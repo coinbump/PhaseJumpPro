@@ -1,0 +1,15 @@
+﻿<Properties StartupConfiguration="{B91259CA-EDF5-26F8-A10F-E11840CF082D}|">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/phasejumppro/Model/StateMachine.cs">
+    <Files>
+      <File FileName="Assets/phasejumppro/Model/Event.cs" Line="24" Column="1" />
+      <File FileName="Assets/phasejumppro/Model/StateMachine.cs" Line="36" Column="1" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.ItemProperties.Phase_220Jump PreferredExecutionTarget="Unity.Editor" />
+</Properties>
