@@ -22,7 +22,7 @@ namespace PJ {
 	/// <summary>
 	/// Template state machine (typically T is an enum).
 	/// </summary>
-	public class TemplateStateMachine <T> : AbstractStateMachine where T : struct, IConvertible
+	public class GenericStateMachine <T> : AbstractStateMachine where T : struct, IConvertible
     {
 		// USAGE: best practice: the T type should have a default value that represents an invalid state
 		public T state { get; protected set; }
@@ -141,7 +141,7 @@ namespace PJ {
 			Test2
 		}
 
-		class TestStateMachine : TemplateStateMachine<TestEnum>
+		class TestStateMachine : GenericStateMachine<TestEnum>
 		{
 			public int test1Count { get; protected set; }
 			public int test2Count { get; protected set; }
