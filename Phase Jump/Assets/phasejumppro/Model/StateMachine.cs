@@ -20,7 +20,7 @@ namespace PJ {
     }
 
 	/// <summary>
-	/// Template state machine (typically T is an enum).
+	/// Generic state machine (typically T is an enum).
 	/// </summary>
 	public class GenericStateMachine <T> : AbstractStateMachine where T : struct, IConvertible
     {
