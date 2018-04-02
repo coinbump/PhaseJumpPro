@@ -26,6 +26,11 @@ public class CircleController : MonoBehaviour {
 		GetComponent<SpriteRenderer>().sprite = sprite;
 	}
 
+	void OnValidate() {
+		stateMachine.SetState(defaultState);
+		UpdateAppearance();
+	}
+
 	// Update is called once per frame
 	void Update () {
 
