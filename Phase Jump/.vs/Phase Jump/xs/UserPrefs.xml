@@ -1,7 +1,9 @@
 ﻿<Properties StartupConfiguration="{B91259CA-EDF5-26F8-A10F-E11840CF082D}|">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/phasejumppro/Model/Boards/BoardTypes.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/phasejumppro/Core/Base.cs">
     <Files>
       <File FileName="Assets/phasejumppro/Model/Boards/BoardTypes.cs" Line="1" Column="1" />
+      <File FileName="Assets/phasejumppro/Core/Core.cs" Line="1" Column="1" />
+      <File FileName="Assets/phasejumppro/Core/Base.cs" Line="8" Column="3" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
