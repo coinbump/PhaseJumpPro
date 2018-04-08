@@ -1,14 +1,65 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using PJ;
 using UnityEngine;
 
 public class CircleController : MonoBehaviour {
 
 	protected RedGreenStateMachine stateMachine = new RedGreenStateMachine();
 	public RedGreenState defaultState = RedGreenState.Green;
+	protected FlipButton flipButton;
+
+	class Listener : PJ.Listener {
+		WeakReference owner;
+
+		public Listener(CircleController owner) {
+			this.owner = new WeakReference(owner);
+		}
+
+		public override void EvtListen(PJ.Event theEvent)
+		{
+			base.EvtListen(theEvent);
+
+			var owner = this.owner.Target as CircleController;
+			if (owner == null) { return; }
+			owner.Flip();
+		}
+	}
+	Listener listener;
+
 	// Use this for initialization
-	void Start () {
+	void Start()
+	{
+		listener = new Listener(this);
+
+		var go = GameObject.Find("flip_button");
+		if (go != null) {
+			flipButton = go.GetComponent<FlipButton>();
+			if (flipButton != null)
+			{
+				flipButton.broadcaster.AddListener(listener);
+			}
+		}
+
 		stateMachine.SetState(defaultState);
+		UpdateAppearance();
+	}
+
+	public void Flip() {
+		switch (stateMachine.state)
+		{
+			case RedGreenState.Red:
+				stateMachine.SetState(RedGreenState.Green);
+				break;
+			case RedGreenState.Green:
+				stateMachine.SetState(RedGreenState.Red);
+				break;
+			default:
+				stateMachine.SetState(RedGreenState.Green);
+				break;
+		}
+
 		UpdateAppearance();
 	}
 
@@ -35,25 +86,12 @@ public class CircleController : MonoBehaviour {
 	void Update () {
 
 		if (Input.GetMouseButtonDown(0)) {
-			var camera = Camera.main;
-			var hit = Physics2D.Raycast(new Vector2(camera.ScreenToWorldPoint(Input.mousePosition).x, camera.ScreenToWorldPoint(Input.mousePosition).y), Vector2.zero, 0f);
+			var c = Camera.main;
+			var hit = Physics2D.Raycast(new Vector2(c.ScreenToWorldPoint(Input.mousePosition).x, c.ScreenToWorldPoint(Input.mousePosition).y), Vector2.zero, 0f);
 
 			if (hit) {
 				if (hit.transform.gameObject == this.transform.gameObject) {
-					switch (stateMachine.state)
-					{
-						case RedGreenState.Red:
-							stateMachine.SetState(RedGreenState.Green);
-							break;
-						case RedGreenState.Green:
-							stateMachine.SetState(RedGreenState.Red);
-							break;
-						default:
-							stateMachine.SetState(RedGreenState.Green);
-							break;
-					}
-
-					UpdateAppearance();
+					Flip();
 				}
 			}
 		}
