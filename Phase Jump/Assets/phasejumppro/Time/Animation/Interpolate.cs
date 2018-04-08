@@ -8,17 +8,16 @@ using NUnit.Framework;
  */
 namespace PJ
 {
-
 	/// <summary>
 	/// Interpolate a normalized float.(0-1.0)
 	/// Used for animation curves
 	/// </summary>
-	abstract class Interpolate
+	public abstract class Interpolate
 	{
 		public abstract float Transform(float factor);
 	}
 
-	class InterpolateLinear : Interpolate
+	public class InterpolateLinear : Interpolate
 	{
 		public override float Transform(float factor)
 		{
@@ -26,7 +25,7 @@ namespace PJ
 		}
 	}
 
-	class InterpolateSquared : Interpolate
+	public class InterpolateSquared : Interpolate
 	{
 		public override float Transform(float factor)
 		{
@@ -34,7 +33,7 @@ namespace PJ
 		}
 	}
 
-	class InterpolateCubed : Interpolate
+	public class InterpolateCubed : Interpolate
 	{
 		public override float Transform(float factor)
 		{
@@ -42,7 +41,7 @@ namespace PJ
 		}
 	}
 
-	class InterpolateOutSquared : Interpolate
+	public class InterpolateOutSquared : Interpolate
 	{
 		public override float Transform(float factor)
 		{
@@ -52,7 +51,7 @@ namespace PJ
 		}
 	}
 
-	class InterpolateOutCubed : Interpolate
+	public class InterpolateOutCubed : Interpolate
 	{
 		public override float Transform(float factor)
 		{
@@ -63,7 +62,7 @@ namespace PJ
 	}
 
 	// FUTURE: evaluate this curve.
-	class InterpolateLeadUp : Interpolate
+	public class InterpolateLeadUp : Interpolate
 	{
 		public override float Transform(float factor)
 		{
@@ -75,7 +74,7 @@ namespace PJ
 	}
 
 	// FUTURE: evaluate this curve.
-	class InterpolateOvershootOut : Interpolate
+	public class InterpolateOvershootOut : Interpolate
 	{
 		public override float Transform(float factor)
 		{
@@ -87,22 +86,22 @@ namespace PJ
 		}
 	}
 
-	class Interpolate_UnitTests {
+	public class UnitTests_Interpolate {
 
 		[Test]
 		public void UnitTests()
 		{
 			{
 				var i = new InterpolateLinear();
-				Assert.LessOrEqual(Math.Abs(i.Transform(1.0f) - 1.0f), .001f);
+				Assert.LessOrEqual(i.Transform(1.0f), 1.0f);
 			}
 			{
 				var i = new InterpolateSquared();
-				Assert.LessOrEqual(Math.Abs(i.Transform(.25f) - (.25f*.25f)), .001f);
+				Assert.LessOrEqual(i.Transform(.25f), .25f*.25f);
 			}
 			{
 				var i = new InterpolateCubed();
-				Assert.LessOrEqual(Math.Abs(i.Transform(.25f) - (.25f * .25f * .25f)), .001f);
+				Assert.LessOrEqual(i.Transform(.25f), (.25f * .25f * .25f));
 			}
 			// No more unit tests needed
 		}

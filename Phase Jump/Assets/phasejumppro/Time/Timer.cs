@@ -11,6 +11,11 @@ namespace PJ {
 	{
 		public float timerState { get; protected set; }   // Time state of the timer
 
+		public Timer(AbstractTimed.Type type)
+		: base(type)
+		{
+		}
+
 		public Timer(AbstractTimed.Type type, float duration)
 			: base(type)
 		{

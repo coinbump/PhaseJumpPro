@@ -11,12 +11,7 @@ namespace PJ {
 	/// Abstract state machine.
 	/// </summary>
 	public abstract class AbstractStateMachine {
-		// FUTURE: support class objects if needed (see PJ C++)
-		//public class Class : PJ.Class {
-		//}
-
-    	//// OPTIONAL:
-        //public StateMachineClass _class;
+		public abstract void AddListener(Listener listener);
     }
 
 	/// <summary>
@@ -33,6 +28,11 @@ namespace PJ {
     	protected float stateReverseTimer;
     	protected bool stateLocked;
 		public float timeInState { get; protected set; }
+		public Broadcaster broadcaster = new Broadcaster();
+
+		public override void AddListener(Listener listener) {
+			broadcaster.AddListener(listener);
+		}
 
     	public void Lock(bool lockState) {
             stateLocked = lockState;
@@ -84,7 +84,7 @@ namespace PJ {
     	}
 			
     	public virtual float GetProgress() {
-    		if (0 == stateDuration) {
+			if (stateDuration.Equals(0)) {
     			return 0;
     		}
 
@@ -105,15 +105,12 @@ namespace PJ {
     	{
             timeInState = 0;
 
-            // FUTURE: Add broadcast-listener support as needed
-    		//Broadcast(tEventType.kEvtStatePreChange); // Respond before any action is taken
-    		//Broadcast(tEventType.kEvtStateChanged);
+			broadcaster.Broadcast(new Event(EventNames.StateChanged));
     	}
 
 		protected virtual void EvtStateFinished()
 		{
-			// FUTURE: Add broadcast-listener support as needed
-    		//Broadcast(tEventType.kEvtStateFinished);
+			broadcaster.Broadcast(new Event(EventNames.StateFinished));
     	}
 
     	public virtual void EvtUpdate(TimeSlice time)
