@@ -15,6 +15,7 @@ namespace PJ {
 		public WeakReference sentFrom;
 		public string name;	// Unique identifier
 		public int value;	// Unique value
+		// FUTURE: add Fragment support as needed (see PJ C++).
 
 		public Event() {
 		}
