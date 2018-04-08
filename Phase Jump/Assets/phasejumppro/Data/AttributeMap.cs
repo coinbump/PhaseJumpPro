@@ -8,7 +8,7 @@ using NUnit.Framework;
  */
 namespace PJ {
 
-	public class AttributeMap : SortedDictionary<string, Attribute> {
+	public class AttributeMap : Dictionary<string, Attribute> {
 		void AddAttribute(string key, string value) {
 			this.Add(key, new Attribute(key, value));
 		}

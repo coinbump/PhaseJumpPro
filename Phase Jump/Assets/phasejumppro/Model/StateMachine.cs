@@ -116,15 +116,15 @@ namespace PJ {
     		//Broadcast(tEventType.kEvtStateFinished);
     	}
 
-    	public virtual void EvtUpdate(TimeSlice task)
+    	public virtual void EvtUpdate(TimeSlice time)
     	{
     		if (stateReverseTimer > 0) {
-    			stateReverseTimer -= task.delta;
+				stateReverseTimer -= time.delta;
     			if (stateReverseTimer <= 0) {
     				EvtStateFinished();
     			}
     		}
-    		timeInState += task.delta;
+			timeInState += time.delta;
     	}
 
 	}
