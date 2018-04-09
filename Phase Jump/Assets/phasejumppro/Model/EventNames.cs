@@ -13,6 +13,7 @@ namespace PJ {
 	{
 		public static string StateFinished = "evt_state_finished";
 		public static string StateChanged = "evt_state_changed";
+		public static string ValueChanged = "evt_value_changed";
 	}
 
 }
