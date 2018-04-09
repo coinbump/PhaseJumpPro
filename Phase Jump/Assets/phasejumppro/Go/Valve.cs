@@ -8,7 +8,7 @@ using NUnit.Framework;
  */
 namespace PJ
 {
-	public enum Input
+	public enum InputEffect
 	{
 		Immediate, OverTime
 	}
@@ -176,7 +176,7 @@ namespace PJ
 					}
 					else if (TimeOff.Equals(0)) {
 						this.state.SetStateDuration(0);
-						TurnOn(Input.OverTime);
+						TurnOn(InputEffect.OverTime);
 					}
 					break;
 				case State.On:
@@ -187,7 +187,7 @@ namespace PJ
 					}
 					else if (TimeOn.Equals(0)) {
 						this.state.SetStateDuration(0);
-						TurnOff(Input.OverTime);
+						TurnOff(InputEffect.OverTime);
 					}
 					break;
 			}
@@ -208,8 +208,8 @@ namespace PJ
 			}
 		}
 
-		public void TurnOn(Input input) {
-			var immediate = input == Input.Immediate;
+		public void TurnOn(InputEffect input) {
+			var immediate = input == InputEffect.Immediate;
 			if (isLocked)
 			{
 				return;
@@ -224,8 +224,8 @@ namespace PJ
 			turnOnTimer.SetProgress(ValveState);
 		}
 
-		public void TurnOff(Input input) {
-			var immediate = input == Input.Immediate;
+		public void TurnOff(InputEffect input) {
+			var immediate = input == InputEffect.Immediate;
 			if (isLocked)
 			{
 				return;
@@ -239,7 +239,7 @@ namespace PJ
 			turnOffTimer.SetProgress(1.0f-ValveState);
 		}
 
-		public void Switch(Input input) {
+		public void Switch(InputEffect input) {
 			if (isLocked)
 			{
 				return;
@@ -257,7 +257,7 @@ namespace PJ
 			}
 		}
 
-		public void InputBinary(bool binary, Input input) {
+		public void InputBinary(bool binary, InputEffect input) {
 			if (binary) {
 				TurnOn(input);
 			}
@@ -275,8 +275,8 @@ namespace PJ
 	class UnitTests_Valve {
 		class TestValve : Valve {
 			public TestValve() {
-				turnOnTimer = new InterpolateTimer(new InterpolateLinear(), AbstractTimed.Type.Persistent, 1.0f);
-				turnOffTimer = new InterpolateTimer(new InterpolateLinear(), AbstractTimed.Type.Persistent, 1.0f);
+				turnOnTimer = new InterpolateTimer(new InterpolateLinear(), 1.0f, AbstractTimed.Type.Persistent);
+				turnOffTimer = new InterpolateTimer(new InterpolateLinear(), 1.0f, AbstractTimed.Type.Persistent);
 				TimeOn = 1.0f;
 				TimeOff = 1.0f;
 			}
@@ -311,13 +311,13 @@ namespace PJ
 			Assert.AreEqual(Valve.State.Off, test.state.state);
 
 			test.TimeOff = 1.0f;
-			test.TurnOn(Input.OverTime);
+			test.TurnOn(InputEffect.OverTime);
 			test.EvtUpdate(new TimeSlice(.5f));
 			Assert.AreEqual(Valve.State.TurnOn, test.state.state);
 			test.EvtUpdate(new TimeSlice(.5f));
 			Assert.AreEqual(Valve.State.On, test.state.state);
 
-			test.TurnOff(Input.Immediate);
+			test.TurnOff(InputEffect.Immediate);
 			Assert.AreEqual(Valve.State.Off, test.state.state);
 			Assert.AreEqual(0, test.ValveState);
 		}

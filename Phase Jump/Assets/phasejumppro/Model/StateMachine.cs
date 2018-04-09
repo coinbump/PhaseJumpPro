@@ -12,6 +12,7 @@ namespace PJ {
 	/// </summary>
 	public abstract class AbstractStateMachine {
 		public abstract void AddListener(Listener listener);
+		public abstract void EvtUpdate(TimeSlice time);
     }
 
 	/// <summary>
@@ -113,7 +114,7 @@ namespace PJ {
 			broadcaster.Broadcast(new Event(EventNames.StateFinished));
     	}
 
-    	public virtual void EvtUpdate(TimeSlice time)
+    	public override void EvtUpdate(TimeSlice time)
     	{
     		if (stateReverseTimer > 0) {
 				stateReverseTimer -= time.delta;

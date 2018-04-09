@@ -8,7 +8,7 @@ using NUnit.Framework;
  */
 namespace PJ {
 
-	/// <summary>
+	/// <summary>EvtStateChanged
 	/// Extends Base by adding some common design patterns
 	/// Most game objects have a state machine, so let's go ahead and set that up here
 	/// </summary>
@@ -48,7 +48,7 @@ namespace PJ {
 				{
 					var target = this.owner.Target as Core;
 					if (null == target) { return; }
-					target.EvtStateChanged();
+					target.EvtStateChanged(target.aState);
 				}
 				else if (theEvent.name == EventNames.StateFinished)
 				{
@@ -61,12 +61,18 @@ namespace PJ {
 		public Listener listener;
 		public Broadcaster broadcaster = new Broadcaster();
 
-		public virtual void EvtStateChanged() {}
-		public virtual void EvtStateFinished() {}
+		protected virtual void EvtStateChanged(AbstractStateMachine state) {}
+		protected virtual void EvtStateFinished() {}
 
 		public Core()
 		{
 			listener = new Listener(this);
+		}
+
+		public virtual void EvtUpdate(TimeSlice time) {
+			if (aState != null) {
+				aState.EvtUpdate(time);
+			}
 		}
 
 		public void SetStateMachine(AbstractStateMachine aState) {
@@ -96,13 +102,13 @@ namespace PJ {
 				SetStateMachine(this.state);
 			}
 
-			public override void EvtStateChanged() {
-				base.EvtStateChanged();
+			protected override void EvtStateChanged(AbstractStateMachine state) {
+				base.EvtStateChanged(state);
 
 				stateChangedCount++;
 			}
 
-			public override void EvtStateFinished() {
+			protected override void EvtStateFinished() {
 				base.EvtStateFinished();
 
 				stateFinishedCount++;

@@ -9,7 +9,17 @@ using NUnit.Framework;
 namespace PJ {
 	public class Timer : AbstractTimed
 	{
-		public float timerState { get; protected set; }   // Time state of the timer
+		private float _timerState;  // Time state of the timer
+
+		public float TimerState {
+			get {
+				return _timerState;
+			}
+			set {
+				_timerState = Math.Min(duration, Math.Max(0, value));
+				IsFinished = _timerState >= duration;
+			}
+		}
 
 		public Timer(AbstractTimed.Type type)
 		: base(type)
@@ -24,14 +34,19 @@ namespace PJ {
 
 		public void Reset()
 		{
-			timerState = 0;
+			TimerState = 0;
 			IsFinished = false;
 			Pause(false);
 		}
 
 		public override float GetProgress()
 		{
-			return Math.Min(1.0f, timerState / duration);
+			return Math.Min(1.0f, TimerState / duration);
+		}
+
+		public void SetProgress(float progress) {
+			progress = Math.Min(1.0f, Math.Max(0, progress));
+			TimerState = progress * duration;
 		}
 
 		public override void EvtUpdate(TimeSlice time)
@@ -41,13 +56,7 @@ namespace PJ {
 			var delta = GetTimeDelta(time);
 			if (delta <= 0) { return; }
 
-			timerState += delta;
-			timerState = Math.Min(duration, timerState);
-
-			if (timerState >= duration)
-			{
-				IsFinished = true;
-			}
+			TimerState = TimerState + delta;
 		}
 	}
 
@@ -58,13 +67,16 @@ namespace PJ {
 		{
 			var timer = new Timer(PJ.AbstractTimed.Type.Persistent, 1.0f);
 			timer.EvtUpdate(new TimeSlice(.3f));
-			Assert.AreEqual(.3f, timer.timerState, .001f);
-			Assert.AreEqual(.3f, timer.GetProgress(), .001f);
+			Assert.AreEqual(.3f, timer.TimerState);
+			Assert.AreEqual(.3f, timer.GetProgress());
 			Assert.AreEqual(false, timer.IsFinished);
 			timer.EvtUpdate(new TimeSlice(.7f));
-			Assert.AreEqual(1.0f, timer.timerState, .001f);
-			Assert.AreEqual(1.0f, timer.GetProgress(), .001f);
+			Assert.AreEqual(1.0f, timer.TimerState);
+			Assert.AreEqual(1.0f, timer.GetProgress());
 			Assert.AreEqual(true, timer.IsFinished);
+
+			timer.SetProgress(.5f);
+			Assert.AreEqual(false, timer.IsFinished);
 		}
 	}
 }
