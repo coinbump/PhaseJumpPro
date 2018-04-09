@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using PJ;
 
-public class Wheel : MonoBehaviour {
+public class Wheel : Node2D {
 
 	class Valve : PJ.Valve {
 		public Valve() {
@@ -25,6 +25,6 @@ public class Wheel : MonoBehaviour {
 		valve.EvtUpdate(new TimeSlice(Time.deltaTime));
 		var valveState = valve.ValveState;
 		//Debug.Log(string.Format("valveState: {0}, State: {1}", valveState, valve.state.state));
-		transform.eulerAngles = new Vector3(0, 0, -360.0f * valveState);
+		RotationNormal = valveState;
 	}
 }
