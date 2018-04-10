@@ -27,7 +27,7 @@ namespace PJ {
 		// OPTIONAL:
     	protected float stateDuration;
     	protected float stateReverseTimer;
-    	protected bool stateLocked;
+    	protected bool isLocked;
 		public float timeInState { get; protected set; }
 		public Broadcaster broadcaster = new Broadcaster();
 
@@ -36,7 +36,7 @@ namespace PJ {
 		}
 
     	public void Lock(bool lockState) {
-            stateLocked = lockState;
+            isLocked = lockState;
     	}
     	
         public void SetStateDuration(float duration) {
@@ -57,7 +57,7 @@ namespace PJ {
             if (newState.Equals(state)) {
     			return true;
     		}
-    		if (stateLocked) {
+    		if (isLocked) {
     			return false;
     		}
     		if (!CanTransition(newState)) {

@@ -16,7 +16,11 @@ namespace PJ
 	public class Node2D : MonoBehaviour
 	{
 		private float _rotation;    // Simplifies basic 2D rotation
-		private bool dontModRotation;
+		private bool dontModRotation = false;
+
+		// Kinematic motion:
+		public float directionVelocity;
+		public Vector2 velocity;
 
 		// Normalized rotation value (0-1.0)
 		public float RotationNormal
@@ -62,16 +66,20 @@ namespace PJ
 			transform.eulerAngles = new Vector3(0, 0, -360.0f * _rotation);
 		}
 
-		// Use this for initialization
-		void Start()
+		protected void UpdateNode()
 		{
+			var velocityVector = velocity;
+			if (!directionVelocity.Equals(0)) {
+				var radians = RotationAngle * 0.01745329252f;
+				velocityVector = new Vector2((float)Math.Sin(radians)* directionVelocity, (float)Math.Cos(radians) * directionVelocity);
+			}
 
-		}
-
-		// Update is called once per frame
-		void Update()
-		{
-
+			if (velocityVector != null) {
+				var position = transform.position;
+				position.x += velocityVector.x * Time.deltaTime;
+				position.y += velocityVector.y * Time.deltaTime;
+				transform.position = position;
+			}
 		}
 
 		public class UnitTests_Node2D {
