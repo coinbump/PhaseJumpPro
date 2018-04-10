@@ -86,7 +86,7 @@ namespace PJ
 
 		public InterpolateTimer turnOnTimer;
 		public InterpolateTimer turnOffTimer;
-		public GenericStateMachine<State> state { get; protected set; }
+		protected GenericStateMachine<State> state;
 		public bool isLocked;
 		private float _valveState; // 1.0 is on
 
@@ -266,6 +266,10 @@ namespace PJ
 			}
 		}
 
+		public State GetState() {
+			return state.state;
+		}
+
 		// OPTIONAL:
 		virtual protected void EvtValveStateChanged() { }
 		virtual protected void EvtOn() { }
@@ -286,39 +290,39 @@ namespace PJ
 		public void UnitTests() {
 			var test = new TestValve();
 			test.EvtUpdate(new TimeSlice(1.0f));
-			Assert.AreEqual(Valve.State.Invalid, test.state.state);
-			test.state.SetState(Valve.State.Off);
+			Assert.AreEqual(Valve.State.Invalid, test.GetState());
+			test.TurnOff(InputEffect.Immediate);
 			Assert.AreEqual(0, test.ValveState);
 
 			test.EvtUpdate(new TimeSlice(1.0f));
-			Assert.AreEqual(Valve.State.TurnOn, test.state.state);
+			Assert.AreEqual(Valve.State.TurnOn, test.GetState());
 
 			test.EvtUpdate(new TimeSlice(0.5f));
 			Assert.AreEqual(.5f, test.ValveState);
 			test.EvtUpdate(new TimeSlice(0.5f));
-			Assert.AreEqual(Valve.State.On, test.state.state);
+			Assert.AreEqual(Valve.State.On, test.GetState());
 
 			test.EvtUpdate(new TimeSlice(1.0f));
-			Assert.AreEqual(Valve.State.TurnOff, test.state.state);
+			Assert.AreEqual(Valve.State.TurnOff, test.GetState());
 
 			test.EvtUpdate(new TimeSlice(0.5f));
 			Assert.AreEqual(.5f, test.ValveState);
 			test.EvtUpdate(new TimeSlice(0.5f));
-			Assert.AreEqual(Valve.State.Off, test.state.state);
+			Assert.AreEqual(Valve.State.Off, test.GetState());
 
 			test.TimeOff = -1.0f;
 			test.EvtUpdate(new TimeSlice(1.0f));
-			Assert.AreEqual(Valve.State.Off, test.state.state);
+			Assert.AreEqual(Valve.State.Off, test.GetState());
 
 			test.TimeOff = 1.0f;
 			test.TurnOn(InputEffect.OverTime);
 			test.EvtUpdate(new TimeSlice(.5f));
-			Assert.AreEqual(Valve.State.TurnOn, test.state.state);
+			Assert.AreEqual(Valve.State.TurnOn, test.GetState());
 			test.EvtUpdate(new TimeSlice(.5f));
-			Assert.AreEqual(Valve.State.On, test.state.state);
+			Assert.AreEqual(Valve.State.On, test.GetState());
 
 			test.TurnOff(InputEffect.Immediate);
-			Assert.AreEqual(Valve.State.Off, test.state.state);
+			Assert.AreEqual(Valve.State.Off, test.GetState());
 			Assert.AreEqual(0, test.ValveState);
 		}
 	}
