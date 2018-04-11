@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class CircleController : MonoBehaviour {
 
-	protected RedGreenStateMachine stateMachine = new RedGreenStateMachine();
+	protected RedGreenStateMachine state = new RedGreenStateMachine();
 	public RedGreenState defaultState = RedGreenState.Green;
 	protected FlipButton flipButton;
 
@@ -42,21 +42,21 @@ public class CircleController : MonoBehaviour {
 			}
 		}
 
-		stateMachine.State = defaultState;
+		state.State = defaultState;
 		UpdateAppearance();
 	}
 
 	public void Flip() {
-		switch (stateMachine.state)
+		switch (state.state)
 		{
 			case RedGreenState.Red:
-				stateMachine.State = RedGreenState.Green;
+				state.State = RedGreenState.Green;
 				break;
 			case RedGreenState.Green:
-				stateMachine.State = RedGreenState.Red;
+				state.State = RedGreenState.Red;
 				break;
 			default:
-				stateMachine.State = RedGreenState.Green;
+				state.State = RedGreenState.Green;
 				break;
 		}
 
@@ -67,7 +67,7 @@ public class CircleController : MonoBehaviour {
 	{
 		var sprite = Resources.Load<Sprite>("green_circle");
 
-		switch (stateMachine.state)
+		switch (state.state)
 		{
 			case RedGreenState.Red:
 				sprite = Resources.Load<Sprite>("red_circle");
@@ -78,7 +78,7 @@ public class CircleController : MonoBehaviour {
 	}
 
 	void OnValidate() {
-		stateMachine.State = defaultState;
+		state.State = defaultState;
 		UpdateAppearance();
 	}
 
