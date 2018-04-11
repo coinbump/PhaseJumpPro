@@ -16,7 +16,8 @@ namespace PJ
 	public class Node2D : MonoBehaviour
 	{
 		private float _rotation;    // Simplifies basic 2D rotation
-		private bool dontModRotation = false;
+		public bool dontModRotation = false;
+		public bool isKinematic;
 
 		// Kinematic motion:
 		public float directionVelocity;
@@ -68,6 +69,7 @@ namespace PJ
 
 		protected void UpdateNode()
 		{
+			if (!isKinematic) { return; }
 			var velocityVector = velocity;
 			if (!directionVelocity.Equals(0)) {
 				var radians = RotationAngle * 0.01745329252f;

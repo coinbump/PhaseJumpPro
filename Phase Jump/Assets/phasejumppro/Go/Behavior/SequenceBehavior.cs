@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 using NUnit.Framework;
 
@@ -23,13 +23,13 @@ namespace PJ
 
 			switch (child.GetState())
 			{
-				case Behavior.State.FinishedFail:
-					state.State = State.FinishedFail;
+				case Behavior.State.Fail:
+					state.State = State.Fail;
 					return;
-				case Behavior.State.FinishedSuccess:
+				case Behavior.State.Success:
 					if (childIndex == children.Count - 1)
 					{
-						state.State = State.FinishedSuccess;
+						state.State = State.Success;
 						return;
 					}
 					else
@@ -57,12 +57,12 @@ namespace PJ
 
 				switch (result)
 				{
-					case State.FinishedFail:
+					case State.Fail:
 						state.State = result;
 						return;
-					case State.FinishedSuccess:
+					case State.Success:
 						if (childIndex == children.Count - 1) {
-							state.State = State.FinishedSuccess;
+							state.State = State.Success;
 							return;
 						}
 						break;
@@ -131,26 +131,26 @@ namespace PJ
 			Assert.IsFalse(c1.IsRunning());
 			Assert.IsFalse(c2.IsRunning());
 			Assert.AreEqual(null, t1.RunningChild);
-			Assert.AreEqual(Behavior.State.FinishedFail, t1.GetState());
-			Assert.AreEqual(Behavior.State.FinishedFail, c1.GetState());
+			Assert.AreEqual(Behavior.State.Fail, t1.GetState());
+			Assert.AreEqual(Behavior.State.Fail, c1.GetState());
 
 			c1.evaluate = true;
 			c2.evaluate = false;
 
 			t1.Run();
-			Assert.AreEqual(Behavior.State.FinishedFail, t1.GetState());
-			Assert.AreEqual(Behavior.State.FinishedSuccess, c1.GetState());
-			Assert.AreEqual(Behavior.State.FinishedFail, c2.GetState());
+			Assert.AreEqual(Behavior.State.Fail, t1.GetState());
+			Assert.AreEqual(Behavior.State.Success, c1.GetState());
+			Assert.AreEqual(Behavior.State.Fail, c2.GetState());
 
 			c1.evaluate = true;
 			c2.evaluate = true;
 			c1.evaluate = true;
 
 			t1.Run();
-			Assert.AreEqual(Behavior.State.FinishedSuccess, t1.GetState());
-			Assert.AreEqual(Behavior.State.FinishedSuccess, c1.GetState());
-			Assert.AreEqual(Behavior.State.FinishedSuccess, c2.GetState());
-			Assert.AreEqual(Behavior.State.FinishedSuccess, c3.GetState());
+			Assert.AreEqual(Behavior.State.Success, t1.GetState());
+			Assert.AreEqual(Behavior.State.Success, c1.GetState());
+			Assert.AreEqual(Behavior.State.Success, c2.GetState());
+			Assert.AreEqual(Behavior.State.Success, c3.GetState());
 
 			var c0 = new TestTimerBehavior();
 			t1.AddChild(c0);
@@ -159,8 +159,8 @@ namespace PJ
 			Assert.IsTrue(t1.IsRunning());
 			t1.EvtUpdate(new TimeSlice(1.0f));
 			Assert.AreEqual(null, t1.RunningChild);
-			Assert.AreEqual(Behavior.State.FinishedSuccess, t1.GetState());
-			Assert.AreEqual(Behavior.State.FinishedSuccess, c0.GetState());
+			Assert.AreEqual(Behavior.State.Success, t1.GetState());
+			Assert.AreEqual(Behavior.State.Success, c0.GetState());
 		}
 	}
 }

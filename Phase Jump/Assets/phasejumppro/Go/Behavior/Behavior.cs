@@ -30,8 +30,8 @@ namespace PJ {
 			Evalute,		// Run has been called, no result yet
 			RunningNode,	// This node is running (set state to Finished when done)
 			RunningChild,	// This node is evaluating a child node (sequences, selectors)
-			FinishedSuccess,	// Run finished with success
-			FinishedFail	// Run finished with failure
+			Success,		// Run finished with success
+			Fail			// Run finished with failure
 		}
 		protected GenericStateMachine<State> state = new GenericStateMachine<State>();
 
@@ -60,8 +60,8 @@ namespace PJ {
 			if (state != this.state) { return; }
 
 			switch (this.state.state) {
-				case State.FinishedFail:
-				case State.FinishedSuccess:
+				case State.Fail:
+				case State.Success:
 					if (null != parent && parent.IsAlive) {
 						var parentBehavior = parent.Target as Behavior;
 						parentBehavior.EvtChildFinished(this);
@@ -117,7 +117,7 @@ namespace PJ {
 
 		public State GetState() { return state.State;  }
 		public bool IsRunning() { return state.State == State.RunningNode || state.State == State.RunningChild; }
-		public bool IsFinished() { return state.State == State.FinishedSuccess || state.State == State.FinishedFail; }
+		public bool IsFinished() { return state.State == State.Success || state.State == State.Fail; }
 	}
 
 	public class UnitTests_Behavior {
@@ -147,10 +147,10 @@ namespace PJ {
 			t1.AddChild(c1);
 
 			t1.Run();
-			Assert.AreEqual(Behavior.State.FinishedFail, c1.GetState());
+			Assert.AreEqual(Behavior.State.Fail, c1.GetState());
 			c1.evaluate = true;
 			t1.Run();
-			Assert.AreEqual(Behavior.State.FinishedSuccess, c1.GetState());
+			Assert.AreEqual(Behavior.State.Success, c1.GetState());
 
 			c1.AddChild(c11);
 			c1.AddChild(c12);

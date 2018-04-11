@@ -6,7 +6,7 @@ public class Ship : PJ.Node2D {
 
 	// Use this for initialization
 	void Start () {
-		
+		isKinematic = true;
 	}
 	
 	// Update is called once per frame

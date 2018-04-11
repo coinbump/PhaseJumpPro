@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 
 /*
@@ -41,7 +41,7 @@ namespace PJ {
 				timer.EvtUpdate(time);
 				if (timer.IsFinished)
 				{
-					state.State = State.FinishedSuccess;
+					state.State = State.Success;
 				}
 			}
 		}
@@ -53,7 +53,7 @@ namespace PJ {
 				state.State = State.RunningNode;
 			}
 			else {
-				state.State = State.FinishedSuccess;
+				state.State = State.Success;
 			}
 		}
 	}

@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 
 namespace PJ {
@@ -15,7 +15,7 @@ namespace PJ {
 		{
 			if (Evaluate())
 			{
-				state.State = State.FinishedSuccess;
+				state.State = State.Success;
 				if (children.Count > 0)
 				{
 					var child = children[0];
@@ -24,7 +24,7 @@ namespace PJ {
 			}
 			else
 			{
-				state.State = State.FinishedFail;
+				state.State = State.Fail;
 			}
 		}
 	}
