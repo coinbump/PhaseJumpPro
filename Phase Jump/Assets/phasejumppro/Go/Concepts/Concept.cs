@@ -47,7 +47,7 @@ namespace PJ
 		public Concept()
 		{
 			SetStateMachine(state);
-			state.SetState(State.Ready);
+			state.State = State.Ready;
 		}
 
 		public virtual void EvtDemoFinished(Demo demo)
@@ -56,7 +56,7 @@ namespace PJ
 
 			if (CheckFinished())
 			{
-				state.SetState(State.Finished);
+				state.State = State.Finished;
 				return;
 			}
 
@@ -86,11 +86,11 @@ namespace PJ
 	}
 
 	public class UnitTests_ConceptDemo {
-		class TestConcept : Concept {
+		private class TestConcept : Concept {
 			
 		}
 
-		class TestDemo : Demo {
+		private class TestDemo : Demo {
 			public string output;
 			public string value;
 

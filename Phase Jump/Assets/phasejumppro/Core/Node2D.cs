@@ -74,12 +74,10 @@ namespace PJ
 				velocityVector = new Vector2((float)Math.Sin(radians)* directionVelocity, (float)Math.Cos(radians) * directionVelocity);
 			}
 
-			if (velocityVector != null) {
-				var position = transform.position;
-				position.x += velocityVector.x * Time.deltaTime;
-				position.y += velocityVector.y * Time.deltaTime;
-				transform.position = position;
-			}
+			var position = transform.position;
+			position.x += velocityVector.x * Time.deltaTime;
+			position.y += velocityVector.y * Time.deltaTime;
+			transform.position = position;
 		}
 
 		public class UnitTests_Node2D {

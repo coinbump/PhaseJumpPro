@@ -52,29 +52,37 @@ namespace PJ {
             stateReverseTimer = 0; // Keep duration if we need to reset the timer later.
     	}
 			
-    	public virtual bool SetState(T newState)
+    	public T State
         {
-            if (newState.Equals(state)) {
-    			return true;
-    		}
-    		if (isLocked) {
-    			return false;
-    		}
-    		if (!CanTransition(newState)) {
-    			return false;
-    		}
+			get {
+				return state;
+			}
+			set
+			{
+				var newState = value;
+				if (newState.Equals(state))
+				{
+					return;
+				}
+				if (isLocked)
+				{
+					return;
+				}
+				if (!CanTransition(newState))
+				{
+					return;
+				}
 
-    		SetStateVal(newState);
-    		EvtStateChanged(newState);
-
-    		return true;
+				SetStateValue(newState);
+				EvtStateChanged(newState);
+			}
     	}
 
         /// <summary>
         /// Sets the state value without broadcasting.
         /// </summary>
         /// <param name="newState">New state.</param>
-    	public void SetStateVal(T newState)
+		public void SetStateValue(T newState)
     	{
             if (newState.Equals(state)) {
     			return;
@@ -139,7 +147,7 @@ namespace PJ {
 			Test2
 		}
 
-		class TestStateMachine : GenericStateMachine<TestEnum>
+		private class TestStateMachine : GenericStateMachine<TestEnum>
 		{
 			public int test1Count { get; protected set; }
 			public int test2Count { get; protected set; }
@@ -171,14 +179,14 @@ namespace PJ {
 		public void UnitTests()
 		{
 			var test = new TestStateMachine();
-			test.SetState(TestEnum.Test2);
+			test.State = TestEnum.Test2;
 			Assert.AreEqual(1, test.test2Count);
 			test.Lock(true);
 
-			test.SetState(TestEnum.Test1);
+			test.State = TestEnum.Test1;
 			Assert.AreEqual(0, test.test1Count);
 			test.Lock(false);
-			test.SetState(TestEnum.Test1);
+			test.State = TestEnum.Test1;
 			Assert.AreEqual(1, test.test1Count);
 
 			test.SetStateDuration(1.0f);
@@ -190,7 +198,7 @@ namespace PJ {
 			test.EvtUpdate(new TimeSlice(.6f));
 			Assert.AreEqual(test.finishedCount, 2);
 
-			test.SetState(TestEnum.Test2);
+			test.State = TestEnum.Test2;
 			Assert.AreEqual(TestEnum.Test1, test.prevState);
 		}
 

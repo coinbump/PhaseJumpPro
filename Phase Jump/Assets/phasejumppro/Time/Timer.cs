@@ -26,7 +26,7 @@ namespace PJ {
 		{
 		}
 
-		public Timer(AbstractTimed.Type type, float duration)
+		public Timer(float duration, AbstractTimed.Type type)
 			: base(type)
 		{
 			this.duration = duration;
@@ -65,7 +65,7 @@ namespace PJ {
 		[Test]
 		public void UnitTests()
 		{
-			var timer = new Timer(PJ.AbstractTimed.Type.Persistent, 1.0f);
+			var timer = new Timer(1.0f, PJ.AbstractTimed.Type.Persistent);
 			timer.EvtUpdate(new TimeSlice(.3f));
 			Assert.AreEqual(.3f, timer.TimerState);
 			Assert.AreEqual(.3f, timer.GetProgress());

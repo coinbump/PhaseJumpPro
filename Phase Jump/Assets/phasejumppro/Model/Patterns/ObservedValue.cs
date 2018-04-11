@@ -55,7 +55,7 @@ namespace PJ
 	}
 
 	class UnitTests_ObservedValue {
-		class TestValue : ObservedValue<int> 
+		private class TestValue : ObservedValue<int> 
 		{
 			public TestValue() {
 				Action<int> _action = _value => { actionCount++; };

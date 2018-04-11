@@ -42,7 +42,7 @@ public class CircleController : MonoBehaviour {
 			}
 		}
 
-		stateMachine.SetState(defaultState);
+		stateMachine.State = defaultState;
 		UpdateAppearance();
 	}
 
@@ -50,13 +50,13 @@ public class CircleController : MonoBehaviour {
 		switch (stateMachine.state)
 		{
 			case RedGreenState.Red:
-				stateMachine.SetState(RedGreenState.Green);
+				stateMachine.State = RedGreenState.Green;
 				break;
 			case RedGreenState.Green:
-				stateMachine.SetState(RedGreenState.Red);
+				stateMachine.State = RedGreenState.Red;
 				break;
 			default:
-				stateMachine.SetState(RedGreenState.Green);
+				stateMachine.State = RedGreenState.Green;
 				break;
 		}
 
@@ -78,7 +78,7 @@ public class CircleController : MonoBehaviour {
 	}
 
 	void OnValidate() {
-		stateMachine.SetState(defaultState);
+		stateMachine.State = defaultState;
 		UpdateAppearance();
 	}
 

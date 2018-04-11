@@ -83,7 +83,7 @@ namespace PJ {
 			}
 		}
 
-		protected class TestCore : Core
+		private class TestCore : Core
 		{
 			public enum State {
 				Invalid, On, Off
@@ -118,11 +118,11 @@ namespace PJ {
 		[Test]
 		public void UnitTests() {
 			var testCore = new TestCore();
-			testCore.state.SetState(TestCore.State.On);
+			testCore.state.State = TestCore.State.On;
 			Assert.AreEqual(1, testCore.stateChangedCount);
-			testCore.state.SetState(TestCore.State.On);
+			testCore.state.State = TestCore.State.On;
 			Assert.AreEqual(1, testCore.stateChangedCount);
-			testCore.state.SetState(TestCore.State.Off);
+			testCore.state.State = TestCore.State.Off;
 			Assert.AreEqual(2, testCore.stateChangedCount);
 
 			testCore.state.SetStateDuration(1.0f);

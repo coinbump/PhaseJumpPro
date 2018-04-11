@@ -150,14 +150,14 @@ namespace PJ
 				case State.Off:
 					if (turnOnTimer != null) {
 						turnOnTimer.Reset();
-						state.SetState(State.TurnOn);
+						state.State = State.TurnOn;
 					}
 					break;
 				case State.On:
 					if (turnOffTimer != null)
 					{
 						turnOffTimer.Reset();
-						state.SetState(State.TurnOff);
+						state.State = State.TurnOff;
 					}
 					break;
 			}
@@ -200,10 +200,10 @@ namespace PJ
 
 			switch (state.state) {
 				case State.TurnOff:
-					state.SetState(State.Off);
+					state.State = State.Off;
 					break;
 				case State.TurnOn:
-					state.SetState(State.On);
+					state.State = State.On;
 					break;
 			}
 		}
@@ -217,10 +217,10 @@ namespace PJ
 
 			if (immediate || turnOnTimer == null)
 			{
-				state.SetState(State.On);
+				state.State = State.On;
 				return;
 			}
-			state.SetState(State.TurnOn);
+			state.State = State.TurnOn;
 			turnOnTimer.SetProgress(ValveState);
 		}
 
@@ -232,10 +232,10 @@ namespace PJ
 			}
 
 			if (immediate || turnOffTimer == null) {
-				state.SetState(State.Off);
+				state.State = State.Off;
 				return;
 			}
-			state.SetState(State.TurnOff);
+			state.State = State.TurnOff;
 			turnOffTimer.SetProgress(1.0f-ValveState);
 		}
 
@@ -277,7 +277,7 @@ namespace PJ
 	}
 
 	class UnitTests_Valve {
-		class TestValve : Valve {
+		private class TestValve : Valve {
 			public TestValve() {
 				turnOnTimer = new InterpolateTimer(new InterpolateLinear(), 1.0f, AbstractTimed.Type.Persistent);
 				turnOffTimer = new InterpolateTimer(new InterpolateLinear(), 1.0f, AbstractTimed.Type.Persistent);

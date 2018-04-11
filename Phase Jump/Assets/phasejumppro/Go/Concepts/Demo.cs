@@ -42,7 +42,7 @@ namespace PJ {
 
 		public Demo() {
 			SetStateMachine(state);
-			state.SetState(State.Ready);
+			state.State = State.Ready;
 		}
 	
 		/// <summary>
@@ -55,7 +55,7 @@ namespace PJ {
 			return true;
 		}
 
-		public void Finish() { state.SetState(State.Finished); }
+		public void Finish() { state.State = State.Finished; }
 		public bool IsFinished() { return state.state == State.Finished; }
 	}
 }

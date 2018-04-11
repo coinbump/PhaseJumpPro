@@ -67,7 +67,7 @@ namespace PJ {
 			}
 		}
 
-		class TestListener : Listener {
+		private class TestListener : Listener {
 			public int listenCount;
 			public string lastMessage;
 

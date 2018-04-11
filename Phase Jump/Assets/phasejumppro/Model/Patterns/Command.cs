@@ -32,11 +32,11 @@ namespace PJ
 			{
 				case State.Invalid:
 					ExecuteCommand(false);
-					state.SetState(State.Complete);
+					state.State = State.Complete;
 					break;
 				case State.Reverse:
 					ExecuteCommand(true);
-					state.SetState(State.Complete);
+					state.State = State.Complete;
 					break;
 				case State.Complete:
 					Debug.Log("ERROR. Execute called twice for comand.");
@@ -50,11 +50,11 @@ namespace PJ
 		{
 			if (State.Complete == state.state) {
 				UndoCommand();
-				state.SetState(State.Reverse);
+				state.State = State.Reverse;
 			}
 		}
 
-		protected class TestCommand : Command {
+		private class TestCommand : Command {
 			public int value;
 			public bool didRedo;
 

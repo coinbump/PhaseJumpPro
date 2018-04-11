@@ -48,7 +48,7 @@ namespace PJ {
 	}
 
 	public class UnitTests_SignalReceptor {
-		class TestReceptor : Receptor<string> {
+		private class TestReceptor : Receptor<string> {
 			public int matchCount;
 
 			public TestReceptor() {
@@ -61,14 +61,14 @@ namespace PJ {
 			}
 		}
 
-		class TestSignalMatch : Signal<string> {
+		private class TestSignalMatch : Signal<string> {
 			public TestSignalMatch() {
 				AddKey("a");
 				AddKey("b");
 			}
 		}
 
-		class TestSignalNoMatch : Signal<string>
+		private class TestSignalNoMatch : Signal<string>
 		{
 			public TestSignalNoMatch()
 			{
