@@ -1,9 +1,9 @@
 ﻿<Properties StartupConfiguration="{B91259CA-EDF5-26F8-A10F-E11840CF082D}|">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/phasejumppro/Extensions/ListExtensions.cs">
+  <MonoDevelop.Ide.Workbench>
     <Files>
       <File FileName="Assets/scripts/CircleController.cs" Line="88" Column="1" />
       <File FileName="Assets/scripts/FlipButton.cs" Line="1" Column="1" />
-      <File FileName="Assets/scripts/Human.cs" Line="1" Column="1" />
+      <File FileName="Assets/scripts/Human.cs" Line="162" Column="39" />
       <File FileName="Assets/phasejumppro/Core/Node2D.cs" Line="73" Column="16" />
       <File FileName="Assets/phasejumppro/Go/Behavior/Behavior.cs" Line="109" Column="1" />
       <File FileName="Assets/phasejumppro/Model/Broadcaster.cs" Line="24" Column="1" />

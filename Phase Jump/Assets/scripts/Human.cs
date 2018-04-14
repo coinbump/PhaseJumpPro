@@ -25,9 +25,7 @@ public class Human : PJ.Node2D
 			if (!owner.IsAlive) { return false; }
 			var human = owner.Target as Human;
 
-			// Going from walk to run near a wall causes issues
-			Debug.Log(String.Format("Active Colliders: {0}", human.activeColliders.Count));
-			return human.boredom >= 5.0f && human.activeColliders.Count == 0;
+			return human.boredom >= 5.0f;
 		}
 	}
 
@@ -190,14 +188,11 @@ public class Human : PJ.Node2D
 
 	void UpdateVelocity() {
 		var walkSpeed = IsRunning() ? 4.0f : 2.0f;
-
-		switch (core.state.State) {
-			case State.WalkLeft:
-				velocity = new Vector2(-walkSpeed, 0);
-				break;
-			case State.WalkRight:
-				velocity = new Vector2(walkSpeed, 0);
-				break;
+		if (IsMovingRight()) {
+			velocity = new Vector2(walkSpeed, 0);
+		}
+		else {
+			velocity = new Vector2(-walkSpeed, 0);
 		}
 	}
 	
