@@ -11,7 +11,10 @@ namespace PJ {
 	public class Behavior : Core {
 		public WeakReference parent { get; protected set; }
 		protected List<Behavior> children = new List<Behavior>();
-		private Behavior _runningChild;	// Only root node sets this value
+		private Behavior _runningChild; // Only root node sets this value
+
+		// Optional:
+		public WeakReference owner;
 
 		public Behavior RunningChild {
 			get {
@@ -40,9 +43,20 @@ namespace PJ {
 			SetStateMachine(state);
 		}
 
+		public Behavior(WeakReference owner)
+		{
+			this.owner = owner;
+			SetStateMachine(state);
+		}
+
 		public void AddChild(Behavior node) {
 			node.parent = new WeakReference(this);
 			children.Add(node);
+
+			if (node.owner == null) {
+				var rootOwner = RootNode().owner;
+				node.owner = rootOwner;
+			}
 		}
 
 		public Behavior RootNode() {
@@ -84,7 +98,10 @@ namespace PJ {
 		public override void EvtUpdate(TimeSlice time) {
 			base.EvtUpdate(time);
 
-			Run();
+			if (RootNode() == this)
+			{
+				Run();
+			}
 
 			// Do this last (Don't Run immediately after child finishes).
 			foreach (Behavior child in children) {
@@ -109,9 +126,13 @@ namespace PJ {
 		// Must set the new state via _Run
 		protected virtual void _Run() {
 
-			if (children.Count > 0) {
-				var child = children[0];
-				child.Run();
+			foreach (Behavior child in children) {
+				switch (child.Run()) {
+					case State.Fail:
+						continue;
+					default:
+						return;
+				}
 			}
 		}
 

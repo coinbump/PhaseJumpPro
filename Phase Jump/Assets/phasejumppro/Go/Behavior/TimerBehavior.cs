@@ -48,6 +48,8 @@ namespace PJ {
 
 		protected override void _Run()
 		{
+			if (null == timer) { return; }
+
 			timer.Reset();
 			if (timer.duration > 0) {
 				state.State = State.RunningNode;
