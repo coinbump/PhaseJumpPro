@@ -152,8 +152,8 @@ namespace PJ {
 			}
 		}
 
-		private class TestTimerBehavior : TimerBehavior {
-			public TestTimerBehavior()
+		private class TestTimedBehavior : TimedBehavior {
+			public TestTimedBehavior()
 				: base(1.0f) {
 
 			}
@@ -161,11 +161,13 @@ namespace PJ {
 
 		[Test]
 		public void UnitTests() {
-			var t1 = new Behavior();
+			var t1 = new Behavior(new WeakReference(this));
 			var c1 = new TestConditionBehavior();
-			var c11 = new TestTimerBehavior();
+			var c11 = new TestTimedBehavior();
 			var c12 = new Behavior();
+
 			t1.AddChild(c1);
+			Assert.AreEqual(c1.owner, t1.owner);
 
 			t1.Run();
 			Assert.AreEqual(Behavior.State.Fail, c1.GetState());

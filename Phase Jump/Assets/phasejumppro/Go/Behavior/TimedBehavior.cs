@@ -11,7 +11,7 @@ namespace PJ {
 	/// Behavior runs for N seconds
 	/// Example: entity searches for food for N seconds, then gives up
  	/// </summary>
-	public class TimerBehavior : Behavior
+	public class TimedBehavior : Behavior
 	{
 		Timer timer;
 
@@ -24,10 +24,10 @@ namespace PJ {
 			}
 		}
 
-		public TimerBehavior() {
+		public TimedBehavior() {
 		}
 
-		public TimerBehavior(float duration)
+		public TimedBehavior(float duration)
 		{
 			timer = new Timer(duration, AbstractTimed.Type.Persistent);
 		}

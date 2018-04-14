@@ -89,9 +89,9 @@ namespace PJ {
 			}
 		}
 
-		private class TestTimerBehavior : TimerBehavior
+		private class TestTimedBehavior : TimedBehavior
 		{
-			public TestTimerBehavior()
+			public TestTimedBehavior()
 				: base(1.0f)
 			{
 
@@ -140,7 +140,7 @@ namespace PJ {
 			Assert.AreEqual(Behavior.State.Fail, c2.GetState());
 			Assert.AreEqual(Behavior.State.Fail, c3.GetState());
 
-			var c0 = new TestTimerBehavior();
+			var c0 = new TestTimedBehavior();
 			t1.AddChild(c0);
 			t1.Run();
 			Assert.AreEqual(t1.RunningChild, c0);

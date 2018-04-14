@@ -50,7 +50,7 @@ public class Human : PJ.Node2D
 		}
 	}
 
-	class RunBehavior : TimerBehavior {
+	class RunBehavior : TimedBehavior {
 		public RunBehavior()
 			:	base(2.0f) {
 
