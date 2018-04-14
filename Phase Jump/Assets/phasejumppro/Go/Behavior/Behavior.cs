@@ -95,10 +95,12 @@ namespace PJ {
 		protected virtual void EvtFinished() {}
 		protected virtual void EvtChildFinished(Behavior child) {}
 
+		// Call this when you get an Update event
 		public override void EvtUpdate(TimeSlice time) {
 			base.EvtUpdate(time);
 
-			if (RootNode() == this)
+			// Only root node kickstarts Run
+			if (null == parent)
 			{
 				Run();
 			}
