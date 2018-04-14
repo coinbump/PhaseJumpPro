@@ -4,9 +4,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using PJ;
 
+/// <summary>
+/// Has a basic behavior tree: walks for awhile, gets bored, does some running
+/// </summary>
 public class Human : PJ.Node2D
 {
-
 	public enum State
 	{
 		Invalid,
@@ -90,15 +92,13 @@ public class Human : PJ.Node2D
 		{
 			base.EvtStateChanged(state);
 
-			if (!owner.IsAlive)
-			{
-				return;
-			}
-
+			if (!owner.IsAlive) { return; }
 			var human = owner.Target as Human;
+
 			human.EvtStateChanged();
 		}
 	}
+
 	Core core;
 	Animator animator;
 
