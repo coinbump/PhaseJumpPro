@@ -119,6 +119,12 @@ namespace PJ {
 			state.State = State.Evalute;
 			_Run();
 
+			switch (state.State) {
+				case State.Evalute:
+					Debug.Log("ERROR. Behavior node must set state after _Run.");
+					break;
+			}
+
 			return state.State;
 		}
 
@@ -131,9 +137,12 @@ namespace PJ {
 					case State.Fail:
 						continue;
 					default:
+						state.State = State.Success;
 						return;
 				}
 			}
+
+			state.State = State.Success;
 		}
 
 		public State GetState() { return state.State;  }
