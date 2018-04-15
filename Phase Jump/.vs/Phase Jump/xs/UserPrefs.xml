@@ -1,10 +1,10 @@
 ﻿<Properties StartupConfiguration="{B91259CA-EDF5-26F8-A10F-E11840CF082D}|">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/phasejumppro/Go/Behavior/RandomBehavior.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/phasejumppro/Go/Behavior/Behavior.cs">
     <Files>
       <File FileName="Assets/scripts/CircleController.cs" Line="88" Column="1" />
       <File FileName="Assets/scripts/FlipButton.cs" Line="1" Column="1" />
       <File FileName="Assets/phasejumppro/Core/Node2D.cs" Line="73" Column="16" />
-      <File FileName="Assets/phasejumppro/Go/Behavior/Behavior.cs" Line="124" Column="63" />
+      <File FileName="Assets/phasejumppro/Go/Behavior/Behavior.cs" Line="121" Column="32" />
       <File FileName="Assets/phasejumppro/Model/Broadcaster.cs" Line="24" Column="1" />
       <File FileName="Assets/phasejumppro/Core/Core.cs" Line="70" Column="1" />
       <File FileName="Assets/phasejumppro/Go/Behavior/ConditionBehavior.cs" Line="29" Column="1" />

@@ -25,6 +25,7 @@ namespace PJ {
 		}
 
 		public TimedBehavior() {
+			timer = new Timer(0.0f, AbstractTimed.Type.Persistent);
 		}
 
 		public TimedBehavior(float duration)
