@@ -1,6 +1,21 @@
 # PhaseJumpPro
 Some utility classes for making games with Unity
 
-The goal of this project is to provide code for design patterns that are commonly used in games: Valves (for animated doors, switches, etc.), Behavior Trees, State Machines, and so on.
+The code contains common design patterns for games in C#:
 
-Ideally this project will make prototyping new projects easier.
+- Behavior Trees
+- State Machines
+- Weighted randoms
+- Directional Velocity (2D-Kinematic)
+- Valves (for animated doors, switches, etc.)
+- Interpolation curves
+- Broadcast-Listener
+- Command (for undo-redo)
+- Timers
+- ObservedValue
+- Goals (for game goals (complete N tasks to continue))
+- Signal-Receptor (for tutorials)
+- Concept-Demo (for tutorials)
+- Bank for Currency (freemium apps)
+
+The idea is to make prototyping simple games a bit easier by having some common design patterns in place.
