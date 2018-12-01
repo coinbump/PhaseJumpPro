@@ -6,6 +6,7 @@ The code contains common design patterns for games in C#:
 - Behavior Trees
 - State Machines
 - Weighted randoms
+- 2D Movement paths (straight line)
 - Directional Velocity (2D-Kinematic)
 - Valves (for animated doors, switches, etc.)
 - Interpolation curves
