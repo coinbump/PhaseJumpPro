@@ -14,7 +14,7 @@ namespace PJ {
 	/// </summary>
 	public abstract class AbstractTimed {
 		public enum Type {
-			Transient,	// Destroyed when finished
+			RunOnce,	// Destroyed when finished
 			Persistent	// Stays around
 		}
 
