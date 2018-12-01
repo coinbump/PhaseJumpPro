@@ -38,6 +38,11 @@ public class MovePath2D : MonoBehaviour
 
 		foreach (GameObject waypoint in waypoints)
 		{
+			if (waypoint == null) {
+				Debug.Log("Missing Waypoint GameObject for " + gameObject.name);
+				return positions;
+			}
+
 			positions.Add(waypoint.transform.position);
 		}
 		if (isLooping)

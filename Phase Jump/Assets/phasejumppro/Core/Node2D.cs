@@ -30,6 +30,7 @@ namespace PJ
 			public float waypointProgress;
 
 			public bool isMovingForward = true;
+			public bool orientToPath = false;
 		}
 		public PathInfo pathInfo = new PathInfo();
 
@@ -79,7 +80,7 @@ namespace PJ
 			}
 		}
 
-		private void OnValidate()
+		protected virtual void OnValidate()
 		{
 			transform.eulerAngles = new Vector3(0, 0, -360.0f * _rotation);
 
@@ -149,6 +150,12 @@ namespace PJ
 			Vector2 position = Vector2.Lerp(positionStart, positionEnd, pathInfo.waypointProgress);
 
 			transform.position = position;
+
+			if (pathInfo.orientToPath)
+			{
+				float angle = Mathf.Atan2(positionEnd.x - positionStart.x, positionEnd.y - positionStart.y) * Mathf.Rad2Deg;
+				RotationAngle = angle;
+			}
 		}
 
 		/// <summary>
