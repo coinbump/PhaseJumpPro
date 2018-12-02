@@ -96,7 +96,12 @@ namespace PJ
 		// Update is called once per frame
 		protected virtual void Update()
 		{
-			UpdateNode();
+			UpdateNode(false);
+		}
+
+		protected virtual void FixedUpdate()
+		{
+			UpdateNode(true);
 		}
 
 		protected void GetPathPositions(MovePath2D movePath, out Vector2 positionStart, out Vector2 positionEnd)
@@ -218,10 +223,8 @@ namespace PJ
 			SnapToPath();
 		}
 
-		protected void UpdateNode()
+		protected void UpdateNode(bool isFixedUpdate)
 		{
-			if (!isKinematic) { return; }
-
 			// MOVEMENT TYPE: Follow Path (requires MovePath2D component on Path object)
 			if (pathInfo.path != null)
 			{
@@ -231,16 +234,28 @@ namespace PJ
 
 			// MOVEMENT TYPE: Directional Velocity (for objects that move where they're pointed)
 			var velocityVector = velocity;
-			if (!directionVelocity.Equals(0)) {
+			if (!directionVelocity.Equals(0))
+			{
 				var radians = RotationAngle * 0.01745329252f;
-				velocityVector = new Vector2((float)Math.Sin(radians)* directionVelocity, (float)Math.Cos(radians) * directionVelocity);
+				velocityVector = new Vector2((float)Math.Sin(radians) * directionVelocity, (float)Math.Cos(radians) * directionVelocity);
 			}
 
 			// MOVEMENT TYPE: Kinematic velocity (for objects that don't require physics)
 			var position = transform.position;
 			position.x += velocityVector.x * Time.deltaTime;
 			position.y += velocityVector.y * Time.deltaTime;
-			transform.position = position;
+
+			if (isKinematic && !isFixedUpdate)
+			{
+				transform.position = position;
+			}
+			else if (!isKinematic && isFixedUpdate)
+			{
+				Rigidbody2D rigidbodyComponent = GetComponent<Rigidbody2D>();
+				if (null != rigidbodyComponent) {
+					rigidbodyComponent.MovePosition(position);
+				}
+			}
 		}
 
 		public class UnitTests_Node2D {

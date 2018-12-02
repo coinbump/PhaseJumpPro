@@ -1,6 +1,7 @@
 ﻿using System;
-using System.Collections;
+using System.Collections.Generic;
 using NUnit.Framework;
+
 
 /*
  * RATING: 5 stars. Works, missing some interpolation curves.
@@ -12,9 +13,45 @@ namespace PJ
 	/// Interpolate a normalized float.(0-1.0)
 	/// Used for animation curves
 	/// </summary>
-	public abstract class Interpolate
+	public class Interpolate
 	{
-		public abstract float Transform(float factor);
+		public virtual float Transform(float factor) { return factor; }
+
+		static FactoryRegister factories = new FactoryRegister();
+
+		public class Factory<T>: GenericFactory<Interpolate> where T: Interpolate, new()
+		{
+			public override Interpolate FactoryNew() { return new T(); }
+		}
+	}
+
+	// For editors to pick from list
+	public enum InterpolateType
+	{
+		Linear, Squared, Cubed, OutSquared, OutCubed
+	}
+
+	/// <summary>
+	/// Registers factories for each interpolate type
+	/// </summary>
+	public class FactoryRegister
+	{
+		public Dictionary<string, GenericFactory<Interpolate>> registry = new Dictionary<string, GenericFactory<Interpolate>>();
+		public FactoryRegister()
+		{
+			registry.Add(InterpolateType.Linear.ToString(), new Interpolate.Factory<InterpolateLinear>());
+			registry.Add(InterpolateType.Squared.ToString(), new Interpolate.Factory<InterpolateSquared>());
+			registry.Add(InterpolateType.Cubed.ToString(), new Interpolate.Factory<InterpolateCubed>());
+			registry.Add(InterpolateType.OutSquared.ToString(), new Interpolate.Factory<InterpolateOutSquared>());
+			registry.Add(InterpolateType.OutCubed.ToString(), new Interpolate.Factory<InterpolateOutCubed>());
+		}
+
+		public Interpolate FactoryNew(InterpolateType type)
+		{
+			var element = registry[type.ToString()];
+			if (null == element) { return new Interpolate(); }
+			return element.FactoryNew();
+		}
 	}
 
 	public class InterpolateLinear : Interpolate
