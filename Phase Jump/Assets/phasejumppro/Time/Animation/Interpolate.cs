@@ -13,6 +13,7 @@ namespace PJ
 	/// Interpolate a normalized float.(0-1.0)
 	/// Used for animation curves
 	/// </summary>
+	/// TODO: can this be integrated with Unity's AnimationCurve?
 	public class Interpolate
 	{
 		public virtual float Transform(float factor) { return factor; }
