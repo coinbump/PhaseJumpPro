@@ -196,15 +196,15 @@ public class Human : PJ.Node2D
 		}
 	}
 	
-	void FixedUpdate() {
+	protected override void FixedUpdate() {
 
 		var r = GetComponent<Rigidbody2D>();
 		r.velocity = velocity;
 	}
 
-	void Update()
+	protected override void Update()
 	{
-		base.UpdateNode();
+		base.UpdateNode(UpdateType.Default);
 
 		behavior.EvtUpdate(new TimeSlice(Time.deltaTime));
 

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using PJ;
 
 public class Ship : PJ.Node2D {
 
@@ -10,8 +11,8 @@ public class Ship : PJ.Node2D {
 	}
 	
 	// Update is called once per frame
-	void Update() {
-		UpdateNode();
+	protected override void Update() {
+		UpdateNode(UpdateType.Default);
 		    
 		if (Input.GetKey(KeyCode.RightArrow))
 		{

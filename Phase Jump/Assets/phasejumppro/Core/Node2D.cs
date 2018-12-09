@@ -10,6 +10,11 @@ using NUnit.Framework;
  */
 namespace PJ
 {
+	public enum UpdateType
+	{
+		Default, Fixed
+	}
+
 	/// <summary>
 	/// Provides utility methods for simplifying common 2D game scenarios
 	/// </summary>
@@ -96,12 +101,12 @@ namespace PJ
 		// Update is called once per frame
 		protected virtual void Update()
 		{
-			UpdateNode(false);
+			UpdateNode(UpdateType.Default);
 		}
 
 		protected virtual void FixedUpdate()
 		{
-			UpdateNode(true);
+			UpdateNode(UpdateType.Fixed);
 		}
 
 		protected void GetPathPositions(MovePath2D movePath, out Vector2 positionStart, out Vector2 positionEnd)
@@ -163,6 +168,22 @@ namespace PJ
 			}
 		}
 
+		public bool ShouldMoveForUpdate(UpdateType updateType)
+		{
+			bool isFixedUpdate = updateType == UpdateType.Fixed;
+
+			if (isKinematic && !isFixedUpdate)
+			{
+				return true;
+			}
+			else if (!isKinematic && isFixedUpdate)
+			{
+				return true;
+			}
+
+			return false;
+		}
+
 		/// <summary>
 		/// On update, moves the object along a MovePath2D.
 		/// 
@@ -170,8 +191,9 @@ namespace PJ
 		/// FUTURE: support spline paths/curves
 		/// 
 		/// </summary>
-		protected void UpdateFollowPath()
+		protected void UpdateFollowPath(UpdateType updateType)
 		{
+			if (!ShouldMoveForUpdate(updateType)) { return; }
 			if (null == pathInfo.path) { return; }
 			MovePath2D movePath = pathInfo.path.GetComponent("MovePath2D") as MovePath2D;
 			if (null == movePath) {
@@ -223,12 +245,12 @@ namespace PJ
 			SnapToPath();
 		}
 
-		protected void UpdateNode(bool isFixedUpdate)
+		protected void UpdateNode(UpdateType updateType)
 		{
 			// MOVEMENT TYPE: Follow Path (requires MovePath2D component on Path object)
 			if (pathInfo.path != null)
 			{
-				UpdateFollowPath();
+				UpdateFollowPath(updateType);
 				return;
 			}
 
@@ -244,6 +266,8 @@ namespace PJ
 			var position = transform.position;
 			position.x += velocityVector.x * Time.deltaTime;
 			position.y += velocityVector.y * Time.deltaTime;
+
+			bool isFixedUpdate = updateType == UpdateType.Fixed;
 
 			if (isKinematic && !isFixedUpdate)
 			{
