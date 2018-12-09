@@ -1,12 +1,12 @@
 ﻿/*
-    Transforms pixels to uniform color (multiplied by texture alpha)
+    Desaturates texture color by specified factor
  */
-Shader "Phase Jump/ToColorTransparent"
+Shader "Phase Jump/DesaturateTransparent"
 {
 	Properties
 	{
 		_MainTex ("Texture", 2D) = "white" {}
-        _Color ("Color", Color) = (1.0, 1.0, 1.0, 1.0)
+        _Factor("Factor", Range(0.0,1.0)) = 1.0
 	}
     SubShader {
         Tags {"Queue"="Transparent" "RenderType"="Transparent"}
@@ -22,7 +22,7 @@ Shader "Phase Jump/ToColorTransparent"
             #pragma fragment frag
             
             sampler2D _MainTex;
-            fixed4 _Color;
+            float _Factor;
              
             struct vertIn {
                 float4 vertex : POSITION;
@@ -43,7 +43,13 @@ Shader "Phase Jump/ToColorTransparent"
 
             half4 frag(vertOut vi) : COLOR {
                 half4 texColor = tex2D(_MainTex, vi.texcoord);
-                return half4(_Color[0]*texColor[3],_Color[1]*texColor[3],_Color[2]*texColor[3],_Color[3]*texColor[3]);
+                float desatColor = (texColor.r*.3+texColor.g*.59+texColor.b*.11);
+                half4 destColor = half4(desatColor, desatColor, desatColor, texColor.a);
+                float factor = _Factor;
+               
+                half4 mixColor = lerp(texColor, destColor, _Factor);
+                mixColor[3] = texColor[3];
+                return mixColor;
             }
             ENDCG
         }

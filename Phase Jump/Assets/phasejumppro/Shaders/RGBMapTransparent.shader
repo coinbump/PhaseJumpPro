@@ -1,12 +1,15 @@
 ﻿/*
-    Transforms pixels to uniform color (multiplied by texture alpha)
+    Maps each color channel (R, G, B) to a new color
+    Useful for quickly recoloring a texture that has 3 primary colors
  */
-Shader "Phase Jump/ToColorTransparent"
+Shader "Phase Jump/RGBMapTransparent"
 {
 	Properties
 	{
 		_MainTex ("Texture", 2D) = "white" {}
-        _Color ("Color", Color) = (1.0, 1.0, 1.0, 1.0)
+        _RedColor ("RedColor", Color) = (1.0, 0, 0, 1.0)
+        _GreenColor ("GreenColor", Color) = (0, 1.0, 0, 1.0)
+        _BlueColor ("BlueColor", Color) = (0, 0, 1.0, 1.0)
 	}
     SubShader {
         Tags {"Queue"="Transparent" "RenderType"="Transparent"}
@@ -22,7 +25,9 @@ Shader "Phase Jump/ToColorTransparent"
             #pragma fragment frag
             
             sampler2D _MainTex;
-            fixed4 _Color;
+            fixed4 _RedColor;
+            fixed4 _GreenColor;
+            fixed4 _BlueColor;
              
             struct vertIn {
                 float4 vertex : POSITION;
@@ -43,7 +48,18 @@ Shader "Phase Jump/ToColorTransparent"
 
             half4 frag(vertOut vi) : COLOR {
                 half4 texColor = tex2D(_MainTex, vi.texcoord);
-                return half4(_Color[0]*texColor[3],_Color[1]*texColor[3],_Color[2]*texColor[3],_Color[3]*texColor[3]);
+                
+                half4 r = _RedColor * texColor.r;
+                half4 g = _GreenColor * texColor.g;
+                half4 b = _BlueColor * texColor.b;
+    
+                half4 finalColor;
+                finalColor.r = r.r+g.r+b.r;
+                finalColor.g = r.g+g.g+b.g;
+                finalColor.b = r.b+g.b+b.b;
+                finalColor.a = texColor.a;
+                
+                return finalColor;
             }
             ENDCG
         }

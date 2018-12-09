@@ -1,12 +1,12 @@
 ﻿/*
-    Transforms pixels to uniform color (multiplied by texture alpha)
+    Uses the red channel of texture as a stencil
  */
-Shader "Phase Jump/ToColorTransparent"
+Shader "Phase Jump/StencilNegativeTransparent"
 {
 	Properties
 	{
 		_MainTex ("Texture", 2D) = "white" {}
-        _Color ("Color", Color) = (1.0, 1.0, 1.0, 1.0)
+        _StencilTex ("Stencil Texture", 2D) = "red" {}
 	}
     SubShader {
         Tags {"Queue"="Transparent" "RenderType"="Transparent"}
@@ -22,7 +22,7 @@ Shader "Phase Jump/ToColorTransparent"
             #pragma fragment frag
             
             sampler2D _MainTex;
-            fixed4 _Color;
+            sampler2D _StencilTex;
              
             struct vertIn {
                 float4 vertex : POSITION;
@@ -43,7 +43,9 @@ Shader "Phase Jump/ToColorTransparent"
 
             half4 frag(vertOut vi) : COLOR {
                 half4 texColor = tex2D(_MainTex, vi.texcoord);
-                return half4(_Color[0]*texColor[3],_Color[1]*texColor[3],_Color[2]*texColor[3],_Color[3]*texColor[3]);
+                half4 stencilColor = tex2D(_StencilTex, vi.texcoord);
+                
+                return half4(texColor.rgb, (1.0-(stencilColor.a*stencilColor.r))*texColor.a);
             }
             ENDCG
         }
