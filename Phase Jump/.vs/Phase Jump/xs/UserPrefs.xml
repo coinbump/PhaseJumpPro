@@ -1,19 +1,7 @@
 ﻿<Properties StartupConfiguration="{51BDC8AF-8B4E-EDCD-CD37-EADF80C84D5E}|">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/scripts/Human.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/phasejumppro/Time/Animation/Interpolate.cs">
     <Files>
-      <File FileName="Assets/scripts/CircleController.cs" Line="88" Column="1" />
-      <File FileName="Assets/scripts/FlipButton.cs" Line="1" Column="1" />
-      <File FileName="Assets/phasejumppro/Core/Node2D.cs" Line="73" Column="1" />
-      <File FileName="Assets/phasejumppro/Go/Behavior/Behavior.cs" Line="121" Column="32" />
-      <File FileName="Assets/phasejumppro/Model/Broadcaster.cs" Line="24" Column="1" />
-      <File FileName="Assets/phasejumppro/Core/Core.cs" Line="70" Column="1" />
-      <File FileName="Assets/phasejumppro/Go/Behavior/ConditionBehavior.cs" Line="29" Column="1" />
-      <File FileName="Assets/phasejumppro/Extensions/ListExtensions.cs" Line="17" Column="22" />
-      <File FileName="Assets/phasejumppro/Go/Behavior/TimedBehavior.cs" Line="1" Column="1" />
-      <File FileName="Assets/phasejumppro/Go/Behavior/SequenceBehavior.cs" Line="1" Column="1" />
-      <File FileName="Assets/phasejumppro/Go/Behavior/RandomBehavior.cs" Line="1" Column="1" />
-      <File FileName="Assets/scripts/Ship.cs" Line="16" Column="2" />
-      <File FileName="Assets/scripts/Human.cs" Line="5" Column="10" />
+      <File FileName="Assets/phasejumppro/Time/Animation/Interpolate.cs" Line="68" Column="34" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.ItemProperties.Phase_220Jump PreferredExecutionTarget="Unity.Editor" />
