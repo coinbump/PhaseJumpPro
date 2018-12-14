@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using NUnit.Framework;
 
 /*
  * RATING: 5 stars. Simple timer with Unit Tests
@@ -57,26 +56,6 @@ namespace PJ {
 			if (delta <= 0) { return; }
 
 			TimerState = TimerState + delta;
-		}
-	}
-
-	public class Timer_UnitTests {
-		
-		[Test]
-		public void UnitTests()
-		{
-			var timer = new Timer(1.0f, PJ.AbstractTimed.Type.Persistent);
-			timer.EvtUpdate(new TimeSlice(.3f));
-			Assert.AreEqual(.3f, timer.TimerState);
-			Assert.AreEqual(.3f, timer.GetProgress());
-			Assert.AreEqual(false, timer.IsFinished);
-			timer.EvtUpdate(new TimeSlice(.7f));
-			Assert.AreEqual(1.0f, timer.TimerState);
-			Assert.AreEqual(1.0f, timer.GetProgress());
-			Assert.AreEqual(true, timer.IsFinished);
-
-			timer.SetProgress(.5f);
-			Assert.AreEqual(false, timer.IsFinished);
 		}
 	}
 }

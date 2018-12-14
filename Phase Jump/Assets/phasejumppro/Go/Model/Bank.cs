@@ -2,13 +2,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using NUnit.Framework;
 
 namespace PJ
 {
 	using AccountMap = Dictionary<string, ObservedValue<int>>;
 
-	struct Price
+	public struct Price
 	{
 		public string currency;
 		public int amount;
@@ -32,7 +31,7 @@ namespace PJ
 	/// 1. Game. Achieved through in-game quests/tasks
 	/// 2. Paid. Purchased via real world $, sometimes given for specific quests/tasks
 	/// </summary>
-	class Bank
+	public class Bank
 	{
 		private AccountMap accounts = new AccountMap();
 		public Broadcaster broadcaster = new Broadcaster();
@@ -83,28 +82,6 @@ namespace PJ
 			if (accounts.TryGetValue(currency, out amount)) {
 				amount.Value = 0;
 			}
-		}
-
-		private class TestBank : Bank
-		{
-		}
-
-		[Test]
-		public void UnitTests() {
-			var test = new TestBank();
-			Assert.AreEqual(0, test.Balance(CurrencyTypes.Game));
-			Assert.AreEqual(0, test.Balance(CurrencyTypes.Paid));
-
-			test.Deposit(new Price(CurrencyTypes.Game, 10));
-			Assert.AreEqual(10, test.Balance(CurrencyTypes.Game));
-			Assert.AreEqual(false, test.CanWithdraw(new Price(CurrencyTypes.Game, 20)));
-			Assert.AreEqual(false, test.Withdraw(new Price(CurrencyTypes.Game, 20)));
-			Assert.AreEqual(10, test.Balance(CurrencyTypes.Game));
-			Assert.AreEqual(true, test.Withdraw(new Price(CurrencyTypes.Game, 5)));
-			Assert.AreEqual(5, test.Balance(CurrencyTypes.Game));
-
-			test.Clear(CurrencyTypes.Game);
-			Assert.AreEqual(0, test.Balance(CurrencyTypes.Game));
 		}
 	}
 }

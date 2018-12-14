@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using UnityEngine.Assertions;
-using NUnit.Framework;
 
 /*
  * RATING: 5 stars. Simple timer with Unit Tests

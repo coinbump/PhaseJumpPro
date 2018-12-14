@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using NUnit.Framework;
 
 /// <summary>
 /// Direction of movement on a hexagonal board
@@ -46,16 +45,6 @@ namespace EnumExtension
 			}
 
 			return HexBoardDirection.Up;
-		}
-	}
-
-	class HexBoardDirectionExtensions_UnitTests {
-
-		[Test]
-		public void UnitTests() {
-			var direction = HexBoardDirection.Up;
-			direction = direction.Opposite();
-			Assert.AreEqual(HexBoardDirection.Down, direction);
 		}
 	}
 }

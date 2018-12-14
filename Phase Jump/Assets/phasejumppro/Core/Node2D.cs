@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using NUnit.Framework;
 
 /*
  * RATING: 5 stars. Simple utility class for 2D games with Unit Tests
@@ -279,17 +278,6 @@ namespace PJ
 				if (null != rigidbodyComponent) {
 					rigidbodyComponent.MovePosition(position);
 				}
-			}
-		}
-
-		public class UnitTests_Node2D {
-			[Test]
-			public void UnitTests() {
-				var test = new Node2D();
-				test.RotationAngle = 180.0f;
-				Assert.AreEqual(test.RotationNormal, .5f);
-				test.RotationAngle += 360.0f;
-				Assert.AreEqual(test.RotationNormal, .5f);
 			}
 		}
 	}
