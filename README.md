@@ -20,7 +20,7 @@ The code contains common design patterns for games in C#:
 - Concept-Demo (for tutorials)
 - Bank for Currency (freemium apps)
 
-#Editor Scripts
+# Editor Scripts
 
 I created some scripts to make life easier for 2D Game developers:
 - Grid Sprite Slicer
