@@ -20,4 +20,12 @@ The code contains common design patterns for games in C#:
 - Concept-Demo (for tutorials)
 - Bank for Currency (freemium apps)
 
+#Editor Scripts
+
+I created some scripts to make life easier for 2D Game developers:
+- Grid Sprite Slicer
+- XML Sprite Slicer
+- Apply Pixel Art settings
+- Generate Animation Clips from Spritesheets
+
 The idea is to make prototyping simple games a bit easier by having some common design patterns in place.
