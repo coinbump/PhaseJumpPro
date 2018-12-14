@@ -35,7 +35,7 @@ public class BuildAnimations : MonoBehaviour
 				var path = AssetDatabase.GUIDToAssetPath(guid1);
 
 				string testString = parameters.folderName + Path.DirectorySeparatorChar;
-				if (path.Contains(testString))
+				if (path.ToLower().Contains(testString.ToLower()))  // Case insensitive
 				{
 					Debug.Log(path);
 

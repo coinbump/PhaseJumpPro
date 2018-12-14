@@ -34,11 +34,11 @@ public class SetupSpriteSheet
 
 			foreach (string guid1 in guids1)
 			{
-				Debug.Log(AssetDatabase.GUIDToAssetPath(guid1));
 				var path = AssetDatabase.GUIDToAssetPath(guid1);
 
 				string testString = parameters.folderName + Path.DirectorySeparatorChar;
-				if (path.Contains(testString)) { 
+				if (path.ToLower().Contains(testString.ToLower())) { // Case insensitive
+					Debug.Log(AssetDatabase.GUIDToAssetPath(guid1));
 
 					TextureImporter importer = (TextureImporter)AssetImporter.GetAtPath(path);
 					importer.filterMode = FilterMode.Point;
