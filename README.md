@@ -19,6 +19,7 @@ The code contains common design patterns for games in C#:
 - Signal-Receptor (for tutorials)
 - Concept-Demo (for tutorials)
 - Bank for Currency (freemium apps)
+- TopDown2D characters and basic steering (Flip, Wander, Wander-to-Target)
 
 # Editor Scripts
 
