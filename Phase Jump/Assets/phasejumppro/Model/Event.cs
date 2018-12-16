@@ -24,6 +24,12 @@ namespace PJ {
 			this.name = name;
 		}
 
+		public Event(string name, WeakReference sentFrom)
+		{
+			this.name = name;
+			this.sentFrom = sentFrom;
+		}
+
 		public Event(int value) {
 			this.value = value;
 		}

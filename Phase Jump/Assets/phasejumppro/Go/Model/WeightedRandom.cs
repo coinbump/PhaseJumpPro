@@ -20,8 +20,9 @@ namespace PJ
 		public string key;  // Key-value
 		public AdjustWeight adjust;
 
-		public Weight(float value) {
+		public Weight(float value, string key = "") {
 			Value = value;
+			this.key = key;
 		}
 
 		public float Value {

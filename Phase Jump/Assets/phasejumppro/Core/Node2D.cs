@@ -98,6 +98,11 @@ namespace PJ
 		}
 
 		// Update is called once per frame
+		protected virtual void Start()
+		{
+
+		}
+
 		protected virtual void Update()
 		{
 			UpdateNode(UpdateType.Default);
@@ -260,6 +265,7 @@ namespace PJ
 				var radians = RotationAngle * 0.01745329252f;
 				velocityVector = new Vector2((float)Math.Sin(radians) * directionVelocity, (float)Math.Cos(radians) * directionVelocity);
 			}
+			if (velocityVector == new Vector2(0, 0)) { return; }
 
 			// MOVEMENT TYPE: Kinematic velocity (for objects that don't require physics)
 			var position = transform.position;

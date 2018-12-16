@@ -34,8 +34,8 @@ namespace PJ {
 				stateChangedCount++;
 			}
 
-			protected override void EvtStateFinished() {
-				base.EvtStateFinished();
+			protected override void EvtStateFinished(AbstractStateMachine state) {
+				base.EvtStateFinished(state);
 
 				stateFinishedCount++;
 			}

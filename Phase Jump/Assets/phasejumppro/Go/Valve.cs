@@ -138,25 +138,25 @@ namespace PJ
 			base.EvtUpdate(time);
 		}
 
-		protected override void EvtStateFinished() {
+		protected override void EvtStateFinished(AbstractStateMachine state) {
 			if (isLocked)
 			{
 				return;
 			}
 
-			switch (state.state)
+			switch (this.state.state)
 			{
 				case State.Off:
 					if (turnOnTimer != null) {
 						turnOnTimer.Reset();
-						state.State = State.TurnOn;
+						this.state.State = State.TurnOn;
 					}
 					break;
 				case State.On:
 					if (turnOffTimer != null)
 					{
 						turnOffTimer.Reset();
-						state.State = State.TurnOff;
+						this.state.State = State.TurnOff;
 					}
 					break;
 			}

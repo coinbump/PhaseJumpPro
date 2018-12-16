@@ -123,12 +123,12 @@ namespace PJ {
 		{
 			timeInState = 0;
 
-			broadcaster.Broadcast(new Event(EventNames.StateChanged));
+			broadcaster.Broadcast(new Event(EventNames.StateChanged, new WeakReference(this)));
 		}
 
 		protected virtual void EvtStateFinished()
 		{
-			broadcaster.Broadcast(new Event(EventNames.StateFinished));
+			broadcaster.Broadcast(new Event(EventNames.StateFinished, new WeakReference(this)));
 		}
 
 		public override void EvtUpdate(TimeSlice time)

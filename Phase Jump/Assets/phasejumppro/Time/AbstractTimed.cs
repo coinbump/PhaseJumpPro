@@ -46,6 +46,18 @@ namespace PJ {
 			}
 		}
 
+		public bool IsRunning
+		{
+			get
+			{
+				return !isPaused;
+			}
+			set
+			{
+				isPaused = !value;
+			}
+		}
+
 		public void Pause(bool pause)
 		{
 			if (pause != isPaused) {

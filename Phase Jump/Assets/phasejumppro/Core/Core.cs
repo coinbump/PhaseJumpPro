@@ -42,18 +42,23 @@ namespace PJ {
 			public override void EvtListen(Event theEvent)
 			{
 				if (!owner.IsAlive) { return; }
+				bool isSentFromAlive = null != theEvent.sentFrom && theEvent.sentFrom.IsAlive;
 
 				if (theEvent.name == EventNames.StateChanged)
 				{
 					var target = this.owner.Target as Core;
 					if (null == target) { return; }
-					target.EvtStateChanged(target.aState);
+					if (!isSentFromAlive) { return; }
+
+					target.EvtStateChanged(theEvent.sentFrom.Target as AbstractStateMachine);
 				}
 				else if (theEvent.name == EventNames.StateFinished)
 				{
 					var target = this.owner.Target as Core;
 					if (null == target) { return; }
-					target.EvtStateFinished();
+					if (!isSentFromAlive) { return; }
+
+					target.EvtStateFinished(theEvent.sentFrom.Target as AbstractStateMachine);
 				}
 			}
 		}
@@ -61,7 +66,7 @@ namespace PJ {
 		public Broadcaster broadcaster = new Broadcaster();
 
 		protected virtual void EvtStateChanged(AbstractStateMachine state) {}
-		protected virtual void EvtStateFinished() {}
+		protected virtual void EvtStateFinished(AbstractStateMachine state) {}
 
 		public Core()
 		{
