@@ -8,7 +8,7 @@ namespace PJ
 	/// <summary>
 	/// Handles states, behaviors for TopDown character (WORK IN PROGRESS)
 	/// </summary>
-	public class TopDown2D
+	public class TopDown2D	// Do not subclass MonoBehaviour (so we can use new)
 	{
 		public enum DirectionState
 		{

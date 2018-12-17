@@ -89,12 +89,15 @@ namespace PJ
 			transform.eulerAngles = new Vector3(0, 0, -360.0f * _rotation);
 
 			if (null == pathInfo.path) { return; }
-			MovePath2D movePath = pathInfo.path.GetComponent("MovePath2D") as MovePath2D;
+			AbstractMovePath2D movePath = pathInfo.path.GetComponent<AbstractMovePath2D>();
 			if (null == movePath) { return; }
 
-			pathInfo.waypointOrigin = Math.Min(pathInfo.waypointOrigin, movePath.waypoints.Count - 1);
-			pathInfo.waypointOrigin = Math.Max(pathInfo.waypointOrigin, 0);
-			SnapToPath();
+			if (!movePath.targets.Contains(gameObject))
+			{
+				movePath.targets.Add(gameObject);
+			}
+
+			SnapToPath(true);
 		}
 
 		// Update is called once per frame
@@ -113,63 +116,16 @@ namespace PJ
 			UpdateNode(UpdateType.Fixed);
 		}
 
-		protected void GetPathPositions(MovePath2D movePath, out Vector2 positionStart, out Vector2 positionEnd)
-		{
-			int origin = pathInfo.waypointOrigin;
-			var positions = movePath.GetWaypointPositions2D();
-
-			positionStart = transform.position;
-			positionEnd = transform.position;
-
-			if (positions.Count < 2) { return; }
-
-			positionStart = positions[origin];
-			positionEnd = positionStart;
-
-			if (pathInfo.isMovingForward)
-			{
-				positionEnd = positions[origin + 1];
-			}
-			else
-			{
-				if (origin > 0)
-				{
-					positionEnd = positions[origin - 1];
-				}
-				else if (movePath.isLooping)
-				{
-					positionEnd = positions[positions.Count - 2];
-				}
-			}
-		}
-
-		protected void SnapToPath()
+		public void SnapToPath(bool force = false)
 		{
 			if (null == pathInfo.path) { return; }
-			MovePath2D movePath = pathInfo.path.GetComponent("MovePath2D") as MovePath2D;
+			AbstractMovePath2D movePath = pathInfo.path.GetComponent<AbstractMovePath2D>();
 			if (null == movePath)
 			{
-				Debug.Log("Warning. Path is missing MovePath2D component"); return;
+				Debug.Log("Warning. Path is missing Path2D component"); return;
 			}
 
-			int origin = pathInfo.waypointOrigin;
-			var positions = movePath.GetWaypointPositions2D();
-
-			if (positions.Count < 2) { return; }
-
-			Vector2 positionStart;
-			Vector2 positionEnd;
-			GetPathPositions(movePath, out positionStart, out positionEnd);
-
-			Vector2 position = Vector2.Lerp(positionStart, positionEnd, pathInfo.waypointProgress);
-
-			transform.position = position;
-
-			if (pathInfo.orientToPath)
-			{
-				float angle = Mathf.Atan2(positionEnd.x - positionStart.x, positionEnd.y - positionStart.y) * Mathf.Rad2Deg;
-				RotationAngle = angle;
-			}
+			movePath.SnapNodeToPath(this, force);
 		}
 
 		public bool ShouldMoveForUpdate(UpdateType updateType)
@@ -199,53 +155,12 @@ namespace PJ
 		{
 			if (!ShouldMoveForUpdate(updateType)) { return; }
 			if (null == pathInfo.path) { return; }
-			MovePath2D movePath = pathInfo.path.GetComponent("MovePath2D") as MovePath2D;
+			AbstractMovePath2D movePath = pathInfo.path.GetComponent<AbstractMovePath2D>();
 			if (null == movePath) {
-				Debug.Log("Warning. Path is missing MovePath2D component"); return; 
+				Debug.Log("Warning. Path is missing Path2D component"); return; 
 			}
 
-			var positions = movePath.GetWaypointPositions2D();
-
-			// TODO: this only works with simple paths, we need better logic here.
-			pathInfo.waypointProgress += Time.deltaTime*pathInfo.speed;
-
-			while (pathInfo.waypointProgress >= 1.0f)
-			{
-				pathInfo.waypointProgress -= 1.0f;
-
-				if (pathInfo.isMovingForward) {
-					pathInfo.waypointOrigin += 1;
-
-					if (movePath.isLooping)
-					{
-						if (pathInfo.waypointOrigin >= positions.Count - 1) {
-							pathInfo.waypointOrigin = 0;
-						}
-					}
-					else
-					{
-						if (pathInfo.waypointOrigin >= positions.Count - 1)
-						{
-							pathInfo.waypointOrigin = movePath.waypoints.Count - 1;
-							pathInfo.isMovingForward = false;
-						}
-					}
-				}
-				else
-				{
-					pathInfo.waypointOrigin -= 1;
-					if (pathInfo.waypointOrigin < 0 && movePath.isLooping)
-					{
-						pathInfo.waypointOrigin = movePath.waypoints.Count - 1;
-					}
-					else if (pathInfo.waypointOrigin <= 0 && !movePath.isLooping)
-					{
-						pathInfo.waypointOrigin = 0;
-						pathInfo.isMovingForward = true;
-					}
-				}
-			}
-
+			movePath.UpdateNodeOnPath(this);
 			SnapToPath();
 		}
 
@@ -272,16 +187,23 @@ namespace PJ
 			position.x += velocityVector.x * Time.deltaTime;
 			position.y += velocityVector.y * Time.deltaTime;
 
-			bool isFixedUpdate = updateType == UpdateType.Fixed;
+			if (ShouldMoveForUpdate(updateType))
+			{
+				MoveToPosition(position);
+			}
+		}
 
-			if (isKinematic && !isFixedUpdate)
+		public void MoveToPosition(Vector2 position, bool force = false)
+		{
+			if (isKinematic || force)
 			{
 				transform.position = position;
 			}
-			else if (!isKinematic && isFixedUpdate)
+			else
 			{
 				Rigidbody2D rigidbodyComponent = GetComponent<Rigidbody2D>();
-				if (null != rigidbodyComponent) {
+				if (null != rigidbodyComponent)
+				{
 					rigidbodyComponent.MovePosition(position);
 				}
 			}

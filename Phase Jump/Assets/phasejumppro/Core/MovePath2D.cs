@@ -1,111 +1,229 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MovePath2D : MonoBehaviour
+namespace PJ
 {
-
-	private enum RenderState
-	{
-		Default,
-		Selected
-	}
-
-	public bool isLooping = false;
-	public List<GameObject> waypoints = new List<GameObject>();
-
-	// Use this for initialization
-	void Start()
+	public class MovePath2D : AbstractMovePath2D
 	{
 
-	}
-
-	// Update is called once per frame
-	void Update()
-	{
-
-	}
-
-	void OnValidate()
-	{
-	}
-
-	public List<Vector3> GetWaypointPositions()
-	{
-		if (waypoints.Count == 0) { return new List<Vector3>(); }
-
-		List<Vector3> positions = new List<Vector3>();
-
-		foreach (GameObject waypoint in waypoints)
+		private enum RenderState
 		{
-			if (waypoint == null) {
-				Debug.Log("Missing Waypoint GameObject for " + gameObject.name);
-				return positions;
-			}
-
-			positions.Add(waypoint.transform.position);
-		}
-		if (isLooping)
-		{
-			positions.Add(waypoints[0].transform.position);
+			Default,
+			Selected
 		}
 
-		return positions;
-	}
+		public bool isLooping = false;
+		public List<GameObject> waypoints = new List<GameObject>();
 
-	public List<Vector2> GetWaypointPositions2D()
-	{
-		List<Vector3> result3D = GetWaypointPositions();
-		List<Vector2> result = new List<Vector2>();
-
-		foreach (Vector3 v in result3D)
+		// Use this for initialization
+		void Start()
 		{
-			result.Add(v);
+
 		}
 
-		return result;
-	}
-
-	private void RenderGizmos(RenderState renderState)
-	{
-		if (waypoints.Count == 0) { return; }
-
-		List<Vector3> positions = GetWaypointPositions();
-
-		bool hasFirstPosition = false;
-		Vector3 prevPosition = new Vector3();
-		Vector3 positionStart, positionEnd;
-
-		foreach (Vector3 position in positions)
+		// Update is called once per frame
+		protected override void Update()
 		{
-			positionStart = prevPosition;
-			positionEnd = position;
+			base.Update();
+		}
 
-			if (hasFirstPosition)
+		protected override void OnValidate()
+		{
+			foreach (GameObject target in targets)
 			{
-				switch (renderState)
+				Node2D node = target.GetComponent<Node2D>();
+				if (null != node)
 				{
-					case RenderState.Default:
-						Gizmos.color = Color.white;
-						break;
-					case RenderState.Selected:
-						Gizmos.color = GUI.skin.settings.selectionColor;
-						break;
+					node.pathInfo.waypointOrigin = Math.Min(node.pathInfo.waypointOrigin, waypoints.Count - 1);
+					node.pathInfo.waypointOrigin = Math.Max(node.pathInfo.waypointOrigin, 0);
 				}
-				Gizmos.DrawLine(positionStart, positionEnd);
 			}
-			hasFirstPosition = true;
-			prevPosition = position;
+
+			base.OnValidate();
 		}
-	}
 
-	void OnDrawGizmos()
-	{
-		RenderGizmos(RenderState.Default);
-	}
+		public List<Vector3> GetWaypointPositions()
+		{
+			if (waypoints.Count == 0) { return new List<Vector3>(); }
 
-	private void OnDrawGizmosSelected()
-	{
-		RenderGizmos(RenderState.Selected);
+			List<Vector3> positions = new List<Vector3>();
+
+			foreach (GameObject waypoint in waypoints)
+			{
+				if (waypoint == null)
+				{
+					Debug.Log("Missing Waypoint GameObject for " + gameObject.name);
+					return positions;
+				}
+
+				positions.Add(waypoint.transform.position);
+			}
+			if (isLooping)
+			{
+				positions.Add(waypoints[0].transform.position);
+			}
+
+			return positions;
+		}
+
+		public List<Vector2> GetWaypointPositions2D()
+		{
+			List<Vector3> result3D = GetWaypointPositions();
+			List<Vector2> result = new List<Vector2>();
+
+			foreach (Vector3 v in result3D)
+			{
+				result.Add(v);
+			}
+
+			return result;
+		}
+
+		private void RenderGizmos(RenderState renderState)
+		{
+			if (waypoints.Count == 0) { return; }
+
+			List<Vector3> positions = GetWaypointPositions();
+
+			bool hasFirstPosition = false;
+			Vector3 prevPosition = new Vector3();
+			Vector3 positionStart, positionEnd;
+
+			foreach (Vector3 position in positions)
+			{
+				positionStart = prevPosition;
+				positionEnd = position;
+
+				if (hasFirstPosition)
+				{
+					switch (renderState)
+					{
+						case RenderState.Default:
+							Gizmos.color = Color.white;
+							break;
+						case RenderState.Selected:
+							Gizmos.color = GUI.skin.settings.selectionColor;
+							break;
+					}
+					Gizmos.DrawLine(positionStart, positionEnd);
+				}
+				hasFirstPosition = true;
+				prevPosition = position;
+			}
+		}
+
+		void OnDrawGizmos()
+		{
+			RenderGizmos(RenderState.Default);
+		}
+
+		private void OnDrawGizmosSelected()
+		{
+			RenderGizmos(RenderState.Selected);
+		}
+
+		public override void SnapNodeToPath(Node2D node, bool force = false)
+		{
+			int origin = node.pathInfo.waypointOrigin;
+			var positions = GetWaypointPositions2D();
+
+			if (positions.Count < 2) { return; }
+
+			Vector2 positionStart;
+			Vector2 positionEnd;
+			GetPathPositions(node, out positionStart, out positionEnd);
+
+			Vector2 position = Vector2.Lerp(positionStart, positionEnd, node.pathInfo.waypointProgress);
+
+			node.MoveToPosition(position, force);
+
+			if (node.pathInfo.orientToPath)
+			{
+				float angle = Mathf.Atan2(positionEnd.x - positionStart.x, positionEnd.y - positionStart.y) * Mathf.Rad2Deg;
+				node.RotationAngle = angle;
+			}
+		}
+
+		public override void UpdateNodeOnPath(Node2D node)
+		{
+			var positions = this.GetWaypointPositions2D();
+
+			Node2D.PathInfo pathInfo = node.pathInfo;
+
+			// TODO: this only works with simple paths, we need better logic here.
+			pathInfo.waypointProgress += Time.deltaTime * pathInfo.speed;
+
+			while (pathInfo.waypointProgress >= 1.0f)
+			{
+				pathInfo.waypointProgress -= 1.0f;
+
+				if (pathInfo.isMovingForward)
+				{
+					pathInfo.waypointOrigin += 1;
+
+					if (this.isLooping)
+					{
+						if (pathInfo.waypointOrigin >= positions.Count - 1)
+						{
+							pathInfo.waypointOrigin = 0;
+						}
+					}
+					else
+					{
+						if (pathInfo.waypointOrigin >= positions.Count - 1)
+						{
+							pathInfo.waypointOrigin = this.waypoints.Count - 1;
+							pathInfo.isMovingForward = false;
+						}
+					}
+				}
+				else
+				{
+					pathInfo.waypointOrigin -= 1;
+					if (pathInfo.waypointOrigin < 0 && this.isLooping)
+					{
+						pathInfo.waypointOrigin = this.waypoints.Count - 1;
+					}
+					else if (pathInfo.waypointOrigin <= 0 && !this.isLooping)
+					{
+						pathInfo.waypointOrigin = 0;
+						pathInfo.isMovingForward = true;
+					}
+				}
+			}
+		}
+
+		protected void GetPathPositions(Node2D node, out Vector2 positionStart, out Vector2 positionEnd)
+		{
+			int origin = node.pathInfo.waypointOrigin;
+			var positions = GetWaypointPositions2D();
+
+			positionStart = transform.position;
+			positionEnd = transform.position;
+
+			if (positions.Count < 2) { return; }
+
+			positionStart = positions[origin];
+			positionEnd = positionStart;
+
+			if (node.pathInfo.isMovingForward)
+			{
+				positionEnd = positions[origin + 1];
+			}
+			else
+			{
+				if (origin > 0)
+				{
+					positionEnd = positions[origin - 1];
+				}
+				else if (isLooping)
+				{
+					positionEnd = positions[positions.Count - 2];
+				}
+			}
+		}
 	}
 }
+
