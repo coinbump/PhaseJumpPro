@@ -5,7 +5,7 @@ The code contains common design patterns for games in C#:
 
 - Behavior Trees
 - State Machines
-- Weighted randoms
+- Weighted randoms (Spawn/Loot Tables + Basic Spawner)
 - Common Shaders (Stencil, Desaturate, Invert, Single Color, RGB-Recolor, etc.)
 - 2D Movement paths (straight line, circle)
 - Directional Velocity (2D-Kinematic)
