@@ -7,6 +7,7 @@ namespace PJ
 	[ExecuteInEditMode]	// Works for class, not methods
 	public abstract class AbstractMovePath2D : MonoBehaviour
 	{
+		public float speed = 1.0f;
 		public List<GameObject> targets;
 
 		public abstract void SnapNodeToPath(Node2D node, bool force);

@@ -19,10 +19,17 @@ namespace PJ
 		// OPTIONAL:
 		public string key;  // Key-value
 		public AdjustWeight adjust;
+		public object theObject;
 
 		public Weight(float value, string key = "") {
 			Value = value;
 			this.key = key;
+		}
+
+		public Weight(float value, object theObject)
+		{
+			Value = value;
+			this.theObject = theObject;
 		}
 
 		public float Value {

@@ -23,7 +23,7 @@ namespace PJ
 		public TopDown2D topDown;
 
 		[SerializeField]
-		private TopDown2D.DirectionState direction;	// Only used when character starts.
+		private DirectionState direction;	// Only used when character starts.
 
 		/// <summary>
 		/// Handles state machine.

@@ -59,12 +59,14 @@ namespace PJ {
 
 		public override void UpdateNodeOnPath(Node2D node)
 		{
+			float timeDelta = Time.deltaTime * speed * node.pathInfo.speed;
+
 			if (node.pathInfo.isMovingForward) {
-				node.pathInfo.waypointProgress += Time.deltaTime * node.pathInfo.speed;
+				node.pathInfo.waypointProgress += timeDelta;
 			}
 			else
 			{
-				node.pathInfo.waypointProgress -= Time.deltaTime * node.pathInfo.speed;
+				node.pathInfo.waypointProgress -= timeDelta;
 			}
 
 			node.pathInfo.waypointProgress %= 1.0f;

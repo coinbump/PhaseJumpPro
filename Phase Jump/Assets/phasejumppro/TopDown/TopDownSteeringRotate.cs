@@ -28,10 +28,10 @@ namespace PJ
 			switch (thisType)
 			{
 				case RotateType.Left:
-					target.topDown.directionState.State = target.topDown.directionState.State.RotateLeft();
+					target.topDown.directionState.State = target.topDown.directionState.State.RotateLeft(DirectionScheme.FourWay);
 					break;
 				case RotateType.Right:
-					target.topDown.directionState.State = target.topDown.directionState.State.RotateRight();
+					target.topDown.directionState.State = target.topDown.directionState.State.RotateRight(DirectionScheme.FourWay);
 					break;
 			}
 		}

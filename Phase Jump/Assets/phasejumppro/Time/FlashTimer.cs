@@ -4,7 +4,10 @@ using System.Collections;
 namespace PJ
 {
 	/// <summary>
-	/// Flashes N times
+	/// Flashes on and off N times
+	/// Used for game objects that flash (usually after they receive damage)
+	/// 
+	/// SEE ALSO: PulseTimer (more generalized)
 	/// </summary>
 	public class FlashTimer : AbstractTimed
 	{

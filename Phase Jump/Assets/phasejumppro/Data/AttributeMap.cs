@@ -13,7 +13,7 @@ namespace PJ {
 			this.Add(key, new Attribute(key, value));
 		}
 
-		public bool GetBoolVal(string key, bool defaultVal)
+		public bool BoolValue(string key, bool defaultVal)
 		{
 			var attribute = this[key];
 			if (null == attribute) { return defaultVal; }
@@ -21,7 +21,7 @@ namespace PJ {
 			return attribute.value == "1" || attribute.value == "true" || attribute.value == "t";
 		}
 
-		public int GetIntVal(string key, int defaultVal)
+		public int IntValue(string key, int defaultVal)
 		{
 			var attribute = this[key];
 			if (null == attribute) { return defaultVal; }
@@ -30,7 +30,7 @@ namespace PJ {
 			return result;
 		}
 
-		public Int64 GetInt64Val(string key, Int64 defaultVal)
+		public Int64 Int64Value(string key, Int64 defaultVal)
 		{
 			var attribute = this[key];
 			if (null == attribute) { return defaultVal; }
@@ -39,7 +39,7 @@ namespace PJ {
 			return result;
 		}
 
-		public float GetFloatVal(string key, float defaultVal)
+		public float FloatValue(string key, float defaultVal)
 		{
 			var attribute = this[key];
 			if (null == attribute) { return defaultVal; }
@@ -48,7 +48,7 @@ namespace PJ {
 			return result;
 		}
 
-		public UInt32 GetUIntVal(string key, UInt32 defaultVal)
+		public UInt32 UIntValue(string key, UInt32 defaultVal)
 		{
 			var attribute = this[key];
 			if (null == attribute) { return defaultVal; }
@@ -57,7 +57,7 @@ namespace PJ {
 			return result;
 		}
 
-		public string GetStrVal(string key, string defaultVal)
+		public string StringValue(string key, string defaultVal)
 		{
 			var attribute = this[key];
 			if (null == attribute) { return defaultVal; }

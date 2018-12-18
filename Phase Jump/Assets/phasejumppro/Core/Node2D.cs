@@ -45,6 +45,12 @@ namespace PJ
 
 		public bool dontModRotation = false;
 
+		public enum CullType
+		{
+			None, OnInvisible
+		}
+		public CullType cullType = CullType.None;
+
 		// Normalized rotation value (0-1.0)
 		public float RotationNormal
 		{
@@ -116,6 +122,16 @@ namespace PJ
 			UpdateNode(UpdateType.Fixed);
 		}
 
+		protected virtual void OnBecameInvisible()
+		{
+			switch (cullType)
+			{
+				case CullType.OnInvisible:
+					Destroy(this.gameObject);
+					break;
+			}
+		}
+
 		public void SnapToPath(bool force = false)
 		{
 			if (null == pathInfo.path) { return; }
@@ -156,8 +172,9 @@ namespace PJ
 			if (!ShouldMoveForUpdate(updateType)) { return; }
 			if (null == pathInfo.path) { return; }
 			AbstractMovePath2D movePath = pathInfo.path.GetComponent<AbstractMovePath2D>();
-			if (null == movePath) {
-				Debug.Log("Warning. Path is missing Path2D component"); return; 
+			if (null == movePath)
+			{
+				Debug.Log("Warning. Path is missing Path2D component"); return;
 			}
 
 			movePath.UpdateNodeOnPath(this);

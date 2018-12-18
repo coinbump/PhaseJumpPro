@@ -57,7 +57,7 @@ public class SliceTexturesFromXML : MonoBehaviour
 		{
 			Debug.Log(path);
 
-			Texture2D texture = (Texture2D)AssetDatabase.LoadAssetAtPath<Texture2D>(path);
+			Texture2D texture = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
 
 			TextureImporter importer = (TextureImporter)AssetImporter.GetAtPath(path);
 

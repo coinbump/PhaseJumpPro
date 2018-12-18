@@ -5,15 +5,26 @@ using PJ;
 
 namespace PJ
 {
+	public enum DirectionState
+	{
+		// Core directions:
+		Right, Left, Up, Down
+
+		// 8-way directions:
+		,UpLeft, UpRight, DownLeft, DownRight, None
+	}
+
+	// FUTURE: support 8-way directions if needed.
+	public enum DirectionScheme
+	{
+		FourWay, EightWay
+	}
+
 	/// <summary>
 	/// Handles states, behaviors for TopDown character (WORK IN PROGRESS)
 	/// </summary>
 	public class TopDown2D	// Do not subclass MonoBehaviour (so we can use new)
 	{
-		public enum DirectionState
-		{
-			Left, Right, Up, Down, None
-		}
 		public GenericStateMachine<DirectionState> directionState = new GenericStateMachine<DirectionState>();
 
 		public float moveSpeed; // Applied to move direction
@@ -34,94 +45,23 @@ namespace PJ
 
 			switch (directionState.State)
 			{
-				case PJ.TopDown2D.DirectionState.Left:
-					velocity = new Vector2(-moveSpeed, 0);
+				case PJ.DirectionState.Left:
+					velocity = new Vector2(moveSpeed, 0)*Vector2.left;
 					break;
-				case PJ.TopDown2D.DirectionState.Right:
-					velocity = new Vector2(moveSpeed, 0);
+				case PJ.DirectionState.Right:
+					velocity = new Vector2(moveSpeed, 0)*Vector2.right;
 					break;
-				case PJ.TopDown2D.DirectionState.Up:
-					velocity = new Vector2(0, moveSpeed);
+				case PJ.DirectionState.Up:
+					velocity = new Vector2(0, moveSpeed)*Vector2.up;
 					break;
-				case PJ.TopDown2D.DirectionState.Down:
-					velocity = new Vector2(0, -moveSpeed);
+				case PJ.DirectionState.Down:
+					velocity = new Vector2(0, moveSpeed)*Vector2.down;
 					break;
+				// FUTURE: support 8 way movement if needed.
 			}
 
 			return velocity;
 		}
 
-	}
-
-	public static class TopDown2DDirectionStateExtension
-	{
-		public static TopDown2D.DirectionState Flip(this TopDown2D.DirectionState state)
-		{
-			TopDown2D.DirectionState result = state;
-
-			switch (state)
-			{
-				case TopDown2D.DirectionState.Left:
-					result = TopDown2D.DirectionState.Right;
-					break;
-				case TopDown2D.DirectionState.Right:
-					result = TopDown2D.DirectionState.Left;
-					break;
-				case TopDown2D.DirectionState.Up:
-					result = TopDown2D.DirectionState.Down;
-					break;
-				case TopDown2D.DirectionState.Down:
-					result = TopDown2D.DirectionState.Up;
-					break;
-			}
-
-			return result;
-		}
-
-		public static TopDown2D.DirectionState RotateLeft(this TopDown2D.DirectionState state)
-		{
-			TopDown2D.DirectionState result = state;
-
-			switch (state)
-			{
-				case TopDown2D.DirectionState.Left:
-					result = TopDown2D.DirectionState.Down;
-					break;
-				case TopDown2D.DirectionState.Right:
-					result = TopDown2D.DirectionState.Up;
-					break;
-				case TopDown2D.DirectionState.Up:
-					result = TopDown2D.DirectionState.Left;
-					break;
-				case TopDown2D.DirectionState.Down:
-					result = TopDown2D.DirectionState.Right;
-					break;
-			}
-
-			return result;
-		}
-
-		public static TopDown2D.DirectionState RotateRight(this TopDown2D.DirectionState state)
-		{
-			TopDown2D.DirectionState result = state;
-
-			switch (state)
-			{
-				case TopDown2D.DirectionState.Left:
-					result = TopDown2D.DirectionState.Up;
-					break;
-				case TopDown2D.DirectionState.Right:
-					result = TopDown2D.DirectionState.Down;
-					break;
-				case TopDown2D.DirectionState.Up:
-					result = TopDown2D.DirectionState.Right;
-					break;
-				case TopDown2D.DirectionState.Down:
-					result = TopDown2D.DirectionState.Left;
-					break;
-			}
-
-			return result;
-		}
 	}
 }

@@ -153,7 +153,7 @@ namespace PJ
 			Node2D.PathInfo pathInfo = node.pathInfo;
 
 			// TODO: this only works with simple paths, we need better logic here.
-			pathInfo.waypointProgress += Time.deltaTime * pathInfo.speed;
+			pathInfo.waypointProgress += Time.deltaTime * speed * pathInfo.speed;
 
 			while (pathInfo.waypointProgress >= 1.0f)
 			{
