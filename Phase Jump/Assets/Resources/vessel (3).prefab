@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 6668945911003112470}
   - component: {fileID: 4245692144656706395}
   - component: {fileID: 8146083482841312039}
+  - component: {fileID: 4053006444602231879}
   m_Layer: 0
   m_Name: vessel (3)
   m_TagString: Untagged
@@ -101,3 +102,27 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &4053006444602231879
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7171209037692700965}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d0a89e4501794c1b92be71e68dc2eec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isKinematic: 0
+  pathInfo:
+    path: {fileID: 0}
+    speed: 1
+    waypointOrigin: 0
+    waypointProgress: 0
+    isMovingForward: 1
+    orientToPath: 0
+  directionVelocity: 0
+  velocity: {x: 0, y: 0}
+  dontModRotation: 0
+  cullType: 1
