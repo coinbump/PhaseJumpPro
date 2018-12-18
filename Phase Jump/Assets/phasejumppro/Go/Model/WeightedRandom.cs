@@ -13,8 +13,8 @@ namespace PJ
 	/// </summary>
 	public class Weight
 	{
-		private float _weight = 1.0f;
-		private float _defaultWeight = 1.0f; // Store, if weight can be temporarily altered
+		private float _weight = 1.0f; // Store, if weight can be temporarily altered
+		private float _adjustedWeight = 1.0f;
 
 		// OPTIONAL:
 		public string key;  // Key-value
@@ -30,8 +30,8 @@ namespace PJ
 				return _weight;
 			}
 			set {
-				_defaultWeight = value;
 				_weight = value;
+				_adjustedWeight = value;
 			}
 		}
 
@@ -39,23 +39,11 @@ namespace PJ
 		{
 			get
 			{
-				return _weight;
+				return _adjustedWeight;
 			}
 			set
 			{
-				_weight = value;
-			}
-		}
-
-		public float DefaultValue
-		{
-			get
-			{
-				return _defaultWeight;
-			}
-			set
-			{
-				_defaultWeight = value;
+				_adjustedWeight = value;
 			}
 		}
 	}
@@ -85,6 +73,7 @@ namespace PJ
 			float totalWeight = 0;
 			foreach (Weight wr in this)
 			{
+				wr.AdjustedValue = wr.Value;
 				if (wr.adjust != null)
 				{
 					wr.adjust.Adjust(wr);
