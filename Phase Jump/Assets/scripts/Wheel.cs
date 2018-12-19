@@ -16,12 +16,16 @@ public class Wheel : Node2D {
 	private Valve valve = new Valve();
 
 	// Use this for initialization
-	void Start () {
+	protected override void Start () {
+		base.Start();
+
 		valve.TurnOn(InputEffect.OverTime);
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	protected override void Update () {
+		base.Update();
+
 		valve.EvtUpdate(new TimeSlice(Time.deltaTime));
 		var valveState = valve.ValveState;
 		//Debug.Log(string.Format("valveState: {0}, State: {1}", valveState, valve.state.state));

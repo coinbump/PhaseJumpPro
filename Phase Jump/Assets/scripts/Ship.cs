@@ -5,25 +5,32 @@ using PJ;
 
 public class Ship : PJ.Node2D {
 
-	// Use this for initialization
-	void Start () {
+	protected override void Awake()
+	{
+		base.Awake();
+
 		isKinematic = true;
+	}
+
+	// Use this for initialization
+	protected override void Start () {
+		base.Start();
 	}
 	
 	// Update is called once per frame
 	protected override void Update() {
 		UpdateNode(UpdateType.Default);
 		    
-		if (Input.GetKey(KeyCode.RightArrow))
+		if (Input.GetAxis("Horizontal") > 0)
 		{
 			RotationAngle += 180.0f * Time.deltaTime;
 		}
-		else if (Input.GetKey(KeyCode.LeftArrow))
+		else if (Input.GetAxis("Horizontal") < 0)
 		{
 			RotationAngle -= 180.0f * Time.deltaTime;
 		}
 
-		if (Input.GetKey(KeyCode.UpArrow))
+		if (Input.GetAxis("Vertical") > 0)
 		{
 			directionVelocity = 2.0f;
 		}

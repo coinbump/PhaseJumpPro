@@ -139,7 +139,9 @@ public class Human : PJ.Node2D
 		return false;
 	}
 
-	void Start() {
+	protected override void Start() {
+		base.Start();
+
 		core = new Core(new WeakReference(this));
 		animator = gameObject.GetComponent<Animator>();
 
