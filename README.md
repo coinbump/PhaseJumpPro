@@ -10,6 +10,7 @@ The code contains common design patterns for games in C#:
 - 2D Movement paths (straight line, circle)
 - Directional Velocity (2D-Kinematic)
 - Valves (for animated doors, switches, etc.)
+- Emitters (firing bullets with time/count limits)
 - Interpolation curves
 - Broadcast-Listener
 - Command (for undo-redo)
