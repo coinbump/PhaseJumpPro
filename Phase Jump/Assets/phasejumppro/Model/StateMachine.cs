@@ -98,18 +98,21 @@ namespace PJ {
 			CancelStateTimer(); // State duration is no longer valid for new state.
 		}
 
-		public virtual float GetProgress()
+		public float Progress
 		{
-			if (stateDuration.Equals(0))
+			get
 			{
-				return 0;
+				if (stateDuration.Equals(0))
+				{
+					return 0;
+				}
+
+				float result = 1.0f - (stateReverseTimer / stateDuration);
+
+				// Cap values to avoid weirdness in case of sudden time jumps.
+				result = Math.Max(0, Math.Min(1.0f, result));
+				return result;
 			}
-
-			float result = 1.0f - (stateReverseTimer / stateDuration);
-
-			// Cap values to avoid weirdness in case of sudden time jumps.
-			result = Math.Max(0, Math.Min(1.0f, result));
-			return result;
 		}
 
 		// Override to handle logic of a state transition

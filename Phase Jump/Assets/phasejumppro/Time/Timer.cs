@@ -20,12 +20,12 @@ namespace PJ {
 			}
 		}
 
-		public Timer(AbstractTimed.Type type)
+		public Timer(Type type = Type.Persistent)
 		: base(type)
 		{
 		}
 
-		public Timer(float duration, AbstractTimed.Type type)
+		public Timer(float duration, Type type = Type.Persistent)
 			: base(type)
 		{
 			this.duration = duration;

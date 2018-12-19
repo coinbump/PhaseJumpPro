@@ -3,6 +3,9 @@ using System.Collections;
 
 namespace PJ
 {
+	/// <summary>
+	/// Extensions for DirectionState type
+	/// </summary>
 	public static class Extensions_DirectionState
 	{
 		public static string ToString(this DirectionState state)

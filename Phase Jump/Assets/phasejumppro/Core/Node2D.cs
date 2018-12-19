@@ -22,6 +22,9 @@ namespace PJ
 		private float _rotation;    // Simplifies basic 2D rotation
 		public bool isKinematic;
 
+		[HideInInspector]
+		public Tagged tags = new Tagged();
+
 		// Paths:
 		[System.Serializable]
 		public class PathInfo
@@ -43,6 +46,7 @@ namespace PJ
 		public float directionVelocity;
 		public Vector2 velocity;
 
+		public float rotationSpeed;	// Normalized angles per second
 		public bool dontModRotation = false;
 
 		public enum CullType
@@ -106,10 +110,13 @@ namespace PJ
 			SnapToPath(true);
 		}
 
-		// Update is called once per frame
+		protected virtual void Awake()
+		{
+			tags = new Tagged();
+		}
+
 		protected virtual void Start()
 		{
-
 		}
 
 		protected virtual void Update()
@@ -183,6 +190,11 @@ namespace PJ
 
 		protected void UpdateNode(UpdateType updateType)
 		{
+			if (Mathf.Abs(rotationSpeed) > 0)
+			{
+				RotationAngle += rotationSpeed*360.0f * Time.deltaTime;
+			}
+
 			// MOVEMENT TYPE: Follow Path (requires MovePath2D component on Path object)
 			if (pathInfo.path != null)
 			{

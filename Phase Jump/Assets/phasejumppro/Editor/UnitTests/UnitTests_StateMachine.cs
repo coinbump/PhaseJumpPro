@@ -63,7 +63,7 @@ namespace PJ {
 			Assert.AreEqual(test.finishedCount, 1);
 			test.ResetStateTimer();
 			test.EvtUpdate(new TimeSlice(.5f));
-			Assert.AreEqual(.5f, test.GetProgress(), .001f);
+			Assert.AreEqual(.5f, test.Progress, .001f);
 			test.EvtUpdate(new TimeSlice(.6f));
 			Assert.AreEqual(test.finishedCount, 2);
 

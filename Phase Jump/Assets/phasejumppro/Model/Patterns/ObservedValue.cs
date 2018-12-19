@@ -35,6 +35,12 @@ namespace PJ
 			}
 		}
 
+		// Conversion operator
+		public static explicit operator T(ObservedValue<T> value)
+		{
+			return value.Value;
+		}
+
 		public ObservedValue() {
 			
 		}
@@ -45,9 +51,7 @@ namespace PJ
 
 		protected virtual void EvtValueChanged()
 		{
-			if (action != null) {
-				action(Value);
-			}
+			action?.Invoke(Value);
 
 			broadcaster.Broadcast(new Event(PJ.EventNames.ValueChanged));
 		}

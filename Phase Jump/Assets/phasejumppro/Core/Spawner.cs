@@ -14,7 +14,7 @@ namespace PJ
 	/// Spawn after N seconds
 	/// </summary>
 	/// TODO: could use a unit test
-	class Spawner : SpawnTable
+	public class Spawner : SpawnTable
 	{
 		public float timer = 0; // If > 0, spawn after N seconds
 
@@ -32,12 +32,17 @@ namespace PJ
 				spawnTimer.EvtUpdate(new TimeSlice(Time.deltaTime));
 				if (spawnTimer.IsFinished)
 				{
-					GameObject spawn = NewSpawn();
-					Instantiate(spawn, transform.position, Quaternion.identity);
+					Spawn();
 
 					spawnTimer.Reset();
 				}
 			}
+		}
+
+		public virtual void Spawn()
+		{
+			GameObject spawn = NextSpawn();
+			Instantiate(spawn, transform.position, Quaternion.identity);
 		}
 	}
 }

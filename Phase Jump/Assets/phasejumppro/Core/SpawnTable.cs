@@ -17,7 +17,7 @@ namespace PJ
 	/// If you want consistent behavior, make sure that all weights add up to a standard value (1 or 100)
 	/// </summary>
 	/// TODO: could use a unit test
-	class SpawnTable : MonoBehaviour
+	public class SpawnTable : MonoBehaviour
 	{
 		[Serializable]
 		public struct Element
@@ -29,7 +29,7 @@ namespace PJ
 		public bool autoNone = true;   // If true, add a none element that results in no result.
 		public float maxWeight = 1.0f;
 
-		public GameObject NewSpawn()
+		public GameObject NextSpawn()
 		{
 			WeightedRandom wr = new WeightedRandom();
 
