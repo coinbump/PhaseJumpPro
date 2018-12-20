@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using PJ;
 using UnityEngine;
 
-public class CircleController : MonoBehaviour {
+public class CircleController : PJ.MonoBehaviour {
 
 	protected RedGreenStateMachine state = new RedGreenStateMachine();
 	public RedGreenState defaultState = RedGreenState.Green;

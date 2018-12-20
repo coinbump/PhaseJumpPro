@@ -42,7 +42,14 @@ namespace PJ
 		public virtual void Spawn()
 		{
 			GameObject spawn = NextSpawn();
-			Instantiate(spawn, transform.position, Quaternion.identity);
+			GameObject newSpawn = Instantiate(spawn, GetSpawnPosition(), Quaternion.identity);
+			SetupSpawn(newSpawn);
+		}
+
+		protected virtual Vector3 GetSpawnPosition() { return transform.position; }
+
+		protected virtual void SetupSpawn(GameObject theObject)
+		{
 		}
 	}
 }

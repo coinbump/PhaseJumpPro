@@ -13,7 +13,7 @@ namespace PJ
 			public TestValue()
 			{
 				Action<int> _action = _value => { actionCount++; };
-				this.action = _action;
+				this.actions.Add(_action);
 			}
 
 			protected override void EvtValueChanged()

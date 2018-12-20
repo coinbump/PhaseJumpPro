@@ -7,17 +7,36 @@ namespace PJ
 {
 	public class MovePath2D : AbstractMovePath2D
 	{
+		public bool isLooping = false;
 
-		private enum RenderState
+		private List<GameObject> _waypoints = new List<GameObject>();
+
+		public List<GameObject> Waypoints
 		{
-			Default,
-			Selected
+			get
+			{
+#if UNITY_EDITOR
+				UpdateWaypoints();	
+#endif
+				return _waypoints;
+			}
 		}
 
-		public bool isLooping = false;
-		public List<GameObject> waypoints = new List<GameObject>();
+		public void UpdateWaypoints()
+		{
+			_waypoints = new List<GameObject>();
 
-		// Use this for initialization
+			foreach (Transform child in transform)
+			{
+				_waypoints.Add(child.gameObject);
+			}
+		}
+
+		private void Awake()
+		{
+			UpdateWaypoints();
+		}
+
 		void Start()
 		{
 
@@ -36,7 +55,7 @@ namespace PJ
 				Node2D node = target.GetComponent<Node2D>();
 				if (null != node)
 				{
-					node.pathInfo.waypointOrigin = Math.Min(node.pathInfo.waypointOrigin, waypoints.Count - 1);
+					node.pathInfo.waypointOrigin = Math.Min(node.pathInfo.waypointOrigin, Waypoints.Count - 1);
 					node.pathInfo.waypointOrigin = Math.Max(node.pathInfo.waypointOrigin, 0);
 				}
 			}
@@ -46,11 +65,11 @@ namespace PJ
 
 		public List<Vector3> GetWaypointPositions()
 		{
-			if (waypoints.Count == 0) { return new List<Vector3>(); }
+			if (Waypoints.Count == 0) { return new List<Vector3>(); }
 
 			List<Vector3> positions = new List<Vector3>();
 
-			foreach (GameObject waypoint in waypoints)
+			foreach (GameObject waypoint in Waypoints)
 			{
 				if (waypoint == null)
 				{
@@ -62,7 +81,7 @@ namespace PJ
 			}
 			if (isLooping)
 			{
-				positions.Add(waypoints[0].transform.position);
+				positions.Add(Waypoints[0].transform.position);
 			}
 
 			return positions;
@@ -81,9 +100,10 @@ namespace PJ
 			return result;
 		}
 
-		private void RenderGizmos(RenderState renderState)
+#if UNITY_EDITOR
+		protected override void RenderGizmos(EditorUtils.RenderState renderState)
 		{
-			if (waypoints.Count == 0) { return; }
+			if (Waypoints.Count == 0) { return; }
 
 			List<Vector3> positions = GetWaypointPositions();
 
@@ -100,10 +120,10 @@ namespace PJ
 				{
 					switch (renderState)
 					{
-						case RenderState.Default:
+						case EditorUtils.RenderState.Default:
 							Gizmos.color = Color.white;
 							break;
-						case RenderState.Selected:
+						case EditorUtils.RenderState.Selected:
 							Gizmos.color = GUI.skin.settings.selectionColor;
 							break;
 					}
@@ -113,16 +133,7 @@ namespace PJ
 				prevPosition = position;
 			}
 		}
-
-		void OnDrawGizmos()
-		{
-			RenderGizmos(RenderState.Default);
-		}
-
-		private void OnDrawGizmosSelected()
-		{
-			RenderGizmos(RenderState.Selected);
-		}
+#endif
 
 		public override void SnapNodeToPath(Node2D node, bool force = false)
 		{
@@ -174,7 +185,7 @@ namespace PJ
 					{
 						if (pathInfo.waypointOrigin >= positions.Count - 1)
 						{
-							pathInfo.waypointOrigin = this.waypoints.Count - 1;
+							pathInfo.waypointOrigin = this.Waypoints.Count - 1;
 							pathInfo.isMovingForward = false;
 						}
 					}
@@ -184,7 +195,7 @@ namespace PJ
 					pathInfo.waypointOrigin -= 1;
 					if (pathInfo.waypointOrigin < 0 && this.isLooping)
 					{
-						pathInfo.waypointOrigin = this.waypoints.Count - 1;
+						pathInfo.waypointOrigin = this.Waypoints.Count - 1;
 					}
 					else if (pathInfo.waypointOrigin <= 0 && !this.isLooping)
 					{

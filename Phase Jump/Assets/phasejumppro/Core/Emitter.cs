@@ -25,7 +25,7 @@ namespace PJ {
 		// Max # of emitted objects alive at one time (prevents flooding)
 		public int maxAlive;	
 
-		protected HashSet<WeakReference<GameObject>> aliveEmits;
+		protected WeakObjectSet aliveEmits;
 		protected Timer cooldownTimer;
 
 		/*
@@ -61,41 +61,6 @@ namespace PJ {
 			return result;
 		}
 
-		protected void RefreshAliveEmits()
-		{
-			var removeEmits = new List<WeakReference<GameObject>>();
-			foreach (WeakReference<GameObject> r in aliveEmits)
-			{
-				// Either A) a game object is marked "dead" in script, 
-				// or B) accessing its name produces an exception (means the object was destroyed)
-				// or C) the WeakReference target is gone (Garbage Collector caught up).
-				// For best performance, we have to check all 3.
-				if (r.TryGetTarget(out GameObject go))
-				{
-					try
-					{
-						if (go.name == "dead")
-						{
-							removeEmits.Add(r);
-						}
-					}
-					catch
-					{
-						removeEmits.Add(r);
-					}
-				}
-				else
-				{
-					removeEmits.Add(r);
-				}
-			}
-
-			foreach (WeakReference<GameObject> r in removeEmits)
-			{
-				aliveEmits.Remove(r);
-			}
-		}
-
 		virtual protected bool CanEmit()
 		{
 			switch (stateMachine.State)
@@ -104,7 +69,7 @@ namespace PJ {
 					return false;
 			}
 
-			RefreshAliveEmits();
+			aliveEmits.Refresh();
 			if (maxAlive > 0 && aliveEmits.Count >= maxAlive)
 			{
 				return false;
@@ -140,7 +105,7 @@ namespace PJ {
 
 			// MonoBehavior subclasses require creating child objects in Start
 			stateMachine = new GenericStateMachine<State>();
-			aliveEmits = new HashSet<WeakReference<GameObject>>();
+			aliveEmits = new WeakObjectSet();
 			cooldownTimer = new Timer();
 		}
 

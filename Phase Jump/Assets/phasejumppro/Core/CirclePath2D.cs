@@ -9,45 +9,14 @@ namespace PJ {
 	/// </summary>
 	public class CirclePath2D : AbstractMovePath2D
 	{
-		private enum RenderState
-		{
-			Default,
-			Selected
-		}
-
 		public float radius = 3.0f;
 
-		private void RenderGizmos(RenderState renderState)
+#if UNITY_EDITOR
+		protected override void RenderGizmos(EditorUtils.RenderState renderState)
 		{
-			Vector3 center = transform.position;
-
-			switch (renderState)
-			{
-				case RenderState.Default:
-					Gizmos.color = Color.white;
-					break;
-				case RenderState.Selected:
-					Gizmos.color = GUI.skin.settings.selectionColor;
-					break;
-			}
-
-			float theta = 0.0f;
-			float x = radius * Mathf.Cos(theta);
-			float y = radius * Mathf.Sin(theta);
-			Vector3 pos = center + new Vector3(x, y, 0);
-			Vector3 newPos = pos;
-			Vector3 lastPos = pos;
-			for (theta = 0.1f; theta < Mathf.PI * 2; theta += 0.1f)
-			{
-				x = radius * Mathf.Cos(theta);
-				y = radius * Mathf.Sin(theta);
-				newPos = center + new Vector3(x, y, 0);
-				Gizmos.DrawLine(pos, newPos);
-				pos = newPos;
-			}
-
-			Gizmos.DrawLine(pos, lastPos);
+			EditorUtils.RenderCircleGizmo(transform.position, radius, renderState);
 		}
+#endif
 
 		public override void SnapNodeToPath(Node2D node, bool force)
 		{
@@ -74,16 +43,6 @@ namespace PJ {
 			{
 				node.pathInfo.waypointProgress = 1.0f + node.pathInfo.waypointProgress;
 			}
-		}
-
-		void OnDrawGizmos()
-		{
-			RenderGizmos(RenderState.Default);
-		}
-
-		private void OnDrawGizmosSelected()
-		{
-			RenderGizmos(RenderState.Selected);
 		}
 	}
 

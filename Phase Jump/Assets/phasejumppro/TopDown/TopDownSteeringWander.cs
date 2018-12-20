@@ -29,25 +29,16 @@ namespace PJ
 		protected Timer restTimer = new Timer(AbstractTimed.Type.Persistent);
 		protected DirectionState nextDirection;
 
-		protected float VaryFloat(float value, float vary)
-		{
-			bool isVaryForward = UnityEngine.Random.value < 0.5f;
-			float factor = isVaryForward ? 1.0f : -1.0f;
-			float result = Mathf.Max(0, value + (UnityEngine.Random.value * vary * factor));
-
-			return result;
-		}
-
 		protected void ResetTimer()
 		{
 			bool isVaryForward = UnityEngine.Random.value < 0.5f;
 			switch (type)
 			{
 				case WanderType.Time:
-					currentValue = VaryFloat(value, vary);
+					currentValue = RandomUtils.VaryFloat(value, vary);
 					break;
 				case WanderType.Distance:
-					currentValue = Mathf.Max(0, value + Mathf.Round(VaryFloat(value, vary)));
+					currentValue = Mathf.Max(0, value + Mathf.Round(RandomUtils.VaryFloat(value, vary)));
 					break;
 			}
 		}
@@ -92,7 +83,7 @@ namespace PJ
 
 		public void ChangeDirection()
 		{
-			restTimer.duration = VaryFloat(restTime, restVary);
+			restTimer.duration = RandomUtils.VaryFloat(restTime, restVary);
 			restTimer.Reset();
 
 			startPosition = gameObject.transform.position;

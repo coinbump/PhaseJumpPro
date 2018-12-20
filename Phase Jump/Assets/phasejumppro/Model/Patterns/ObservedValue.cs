@@ -17,7 +17,7 @@ namespace PJ
 		// FUTURE: support binding value A to B
 		private T _value;
 		public Broadcaster broadcaster = new Broadcaster();
-		protected Action<T> action;
+		protected List<Action<T>> actions = new List<Action<T>>();
 
 		public T Value
 		{
@@ -46,12 +46,19 @@ namespace PJ
 		}
 
 		public ObservedValue(Action<T> action) {	
-			this.action = action;
+			this.actions.Add(action);
+		}
+
+		public void AddAction(Action<T> action)
+		{
+			this.actions.Add(action);
 		}
 
 		protected virtual void EvtValueChanged()
 		{
-			action?.Invoke(Value);
+			foreach (Action<T> action in actions) {
+				action.Invoke(Value);
+			}
 
 			broadcaster.Broadcast(new Event(PJ.EventNames.ValueChanged));
 		}

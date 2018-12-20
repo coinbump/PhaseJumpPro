@@ -82,7 +82,7 @@ namespace PJ {
 
 		float emitRadius;		// Radius from center to fire.
 		List<EmitInfo> emitsList = new List<EmitInfo>();			// Emit sets to emit (CHECKLIST: must map with pulseEmitMap)
-		PulseEmitMap pulseEmitMap;	// For each pulse, link to an index in the Emit vector
+		PulseEmitMap pulseEmitMap = new PulseEmitMap();	// For each pulse, link to an index in the Emit vector
 		
 		protected override void Start()
 		{

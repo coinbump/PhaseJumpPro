@@ -1,32 +1,35 @@
 ﻿using UnityEditor;
 using System;
 
-public class EditorProgressBarWindow : EditorWindow
+namespace PJ
 {
-	public float value = 0f;
-	public float maxValue = 1.0f;
-
-	static void Init()
+	public class EditorProgressBarWindow : EditorWindow
 	{
-		// EXAMPLE:
-		//EditorProgressBarWindow progressBarWindow = GetWindow<EditorProgressBarWindow>();
-		//progressBarWindow.Show();
-	}
+		public float value = 0f;
+		public float maxValue = 1.0f;
 
-	void OnGUI()
-	{
-		if (maxValue <= 0) { return; }
-		float progress = Math.Min(1.0f, value / maxValue);
+		static void Init()
+		{
+			// EXAMPLE:
+			//EditorProgressBarWindow progressBarWindow = GetWindow<EditorProgressBarWindow>();
+			//progressBarWindow.Show();
+		}
 
-		// CRASHES in Unity 2018 (will be fixed in 2019).
-		//if (progress >= 1.0f)
-		//	EditorUtility.ClearProgressBar();
-		//else
+		void OnGUI()
+		{
+			if (maxValue <= 0) { return; }
+			float progress = Math.Min(1.0f, value / maxValue);
+
+			// CRASHES in Unity 2018 (will be fixed in 2019).
+			//if (progress >= 1.0f)
+			//	EditorUtility.ClearProgressBar();
+			//else
 			//EditorUtility.DisplayProgressBar("Progress", "Working on it...", progress);
-	}
+		}
 
-	void OnInspectorUpdate()
-	{
-		Repaint();
+		void OnInspectorUpdate()
+		{
+			Repaint();
+		}
 	}
 }

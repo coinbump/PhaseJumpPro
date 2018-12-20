@@ -1,72 +1,76 @@
-﻿#if (UNITY_EDITOR)
+﻿#if UNITY_EDITOR
 
 using System.IO;
 using UnityEngine;
 using UnityEditor;
 
-/// <summary>
-/// Applies proper settings to textures for pixel art (point filter, no compression)
-/// </summary>
-/// <remarks>
-/// RATING: 5 stars. Simple, effective. Does what it needs to do.
-/// CODE REVIEW: 12.13.18 
-/// 
-/// FUTURE: maybe add path options? Only change images at specific paths in Assets?
-/// </remarks>
-public class SetupSpriteSheet
+namespace PJ
 {
-	[MenuItem("Phase Jump/Textures -> Pixel Art…")]
-	static void Foo()
+	/// <summary>
+	/// Applies proper settings to textures for pixel art (point filter, no compression)
+	/// </summary>
+	/// <remarks>
+	/// RATING: 5 stars. Simple, effective. Does what it needs to do.
+	/// CODE REVIEW: 12.13.18 
+	/// 
+	/// FUTURE: maybe add path options? Only change images at specific paths in Assets?
+	/// </remarks>
+	public class SetupSpriteSheet
 	{
-		EditorWindow.GetWindow<Window>(false, "Textures -> Pixel Art");
-	}
-
-	public class Window : EditorWindow
-	{
-		public class Parameters
+		[MenuItem("Phase Jump/Textures -> Pixel Art…")]
+		static void Foo()
 		{
-			public string folderName = "spritesheets";
+			EditorWindow.GetWindow<Window>(false, "Textures -> Pixel Art");
 		}
-	
-		void RunScript(Parameters parameters)
+
+		public class Window : EditorWindow
 		{
-			string[] guids1 = AssetDatabase.FindAssets("t:texture2D", null);
-
-			foreach (string guid1 in guids1)
+			public class Parameters
 			{
-				var path = AssetDatabase.GUIDToAssetPath(guid1);
+				public string folderName = "spritesheets";
+			}
 
-				string testString = parameters.folderName + Path.DirectorySeparatorChar;
-				if (path.ToLower().Contains(testString.ToLower())) { // Case insensitive
-					Debug.Log(AssetDatabase.GUIDToAssetPath(guid1));
+			void RunScript(Parameters parameters)
+			{
+				string[] guids1 = AssetDatabase.FindAssets("t:texture2D", null);
 
-					TextureImporter importer = (TextureImporter)AssetImporter.GetAtPath(path);
-					importer.filterMode = FilterMode.Point;
-					importer.textureCompression = TextureImporterCompression.Uncompressed;
+				foreach (string guid1 in guids1)
+				{
+					var path = AssetDatabase.GUIDToAssetPath(guid1);
+
+					string testString = parameters.folderName + Path.DirectorySeparatorChar;
+					if (path.ToLower().Contains(testString.ToLower()))
+					{ // Case insensitive
+						Debug.Log(AssetDatabase.GUIDToAssetPath(guid1));
+
+						TextureImporter importer = (TextureImporter)AssetImporter.GetAtPath(path);
+						importer.filterMode = FilterMode.Point;
+						importer.textureCompression = TextureImporterCompression.Uncompressed;
+					}
 				}
 			}
-		}
 
-		void OnGUI()
-		{
-			BuildWindow();
-		}
-
-		string folderName = "spritesheets";
-
-		void BuildWindow()
-		{
-			GUILayout.Label("Folder Name");
-			folderName = GUILayout.TextField(folderName);
-
-			if (GUILayout.Button("Apply"))
+			void OnGUI()
 			{
-				Parameters parameters = new Parameters
-				{
-					folderName = folderName,
-				};
+				BuildWindow();
+			}
 
-				RunScript(parameters);
+			string folderName = "spritesheets";
+
+			void BuildWindow()
+			{
+				GUILayout.Label("Folder Name");
+				folderName = GUILayout.TextField(folderName);
+
+				if (GUILayout.Button("Apply"))
+				{
+					Parameters parameters = new Parameters
+					{
+						folderName = folderName,
+					};
+
+					RunScript(parameters);
+				}
 			}
 		}
 	}
