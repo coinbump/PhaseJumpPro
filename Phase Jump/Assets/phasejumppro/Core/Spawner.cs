@@ -16,7 +16,21 @@ namespace PJ
 	/// TODO: could use a unit test
 	public class Spawner : SpawnTable
 	{
-		public float timer = 0; // If > 0, spawn after N seconds
+		[SerializeField]
+		protected float timer = 0; // If > 0, spawn after N seconds
+
+		public float Timer
+		{
+			get
+			{
+				return timer;
+			}
+			set
+			{
+				timer = value;
+				spawnTimer.duration = timer;
+			}
+		}
 
 		private Timer spawnTimer = new Timer(AbstractTimed.Type.Persistent);
 
@@ -48,7 +62,7 @@ namespace PJ
 
 		protected virtual Vector3 GetSpawnPosition() { return transform.position; }
 
-		protected virtual void SetupSpawn(GameObject theObject)
+		protected virtual void SetupSpawn(GameObject go)
 		{
 		}
 	}

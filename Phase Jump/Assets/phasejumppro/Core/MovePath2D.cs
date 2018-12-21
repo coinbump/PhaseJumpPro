@@ -153,7 +153,7 @@ namespace PJ
 			if (node.pathInfo.orientToPath)
 			{
 				float angle = Mathf.Atan2(positionEnd.x - positionStart.x, positionEnd.y - positionStart.y) * Mathf.Rad2Deg;
-				node.RotationAngle = angle;
+				node.RotationDegreeAngle = angle;
 			}
 		}
 

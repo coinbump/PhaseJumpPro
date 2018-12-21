@@ -22,7 +22,7 @@ namespace PJ
 			float distance = RandomUtils.VaryFloat(0, 1.0f) * radius;
 			float angle = Random.value * 360.0f;
 
-			Vector2 offset = AngleUtils.DegreeAngleToVector2(angle) * distance;
+			Vector2 offset = AngleUtils.DegreeAngleToVector2(angle, 1.0f) * distance;
 			result = result + new Vector3(offset.x, offset.y, 0);
 
 			return result;

@@ -85,7 +85,7 @@ namespace PJ
 			}
 		}
 
-		public float RotationAngle
+		public float RotationDegreeAngle
 		{
 			get { return _rotation * 360.0f; }
 			set
@@ -192,7 +192,7 @@ namespace PJ
 		{
 			if (Mathf.Abs(rotationSpeed) > 0)
 			{
-				RotationAngle += rotationSpeed*360.0f * Time.deltaTime;
+				RotationDegreeAngle += rotationSpeed*360.0f * Time.deltaTime;
 			}
 
 			// MOVEMENT TYPE: Follow Path (requires MovePath2D component on Path object)
@@ -206,8 +206,7 @@ namespace PJ
 			var velocityVector = velocity;
 			if (!directionVelocity.Equals(0))
 			{
-				var radians = RotationAngle * 0.01745329252f;
-				velocityVector = new Vector2((float)Math.Sin(radians) * directionVelocity, (float)Math.Cos(radians) * directionVelocity);
+				velocityVector = AngleUtils.DegreeAngleToVector2(RotationDegreeAngle, directionVelocity);
 			}
 			if (velocityVector == new Vector2(0, 0)) { return; }
 

@@ -137,7 +137,23 @@ namespace PJ
 					return;
 				}
 
-				GameObject newObject = Instantiate(template, child.position, Quaternion.identity);
+				GameObject newObject;
+
+#if UNITY_EDITOR
+				var prefabType = PrefabUtility.GetPrefabAssetType(template);
+				if (prefabType == PrefabAssetType.NotAPrefab)
+				{
+					newObject = Instantiate(template, child.position, Quaternion.identity);
+				}
+				else
+				{
+					newObject = (UnityEngine.GameObject)PrefabUtility.InstantiatePrefab(template);
+					newObject.transform.position = child.position;
+					newObject.transform.rotation = Quaternion.identity;
+				}
+#else
+				newObject = Instantiate(template, child.position, Quaternion.identity);
+#endif
 
 				newObject.transform.SetParent(child);
 				formation.Add(newObject);
@@ -168,13 +184,25 @@ namespace PJ
 		{
 		}
 
+		public void FlipX()
+		{
+			foreach (Transform child in transform)
+			{
+				Vector3 position = child.localPosition;
+				position.x = -position.x;
+				child.localPosition = position;
+			}
+		}
+
 #if UNITY_EDITOR
 		protected override void RenderGizmos(EditorUtils.RenderState renderState)
 		{
 			EditorUtils.RenderLinesBetweenObjects(ChildObjects, renderState);
 		}
+#endif
 	}
 
+#if UNITY_EDITOR
 	[CustomEditor(typeof(Formation))]
 	public class FormationEditor : Editor
 	{
@@ -191,6 +219,11 @@ namespace PJ
 			if (GUILayout.Button("Remove All"))
 			{
 				formation.DestroyAll();
+			}
+
+			if (GUILayout.Button("Flip X"))
+			{
+				formation.FlipX();
 			}
 		}
 	}

@@ -5,7 +5,7 @@
       <File FileName="Assets/phasejumppro/Core/MovePath2D.cs" Line="34" Column="3" />
       <File FileName="Assets/scripts/CircleController.cs" Line="27" Column="4" />
       <File FileName="Assets/phasejumppro/TopDown/TopDownNode2D.cs" Line="26" Column="58" />
-      <File FileName="Assets/phasejumppro/Unfinished/Cannon2D.cs" Line="85" Column="49" />
+      <File FileName="Assets/phasejumppro/Unfinished/Cannon2D.cs" Line="23" Column="2" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.ItemProperties.Phase_220Jump PreferredExecutionTarget="Unity.Editor" />
