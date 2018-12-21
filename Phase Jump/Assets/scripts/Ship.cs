@@ -23,11 +23,11 @@ public class Ship : PJ.Node2D {
 		    
 		if (Input.GetAxis("Horizontal") > 0)
 		{
-			RotationAngle += 180.0f * Time.deltaTime;
+			RotationDegreeAngle += 180.0f * Time.deltaTime;
 		}
 		else if (Input.GetAxis("Horizontal") < 0)
 		{
-			RotationAngle -= 180.0f * Time.deltaTime;
+			RotationDegreeAngle -= 180.0f * Time.deltaTime;
 		}
 
 		if (Input.GetAxis("Vertical") > 0)
