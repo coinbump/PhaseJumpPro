@@ -8,7 +8,7 @@ The code contains common design patterns for games in C#:
 - Common Shaders (Stencil, Desaturate, Invert, Single Color, RGB-Recolor, etc.)
 - 2D Movement paths (straight line, circle)
 - Directional Velocity (2D-Kinematic)
-- Emitters (firing bullets with time/count limits)
+- Emitters/Auto Emitters (firing bullets with time/count limits, Auto Emitter for shmups)
 - Formations (auto populate template objects into a formation). EXAMPLE: line of hearts to show health
 - Valves (for animated doors, switches, etc.)
 - Interpolation curves
