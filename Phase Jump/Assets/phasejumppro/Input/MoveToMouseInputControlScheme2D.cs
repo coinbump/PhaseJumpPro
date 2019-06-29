@@ -4,16 +4,10 @@ using System;
 namespace PJ
 {
 	/// <summary>
-	/// Rotates the Node2D to aim at the mouse
+	/// Moves the center of the gameObject to the mouse position
 	/// </summary>
-	public class AimAtMouseInputControlScheme2D : AbstractInputControlScheme
+	public class MoveToMouseInputControlScheme2D : AbstractInputControlScheme
 	{
-		/// <summary>
-		/// if null, use the associated GameObject
-		/// </summary>
-		[SerializeField]
-		private GameObject target;
-
 		private MouseInputController mouseInputController;
 
 		private void Awake()
@@ -21,36 +15,18 @@ namespace PJ
 			mouseInputController = new MouseInputController();
 		}
 
-		public AimAtMouseInputControlScheme2D()
+		public MoveToMouseInputControlScheme2D()
 		{
 		}
 
-		public AimAtMouseInputControlScheme2D(GameObject target)
-		{
-			this.target = target;
-		}
-
-		/// <summary>
-		/// On update, aim at the mouse
-		/// </summary>
 		public virtual void EvtUpdate(TimeSlice time)
 		{
 			if (null == mouseInputController || !mouseInputController.IsAvailable()) { return; }
 
-			var target = this.target;
-			if (null == target)
-			{
-				target = this.gameObject;
-			}
+			var target = this.gameObject;
 			if (null == target) { return; }
 
 			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-			var node = target.GetComponent<Node2D>();
-			if (null == node) {
-				Debug.LogWarning("Aim at Mouse requires a Node2D");
-				return; 
-			}
 
 			var theRenderer = target.GetComponent<Renderer>();
 			if (null == theRenderer) { return; }
@@ -60,8 +36,12 @@ namespace PJ
 			Vector2 origin2 = new Vector2(origin3.x, origin3.y);
 			Vector2 centerPoint2 = new Vector2(centerPoint3.x, centerPoint3.y);
 
-			var angle = AngleUtils.Vector2ToDegreeAngle(new Vector2(origin2.x - centerPoint2.x, origin2.y - centerPoint2.y));
-			node.RotationDegreeAngle = angle;
+			float width = theRenderer.bounds.size.x;
+			float height = theRenderer.bounds.size.y;
+			float newX = origin2.x - (width / 2.0f);
+			float newY = origin2.y - (height / 2.0f);
+
+			target.transform.position = new Vector3(newX, newY, target.transform.position.z);
 		}
 
 		public void Update()
