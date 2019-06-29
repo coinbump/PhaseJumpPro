@@ -16,5 +16,11 @@ namespace PJ
 			position = Input.mousePosition;
 			ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 		}
+
+		public override bool IsAvailable()
+		{
+			return Input.mousePresent;
+		}
 	}
+
 }

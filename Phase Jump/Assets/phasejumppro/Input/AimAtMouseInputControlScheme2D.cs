@@ -14,6 +14,13 @@ namespace PJ
 		[SerializeField]
 		private GameObject target;
 
+		private MouseInputController mouseInputController;
+
+		private void Awake()
+		{
+			mouseInputController = new MouseInputController();
+		}
+
 		public AimAtMouseInputControlScheme2D()
 		{
 		}
@@ -28,6 +35,8 @@ namespace PJ
 		/// </summary>
 		public virtual void EvtUpdate(TimeSlice time)
 		{
+			if (!mouseInputController.IsAvailable()) { return; }
+
 			var target = this.target;
 			if (null == target)
 			{

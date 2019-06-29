@@ -7,6 +7,6 @@ namespace PJ
 	/// </summary>
 	public abstract class AbstractInputController
 	{
-
+		public abstract bool IsAvailable();
 	}
 }
