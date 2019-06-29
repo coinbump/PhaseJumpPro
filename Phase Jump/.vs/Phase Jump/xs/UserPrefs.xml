@@ -1,11 +1,14 @@
 ﻿<Properties StartupConfiguration="{51BDC8AF-8B4E-EDCD-CD37-EADF80C84D5E}|">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/scripts/Ship.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/scripts/Human.cs">
     <Files>
-      <File FileName="Assets/phasejumppro/Core/Spawner.cs" Line="10" Column="4" />
-      <File FileName="Assets/phasejumppro/Core/MovePath2D.cs" Line="34" Column="1" />
-      <File FileName="Assets/scripts/CircleController.cs" Line="27" Column="4" />
-      <File FileName="Assets/phasejumppro/TopDown/TopDownNode2D.cs" Line="26" Column="58" />
-      <File FileName="Assets/scripts/Ship.cs" Line="26" Column="12" />
+      <File FileName="Assets/phasejumppro/Classes/Class.cs" Line="8" Column="16" />
+      <File FileName="Assets/phasejumppro/Classes/TagClassNames.cs" Line="36" Column="1" />
+      <File FileName="Assets/phasejumppro/Core/Core.cs" Line="97" Column="1" />
+      <File FileName="Assets/phasejumppro/Input/MouseInputController.cs" Line="21" Column="1" />
+      <File FileName="Assets/phasejumppro/Input/AimAtMouseInputControlScheme2D.cs" Line="18" Column="4" />
+      <File FileName="Assets/phasejumppro/Input/AbstractInputControlScheme.cs" Line="12" Column="1" />
+      <File FileName="Assets/phasejumppro/Go/Behavior/Behavior.cs" Line="56" Column="1" />
+      <File FileName="Assets/scripts/Human.cs" Line="62" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.ItemProperties.Phase_220Jump PreferredExecutionTarget="Unity.Editor" />
@@ -13,12 +16,7 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="Unity.Editor" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore>
-      <Breakpoint file="/Users/alphapro/Projects/PhaseJumpPro/Phase Jump/Assets/phasejumppro/Go/Behavior/Behavior.cs" relfile="Assets/phasejumppro/Go/Behavior/Behavior.cs" line="56" column="29" />
-      <Breakpoint file="/Users/alphapro/Projects/PhaseJumpPro/Phase Jump/Assets/scripts/Human.cs" relfile="Assets/scripts/Human.cs" line="65" column="1" />
-      <Breakpoint file="/Users/alphapro/Projects/PhaseJumpPro/Phase Jump/Assets/scripts/Human.cs" relfile="Assets/scripts/Human.cs" line="62" column="1" />
-      <Breakpoint file="/Users/alphapro/Projects/PhaseJumpPro/Phase Jump/Assets/scripts/Human.cs" relfile="Assets/scripts/Human.cs" line="188" column="1" />
-    </BreakpointStore>
+    <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MultiItemStartupConfigurations />
 </Properties>

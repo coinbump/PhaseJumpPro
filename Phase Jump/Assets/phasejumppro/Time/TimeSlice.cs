@@ -9,7 +9,7 @@ namespace PJ {
 	/// Encapsulates time delta for update events
 	/// Allows for future time delta logic vs a standard float
 	/// </summary>
-	public class TimeSlice
+	public struct TimeSlice
 	 {
 		public float delta;
 

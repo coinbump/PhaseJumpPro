@@ -7,7 +7,7 @@ using System.Collections;
  */
 namespace PJ {
 
-	/// <summary>EvtStateChanged
+	/// <summary>
 	/// Extends Base by adding some common design patterns
 	/// Most game objects have a state machine, so let's go ahead and set that up here
 	/// </summary>
@@ -74,11 +74,15 @@ namespace PJ {
 		}
 
 		public virtual void EvtUpdate(TimeSlice time) {
+			// A state machine may need time for timed states
 			if (aState != null) {
 				aState.EvtUpdate(time);
 			}
 		}
 
+		/// <summary>
+		/// Allows state events to propagate to a concrete implementation
+		/// </summary>
 		public void SetStateMachine(AbstractStateMachine aState)
 		{
 			this.aState = aState;
