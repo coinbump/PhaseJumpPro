@@ -4,7 +4,7 @@ using System;
 namespace PJ
 {
 	/// <summary>
-	/// Aim at mouse
+	/// Rotates the Node2D to aim at the mouse
 	/// </summary>
 	public class AimAtMouseInputControlScheme2D : AbstractInputControlScheme
 	{
