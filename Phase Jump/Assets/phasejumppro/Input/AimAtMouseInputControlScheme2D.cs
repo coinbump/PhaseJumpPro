@@ -18,11 +18,15 @@ namespace PJ
 
 		private void Awake()
 		{
-			mouseInputController = new MouseInputController();
+			if (null == mouseInputController)
+			{
+				mouseInputController = new MouseInputController();
+			}
 		}
 
 		public AimAtMouseInputControlScheme2D()
 		{
+			mouseInputController = new MouseInputController();
 		}
 
 		public AimAtMouseInputControlScheme2D(GameObject target)
