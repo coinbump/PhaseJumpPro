@@ -13,6 +13,7 @@ namespace PJ
 			public const string EvtWillRemoveTile = "tile_will_remove";
 		}
 
+		#region Events
 		protected virtual void EvtAddTile(Tile tile)
 		{
 			if (null == broadcaster) { return; }
@@ -29,12 +30,13 @@ namespace PJ
 		{
 
 		}
+		#endregion
 
 		#region Axial
 		/*
-		 * AXIAL:
-		 * Axial directions can be used to navigate a grid by moving in a specific
-		 * direction (North, Northeast, etc.)
+		  AXIAL:
+		  Axial directions can be used to navigate a grid by moving in a specific
+		  direction (North, Northeast, etc.)
 		 */
 
 		// 	ORDER: top-left, running clockwise.
@@ -94,18 +96,18 @@ namespace PJ
 			return GridNeighborAxialLocs[nextIndex];
 		}
 
-		Vector3Int GridLocAxialToGridLoc(Vector3Int origin, Vector2Int axialOffset)
+		Vector3Int OffsetLoc(Vector3Int loc, Vector2Int offset)
 		{
-			Vector3Int result = origin;
-			result.x += axialOffset.x;
-			result.y += axialOffset.y;
+			Vector3Int result = loc;
+			result.x += offset.x;
+			result.y += offset.y;
 			return result;
 		}
 		#endregion
 	}
 }
 
-//virtual PJ_BoardGrid* newBoardGrid(int width, int height, BoardDistro distro)
+//virtual PJ_BoardGrid newBoardGrid(int width, int height, BoardDistro distro)
 //{
 //	return new PJ_BoardGrid(this, width, height, distro);
 //}
@@ -157,18 +159,18 @@ namespace PJ
 //		return true;
 //	}
 	
-//	virtual PJ_GridCell* NewCell() { return new PJ_GridCell; }
+//	virtual PJ_GridCell NewCell() { return new PJ_GridCell; }
 	
-//	PJ_GridCell* GetCell(Vector3Int loc) {
+//	PJ_GridCell GetCell(Vector3Int loc) {
 //		if (!IsValidLoc(loc)) { return NULL; }
-//		PJ_GridCell* result = NULL;
+//		PJ_GridCell result = NULL;
 
-//PJ_BoardGrid* grid = mGrids[loc.z].get();
-//result = grid->GetCell(loc);
+//PJ_BoardGrid grid = mGrids[loc.z].get();
+//result = grid.GetCell(loc);
 //		if (NULL == result) {
 //			result = NewCell();
-//result->mLoc = loc;
-//			grid->SetCell(loc, result);
+//result.mLoc = loc;
+//			grid.SetCell(loc, result);
 //		}
 		
 //		return result;
@@ -177,7 +179,7 @@ namespace PJ
 	
 //	bool IsCellBlocked(Vector3Int loc) {
 //		if (!IsValidLoc(loc)) { return true; }
-//		return mGrids[loc.z]->IsCellBlocked(loc);
+//		return mGrids[loc.z].IsCellBlocked(loc);
 //	}
 	
 //	bool IsBlocked(PJ_VecRect2Int bounds, int depth) {
@@ -192,30 +194,30 @@ namespace PJ
 //		return false;
 //	}
 	
-//	PJ_GridTile* GetTile(Vector3Int loc) {
-//		PJ_GridCell* cell = GetCell(loc);
+//	PJ_GridTile GetTile(Vector3Int loc) {
+//		PJ_GridCell cell = GetCell(loc);
 //		if (NULL != cell) {
-//			return static_cast<PJ_GridTile*>(cell->mTile);
+//			return static_cast<PJ_GridTile*>(cell.mTile);
 //		}
 //		return NULL;
 		
 //	}
 	
-//	PJ_VecRect2Int GetDestTileBounds(PJ_GridTile* tile, Vector3Int loc)
+//	PJ_VecRect2Int GetDestTileBounds(PJ_GridTile tile, Vector3Int loc)
 //{
 
 //	PJ_VecRect2Int result(loc.x, loc.y);
-//	result.SetSize(tile->mSize.x(), tile->mSize.y());
+//	result.SetSize(tile.mSize.x(), tile.mSize.y());
 //	return result;
 //}
 
-//bool PutTile(PJ_GridTile* tile, Vector3Int loc)
+//bool PutTile(PJ_GridTile tile, Vector3Int loc)
 //{
 //	if (loc.z < 0 || loc.z >= static_cast<int>(mGrids.size())) { return false; }
 //	if (NULL == tile) { return false; }
-//	if (tile->mSize.x() < 1 || tile->mSize.y() < 1)
+//	if (tile.mSize.x() < 1 || tile.mSize.y() < 1)
 //	{
-//		PJLog("ERROR. Invalid tile size %d, %d", tile->mSize.x(), tile->mSize.y());
+//		PJLog("ERROR. Invalid tile size %d, %d", tile.mSize.x(), tile.mSize.y());
 //		return false;
 //	}
 
@@ -227,18 +229,18 @@ namespace PJ
 
 //	mTiles.Put(tile);
 
-//	tile->mBoard = this;
-//	tile->mGrid = mGrids[loc.z].get();
-//	tile->mOrigin = loc;
+//	tile.mBoard = this;
+//	tile.mGrid = mGrids[loc.z].get();
+//	tile.mOrigin = loc;
 
 //	for (int x = tileBounds.left(); x <= tileBounds.right(); x++)
 //	{
 //		for (int y = tileBounds.top(); y <= tileBounds.bottom(); y++)
 //		{
-//			GetCell(Vector3Int(x, y, loc.z))->mTile = tile;
+//			GetCell(Vector3Int(x, y, loc.z)).mTile = tile;
 //		}
 //	}
-//	tile->mGrid->evtCellsBlocked(tileBounds);
+//	tile.mGrid.evtCellsBlocked(tileBounds);
 
 //	// Don't notify until tile's state is set (or wrong state will be encoded).
 //	if (!mSuspendNotify)
@@ -249,38 +251,38 @@ namespace PJ
 //	return true;
 //}
 
-//void RemoveTile(PJ_GridTile* tile)
+//void RemoveTile(PJ_GridTile tile)
 //{
 //	if (NULL == tile) { return; }
-//	if (tile->mBoard != this) { return; }
+//	if (tile.mBoard != this) { return; }
 
 //	if (!mSuspendNotify)
 //	{
 //		evtRemoveTile(tile);    // Before release
 //	}
 
-//	Vector3Int loc = tile->mOrigin;
+//	Vector3Int loc = tile.mOrigin;
 //	PJ_VecRect2Int tileBounds = GetDestTileBounds(tile, loc);
 
 //	mSelection.Remove(tile);
-//	tile->mBoard = NULL;
+//	tile.mBoard = NULL;
 
 //	// Save value before release tile.
-//	int depth = tile->mOrigin.z;
+//	int depth = tile.mOrigin.z;
 
 //	for (int x = tileBounds.left(); x <= tileBounds.right(); x++)
 //	{
 //		for (int y = tileBounds.top(); y <= tileBounds.bottom(); y++)
 //		{
-//			GetCell(Vector3Int(x, y, depth))->mTile = NULL;
+//			GetCell(Vector3Int(x, y, depth)).mTile = NULL;
 //		}
 //	}
 //	mTiles.Remove(tile);
-//	mGrids[depth]->evtCellsUnblocked(tileBounds);
+//	mGrids[depth].evtCellsUnblocked(tileBounds);
 
 //	if (!mSuspendNotify)
 //	{
-//		mBroadcaster->Broadcast(kEvtTileRemoved);
+//		mBroadcaster.Broadcast(kEvtTileRemoved);
 //	}
 //}
 
@@ -327,7 +329,7 @@ namespace PJ
 //		isBlocked = IsBlocked(bounds);
 //	}
 
-//	PJ_GridCell* cell = GetCell(loc);
+//	PJ_GridCell cell = GetCell(loc);
 //	if (NULL == cell)
 //	{
 //		cell = new PJ_GridCell(loc);
@@ -335,11 +337,11 @@ namespace PJ
 //	}
 //	if (!isBlocked)
 //	{
-//		getDistroCellIterator(size)->second.insert(cell);
+//		getDistroCellIterator(size).second.insert(cell);
 //	}
 //	else
 //	{
-//		getDistroCellIterator(size)->second.erase(cell);
+//		getDistroCellIterator(size).second.erase(cell);
 //	}
 
 //}
@@ -407,7 +409,7 @@ namespace PJ
 
 //	buildMapsForSize(tileSize); // Update distro maps (if needed).
 //	PJ_BoardGrid::DistroCellMap::iterator cellI = getDistroCellIterator(tileSize);  // Always returns an iterator
-//	size_t numCells = cellI->second.size();
+//	size_t numCells = cellI.second.size();
 
 //	if (numCells > 0)
 //	{
@@ -415,12 +417,12 @@ namespace PJ
 
 //		// NOTE: possibly optimize this in the future. We need set for fast remove, but random
 //		// choice isn't as efficient. (optimizing remove is more important).
-//		CellSet::iterator chooseI = cellI->second.begin();
+//		CellSet::iterator chooseI = cellI.second.begin();
 //		for (int choose = 0; choose < choice; choose++)
 //		{
 //			chooseI++;
 //		}
-//		result = (*chooseI)->mLoc;
+//		result = (*chooseI).mLoc;
 //	}
 
 //	return result;
@@ -428,9 +430,9 @@ namespace PJ
 //}
 
 
-//void MoveTile(Tile* tile, Vector3Int newLoc)
+//void MoveTile(Tile tile, Vector3Int newLoc)
 //{
-//	if (newLoc.z != tile->mOrigin.z)
+//	if (newLoc.z != tile.mOrigin.z)
 //	{
 //		PJLog("ERROR. MoveTile only moves within the same z grid.");
 //		return;
@@ -439,7 +441,7 @@ namespace PJ
 //	// Don't notify, we're just moving the tile, not removing it.
 //	PJ_TChangeAndRestore<bool> altSuspendNotify(mSuspendNotify, true);
 
-//	Vector3Int firstLoc = tile->mOrigin;
+//	Vector3Int firstLoc = tile.mOrigin;
 
 //	pjRetain(tile);
 //	RemoveTile(tile);
@@ -476,17 +478,17 @@ namespace PJ
 
 //	for (int y = 0; y < Height(); y++)
 //	{
-//		Tile* tileA = GetTile(Vector3Int(a.x, y, a.z));
+//		Tile tileA = GetTile(Vector3Int(a.x, y, a.z));
 //		if (NULL != tileA)
 //		{
 //			pjRetain(tileA);
 //			RemoveTile(tileA);
 //		}
 
-//		Tile* tileB = GetTile(Vector3Int(b.x, y, b.z));
+//		Tile tileB = GetTile(Vector3Int(b.x, y, b.z));
 //		if (NULL != tileB)
 //		{
-//			Vector3Int oldLocB = tileB->mOrigin;
+//			Vector3Int oldLocB = tileB.mOrigin;
 //			pjRetain(tileB);
 //			RemoveTile(tileB);
 //			Vector3Int newLoc(a.x, y, a.z);
@@ -539,17 +541,17 @@ namespace PJ
 
 //	for (int x = 0; x < Width(); x++)
 //	{
-//		Tile* tileA = GetTile(Vector3Int(x, a.y, a.z));
+//		Tile tileA = GetTile(Vector3Int(x, a.y, a.z));
 //		if (NULL != tileA)
 //		{
 //			pjRetain(tileA);
 //			RemoveTile(tileA);
 //		}
 
-//		Tile* tileB = GetTile(Vector3Int(x, b.y, b.z));
+//		Tile tileB = GetTile(Vector3Int(x, b.y, b.z));
 //		if (NULL != tileB)
 //		{
-//			Vector3Int oldLocB = tileB->mOrigin;
+//			Vector3Int oldLocB = tileB.mOrigin;
 //			pjRetain(tileB);
 //			RemoveTile(tileB);
 //			Vector3Int newLoc(x, a.y, a.z);
@@ -594,7 +596,7 @@ namespace PJ
 //	vector<PJ_GridTile*> tiles;
 //	for (int y = 0; y < Height(); y++)
 //	{
-//		PJ_GridTile* tile = GetTile(Vector3Int(a.x, y, a.z));
+//		PJ_GridTile tile = GetTile(Vector3Int(a.x, y, a.z));
 //		if (NULL == tile)
 //		{
 //			continue;
@@ -611,8 +613,8 @@ namespace PJ
 //	}
 
 //	FOR_CONST_I(vector<PJ_GridTile*>, tiles) {
-//		PJ_GridTile* tile = *i;
-//		Vector3Int newLoc = tile->mOrigin;
+//		PJ_GridTile tile = *i;
+//		Vector3Int newLoc = tile.mOrigin;
 //		newLoc.y += offset;
 
 //		if (wrap)
@@ -646,7 +648,7 @@ namespace PJ
 //	vector<PJ_GridTile*> tiles;
 //	for (int x = 0; x < Width(); x++)
 //	{
-//		PJ_GridTile* tile = GetTile(Vector3Int(x, a.y, a.z));
+//		PJ_GridTile tile = GetTile(Vector3Int(x, a.y, a.z));
 //		if (NULL == tile)
 //		{
 //			continue;
@@ -663,8 +665,8 @@ namespace PJ
 //	}
 
 //	FOR_CONST_I(vector<PJ_GridTile*>, tiles) {
-//		PJ_GridTile* tile = *i;
-//		Vector3Int newLoc = tile->mOrigin;
+//		PJ_GridTile tile = *i;
+//		Vector3Int newLoc = tile.mOrigin;
 //		newLoc.x += offset;
 
 //		if (wrap)
@@ -709,8 +711,8 @@ namespace PJ
 //				//				assert(thisBounds.TestIntersect(blocked));
 //#endif
 
-//				PJ_GridCell* cell = GetCell(Vector3Int(x, y));
-//				cellIter->second.erase(cell);
+//				PJ_GridCell cell = GetCell(Vector3Int(x, y));
+//				cellIter.second.erase(cell);
 //			}
 //		}
 //	}
@@ -719,14 +721,14 @@ namespace PJ
 
 //bool PJ_BoardGrid::IsCellBlocked(Vector3Int loc) const  {
 //	if (!IsValidLoc(loc)) { return true; }
-//	PJ_GridCell* cell = GetCell(loc);
+//	PJ_GridCell cell = GetCell(loc);
 //	if (NULL == cell) {
 //		return false;	// Nothing there.
 //	}
-//	if (NULL != cell->mTile && cell->mTile->mIsGhost) {
+//	if (NULL != cell.mTile && cell.mTile.mIsGhost) {
 //		return false;	// Ghost tile.
 //	}
-//	return NULL != cell->mTile;
+//	return NULL != cell.mTile;
 //}
 
 //bool PJ_BoardGrid::IsBlocked(PJ_VecRect2Int bounds) {
@@ -782,9 +784,7 @@ namespace PJ
 
 //}
 
-
-
-//void CollectNeighbors(Tile* tile, vector<Tile*>& neighbors)
+//void CollectNeighbors(Tile tile, vector<Tile*>& neighbors)
 //{
 
 //	neighbors.clear();
@@ -792,8 +792,8 @@ namespace PJ
 //	for (int i = 0; i < NumAxialDirections(); i++)
 //	{
 //		Vector2Int axialOffset = GridNeighborAxialLocs[i];
-//		Vector3Int neighborLoc = GridAxialToGridLoc(tile->mOrigin, axialOffset);
-//		Tile* neighbor = static_cast<Tile*>(GetTile(neighborLoc));
+//		Vector3Int neighborLoc = OffsetLoc(tile.mOrigin, axialOffset);
+//		Tile neighbor = static_cast<Tile*>(GetTile(neighborLoc));
 //		if (NULL != neighbor)
 //		{
 //			neighbors.push_back(neighbor);
@@ -802,7 +802,7 @@ namespace PJ
 
 //}
 
-//bool DoTilesTouch(Tile* tile1, Tile* tile2, AxialType axialType)
+//bool DoTilesTouch(Tile tile1, Tile tile2, AxialType axialType)
 //{
 //	if (NULL == tile1 || NULL == tile2)
 //	{
@@ -819,13 +819,13 @@ namespace PJ
 //	for (int i = 0; i < NumAxialDirections(); i++)
 //	{
 //		Vector2Int axialOffset = GetAxial(i);
-//		Vector3Int neighborLoc = GridAxialToGridLoc(tile1->mOrigin, axialOffset);
+//		Vector3Int neighborLoc = OffsetLoc(tile1.mOrigin, axialOffset);
 //		if (!DoesAxialIndexMatchType(i, axialType))
 //		{
 //			continue;
 //		}
 
-//		if (neighborLoc == tile2->mOrigin)
+//		if (neighborLoc == tile2.mOrigin)
 //		{
 //			return true;
 //		}
@@ -899,12 +899,12 @@ namespace PJ
 	
 //	int result = 0;
 //	for (int y = 0; y<Height(); y++) {
-//		Tile* tile = GetTile(Vector3Int(col.x, y));
+//		Tile tile = GetTile(Vector3Int(col.x, y));
 //		if (NULL == tile) {
 //			continue;
 //		}
 //		result++;
-//		y += tile->mSize.y()-1;
+//		y += tile.mSize.y()-1;
 		
 //	}
 	
@@ -916,12 +916,12 @@ namespace PJ
 	
 //	int result = 0;
 //	for (int x = 0; x<Width(); x++) {
-//		Tile* tile = GetTile(Vector3Int(x, col.y));
+//		Tile tile = GetTile(Vector3Int(x, col.y));
 //		if (NULL == tile) {
 //			continue;
 //		}
 //		result++;
-//		x += tile->mSize.x()-1;
+//		x += tile.mSize.x()-1;
 //	}
 	
 //	return result;
@@ -934,7 +934,7 @@ namespace PJ
 //	// Avoid mutation error if tile set changes during update.
 //	set<PJ_GridTile*> iterTiles = mTiles;
 //	FOR_CONST_I(TileSet, iterTiles) {
-//		(*i)->evtUpdate(task);
+//		(*i).evtUpdate(task);
 //	}
 
 //}
@@ -943,5 +943,5 @@ namespace PJ
 
 //void PJ_GridTile::evtModified()
 //{
-//	if (NULL != mBoard) mBoard->evtTileModified(this);
+//	if (NULL != mBoard) mBoard.evtTileModified(this);
 //}
