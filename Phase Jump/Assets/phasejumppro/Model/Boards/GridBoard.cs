@@ -274,7 +274,6 @@ namespace PJ
 
 //public:
 //	bool mSuspendNotify;    // TRUE: suspend notification for add/remove events.
-//Vector2Int size;
 //GridVector mGrids;
 //TileSet tiles;
 //PJ_TSelection<PJ_GridTile> mSelection;
