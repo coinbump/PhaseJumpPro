@@ -15,9 +15,9 @@
       <File FileName="Assets/phasejumppro/Model/Patterns/Command.cs" />
       <File FileName="Assets/phasejumppro/Model/Boards/GridBoard.cs" Line="26" Column="4" />
       <File FileName="Assets/phasejumppro/Model/Boards/GridLayer.cs" Line="7" Column="1" />
-      <File FileName="Assets/phasejumppro/Editor/UnitTests/NewMonoBehaviour.cs" Line="11" Column="43" />
+      <File FileName="Assets/phasejumppro/Editor/UnitTests/NewMonoBehaviour.cs" Line="15" Column="5" />
       <File FileName="Assets/phasejumppro/Editor/UnitTests/UnitTests_ObservedValue.cs" Line="35" Column="20" />
-      <File FileName="Assets/phasejumppro/Model/Boards/GenericGridStorage.cs" Line="64" Column="5" />
+      <File FileName="Assets/phasejumppro/Model/Boards/GenericGridStorage.cs" Line="9" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -55,6 +55,13 @@
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
       <Breakpoint enabled="false" file="/Users/alphapro/Projects/PhaseJumpPro/Phase Jump/Assets/phasejumppro/Input/MoveToMouseInputControlScheme2D.cs" relfile="Assets/phasejumppro/Input/MoveToMouseInputControlScheme2D.cs" line="41" column="1" />
+      <Breakpoint file="/Users/alphapro/Projects/PhaseJumpPro/Phase Jump/Assets/phasejumppro/Model/Boards/GenericGridStorage.cs" relfile="Assets/phasejumppro/Model/Boards/GenericGridStorage.cs" line="62" column="1" />
+      <Breakpoint file="/Users/alphapro/Projects/PhaseJumpPro/Phase Jump/Assets/phasejumppro/Model/Boards/GenericGridStorage.cs" relfile="Assets/phasejumppro/Model/Boards/GenericGridStorage.cs" line="85" column="1" />
+      <Breakpoint file="/Users/alphapro/Projects/PhaseJumpPro/Phase Jump/Assets/phasejumppro/Model/Boards/GenericGridStorage.cs" relfile="Assets/phasejumppro/Model/Boards/GenericGridStorage.cs" line="147" column="1" />
+      <Breakpoint file="/Users/alphapro/Projects/PhaseJumpPro/Phase Jump/Assets/phasejumppro/Model/Boards/GenericGridStorage.cs" relfile="Assets/phasejumppro/Model/Boards/GenericGridStorage.cs" line="141" column="1" />
+      <Breakpoint file="/Users/alphapro/Projects/PhaseJumpPro/Phase Jump/Assets/phasejumppro/Model/Boards/GenericGridStorage.cs" relfile="Assets/phasejumppro/Model/Boards/GenericGridStorage.cs" line="159" column="1" />
+      <Breakpoint file="/Users/alphapro/Projects/PhaseJumpPro/Phase Jump/Assets/phasejumppro/Model/Boards/GenericGridStorage.cs" relfile="Assets/phasejumppro/Model/Boards/GenericGridStorage.cs" line="74" column="1" />
+      <Breakpoint file="/Users/alphapro/Projects/PhaseJumpPro/Phase Jump/Assets/phasejumppro/Model/Boards/GenericGridStorage.cs" relfile="Assets/phasejumppro/Model/Boards/GenericGridStorage.cs" line="70" column="1" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MultiItemStartupConfigurations />

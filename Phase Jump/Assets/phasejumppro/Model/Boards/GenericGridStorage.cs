@@ -2,6 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 
+/*
+ * RATING: 5 stars. Simple storage mechanism with Unit Tests
+ * CODE REVIEW: 6.30.19
+ */
 namespace PJ
 {
 	/// <summary>
