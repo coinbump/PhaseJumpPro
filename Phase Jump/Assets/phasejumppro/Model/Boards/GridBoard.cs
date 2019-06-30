@@ -13,6 +13,104 @@ namespace PJ
 			public const string EvtWillRemoveTile = "tile_will_remove";
 		}
 
+		// TODO: Finish this
+		public int Width() { return 0; }
+		public int Height() { return 0; }
+		public Tile GetTile(Vector3Int loc) { return null; }
+
+		bool IsRowEmpty(Vector3Int row)
+		{
+			for (int x = 0; x < Width(); x++)
+			{
+				Vector3Int loc = row;
+				loc.x = x;
+				if (null != GetTile(loc))
+				{
+					return false;
+				}
+			}
+			return true;
+		}
+
+		bool IsColumnEmpty(Vector3Int col)
+		{
+			for (int y = 0; y < Height(); y++)
+			{
+				Vector3Int loc = col;
+				loc.y = y;
+				if (null != GetTile(loc))
+				{
+					return false;
+				}
+			}
+			return true;
+		}
+
+		bool IsRowFull(Vector3Int row)
+		{
+			for (int x = 0; x < Width(); x++)
+			{
+				Vector3Int loc = row;
+				loc.x = x;
+				if (null == GetTile(loc))
+				{
+					return false;
+				}
+			}
+			return true;
+		}
+
+		bool IsColumnFull(Vector3Int col)
+		{
+			for (int y = 0; y < Height(); y++)
+			{
+				Vector3Int loc = col;
+				loc.y = y;
+				if (null == GetTile(loc))
+				{
+					return false;
+				}
+			}
+			return true;
+		}
+
+		int CountTilesInColumn(Vector3Int col)
+		{
+
+			int result = 0;
+			for (int y = 0; y < Height(); y++)
+			{
+				Tile tile = GetTile(new Vector3Int(col.x, y, col.z));
+				if (null == tile)
+				{
+					continue;
+				}
+				result++;
+				y += tile.size.y - 1;
+
+			}
+
+			return result;
+		}
+
+		int CountTilesInRow(Vector3Int col)
+		{
+
+			int result = 0;
+			for (int x = 0; x < Width(); x++)
+			{
+				Tile tile = GetTile(new Vector3Int(x, col.y, col.z));
+				if (null == tile)
+				{
+					continue;
+				}
+				result++;
+				x += tile.size.x - 1;
+			}
+
+			return result;
+		}
+
 		#region Events
 		protected virtual void EvtAddTile(Tile tile)
 		{
@@ -162,12 +260,12 @@ namespace PJ
 //	virtual PJ_GridCell NewCell() { return new PJ_GridCell; }
 	
 //	PJ_GridCell GetCell(Vector3Int loc) {
-//		if (!IsValidLoc(loc)) { return NULL; }
-//		PJ_GridCell result = NULL;
+//		if (!IsValidLoc(loc)) { return null; }
+//		PJ_GridCell result = null;
 
 //PJ_BoardGrid grid = mGrids[loc.z].get();
 //result = grid.GetCell(loc);
-//		if (NULL == result) {
+//		if (null == result) {
 //			result = NewCell();
 //result.mLoc = loc;
 //			grid.SetCell(loc, result);
@@ -196,10 +294,10 @@ namespace PJ
 	
 //	PJ_GridTile GetTile(Vector3Int loc) {
 //		PJ_GridCell cell = GetCell(loc);
-//		if (NULL != cell) {
+//		if (null != cell) {
 //			return static_cast<PJ_GridTile*>(cell.mTile);
 //		}
-//		return NULL;
+//		return null;
 		
 //	}
 	
@@ -214,7 +312,7 @@ namespace PJ
 //bool PutTile(PJ_GridTile tile, Vector3Int loc)
 //{
 //	if (loc.z < 0 || loc.z >= static_cast<int>(mGrids.size())) { return false; }
-//	if (NULL == tile) { return false; }
+//	if (null == tile) { return false; }
 //	if (tile.mSize.x() < 1 || tile.mSize.y() < 1)
 //	{
 //		PJLog("ERROR. Invalid tile size %d, %d", tile.mSize.x(), tile.mSize.y());
@@ -253,7 +351,7 @@ namespace PJ
 
 //void RemoveTile(PJ_GridTile tile)
 //{
-//	if (NULL == tile) { return; }
+//	if (null == tile) { return; }
 //	if (tile.mBoard != this) { return; }
 
 //	if (!mSuspendNotify)
@@ -265,7 +363,7 @@ namespace PJ
 //	PJ_VecRect2Int tileBounds = GetDestTileBounds(tile, loc);
 
 //	mSelection.Remove(tile);
-//	tile.mBoard = NULL;
+//	tile.mBoard = null;
 
 //	// Save value before release tile.
 //	int depth = tile.mOrigin.z;
@@ -274,7 +372,7 @@ namespace PJ
 //	{
 //		for (int y = tileBounds.top(); y <= tileBounds.bottom(); y++)
 //		{
-//			GetCell(Vector3Int(x, y, depth)).mTile = NULL;
+//			GetCell(Vector3Int(x, y, depth)).mTile = null;
 //		}
 //	}
 //	mTiles.Remove(tile);
@@ -330,7 +428,7 @@ namespace PJ
 //	}
 
 //	PJ_GridCell cell = GetCell(loc);
-//	if (NULL == cell)
+//	if (null == cell)
 //	{
 //		cell = new PJ_GridCell(loc);
 //		SetCell(loc, cell);
@@ -479,14 +577,14 @@ namespace PJ
 //	for (int y = 0; y < Height(); y++)
 //	{
 //		Tile tileA = GetTile(Vector3Int(a.x, y, a.z));
-//		if (NULL != tileA)
+//		if (null != tileA)
 //		{
 //			pjRetain(tileA);
 //			RemoveTile(tileA);
 //		}
 
 //		Tile tileB = GetTile(Vector3Int(b.x, y, b.z));
-//		if (NULL != tileB)
+//		if (null != tileB)
 //		{
 //			Vector3Int oldLocB = tileB.mOrigin;
 //			pjRetain(tileB);
@@ -500,7 +598,7 @@ namespace PJ
 //			}
 //		}
 
-//		if (NULL != tileA)
+//		if (null != tileA)
 //		{
 //			Vector3Int newLoc(b.x, y, b.z);
 //			if (!PutTile(tileA, newLoc))
@@ -542,14 +640,14 @@ namespace PJ
 //	for (int x = 0; x < Width(); x++)
 //	{
 //		Tile tileA = GetTile(Vector3Int(x, a.y, a.z));
-//		if (NULL != tileA)
+//		if (null != tileA)
 //		{
 //			pjRetain(tileA);
 //			RemoveTile(tileA);
 //		}
 
 //		Tile tileB = GetTile(Vector3Int(x, b.y, b.z));
-//		if (NULL != tileB)
+//		if (null != tileB)
 //		{
 //			Vector3Int oldLocB = tileB.mOrigin;
 //			pjRetain(tileB);
@@ -563,7 +661,7 @@ namespace PJ
 //			}
 //		}
 
-//		if (NULL != tileA)
+//		if (null != tileA)
 //		{
 //			Vector3Int newLoc(x, b.y, b.z);
 //			if (!PutTile(tileA, newLoc))
@@ -597,7 +695,7 @@ namespace PJ
 //	for (int y = 0; y < Height(); y++)
 //	{
 //		PJ_GridTile tile = GetTile(Vector3Int(a.x, y, a.z));
-//		if (NULL == tile)
+//		if (null == tile)
 //		{
 //			continue;
 //		}
@@ -649,7 +747,7 @@ namespace PJ
 //	for (int x = 0; x < Width(); x++)
 //	{
 //		PJ_GridTile tile = GetTile(Vector3Int(x, a.y, a.z));
-//		if (NULL == tile)
+//		if (null == tile)
 //		{
 //			continue;
 //		}
@@ -722,13 +820,13 @@ namespace PJ
 //bool PJ_BoardGrid::IsCellBlocked(Vector3Int loc) const  {
 //	if (!IsValidLoc(loc)) { return true; }
 //	PJ_GridCell cell = GetCell(loc);
-//	if (NULL == cell) {
+//	if (null == cell) {
 //		return false;	// Nothing there.
 //	}
-//	if (NULL != cell.mTile && cell.mTile.mIsGhost) {
+//	if (null != cell.mTile && cell.mTile.mIsGhost) {
 //		return false;	// Ghost tile.
 //	}
-//	return NULL != cell.mTile;
+//	return null != cell.mTile;
 //}
 
 //bool PJ_BoardGrid::IsBlocked(PJ_VecRect2Int bounds) {
@@ -794,7 +892,7 @@ namespace PJ
 //		Vector2Int axialOffset = GridNeighborAxialLocs[i];
 //		Vector3Int neighborLoc = OffsetLoc(tile.mOrigin, axialOffset);
 //		Tile neighbor = static_cast<Tile*>(GetTile(neighborLoc));
-//		if (NULL != neighbor)
+//		if (null != neighbor)
 //		{
 //			neighbors.push_back(neighbor);
 //		}
@@ -804,7 +902,7 @@ namespace PJ
 
 //bool DoTilesTouch(Tile tile1, Tile tile2, AxialType axialType)
 //{
-//	if (NULL == tile1 || NULL == tile2)
+//	if (null == tile1 || null == tile2)
 //	{
 //		return false;
 //	}
@@ -849,84 +947,7 @@ namespace PJ
 //	return result;
 //}
 
-//bool IsRowEmpty(Vector3Int row) {
-//	for (int x = 0; x<Width(); x++) {
-//		Vector3Int loc = row;
-//loc.x = x;
-//		if (NULL != GetTile(loc)) {
-//			return false;
-//		}
-//	}
-//	return true;
-//}
 
-//bool IsColumnEmpty(Vector3Int col) {
-//	for (int y = 0; y<Height(); y++) {
-//		Vector3Int loc = col;
-//loc.y = y;
-//		if (NULL != GetTile(loc)) {
-//			return false;
-//		}
-//	}
-//	return true;
-
-//}
-
-//bool IsRowFull(Vector3Int row) {
-//	for (int x = 0; x<Width(); x++) {
-//		Vector3Int loc = row;
-//loc.x = x;
-//		if (NULL == GetTile(loc)) {
-//			return false;
-//		}
-//	}
-//	return true;
-//}
-
-//bool IsColumnFull(Vector3Int col) {
-//	for (int y = 0; y<Height(); y++) {
-//		Vector3Int loc = col;
-//loc.y = y;
-//		if (NULL == GetTile(loc)) {
-//			return false;
-//		}
-//	}
-//	return true;
-	
-//}
-
-//int CountTilesInColumn(Vector3Int col) {
-	
-//	int result = 0;
-//	for (int y = 0; y<Height(); y++) {
-//		Tile tile = GetTile(Vector3Int(col.x, y));
-//		if (NULL == tile) {
-//			continue;
-//		}
-//		result++;
-//		y += tile.mSize.y()-1;
-		
-//	}
-	
-//	return result;
-	
-//}
-
-//int CountTilesInRow(Vector3Int col) {
-	
-//	int result = 0;
-//	for (int x = 0; x<Width(); x++) {
-//		Tile tile = GetTile(Vector3Int(x, col.y));
-//		if (NULL == tile) {
-//			continue;
-//		}
-//		result++;
-//		x += tile.mSize.x()-1;
-//	}
-	
-//	return result;
-	
-//}
 
 //void evtUpdate(PJ_TimeSlice const& task)
 //{
@@ -943,5 +964,5 @@ namespace PJ
 
 //void PJ_GridTile::evtModified()
 //{
-//	if (NULL != mBoard) mBoard.evtTileModified(this);
+//	if (null != mBoard) mBoard.evtTileModified(this);
 //}
