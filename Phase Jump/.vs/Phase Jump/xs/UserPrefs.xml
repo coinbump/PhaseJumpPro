@@ -13,9 +13,9 @@
       <File FileName="Assets/phasejumppro/Editor/UnitTests/UnitTests_GridLayer.cs" />
       <File FileName="Assets/phasejumppro/Model/Broadcaster.cs" />
       <File FileName="Assets/phasejumppro/Model/Patterns/Command.cs" />
-      <File FileName="Assets/phasejumppro/Model/Boards/GridBoard.cs" Line="281" Column="1" />
+      <File FileName="Assets/phasejumppro/Model/Boards/GridBoard.cs" Line="26" Column="4" />
       <File FileName="Assets/phasejumppro/Model/Boards/GridLayer.cs" Line="7" Column="1" />
-      <File FileName="Assets/phasejumppro/Model/Boards/GenericGridStorage.cs" Line="22" Column="89" />
+      <File FileName="Assets/phasejumppro/Model/Boards/GenericGridStorage.cs" Line="13" Column="17" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">

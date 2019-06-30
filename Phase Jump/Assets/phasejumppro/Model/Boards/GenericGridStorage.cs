@@ -5,18 +5,27 @@ using System.Collections.Generic;
 namespace PJ
 {
 	/// <summary>
-	/// Stores objects in an NxN grid structure
+	/// Stores objects in an XxY grid structure (Y rows of X cells)
 	/// </summary>
 	/// <typeparam name="T">Type of thing to store</typeparam>
 	public class GenericGridStorage<T>
 	{
-		class Row : List<T>
+		#region Types
+		public class Row : List<T>
 		{
-
+			public Row(int capacity)
+			: base(capacity)
+			{
+			}
 		}
+		#endregion
 
+		#region Fields
+		protected List<Row> rows;
 		protected Vector2Int size;
+		#endregion
 
+		#region Properties
 		public int Width
 		{
 			get
@@ -31,6 +40,7 @@ namespace PJ
 				return size.y;
 			}
 		}
+		#endregion
 
 		public GenericGridStorage()
 		{
@@ -43,64 +53,36 @@ namespace PJ
 				Debug.LogError(string.Format("Invalid grid storage size {0}, {1}.", size.x, size.y));
 				return;
 			}
+
+			this.size = size;
+
+			for (int i = 0; i < size.y; i++)
+			{
+				Row row = new Row(size.x);
+				rows.Add(row);
+			}
 		}
 	}
 }
 
 // TODO: port this
 
-//public:
-//PJ_TStdVector<Row*> mRows;
-//typedef typename Row::iterator CellIterator;
-//typedef typename PJ_TStdVector<Row*>::iterator RowIterator;
-
 //protected:
-//	virtual void removeCells(Row* row, CellIterator first, CellIterator end)
+//	virtual void removeCells(Row row, CellIterator first, CellIterator end)
 //{
 //	row->erase(first, end);
-//}
-
-//public:
-//	PJ_TGrid(int width, int height, T defaultVal)
-//{
-//# ifdef __DEBUG__
-//	if (width < 1 || height < 1)
-//	{
-//		PJLog("ERROR. Invalid grid size %d, %d", width, height);
-//	}
-//#endif
-
-//	for (int i = 0; i < height; i++)
-//	{
-//		Row* row = new Row(width, defaultVal);
-//		mRows.Add(row);
-//	}
-
-//	mSize[0] = width;
-//	mSize[1] = height;
-
-//}
-
-//virtual ~PJ_TGrid()
-//{
-//	for (typename PJ_TStdVector< Row *>::iterator i = mRows.begin(); i != mRows.end(); i++) {
-//		Row* row = (*i);
-//		delete row;
-
-//	}
-
 //}
 
 //virtual void RemoveRows(RowIterator first, RowIterator end)
 //{
 
-//	for (typename PJ_TStdVector< Row *>::iterator i = first; i != end; i++) {
-//		Row* row = (*i);
+//	for (typename PJ_TStdVector< Row *>.iterator i = first; i != end; i++) {
+//		Row row = (*i);
 //		delete row;
 
 //	}
 
-//	mRows.erase(first, end);
+//	rows.erase(first, end);
 
 //}
 
@@ -120,7 +102,7 @@ namespace PJ
 
 //	// Change width of existing rows first.
 //	int y = 0;
-//	for (typename PJ_TStdVector< Row *>::iterator i = mRows.begin(); i != mRows.end(); i++, y++) {
+//	for (typename PJ_TStdVector< Row *>.iterator i = rows.begin(); i != rows.end(); i++, y++) {
 
 //		// Don't bother resizing rows that are going to be deleted if the
 //		// grid is shrinking.
@@ -129,7 +111,7 @@ namespace PJ
 //			break;
 //		}
 
-//		Row* row = (*i);
+//		Row row = (*i);
 //		int sizeX = mSize[0];
 
 //		while (sizeX < width)
@@ -141,7 +123,7 @@ namespace PJ
 //		{
 //			int diff = sizeX - width;
 
-//			typename Row::iterator  first = row->end();
+//			typename Row.iterator  first = row->end();
 //			first -= diff;
 //			removeCells(row, first, row->end());
 
@@ -153,16 +135,16 @@ namespace PJ
 //	{
 //		int diff = mSize[1] - height;
 
-//		typename PJ_TStdVector<Row*>::iterator  first = mRows.end() - diff;
-//		RemoveRows(first, mRows.end());
+//		typename PJ_TStdVector<Row*>.iterator  first = rows.end() - diff;
+//		RemoveRows(first, rows.end());
 //		mSize[1] = height;
 //	}
 //	else
 //	{
 //		while (mSize[1] < height)
 //		{
-//			Row* row = new Row(width, defaultVal);
-//			mRows.Add(row);
+//			Row row = new Row(width, defaultVal);
+//			rows.Add(row);
 //			mSize[1]++;
 //		}
 //	}
@@ -172,7 +154,7 @@ namespace PJ
 
 //}
 
-//inline Row* GetRow(typename PJ_TStdVector<Row*>::size_type y) const { return y<mRows.size()? mRows[y] : NULL; }
+//inline Row GetRow(typename PJ_TStdVector<Row*>.size_type y) const { return y<rows.size()? rows[y] : NULL; }
 	
 //	bool IsValidLoc(PJ_GridLoc const& loc) const {
 //		return (loc.x >= 0 && loc.x<mSize[0] &&
@@ -183,8 +165,8 @@ namespace PJ
 //		if (loc.x >= 0 && loc.x<mSize[0] &&
 //			loc.y >= 0 && loc.y<mSize[1]) {
 			
-//			Row* row = mRows[loc.y];
-//			return (* row)[loc.x];
+//			Row row = rows[loc.y];
+//			return ( row)[loc.x];
 //		}
 		
 //		// http://stackoverflow.com/questions/936999/what-is-the-default-constructor-for-c-pointer
@@ -198,7 +180,7 @@ namespace PJ
 //		loc.y >= 0 && loc.y < mSize[1])
 //	{
 
-//		Row* row = GetRow(loc.y);
+//		Row row = GetRow(loc.y);
 //		if (NULL != row)
 //		{
 //			(*row)[loc.x] = content;
@@ -206,12 +188,12 @@ namespace PJ
 //	}
 //}
 
-//typename Row::iterator IteratorOf(PJ_GridLoc const& loc)
+//typename Row.iterator IteratorOf(PJ_GridLoc const& loc)
 //{
-//	if (loc.x >= mSize[0] || loc.x < 0) { return mRows.end(); }
-//	if (loc.y >= mSize[1] || loc.y < 0) { return mRows.end(); }
+//	if (loc.x >= mSize[0] || loc.x < 0) { return rows.end(); }
+//	if (loc.y >= mSize[1] || loc.y < 0) { return rows.end(); }
 
-//	Row* row = mRows[loc.y];
+//	Row row = rows[loc.y];
 //	return row->begin() + loc.x;
 
 //}
