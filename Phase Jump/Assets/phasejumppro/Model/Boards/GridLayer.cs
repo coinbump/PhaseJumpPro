@@ -3,6 +3,8 @@ using System.Collections;
 
 namespace PJ
 {
+	using Tile = AbstractGridTile;
+
 	/// <summary>
 	/// Stores model data for each layer of the grid board
 	/// </summary>
@@ -12,7 +14,7 @@ namespace PJ
 		public int Width() { return 0; }
 		public int Height() { return 0; }
 
-		public AbstractGridTile GetTile(Vector3Int loc)
+		public Tile GetTile(Vector3Int loc)
 		{
 			return null;
 		}
@@ -56,6 +58,7 @@ namespace PJ
 		public bool IsCellBlocked(Vector3Int loc)
 		{
 			if (!IsValidLoc(loc)) { return true; }
+
 			GridCell cell = GetCell(loc);
 			if (null == cell)
 			{
@@ -68,22 +71,81 @@ namespace PJ
 			return null != cell.tile;
 		}
 
-		//bool IsBlocked(PJ_VecRect2Int bounds) {
-		//	for (int x = bounds.left(); x <= bounds.right(); x++) {
-		//		for (int y = bounds.top(); y <= bounds.bottom(); y++) {
-		//			if (IsCellBlocked(Vector3Int(x, y))) {
-		//				return true;
-		//			}
-		//		}
-		//	}
-		//}
+		public int CountTilesInColumn(Vector3Int col)
+		{
+
+			int result = 0;
+			for (int y = 0; y < Height(); y++)
+			{
+				Tile tile = GetTile(new Vector3Int(col.x, y, col.z));
+				if (null == tile)
+				{
+					continue;
+				}
+				result++;
+				y += tile.size.y - 1;
+			}
+
+			return result;
+		}
+
+		public int CountTilesInRow(Vector3Int col)
+		{
+			int result = 0;
+			for (int x = 0; x < Width(); x++)
+			{
+				Tile tile = GetTile(new Vector3Int(x, col.y, col.z));
+				if (null == tile)
+				{
+					continue;
+				}
+				result++;
+				x += tile.size.x - 1;
+			}
+
+			return result;
+		}
+
+		bool IsRowFull(Vector3Int row)
+		{
+			for (int x = 0; x < Width(); x++)
+			{
+				Vector3Int loc = row;
+				loc.x = x;
+				if (null == GetTile(loc))
+				{
+					return false;
+				}
+			}
+			return true;
+		}
+
+		bool IsColumnFull(Vector3Int col)
+		{
+			for (int y = 0; y < Height(); y++)
+			{
+				Vector3Int loc = col;
+				loc.y = y;
+				if (null == GetTile(loc))
+				{
+					return false;
+				}
+			}
+			return true;
+		}
 	}
 }
 
 // TODO: port this C++ code to C#
-///*
-//	GridLayer
-
+//bool IsBlocked(PJ_VecRect2Int bounds) {
+//	for (int x = bounds.left(); x <= bounds.right(); x++) {
+//		for (int y = bounds.top(); y <= bounds.bottom(); y++) {
+//			if (IsCellBlocked(Vector3Int(x, y))) {
+//				return true;
+//			}
+//		}
+//	}
+//}
 //	Stores model data for each layer of the grid board.
 
 // */
@@ -613,7 +675,7 @@ namespace PJ
 //	PJ_Vector3Int(-1, 0)
 //};
 
-//PJ_Vector3Int GetAxial(int index) const {
+//PJ_Vector3Int GetAxial(int index) {
 //	PJ_Vector3Int result;
 //	if (index< 0 || index> 7) {
 //		return result;
@@ -622,7 +684,7 @@ namespace PJ
 //	return sGridNeighborAxialLocs[index];
 //}
 
-//int GetAxialIndex(PJ_Vector3Int axial) const {
+//int GetAxialIndex(PJ_Vector3Int axial) {
 
 //	// FUTURE: use map for optimization if needed.
 //	for (int i = 0; i<GetNumAxial(); i++) {
@@ -636,7 +698,7 @@ namespace PJ
 
 //}
 
-//int GetNextAxialIndex(int axialIndex, AxialDir dir) const {
+//int GetNextAxialIndex(int axialIndex, AxialDir dir) {
 
 //	switch (dir) {
 //		case AxialDir::Right:
@@ -655,7 +717,7 @@ namespace PJ
 //	return axialIndex;
 //}
 
-//PJ_Vector3Int GetNextAxial(int axialIndex, AxialDir dir) const {
+//PJ_Vector3Int GetNextAxial(int axialIndex, AxialDir dir) {
 //	int nextIndex = GetNextAxialIndex(axialIndex, dir);
 //	return sGridNeighborAxialLocs[nextIndex];
 
@@ -721,7 +783,7 @@ namespace PJ
 
 //}
 
-//bool DoesAxialIndexMatchType(int index, AxialType type) const {
+//bool DoesAxialIndexMatchType(int index, AxialType type) {
 //	bool result = true;
 
 //	switch (type) {
@@ -737,61 +799,11 @@ namespace PJ
 
 
 
-//bool IsRowFull(Vector3Int row) const {
-//	for (int x = 0; x<Width(); x++) {
-//		Vector3Int loc = row;
-//loc.x = x;
-//		if (null == GetTile(loc)) {
-//			return false;
-//		}
-//	}
-//	return true;
-//}
 
-//bool IsColumnFull(Vector3Int col) const {
-//	for (int y = 0; y<Height(); y++) {
-//		Vector3Int loc = col;
-//loc.y = y;
-//		if (null == GetTile(loc)) {
-//			return false;
-//		}
-//	}
-//	return true;
 
 //}
 
-//int CountTilesInColumn(Vector3Int col) const {
 
-//	int result = 0;
-//	for (int y = 0; y<Height(); y++) {
-//		Tile* tile = GetTile(Vector3Int(col.x, y));
-//		if (null == tile) {
-//			continue;
-//		}
-//		result++;
-//		y += tile.mSize.y()-1;
-
-//	}
-
-//	return result;
-
-//}
-
-//int CountTilesInRow(Vector3Int col) const {
-
-//	int result = 0;
-//	for (int x = 0; x<Width(); x++) {
-//		Tile* tile = GetTile(Vector3Int(x, col.y));
-//		if (null == tile) {
-//			continue;
-//		}
-//		result++;
-//		x += tile.mSize.x()-1;
-//	}
-
-//	return result;
-
-//}
 
 //void evtUpdate(PJ_TimeSlice const& task)
 //{
