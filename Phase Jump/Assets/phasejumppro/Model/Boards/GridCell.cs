@@ -10,6 +10,8 @@ namespace PJ
 {
 	/// <summary>
 	/// Tile placement information in a grid (1 large tile might extend across multiple spaces)
+	///
+	/// Grids are 2-dimensional, but we use Vector3Int in case an extra depth value is needed
 	/// </summary>
 	public class GridCell
 	{

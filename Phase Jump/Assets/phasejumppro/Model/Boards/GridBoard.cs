@@ -120,7 +120,6 @@ namespace PJ
 
 		int CountTilesInColumn(Vector3Int col)
 		{
-
 			int result = 0;
 			for (int y = 0; y < Height; y++)
 			{
@@ -139,7 +138,6 @@ namespace PJ
 
 		int CountTilesInRow(Vector3Int col)
 		{
-
 			int result = 0;
 			for (int x = 0; x < Width; x++)
 			{
