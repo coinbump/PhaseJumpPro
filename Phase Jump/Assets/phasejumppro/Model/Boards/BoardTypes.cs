@@ -6,12 +6,13 @@ using System.Collections.Generic;
 /// </summary>
 public enum HexBoardDirection
 {
-	UpLeft,
-	Up,
-	UpRight,
-	DownRight,
-	Down,
-	DownLeft
+	Northwest,
+	North,
+	Northeast,
+	East,
+	South,
+	Southeast,
+	Southwest
 }
 
 /// <summary>
@@ -30,21 +31,21 @@ namespace EnumExtension
 		{
 			switch (direction)
 			{
-				case HexBoardDirection.UpLeft:
-					return HexBoardDirection.DownRight;
-				case HexBoardDirection.Up:
-					return HexBoardDirection.Down;
-				case HexBoardDirection.UpRight:
-					return HexBoardDirection.DownLeft;
-				case HexBoardDirection.DownRight:
-					return HexBoardDirection.UpLeft;
-				case HexBoardDirection.Down:
-					return HexBoardDirection.Up;
-				case HexBoardDirection.DownLeft:
-					return HexBoardDirection.UpRight;
+				case HexBoardDirection.Northwest:
+					return HexBoardDirection.Southeast;
+				case HexBoardDirection.North:
+					return HexBoardDirection.South;
+				case HexBoardDirection.Northeast:
+					return HexBoardDirection.Southwest;
+				case HexBoardDirection.Southeast:
+					return HexBoardDirection.Northwest;
+				case HexBoardDirection.South:
+					return HexBoardDirection.North;
+				case HexBoardDirection.Southwest:
+					return HexBoardDirection.Northeast;
 			}
 
-			return HexBoardDirection.Up;
+			return HexBoardDirection.North;
 		}
 	}
 }

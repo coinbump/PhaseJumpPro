@@ -9,9 +9,9 @@ namespace EnumExtension
 		[Test]
 		public void UnitTests()
 		{
-			var direction = HexBoardDirection.Up;
+			var direction = HexBoardDirection.North;
 			direction = direction.Opposite();
-			Assert.AreEqual(HexBoardDirection.Down, direction);
+			Assert.AreEqual(HexBoardDirection.South, direction);
 		}
 	}
 }
