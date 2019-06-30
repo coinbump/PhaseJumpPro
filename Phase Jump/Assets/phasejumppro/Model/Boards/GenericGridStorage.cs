@@ -16,6 +16,11 @@ namespace PJ
 			public Row(int capacity)
 			: base(capacity)
 			{
+				// Fill the row (initializing with capacity doesn't do this)
+				while (Count < capacity)
+				{
+					Add(new T());
+				}
 			}
 		}
 		#endregion
