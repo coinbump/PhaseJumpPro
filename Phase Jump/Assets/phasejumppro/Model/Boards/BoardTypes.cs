@@ -23,6 +23,12 @@ public enum AxialDirection {
 	Left
 }
 
+public enum AxialType
+{
+	AxialAny,	// Any axial tile that touches the origin tile
+	AxialEdge   // Any axial tile that has an edge touching the origin tile (no square diagonal)
+}
+
 namespace EnumExtension
 {
 	public static class HexBoardDirectionExtensions

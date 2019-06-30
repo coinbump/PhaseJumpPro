@@ -4,11 +4,26 @@ using System.Collections;
 namespace PJ
 {
 	using Tile = PJ.AbstractGridTile;
-	
+
 	class GridBoard : Core
 	{
 		public int depth = 1;
 		public Vector2Int size = new Vector2Int(0, 0);
+
+		public int Width
+		{
+			get
+			{
+				return size.x;
+			}
+		}
+		public int Height
+		{
+			get
+			{
+				return size.y;
+			}
+		}
 
 		struct Events
 		{
@@ -17,8 +32,6 @@ namespace PJ
 		}
 
 		// TODO: Finish this
-		public int Width() { return 0; }
-		public int Height() { return 0; }
 		public Tile GetTile(Vector3Int loc) { return null; }
 		public GridCell GetCell(Vector3Int loc) { return null; }
 
@@ -51,7 +64,7 @@ namespace PJ
 
 		bool IsRowEmpty(Vector3Int row)
 		{
-			for (int x = 0; x < Width(); x++)
+			for (int x = 0; x < Width; x++)
 			{
 				Vector3Int loc = row;
 				loc.x = x;
@@ -65,7 +78,7 @@ namespace PJ
 
 		bool IsColumnEmpty(Vector3Int col)
 		{
-			for (int y = 0; y < Height(); y++)
+			for (int y = 0; y < Height; y++)
 			{
 				Vector3Int loc = col;
 				loc.y = y;
@@ -79,7 +92,7 @@ namespace PJ
 
 		bool IsRowFull(Vector3Int row)
 		{
-			for (int x = 0; x < Width(); x++)
+			for (int x = 0; x < Width; x++)
 			{
 				Vector3Int loc = row;
 				loc.x = x;
@@ -93,7 +106,7 @@ namespace PJ
 
 		bool IsColumnFull(Vector3Int col)
 		{
-			for (int y = 0; y < Height(); y++)
+			for (int y = 0; y < Height; y++)
 			{
 				Vector3Int loc = col;
 				loc.y = y;
@@ -109,7 +122,7 @@ namespace PJ
 		{
 
 			int result = 0;
-			for (int y = 0; y < Height(); y++)
+			for (int y = 0; y < Height; y++)
 			{
 				Tile tile = GetTile(new Vector3Int(col.x, y, col.z));
 				if (null == tile)
@@ -128,7 +141,7 @@ namespace PJ
 		{
 
 			int result = 0;
-			for (int x = 0; x < Width(); x++)
+			for (int x = 0; x < Width; x++)
 			{
 				Tile tile = GetTile(new Vector3Int(x, col.y, col.z));
 				if (null == tile)
@@ -185,6 +198,22 @@ namespace PJ
 		/// Returns the number of axial directions from one cell to another (North, Northeast, etc.)
 		/// </summary>
 		public virtual int NumAxialDirections() { return 8; }
+
+		bool DoesAxialIndexMatchType(int index, AxialType type)
+		{
+			bool result = true;
+
+			switch (type)
+			{
+				case AxialType.AxialEdge:
+					result = (index % 2 != 0);
+					break;
+				default:
+					break;
+			}
+
+			return result;
+		}
 
 		public Vector2Int GetAxial(int index) {
 			Vector2Int result = new Vector2Int(0, 0);
@@ -279,9 +308,9 @@ namespace PJ
 //	OPTIMIZE: avoid calling methods, this function is called very often.
 
 // */
-	
+
 //	virtual GridCell NewCell() { return new GridCell; }
-	
+
 //	GridCell GetCell(Vector3Int loc) {
 //		if (!IsValidLoc(loc)) { return null; }
 //		GridCell result = null;
@@ -293,16 +322,16 @@ namespace PJ
 //result.mLoc = loc;
 //			grid.SetCell(loc, result);
 //		}
-		
+
 //		return result;
-		
+
 //	}
-	
+
 //	bool IsCellBlocked(Vector3Int loc) {
 //		if (!IsValidLoc(loc)) { return true; }
 //		return mGrids[loc.z].IsCellBlocked(loc);
 //	}
-	
+
 //	bool IsBlocked(PJ_VecRect2Int bounds, int depth) {
 //		for (int x = bounds.left(); x <= bounds.right(); x++) {
 //			for (int y = bounds.top(); y <= bounds.bottom(); y++) {
@@ -311,19 +340,19 @@ namespace PJ
 //				}
 //			}
 //		}
-		
+
 //		return false;
 //	}
-	
+
 //	PJ_GridTile GetTile(Vector3Int loc) {
 //		GridCell cell = GetCell(loc);
 //		if (null != cell) {
 //			return static_cast<PJ_GridTile*>(cell.tile);
 //		}
 //		return null;
-		
+
 //	}
-	
+
 //	PJ_VecRect2Int GetDestTileBounds(PJ_GridTile tile, Vector3Int loc)
 //{
 
@@ -415,27 +444,24 @@ namespace PJ
 //	}
 //}
 
-
-//virtual void evtUpdate(PJ_TimeSlice const& task);
-
 //// GO:
-//int Width() { return size.x; }
-//	int Height() { return size.y; }
+//int Width { return size.x; }
+//	int Height { return size.y; }
 //	int Depth() { return depth; }
-	
+
 //};
 
 
 ///*
 //	mapDistroLocSize
- 
+
 //	Maps which cells are an open slot for a tile of the specified size.
-	
+
 // */
 //void mapDistroLocSize(Vector3Int loc, Vector2Int size, bool testBlocked)
 //{
-//	if ((loc.x + size.x - 1) >= Width() ||
-//		(loc.y + size.y - 1) >= Height())
+//	if ((loc.x + size.x - 1) >= Width ||
+//		(loc.y + size.y - 1) >= Height)
 //	{
 
 //		return; // Invalid location.
@@ -469,15 +495,15 @@ namespace PJ
 
 ///*
 //	evtCellsUnblocked
- 
+
 //	Called when a tile is removed, updates the open slots map.
- 
+
 // */
 //void evtCellsUnblocked(PJ_VecRect2Int const& blocked)
 //{
 //	switch (mDistro)
 //	{
-//		case BoardDistro::Track:
+//		case BoardDistro.Track:
 //			break;
 //		default:
 //			return;
@@ -511,16 +537,16 @@ namespace PJ
 
 ///*
 //	FindRandomLocForTile
- 
+
 //	If tracking.
- 
+
 // */
 //Vector3Int FindRandomLocForTile(Vector2Int tileSize)
 //{
 //	Vector3Int result(-1, -1);  // Invalid.
 //	switch (mDistro)
 //	{
-//		case BoardDistro::Track:
+//		case BoardDistro.Track:
 //			break;
 //		default:
 //			PJLog("ERROR. Can't use FindRandomLocForTile. Not tracking distro slots");
@@ -529,16 +555,16 @@ namespace PJ
 //	}
 
 //	buildMapsForSize(tileSize); // Update distro maps (if needed).
-//	DistroCellMap::iterator cellI = getDistroCellIterator(tileSize);  // Always returns an iterator
+//	DistroCellMap.iterator cellI = getDistroCellIterator(tileSize);  // Always returns an iterator
 //	size_t numCells = cellI.second.size();
 
 //	if (numCells > 0)
 //	{
-//		size_t choice = PJ_Random::Choice(numCells);
+//		size_t choice = PJ_Random.Choice(numCells);
 
 //		// NOTE: possibly optimize this in the future. We need set for fast remove, but random
 //		// choice isn't as efficient. (optimizing remove is more important).
-//		CellSet::iterator chooseI = cellI.second.begin();
+//		CellSet.iterator chooseI = cellI.second.begin();
 //		for (int choose = 0; choose < choice; choose++)
 //		{
 //			chooseI++;
@@ -576,10 +602,10 @@ namespace PJ
 
 ///*
 // 	SwapColumn
- 
+
 // 	USAGE: assumes that all tiles are uniform in size. If the grid has irregular tile sizes, this
 // 	can fail and leak memory.
- 
+
 // */
 //bool SwapColumn(Vector3Int a, Vector3Int b)
 //{
@@ -597,7 +623,7 @@ namespace PJ
 //		return false;
 //	}
 
-//	for (int y = 0; y < Height(); y++)
+//	for (int y = 0; y < Height; y++)
 //	{
 //		Tile tileA = GetTile(Vector3Int(a.x, y, a.z));
 //		if (null != tileA)
@@ -642,7 +668,7 @@ namespace PJ
 
 //	USAGE: assumes that all tiles are uniform in size. If the grid has irregular tile sizes, this
 //	can fail and leak memory.
- 
+
 // */
 //bool SwapRow(Vector3Int a, Vector3Int b)
 //{
@@ -660,7 +686,7 @@ namespace PJ
 //		return false;
 //	}
 
-//	for (int x = 0; x < Width(); x++)
+//	for (int x = 0; x < Width; x++)
 //	{
 //		Tile tileA = GetTile(Vector3Int(x, a.y, a.z));
 //		if (null != tileA)
@@ -704,10 +730,10 @@ namespace PJ
 //	SlideColumn
 
 // 	Slides the column and wraps the tiles.
- 
+
 //	USAGE: assumes that all tiles are uniform in size. If the grid has irregular tile sizes, this
 //	can fail and leak memory.
- 
+
 // */
 //void SlideColumn(Vector3Int a, int offset, bool wrap)
 //{
@@ -715,7 +741,7 @@ namespace PJ
 //	PJ_TChangeAndRestore<bool> altSuspendNotify(mSuspendNotify, true);
 
 //	vector<PJ_GridTile*> tiles;
-//	for (int y = 0; y < Height(); y++)
+//	for (int y = 0; y < Height; y++)
 //	{
 //		PJ_GridTile tile = GetTile(Vector3Int(a.x, y, a.z));
 //		if (null == tile)
@@ -730,7 +756,7 @@ namespace PJ
 
 //	if (wrap && offset < 0)
 //	{
-//		offset = Height() + (offset % Height());
+//		offset = Height + (offset % Height);
 //	}
 
 //	FOR_CONST_I(vector<PJ_GridTile*>, tiles) {
@@ -740,7 +766,7 @@ namespace PJ
 
 //		if (wrap)
 //		{
-//			newLoc.y %= Height();
+//			newLoc.y %= Height;
 //		}
 
 //		if (!PutTile(tile, newLoc))
@@ -767,7 +793,7 @@ namespace PJ
 //	PJ_TChangeAndRestore<bool> altSuspendNotify(mSuspendNotify, true);
 
 //	vector<PJ_GridTile*> tiles;
-//	for (int x = 0; x < Width(); x++)
+//	for (int x = 0; x < Width; x++)
 //	{
 //		PJ_GridTile tile = GetTile(Vector3Int(x, a.y, a.z));
 //		if (null == tile)
@@ -782,7 +808,7 @@ namespace PJ
 
 //	if (wrap && offset < 0)
 //	{
-//		offset = Width() + (offset % Width());
+//		offset = Width + (offset % Width);
 //	}
 
 //	FOR_CONST_I(vector<PJ_GridTile*>, tiles) {
@@ -792,7 +818,7 @@ namespace PJ
 
 //		if (wrap)
 //		{
-//			newLoc.x %= Width();
+//			newLoc.x %= Width;
 //		}
 
 //		if (!PutTile(tile, newLoc))
@@ -808,7 +834,7 @@ namespace PJ
 //{
 //	switch (mDistro)
 //	{
-//		case BoardDistro::Track:
+//		case BoardDistro.Track:
 //			break;
 //		default:
 //			return;
@@ -818,7 +844,7 @@ namespace PJ
 //	// Remove all slots that have now been blocked.
 //	FOR_I(set<Vector2Int>, mDistroSizes) {
 //		Vector2Int size = *i;
-//		DistroCellMap::iterator cellIter = getDistroCellIterator(size);
+//		DistroCellMap.iterator cellIter = getDistroCellIterator(size);
 
 //		for (int x = blocked.left() - (size.x - 1); x <= blocked.right(); x++)
 //		{
@@ -849,7 +875,7 @@ namespace PJ
 //			}
 //		}
 //	}
-	
+
 //	return false;
 //}
 
@@ -863,8 +889,8 @@ namespace PJ
 //	mDistroSizes.insert(size);  // We are now tracking slots for this tile size.
 //	PJLog("Built map for size %d, %d", size.x, size.y);
 
-//	int width = Width();
-//	int height = Height();
+//	int width = Width;
+//	int height = Height;
 //	for (int x = 0; x <= (width - size.x); x++)
 //	{
 //		for (int y = 0; y <= (height - size.y); y++)
@@ -879,11 +905,11 @@ namespace PJ
 //	getDistroCellIterator
 
 //	RETURNS: a set of cells that are open slots available for the specified tile size.
- 
+
 // */
-//DistroCellMap::iterator getDistroCellIterator(Vector2Int size)
+//DistroCellMap.iterator getDistroCellIterator(Vector2Int size)
 //{
-//	DistroCellMap::iterator i = mDistroCellMap.find(size);
+//	DistroCellMap.iterator i = mDistroCellMap.find(size);
 //	if (mDistroCellMap.end() == i)
 //	{
 //		CellSet newSet;
@@ -945,22 +971,6 @@ namespace PJ
 
 //}
 
-//bool DoesAxialIndexMatchType(int index, AxialType type) {
-//	bool result = true;
-	
-//	switch (type) {
-//		case AxialType::AxialEdge:
-//			result = (index % 2 != 0);
-//			break;
-//		default:
-//			break;
-//	}
-	
-//	return result;
-//}
-
-
-
 //void evtUpdate(PJ_TimeSlice const& task)
 //{
 
@@ -974,7 +984,7 @@ namespace PJ
 
 //#pragma mark - PJ_GridTile
 
-//void PJ_GridTile::evtModified()
+//void PJ_GridTile.evtModified()
 //{
 //	if (null != mBoard) mBoard.evtTileModified(this);
 //}
