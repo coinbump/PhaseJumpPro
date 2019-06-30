@@ -10,7 +10,7 @@ namespace PJ
 		struct Events
 		{
 			public const string EvtAddTile = "tile_add";
-			public const string EvtRemoveTile = "tile_remove";
+			public const string EvtWillRemoveTile = "tile_will_remove";
 		}
 
 		protected virtual void EvtAddTile(Tile tile)
@@ -19,21 +19,89 @@ namespace PJ
 			broadcaster.Broadcast(new Event(Events.EvtAddTile));
 		}
 
-		protected virtual void EvtRemoveTile(Tile tile)
+		protected virtual void EvtWillRemoveTile(Tile tile)
 		{
 			if (null == broadcaster) { return; }
-			broadcaster.Broadcast(new Event(Events.EvtRemoveTile));
+			broadcaster.Broadcast(new Event(Events.EvtWillRemoveTile));
 		}
 
 		protected virtual void EvtTileModified(Tile tile)
 		{
-			
+
 		}
+
+		#region Axial
+		/*
+		 * AXIAL:
+		 * Axial directions can be used to navigate a grid by moving in a specific
+		 * direction (North, Northeast, etc.)
+		 */
+
+		// 	ORDER: top-left, running clockwise.
+		protected static readonly Vector2Int[] GridNeighborAxialLocs = {
+			new Vector2Int(-1, -1),
+			new Vector2Int(0, -1),
+			new Vector2Int(1, -1),
+			new Vector2Int(1, 0),
+			new Vector2Int(1, 1),
+			new Vector2Int(0, 1),
+			new Vector2Int(-1, 1),
+			new Vector2Int(-1, 0)
+		};
 
 		/// <summary>
 		/// Returns the number of axial directions from one cell to another (North, Northeast, etc.)
 		/// </summary>
-		public virtual int GetNumAxial() { return 8; }
+		public virtual int NumAxialDirections() { return 8; }
+
+		public Vector2Int GetAxial(int index) {
+			Vector2Int result = new Vector2Int(0, 0);
+			return index < 0 || index > (GridNeighborAxialLocs.Length - 1) ? result : GridNeighborAxialLocs[index];
+		}
+
+		public int GetAxialIndex(Vector2Int axial) {
+			for (int i = 0; i < NumAxialDirections(); i++) {
+				Vector2Int axialOffset = GridNeighborAxialLocs[i];
+				if (axialOffset == axial) {
+					return i;
+				}
+			}
+	
+			return -1;	// Invalid.
+		}
+
+		public int GetNextAxialIndex(int axialIndex, AxialDirection dir) {
+	
+			switch (dir) {
+				case AxialDirection.Right:
+					axialIndex++;
+					break;
+				default:
+					axialIndex--;
+					if (axialIndex < 0) {
+						axialIndex = NumAxialDirections() - 1;
+					}
+					break;
+			}
+	
+			axialIndex %= NumAxialDirections();
+	
+			return axialIndex;
+		}
+
+		Vector2Int GetNextAxial(int axialIndex, AxialDirection dir) {
+			int nextIndex = GetNextAxialIndex(axialIndex, dir);
+			return GridNeighborAxialLocs[nextIndex];
+		}
+
+		Vector3Int GridLocAxialToGridLoc(Vector3Int origin, Vector2Int axialOffset)
+		{
+			Vector3Int result = origin;
+			result.x += axialOffset.x;
+			result.y += axialOffset.y;
+			return result;
+		}
+		#endregion
 	}
 }
 
@@ -45,21 +113,11 @@ namespace PJ
 
 //public:
 //	bool mSuspendNotify;    // TRUE: suspend notification for add/remove events.
-//PJ_Vector2Int mSize;
+//Vector2Int mSize;
 //GridVector mGrids;
 //TileSet mTiles;
 //PJ_TSelection<PJ_GridTile> mSelection;
 //BoardDistro mDistro;    // OPTIMIZE: turn off distro tracking if you need more speed.
-
-//PJ_GridBoard(BoardDistro distro)
-//{
-//	mDistro = distro;
-//}
-//PJ_GridBoard()
-//:   mDistro(BoardDistro::Ignore)
-//{
-
-//}
 
 //void Build(int width, int height, int depth)
 //{
@@ -73,7 +131,7 @@ namespace PJ
 //	RemoveAllTiles();
 //	mGrids.RemoveAll();
 
-//	mSize = PJ_Vector2Int(width, height);
+//	mSize = Vector2Int(width, height);
 //	mDepth = depth;
 
 //	for (int i = 0; i < depth; i++)
@@ -89,7 +147,7 @@ namespace PJ
 //	OPTIMIZE: avoid calling methods, this function is called very often.
 
 // */
-//bool IsValidLoc(Vector3Int loc) const {
+//bool IsValidLoc(Vector3Int loc) {
 //		if (loc.x< 0 || loc.y< 0 || loc.x >= mSize.x() || loc.y >= mSize.y()) {
 //			return false;
 //		}
@@ -99,9 +157,9 @@ namespace PJ
 //		return true;
 //	}
 	
-//	virtual PJ_GridCell* NewCell() const { return new PJ_GridCell; }
+//	virtual PJ_GridCell* NewCell() { return new PJ_GridCell; }
 	
-//	PJ_GridCell* GetCell(Vector3Int loc) const {
+//	PJ_GridCell* GetCell(Vector3Int loc) {
 //		if (!IsValidLoc(loc)) { return NULL; }
 //		PJ_GridCell* result = NULL;
 
@@ -117,12 +175,12 @@ namespace PJ
 		
 //	}
 	
-//	bool IsCellBlocked(Vector3Int loc) const {
+//	bool IsCellBlocked(Vector3Int loc) {
 //		if (!IsValidLoc(loc)) { return true; }
 //		return mGrids[loc.z]->IsCellBlocked(loc);
 //	}
 	
-//	bool IsBlocked(PJ_VecRect2Int bounds, int depth) const {
+//	bool IsBlocked(PJ_VecRect2Int bounds, int depth) {
 //		for (int x = bounds.left(); x <= bounds.right(); x++) {
 //			for (int y = bounds.top(); y <= bounds.bottom(); y++) {
 //				if (IsCellBlocked(Vector3Int(x, y, depth))) {
@@ -134,7 +192,7 @@ namespace PJ
 //		return false;
 //	}
 	
-//	PJ_GridTile* GetTile(Vector3Int loc) const {
+//	PJ_GridTile* GetTile(Vector3Int loc) {
 //		PJ_GridCell* cell = GetCell(loc);
 //		if (NULL != cell) {
 //			return static_cast<PJ_GridTile*>(cell->mTile);
@@ -238,9 +296,9 @@ namespace PJ
 //virtual void evtUpdate(PJ_TimeSlice const& task);
 
 //// GO:
-//int Width() const { return mSize.x(); }
-//	int Height() const { return mSize.y(); }
-//	int Depth() const { return mDepth; }
+//int Width() { return mSize.x(); }
+//	int Height() { return mSize.y(); }
+//	int Depth() { return mDepth; }
 	
 //};
 
@@ -251,7 +309,7 @@ namespace PJ
 //	Maps which cells are an open slot for a tile of the specified size.
 	
 // */
-//void PJ_BoardGrid::mapDistroLocSize(Vector3Int loc, PJ_Vector2Int size, bool testBlocked)
+//void PJ_BoardGrid::mapDistroLocSize(Vector3Int loc, Vector2Int size, bool testBlocked)
 //{
 //	if ((loc.x + size.x() - 1) >= Width() ||
 //		(loc.y + size.y() - 1) >= Height())
@@ -304,8 +362,8 @@ namespace PJ
 //	}
 
 //	// Add back slots that are now unblocked.
-//	FOR_I(set<PJ_Vector2Int>, mDistroSizes) {
-//		PJ_Vector2Int size = *i;
+//	FOR_I(set<Vector2Int>, mDistroSizes) {
+//		Vector2Int size = *i;
 
 //		// FUTURE: this could be further optimized since we know that if size is smaller than the
 //		// unblocked bounds, as long as size fits we don't have to test IsBlocked (good enough for now).
@@ -334,7 +392,7 @@ namespace PJ
 //	If tracking.
  
 // */
-//Vector3Int PJ_BoardGrid::FindRandomLocForTile(PJ_Vector2Int tileSize)
+//Vector3Int PJ_BoardGrid::FindRandomLocForTile(Vector2Int tileSize)
 //{
 //	Vector3Int result(-1, -1);  // Invalid.
 //	switch (mDistro)
@@ -370,7 +428,7 @@ namespace PJ
 //}
 
 
-//void PJ_GridBoard::MoveTile(PJ_GridBoard::Tile* tile, Vector3Int newLoc)
+//void MoveTile(Tile* tile, Vector3Int newLoc)
 //{
 //	if (newLoc.z != tile->mOrigin.z)
 //	{
@@ -400,7 +458,7 @@ namespace PJ
 // 	can fail and leak memory.
  
 // */
-//bool PJ_GridBoard::SwapColumn(Vector3Int a, Vector3Int b)
+//bool SwapColumn(Vector3Int a, Vector3Int b)
 //{
 //	// Don't notify, we're just moving the tiles.
 //	PJ_TChangeAndRestore<bool> altSuspendNotify(mSuspendNotify, true);
@@ -463,7 +521,7 @@ namespace PJ
 //	can fail and leak memory.
  
 // */
-//bool PJ_GridBoard::SwapRow(Vector3Int a, Vector3Int b)
+//bool SwapRow(Vector3Int a, Vector3Int b)
 //{
 //	// Don't notify, we're just moving the tiles.
 //	PJ_TChangeAndRestore<bool> altSuspendNotify(mSuspendNotify, true);
@@ -528,7 +586,7 @@ namespace PJ
 //	can fail and leak memory.
  
 // */
-//void PJ_GridBoard::SlideColumn(Vector3Int a, int offset, bool wrap)
+//void SlideColumn(Vector3Int a, int offset, bool wrap)
 //{
 //	// Don't notify, we're just moving the tiles.
 //	PJ_TChangeAndRestore<bool> altSuspendNotify(mSuspendNotify, true);
@@ -580,7 +638,7 @@ namespace PJ
 //	can fail and leak memory.
 
 // */
-//void PJ_GridBoard::SlideRow(Vector3Int a, int offset, bool wrap)
+//void SlideRow(Vector3Int a, int offset, bool wrap)
 //{
 //	// Don't notify, we're just moving the tiles.
 //	PJ_TChangeAndRestore<bool> altSuspendNotify(mSuspendNotify, true);
@@ -635,8 +693,8 @@ namespace PJ
 //	}
 
 //	// Remove all slots that have now been blocked.
-//	FOR_I(set<PJ_Vector2Int>, mDistroSizes) {
-//		PJ_Vector2Int size = *i;
+//	FOR_I(set<Vector2Int>, mDistroSizes) {
+//		Vector2Int size = *i;
 //		DistroCellMap::iterator cellIter = getDistroCellIterator(size);
 
 //		for (int x = blocked.left() - (size.x() - 1); x <= blocked.right(); x++)
@@ -671,7 +729,7 @@ namespace PJ
 //	return NULL != cell->mTile;
 //}
 
-//bool PJ_BoardGrid::IsBlocked(PJ_VecRect2Int bounds) const {
+//bool PJ_BoardGrid::IsBlocked(PJ_VecRect2Int bounds) {
 //	for (int x = bounds.left(); x <= bounds.right(); x++) {
 //		for (int y = bounds.top(); y <= bounds.bottom(); y++) {
 //			if (IsCellBlocked(Vector3Int(x, y))) {
@@ -683,7 +741,7 @@ namespace PJ
 //	return false;
 //}
 
-//void PJ_BoardGrid::buildMapsForSize(PJ_Vector2Int size)
+//void PJ_BoardGrid::buildMapsForSize(Vector2Int size)
 //{
 //	// FUTURE: support resize of the board.
 //	if (mDistroSizes.find(size) != mDistroSizes.end())
@@ -711,7 +769,7 @@ namespace PJ
 //	RETURNS: a set of cells that are open slots available for the specified tile size.
  
 // */
-//PJ_BoardGrid::DistroCellMap::iterator PJ_BoardGrid::getDistroCellIterator(PJ_Vector2Int size)
+//PJ_BoardGrid::DistroCellMap::iterator PJ_BoardGrid::getDistroCellIterator(Vector2Int size)
 //{
 //	DistroCellMap::iterator i = mDistroCellMap.find(size);
 //	if (mDistroCellMap.end() == i)
@@ -724,88 +782,16 @@ namespace PJ
 
 //}
 
-///*
-// 	sGridNeighborAxialLocs
- 
-// 	ORDER: top-left, running clockwise.
- 
-// */
-//PJ_Vector2Int PJ_GridBoard::sGridNeighborAxialLocs[] = {
-//	PJ_Vector2Int(-1, -1),
-//	PJ_Vector2Int(0, -1),
-//	PJ_Vector2Int(1, -1),
-//	PJ_Vector2Int(1, 0),
-//	PJ_Vector2Int(1, 1),
-//	PJ_Vector2Int(0, 1),
-//	PJ_Vector2Int(-1, 1),
-//	PJ_Vector2Int(-1, 0)
-//};
 
-//PJ_Vector2Int PJ_GridBoard::GetAxial(int index) const {
-//	PJ_Vector2Int result;
-//	if (index< 0 || index> 7) {
-//		return result;
-//	}
-	
-//	return sGridNeighborAxialLocs[index];
-//}
 
-//int PJ_GridBoard::GetAxialIndex(PJ_Vector2Int axial) const {
-	
-//	// FUTURE: use map for optimization if needed.
-//	for (int i = 0; i<GetNumAxial(); i++) {
-//		PJ_Vector2Int axialOffset = sGridNeighborAxialLocs[i];
-//		if (axialOffset == axial) {
-//			return i;
-//		}
-//	}
-	
-//	return -1;	// Invalid.
-	
-//}
-
-//int PJ_GridBoard::GetNextAxialIndex(int axialIndex, AxialDir dir) const {
-	
-//	switch (dir) {
-//		case AxialDir::Right:
-//			axialIndex++;
-//			break;
-//		default:
-//			axialIndex--;
-//			if (axialIndex< 0) {
-//				axialIndex = GetNumAxial()-1;
-//			}
-//			break;
-//	}
-	
-//	axialIndex %= GetNumAxial();
-	
-//	return axialIndex;
-//}
-
-//PJ_Vector2Int PJ_GridBoard::GetNextAxial(int axialIndex, AxialDir dir) const {
-//	int nextIndex = GetNextAxialIndex(axialIndex, dir);
-//	return sGridNeighborAxialLocs[nextIndex];
-	
-//}
-
-//Vector3Int PJ_GridBoard::GridAxialToGridLoc(Vector3Int origin, PJ_Vector2Int axialOffset)
-//{
-//	Vector3Int result = origin;
-//	result.x += axialOffset.x();
-//	result.y += axialOffset.y();
-//	return result;
-
-//}
-
-//void PJ_GridBoard::CollectNeighbors(Tile* tile, vector<Tile*>& neighbors)
+//void CollectNeighbors(Tile* tile, vector<Tile*>& neighbors)
 //{
 
 //	neighbors.clear();
 
-//	for (int i = 0; i < GetNumAxial(); i++)
+//	for (int i = 0; i < NumAxialDirections(); i++)
 //	{
-//		PJ_Vector2Int axialOffset = sGridNeighborAxialLocs[i];
+//		Vector2Int axialOffset = GridNeighborAxialLocs[i];
 //		Vector3Int neighborLoc = GridAxialToGridLoc(tile->mOrigin, axialOffset);
 //		Tile* neighbor = static_cast<Tile*>(GetTile(neighborLoc));
 //		if (NULL != neighbor)
@@ -816,7 +802,7 @@ namespace PJ
 
 //}
 
-//bool PJ_GridBoard::DoTilesTouch(Tile* tile1, Tile* tile2, AxialType axialType)
+//bool DoTilesTouch(Tile* tile1, Tile* tile2, AxialType axialType)
 //{
 //	if (NULL == tile1 || NULL == tile2)
 //	{
@@ -830,9 +816,9 @@ namespace PJ
 
 //	bool result = false;
 
-//	for (int i = 0; i < GetNumAxial(); i++)
+//	for (int i = 0; i < NumAxialDirections(); i++)
 //	{
-//		PJ_Vector2Int axialOffset = GetAxial(i);
+//		Vector2Int axialOffset = GetAxial(i);
 //		Vector3Int neighborLoc = GridAxialToGridLoc(tile1->mOrigin, axialOffset);
 //		if (!DoesAxialIndexMatchType(i, axialType))
 //		{
@@ -849,7 +835,7 @@ namespace PJ
 
 //}
 
-//bool PJ_GridBoard::DoesAxialIndexMatchType(int index, AxialType type) const {
+//bool DoesAxialIndexMatchType(int index, AxialType type) {
 //	bool result = true;
 	
 //	switch (type) {
@@ -863,7 +849,7 @@ namespace PJ
 //	return result;
 //}
 
-//bool PJ_GridBoard::IsRowEmpty(Vector3Int row) const {
+//bool IsRowEmpty(Vector3Int row) {
 //	for (int x = 0; x<Width(); x++) {
 //		Vector3Int loc = row;
 //loc.x = x;
@@ -874,7 +860,7 @@ namespace PJ
 //	return true;
 //}
 
-//bool PJ_GridBoard::IsColumnEmpty(Vector3Int col) const {
+//bool IsColumnEmpty(Vector3Int col) {
 //	for (int y = 0; y<Height(); y++) {
 //		Vector3Int loc = col;
 //loc.y = y;
@@ -886,7 +872,7 @@ namespace PJ
 
 //}
 
-//bool PJ_GridBoard::IsRowFull(Vector3Int row) const {
+//bool IsRowFull(Vector3Int row) {
 //	for (int x = 0; x<Width(); x++) {
 //		Vector3Int loc = row;
 //loc.x = x;
@@ -897,7 +883,7 @@ namespace PJ
 //	return true;
 //}
 
-//bool PJ_GridBoard::IsColumnFull(Vector3Int col) const {
+//bool IsColumnFull(Vector3Int col) {
 //	for (int y = 0; y<Height(); y++) {
 //		Vector3Int loc = col;
 //loc.y = y;
@@ -909,7 +895,7 @@ namespace PJ
 	
 //}
 
-//int PJ_GridBoard::CountTilesInColumn(Vector3Int col) const {
+//int CountTilesInColumn(Vector3Int col) {
 	
 //	int result = 0;
 //	for (int y = 0; y<Height(); y++) {
@@ -926,7 +912,7 @@ namespace PJ
 	
 //}
 
-//int PJ_GridBoard::CountTilesInRow(Vector3Int col) const {
+//int CountTilesInRow(Vector3Int col) {
 	
 //	int result = 0;
 //	for (int x = 0; x<Width(); x++) {
@@ -942,7 +928,7 @@ namespace PJ
 	
 //}
 
-//void PJ_GridBoard::evtUpdate(PJ_TimeSlice const& task)
+//void evtUpdate(PJ_TimeSlice const& task)
 //{
 
 //	// Avoid mutation error if tile set changes during update.
