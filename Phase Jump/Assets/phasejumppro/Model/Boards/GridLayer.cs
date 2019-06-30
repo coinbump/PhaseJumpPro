@@ -73,7 +73,6 @@ namespace PJ
 
 		public int CountTilesInColumn(Vector3Int col)
 		{
-
 			int result = 0;
 			for (int y = 0; y < Height(); y++)
 			{
