@@ -65,74 +65,64 @@ namespace PJ
 		}
 		#endregion
 
+		#region Utilities
 		Row GetRow(int index) { return index < rows.Count ? rows[index] : null; }
 
 		void Resize(Vector2Int newSize)
 		{
-			var width = newSize.x;
-			var height = newSize.y;
+			var newWidth = newSize.x;
+			var newHeight = newSize.y;
 
-			if (width < 1 || height < 1)
+			if (newWidth < 1 || newHeight < 1)
 			{
 				Debug.LogError(string.Format("Invalid grid storage size {0}, {1}.", size.x, size.y));
 				return;
 			}
 
 			// Same size.
-			if (width == Width && height == Height) { return; }
+			if (newWidth == Width && newHeight == Height) { return; }
 
-			//	// Change width of existing rows first.
-			//	int y = 0;
-			//	for (typename PJ_TStdVector< Row *>.iterator i = rows.begin(); i != rows.end(); i++, y++) {
+			// Change width of existing rows first.
+			int y = 0;
+			foreach (Row row in rows)
+			{
+				// Don't bother resizing rows that are going to be deleted if the
+				// grid is shrinking.
+				if (y >= newHeight)
+				{
+					break;
+				}
 
-			//		// Don't bother resizing rows that are going to be deleted if the
-			//		// grid is shrinking.
-			//		if (y >= height)
-			//		{
-			//			break;
-			//		}
+				int sizeX = Width;
 
-			//		Row row = (*i);
-			//		int sizeX = Width;
+				// Add new columns.
+				while (row.Count < newWidth)
+				{
+					row.Add(new T());
+					sizeX++;
+				}
 
-			//		while (sizeX < width)
-			//		{
-			//			row->Add(defaultVal);
-			//			sizeX++;
-			//		}
-			//		if (sizeX > width)
-			//		{
-			//			int diff = sizeX - width;
+				// Remove deleted columns.
+				if (row.Count > newWidth)
+				{
+					var diff = row.Count - newWidth;
+					row.RemoveRange(row.Count - diff, diff);
+				}
+			}
 
-			//			typename Row.iterator  first = row->end();
-			//			first -= diff;
-			//			removeCells(row, first, row->end());
+			// Add new rows.
+			while (rows.Count < newHeight) {
+				var row = new Row(newWidth);
+				rows.Add(row);
+			}
+			if (rows.Count > newHeight)
+			{
+				var diff = rows.Count - newHeight;
+				rows.RemoveRange(rows.Count - diff, diff);
+			}
 
-			//			sizeX = width;
-			//		}
-			//	}
-
-			//	if (Height > height)
-			//	{
-			//		int diff = Height - height;
-
-			//		typename PJ_TStdVector<Row*>.iterator  first = rows.end() - diff;
-			//		RemoveRows(first, rows.end());
-			//		Height = height;
-			//	}
-			//	else
-			//	{
-			//		while (Height < height)
-			//		{
-			//			Row row = new Row(width, defaultVal);
-			//			rows.Add(row);
-			//			Height++;
-			//		}
-			//	}
-
-			//	Width = width;
-			//	Height = height;
-
+			size.x = newWidth;
+			size.y = newHeight;
 		}
 
 		public bool IsValidLoc(Vector2Int loc) {
@@ -164,5 +154,16 @@ namespace PJ
 				}
 			}
 		}
+		#endregion
+	}
+
+	class GridStorageBool : GenericGridStorage<bool>
+	{
+
+	}
+
+	class GridStorageInt : GenericGridStorage<int>
+	{
+
 	}
 }
