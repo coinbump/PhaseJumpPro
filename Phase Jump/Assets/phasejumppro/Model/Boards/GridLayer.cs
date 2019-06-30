@@ -3,286 +3,59 @@ using System.Collections;
 
 namespace PJ
 {
-	using Tile = PJ.AbstractGridTile;
-
-	class GridBoard : Core
+	class GridLayer
 	{
-		struct Events
-		{
-			public const string EvtAddTile = "tile_add";
-			public const string EvtRemoveTile = "tile_remove";
-		}
 
-		virtual protected void EvtAddTile(Tile tile)
-		{
-			if (null == broadcaster) { return; }
-			broadcaster.Broadcast(new Event(Events.EvtAddTile));
-		}
-
-		virtual protected void EvtRemoveTile(Tile tile)
-		{
-			if (null == broadcaster) { return; }
-			broadcaster.Broadcast(new Event(Events.EvtRemoveTile));
-		}
-
-		virtual protected void EvtTileModified(Tile tile)
-		{
-			
-		}
 	}
 }
 
-//virtual PJ_BoardGrid* newBoardGrid(int width, int height, BoardDistro distro)
-//{
-//	return new PJ_BoardGrid(this, width, height, distro);
-//}
+// TODO: port this C++ code to C#
+///*
+//	GridLayer
 
+//	Stores model data for each layer of the grid board.
+
+// */
+//class GridLayer : public PJ_TPtrGrid<PJ_GridCell> {
+//private:
+//	typedef PJ_TPtrGrid<PJ_GridCell>    Super;
 
 //public:
-//	bool mSuspendNotify;    // TRUE: suspend notification for add/remove events.
-//PJ_Vector2Int mSize;
-//GridVector mGrids;
-//TileSet mTiles;
-//PJ_TSelection<PJ_GridTile> mSelection;
+//	typedef set<PJ_GridCell*>       CellSet;
+
 //BoardDistro mDistro;    // OPTIMIZE: turn off distro tracking if you need more speed.
 
-//PJ_GridBoard(BoardDistro distro)
-//{
-//	mDistro = distro;
-//}
-//PJ_GridBoard()
-//:   mDistro(BoardDistro::Ignore)
-//{
+//protected:
+//	// DISTRIBUTION INFO:
+//	typedef map<PJ_Vector2Int, CellSet> DistroCellMap;
+//DistroCellMap mDistroCellMap;
+//set<PJ_Vector2Int> mDistroSizes;    // Sizes that have been mapped for distribution
 
-//}
+//protected:
+//	DistroCellMap::iterator getDistroCellIterator(PJ_Vector2Int size);
+//void buildMapsForSize(PJ_Vector2Int size);
+//void mapDistroLocSize(PJ_GridLoc loc, PJ_Vector2Int size, bool testBlocked);
 
-//void Build(int width, int height, int depth)
-//{
-//	if (depth < 1)
-//	{
-//		PJLog("ERROR. Grid depth must be >= 1.");
-//		depth = 1;
-//	}
+//public:
+//	PJ_GridBoard* mOwner;
 
-//	mSelection.Clear();
-//	RemoveAllTiles();
-//	mGrids.RemoveAll();
+//GridLayer(PJ_GridBoard* owner, int width, int height, BoardDistro distro);
+//virtual ~GridLayer();
 
-//	mSize = PJ_Vector2Int(width, height);
-//	mDepth = depth;
+//PJ_GridLoc FindRandomLocForTile(PJ_Vector2Int tileSize);
+//virtual void evtCellsBlocked(PJ_VecRect2Int const& blocked);
+//virtual void evtCellsUnblocked(PJ_VecRect2Int const& blocked);
 
-//	for (int i = 0; i < depth; i++)
-//	{
-//		PJ_BoardGridPtr grid(newBoardGrid(width, height, mDistro));
-//		mGrids.Add(grid);
-//	}
-//}
+//bool IsCellBlocked(PJ_GridLoc loc) const;
+//bool IsBlocked(PJ_VecRect2Int bounds) const;
 
-///*
-//	IsValidLoc
 
-//	OPTIMIZE: avoid calling methods, this function is called very often.
-
-// */
-//bool IsValidLoc(PJ_GridLoc loc) const {
-//		if (loc.x< 0 || loc.y< 0 || loc.x >= mSize.x() || loc.y >= mSize.y()) {
-//			return false;
-//		}
-//		if (loc.z< 0 || loc.z >= mDepth) {
-//			return false;
-//		}
-//		return true;
-//	}
-	
-//	virtual PJ_GridCell* NewCell() const { return new PJ_GridCell; }
-	
-//	PJ_GridCell* GetCell(PJ_GridLoc loc) const {
-//		if (!IsValidLoc(loc)) { return NULL; }
-//		PJ_GridCell* result = NULL;
-
-//PJ_BoardGrid* grid = mGrids[loc.z].get();
-//result = grid->GetCell(loc);
-//		if (NULL == result) {
-//			result = NewCell();
-//result->mLoc = loc;
-//			grid->SetCell(loc, result);
-//		}
-		
-//		return result;
-		
-//	}
-	
-//	bool IsCellBlocked(PJ_GridLoc loc) const {
-//		if (!IsValidLoc(loc)) { return true; }
-//		return mGrids[loc.z]->IsCellBlocked(loc);
-//	}
-	
-//	bool IsBlocked(PJ_VecRect2Int bounds, int depth) const {
-//		for (int x = bounds.left(); x <= bounds.right(); x++) {
-//			for (int y = bounds.top(); y <= bounds.bottom(); y++) {
-//				if (IsCellBlocked(PJ_GridLoc(x, y, depth))) {
-//					return true;
-//				}
-//			}
-//		}
-		
-//		return false;
-//	}
-	
-//	PJ_GridTile* GetTile(PJ_GridLoc loc) const {
-//		PJ_GridCell* cell = GetCell(loc);
-//		if (NULL != cell) {
-//			return static_cast<PJ_GridTile*>(cell->mTile);
-//		}
-//		return NULL;
-		
-//	}
-	
-//	PJ_VecRect2Int GetDestTileBounds(PJ_GridTile* tile, PJ_GridLoc loc)
-//{
-
-//	PJ_VecRect2Int result(loc.x, loc.y);
-//	result.SetSize(tile->mSize.x(), tile->mSize.y());
-//	return result;
-//}
-
-//bool PutTile(PJ_GridTile* tile, PJ_GridLoc loc)
-//{
-//	if (loc.z < 0 || loc.z >= static_cast<int>(mGrids.size())) { return false; }
-//	if (NULL == tile) { return false; }
-//	if (tile->mSize.x() < 1 || tile->mSize.y() < 1)
-//	{
-//		PJLog("ERROR. Invalid tile size %d, %d", tile->mSize.x(), tile->mSize.y());
-//		return false;
-//	}
-
-//	PJ_VecRect2Int tileBounds = GetDestTileBounds(tile, loc);
-//	if (IsBlocked(tileBounds, loc.z))
-//	{
-//		return false;
-//	}
-
-//	mTiles.Put(tile);
-
-//	tile->mBoard = this;
-//	tile->mGrid = mGrids[loc.z].get();
-//	tile->mOrigin = loc;
-
-//	for (int x = tileBounds.left(); x <= tileBounds.right(); x++)
-//	{
-//		for (int y = tileBounds.top(); y <= tileBounds.bottom(); y++)
-//		{
-//			GetCell(PJ_GridLoc(x, y, loc.z))->mTile = tile;
-//		}
-//	}
-//	tile->mGrid->evtCellsBlocked(tileBounds);
-
-//	// Don't notify until tile's state is set (or wrong state will be encoded).
-//	if (!mSuspendNotify)
-//	{
-//		evtAddTile(tile);
-//	}
-
-//	return true;
-//}
-
-//void RemoveTile(PJ_GridTile* tile)
-//{
-//	if (NULL == tile) { return; }
-//	if (tile->mBoard != this) { return; }
-
-//	if (!mSuspendNotify)
-//	{
-//		evtRemoveTile(tile);    // Before release
-//	}
-
-//	PJ_GridLoc loc = tile->mOrigin;
-//	PJ_VecRect2Int tileBounds = GetDestTileBounds(tile, loc);
-
-//	mSelection.Remove(tile);
-//	tile->mBoard = NULL;
-
-//	// Save value before release tile.
-//	int depth = tile->mOrigin.z;
-
-//	for (int x = tileBounds.left(); x <= tileBounds.right(); x++)
-//	{
-//		for (int y = tileBounds.top(); y <= tileBounds.bottom(); y++)
-//		{
-//			GetCell(PJ_GridLoc(x, y, depth))->mTile = NULL;
-//		}
-//	}
-//	mTiles.Remove(tile);
-//	mGrids[depth]->evtCellsUnblocked(tileBounds);
-
-//	if (!mSuspendNotify)
-//	{
-//		mBroadcaster->Broadcast(kEvtTileRemoved);
-//	}
-//}
-
-//virtual void RemoveAllTiles()
-//{
-//	set<PJ_GridTile*> iterTiles = mTiles;
-//	FOR_I(set<PJ_GridTile*>, iterTiles) {
-//		RemoveTile(*i);
-//	}
-//}
-
-//void MoveTile(Tile* tile, PJ_GridLoc newLoc);
-//bool SwapColumn(PJ_GridLoc a, PJ_GridLoc b);
-//bool SwapRow(PJ_GridLoc a, PJ_GridLoc b);
-//void SlideColumn(PJ_GridLoc a, int offset, bool wrap);
-//void SlideRow(PJ_GridLoc a, int offset, bool wrap);
-
-//virtual bool DoesAxialIndexMatchType(int index, AxialType type) const;
-//virtual PJ_Vector2Int GetAxial(int index) const;
-//virtual PJ_GridLoc GridAxialToGridLoc(PJ_GridLoc origin, PJ_Vector2Int axialOffset);
-//virtual int GetNumAxial() const { return 8; }
-//	virtual int GetAxialIndex(PJ_Vector2Int axial) const;
-//virtual int GetNextAxialIndex(int axialIndex, AxialDir dir) const;
-//virtual PJ_Vector2Int GetNextAxial(int axialIndex, AxialDir dir) const;
-//virtual void CollectNeighbors(Tile* tile, vector<Tile*>& neighbors);
-//virtual bool DoTilesTouch(Tile* tile1, Tile* tile2, AxialType axialType);
-
-//virtual bool IsRowEmpty(PJ_GridLoc row) const;
-//virtual bool IsColumnEmpty(PJ_GridLoc col) const;
-//virtual bool IsRowFull(PJ_GridLoc row) const;
-//virtual bool IsColumnFull(PJ_GridLoc col) const;
-
-//int CountTilesInColumn(PJ_GridLoc col) const;
-//int CountTilesInRow(PJ_GridLoc col) const;
-
-//virtual void evtUpdate(PJ_TimeSlice const& task);
-
-//// GO:
-//int Width() const { return mSize.x(); }
-//	int Height() const { return mSize.y(); }
-//	int Depth() const { return mDepth; }
-	
-//};
-//	//
-////  PJ_GridBoard.mm
-////  Phase Jump
-////
-////  Created by Jeremy Vineyard on 10/10/10.
-////  Copyright 2010 Coin Bump. All rights reserved.
-////
-
-//#include "stdafx.h"
-
-//#include "PJ_GridBoard.h"
-//#include "PJ_Profiler.h"
-//#include "PJ_Random.h"
-//#include "PJ_Utils.h"
-//#include <assert.h>
-
-///*
-//	mapDistroLocSize
+/*
+	mapDistroLocSize
  
-//	Maps which cells are an open slot for a tile of the specified size.
+	Maps which cells are an open slot for a tile of the specified size.
 	
-// */
+ */
 //void PJ_BoardGrid::mapDistroLocSize(PJ_GridLoc loc, PJ_Vector2Int size, bool testBlocked)
 //{
 //	if ((loc.x + size.x() - 1) >= Width() ||
@@ -1343,5 +1116,3 @@ namespace PJ
 //	EXPECT_EQ(4, board->GetNextAxialIndex(5, AxialDir::Left));
 
 //}
-
-//#endif
