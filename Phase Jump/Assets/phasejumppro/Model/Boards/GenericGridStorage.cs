@@ -57,6 +57,8 @@ namespace PJ
 
 			this.size = size;
 
+			rows = new List<Row>();
+
 			for (int i = 0; i < size.y; i++)
 			{
 				Row row = new Row(size.x);
@@ -68,7 +70,7 @@ namespace PJ
 		#region Utilities
 		Row GetRow(int index) { return index < rows.Count ? rows[index] : null; }
 
-		void Resize(Vector2Int newSize)
+		public void Resize(Vector2Int newSize)
 		{
 			var newWidth = newSize.x;
 			var newHeight = newSize.y;

@@ -6,8 +6,8 @@
       <File FileName="Assets/phasejumppro/Input/MoveToMouseInputControlScheme2D.cs" />
       <File FileName="Assets/phasejumppro/Editor/UnitTests/UnitTests_BoardTypes.cs" />
       <File FileName="Assets/phasejumppro/Model/Boards/GridCell.cs" Line="25" Column="1" />
-      <File FileName="Assets/phasejumppro/Go/Behavior/Behavior.cs" />
-      <File FileName="Assets/phasejumppro/Model/StateMachine.cs" />
+      <File FileName="Assets/phasejumppro/Go/Behavior/Behavior.cs" Line="38" Column="32" />
+      <File FileName="Assets/phasejumppro/Model/StateMachine.cs" Line="20" Column="39" />
       <File FileName="Assets/phasejumppro/Editor/UnitTests/UnitTests_Goal.cs" />
       <File FileName="Assets/phasejumppro/Editor/UnitTests/UnitTests_GridBoard.cs" />
       <File FileName="Assets/phasejumppro/Editor/UnitTests/UnitTests_GridLayer.cs" />
@@ -15,7 +15,9 @@
       <File FileName="Assets/phasejumppro/Model/Patterns/Command.cs" />
       <File FileName="Assets/phasejumppro/Model/Boards/GridBoard.cs" Line="26" Column="4" />
       <File FileName="Assets/phasejumppro/Model/Boards/GridLayer.cs" Line="7" Column="1" />
-      <File FileName="Assets/phasejumppro/Model/Boards/GenericGridStorage.cs" Line="13" Column="17" />
+      <File FileName="Assets/phasejumppro/Editor/UnitTests/NewMonoBehaviour.cs" Line="11" Column="43" />
+      <File FileName="Assets/phasejumppro/Editor/UnitTests/UnitTests_ObservedValue.cs" Line="35" Column="20" />
+      <File FileName="Assets/phasejumppro/Model/Boards/GenericGridStorage.cs" Line="64" Column="5" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
