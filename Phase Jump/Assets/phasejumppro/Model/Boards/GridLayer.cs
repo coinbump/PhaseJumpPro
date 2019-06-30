@@ -55,7 +55,7 @@ namespace PJ
 			return true;
 		}
 
-		public bool IsCellBlocked(Vector3Int loc)
+		public virtual bool IsCellBlocked(Vector3Int loc)
 		{
 			if (!IsValidLoc(loc)) { return true; }
 
@@ -106,7 +106,7 @@ namespace PJ
 			return result;
 		}
 
-		bool IsRowFull(Vector3Int row)
+		public virtual bool IsRowFull(Vector3Int row)
 		{
 			for (int x = 0; x < Width(); x++)
 			{
@@ -120,7 +120,7 @@ namespace PJ
 			return true;
 		}
 
-		bool IsColumnFull(Vector3Int col)
+		public virtual bool IsColumnFull(Vector3Int col)
 		{
 			for (int y = 0; y < Height(); y++)
 			{
