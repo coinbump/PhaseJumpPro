@@ -7,6 +7,9 @@ namespace PJ
 	
 	class GridBoard : Core
 	{
+		public int depth = 1;
+		public Vector2Int size = new Vector2Int(0, 0);
+
 		struct Events
 		{
 			public const string EvtAddTile = "tile_add";
@@ -17,6 +20,34 @@ namespace PJ
 		public int Width() { return 0; }
 		public int Height() { return 0; }
 		public Tile GetTile(Vector3Int loc) { return null; }
+		public GridCell GetCell(Vector3Int loc) { return null; }
+
+		#region Utilities
+		public bool IsValidLoc(Vector3Int loc)
+		{
+			if (loc.x < 0 || loc.y < 0 || loc.x >= size.x || loc.y >= size.y)
+			{
+				return false;
+			}
+			if (loc.z < 0 || loc.z >= depth)
+			{
+				return false;
+			}
+			return true;
+		}
+
+		public bool IsCellBlocked(Vector3Int loc) {
+			if (!IsValidLoc(loc)) { return true; }
+
+			GridCell cell = GetCell(loc);
+			if (null == cell) {
+				return false;	// Nothing there.
+			}
+			if (null != cell.tile && cell.tile.isGhost) {
+				return false;	// Ghost tile.
+			}
+			return null != cell.tile;
+		}
 
 		bool IsRowEmpty(Vector3Int row)
 		{
@@ -110,6 +141,7 @@ namespace PJ
 
 			return result;
 		}
+		#endregion
 
 		#region Events
 		protected virtual void EvtAddTile(Tile tile)
@@ -213,9 +245,9 @@ namespace PJ
 
 //public:
 //	bool mSuspendNotify;    // TRUE: suspend notification for add/remove events.
-//Vector2Int mSize;
+//Vector2Int size;
 //GridVector mGrids;
-//TileSet mTiles;
+//TileSet tiles;
 //PJ_TSelection<PJ_GridTile> mSelection;
 //BoardDistro mDistro;    // OPTIMIZE: turn off distro tracking if you need more speed.
 
@@ -231,8 +263,8 @@ namespace PJ
 //	RemoveAllTiles();
 //	mGrids.RemoveAll();
 
-//	mSize = Vector2Int(width, height);
-//	mDepth = depth;
+//	size = Vector2Int(width, height);
+//	depth = depth;
 
 //	for (int i = 0; i < depth; i++)
 //	{
@@ -247,21 +279,12 @@ namespace PJ
 //	OPTIMIZE: avoid calling methods, this function is called very often.
 
 // */
-//bool IsValidLoc(Vector3Int loc) {
-//		if (loc.x< 0 || loc.y< 0 || loc.x >= mSize.x() || loc.y >= mSize.y()) {
-//			return false;
-//		}
-//		if (loc.z< 0 || loc.z >= mDepth) {
-//			return false;
-//		}
-//		return true;
-//	}
 	
-//	virtual PJ_GridCell NewCell() { return new PJ_GridCell; }
+//	virtual GridCell NewCell() { return new GridCell; }
 	
-//	PJ_GridCell GetCell(Vector3Int loc) {
+//	GridCell GetCell(Vector3Int loc) {
 //		if (!IsValidLoc(loc)) { return null; }
-//		PJ_GridCell result = null;
+//		GridCell result = null;
 
 //PJ_BoardGrid grid = mGrids[loc.z].get();
 //result = grid.GetCell(loc);
@@ -293,9 +316,9 @@ namespace PJ
 //	}
 	
 //	PJ_GridTile GetTile(Vector3Int loc) {
-//		PJ_GridCell cell = GetCell(loc);
+//		GridCell cell = GetCell(loc);
 //		if (null != cell) {
-//			return static_cast<PJ_GridTile*>(cell.mTile);
+//			return static_cast<PJ_GridTile*>(cell.tile);
 //		}
 //		return null;
 		
@@ -305,7 +328,7 @@ namespace PJ
 //{
 
 //	PJ_VecRect2Int result(loc.x, loc.y);
-//	result.SetSize(tile.mSize.x(), tile.mSize.y());
+//	result.SetSize(tile.size.x, tile.size.y);
 //	return result;
 //}
 
@@ -313,9 +336,9 @@ namespace PJ
 //{
 //	if (loc.z < 0 || loc.z >= static_cast<int>(mGrids.size())) { return false; }
 //	if (null == tile) { return false; }
-//	if (tile.mSize.x() < 1 || tile.mSize.y() < 1)
+//	if (tile.size.x < 1 || tile.size.y < 1)
 //	{
-//		PJLog("ERROR. Invalid tile size %d, %d", tile.mSize.x(), tile.mSize.y());
+//		PJLog("ERROR. Invalid tile size %d, %d", tile.size.x, tile.size.y);
 //		return false;
 //	}
 
@@ -325,7 +348,7 @@ namespace PJ
 //		return false;
 //	}
 
-//	mTiles.Put(tile);
+//	tiles.Put(tile);
 
 //	tile.mBoard = this;
 //	tile.mGrid = mGrids[loc.z].get();
@@ -335,7 +358,7 @@ namespace PJ
 //	{
 //		for (int y = tileBounds.top(); y <= tileBounds.bottom(); y++)
 //		{
-//			GetCell(Vector3Int(x, y, loc.z)).mTile = tile;
+//			GetCell(Vector3Int(x, y, loc.z)).tile = tile;
 //		}
 //	}
 //	tile.mGrid.evtCellsBlocked(tileBounds);
@@ -372,10 +395,10 @@ namespace PJ
 //	{
 //		for (int y = tileBounds.top(); y <= tileBounds.bottom(); y++)
 //		{
-//			GetCell(Vector3Int(x, y, depth)).mTile = null;
+//			GetCell(Vector3Int(x, y, depth)).tile = null;
 //		}
 //	}
-//	mTiles.Remove(tile);
+//	tiles.Remove(tile);
 //	mGrids[depth].evtCellsUnblocked(tileBounds);
 
 //	if (!mSuspendNotify)
@@ -386,7 +409,7 @@ namespace PJ
 
 //virtual void RemoveAllTiles()
 //{
-//	set<PJ_GridTile*> iterTiles = mTiles;
+//	set<PJ_GridTile*> iterTiles = tiles;
 //	FOR_I(set<PJ_GridTile*>, iterTiles) {
 //		RemoveTile(*i);
 //	}
@@ -396,9 +419,9 @@ namespace PJ
 //virtual void evtUpdate(PJ_TimeSlice const& task);
 
 //// GO:
-//int Width() { return mSize.x(); }
-//	int Height() { return mSize.y(); }
-//	int Depth() { return mDepth; }
+//int Width() { return size.x; }
+//	int Height() { return size.y; }
+//	int Depth() { return depth; }
 	
 //};
 
@@ -409,10 +432,10 @@ namespace PJ
 //	Maps which cells are an open slot for a tile of the specified size.
 	
 // */
-//void PJ_BoardGrid::mapDistroLocSize(Vector3Int loc, Vector2Int size, bool testBlocked)
+//void mapDistroLocSize(Vector3Int loc, Vector2Int size, bool testBlocked)
 //{
-//	if ((loc.x + size.x() - 1) >= Width() ||
-//		(loc.y + size.y() - 1) >= Height())
+//	if ((loc.x + size.x - 1) >= Width() ||
+//		(loc.y + size.y - 1) >= Height())
 //	{
 
 //		return; // Invalid location.
@@ -427,10 +450,10 @@ namespace PJ
 //		isBlocked = IsBlocked(bounds);
 //	}
 
-//	PJ_GridCell cell = GetCell(loc);
+//	GridCell cell = GetCell(loc);
 //	if (null == cell)
 //	{
-//		cell = new PJ_GridCell(loc);
+//		cell = new GridCell(loc);
 //		SetCell(loc, cell);
 //	}
 //	if (!isBlocked)
@@ -450,7 +473,7 @@ namespace PJ
 //	Called when a tile is removed, updates the open slots map.
  
 // */
-//void PJ_BoardGrid::evtCellsUnblocked(PJ_VecRect2Int const& blocked)
+//void evtCellsUnblocked(PJ_VecRect2Int const& blocked)
 //{
 //	switch (mDistro)
 //	{
@@ -467,9 +490,9 @@ namespace PJ
 
 //		// FUTURE: this could be further optimized since we know that if size is smaller than the
 //		// unblocked bounds, as long as size fits we don't have to test IsBlocked (good enough for now).
-//		for (int x = blocked.left() - (size.x() - 1); x <= blocked.right(); x++)
+//		for (int x = blocked.left() - (size.x - 1); x <= blocked.right(); x++)
 //		{
-//			for (int y = blocked.top() - (size.y() - 1); y <= blocked.bottom(); y++)
+//			for (int y = blocked.top() - (size.y - 1); y <= blocked.bottom(); y++)
 //			{
 //				if (!IsValidLoc(Vector3Int(x, y))) { continue; }
 
@@ -492,7 +515,7 @@ namespace PJ
 //	If tracking.
  
 // */
-//Vector3Int PJ_BoardGrid::FindRandomLocForTile(Vector2Int tileSize)
+//Vector3Int FindRandomLocForTile(Vector2Int tileSize)
 //{
 //	Vector3Int result(-1, -1);  // Invalid.
 //	switch (mDistro)
@@ -506,7 +529,7 @@ namespace PJ
 //	}
 
 //	buildMapsForSize(tileSize); // Update distro maps (if needed).
-//	PJ_BoardGrid::DistroCellMap::iterator cellI = getDistroCellIterator(tileSize);  // Always returns an iterator
+//	DistroCellMap::iterator cellI = getDistroCellIterator(tileSize);  // Always returns an iterator
 //	size_t numCells = cellI.second.size();
 
 //	if (numCells > 0)
@@ -781,7 +804,7 @@ namespace PJ
 
 //}
 
-//void PJ_BoardGrid::evtCellsBlocked(PJ_VecRect2Int const& blocked)
+//void evtCellsBlocked(PJ_VecRect2Int const& blocked)
 //{
 //	switch (mDistro)
 //	{
@@ -797,9 +820,9 @@ namespace PJ
 //		Vector2Int size = *i;
 //		DistroCellMap::iterator cellIter = getDistroCellIterator(size);
 
-//		for (int x = blocked.left() - (size.x() - 1); x <= blocked.right(); x++)
+//		for (int x = blocked.left() - (size.x - 1); x <= blocked.right(); x++)
 //		{
-//			for (int y = blocked.top() - (size.y() - 1); y <= blocked.bottom(); y++)
+//			for (int y = blocked.top() - (size.y - 1); y <= blocked.bottom(); y++)
 //			{
 //				if (!IsValidLoc(Vector3Int(x, y))) { continue; }
 
@@ -809,7 +832,7 @@ namespace PJ
 //				//				assert(thisBounds.TestIntersect(blocked));
 //#endif
 
-//				PJ_GridCell cell = GetCell(Vector3Int(x, y));
+//				GridCell cell = GetCell(Vector3Int(x, y));
 //				cellIter.second.erase(cell);
 //			}
 //		}
@@ -817,19 +840,8 @@ namespace PJ
 
 //}
 
-//bool PJ_BoardGrid::IsCellBlocked(Vector3Int loc) const  {
-//	if (!IsValidLoc(loc)) { return true; }
-//	PJ_GridCell cell = GetCell(loc);
-//	if (null == cell) {
-//		return false;	// Nothing there.
-//	}
-//	if (null != cell.mTile && cell.mTile.mIsGhost) {
-//		return false;	// Ghost tile.
-//	}
-//	return null != cell.mTile;
-//}
 
-//bool PJ_BoardGrid::IsBlocked(PJ_VecRect2Int bounds) {
+//bool IsBlocked(PJ_VecRect2Int bounds) {
 //	for (int x = bounds.left(); x <= bounds.right(); x++) {
 //		for (int y = bounds.top(); y <= bounds.bottom(); y++) {
 //			if (IsCellBlocked(Vector3Int(x, y))) {
@@ -841,7 +853,7 @@ namespace PJ
 //	return false;
 //}
 
-//void PJ_BoardGrid::buildMapsForSize(Vector2Int size)
+//void buildMapsForSize(Vector2Int size)
 //{
 //	// FUTURE: support resize of the board.
 //	if (mDistroSizes.find(size) != mDistroSizes.end())
@@ -849,13 +861,13 @@ namespace PJ
 //		return;
 //	}
 //	mDistroSizes.insert(size);  // We are now tracking slots for this tile size.
-//	PJLog("Built map for size %d, %d", size.x(), size.y());
+//	PJLog("Built map for size %d, %d", size.x, size.y);
 
 //	int width = Width();
 //	int height = Height();
-//	for (int x = 0; x <= (width - size.x()); x++)
+//	for (int x = 0; x <= (width - size.x); x++)
 //	{
-//		for (int y = 0; y <= (height - size.y()); y++)
+//		for (int y = 0; y <= (height - size.y); y++)
 //		{
 //			mapDistroLocSize(Vector3Int(x, y), size, true);
 //		}
@@ -869,7 +881,7 @@ namespace PJ
 //	RETURNS: a set of cells that are open slots available for the specified tile size.
  
 // */
-//PJ_BoardGrid::DistroCellMap::iterator PJ_BoardGrid::getDistroCellIterator(Vector2Int size)
+//DistroCellMap::iterator getDistroCellIterator(Vector2Int size)
 //{
 //	DistroCellMap::iterator i = mDistroCellMap.find(size);
 //	if (mDistroCellMap.end() == i)
@@ -953,7 +965,7 @@ namespace PJ
 //{
 
 //	// Avoid mutation error if tile set changes during update.
-//	set<PJ_GridTile*> iterTiles = mTiles;
+//	set<PJ_GridTile*> iterTiles = tiles;
 //	FOR_CONST_I(TileSet, iterTiles) {
 //		(*i).evtUpdate(task);
 //	}
