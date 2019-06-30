@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+ * RATING: 5 stars. Simple storage class
+ * CODE REVIEW: 6.30.19
+ */
 namespace PJ
 {
 	/// <summary>
