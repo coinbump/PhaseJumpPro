@@ -3,9 +3,80 @@ using System.Collections;
 
 namespace PJ
 {
+	/// <summary>
+	/// Stores model data for each layer of the grid board
+	/// </summary>
 	class GridLayer
 	{
+		// TODO: Finish this
+		public int Width() { return 0; }
+		public int Height() { return 0; }
 
+		public AbstractGridTile GetTile(Vector3Int loc)
+		{
+			return null;
+		}
+		public bool IsValidLoc(Vector3Int loc)
+		{
+			return false;
+		}
+		public GridCell GetCell(Vector3Int loc)
+		{
+			return null;
+		}
+
+		public bool IsRowEmpty(Vector3Int row)
+		{
+			for (int x = 0; x < Width(); x++)
+			{
+				Vector3Int loc = row;
+				loc.x = x;
+				if (null != GetTile(loc))
+				{
+					return false;
+				}
+			}
+			return true;
+		}
+
+		public bool IsColumnEmpty(Vector3Int col)
+		{
+			for (int y = 0; y < Height(); y++)
+			{
+				Vector3Int loc = col;
+				loc.y = y;
+				if (null != GetTile(loc))
+				{
+					return false;
+				}
+			}
+			return true;
+		}
+
+		public bool IsCellBlocked(Vector3Int loc)
+		{
+			if (!IsValidLoc(loc)) { return true; }
+			GridCell cell = GetCell(loc);
+			if (null == cell)
+			{
+				return false;   // Nothing there.
+			}
+			if (null != cell.tile && cell.tile.isGhost)
+			{
+				return false;   // Ghost tile.
+			}
+			return null != cell.tile;
+		}
+
+		//bool IsBlocked(PJ_VecRect2Int bounds) {
+		//	for (int x = bounds.left(); x <= bounds.right(); x++) {
+		//		for (int y = bounds.top(); y <= bounds.bottom(); y++) {
+		//			if (IsCellBlocked(Vector3Int(x, y))) {
+		//				return true;
+		//			}
+		//		}
+		//	}
+		//}
 	}
 }
 
@@ -16,25 +87,25 @@ namespace PJ
 //	Stores model data for each layer of the grid board.
 
 // */
-//class GridLayer : public PJ_TPtrGrid<PJ_GridCell> {
+//class GridLayer : public GenericGridStorage<GridCell> {
 //private:
-//	typedef PJ_TPtrGrid<PJ_GridCell>    Super;
+//	typedef GenericGridStorage<GridCell>    Super;
 
 //public:
-//	typedef set<PJ_GridCell*>       CellSet;
+//	typedef set<GridCell*>       CellSet;
 
 //BoardDistro mDistro;    // OPTIMIZE: turn off distro tracking if you need more speed.
 
 //protected:
 //	// DISTRIBUTION INFO:
-//	typedef map<PJ_Vector2Int, CellSet> DistroCellMap;
+//	typedef map<PJ_Vector3Int, CellSet> DistroCellMap;
 //DistroCellMap mDistroCellMap;
-//set<PJ_Vector2Int> mDistroSizes;    // Sizes that have been mapped for distribution
+//set<PJ_Vector3Int> mDistroSizes;    // Sizes that have been mapped for distribution
 
 //protected:
-//	DistroCellMap::iterator getDistroCellIterator(PJ_Vector2Int size);
-//void buildMapsForSize(PJ_Vector2Int size);
-//void mapDistroLocSize(PJ_GridLoc loc, PJ_Vector2Int size, bool testBlocked);
+//	DistroCellMap::iterator getDistroCellIterator(PJ_Vector3Int size);
+//void buildMapsForSize(PJ_Vector3Int size);
+//void mapDistroLocSize(Vector3Int loc, PJ_Vector3Int size, bool testBlocked);
 
 //public:
 //	PJ_GridBoard* mOwner;
@@ -42,11 +113,11 @@ namespace PJ
 //GridLayer(PJ_GridBoard* owner, int width, int height, BoardDistro distro);
 //virtual ~GridLayer();
 
-//PJ_GridLoc FindRandomLocForTile(PJ_Vector2Int tileSize);
+//Vector3Int FindRandomLocForTile(PJ_Vector3Int tileSize);
 //virtual void evtCellsBlocked(PJ_VecRect2Int const& blocked);
 //virtual void evtCellsUnblocked(PJ_VecRect2Int const& blocked);
 
-//bool IsCellBlocked(PJ_GridLoc loc) const;
+//bool IsCellBlocked(Vector3Int loc) const;
 //bool IsBlocked(PJ_VecRect2Int bounds) const;
 
 
@@ -56,7 +127,7 @@ namespace PJ
 	Maps which cells are an open slot for a tile of the specified size.
 	
  */
-//void PJ_BoardGrid::mapDistroLocSize(PJ_GridLoc loc, PJ_Vector2Int size, bool testBlocked)
+//void mapDistroLocSize(Vector3Int loc, PJ_Vector3Int size, bool testBlocked)
 //{
 //	if ((loc.x + size.x() - 1) >= Width() ||
 //		(loc.y + size.y() - 1) >= Height())
@@ -74,30 +145,30 @@ namespace PJ
 //		isBlocked = IsBlocked(bounds);
 //	}
 
-//	PJ_GridCell* cell = GetCell(loc);
-//	if (NULL == cell)
+//	GridCell* cell = GetCell(loc);
+//	if (null == cell)
 //	{
-//		cell = new PJ_GridCell(loc);
+//		cell = new GridCell(loc);
 //		SetCell(loc, cell);
 //	}
 //	if (!isBlocked)
 //	{
-//		getDistroCellIterator(size)->second.insert(cell);
+//		getDistroCellIterator(size).second.insert(cell);
 //	}
 //	else
 //	{
-//		getDistroCellIterator(size)->second.erase(cell);
+//		getDistroCellIterator(size).second.erase(cell);
 //	}
 
 //}
 
 ///*
 //	evtCellsUnblocked
- 
+
 //	Called when a tile is removed, updates the open slots map.
- 
+
 // */
-//void PJ_BoardGrid::evtCellsUnblocked(PJ_VecRect2Int const& blocked)
+//void evtCellsUnblocked(PJ_VecRect2Int const& blocked)
 //{
 //	switch (mDistro)
 //	{
@@ -109,8 +180,8 @@ namespace PJ
 //	}
 
 //	// Add back slots that are now unblocked.
-//	FOR_I(set<PJ_Vector2Int>, mDistroSizes) {
-//		PJ_Vector2Int size = *i;
+//	FOR_I(set<PJ_Vector3Int>, mDistroSizes) {
+//		PJ_Vector3Int size = *i;
 
 //		// FUTURE: this could be further optimized since we know that if size is smaller than the
 //		// unblocked bounds, as long as size fits we don't have to test IsBlocked (good enough for now).
@@ -118,7 +189,7 @@ namespace PJ
 //		{
 //			for (int y = blocked.top() - (size.y() - 1); y <= blocked.bottom(); y++)
 //			{
-//				if (!IsValidLoc(PJ_GridLoc(x, y))) { continue; }
+//				if (!IsValidLoc(Vector3Int(x, y))) { continue; }
 
 //# ifdef __DEBUG__
 //				//				PJ_VecRect2Int	thisBounds(x,y);
@@ -126,7 +197,7 @@ namespace PJ
 //				//				assert(thisBounds.TestIntersect(blocked));
 //#endif
 
-//				mapDistroLocSize(PJ_GridLoc(x, y), size, true);
+//				mapDistroLocSize(Vector3Int(x, y), size, true);
 //			}
 //		}
 //	}
@@ -135,13 +206,13 @@ namespace PJ
 
 ///*
 //	FindRandomLocForTile
- 
+
 //	If tracking.
- 
+
 // */
-//PJ_GridLoc PJ_BoardGrid::FindRandomLocForTile(PJ_Vector2Int tileSize)
+//Vector3Int FindRandomLocForTile(PJ_Vector3Int tileSize)
 //{
-//	PJ_GridLoc result(-1, -1);  // Invalid.
+//	Vector3Int result(-1, -1);  // Invalid.
 //	switch (mDistro)
 //	{
 //		case BoardDistro::Track:
@@ -153,8 +224,8 @@ namespace PJ
 //	}
 
 //	buildMapsForSize(tileSize); // Update distro maps (if needed).
-//	PJ_BoardGrid::DistroCellMap::iterator cellI = getDistroCellIterator(tileSize);  // Always returns an iterator
-//	size_t numCells = cellI->second.size();
+//	DistroCellMap::iterator cellI = getDistroCellIterator(tileSize);  // Always returns an iterator
+//	size_t numCells = cellI.second.size();
 
 //	if (numCells > 0)
 //	{
@@ -162,20 +233,20 @@ namespace PJ
 
 //		// NOTE: possibly optimize this in the future. We need set for fast remove, but random
 //		// choice isn't as efficient. (optimizing remove is more important).
-//		CellSet::iterator chooseI = cellI->second.begin();
+//		CellSet::iterator chooseI = cellI.second.begin();
 //		for (int choose = 0; choose < choice; choose++)
 //		{
 //			chooseI++;
 //		}
-//		result = (*chooseI)->mLoc;
+//		result = (*chooseI).mLoc;
 //	}
 
 //	return result;
 
 //}
 
-//PJ_BoardGrid::PJ_BoardGrid(PJ_GridBoard* owner, int width, int height, BoardDistro distro)
-//:	PJ_TPtrGrid<PJ_GridCell>(width, height),
+//PJ_BoardGrid(PJ_GridBoard* owner, int width, int height, BoardDistro distro)
+//:	PJ_TPtrGrid<GridCell>(width, height),
 
 //	mOwner(owner)
 //{
@@ -183,7 +254,7 @@ namespace PJ
 //	mDistro = distro;
 //}
 
-//PJ_BoardGrid::~PJ_BoardGrid()
+//~PJ_BoardGrid()
 //{
 //# ifdef __DEBUG__
 //	int breakpoint = 0; breakpoint++;
@@ -191,9 +262,9 @@ namespace PJ
 
 //}
 
-//void PJ_GridBoard::MoveTile(PJ_GridBoard::Tile* tile, PJ_GridLoc newLoc)
+//void MoveTile(Tile* tile, Vector3Int newLoc)
 //{
-//	if (newLoc.z != tile->mOrigin.z)
+//	if (newLoc.z != tile.mOrigin.z)
 //	{
 //		PJLog("ERROR. MoveTile only moves within the same z grid.");
 //		return;
@@ -202,7 +273,7 @@ namespace PJ
 //	// Don't notify, we're just moving the tile, not removing it.
 //	PJ_TChangeAndRestore<bool> altSuspendNotify(mSuspendNotify, true);
 
-//	PJ_GridLoc firstLoc = tile->mOrigin;
+//	Vector3Int firstLoc = tile.mOrigin;
 
 //	pjRetain(tile);
 //	RemoveTile(tile);
@@ -216,12 +287,12 @@ namespace PJ
 
 ///*
 // 	SwapColumn
- 
+
 // 	USAGE: assumes that all tiles are uniform in size. If the grid has irregular tile sizes, this
 // 	can fail and leak memory.
- 
+
 // */
-//bool PJ_GridBoard::SwapColumn(PJ_GridLoc a, PJ_GridLoc b)
+//bool SwapColumn(Vector3Int a, Vector3Int b)
 //{
 //	// Don't notify, we're just moving the tiles.
 //	PJ_TChangeAndRestore<bool> altSuspendNotify(mSuspendNotify, true);
@@ -239,20 +310,20 @@ namespace PJ
 
 //	for (int y = 0; y < Height(); y++)
 //	{
-//		Tile* tileA = GetTile(PJ_GridLoc(a.x, y, a.z));
-//		if (NULL != tileA)
+//		Tile* tileA = GetTile(Vector3Int(a.x, y, a.z));
+//		if (null != tileA)
 //		{
 //			pjRetain(tileA);
 //			RemoveTile(tileA);
 //		}
 
-//		Tile* tileB = GetTile(PJ_GridLoc(b.x, y, b.z));
-//		if (NULL != tileB)
+//		Tile* tileB = GetTile(Vector3Int(b.x, y, b.z));
+//		if (null != tileB)
 //		{
-//			PJ_GridLoc oldLocB = tileB->mOrigin;
+//			Vector3Int oldLocB = tileB.mOrigin;
 //			pjRetain(tileB);
 //			RemoveTile(tileB);
-//			PJ_GridLoc newLoc(a.x, y, a.z);
+//			Vector3Int newLoc(a.x, y, a.z);
 //			if (!PutTile(tileB, newLoc))
 //			{
 //				PJLog("ERROR. SwapColumn didn't fit at %d, %d, %d.", newLoc.x, newLoc.y, newLoc.z);
@@ -261,9 +332,9 @@ namespace PJ
 //			}
 //		}
 
-//		if (NULL != tileA)
+//		if (null != tileA)
 //		{
-//			PJ_GridLoc newLoc(b.x, y, b.z);
+//			Vector3Int newLoc(b.x, y, b.z);
 //			if (!PutTile(tileA, newLoc))
 //			{
 //				PJLog("ERROR. SwapColumn didn't fit at %d, %d, %d.", newLoc.x, newLoc.y, newLoc.z);
@@ -282,9 +353,9 @@ namespace PJ
 
 //	USAGE: assumes that all tiles are uniform in size. If the grid has irregular tile sizes, this
 //	can fail and leak memory.
- 
+
 // */
-//bool PJ_GridBoard::SwapRow(PJ_GridLoc a, PJ_GridLoc b)
+//bool SwapRow(Vector3Int a, Vector3Int b)
 //{
 //	// Don't notify, we're just moving the tiles.
 //	PJ_TChangeAndRestore<bool> altSuspendNotify(mSuspendNotify, true);
@@ -302,20 +373,20 @@ namespace PJ
 
 //	for (int x = 0; x < Width(); x++)
 //	{
-//		Tile* tileA = GetTile(PJ_GridLoc(x, a.y, a.z));
-//		if (NULL != tileA)
+//		Tile* tileA = GetTile(Vector3Int(x, a.y, a.z));
+//		if (null != tileA)
 //		{
 //			pjRetain(tileA);
 //			RemoveTile(tileA);
 //		}
 
-//		Tile* tileB = GetTile(PJ_GridLoc(x, b.y, b.z));
-//		if (NULL != tileB)
+//		Tile* tileB = GetTile(Vector3Int(x, b.y, b.z));
+//		if (null != tileB)
 //		{
-//			PJ_GridLoc oldLocB = tileB->mOrigin;
+//			Vector3Int oldLocB = tileB.mOrigin;
 //			pjRetain(tileB);
 //			RemoveTile(tileB);
-//			PJ_GridLoc newLoc(x, a.y, a.z);
+//			Vector3Int newLoc(x, a.y, a.z);
 //			if (!PutTile(tileB, newLoc))
 //			{
 //				PJLog("ERROR. SwapRow didn't fit at %d, %d, %d.", newLoc.x, newLoc.y, newLoc.z);
@@ -324,9 +395,9 @@ namespace PJ
 //			}
 //		}
 
-//		if (NULL != tileA)
+//		if (null != tileA)
 //		{
-//			PJ_GridLoc newLoc(x, b.y, b.z);
+//			Vector3Int newLoc(x, b.y, b.z);
 //			if (!PutTile(tileA, newLoc))
 //			{
 //				PJLog("ERROR. SwapRow didn't fit at %d, %d, %d.", newLoc.x, newLoc.y, newLoc.z);
@@ -344,12 +415,12 @@ namespace PJ
 //	SlideColumn
 
 // 	Slides the column and wraps the tiles.
- 
+
 //	USAGE: assumes that all tiles are uniform in size. If the grid has irregular tile sizes, this
 //	can fail and leak memory.
- 
+
 // */
-//void PJ_GridBoard::SlideColumn(PJ_GridLoc a, int offset, bool wrap)
+//void SlideColumn(Vector3Int a, int offset, bool wrap)
 //{
 //	// Don't notify, we're just moving the tiles.
 //	PJ_TChangeAndRestore<bool> altSuspendNotify(mSuspendNotify, true);
@@ -357,8 +428,8 @@ namespace PJ
 //	vector<PJ_GridTile*> tiles;
 //	for (int y = 0; y < Height(); y++)
 //	{
-//		PJ_GridTile* tile = GetTile(PJ_GridLoc(a.x, y, a.z));
-//		if (NULL == tile)
+//		PJ_GridTile* tile = GetTile(Vector3Int(a.x, y, a.z));
+//		if (null == tile)
 //		{
 //			continue;
 //		}
@@ -375,7 +446,7 @@ namespace PJ
 
 //	FOR_CONST_I(vector<PJ_GridTile*>, tiles) {
 //		PJ_GridTile* tile = *i;
-//		PJ_GridLoc newLoc = tile->mOrigin;
+//		Vector3Int newLoc = tile.mOrigin;
 //		newLoc.y += offset;
 
 //		if (wrap)
@@ -401,7 +472,7 @@ namespace PJ
 //	can fail and leak memory.
 
 // */
-//void PJ_GridBoard::SlideRow(PJ_GridLoc a, int offset, bool wrap)
+//void SlideRow(Vector3Int a, int offset, bool wrap)
 //{
 //	// Don't notify, we're just moving the tiles.
 //	PJ_TChangeAndRestore<bool> altSuspendNotify(mSuspendNotify, true);
@@ -409,8 +480,8 @@ namespace PJ
 //	vector<PJ_GridTile*> tiles;
 //	for (int x = 0; x < Width(); x++)
 //	{
-//		PJ_GridTile* tile = GetTile(PJ_GridLoc(x, a.y, a.z));
-//		if (NULL == tile)
+//		PJ_GridTile* tile = GetTile(Vector3Int(x, a.y, a.z));
+//		if (null == tile)
 //		{
 //			continue;
 //		}
@@ -427,7 +498,7 @@ namespace PJ
 
 //	FOR_CONST_I(vector<PJ_GridTile*>, tiles) {
 //		PJ_GridTile* tile = *i;
-//		PJ_GridLoc newLoc = tile->mOrigin;
+//		Vector3Int newLoc = tile.mOrigin;
 //		newLoc.x += offset;
 
 //		if (wrap)
@@ -444,7 +515,7 @@ namespace PJ
 
 //}
 
-//void PJ_BoardGrid::evtCellsBlocked(PJ_VecRect2Int const& blocked)
+//void evtCellsBlocked(PJ_VecRect2Int const& blocked)
 //{
 //	switch (mDistro)
 //	{
@@ -456,15 +527,15 @@ namespace PJ
 //	}
 
 //	// Remove all slots that have now been blocked.
-//	FOR_I(set<PJ_Vector2Int>, mDistroSizes) {
-//		PJ_Vector2Int size = *i;
+//	FOR_I(set<PJ_Vector3Int>, mDistroSizes) {
+//		PJ_Vector3Int size = *i;
 //		DistroCellMap::iterator cellIter = getDistroCellIterator(size);
 
 //		for (int x = blocked.left() - (size.x() - 1); x <= blocked.right(); x++)
 //		{
 //			for (int y = blocked.top() - (size.y() - 1); y <= blocked.bottom(); y++)
 //			{
-//				if (!IsValidLoc(PJ_GridLoc(x, y))) { continue; }
+//				if (!IsValidLoc(Vector3Int(x, y))) { continue; }
 
 //# ifdef __DEBUG__
 //				//				PJ_VecRect2Int thisBounds(x,y);
@@ -472,39 +543,19 @@ namespace PJ
 //				//				assert(thisBounds.TestIntersect(blocked));
 //#endif
 
-//				PJ_GridCell* cell = GetCell(PJ_GridLoc(x, y));
-//				cellIter->second.erase(cell);
+//				GridCell* cell = GetCell(Vector3Int(x, y));
+//				cellIter.second.erase(cell);
 //			}
 //		}
 //	}
 
 //}
 
-//bool PJ_BoardGrid::IsCellBlocked(PJ_GridLoc loc) const  {
-//	if (!IsValidLoc(loc)) { return true; }
-//	PJ_GridCell* cell = GetCell(loc);
-//	if (NULL == cell) {
-//		return false;	// Nothing there.
-//	}
-//	if (NULL != cell->mTile && cell->mTile->mIsGhost) {
-//		return false;	// Ghost tile.
-//	}
-//	return NULL != cell->mTile;
-//}
 
-//bool PJ_BoardGrid::IsBlocked(PJ_VecRect2Int bounds) const {
-//	for (int x = bounds.left(); x <= bounds.right(); x++) {
-//		for (int y = bounds.top(); y <= bounds.bottom(); y++) {
-//			if (IsCellBlocked(PJ_GridLoc(x, y))) {
-//				return true;
-//			}
-//		}
-//	}
-	
 //	return false;
 //}
 
-//void PJ_BoardGrid::buildMapsForSize(PJ_Vector2Int size)
+//void buildMapsForSize(PJ_Vector3Int size)
 //{
 //	// FUTURE: support resize of the board.
 //	if (mDistroSizes.find(size) != mDistroSizes.end())
@@ -520,7 +571,7 @@ namespace PJ
 //	{
 //		for (int y = 0; y <= (height - size.y()); y++)
 //		{
-//			mapDistroLocSize(PJ_GridLoc(x, y), size, true);
+//			mapDistroLocSize(Vector3Int(x, y), size, true);
 //		}
 //	}
 
@@ -530,9 +581,9 @@ namespace PJ
 //	getDistroCellIterator
 
 //	RETURNS: a set of cells that are open slots available for the specified tile size.
- 
+
 // */
-//PJ_BoardGrid::DistroCellMap::iterator PJ_BoardGrid::getDistroCellIterator(PJ_Vector2Int size)
+//DistroCellMap::iterator getDistroCellIterator(PJ_Vector3Int size)
 //{
 //	DistroCellMap::iterator i = mDistroCellMap.find(size);
 //	if (mDistroCellMap.end() == i)
@@ -547,46 +598,46 @@ namespace PJ
 
 ///*
 // 	sGridNeighborAxialLocs
- 
+
 // 	ORDER: top-left, running clockwise.
- 
+
 // */
-//PJ_Vector2Int PJ_GridBoard::sGridNeighborAxialLocs[] = {
-//	PJ_Vector2Int(-1, -1),
-//	PJ_Vector2Int(0, -1),
-//	PJ_Vector2Int(1, -1),
-//	PJ_Vector2Int(1, 0),
-//	PJ_Vector2Int(1, 1),
-//	PJ_Vector2Int(0, 1),
-//	PJ_Vector2Int(-1, 1),
-//	PJ_Vector2Int(-1, 0)
+//PJ_Vector3Int sGridNeighborAxialLocs[] = {
+//	PJ_Vector3Int(-1, -1),
+//	PJ_Vector3Int(0, -1),
+//	PJ_Vector3Int(1, -1),
+//	PJ_Vector3Int(1, 0),
+//	PJ_Vector3Int(1, 1),
+//	PJ_Vector3Int(0, 1),
+//	PJ_Vector3Int(-1, 1),
+//	PJ_Vector3Int(-1, 0)
 //};
 
-//PJ_Vector2Int PJ_GridBoard::GetAxial(int index) const {
-//	PJ_Vector2Int result;
+//PJ_Vector3Int GetAxial(int index) const {
+//	PJ_Vector3Int result;
 //	if (index< 0 || index> 7) {
 //		return result;
 //	}
-	
+
 //	return sGridNeighborAxialLocs[index];
 //}
 
-//int PJ_GridBoard::GetAxialIndex(PJ_Vector2Int axial) const {
-	
+//int GetAxialIndex(PJ_Vector3Int axial) const {
+
 //	// FUTURE: use map for optimization if needed.
 //	for (int i = 0; i<GetNumAxial(); i++) {
-//		PJ_Vector2Int axialOffset = sGridNeighborAxialLocs[i];
+//		PJ_Vector3Int axialOffset = sGridNeighborAxialLocs[i];
 //		if (axialOffset == axial) {
 //			return i;
 //		}
 //	}
-	
+
 //	return -1;	// Invalid.
-	
+
 //}
 
-//int PJ_GridBoard::GetNextAxialIndex(int axialIndex, AxialDir dir) const {
-	
+//int GetNextAxialIndex(int axialIndex, AxialDir dir) const {
+
 //	switch (dir) {
 //		case AxialDir::Right:
 //			axialIndex++;
@@ -598,38 +649,38 @@ namespace PJ
 //			}
 //			break;
 //	}
-	
+
 //	axialIndex %= GetNumAxial();
-	
+
 //	return axialIndex;
 //}
 
-//PJ_Vector2Int PJ_GridBoard::GetNextAxial(int axialIndex, AxialDir dir) const {
+//PJ_Vector3Int GetNextAxial(int axialIndex, AxialDir dir) const {
 //	int nextIndex = GetNextAxialIndex(axialIndex, dir);
 //	return sGridNeighborAxialLocs[nextIndex];
-	
+
 //}
 
-//PJ_GridLoc PJ_GridBoard::GridAxialToGridLoc(PJ_GridLoc origin, PJ_Vector2Int axialOffset)
+//Vector3Int GridAxialToGridLoc(Vector3Int origin, PJ_Vector3Int axialOffset)
 //{
-//	PJ_GridLoc result = origin;
+//	Vector3Int result = origin;
 //	result.x += axialOffset.x();
 //	result.y += axialOffset.y();
 //	return result;
 
 //}
 
-//void PJ_GridBoard::CollectNeighbors(Tile* tile, vector<Tile*>& neighbors)
+//void CollectNeighbors(Tile* tile, vector<Tile*>& neighbors)
 //{
 
 //	neighbors.clear();
 
 //	for (int i = 0; i < GetNumAxial(); i++)
 //	{
-//		PJ_Vector2Int axialOffset = sGridNeighborAxialLocs[i];
-//		PJ_GridLoc neighborLoc = GridAxialToGridLoc(tile->mOrigin, axialOffset);
+//		PJ_Vector3Int axialOffset = sGridNeighborAxialLocs[i];
+//		Vector3Int neighborLoc = GridAxialToGridLoc(tile.mOrigin, axialOffset);
 //		Tile* neighbor = static_cast<Tile*>(GetTile(neighborLoc));
-//		if (NULL != neighbor)
+//		if (null != neighbor)
 //		{
 //			neighbors.push_back(neighbor);
 //		}
@@ -637,9 +688,9 @@ namespace PJ
 
 //}
 
-//bool PJ_GridBoard::DoTilesTouch(Tile* tile1, Tile* tile2, AxialType axialType)
+//bool DoTilesTouch(Tile* tile1, Tile* tile2, AxialType axialType)
 //{
-//	if (NULL == tile1 || NULL == tile2)
+//	if (null == tile1 || null == tile2)
 //	{
 //		return false;
 //	}
@@ -653,14 +704,14 @@ namespace PJ
 
 //	for (int i = 0; i < GetNumAxial(); i++)
 //	{
-//		PJ_Vector2Int axialOffset = GetAxial(i);
-//		PJ_GridLoc neighborLoc = GridAxialToGridLoc(tile1->mOrigin, axialOffset);
+//		PJ_Vector3Int axialOffset = GetAxial(i);
+//		Vector3Int neighborLoc = GridAxialToGridLoc(tile1.mOrigin, axialOffset);
 //		if (!DoesAxialIndexMatchType(i, axialType))
 //		{
 //			continue;
 //		}
 
-//		if (neighborLoc == tile2->mOrigin)
+//		if (neighborLoc == tile2.mOrigin)
 //		{
 //			return true;
 //		}
@@ -670,9 +721,9 @@ namespace PJ
 
 //}
 
-//bool PJ_GridBoard::DoesAxialIndexMatchType(int index, AxialType type) const {
+//bool DoesAxialIndexMatchType(int index, AxialType type) const {
 //	bool result = true;
-	
+
 //	switch (type) {
 //		case AxialType::AxialEdge:
 //			result = (index % 2 != 0);
@@ -680,26 +731,28 @@ namespace PJ
 //		default:
 //			break;
 //	}
-	
+
 //	return result;
 //}
 
-//bool PJ_GridBoard::IsRowEmpty(PJ_GridLoc row) const {
+
+
+//bool IsRowFull(Vector3Int row) const {
 //	for (int x = 0; x<Width(); x++) {
-//		PJ_GridLoc loc = row;
+//		Vector3Int loc = row;
 //loc.x = x;
-//		if (NULL != GetTile(loc)) {
+//		if (null == GetTile(loc)) {
 //			return false;
 //		}
 //	}
 //	return true;
 //}
 
-//bool PJ_GridBoard::IsColumnEmpty(PJ_GridLoc col) const {
+//bool IsColumnFull(Vector3Int col) const {
 //	for (int y = 0; y<Height(); y++) {
-//		PJ_GridLoc loc = col;
+//		Vector3Int loc = col;
 //loc.y = y;
-//		if (NULL != GetTile(loc)) {
+//		if (null == GetTile(loc)) {
 //			return false;
 //		}
 //	}
@@ -707,69 +760,46 @@ namespace PJ
 
 //}
 
-//bool PJ_GridBoard::IsRowFull(PJ_GridLoc row) const {
-//	for (int x = 0; x<Width(); x++) {
-//		PJ_GridLoc loc = row;
-//loc.x = x;
-//		if (NULL == GetTile(loc)) {
-//			return false;
-//		}
-//	}
-//	return true;
-//}
+//int CountTilesInColumn(Vector3Int col) const {
 
-//bool PJ_GridBoard::IsColumnFull(PJ_GridLoc col) const {
-//	for (int y = 0; y<Height(); y++) {
-//		PJ_GridLoc loc = col;
-//loc.y = y;
-//		if (NULL == GetTile(loc)) {
-//			return false;
-//		}
-//	}
-//	return true;
-	
-//}
-
-//int PJ_GridBoard::CountTilesInColumn(PJ_GridLoc col) const {
-	
 //	int result = 0;
 //	for (int y = 0; y<Height(); y++) {
-//		Tile* tile = GetTile(PJ_GridLoc(col.x, y));
-//		if (NULL == tile) {
+//		Tile* tile = GetTile(Vector3Int(col.x, y));
+//		if (null == tile) {
 //			continue;
 //		}
 //		result++;
-//		y += tile->mSize.y()-1;
-		
+//		y += tile.mSize.y()-1;
+
 //	}
-	
+
 //	return result;
-	
+
 //}
 
-//int PJ_GridBoard::CountTilesInRow(PJ_GridLoc col) const {
-	
+//int CountTilesInRow(Vector3Int col) const {
+
 //	int result = 0;
 //	for (int x = 0; x<Width(); x++) {
-//		Tile* tile = GetTile(PJ_GridLoc(x, col.y));
-//		if (NULL == tile) {
+//		Tile* tile = GetTile(Vector3Int(x, col.y));
+//		if (null == tile) {
 //			continue;
 //		}
 //		result++;
-//		x += tile->mSize.x()-1;
+//		x += tile.mSize.x()-1;
 //	}
-	
+
 //	return result;
-	
+
 //}
 
-//void PJ_GridBoard::evtUpdate(PJ_TimeSlice const& task)
+//void evtUpdate(PJ_TimeSlice const& task)
 //{
 
 //	// Avoid mutation error if tile set changes during update.
-//	set<PJ_GridTile*> iterTiles = mTiles;
+//	set<PJ_GridTile*> iterTiles = tiles;
 //	FOR_CONST_I(TileSet, iterTiles) {
-//		(*i)->evtUpdate(task);
+//		(*i).evtUpdate(task);
 //	}
 
 //}
@@ -778,7 +808,7 @@ namespace PJ
 
 //void PJ_GridTile::evtModified()
 //{
-//	if (NULL != mBoard) mBoard->evtTileModified(this);
+//	if (null != mBoard) mBoard.evtTileModified(this);
 //}
 
 //#pragma mark - UNIT TESTS
@@ -801,12 +831,12 @@ namespace PJ
 //virtual void evtCellsBlocked(PJ_VecRect2Int const& blocked)
 //{
 //	mLastCellsBlocked = blocked;
-//	PJ_BoardGrid::evtCellsBlocked(blocked);
+//	evtCellsBlocked(blocked);
 //}
 //virtual void evtCellsUnblocked(PJ_VecRect2Int const& blocked)
 //{
 //	mLastCellsUnblocked = blocked;
-//	PJ_BoardGrid::evtCellsUnblocked(blocked);
+//	evtCellsUnblocked(blocked);
 //}
 
 //};
@@ -833,11 +863,11 @@ namespace PJ
 //class TestGridTile : public PJ_GridTile {
 //public:
 //	int* mDeconstruct;
-//PJ_GridLoc mOldLoc;
+//Vector3Int mOldLoc;
 //PJ_String mObject;
 
 //TestGridTile(int* deconstruct)
-//:   PJ_GridTile(PJ_Vector2Int(2,2))
+//:   PJ_GridTile(PJ_Vector3Int(2,2))
 //	{
 //		* deconstruct = 0;
 //mDeconstruct = deconstruct;
@@ -846,19 +876,19 @@ namespace PJ
 //{
 //	*mDeconstruct = 1;
 //}
-	
+
 //};
 
 //void TestGridBoard::FillWith1by1()
 //{
-//	for (int x = 0; x < this->Width(); x++)
+//	for (int x = 0; x < this.Width(); x++)
 //	{
-//		for (int y = 0; y < this->Height(); y++)
+//		for (int y = 0; y < this.Height(); y++)
 //		{
 //			TestGridTile* tile = new TestGridTile(&mDeconstruct);
-//			tile->mSize = PJ_Vector2Int(1, 1);
-//			this->PutTile(tile, PJ_GridLoc(x, y));
-//			tile->mOldLoc = tile->mOrigin;
+//			tile.mSize = PJ_Vector3Int(1, 1);
+//			this.PutTile(tile, Vector3Int(x, y));
+//			tile.mOldLoc = tile.mOrigin;
 //		}
 //	}
 
@@ -868,22 +898,22 @@ namespace PJ
 //{
 
 //	PTR(TestGridBoard)  gridBoard(new TestGridBoard(BoardDistro::Track));
-//	gridBoard->Build(20, 20, 2);
-//	EXPECT_EQ(2, gridBoard->Depth());
-//	EXPECT_EQ(20, gridBoard->Width());
-//	EXPECT_EQ(20, gridBoard->Height());
+//	gridBoard.Build(20, 20, 2);
+//	EXPECT_EQ(2, gridBoard.Depth());
+//	EXPECT_EQ(20, gridBoard.Width());
+//	EXPECT_EQ(20, gridBoard.Height());
 
 //	int deconstruct;
 //	TestGridTile* tile = new TestGridTile(&deconstruct);
-//	EXPECT_TRUE(gridBoard->PutTile(tile, PJ_GridLoc(0, 0)));
-//	EXPECT_EQ(static_cast<TestBoardGrid*>(gridBoard->mGrids[0].get())->mLastCellsBlocked, PJ_VecRect2Int(0, 0, 1, 1));
-//	gridBoard->RemoveTile(tile);
-//	EXPECT_EQ(static_cast<TestBoardGrid*>(gridBoard->mGrids[0].get())->mLastCellsUnblocked, PJ_VecRect2Int(0, 0, 1, 1));
+//	EXPECT_TRUE(gridBoard.PutTile(tile, Vector3Int(0, 0)));
+//	EXPECT_EQ(static_cast<TestBoardGrid*>(gridBoard.mGrids[0].get()).mLastCellsBlocked, PJ_VecRect2Int(0, 0, 1, 1));
+//	gridBoard.RemoveTile(tile);
+//	EXPECT_EQ(static_cast<TestBoardGrid*>(gridBoard.mGrids[0].get()).mLastCellsUnblocked, PJ_VecRect2Int(0, 0, 1, 1));
 
 //	tile = new TestGridTile(&deconstruct);
-//	EXPECT_TRUE(gridBoard->PutTile(tile, PJ_GridLoc(1, 1)));
-//	gridBoard->RemoveAllTiles();
-//	EXPECT_EQ(static_cast<TestBoardGrid*>(gridBoard->mGrids[0].get())->mLastCellsUnblocked, PJ_VecRect2Int(1, 1, 2, 2));
+//	EXPECT_TRUE(gridBoard.PutTile(tile, Vector3Int(1, 1)));
+//	gridBoard.RemoveAllTiles();
+//	EXPECT_EQ(static_cast<TestBoardGrid*>(gridBoard.mGrids[0].get()).mLastCellsUnblocked, PJ_VecRect2Int(1, 1, 2, 2));
 
 //}
 
@@ -893,128 +923,128 @@ namespace PJ
 
 //	{
 //		PTR(TestGridBoard) gridBoard(new TestGridBoard(BoardDistro::Ignore));
-//		gridBoard->Build(5, 5, 2);
-//		gridBoard->FillWith1by1();
+//		gridBoard.Build(5, 5, 2);
+//		gridBoard.FillWith1by1();
 
-//		EXPECT_FALSE(gridBoard->SwapColumn(PJ_GridLoc(0, 0, 0), PJ_GridLoc(0, 0, 0)));
-//		EXPECT_FALSE(gridBoard->SwapColumn(PJ_GridLoc(0, 0, 0), PJ_GridLoc(2, 0, 1)));
-//		EXPECT_TRUE(gridBoard->SwapColumn(PJ_GridLoc(0, 0, 0), PJ_GridLoc(2, 0, 0)));
+//		EXPECT_FALSE(gridBoard.SwapColumn(Vector3Int(0, 0, 0), Vector3Int(0, 0, 0)));
+//		EXPECT_FALSE(gridBoard.SwapColumn(Vector3Int(0, 0, 0), Vector3Int(2, 0, 1)));
+//		EXPECT_TRUE(gridBoard.SwapColumn(Vector3Int(0, 0, 0), Vector3Int(2, 0, 0)));
 
-//		for (int y = 0; y < gridBoard->Height(); y++)
+//		for (int y = 0; y < gridBoard.Height(); y++)
 //		{
-//			EXPECT_EQ(PJ_GridLoc(2, y), static_cast<TestGridTile*>(gridBoard->GetTile(PJ_GridLoc(0, y)))->mOldLoc);
-//			EXPECT_EQ(PJ_GridLoc(0, y), static_cast<TestGridTile*>(gridBoard->GetTile(PJ_GridLoc(2, y)))->mOldLoc);
+//			EXPECT_EQ(Vector3Int(2, y), static_cast<TestGridTile*>(gridBoard.GetTile(Vector3Int(0, y))).mOldLoc);
+//			EXPECT_EQ(Vector3Int(0, y), static_cast<TestGridTile*>(gridBoard.GetTile(Vector3Int(2, y))).mOldLoc);
 //		}
 //	}
 
 //	{
 //		PTR(TestGridBoard) gridBoard(new TestGridBoard(BoardDistro::Ignore));
-//		gridBoard->Build(5, 5, 2);
-//		gridBoard->FillWith1by1();
+//		gridBoard.Build(5, 5, 2);
+//		gridBoard.FillWith1by1();
 
-//		EXPECT_FALSE(gridBoard->SwapRow(PJ_GridLoc(0, 0, 0), PJ_GridLoc(0, 0, 0)));
-//		EXPECT_FALSE(gridBoard->SwapRow(PJ_GridLoc(0, 0, 0), PJ_GridLoc(0, 2, 1)));
-//		EXPECT_TRUE(gridBoard->SwapRow(PJ_GridLoc(0, 0, 0), PJ_GridLoc(0, 2, 0)));
+//		EXPECT_FALSE(gridBoard.SwapRow(Vector3Int(0, 0, 0), Vector3Int(0, 0, 0)));
+//		EXPECT_FALSE(gridBoard.SwapRow(Vector3Int(0, 0, 0), Vector3Int(0, 2, 1)));
+//		EXPECT_TRUE(gridBoard.SwapRow(Vector3Int(0, 0, 0), Vector3Int(0, 2, 0)));
 
-//		for (int x = 0; x < gridBoard->Width(); x++)
+//		for (int x = 0; x < gridBoard.Width(); x++)
 //		{
-//			EXPECT_EQ(PJ_GridLoc(x, 2), static_cast<TestGridTile*>(gridBoard->GetTile(PJ_GridLoc(x, 0)))->mOldLoc);
-//			EXPECT_EQ(PJ_GridLoc(x, 0), static_cast<TestGridTile*>(gridBoard->GetTile(PJ_GridLoc(x, 2)))->mOldLoc);
+//			EXPECT_EQ(Vector3Int(x, 2), static_cast<TestGridTile*>(gridBoard.GetTile(Vector3Int(x, 0))).mOldLoc);
+//			EXPECT_EQ(Vector3Int(x, 0), static_cast<TestGridTile*>(gridBoard.GetTile(Vector3Int(x, 2))).mOldLoc);
 //		}
 //	}
 
 //	// SlideColumn: WRAP
 //	{
 //		PTR(TestGridBoard) gridBoard(new TestGridBoard(BoardDistro::Ignore));
-//		gridBoard->Build(5, 5, 2);
-//		gridBoard->FillWith1by1();
+//		gridBoard.Build(5, 5, 2);
+//		gridBoard.FillWith1by1();
 
-//		gridBoard->SlideColumn(PJ_GridLoc(0, 0, 0), 3, true);
-//		EXPECT_EQ(PJ_GridLoc(0, 2), static_cast<TestGridTile*>(gridBoard->GetTile(PJ_GridLoc(0, 0)))->mOldLoc);
-//		EXPECT_EQ(PJ_GridLoc(0, 3), static_cast<TestGridTile*>(gridBoard->GetTile(PJ_GridLoc(0, 1)))->mOldLoc);
-//		EXPECT_EQ(PJ_GridLoc(0, 4), static_cast<TestGridTile*>(gridBoard->GetTile(PJ_GridLoc(0, 2)))->mOldLoc);
-//		EXPECT_EQ(PJ_GridLoc(0, 0), static_cast<TestGridTile*>(gridBoard->GetTile(PJ_GridLoc(0, 3)))->mOldLoc);
-//		EXPECT_EQ(PJ_GridLoc(0, 1), static_cast<TestGridTile*>(gridBoard->GetTile(PJ_GridLoc(0, 4)))->mOldLoc);
+//		gridBoard.SlideColumn(Vector3Int(0, 0, 0), 3, true);
+//		EXPECT_EQ(Vector3Int(0, 2), static_cast<TestGridTile*>(gridBoard.GetTile(Vector3Int(0, 0))).mOldLoc);
+//		EXPECT_EQ(Vector3Int(0, 3), static_cast<TestGridTile*>(gridBoard.GetTile(Vector3Int(0, 1))).mOldLoc);
+//		EXPECT_EQ(Vector3Int(0, 4), static_cast<TestGridTile*>(gridBoard.GetTile(Vector3Int(0, 2))).mOldLoc);
+//		EXPECT_EQ(Vector3Int(0, 0), static_cast<TestGridTile*>(gridBoard.GetTile(Vector3Int(0, 3))).mOldLoc);
+//		EXPECT_EQ(Vector3Int(0, 1), static_cast<TestGridTile*>(gridBoard.GetTile(Vector3Int(0, 4))).mOldLoc);
 //	}
 
 //	// SlideColumn: WRAP-NEGATIVE
 //	{
 //		PTR(TestGridBoard) gridBoard(new TestGridBoard(BoardDistro::Ignore));
-//		gridBoard->Build(5, 5, 2);
-//		gridBoard->FillWith1by1();
+//		gridBoard.Build(5, 5, 2);
+//		gridBoard.FillWith1by1();
 
-//		gridBoard->SlideColumn(PJ_GridLoc(0, 0, 0), -2, true);
-//		EXPECT_EQ(PJ_GridLoc(0, 2), static_cast<TestGridTile*>(gridBoard->GetTile(PJ_GridLoc(0, 0)))->mOldLoc);
-//		EXPECT_EQ(PJ_GridLoc(0, 3), static_cast<TestGridTile*>(gridBoard->GetTile(PJ_GridLoc(0, 1)))->mOldLoc);
-//		EXPECT_EQ(PJ_GridLoc(0, 4), static_cast<TestGridTile*>(gridBoard->GetTile(PJ_GridLoc(0, 2)))->mOldLoc);
-//		EXPECT_EQ(PJ_GridLoc(0, 0), static_cast<TestGridTile*>(gridBoard->GetTile(PJ_GridLoc(0, 3)))->mOldLoc);
-//		EXPECT_EQ(PJ_GridLoc(0, 1), static_cast<TestGridTile*>(gridBoard->GetTile(PJ_GridLoc(0, 4)))->mOldLoc);
+//		gridBoard.SlideColumn(Vector3Int(0, 0, 0), -2, true);
+//		EXPECT_EQ(Vector3Int(0, 2), static_cast<TestGridTile*>(gridBoard.GetTile(Vector3Int(0, 0))).mOldLoc);
+//		EXPECT_EQ(Vector3Int(0, 3), static_cast<TestGridTile*>(gridBoard.GetTile(Vector3Int(0, 1))).mOldLoc);
+//		EXPECT_EQ(Vector3Int(0, 4), static_cast<TestGridTile*>(gridBoard.GetTile(Vector3Int(0, 2))).mOldLoc);
+//		EXPECT_EQ(Vector3Int(0, 0), static_cast<TestGridTile*>(gridBoard.GetTile(Vector3Int(0, 3))).mOldLoc);
+//		EXPECT_EQ(Vector3Int(0, 1), static_cast<TestGridTile*>(gridBoard.GetTile(Vector3Int(0, 4))).mOldLoc);
 //	}
 
 //	// SlideColumn: NO WRAP
 //	{
 //		PTR(TestGridBoard) gridBoard(new TestGridBoard(BoardDistro::Ignore));
-//		gridBoard->Build(5, 5, 2);
-//		gridBoard->FillWith1by1();
+//		gridBoard.Build(5, 5, 2);
+//		gridBoard.FillWith1by1();
 
-//		gridBoard->SlideColumn(PJ_GridLoc(0, 0, 0), 3, false);
-//		EXPECT_EQ(NULL, static_cast<TestGridTile*>(gridBoard->GetTile(PJ_GridLoc(0, 0))));
-//		EXPECT_EQ(NULL, static_cast<TestGridTile*>(gridBoard->GetTile(PJ_GridLoc(0, 1))));
-//		EXPECT_EQ(NULL, static_cast<TestGridTile*>(gridBoard->GetTile(PJ_GridLoc(0, 2))));
-//		EXPECT_EQ(PJ_GridLoc(0, 0), static_cast<TestGridTile*>(gridBoard->GetTile(PJ_GridLoc(0, 3)))->mOldLoc);
-//		EXPECT_EQ(PJ_GridLoc(0, 1), static_cast<TestGridTile*>(gridBoard->GetTile(PJ_GridLoc(0, 4)))->mOldLoc);
+//		gridBoard.SlideColumn(Vector3Int(0, 0, 0), 3, false);
+//		EXPECT_EQ(null, static_cast<TestGridTile*>(gridBoard.GetTile(Vector3Int(0, 0))));
+//		EXPECT_EQ(null, static_cast<TestGridTile*>(gridBoard.GetTile(Vector3Int(0, 1))));
+//		EXPECT_EQ(null, static_cast<TestGridTile*>(gridBoard.GetTile(Vector3Int(0, 2))));
+//		EXPECT_EQ(Vector3Int(0, 0), static_cast<TestGridTile*>(gridBoard.GetTile(Vector3Int(0, 3))).mOldLoc);
+//		EXPECT_EQ(Vector3Int(0, 1), static_cast<TestGridTile*>(gridBoard.GetTile(Vector3Int(0, 4))).mOldLoc);
 //	}
 
 //	// SlideRow: WRAP
 //	{
 //		PTR(TestGridBoard) gridBoard(new TestGridBoard(BoardDistro::Ignore));
-//		gridBoard->Build(5, 5, 2);
-//		gridBoard->FillWith1by1();
+//		gridBoard.Build(5, 5, 2);
+//		gridBoard.FillWith1by1();
 
-//		gridBoard->SlideRow(PJ_GridLoc(0, 0, 0), 3, true);
-//		EXPECT_EQ(PJ_GridLoc(2, 0), static_cast<TestGridTile*>(gridBoard->GetTile(PJ_GridLoc(0, 0)))->mOldLoc);
-//		EXPECT_EQ(PJ_GridLoc(3, 0), static_cast<TestGridTile*>(gridBoard->GetTile(PJ_GridLoc(1, 0)))->mOldLoc);
-//		EXPECT_EQ(PJ_GridLoc(4, 0), static_cast<TestGridTile*>(gridBoard->GetTile(PJ_GridLoc(2, 0)))->mOldLoc);
-//		EXPECT_EQ(PJ_GridLoc(0, 0), static_cast<TestGridTile*>(gridBoard->GetTile(PJ_GridLoc(3, 0)))->mOldLoc);
-//		EXPECT_EQ(PJ_GridLoc(1, 0), static_cast<TestGridTile*>(gridBoard->GetTile(PJ_GridLoc(4, 0)))->mOldLoc);
+//		gridBoard.SlideRow(Vector3Int(0, 0, 0), 3, true);
+//		EXPECT_EQ(Vector3Int(2, 0), static_cast<TestGridTile*>(gridBoard.GetTile(Vector3Int(0, 0))).mOldLoc);
+//		EXPECT_EQ(Vector3Int(3, 0), static_cast<TestGridTile*>(gridBoard.GetTile(Vector3Int(1, 0))).mOldLoc);
+//		EXPECT_EQ(Vector3Int(4, 0), static_cast<TestGridTile*>(gridBoard.GetTile(Vector3Int(2, 0))).mOldLoc);
+//		EXPECT_EQ(Vector3Int(0, 0), static_cast<TestGridTile*>(gridBoard.GetTile(Vector3Int(3, 0))).mOldLoc);
+//		EXPECT_EQ(Vector3Int(1, 0), static_cast<TestGridTile*>(gridBoard.GetTile(Vector3Int(4, 0))).mOldLoc);
 //	}
 
 //	// SlideRow: WRAP-NEGATIVE
 //	{
 //		PTR(TestGridBoard) gridBoard(new TestGridBoard(BoardDistro::Ignore));
-//		gridBoard->Build(5, 5, 2);
-//		gridBoard->FillWith1by1();
+//		gridBoard.Build(5, 5, 2);
+//		gridBoard.FillWith1by1();
 
-//		gridBoard->SlideRow(PJ_GridLoc(0, 0, 0), -2, true);
-//		EXPECT_EQ(PJ_GridLoc(2, 0), static_cast<TestGridTile*>(gridBoard->GetTile(PJ_GridLoc(0, 0)))->mOldLoc);
-//		EXPECT_EQ(PJ_GridLoc(3, 0), static_cast<TestGridTile*>(gridBoard->GetTile(PJ_GridLoc(1, 0)))->mOldLoc);
-//		EXPECT_EQ(PJ_GridLoc(4, 0), static_cast<TestGridTile*>(gridBoard->GetTile(PJ_GridLoc(2, 0)))->mOldLoc);
-//		EXPECT_EQ(PJ_GridLoc(0, 0), static_cast<TestGridTile*>(gridBoard->GetTile(PJ_GridLoc(3, 0)))->mOldLoc);
-//		EXPECT_EQ(PJ_GridLoc(1, 0), static_cast<TestGridTile*>(gridBoard->GetTile(PJ_GridLoc(4, 0)))->mOldLoc);
+//		gridBoard.SlideRow(Vector3Int(0, 0, 0), -2, true);
+//		EXPECT_EQ(Vector3Int(2, 0), static_cast<TestGridTile*>(gridBoard.GetTile(Vector3Int(0, 0))).mOldLoc);
+//		EXPECT_EQ(Vector3Int(3, 0), static_cast<TestGridTile*>(gridBoard.GetTile(Vector3Int(1, 0))).mOldLoc);
+//		EXPECT_EQ(Vector3Int(4, 0), static_cast<TestGridTile*>(gridBoard.GetTile(Vector3Int(2, 0))).mOldLoc);
+//		EXPECT_EQ(Vector3Int(0, 0), static_cast<TestGridTile*>(gridBoard.GetTile(Vector3Int(3, 0))).mOldLoc);
+//		EXPECT_EQ(Vector3Int(1, 0), static_cast<TestGridTile*>(gridBoard.GetTile(Vector3Int(4, 0))).mOldLoc);
 //	}
 
 //	// SlideRow: NO WRAP
 //	{
 //		PTR(TestGridBoard) gridBoard(new TestGridBoard(BoardDistro::Ignore));
-//		gridBoard->Build(5, 5, 2);
+//		gridBoard.Build(5, 5, 2);
 //		int deconstruct = 0;
-//		for (int x = 0; x < gridBoard->Width(); x++)
+//		for (int x = 0; x < gridBoard.Width(); x++)
 //		{
-//			for (int y = 0; y < gridBoard->Height(); y++)
+//			for (int y = 0; y < gridBoard.Height(); y++)
 //			{
 //				TestGridTile* tile = new TestGridTile(&deconstruct);
-//				tile->mSize = PJ_Vector2Int(1, 1);
-//				gridBoard->PutTile(tile, PJ_GridLoc(x, y));
-//				tile->mOldLoc = tile->mOrigin;
+//				tile.mSize = PJ_Vector3Int(1, 1);
+//				gridBoard.PutTile(tile, Vector3Int(x, y));
+//				tile.mOldLoc = tile.mOrigin;
 //			}
 //		}
 
-//		gridBoard->SlideRow(PJ_GridLoc(0, 0, 0), 3, false);
-//		EXPECT_EQ(NULL, static_cast<TestGridTile*>(gridBoard->GetTile(PJ_GridLoc(0, 0))));
-//		EXPECT_EQ(NULL, static_cast<TestGridTile*>(gridBoard->GetTile(PJ_GridLoc(1, 0))));
-//		EXPECT_EQ(NULL, static_cast<TestGridTile*>(gridBoard->GetTile(PJ_GridLoc(2, 0))));
-//		EXPECT_EQ(PJ_GridLoc(0, 0), static_cast<TestGridTile*>(gridBoard->GetTile(PJ_GridLoc(3, 0)))->mOldLoc);
-//		EXPECT_EQ(PJ_GridLoc(1, 0), static_cast<TestGridTile*>(gridBoard->GetTile(PJ_GridLoc(4, 0)))->mOldLoc);
+//		gridBoard.SlideRow(Vector3Int(0, 0, 0), 3, false);
+//		EXPECT_EQ(null, static_cast<TestGridTile*>(gridBoard.GetTile(Vector3Int(0, 0))));
+//		EXPECT_EQ(null, static_cast<TestGridTile*>(gridBoard.GetTile(Vector3Int(1, 0))));
+//		EXPECT_EQ(null, static_cast<TestGridTile*>(gridBoard.GetTile(Vector3Int(2, 0))));
+//		EXPECT_EQ(Vector3Int(0, 0), static_cast<TestGridTile*>(gridBoard.GetTile(Vector3Int(3, 0))).mOldLoc);
+//		EXPECT_EQ(Vector3Int(1, 0), static_cast<TestGridTile*>(gridBoard.GetTile(Vector3Int(4, 0))).mOldLoc);
 //	}
 
 //	// TODO: test no wrap, slide row, slide row-noWRAP
@@ -1025,73 +1055,73 @@ namespace PJ
 //{
 
 //	PTR(TestGridBoard)  gridBoard(new TestGridBoard(BoardDistro::Track));
-//	gridBoard->Build(20, 20, 2);
-//	EXPECT_EQ(2, gridBoard->Depth());
-//	EXPECT_EQ(20, gridBoard->Width());
-//	EXPECT_EQ(20, gridBoard->Height());
-//	EXPECT_FALSE(gridBoard->IsValidLoc(PJ_GridLoc(0, 0, 2)));
-//	EXPECT_FALSE(gridBoard->IsValidLoc(PJ_GridLoc(0, 0, -1)));
-//	EXPECT_FALSE(gridBoard->IsValidLoc(PJ_GridLoc(20, 20)));
-//	EXPECT_FALSE(gridBoard->IsValidLoc(PJ_GridLoc(-1, -1)));
-//	EXPECT_TRUE(gridBoard->IsValidLoc(PJ_GridLoc(19, 19)));
-//	EXPECT_TRUE(gridBoard->IsValidLoc(PJ_GridLoc(0, 0)));
+//	gridBoard.Build(20, 20, 2);
+//	EXPECT_EQ(2, gridBoard.Depth());
+//	EXPECT_EQ(20, gridBoard.Width());
+//	EXPECT_EQ(20, gridBoard.Height());
+//	EXPECT_FALSE(gridBoard.IsValidLoc(Vector3Int(0, 0, 2)));
+//	EXPECT_FALSE(gridBoard.IsValidLoc(Vector3Int(0, 0, -1)));
+//	EXPECT_FALSE(gridBoard.IsValidLoc(Vector3Int(20, 20)));
+//	EXPECT_FALSE(gridBoard.IsValidLoc(Vector3Int(-1, -1)));
+//	EXPECT_TRUE(gridBoard.IsValidLoc(Vector3Int(19, 19)));
+//	EXPECT_TRUE(gridBoard.IsValidLoc(Vector3Int(0, 0)));
 
-//	PJ_GridCell* gridCell = gridBoard->GetCell(PJ_GridLoc(0, 0));
-//	EXPECT_EQ(NULL, gridCell->mTile);
-//	EXPECT_EQ(NULL, gridBoard->GetTile(PJ_GridLoc(0, 0)));
+//	GridCell* gridCell = gridBoard.GetCell(Vector3Int(0, 0));
+//	EXPECT_EQ(null, gridCell.tile);
+//	EXPECT_EQ(null, gridBoard.GetTile(Vector3Int(0, 0)));
 
 //	int deconstruct;
 //	TestGridTile* tile = new TestGridTile(&deconstruct);
-//	EXPECT_FALSE(gridBoard->PutTile(tile, PJ_GridLoc(20, 20)));
-//	EXPECT_FALSE(gridBoard->PutTile(tile, PJ_GridLoc(0, 0, 2)));
-//	EXPECT_TRUE(gridBoard->PutTile(tile, PJ_GridLoc(0, 0)));
+//	EXPECT_FALSE(gridBoard.PutTile(tile, Vector3Int(20, 20)));
+//	EXPECT_FALSE(gridBoard.PutTile(tile, Vector3Int(0, 0, 2)));
+//	EXPECT_TRUE(gridBoard.PutTile(tile, Vector3Int(0, 0)));
 
-//	gridCell = gridBoard->GetCell(PJ_GridLoc(0, 0));
-//	EXPECT_EQ(tile, gridCell->mTile);
-//	EXPECT_EQ(tile, gridBoard->GetTile(PJ_GridLoc(0, 0)));
-//	EXPECT_EQ(tile, gridBoard->GetTile(PJ_GridLoc(0, 1)));
-//	EXPECT_EQ(tile, gridBoard->GetTile(PJ_GridLoc(1, 0)));
-//	EXPECT_EQ(tile, gridBoard->GetTile(PJ_GridLoc(1, 1)));
-//	EXPECT_EQ(NULL, gridBoard->GetTile(PJ_GridLoc(0, 0, 1)));
-//	EXPECT_EQ(NULL, gridBoard->GetTile(PJ_GridLoc(2, 0)));
-//	EXPECT_EQ(NULL, gridBoard->GetTile(PJ_GridLoc(0, 2)));
+//	gridCell = gridBoard.GetCell(Vector3Int(0, 0));
+//	EXPECT_EQ(tile, gridCell.tile);
+//	EXPECT_EQ(tile, gridBoard.GetTile(Vector3Int(0, 0)));
+//	EXPECT_EQ(tile, gridBoard.GetTile(Vector3Int(0, 1)));
+//	EXPECT_EQ(tile, gridBoard.GetTile(Vector3Int(1, 0)));
+//	EXPECT_EQ(tile, gridBoard.GetTile(Vector3Int(1, 1)));
+//	EXPECT_EQ(null, gridBoard.GetTile(Vector3Int(0, 0, 1)));
+//	EXPECT_EQ(null, gridBoard.GetTile(Vector3Int(2, 0)));
+//	EXPECT_EQ(null, gridBoard.GetTile(Vector3Int(0, 2)));
 
-//	EXPECT_TRUE(gridBoard->IsCellBlocked(PJ_GridLoc(-1, -1)));
-//	EXPECT_TRUE(gridBoard->IsCellBlocked(PJ_GridLoc(0, 0)));
-//	EXPECT_TRUE(gridBoard->IsCellBlocked(PJ_GridLoc(0, 1)));
-//	EXPECT_TRUE(gridBoard->IsCellBlocked(PJ_GridLoc(1, 0)));
-//	EXPECT_TRUE(gridBoard->IsCellBlocked(PJ_GridLoc(1, 1)));
-//	EXPECT_FALSE(gridBoard->IsCellBlocked(PJ_GridLoc(0, 0, 1)));
-//	EXPECT_FALSE(gridBoard->IsCellBlocked(PJ_GridLoc(0, 2)));
-//	EXPECT_FALSE(gridBoard->IsCellBlocked(PJ_GridLoc(2, 0)));
+//	EXPECT_TRUE(gridBoard.IsCellBlocked(Vector3Int(-1, -1)));
+//	EXPECT_TRUE(gridBoard.IsCellBlocked(Vector3Int(0, 0)));
+//	EXPECT_TRUE(gridBoard.IsCellBlocked(Vector3Int(0, 1)));
+//	EXPECT_TRUE(gridBoard.IsCellBlocked(Vector3Int(1, 0)));
+//	EXPECT_TRUE(gridBoard.IsCellBlocked(Vector3Int(1, 1)));
+//	EXPECT_FALSE(gridBoard.IsCellBlocked(Vector3Int(0, 0, 1)));
+//	EXPECT_FALSE(gridBoard.IsCellBlocked(Vector3Int(0, 2)));
+//	EXPECT_FALSE(gridBoard.IsCellBlocked(Vector3Int(2, 0)));
 
-//	EXPECT_TRUE(gridBoard->IsBlocked(PJ_VecRect2Int(0, 0, 1, 1), 0));
-//	EXPECT_TRUE(gridBoard->IsBlocked(PJ_VecRect2Int(1, 0, 2, 1), 0));
-//	EXPECT_TRUE(gridBoard->IsBlocked(PJ_VecRect2Int(0, 1, 1, 2), 0));
-//	EXPECT_FALSE(gridBoard->IsBlocked(PJ_VecRect2Int(2, 0, 3, 1), 0));
-//	EXPECT_FALSE(gridBoard->IsBlocked(PJ_VecRect2Int(0, 2, 1, 3), 0));
+//	EXPECT_TRUE(gridBoard.IsBlocked(PJ_VecRect2Int(0, 0, 1, 1), 0));
+//	EXPECT_TRUE(gridBoard.IsBlocked(PJ_VecRect2Int(1, 0, 2, 1), 0));
+//	EXPECT_TRUE(gridBoard.IsBlocked(PJ_VecRect2Int(0, 1, 1, 2), 0));
+//	EXPECT_FALSE(gridBoard.IsBlocked(PJ_VecRect2Int(2, 0, 3, 1), 0));
+//	EXPECT_FALSE(gridBoard.IsBlocked(PJ_VecRect2Int(0, 2, 1, 3), 0));
 
-//	PJ_VecRect2Int destTileBounds = gridBoard->GetDestTileBounds(tile, PJ_GridLoc(0, 0));
+//	PJ_VecRect2Int destTileBounds = gridBoard.GetDestTileBounds(tile, Vector3Int(0, 0));
 //	EXPECT_EQ(0, destTileBounds.left());
 //	EXPECT_EQ(0, destTileBounds.top());
 //	EXPECT_EQ(1, destTileBounds.right());
 //	EXPECT_EQ(1, destTileBounds.bottom());
 
 //	EXPECT_EQ(0, deconstruct);
-//	gridBoard->RemoveTile(tile); tile = NULL;
+//	gridBoard.RemoveTile(tile); tile = null;
 //	EXPECT_EQ(1, deconstruct);
-//	EXPECT_FALSE(gridBoard->IsCellBlocked(PJ_GridLoc(0, 0)));
-//	EXPECT_FALSE(gridBoard->IsCellBlocked(PJ_GridLoc(0, 1)));
-//	EXPECT_FALSE(gridBoard->IsCellBlocked(PJ_GridLoc(1, 0)));
-//	EXPECT_FALSE(gridBoard->IsCellBlocked(PJ_GridLoc(1, 1)));
-//	EXPECT_FALSE(gridBoard->IsBlocked(PJ_VecRect2Int(0, 0, 1, 1), 0));
-//	EXPECT_FALSE(gridBoard->IsBlocked(PJ_VecRect2Int(1, 0, 2, 1), 0));
-//	EXPECT_FALSE(gridBoard->IsBlocked(PJ_VecRect2Int(0, 1, 1, 2), 0));
+//	EXPECT_FALSE(gridBoard.IsCellBlocked(Vector3Int(0, 0)));
+//	EXPECT_FALSE(gridBoard.IsCellBlocked(Vector3Int(0, 1)));
+//	EXPECT_FALSE(gridBoard.IsCellBlocked(Vector3Int(1, 0)));
+//	EXPECT_FALSE(gridBoard.IsCellBlocked(Vector3Int(1, 1)));
+//	EXPECT_FALSE(gridBoard.IsBlocked(PJ_VecRect2Int(0, 0, 1, 1), 0));
+//	EXPECT_FALSE(gridBoard.IsBlocked(PJ_VecRect2Int(1, 0, 2, 1), 0));
+//	EXPECT_FALSE(gridBoard.IsBlocked(PJ_VecRect2Int(0, 1, 1, 2), 0));
 
 //	tile = new TestGridTile(&deconstruct);
-//	EXPECT_TRUE(gridBoard->PutTile(tile, PJ_GridLoc(0, 0)));
+//	EXPECT_TRUE(gridBoard.PutTile(tile, Vector3Int(0, 0)));
 //	EXPECT_EQ(0, deconstruct);
-//	gridBoard->RemoveAllTiles(); tile = NULL;
+//	gridBoard.RemoveAllTiles(); tile = null;
 //	EXPECT_EQ(1, deconstruct);
 
 //}
@@ -1101,18 +1131,18 @@ namespace PJ
 //{
 
 //	PTR(PJ_GridBoard) board(new PJ_GridBoard(BoardDistro::Ignore));
-//	EXPECT_EQ(1, board->GetNextAxialIndex(0, AxialDir::Right));
-//	EXPECT_EQ(2, board->GetNextAxialIndex(1, AxialDir::Right));
-//	EXPECT_EQ(3, board->GetNextAxialIndex(2, AxialDir::Right));
-//	EXPECT_EQ(4, board->GetNextAxialIndex(3, AxialDir::Right));
-//	EXPECT_EQ(5, board->GetNextAxialIndex(4, AxialDir::Right));
-//	EXPECT_EQ(0, board->GetNextAxialIndex(7, AxialDir::Right));
+//	EXPECT_EQ(1, board.GetNextAxialIndex(0, AxialDir::Right));
+//	EXPECT_EQ(2, board.GetNextAxialIndex(1, AxialDir::Right));
+//	EXPECT_EQ(3, board.GetNextAxialIndex(2, AxialDir::Right));
+//	EXPECT_EQ(4, board.GetNextAxialIndex(3, AxialDir::Right));
+//	EXPECT_EQ(5, board.GetNextAxialIndex(4, AxialDir::Right));
+//	EXPECT_EQ(0, board.GetNextAxialIndex(7, AxialDir::Right));
 
-//	EXPECT_EQ(7, board->GetNextAxialIndex(0, AxialDir::Left));
-//	EXPECT_EQ(0, board->GetNextAxialIndex(1, AxialDir::Left));
-//	EXPECT_EQ(1, board->GetNextAxialIndex(2, AxialDir::Left));
-//	EXPECT_EQ(2, board->GetNextAxialIndex(3, AxialDir::Left));
-//	EXPECT_EQ(3, board->GetNextAxialIndex(4, AxialDir::Left));
-//	EXPECT_EQ(4, board->GetNextAxialIndex(5, AxialDir::Left));
+//	EXPECT_EQ(7, board.GetNextAxialIndex(0, AxialDir::Left));
+//	EXPECT_EQ(0, board.GetNextAxialIndex(1, AxialDir::Left));
+//	EXPECT_EQ(1, board.GetNextAxialIndex(2, AxialDir::Left));
+//	EXPECT_EQ(2, board.GetNextAxialIndex(3, AxialDir::Left));
+//	EXPECT_EQ(3, board.GetNextAxialIndex(4, AxialDir::Left));
+//	EXPECT_EQ(4, board.GetNextAxialIndex(5, AxialDir::Left));
 
 //}
