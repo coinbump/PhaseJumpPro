@@ -78,7 +78,7 @@ namespace PJ {
 			return true;
 		}
 
-		virtual public GameObject Emit()
+		public virtual GameObject Emit()
 		{
 			if (!CanEmit())
 			{

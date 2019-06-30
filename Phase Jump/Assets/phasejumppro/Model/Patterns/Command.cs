@@ -25,7 +25,7 @@ namespace PJ
 
 		GenericStateMachine<State> state = new GenericStateMachine<State>();
 
-		virtual public void Execute()
+		public virtual void Execute()
 		{
 			switch (state.state)
 			{

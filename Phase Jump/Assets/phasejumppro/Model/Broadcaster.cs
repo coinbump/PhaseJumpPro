@@ -7,7 +7,7 @@ using System.Collections.Generic;
  */
 namespace PJ {
 	public abstract class AbstractBroadcaster {
-		virtual public void RemoveListener(Listener listener) {}
+		public virtual void RemoveListener(Listener listener) {}
 	}
 
 	/// <summary>

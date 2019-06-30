@@ -4,7 +4,7 @@ using System.Collections;
 namespace PJ
 {
 	using Tile = PJ.AbstractGridTile;
-
+	
 	class GridBoard : Core
 	{
 		struct Events
@@ -13,22 +13,27 @@ namespace PJ
 			public const string EvtRemoveTile = "tile_remove";
 		}
 
-		virtual protected void EvtAddTile(Tile tile)
+		protected virtual void EvtAddTile(Tile tile)
 		{
 			if (null == broadcaster) { return; }
 			broadcaster.Broadcast(new Event(Events.EvtAddTile));
 		}
 
-		virtual protected void EvtRemoveTile(Tile tile)
+		protected virtual void EvtRemoveTile(Tile tile)
 		{
 			if (null == broadcaster) { return; }
 			broadcaster.Broadcast(new Event(Events.EvtRemoveTile));
 		}
 
-		virtual protected void EvtTileModified(Tile tile)
+		protected virtual void EvtTileModified(Tile tile)
 		{
 			
 		}
+
+		/// <summary>
+		/// Returns the number of axial directions from one cell to another (North, Northeast, etc.)
+		/// </summary>
+		public virtual int GetNumAxial() { return 8; }
 	}
 }
 
@@ -229,29 +234,6 @@ namespace PJ
 //	}
 //}
 
-//void MoveTile(Tile* tile, Vector3Int newLoc);
-//bool SwapColumn(Vector3Int a, Vector3Int b);
-//bool SwapRow(Vector3Int a, Vector3Int b);
-//void SlideColumn(Vector3Int a, int offset, bool wrap);
-//void SlideRow(Vector3Int a, int offset, bool wrap);
-
-//virtual bool DoesAxialIndexMatchType(int index, AxialType type) const;
-//virtual PJ_Vector2Int GetAxial(int index) const;
-//virtual Vector3Int GridAxialToGridLoc(Vector3Int origin, PJ_Vector2Int axialOffset);
-//virtual int GetNumAxial() const { return 8; }
-//	virtual int GetAxialIndex(PJ_Vector2Int axial) const;
-//virtual int GetNextAxialIndex(int axialIndex, AxialDir dir) const;
-//virtual PJ_Vector2Int GetNextAxial(int axialIndex, AxialDir dir) const;
-//virtual void CollectNeighbors(Tile* tile, vector<Tile*>& neighbors);
-//virtual bool DoTilesTouch(Tile* tile1, Tile* tile2, AxialType axialType);
-
-//virtual bool IsRowEmpty(Vector3Int row) const;
-//virtual bool IsColumnEmpty(Vector3Int col) const;
-//virtual bool IsRowFull(Vector3Int row) const;
-//virtual bool IsColumnFull(Vector3Int col) const;
-
-//int CountTilesInColumn(Vector3Int col) const;
-//int CountTilesInRow(Vector3Int col) const;
 
 //virtual void evtUpdate(PJ_TimeSlice const& task);
 
