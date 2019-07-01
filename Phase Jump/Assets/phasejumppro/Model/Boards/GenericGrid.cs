@@ -107,6 +107,8 @@ namespace PJ
 					var diff = row.Count - newWidth;
 					row.RemoveRange(row.Count - diff, diff);
 				}
+
+				y++;
 			}
 
 			// Add new rows.
