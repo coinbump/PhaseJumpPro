@@ -7,6 +7,10 @@ namespace PJ
 	public class AbstractGridBoard : Core {
 	}
 
+	/*
+	 * RATING: 4 stars. Solid Design Pattern, but could use more unit tests + advanced functionality ported from C++
+	 * CODE REVIEW: 6.30.19
+	 */
 	public class GenericGridBoard<Tile> : AbstractGridBoard where Tile : GridTile
 	{
 		#region Constants
@@ -54,6 +58,7 @@ namespace PJ
 			// Store all tiles here for easy iteration.
 			tiles.Add(tile);
 
+			tile.board = this;
 			tile.origin = loc;
 
 			// A tile might extend across several cells, fill them all
@@ -91,7 +96,6 @@ namespace PJ
 			//selection.Remove(tile);
 			tile.board = null;
 
-			// Save value before release tile.
 			int depth = tile.origin.z;
 
 			for (int x = tileBounds.origin.x; x < (tileBounds.origin.x + tileBounds.size.x); x++)
@@ -277,7 +281,8 @@ namespace PJ
 
 		int CountTilesInColumn(Vector3Int col)
 		{
-			int result = 0;
+			HashSet<Tile> foundTiles = new HashSet<Tile>();
+
 			for (int y = 0; y < Height; y++)
 			{
 				Tile tile = GetTile(new Vector3Int(col.x, y, col.z));
@@ -285,17 +290,17 @@ namespace PJ
 				{
 					continue;
 				}
-				result++;
+				foundTiles.Add(tile);
 				y += tile.size.y - 1;
-
 			}
 
-			return result;
+			return foundTiles.Count;
 		}
 
 		int CountTilesInRow(Vector3Int col)
 		{
-			int result = 0;
+			HashSet<Tile> foundTiles = new HashSet<Tile>();
+
 			for (int x = 0; x < Width; x++)
 			{
 				Tile tile = GetTile(new Vector3Int(x, col.y, col.z));
@@ -303,11 +308,11 @@ namespace PJ
 				{
 					continue;
 				}
-				result++;
+				foundTiles.Add(tile);
 				x += tile.size.x - 1;
 			}
 
-			return result;
+			return foundTiles.Count;
 		}
 		#endregion
 

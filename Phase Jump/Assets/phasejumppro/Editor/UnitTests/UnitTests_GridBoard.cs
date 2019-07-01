@@ -243,7 +243,7 @@ namespace PJ
 			Assert.IsFalse(gridBoard.IsValidLoc(new Vector3Int(0, 0, -1)));
 			Assert.IsFalse(gridBoard.IsValidLoc(new Vector3Int(20, 20, 0)));
 			Assert.IsFalse(gridBoard.IsValidLoc(new Vector3Int(-1, -1, 0)));
-			Assert.IsTrue(gridBoard.IsValidLoc(new Vector3Int(19, 19, 0)));
+			Assert.IsTrue(gridBoard.IsValidLoc(new Vector3Int(19, 19, 1)));
 			Assert.IsTrue(gridBoard.IsValidLoc(new Vector3Int(0, 0, 0)));
 
 			GenericGridCell<GridTile> gridCell = gridBoard.GetCell(new Vector3Int(0, 0, 0));
@@ -275,11 +275,11 @@ namespace PJ
 			Assert.IsFalse(gridBoard.IsCellBlocked(new Vector3Int(0, 2, 0)));
 			Assert.IsFalse(gridBoard.IsCellBlocked(new Vector3Int(2, 0, 0)));
 
-			Assert.IsTrue(gridBoard.IsBlocked(new Rect2Int(new Vector2Int(0, 0), new Vector2Int(1, 1)), 0));
+			Assert.IsTrue(gridBoard.IsBlocked(new Rect2Int(new Vector2Int(0, 0), new Vector2Int(1, 2)), 0));
 			Assert.IsTrue(gridBoard.IsBlocked(new Rect2Int(new Vector2Int(1, 0), new Vector2Int(2, 1)), 0));
-			Assert.IsTrue(gridBoard.IsBlocked(new Rect2Int(new Vector2Int(0, 1), new Vector2Int(1, 2)), 0));
-			Assert.IsFalse(gridBoard.IsBlocked(new Rect2Int(new Vector2Int(2, 0), new Vector2Int(3, 1)), 0));
-			Assert.IsFalse(gridBoard.IsBlocked(new Rect2Int(new Vector2Int(0, 2), new Vector2Int(1, 3)), 0));
+			Assert.IsTrue(gridBoard.IsBlocked(new Rect2Int(new Vector2Int(0, 1), new Vector2Int(1, 1)), 0));
+			Assert.IsFalse(gridBoard.IsBlocked(new Rect2Int(new Vector2Int(2, 0), new Vector2Int(1, 1)), 0));
+			Assert.IsFalse(gridBoard.IsBlocked(new Rect2Int(new Vector2Int(0, 2), new Vector2Int(1, 1)), 0));
 
 			Rect2Int destTileBounds = gridBoard.GetDestTileBounds(tile, new Vector3Int(0, 0, 0));
 			Assert.AreEqual(0, destTileBounds.origin.x);
