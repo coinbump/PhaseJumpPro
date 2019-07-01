@@ -202,17 +202,17 @@ namespace PJ
 			{
 				layer.Resize(gridSize);
 			}
+
+			size = newSize;
 		}
 
 		public bool IsValidLoc(Vector3Int loc)
 		{
-			var depth = loc.z;
-
 			if (loc.x < 0 || loc.y < 0 || loc.x >= size.x || loc.y >= size.y)
 			{
 				return false;
 			}
-			if (loc.z < 0 || loc.z >= depth)
+			if (loc.z < 0 || loc.z >= Depth)
 			{
 				return false;
 			}

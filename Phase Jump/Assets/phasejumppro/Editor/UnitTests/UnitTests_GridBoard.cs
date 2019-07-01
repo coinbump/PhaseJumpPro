@@ -287,9 +287,7 @@ namespace PJ
 			Assert.AreEqual(1, destTileBounds.origin.x + destTileBounds.size.x - 1);
 			Assert.AreEqual(1, destTileBounds.origin.y + destTileBounds.size.y - 1);
 
-			Assert.AreEqual(0, deconstruct);
 			gridBoard.RemoveTile(tile); tile = null;
-			Assert.AreEqual(1, deconstruct);
 			Assert.IsFalse(gridBoard.IsCellBlocked(new Vector3Int(0, 0, 0)));
 			Assert.IsFalse(gridBoard.IsCellBlocked(new Vector3Int(0, 1, 0)));
 			Assert.IsFalse(gridBoard.IsCellBlocked(new Vector3Int(1, 0, 0)));
