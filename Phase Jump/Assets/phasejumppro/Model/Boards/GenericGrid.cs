@@ -12,7 +12,7 @@ namespace PJ
 	/// Stores objects in an XxY grid structure (Y rows of X cells)
 	/// </summary>
 	/// <typeparam name="T">Type of thing to store</typeparam>
-	public class GenericGridStorage<T> where T : new()
+	public class GenericGrid<T> where T : new()
 	{
 		#region Types
 		public class Row : List<T>
@@ -52,11 +52,11 @@ namespace PJ
 		#endregion
 
 		#region Initializers
-		public GenericGridStorage()
+		public GenericGrid()
 		{
 		}
 
-		public GenericGridStorage(Vector2Int size)
+		public GenericGrid(Vector2Int size)
 		{
 			if (size.x < 1 || size.y < 1)
 			{
@@ -168,12 +168,12 @@ namespace PJ
 		#endregion
 	}
 
-	class GridStorageBool : GenericGridStorage<bool>
+	class GridStorageBool : GenericGrid<bool>
 	{
 
 	}
 
-	class GridStorageInt : GenericGridStorage<int>
+	class GridStorageInt : GenericGrid<int>
 	{
 
 	}
