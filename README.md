@@ -22,6 +22,8 @@ The code contains common design patterns for games in C#:
 - Concept-Demo (for tutorials)
 - Bank for Currency (freemium apps)
 - TopDown2D characters and basic steering (Flip, Wander, Wander-to-Target)
+- Input Schemes (Move to Mouse for Cursors, Aim at Mouse for shooters)
+- Grid-Based Games (Bejeweled, Tetris, etc.)
 
 # Editor Scripts
 
