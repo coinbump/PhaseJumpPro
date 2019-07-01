@@ -9,8 +9,10 @@ namespace PJ
 	/// </summary>
 	public abstract class AbstractGridTile : Core
 	{
-		public Vector3Int origin;   // Z can be used or ignored
+		public Vector3Int origin;	// Z is used for multi-layer grids
 		public Vector2Int size;
+
+		public GridBoard board;
 
 		// OPTIONAL attributes:
 		public bool isPainted;  // True: was painted for render

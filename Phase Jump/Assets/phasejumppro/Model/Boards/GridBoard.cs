@@ -6,13 +6,14 @@ namespace PJ
 {
 	using Tile = PJ.AbstractGridTile;
 
-	class GridBoard : Core
+	public class GridBoard : Core
 	{
 		#region Constants
 		struct Events
 		{
 			public const string EvtAddTile = "tile_add";
 			public const string EvtWillRemoveTile = "tile_will_remove";
+			public const string EvtRemovedTile = "tile_removed";
 		}
 		#endregion
 
@@ -72,6 +73,52 @@ namespace PJ
 
 			return true;
 		}
+
+		public virtual void RemoveTile(Tile tile)
+		{
+			if (null == tile) { return; }
+			if (tile.board != this) { return; }
+
+			if (!suspendEvents)
+			{
+				EvtWillRemoveTile(tile);
+			}
+
+			Vector3Int loc = tile.origin;
+			Rect2Int tileBounds = GetDestTileBounds(tile, loc);
+
+			//selection.Remove(tile);
+			tile.board = null;
+
+			// Save value before release tile.
+			int depth = tile.origin.z;
+
+			for (int x = tileBounds.origin.x; x < (tileBounds.origin.x + tileBounds.size.x); x++)
+			{
+				for (int y = tileBounds.origin.y; y < (tileBounds.origin.y + tileBounds.size.y); y++)
+				{
+					GetCell(new Vector3Int(x, y, depth)).tile = null;
+				}
+			}
+			tiles.Remove(tile);
+			layers[depth].EvtCellsUnblocked(tileBounds);
+
+			if (!suspendEvents)
+			{
+				EvtRemovedTile(tile);
+			}
+		}
+
+		public virtual void RemoveAllTiles()
+		{
+			// Avoid mutation error while iterating
+			HashSet<Tile> iterTiles = new HashSet<Tile>(tiles);
+			foreach (Tile tile in iterTiles)
+			{
+				RemoveTile(tile);
+			}
+		}
+
 		#endregion
 
 		#region Utilities
@@ -288,6 +335,12 @@ namespace PJ
 			broadcaster.Broadcast(new Event(Events.EvtWillRemoveTile));
 		}
 
+		protected virtual void EvtRemovedTile(Tile tile)
+		{
+			if (null == broadcaster) { return; }
+			broadcaster.Broadcast(new Event(Events.EvtRemovedTile));
+		}
+
 		protected virtual void EvtTileModified(Tile tile)
 		{
 
@@ -445,53 +498,3 @@ namespace PJ
 	}
 }
 
-
-// TODO: port this C++ code to C#
-//void RemoveTile(Tile tile)
-//{
-//	if (null == tile) { return; }
-//	if (tile.mBoard != this) { return; }
-
-//	if (!suspendEvents)
-//	{
-//		evtRemoveTile(tile);    // Before release
-//	}
-
-//	Vector3Int loc = tile.origin;
-//	Rect2Int tileBounds = GetDestTileBounds(tile, loc);
-
-//	mSelection.Remove(tile);
-//	tile.mBoard = null;
-
-//	// Save value before release tile.
-//	int depth = tile.origin.z;
-
-//	for (int x = tileBounds.left(); x <= tileBounds.right(); x++)
-//	{
-//		for (int y = tileBounds.top(); y <= tileBounds.bottom(); y++)
-//		{
-//			GetCell(Vector3Int(x, y, depth)).tile = null;
-//		}
-//	}
-//	tiles.Remove(tile);
-//	layers[depth].evtCellsUnblocked(tileBounds);
-
-//	if (!suspendEvents)
-//	{
-//		mBroadcaster.Broadcast(kEvtTileRemoved);
-//	}
-//}
-
-//virtual void RemoveAllTiles()
-//{
-//	set<Tile*> iterTiles = tiles;
-//	FOR_I(set<Tile*>, iterTiles) {
-//		RemoveTile(*i);
-//	}
-//}
-//#pragma mark - Tile
-
-//void Tile.evtModified()
-//{
-//	if (null != mBoard) mBoard.evtTileModified(this);
-//}
