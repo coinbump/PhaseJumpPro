@@ -35,20 +35,8 @@ namespace PJ
 		#endregion
 
 		#region Properties
-		public int Width
-		{
-			get
-			{
-				return size.x;
-			}
-		}
-		public int Height
-		{
-			get
-			{
-				return size.y;
-			}
-		}
+		public int Width => size.x;
+		public int Height => size.y;
 		#endregion
 
 		#region Initializers

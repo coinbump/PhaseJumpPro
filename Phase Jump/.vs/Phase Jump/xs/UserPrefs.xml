@@ -1,12 +1,12 @@
 ﻿<Properties StartupConfiguration="{51BDC8AF-8B4E-EDCD-CD37-EADF80C84D5E}|">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/phasejumppro/Editor/UnitTests/UnitTests_GridBoard.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/phasejumppro/Model/Boards/GridBoard.cs">
     <Files>
-      <File FileName="Assets/phasejumppro/Model/Boards/GridBoard.cs" Line="882" Column="1" />
-      <File FileName="Assets/phasejumppro/Model/Boards/GenericGrid.cs" Line="181" Column="1" />
+      <File FileName="Assets/phasejumppro/Model/Boards/GridBoard.cs" Line="7" Column="34" />
+      <File FileName="Assets/phasejumppro/Model/Boards/GenericGrid.cs" Line="139" Column="5" />
       <File FileName="Assets/phasejumppro/Editor/UnitTests/UnitTests_BoardTypes.cs" Line="1" Column="1" />
-      <File FileName="Assets/phasejumppro/Model/Boards/GridLayer.cs" Line="25" Column="4" />
       <File FileName="Assets/phasejumppro/Editor/UnitTests/UnitTests_GridLayer.cs" Line="169" Column="31" />
-      <File FileName="Assets/phasejumppro/Editor/UnitTests/UnitTests_GridBoard.cs" Line="290" Column="1" />
+      <File FileName="Assets/phasejumppro/Model/Boards/GridCell.cs" Line="28" Column="4" />
+      <File FileName="Assets/phasejumppro/Model/Boards/GridLayer.cs" Line="53" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -17,16 +17,16 @@
                 <Node name="Classes" expanded="True" />
                 <Node name="Core" expanded="True" />
                 <Node name="Editor" expanded="True">
-                  <Node name="UnitTests" expanded="True">
-                    <Node name="UnitTests_GridBoard.cs" selected="True" />
-                  </Node>
+                  <Node name="UnitTests" expanded="True" />
                 </Node>
                 <Node name="Go" expanded="True">
                   <Node name="Behavior" expanded="True" />
                 </Node>
                 <Node name="Input" expanded="True" />
                 <Node name="Model" expanded="True">
-                  <Node name="Boards" expanded="True" />
+                  <Node name="Boards" expanded="True">
+                    <Node name="GridBoard.cs" selected="True" />
+                  </Node>
                   <Node name="Patterns" expanded="True" />
                 </Node>
                 <Node name="Time" expanded="True" />
