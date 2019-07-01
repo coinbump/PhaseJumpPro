@@ -21,10 +21,10 @@ namespace PJ
 
 			test.Deposit(new Price(CurrencyTypes.Game, 10));
 			Assert.AreEqual(10, test.Balance(CurrencyTypes.Game));
-			Assert.AreEqual(false, test.CanWithdraw(new Price(CurrencyTypes.Game, 20)));
-			Assert.AreEqual(false, test.Withdraw(new Price(CurrencyTypes.Game, 20)));
+			Assert.IsFalse(test.CanWithdraw(new Price(CurrencyTypes.Game, 20)));
+			Assert.IsFalse(test.Withdraw(new Price(CurrencyTypes.Game, 20)));
 			Assert.AreEqual(10, test.Balance(CurrencyTypes.Game));
-			Assert.AreEqual(true, test.Withdraw(new Price(CurrencyTypes.Game, 5)));
+			Assert.IsTrue(test.Withdraw(new Price(CurrencyTypes.Game, 5)));
 			Assert.AreEqual(5, test.Balance(CurrencyTypes.Game));
 
 			test.Clear(CurrencyTypes.Game);

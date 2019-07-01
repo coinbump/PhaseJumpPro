@@ -13,14 +13,14 @@ namespace PJ
 			timer.EvtUpdate(new TimeSlice(.3f));
 			Assert.AreEqual(.3f, timer.TimerState);
 			Assert.AreEqual(.3f, timer.GetProgress());
-			Assert.AreEqual(false, timer.IsFinished);
+			Assert.IsFalse(timer.IsFinished);
 			timer.EvtUpdate(new TimeSlice(.7f));
 			Assert.AreEqual(1.0f, timer.TimerState);
 			Assert.AreEqual(1.0f, timer.GetProgress());
-			Assert.AreEqual(true, timer.IsFinished);
+			Assert.IsTrue(timer.IsFinished);
 
 			timer.SetProgress(.5f);
-			Assert.AreEqual(false, timer.IsFinished);
+			Assert.IsFalse(timer.IsFinished);
 		}
 	}
 }

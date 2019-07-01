@@ -42,11 +42,11 @@ namespace PJ
 			Assert.AreEqual(6, gridStorage.NumRows(), "Num Rows Check");
 			Assert.AreEqual(6, gridStorage.NumColumns(), "Num Columns Check");
 
-			Assert.AreEqual(false, gridStorage.IsValidLoc(new Vector2Int(-1, -1)));
-			Assert.AreEqual(false, gridStorage.IsValidLoc(new Vector2Int(6, 0)));
-			Assert.AreEqual(false, gridStorage.IsValidLoc(new Vector2Int(0, 6)));
-			Assert.AreEqual(true, gridStorage.IsValidLoc(new Vector2Int(0, 0)));
-			Assert.AreEqual(true, gridStorage.IsValidLoc(new Vector2Int(5, 5)));
+			Assert.IsFalse(gridStorage.IsValidLoc(new Vector2Int(-1, -1)));
+			Assert.IsFalse(gridStorage.IsValidLoc(new Vector2Int(6, 0)));
+			Assert.IsFalse(gridStorage.IsValidLoc(new Vector2Int(0, 6)));
+			Assert.IsTrue(gridStorage.IsValidLoc(new Vector2Int(0, 0)));
+			Assert.IsTrue(gridStorage.IsValidLoc(new Vector2Int(5, 5)));
 
 			Assert.AreEqual(0, gridStorage.GetCell(new Vector2Int(0, 0)));
 			gridStorage.SetCell(new Vector2Int(0, 0), 3);

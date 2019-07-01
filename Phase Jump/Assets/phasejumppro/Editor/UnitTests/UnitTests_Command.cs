@@ -29,12 +29,12 @@ namespace PJ
 			var command = new TestCommand();
 			command.Execute();
 			Assert.AreEqual(1, command.value);
-			Assert.AreEqual(false, command.didRedo);
+			Assert.IsFalse(command.didRedo);
 			command.Undo();
 			Assert.AreEqual(0, command.value);
 			command.Execute();
 			Assert.AreEqual(1, command.value);
-			Assert.AreEqual(true, command.didRedo);
+			Assert.IsTrue(command.didRedo);
 		}
 	}
 
