@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace PJ
 {
-	using Tile = PJ.AbstractGridTile;
+	using Tile = PJ.GridTile;
 
 	public class GridBoard : Core
 	{

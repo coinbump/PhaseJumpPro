@@ -3,7 +3,7 @@ using System.Collections;
 
 namespace PJ
 {
-	using Tile = AbstractGridTile;
+	using Tile = GridTile;
 
 	/// <summary>
 	/// Stores model data for each layer of the grid board
