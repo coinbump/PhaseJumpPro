@@ -381,64 +381,114 @@ namespace PJ
 			result.y += offset.y;
 			return result;
 		}
+
+		public HashSet<Tile> CollectNeighbors(Vector3Int loc)
+		{
+			var neighbors = new HashSet<Tile>();
+
+			for (int i = 0; i < NumAxialDirections(); i++)
+			{
+				Vector2Int axialOffset = GridNeighborAxialLocs[i];
+				Vector3Int neighborLoc = OffsetLoc(loc, axialOffset);
+				Tile neighbor = GetTile(neighborLoc);
+				if (null != neighbor)
+				{
+					neighbors.Add(neighbor);
+				}
+			}
+
+			return neighbors;
+		}
+
+		/// <summary>
+		/// Returns true if the two tiles touch (depending on AxialType)
+		/// 
+		/// NOTE: this currently only works with 1x1 tiles
+		/// </summary>
+		/// <param name="tile1"></param>
+		/// <param name="tile2"></param>
+		/// <param name="axialType"></param>
+		/// <returns></returns>
+		public bool DoTilesTouch(Tile tile1, Tile tile2, AxialType axialType)
+		{
+			if (null == tile1 || null == tile2)
+			{
+				return false;
+			}
+			if (tile1 == tile2)
+			{
+				Debug.LogWarning("WARNING. DoTilesTouch can't compare the same tile.");
+				return false;
+			}
+
+			bool result = false;
+
+			for (int i = 0; i < NumAxialDirections(); i++)
+			{
+				Vector2Int axialOffset = GetAxial(i);
+				Vector3Int neighborLoc = OffsetLoc(tile1.origin, axialOffset);
+				if (!DoesAxialIndexMatchType(i, axialType))
+				{
+					continue;
+				}
+
+				if (neighborLoc == tile2.origin)
+				{
+					return true;
+				}
+			}
+
+			return result;
+
+		}
 		#endregion
 	}
 }
 
 
 // TODO: port this C++ code to C#
-
-//void CollectNeighbors(Tile tile, vector<Tile*>& neighbors)
+//void RemoveTile(Tile tile)
 //{
+//	if (null == tile) { return; }
+//	if (tile.mBoard != this) { return; }
 
-//	neighbors.clear();
-
-//	for (int i = 0; i < NumAxialDirections(); i++)
+//	if (!suspendEvents)
 //	{
-//		Vector2Int axialOffset = GridNeighborAxialLocs[i];
-//		Vector3Int neighborLoc = OffsetLoc(tile.origin, axialOffset);
-//		Tile neighbor = static_cast<Tile*>(GetTile(neighborLoc));
-//		if (null != neighbor)
-//		{
-//			neighbors.push_back(neighbor);
-//		}
+//		evtRemoveTile(tile);    // Before release
 //	}
 
+//	Vector3Int loc = tile.origin;
+//	Rect2Int tileBounds = GetDestTileBounds(tile, loc);
+
+//	mSelection.Remove(tile);
+//	tile.mBoard = null;
+
+//	// Save value before release tile.
+//	int depth = tile.origin.z;
+
+//	for (int x = tileBounds.left(); x <= tileBounds.right(); x++)
+//	{
+//		for (int y = tileBounds.top(); y <= tileBounds.bottom(); y++)
+//		{
+//			GetCell(Vector3Int(x, y, depth)).tile = null;
+//		}
+//	}
+//	tiles.Remove(tile);
+//	layers[depth].evtCellsUnblocked(tileBounds);
+
+//	if (!suspendEvents)
+//	{
+//		mBroadcaster.Broadcast(kEvtTileRemoved);
+//	}
 //}
 
-//bool DoTilesTouch(Tile tile1, Tile tile2, AxialType axialType)
+//virtual void RemoveAllTiles()
 //{
-//	if (null == tile1 || null == tile2)
-//	{
-//		return false;
+//	set<Tile*> iterTiles = tiles;
+//	FOR_I(set<Tile*>, iterTiles) {
+//		RemoveTile(*i);
 //	}
-//	if (tile1 == tile2)
-//	{
-//		PJLog("ERROR. DoTilesTouch can't compare the same tile.");
-//		return false;
-//	}
-
-//	bool result = false;
-
-//	for (int i = 0; i < NumAxialDirections(); i++)
-//	{
-//		Vector2Int axialOffset = GetAxial(i);
-//		Vector3Int neighborLoc = OffsetLoc(tile1.origin, axialOffset);
-//		if (!DoesAxialIndexMatchType(i, axialType))
-//		{
-//			continue;
-//		}
-
-//		if (neighborLoc == tile2.origin)
-//		{
-//			return true;
-//		}
-//	}
-
-//	return result;
-
 //}
-
 //#pragma mark - Tile
 
 //void Tile.evtModified()

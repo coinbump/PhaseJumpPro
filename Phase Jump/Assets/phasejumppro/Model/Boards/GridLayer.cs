@@ -61,48 +61,7 @@ namespace PJ
 //BoardDistro mDistro;    // OPTIMIZE: turn off distro tracking if you need more speed.
 
 
-//void RemoveTile(Tile tile)
-//{
-//	if (null == tile) { return; }
-//	if (tile.mBoard != this) { return; }
 
-//	if (!suspendEvents)
-//	{
-//		evtRemoveTile(tile);    // Before release
-//	}
-
-//	Vector3Int loc = tile.origin;
-//	Rect2Int tileBounds = GetDestTileBounds(tile, loc);
-
-//	mSelection.Remove(tile);
-//	tile.mBoard = null;
-
-//	// Save value before release tile.
-//	int depth = tile.origin.z;
-
-//	for (int x = tileBounds.left(); x <= tileBounds.right(); x++)
-//	{
-//		for (int y = tileBounds.top(); y <= tileBounds.bottom(); y++)
-//		{
-//			GetCell(Vector3Int(x, y, depth)).tile = null;
-//		}
-//	}
-//	tiles.Remove(tile);
-//	layers[depth].evtCellsUnblocked(tileBounds);
-
-//	if (!suspendEvents)
-//	{
-//		mBroadcaster.Broadcast(kEvtTileRemoved);
-//	}
-//}
-
-//virtual void RemoveAllTiles()
-//{
-//	set<Tile*> iterTiles = tiles;
-//	FOR_I(set<Tile*>, iterTiles) {
-//		RemoveTile(*i);
-//	}
-//}
 
 ///*
 //	mapDistroLocSize
