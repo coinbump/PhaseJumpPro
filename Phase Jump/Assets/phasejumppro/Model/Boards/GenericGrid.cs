@@ -156,12 +156,12 @@ namespace PJ
 		#endregion
 	}
 
-	class GridStorageBool : GenericGrid<bool>
+	class GridBool : GenericGrid<bool>
 	{
 
 	}
 
-	class GridStorageInt : GenericGrid<int>
+	class GridInt : GenericGrid<int>
 	{
 
 	}
