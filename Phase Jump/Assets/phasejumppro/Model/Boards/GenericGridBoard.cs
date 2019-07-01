@@ -131,6 +131,7 @@ namespace PJ
 		}
 
 		public virtual GenericGridCell<Tile> NewCell() { return new GenericGridCell<Tile>(); }
+		public virtual GenericGridLayer<Tile> NewLayer(Vector2Int size) { return new GenericGridLayer<Tile>(size); }
 
 		public GenericGridCell<Tile> GetCell(Vector3Int _loc)
 		{
@@ -188,7 +189,7 @@ namespace PJ
 			// Add new layers.
 			while (layers.Count < newLayerCount)
 			{
-				GenericGridLayer<Tile> layer = new GenericGridLayer<Tile>(gridSize);
+				GenericGridLayer<Tile> layer = NewLayer(gridSize);
 				layers.Add(layer);
 			}
 			if (layers.Count > newLayerCount)
