@@ -4,9 +4,10 @@ using System.Collections.Generic;
 
 namespace PJ
 {
-	using Tile = PJ.GridTile;
+	public class AbstractGridBoard : Core {
+	}
 
-	public class GridBoard : Core
+	public class GenericGridBoard<Tile> : AbstractGridBoard where Tile : GridTile
 	{
 		#region Constants
 		struct Events
@@ -20,7 +21,7 @@ namespace PJ
 		#region Fields
 		protected HashSet<Tile> tiles = new HashSet<Tile>();
 		protected Vector3Int size = new Vector3Int(0, 0, 0);
-		protected List<GridLayer> layers = new List<GridLayer>();
+		protected List<GenericGridLayer<Tile>> layers = new List<GenericGridLayer<Tile>>();
 		protected bool suspendEvents;   // If true, don't broadcast events
 		#endregion
 
@@ -129,16 +130,16 @@ namespace PJ
 			return result;
 		}
 
-		public virtual GridCell NewCell() { return new GridCell(); }
+		public virtual GenericGridCell<Tile> NewCell() { return new GenericGridCell<Tile>(); }
 
-		public GridCell GetCell(Vector3Int _loc)
+		public GenericGridCell<Tile> GetCell(Vector3Int _loc)
 		{
 			if (!IsValidLoc(_loc)) { return null; }
-			GridCell result;
+			GenericGridCell<Tile> result;
 
 			var loc = new Vector2Int(_loc.x, _loc.y);
 
-			GridLayer grid = layers[_loc.z];
+			GenericGridLayer<Tile> grid = layers[_loc.z];
 			result = grid.GetCell(loc);
 			if (null == result)
 			{
@@ -164,7 +165,7 @@ namespace PJ
 
 		public Tile GetTile(Vector3Int loc)
 		{
-			GridCell cell = GetCell(loc);
+			GenericGridCell<Tile> cell = GetCell(loc);
 			if (null != cell)
 			{
 				return cell.tile;
@@ -187,7 +188,7 @@ namespace PJ
 			// Add new layers.
 			while (layers.Count < newLayerCount)
 			{
-				GridLayer layer = new GridLayer(gridSize);
+				GenericGridLayer<Tile> layer = new GenericGridLayer<Tile>(gridSize);
 				layers.Add(layer);
 			}
 			if (layers.Count > newLayerCount)
@@ -196,7 +197,7 @@ namespace PJ
 				layers.RemoveRange(layers.Count - diff, diff);
 			}
 
-			foreach (GridLayer layer in layers)
+			foreach (GenericGridLayer<Tile> layer in layers)
 			{
 				layer.Resize(gridSize);
 			}

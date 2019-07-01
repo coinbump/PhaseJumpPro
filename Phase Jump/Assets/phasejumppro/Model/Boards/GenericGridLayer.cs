@@ -8,13 +8,13 @@ namespace PJ
 	/// <summary>
 	/// Stores model data for each layer of the grid board
 	/// </summary>
-	public class GridLayer : GenericGrid<GridCell>
+	public class GenericGridLayer<Tile> : GenericGrid<GenericGridCell<Tile>> where Tile : GridTile
 	{
 		// FUTURE: add support for cell sets, fast distribution (for populating grid worlds).
 
 		public bool IsCellBlocked(Vector2Int loc) {
 			if (!IsValidLoc(loc)) { return true; }
-			GridCell cell = GetCell(loc);
+			GenericGridCell<Tile> cell = GetCell(loc);
 			if (null == cell) {
 				return false;	// Nothing there.
 			}
@@ -36,7 +36,7 @@ namespace PJ
 			return false;
 		}
 
-		public GridLayer(Vector2Int size)
+		public GenericGridLayer(Vector2Int size)
 			: base(size)
 		{
 		}

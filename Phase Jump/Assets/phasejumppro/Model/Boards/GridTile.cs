@@ -12,7 +12,7 @@ namespace PJ
 		public Vector3Int origin;	// Z is used for multi-layer grids
 		public Vector2Int size;
 
-		public GridBoard board;
+		public AbstractGridBoard board;
 
 		// OPTIONAL attributes:
 		public bool isPainted;  // True: was painted for render
