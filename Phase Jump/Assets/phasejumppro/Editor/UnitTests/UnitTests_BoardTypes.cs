@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
+using PJ;
 
 namespace EnumExtension
 {
@@ -9,9 +10,9 @@ namespace EnumExtension
 		[Test]
 		public void UnitTests()
 		{
-			var direction = HexBoardDirection.North;
+			var direction = PJ.HexBoardDirection.North;
 			direction = direction.Opposite();
-			Assert.AreEqual(HexBoardDirection.South, direction);
+			Assert.AreEqual(PJ.HexBoardDirection.South, direction);
 		}
 	}
 }

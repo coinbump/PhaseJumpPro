@@ -1,33 +1,50 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
+using PJ;
 
-/// <summary>
-/// Direction of movement on a hexagonal board
-/// </summary>
-public enum HexBoardDirection
+namespace PJ
 {
-	Northwest,
-	North,
-	Northeast,
-	East,
-	South,
-	Southeast,
-	Southwest
+	/// <summary>
+	/// Direction of movement on a hexagonal board
+	/// </summary>
+	public enum HexBoardDirection
+	{
+		Northwest,
+		North,
+		Northeast,
+		East,
+		South,
+		Southeast,
+		Southwest
+	}
+
+	/// <summary>
+	/// A rectangle in 2D space
+	/// </summary>
+	public struct Rect2Int
+	{
+		public Vector2Int origin;
+		public Vector2Int size;
+	}
+
+	/// <summary>
+	/// Axial direction of travel
+	/// </summary>
+	public enum AxialDirection
+	{
+		Right,
+		Left
+	}
+
+	public enum AxialType
+	{
+		AxialAny,   // Any axial tile that touches the origin tile
+		AxialEdge   // Any axial tile that has an edge touching the origin tile (no square diagonal)
+	}
+
 }
 
-/// <summary>
-/// Axial direction of travel
-/// </summary>
-public enum AxialDirection {
-	Right,
-	Left
-}
-
-public enum AxialType
-{
-	AxialAny,	// Any axial tile that touches the origin tile
-	AxialEdge   // Any axial tile that has an edge touching the origin tile (no square diagonal)
-}
 
 namespace EnumExtension
 {
