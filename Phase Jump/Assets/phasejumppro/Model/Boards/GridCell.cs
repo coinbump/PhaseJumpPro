@@ -18,6 +18,10 @@ namespace PJ
 		public AbstractGridTile tile;
 		public Vector3Int origin;	// Z can be used or ignored
 
+		public GridCell()
+		{
+		}
+
 		public GridCell(Vector3Int origin)
 		{
 			this.origin = origin;

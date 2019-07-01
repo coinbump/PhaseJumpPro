@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace PJ
 {
@@ -7,9 +8,21 @@ namespace PJ
 
 	class GridBoard : Core
 	{
+		#region Constants
+		struct Events
+		{
+			public const string EvtAddTile = "tile_add";
+			public const string EvtWillRemoveTile = "tile_will_remove";
+		}
+		#endregion
+
+		#region Fields
 		protected Vector3Int size = new Vector3Int(0, 0, 0);
 		protected List<GridLayer> layers = new List<GridLayer>();
+		protected bool suspendEvents;	// If true, don't broadcast events
+		#endregion
 
+		#region Properties
 		public int Width
 		{
 			get
@@ -24,29 +37,108 @@ namespace PJ
 				return size.y;
 			}
 		}
+		#endregion
 
-		struct Events
+		#region Builders
+		public bool PutTile(Tile tile, Vector3Int loc)
 		{
-			public const string EvtAddTile = "tile_add";
-			public const string EvtWillRemoveTile = "tile_will_remove";
-		}
+			if (!IsValidLoc(loc)) { return false; }
+			if (null == tile) { return false; }
 
-		// TODO: Finish this
-		public Tile GetTile(Vector3Int loc) { return null; }
-		public GridCell GetCell(Vector3Int loc) { return null; }
+			if (tile.size.x < 1 || tile.size.y < 1)
+			{
+				Debug.LogWarningFormat("ERROR. Invalid tile size {0}, {1}", tile.size.x, tile.size.y);
+				return false;
+			}
+
+			Rect2Int tileBounds = GetDestTileBounds(tile, loc);
+			if (IsBlocked(tileBounds, loc.z))
+			{
+				return false;
+			}
+
+			// TODO: Finish porting from C++
+			//tiles.Put(tile);
+
+			//tile.mBoard = this;
+			//tile.mGrid = mGrids[loc.z].get();
+			//tile.origin = loc;
+
+			//for (int x = tileBounds.origin.x; x < (tileBounds.origin.x + tileBounds.size.x); x++)
+			//{
+			//	for (int y = tileBounds.origin.y; y < (tileBounds.origin.y + tileBounds.size.y); y++)
+			//	{
+			//		GetCell(new Vector3Int(x, y, loc.z)).tile = tile;
+			//	}
+			//}
+			//tile.mGrid.evtCellsBlocked(tileBounds);
+
+			// Don't notify until tile's state is set (or wrong state will be encoded).
+			if (!suspendEvents)
+			{
+				EvtAddTile(tile);
+			}
+
+			return true;
+		}
+		#endregion
 
 		#region Utilities
 
-		Rect2Int GetDestTileBounds(Tile tile, Vector3Int loc)
+		public Rect2Int GetDestTileBounds(Tile tile, Vector3Int loc)
 		{
-			Rect2Int result = new Rect2Int(new Vector2Int(loc.x, loc.y)), new Vector2Int(tile.size.x, tile.size.y));
+			Rect2Int result = new Rect2Int(new Vector2Int(loc.x, loc.y), new Vector2Int(tile.size.x, tile.size.y));
 			return result;
 		}
 
-		void Resize(Vector3Int newSize)
+		public virtual GridCell NewCell() { return new GridCell(); }
+
+		public GridCell GetCell(Vector3Int _loc)
+		{
+			if (!IsValidLoc(_loc)) { return null; }
+			GridCell result = null;
+
+			var loc = new Vector2Int(_loc.x, _loc.y);
+
+			GridLayer grid = layers[_loc.z];
+			result = grid.GetCell(loc);
+			if (null == result)
+			{
+				result = NewCell();
+				result.origin = _loc;
+				grid.SetCell(loc, result);
+			}
+
+			return result;
+		}
+
+		public bool IsCellBlocked(Vector3Int loc)
+		{
+			if (!IsValidLoc(loc)) { return true; }
+			return layers[loc.z].IsCellBlocked(new Vector2Int(loc.x, loc.y));
+		}
+
+		public bool IsBlocked(Rect2Int bounds, int depth)
+		{
+			if (!IsValidLoc(new Vector3Int(0, 0, depth))) { return true; }
+			return layers[depth].IsBlocked(bounds);
+		}
+
+		public Tile GetTile(Vector3Int loc)
+		{
+			GridCell cell = GetCell(loc);
+			if (null != cell)
+			{
+				return cell.tile;
+			}
+			return null;
+		}
+
+		public void Resize(Vector3Int newSize)
 		{
 			var newLayerCount = newSize.z;
 			var gridSize = new Vector2Int(newSize.x, newSize.y);
+			var depth = newSize.z;
 
 			if (depth < 1)
 			{
@@ -57,8 +149,8 @@ namespace PJ
 			// Add new layers.
 			while (layers.Count < newLayerCount)
 			{
-				var layer = new GridLayer(gridSize);
-				layer.Add(layer);
+				GridLayer layer = new GridLayer(gridSize);
+				layers.Add(layer);
 			}
 			if (layers.Count > newLayerCount)
 			{
@@ -74,6 +166,8 @@ namespace PJ
 
 		public bool IsValidLoc(Vector3Int loc)
 		{
+			var depth = loc.z;
+
 			if (loc.x < 0 || loc.y < 0 || loc.x >= size.x || loc.y >= size.y)
 			{
 				return false;
@@ -83,19 +177,6 @@ namespace PJ
 				return false;
 			}
 			return true;
-		}
-
-		public bool IsCellBlocked(Vector3Int loc) {
-			if (!IsValidLoc(loc)) { return true; }
-
-			GridCell cell = GetCell(loc);
-			if (null == cell) {
-				return false;	// Nothing there.
-			}
-			if (null != cell.tile && cell.tile.isGhost) {
-				return false;	// Ghost tile.
-			}
-			return null != cell.tile;
 		}
 
 		bool IsRowEmpty(Vector3Int row)
@@ -300,20 +381,18 @@ namespace PJ
 	}
 }
 
-//virtual PJ_BoardGrid newBoardGrid(int width, int height, BoardDistro distro)
+
+// TODO: port this C++ code to C#
+//virtual GridLayer newBoardGrid(int width, int height, BoardDistro distro)
 //{
-//	return new PJ_BoardGrid(this, width, height, distro);
+//	return new GridLayer(this, width, height, distro);
 //}
 
-
 //public:
-//	bool mSuspendNotify;    // TRUE: suspend notification for add/remove events.
-//GridVector mGrids;
+//	bool suspendEvents;    // TRUE: suspend notification for add/remove events.
 //TileSet tiles;
 //PJ_TSelection<Tile> mSelection;
 //BoardDistro mDistro;    // OPTIMIZE: turn off distro tracking if you need more speed.
-
-
 
 ///*
 //	IsValidLoc
@@ -322,109 +401,26 @@ namespace PJ
 
 // */
 
-//	virtual GridCell NewCell() { return new GridCell; }
 
-//	GridCell GetCell(Vector3Int loc) {
-//		if (!IsValidLoc(loc)) { return null; }
-//		GridCell result = null;
-
-//PJ_BoardGrid grid = mGrids[loc.z].get();
-//result = grid.GetCell(loc);
-//		if (null == result) {
-//			result = NewCell();
-//result.mLoc = loc;
-//			grid.SetCell(loc, result);
-//		}
-
-//		return result;
-
-//	}
-
-//	bool IsCellBlocked(Vector3Int loc) {
-//		if (!IsValidLoc(loc)) { return true; }
-//		return mGrids[loc.z].IsCellBlocked(loc);
-//	}
-
-//	bool IsBlocked(Rect2Int bounds, int depth) {
-//		for (int x = bounds.left(); x <= bounds.right(); x++) {
-//			for (int y = bounds.top(); y <= bounds.bottom(); y++) {
-//				if (IsCellBlocked(Vector3Int(x, y, depth))) {
-//					return true;
-//				}
-//			}
-//		}
-
-//		return false;
-//	}
-
-//	Tile GetTile(Vector3Int loc) {
-//		GridCell cell = GetCell(loc);
-//		if (null != cell) {
-//			return static_cast<Tile*>(cell.tile);
-//		}
-//		return null;
-
-//	}
-
-
-//bool PutTile(Tile tile, Vector3Int loc)
-//{
-//	if (loc.z < 0 || loc.z >= static_cast<int>(mGrids.size())) { return false; }
-//	if (null == tile) { return false; }
-//	if (tile.size.x < 1 || tile.size.y < 1)
-//	{
-//		PJLog("ERROR. Invalid tile size %d, %d", tile.size.x, tile.size.y);
-//		return false;
-//	}
-
-//	Rect2Int tileBounds = GetDestTileBounds(tile, loc);
-//	if (IsBlocked(tileBounds, loc.z))
-//	{
-//		return false;
-//	}
-
-//	tiles.Put(tile);
-
-//	tile.mBoard = this;
-//	tile.mGrid = mGrids[loc.z].get();
-//	tile.mOrigin = loc;
-
-//	for (int x = tileBounds.left(); x <= tileBounds.right(); x++)
-//	{
-//		for (int y = tileBounds.top(); y <= tileBounds.bottom(); y++)
-//		{
-//			GetCell(Vector3Int(x, y, loc.z)).tile = tile;
-//		}
-//	}
-//	tile.mGrid.evtCellsBlocked(tileBounds);
-
-//	// Don't notify until tile's state is set (or wrong state will be encoded).
-//	if (!mSuspendNotify)
-//	{
-//		evtAddTile(tile);
-//	}
-
-//	return true;
-//}
 
 //void RemoveTile(Tile tile)
 //{
 //	if (null == tile) { return; }
 //	if (tile.mBoard != this) { return; }
 
-//	if (!mSuspendNotify)
+//	if (!suspendEvents)
 //	{
 //		evtRemoveTile(tile);    // Before release
 //	}
 
-//	Vector3Int loc = tile.mOrigin;
+//	Vector3Int loc = tile.origin;
 //	Rect2Int tileBounds = GetDestTileBounds(tile, loc);
 
 //	mSelection.Remove(tile);
 //	tile.mBoard = null;
 
 //	// Save value before release tile.
-//	int depth = tile.mOrigin.z;
+//	int depth = tile.origin.z;
 
 //	for (int x = tileBounds.left(); x <= tileBounds.right(); x++)
 //	{
@@ -434,9 +430,9 @@ namespace PJ
 //		}
 //	}
 //	tiles.Remove(tile);
-//	mGrids[depth].evtCellsUnblocked(tileBounds);
+//	layers[depth].evtCellsUnblocked(tileBounds);
 
-//	if (!mSuspendNotify)
+//	if (!suspendEvents)
 //	{
 //		mBroadcaster.Broadcast(kEvtTileRemoved);
 //	}
@@ -542,12 +538,12 @@ namespace PJ
 //}
 
 ///*
-//	FindRandomLocForTile
+//	FindRandooriginForTile
 
 //	If tracking.
 
 // */
-//Vector3Int FindRandomLocForTile(Vector2Int tileSize)
+//Vector3Int FindRandooriginForTile(Vector2Int tileSize)
 //{
 //	Vector3Int result(-1, -1);  // Invalid.
 //	switch (mDistro)
@@ -555,7 +551,7 @@ namespace PJ
 //		case BoardDistro.Track:
 //			break;
 //		default:
-//			PJLog("ERROR. Can't use FindRandomLocForTile. Not tracking distro slots");
+//			PJLog("ERROR. Can't use FindRandooriginForTile. Not tracking distro slots");
 //			return result;
 //			break;
 //	}
@@ -575,7 +571,7 @@ namespace PJ
 //		{
 //			chooseI++;
 //		}
-//		result = (*chooseI).mLoc;
+//		result = (*chooseI).origin;
 //	}
 
 //	return result;
@@ -585,16 +581,16 @@ namespace PJ
 
 //void MoveTile(Tile tile, Vector3Int newLoc)
 //{
-//	if (newLoc.z != tile.mOrigin.z)
+//	if (newLoc.z != tile.origin.z)
 //	{
 //		PJLog("ERROR. MoveTile only moves within the same z grid.");
 //		return;
 //	}
 
 //	// Don't notify, we're just moving the tile, not removing it.
-//	PJ_TChangeAndRestore<bool> altSuspendNotify(mSuspendNotify, true);
+//	PJ_TChangeAndRestore<bool> altSuspendNotify(suspendEvents, true);
 
-//	Vector3Int firstLoc = tile.mOrigin;
+//	Vector3Int firstLoc = tile.origin;
 
 //	pjRetain(tile);
 //	RemoveTile(tile);
@@ -616,7 +612,7 @@ namespace PJ
 //bool SwapColumn(Vector3Int a, Vector3Int b)
 //{
 //	// Don't notify, we're just moving the tiles.
-//	PJ_TChangeAndRestore<bool> altSuspendNotify(mSuspendNotify, true);
+//	PJ_TChangeAndRestore<bool> altSuspendNotify(suspendEvents, true);
 
 //	if (a.z != b.z)
 //	{
@@ -641,7 +637,7 @@ namespace PJ
 //		Tile tileB = GetTile(Vector3Int(b.x, y, b.z));
 //		if (null != tileB)
 //		{
-//			Vector3Int oldLocB = tileB.mOrigin;
+//			Vector3Int oldLocB = tileB.origin;
 //			pjRetain(tileB);
 //			RemoveTile(tileB);
 //			Vector3Int newLoc(a.x, y, a.z);
@@ -679,7 +675,7 @@ namespace PJ
 //bool SwapRow(Vector3Int a, Vector3Int b)
 //{
 //	// Don't notify, we're just moving the tiles.
-//	PJ_TChangeAndRestore<bool> altSuspendNotify(mSuspendNotify, true);
+//	PJ_TChangeAndRestore<bool> altSuspendNotify(suspendEvents, true);
 
 //	if (a.z != b.z)
 //	{
@@ -704,7 +700,7 @@ namespace PJ
 //		Tile tileB = GetTile(Vector3Int(x, b.y, b.z));
 //		if (null != tileB)
 //		{
-//			Vector3Int oldLocB = tileB.mOrigin;
+//			Vector3Int oldLocB = tileB.origin;
 //			pjRetain(tileB);
 //			RemoveTile(tileB);
 //			Vector3Int newLoc(x, a.y, a.z);
@@ -744,7 +740,7 @@ namespace PJ
 //void SlideColumn(Vector3Int a, int offset, bool wrap)
 //{
 //	// Don't notify, we're just moving the tiles.
-//	PJ_TChangeAndRestore<bool> altSuspendNotify(mSuspendNotify, true);
+//	PJ_TChangeAndRestore<bool> altSuspendNotify(suspendEvents, true);
 
 //	vector<Tile*> tiles;
 //	for (int y = 0; y < Height; y++)
@@ -767,7 +763,7 @@ namespace PJ
 
 //	FOR_CONST_I(vector<Tile*>, tiles) {
 //		Tile tile = *i;
-//		Vector3Int newLoc = tile.mOrigin;
+//		Vector3Int newLoc = tile.origin;
 //		newLoc.y += offset;
 
 //		if (wrap)
@@ -796,7 +792,7 @@ namespace PJ
 //void SlideRow(Vector3Int a, int offset, bool wrap)
 //{
 //	// Don't notify, we're just moving the tiles.
-//	PJ_TChangeAndRestore<bool> altSuspendNotify(mSuspendNotify, true);
+//	PJ_TChangeAndRestore<bool> altSuspendNotify(suspendEvents, true);
 
 //	vector<Tile*> tiles;
 //	for (int x = 0; x < Width; x++)
@@ -819,7 +815,7 @@ namespace PJ
 
 //	FOR_CONST_I(vector<Tile*>, tiles) {
 //		Tile tile = *i;
-//		Vector3Int newLoc = tile.mOrigin;
+//		Vector3Int newLoc = tile.origin;
 //		newLoc.x += offset;
 
 //		if (wrap)
@@ -871,7 +867,6 @@ namespace PJ
 //	}
 
 //}
-
 
 //bool IsBlocked(Rect2Int bounds) {
 //	for (int x = bounds.left(); x <= bounds.right(); x++) {
@@ -934,7 +929,7 @@ namespace PJ
 //	for (int i = 0; i < NumAxialDirections(); i++)
 //	{
 //		Vector2Int axialOffset = GridNeighborAxialLocs[i];
-//		Vector3Int neighborLoc = OffsetLoc(tile.mOrigin, axialOffset);
+//		Vector3Int neighborLoc = OffsetLoc(tile.origin, axialOffset);
 //		Tile neighbor = static_cast<Tile*>(GetTile(neighborLoc));
 //		if (null != neighbor)
 //		{
@@ -961,13 +956,13 @@ namespace PJ
 //	for (int i = 0; i < NumAxialDirections(); i++)
 //	{
 //		Vector2Int axialOffset = GetAxial(i);
-//		Vector3Int neighborLoc = OffsetLoc(tile1.mOrigin, axialOffset);
+//		Vector3Int neighborLoc = OffsetLoc(tile1.origin, axialOffset);
 //		if (!DoesAxialIndexMatchType(i, axialType))
 //		{
 //			continue;
 //		}
 
-//		if (neighborLoc == tile2.mOrigin)
+//		if (neighborLoc == tile2.origin)
 //		{
 //			return true;
 //		}

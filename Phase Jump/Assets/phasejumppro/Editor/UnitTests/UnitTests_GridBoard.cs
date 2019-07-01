@@ -98,13 +98,13 @@ namespace PJ
 
 //	int deconstruct;
 //	TestGridTile* tile = new TestGridTile(&deconstruct);
-//	EXPECT_TRUE(gridBoard->PutTile(tile, PJ_GridLoc(0, 0)));
+//	Assert.AreEqual(true, gridBoard->PutTile(tile, PJ_GridLoc(0, 0)));
 //	Assert.AreEqual(static_cast<TestBoardGrid*>(gridBoard->mGrids[0].get())->mLastCellsBlocked, PJ_VecRect2Int(0, 0, 1, 1));
 //	gridBoard->RemoveTile(tile);
 //	Assert.AreEqual(static_cast<TestBoardGrid*>(gridBoard->mGrids[0].get())->mLastCellsUnblocked, PJ_VecRect2Int(0, 0, 1, 1));
 
 //	tile = new TestGridTile(&deconstruct);
-//	EXPECT_TRUE(gridBoard->PutTile(tile, PJ_GridLoc(1, 1)));
+//	Assert.AreEqual(true, gridBoard->PutTile(tile, PJ_GridLoc(1, 1)));
 //	gridBoard->RemoveAllTiles();
 //	Assert.AreEqual(static_cast<TestBoardGrid*>(gridBoard->mGrids[0].get())->mLastCellsUnblocked, PJ_VecRect2Int(1, 1, 2, 2));
 
@@ -121,7 +121,7 @@ namespace PJ
 
 //		EXPECT_FALSE(gridBoard->SwapColumn(PJ_GridLoc(0, 0, 0), PJ_GridLoc(0, 0, 0)));
 //		EXPECT_FALSE(gridBoard->SwapColumn(PJ_GridLoc(0, 0, 0), PJ_GridLoc(2, 0, 1)));
-//		EXPECT_TRUE(gridBoard->SwapColumn(PJ_GridLoc(0, 0, 0), PJ_GridLoc(2, 0, 0)));
+//		Assert.AreEqual(true, gridBoard->SwapColumn(PJ_GridLoc(0, 0, 0), PJ_GridLoc(2, 0, 0)));
 
 //		for (int y = 0; y < gridBoard->Height(); y++)
 //		{
@@ -137,7 +137,7 @@ namespace PJ
 
 //		EXPECT_FALSE(gridBoard->SwapRow(PJ_GridLoc(0, 0, 0), PJ_GridLoc(0, 0, 0)));
 //		EXPECT_FALSE(gridBoard->SwapRow(PJ_GridLoc(0, 0, 0), PJ_GridLoc(0, 2, 1)));
-//		EXPECT_TRUE(gridBoard->SwapRow(PJ_GridLoc(0, 0, 0), PJ_GridLoc(0, 2, 0)));
+//		Assert.AreEqual(true, gridBoard->SwapRow(PJ_GridLoc(0, 0, 0), PJ_GridLoc(0, 2, 0)));
 
 //		for (int x = 0; x < gridBoard->Width(); x++)
 //		{
@@ -256,8 +256,8 @@ namespace PJ
 //	EXPECT_FALSE(gridBoard->IsValidLoc(PJ_GridLoc(0, 0, -1)));
 //	EXPECT_FALSE(gridBoard->IsValidLoc(PJ_GridLoc(20, 20)));
 //	EXPECT_FALSE(gridBoard->IsValidLoc(PJ_GridLoc(-1, -1)));
-//	EXPECT_TRUE(gridBoard->IsValidLoc(PJ_GridLoc(19, 19)));
-//	EXPECT_TRUE(gridBoard->IsValidLoc(PJ_GridLoc(0, 0)));
+//	Assert.AreEqual(true, gridBoard->IsValidLoc(PJ_GridLoc(19, 19)));
+//	Assert.AreEqual(true, gridBoard->IsValidLoc(PJ_GridLoc(0, 0)));
 
 //	PJ_GridCell* gridCell = gridBoard->GetCell(PJ_GridLoc(0, 0));
 //	Assert.AreEqual(NULL, gridCell->mTile);
@@ -267,7 +267,7 @@ namespace PJ
 //	TestGridTile* tile = new TestGridTile(&deconstruct);
 //	EXPECT_FALSE(gridBoard->PutTile(tile, PJ_GridLoc(20, 20)));
 //	EXPECT_FALSE(gridBoard->PutTile(tile, PJ_GridLoc(0, 0, 2)));
-//	EXPECT_TRUE(gridBoard->PutTile(tile, PJ_GridLoc(0, 0)));
+//	Assert.AreEqual(true, gridBoard->PutTile(tile, PJ_GridLoc(0, 0)));
 
 //	gridCell = gridBoard->GetCell(PJ_GridLoc(0, 0));
 //	Assert.AreEqual(tile, gridCell->mTile);
@@ -279,18 +279,18 @@ namespace PJ
 //	Assert.AreEqual(NULL, gridBoard->GetTile(PJ_GridLoc(2, 0)));
 //	Assert.AreEqual(NULL, gridBoard->GetTile(PJ_GridLoc(0, 2)));
 
-//	EXPECT_TRUE(gridBoard->IsCellBlocked(PJ_GridLoc(-1, -1)));
-//	EXPECT_TRUE(gridBoard->IsCellBlocked(PJ_GridLoc(0, 0)));
-//	EXPECT_TRUE(gridBoard->IsCellBlocked(PJ_GridLoc(0, 1)));
-//	EXPECT_TRUE(gridBoard->IsCellBlocked(PJ_GridLoc(1, 0)));
-//	EXPECT_TRUE(gridBoard->IsCellBlocked(PJ_GridLoc(1, 1)));
+//	Assert.AreEqual(true, gridBoard->IsCellBlocked(PJ_GridLoc(-1, -1)));
+//	Assert.AreEqual(true, gridBoard->IsCellBlocked(PJ_GridLoc(0, 0)));
+//	Assert.AreEqual(true, gridBoard->IsCellBlocked(PJ_GridLoc(0, 1)));
+//	Assert.AreEqual(true, gridBoard->IsCellBlocked(PJ_GridLoc(1, 0)));
+//	Assert.AreEqual(true, gridBoard->IsCellBlocked(PJ_GridLoc(1, 1)));
 //	EXPECT_FALSE(gridBoard->IsCellBlocked(PJ_GridLoc(0, 0, 1)));
 //	EXPECT_FALSE(gridBoard->IsCellBlocked(PJ_GridLoc(0, 2)));
 //	EXPECT_FALSE(gridBoard->IsCellBlocked(PJ_GridLoc(2, 0)));
 
-//	EXPECT_TRUE(gridBoard->IsBlocked(PJ_VecRect2Int(0, 0, 1, 1), 0));
-//	EXPECT_TRUE(gridBoard->IsBlocked(PJ_VecRect2Int(1, 0, 2, 1), 0));
-//	EXPECT_TRUE(gridBoard->IsBlocked(PJ_VecRect2Int(0, 1, 1, 2), 0));
+//	Assert.AreEqual(true, gridBoard->IsBlocked(PJ_VecRect2Int(0, 0, 1, 1), 0));
+//	Assert.AreEqual(true, gridBoard->IsBlocked(PJ_VecRect2Int(1, 0, 2, 1), 0));
+//	Assert.AreEqual(true, gridBoard->IsBlocked(PJ_VecRect2Int(0, 1, 1, 2), 0));
 //	EXPECT_FALSE(gridBoard->IsBlocked(PJ_VecRect2Int(2, 0, 3, 1), 0));
 //	EXPECT_FALSE(gridBoard->IsBlocked(PJ_VecRect2Int(0, 2, 1, 3), 0));
 
@@ -312,7 +312,7 @@ namespace PJ
 //	EXPECT_FALSE(gridBoard->IsBlocked(PJ_VecRect2Int(0, 1, 1, 2), 0));
 
 //	tile = new TestGridTile(&deconstruct);
-//	EXPECT_TRUE(gridBoard->PutTile(tile, PJ_GridLoc(0, 0)));
+//	Assert.AreEqual(true, gridBoard->PutTile(tile, PJ_GridLoc(0, 0)));
 //	Assert.AreEqual(0, deconstruct);
 //	gridBoard->RemoveAllTiles(); tile = NULL;
 //	Assert.AreEqual(1, deconstruct);

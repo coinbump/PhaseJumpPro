@@ -26,6 +26,12 @@ namespace PJ
 	{
 		public Vector2Int origin;
 		public Vector2Int size;
+
+		public Rect2Int(Vector2Int origin, Vector2Int size)
+		{
+			this.origin = origin;
+			this.size = size;
+		}
 	}
 
 	/// <summary>
