@@ -2,24 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-// TODO: Work in progress
+// TODO: This is UNFINISHED (Work in progress).
 namespace PJ
 {
-	public class GridLoc : MonoBehaviour
-	{
-		public Vector3Int value;
-		public Vector3 offset;
-	}
-
 	/// <summary>
 	/// Unlike Unity's Grid, ours automatically places objects in the correct position
 	/// when the grid is resized.
+	/// Unlike GridLayoutGroup, this allows us to specify a specific cell for each child
+	/// NOTE: We can't subclass UnityEngine.Grid, because it is sealed
 	/// </summary>
 	public class Grid2D : MonoBehaviour
 	{
-		public Vector2Int size = new Vector2Int(1, 1);
-		public Vector2 cellSize = new Vector2Int(1, 1);
-		public Vector2 cellGap;
+		private void Awake()
+		{
+		}
 
 		void Start()
 		{
@@ -29,28 +25,6 @@ namespace PJ
 		void Update()
 		{
 
-		}
-
-		Rect CellBounds(GridLoc loc)
-		{
-			var result = new Rect();
-
-			result.xMin = loc.value.x * cellSize.x;
-			if (loc.value.x > 0)
-			{
-				result.xMin += (loc.value.x - 1) * cellGap.x;
-			}
-			result.xMax = loc.value.y * cellSize.y;
-			if (loc.value.y > 0)
-			{
-				result.yMin += (loc.value.y - 1) * cellGap.y;
-			}
-
-			result.size = cellSize;
-
-			// TODO: are we using Cartesian or reading coordinates?
-
-			return result;
 		}
 
 		private GridLoc GridLocFor(GameObject go)
@@ -68,7 +42,7 @@ namespace PJ
 		/// <summary>
 		/// For each child object, make sure it has a grid loc, or create one.
 		/// </summary>
-		private void ForceChildLocs()
+		private void AddChildLocs()
 		{
 			foreach (Transform child in transform)
 			{
@@ -77,20 +51,35 @@ namespace PJ
 			}
 		}
 
-		void OnTransformChildrenChanged()
+		public void ResizeChild(GameObject go)
 		{
-			ResizeChildren();
+			var grid = GetComponent<Grid>();
+			if (null == grid)
+			{
+				Debug.LogError("ERROR. Grid2D requires a Grid component.");
+				return;
+			}
+
+			var loc = GridLocFor(go);
+			var position = grid.GetCellCenterLocal(loc.value);
+			position += loc.offset;
+
+			go.transform.position = position;
 		}
 
 		private void ResizeChildren()
 		{
+
 			foreach (Transform child in transform)
 			{
 				var go = child.gameObject;
-				var loc = GridLocFor(go);
-				var bounds = CellBounds(loc);
-				go.transform.position = bounds.center;	// TODO: support offset
+				ResizeChild(go);
 			}
+		}
+
+		void OnTransformChildrenChanged()
+		{
+			ResizeChildren();
 		}
 
 		private void OnValidate()
