@@ -21,10 +21,7 @@ namespace PJ
 
 		public float Timer
 		{
-			get
-			{
-				return timer;
-			}
+			get => timer;
 			set
 			{
 				timer = value;

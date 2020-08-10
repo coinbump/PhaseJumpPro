@@ -17,7 +17,7 @@ namespace PJ {
 	/// <summary>
 	/// Generic state machine (typically T is an enum).
 	/// </summary>
-	public class GenericStateMachine<T> : AbstractStateMachine where T : struct, IConvertible
+	public class GenericStateMachine<T> : AbstractStateMachine where T : IConvertible
 	{
 		// USAGE: best practice: the T type should have a default value that represents an invalid state
 		public T state { get; protected set; }

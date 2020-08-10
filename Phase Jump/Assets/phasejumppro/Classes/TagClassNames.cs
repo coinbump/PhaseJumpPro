@@ -15,7 +15,6 @@ namespace PJ {
 	/// </example>
 	public class TagClassNames {
 
-        // NOTE: const implies static.
 		public const string Tag = "tag";
 		public const string Int = "int";
 		public const string Int64 = "int64";

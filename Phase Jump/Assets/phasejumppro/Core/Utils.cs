@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace PJ
@@ -16,7 +15,7 @@ namespace PJ
 	{
 		public static float VaryFloat(float value, float vary)
 		{
-			bool isVaryForward = UnityEngine.Random.value < 0.5f;
+			bool isVaryForward = Random.value < 0.5f;
 			float factor = isVaryForward ? 1.0f : -1.0f;
 			float result = Mathf.Max(0, value + (UnityEngine.Random.value * vary * factor));
 

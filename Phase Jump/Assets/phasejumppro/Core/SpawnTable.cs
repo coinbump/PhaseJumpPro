@@ -22,11 +22,20 @@ namespace PJ
 		[Serializable]
 		public struct Element
 		{
+			[Tooltip("Weighted value of randomness for spawning this element.")]
 			public float weight;
+
+			[Tooltip("Object to be spawned (prefabs preferred).")]
 			public GameObject spawn;
 		}
+
+		[Tooltip("Elements in the spawn table.")]
 		public List<Element> elements = new List<Element>();
-		public bool autoNone = true;   // If true, add a none element that results in no result.
+
+		[Tooltip("Add a none element that results in nothing spawned.")]
+		public bool autoNone = true;
+
+		[Tooltip("Maximum of all weights in spawn table totaled.")]
 		public float maxWeight = 1.0f;
 
 		public GameObject NextSpawn()

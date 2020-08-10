@@ -25,6 +25,16 @@ namespace PJ
 		[HideInInspector]
 		public Tagged tags = new Tagged();
 
+		public string initialState;
+
+		[Serializable]
+		public struct NodeTag
+		{
+			public string name;
+			public string value;    // Type is inferred from value
+		}
+		public List<NodeTag> nodeTags = new List<NodeTag>();
+
 		// Paths:
 		[System.Serializable]
 		public class PathInfo
@@ -46,7 +56,7 @@ namespace PJ
 		public float directionVelocity;
 		public Vector2 velocity;
 
-		public float rotationSpeed;	// Normalized angles per second
+		public float rotationSpeed; // Normalized angles per second
 		public bool dontModRotation = false;
 
 		public enum CullType
@@ -54,6 +64,33 @@ namespace PJ
 			None, OnInvisible
 		}
 		public CullType cullType = CullType.None;
+
+		protected GenericStateMachine<string> state = new GenericStateMachine<string>();
+		protected Rigidbody2D rb;
+
+		/// <summary>
+		/// Handles state machine.
+		/// </summary>
+		protected class Core : PJ.Core
+		{
+			public WeakReference<Node2D> Owner { get; }
+
+			public Core(Node2D owner)
+			{
+				this.Owner = new WeakReference<Node2D>(owner);
+				SetStateMachine(owner.state);
+			}
+
+			protected override void EvtStateChanged(AbstractStateMachine state)
+			{
+				base.EvtStateChanged(state);
+
+				if (!Owner.TryGetTarget(out Node2D owner)) { return; }
+				if (null == owner) { return; }
+			}
+		}
+
+		private Core core;
 
 		// Normalized rotation value (0-1.0)
 		public float RotationNormal
@@ -112,11 +149,20 @@ namespace PJ
 
 		protected virtual void Awake()
 		{
+			core = new Core(this);
 			tags = new Tagged();
 		}
 
 		protected virtual void Start()
 		{
+			rb = GetComponent<Rigidbody2D>();
+
+			foreach (NodeTag tag in nodeTags)
+			{
+				tags.Add(tag.name, tag.value);
+			}
+
+			state.State = initialState;
 		}
 
 		protected virtual void Update()
@@ -192,7 +238,7 @@ namespace PJ
 		{
 			if (Mathf.Abs(rotationSpeed) > 0)
 			{
-				RotationDegreeAngle += rotationSpeed*360.0f * Time.deltaTime;
+				RotationDegreeAngle += rotationSpeed * 360.0f * Time.deltaTime;
 			}
 
 			// MOVEMENT TYPE: Follow Path (requires MovePath2D component on Path object)
@@ -229,12 +275,18 @@ namespace PJ
 			}
 			else
 			{
-				Rigidbody2D rigidbodyComponent = GetComponent<Rigidbody2D>();
-				if (null != rigidbodyComponent)
+				if (null != rb)
 				{
-					rigidbodyComponent.MovePosition(position);
+					rb.MovePosition(position);
 				}
 			}
+		}
+
+		public bool HasTag(string name) => tags.ContainsKey(name) || gameObject.CompareTag(name);
+
+		protected virtual void EvtStateChanged(AbstractStateMachine state)
+		{
+			// Implemented by subclass
 		}
 	}
 }

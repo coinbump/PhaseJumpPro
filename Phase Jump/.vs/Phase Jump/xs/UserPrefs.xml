@@ -1,14 +1,17 @@
 ﻿<Properties StartupConfiguration="{51BDC8AF-8B4E-EDCD-CD37-EADF80C84D5E}|">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/phasejumppro/Core/Grid2D.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="../../Unity/U-Alpha/Assets/phasejumppro/Core/AbstractMovePath2D.cs">
     <Files>
-      <File FileName="Assets/phasejumppro/Model/Boards/GenericGrid.cs" Line="16" Column="3" />
-      <File FileName="Assets/phasejumppro/Model/Boards/GenericGridBoard.cs" Line="199" Column="37" />
-      <File FileName="Assets/phasejumppro/Model/Boards/GenericGridLayer.cs" />
-      <File FileName="Assets/phasejumppro/Model/Boards/GenericGridCell.cs" />
-      <File FileName="Assets/phasejumppro/Core/Grid2D.cs" Line="62" Column="1" />
-      <File FileName="Assets/phasejumppro/Core/AbstractMovePath2D.cs" Line="16" Column="26" />
-      <File FileName="Assets/phasejumppro/Editor/Scripts/BuildAnimations.cs" Line="117" Column="5" />
-      <File FileName="Assets/phasejumppro/Core/GridLoc.cs" Line="23" Column="1" />
+      <File FileName="Assets/phasejumppro/Core/AbstractMovePath2D.cs" Line="1" Column="1" />
+      <File FileName="Assets/phasejumppro/Editor/Scripts/BuildAnimations.cs" />
+      <File FileName="Assets/phasejumppro/Core/GridLoc.cs" />
+      <File FileName="Assets/phasejumppro/Core/Base.cs" />
+      <File FileName="../../Unity/U-Alpha/Assets/phasejumppro/Classes/TagClassNames.cs" Line="1" Column="1" />
+      <File FileName="../../Unity/U-Alpha/Assets/phasejumppro/Core/AbstractMovePath2D.cs" Line="1" Column="1" />
+      <File FileName="../../Unity/U-Alpha/Assets/phasejumppro/Core/AutoEmitter2D.cs" Line="1" Column="1" />
+      <File FileName="Assets/phasejumppro/Core/AutoEmitter2D.cs" Line="1" Column="1" />
+      <File FileName="../../Unity/U-Alpha/Assets/phasejumppro/Core/AbstractMovePath2D.cs" Line="1" Column="1" />
+      <File FileName="Assets/phasejumppro/Core/AutoEmitter2D.cs" Line="1" Column="1" />
+      <File FileName="../../Unity/U-Alpha/Assets/phasejumppro/Core/AbstractMovePath2D.cs" Line="1" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -18,7 +21,7 @@
               <Node name="phasejumppro" expanded="True">
                 <Node name="Classes" expanded="True" />
                 <Node name="Core" expanded="True">
-                  <Node name="Grid2D.cs" selected="True" />
+                  <Node name="AutoEmitter2D.cs" selected="True" />
                 </Node>
                 <Node name="Editor" expanded="True">
                   <Node name="Scripts" expanded="True" />
@@ -43,7 +46,7 @@
   <MonoDevelop.Ide.ItemProperties.Phase_220Jump PreferredExecutionTarget="Unity.Editor" />
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="7e6caee3-cfa0-44f7-b0fd-7a7130b16822" />
+  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="a2420822-e446-4ff9-9b2e-bf152b88c294" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
       <Breakpoint enabled="false" file="/Users/alphapro/Projects/PhaseJumpPro/Phase Jump/Assets/phasejumppro/Input/MoveToMouseInputControlScheme2D.cs" relfile="Assets/phasejumppro/Input/MoveToMouseInputControlScheme2D.cs" line="41" column="1" />

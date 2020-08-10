@@ -6,7 +6,8 @@ namespace PJ
 {
 	public class Spawner2D : Spawner
 	{
-		public float radius;    // Spawn within radius
+		[Tooltip("Spawn within radius")]
+		public float radius;
 
 #if UNITY_EDITOR
 		protected override void RenderGizmos(EditorUtils.RenderState renderState)

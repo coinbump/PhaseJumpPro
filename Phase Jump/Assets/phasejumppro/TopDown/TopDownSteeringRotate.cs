@@ -4,6 +4,9 @@ using PJ;
 
 namespace PJ
 {
+	/// <summary>
+	/// Rotates direction after collision.
+	/// </summary>
 	public class TopDownSteeringRotate : TopDownSteering
 	{
 		public enum RotateType
