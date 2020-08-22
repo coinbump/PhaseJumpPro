@@ -4,6 +4,7 @@ Some utility classes for making games with Unity
 The code contains common design patterns for games in C#:
 
 - Behavior Trees
+- Basic objects for building node graphs/simulation graphs (for city builders, sims, etc.)
 - Weighted randoms (Spawn/Loot Tables + Spawner2D with spawn radius)
 - Common Shaders (Stencil, Desaturate, Invert, Single Color, RGB-Recolor, etc.)
 - 2D Movement paths (straight line, circle)
