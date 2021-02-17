@@ -10,8 +10,8 @@ namespace PJ
 		{
 			public TestValve()
 			{
-				turnOnTimer = new InterpolateTimer(new InterpolateLinear(), 1.0f, AbstractTimed.Type.Persistent);
-				turnOffTimer = new InterpolateTimer(new InterpolateLinear(), 1.0f, AbstractTimed.Type.Persistent);
+				turnOnTimer = new InterpolateTimer(new InterpolateLinear(), 1.0f, SomeTimed.Type.Persistent);
+				turnOffTimer = new InterpolateTimer(new InterpolateLinear(), 1.0f, SomeTimed.Type.Persistent);
 				TimeOn = 1.0f;
 				TimeOff = 1.0f;
 			}

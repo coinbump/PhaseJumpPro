@@ -9,14 +9,14 @@ namespace PJ
 	/// 
 	/// SEE ALSO: PulseTimer (more generalized)
 	/// </summary>
-	public class FlashTimer : AbstractTimed
+	public class FlashTimer : SomeTimed
 	{
 		public int flashCount = 3;
 
 		protected bool isFlashOn;
 
 		protected int curFlashCount = 0;
-		protected Timer timer = new Timer(AbstractTimed.Type.Persistent);
+		protected Timer timer = new Timer(SomeTimed.Type.Persistent);
 
 		public bool IsFlashOn
 		{
@@ -26,9 +26,8 @@ namespace PJ
 			}
 		}
 
-		public FlashTimer(int flashCount, float flashDuration) : base(AbstractTimed.Type.Persistent)
+		public FlashTimer(int flashCount, float flashDuration) : base(SomeTimed.Type.Persistent)
 		{
-			IsRunning = false;	// Off by default.
 			this.flashCount = flashCount;
 			timer.duration = flashDuration;
 		}
@@ -72,7 +71,7 @@ namespace PJ
 			if (!isFlashOn)
 			{
 				curFlashCount += 1;
-				if (curFlashCount >= flashCount)
+				if (flashCount > 0 && curFlashCount >= flashCount)
 				{
 					Pause(true);	// Pause when finished.
 					return;

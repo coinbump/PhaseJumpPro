@@ -16,7 +16,7 @@ namespace PJ {
 			Test2
 		}
 
-		private class TestStateMachine : GenericStateMachine<TestEnum>
+		private class TestStateMachine : StateMachine<TestEnum>
 		{
 			public int test1Count { get; protected set; }
 			public int test2Count { get; protected set; }

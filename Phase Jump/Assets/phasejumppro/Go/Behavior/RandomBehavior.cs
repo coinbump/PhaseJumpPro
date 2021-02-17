@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 
 namespace PJ
 {
@@ -7,7 +7,7 @@ namespace PJ
 	/// </summary>
 	public class RandomSelectorBehavior : SelectorBehavior
 	{
-		protected override void EvtStateChanged(AbstractStateMachine state)
+		protected override void EvtStateChanged(SomeStateMachine state)
 		{
 			if (state != this.state) { return; }
 
@@ -26,7 +26,7 @@ namespace PJ
 	/// </summary>
 	public class RandomSequenceBehavior : SequenceBehavior
 	{
-		protected override void EvtStateChanged(AbstractStateMachine state)
+		protected override void EvtStateChanged(SomeStateMachine state)
 		{
 			if (state != this.state) { return; }
 

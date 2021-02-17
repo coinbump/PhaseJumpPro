@@ -14,19 +14,19 @@ namespace PJ {
 	public class Core : Base {
 		// OPTIONAL:
 		protected Class _class;
-		protected string className;	// If class is not yet assigned
-		AbstractStateMachine aState;
+		protected string classIdentifier;	// If class is not yet assigned
+		SomeStateMachine someState;
 
-		public string ClassName {
+		public string ClassIdentifier {
 			get {
-				string result = className;
+				string result = classIdentifier;
 				if (_class != null) {
-					result = _class.name;
+					result = _class.Identifier;
 				}
 				return result;
 			}
 			set {
-				className = value;
+				classIdentifier = value;
 			}
 		}
 
@@ -50,7 +50,7 @@ namespace PJ {
 					if (null == target) { return; }
 					if (!isSentFromAlive) { return; }
 
-					target.EvtStateChanged(theEvent.sentFrom.Target as AbstractStateMachine);
+					target.EvtStateChanged(theEvent.sentFrom.Target as SomeStateMachine);
 				}
 				else if (theEvent.name == EventNames.StateFinished)
 				{
@@ -58,15 +58,15 @@ namespace PJ {
 					if (null == target) { return; }
 					if (!isSentFromAlive) { return; }
 
-					target.EvtStateFinished(theEvent.sentFrom.Target as AbstractStateMachine);
+					target.EvtStateFinished(theEvent.sentFrom.Target as SomeStateMachine);
 				}
 			}
 		}
 		public Listener listener;
 		public Broadcaster broadcaster = new Broadcaster();
 
-		protected virtual void EvtStateChanged(AbstractStateMachine state) {}
-		protected virtual void EvtStateFinished(AbstractStateMachine state) {}
+		protected virtual void EvtStateChanged(SomeStateMachine state) {}
+		protected virtual void EvtStateFinished(SomeStateMachine state) {}
 
 		public Core()
 		{
@@ -75,21 +75,21 @@ namespace PJ {
 
 		public virtual void EvtUpdate(TimeSlice time) {
 			// A state machine may need time for timed states
-			if (aState != null) {
-				aState.EvtUpdate(time);
+			if (someState != null) {
+				someState.EvtUpdate(time);
 			}
 		}
 
 		/// <summary>
 		/// Allows state events to propagate to a concrete implementation
 		/// </summary>
-		public void SetStateMachine(AbstractStateMachine aState)
+		public void SetStateMachine(SomeStateMachine someState)
 		{
-			this.aState = aState;
+			this.someState = someState;
 
-			if (aState != null)
+			if (someState != null)
 			{
-				aState.AddListener(listener);
+				someState.AddListener(listener);
 			}
 		}
 	}

@@ -8,7 +8,7 @@ namespace PJ
 {
 	class UnitTests_GridStorage
 	{
-		private class TestGridStorage : GenericGrid<int>
+		private class TestGridStorage : Grid<int>
 		{
 			public TestGridStorage(Vector2Int size)
 				: base(size)

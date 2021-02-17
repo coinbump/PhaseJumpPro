@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace PJ
 {
-	public class Spawner2D : Spawner
+	public class CircleSpawner2D : Spawner
 	{
 		[Tooltip("Spawn within radius")]
 		public float radius;

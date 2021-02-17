@@ -13,16 +13,16 @@ namespace PJ
 	///
 	/// Grids are 2-dimensional, but we use Vector3Int for layers
 	/// </summary>
-	public class GenericGridCell<Tile> where Tile : GridTile
+	public class GridCell<Tile> where Tile : GridTile
 	{
 		public Tile tile;
 		public Vector3Int origin;	// Z is for multi-layer grids
 
-		public GenericGridCell()
+		public GridCell()
 		{
 		}
 
-		public GenericGridCell(Vector3Int origin)
+		public GridCell(Vector3Int origin)
 		{
 			this.origin = origin;
 		}

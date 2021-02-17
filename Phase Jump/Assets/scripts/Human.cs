@@ -79,7 +79,7 @@ public class Human : PJ.Node2D
 	{
 		WeakReference owner;
 
-		public GenericStateMachine<State> state = new GenericStateMachine<State>();
+		public StateMachine<State> state = new StateMachine<State>();
 
 		public Core(WeakReference owner)
 		{
@@ -88,7 +88,7 @@ public class Human : PJ.Node2D
 			SetStateMachine(state);
 		}
 
-		protected override void EvtStateChanged(AbstractStateMachine state)
+		protected override void EvtStateChanged(SomeStateMachine state)
 		{
 			base.EvtStateChanged(state);
 

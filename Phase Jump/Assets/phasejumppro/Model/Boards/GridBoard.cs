@@ -4,14 +4,14 @@ using System.Collections.Generic;
 
 namespace PJ
 {
-	public class AbstractGridBoard : Core {
+	public class SomeGridBoard : Core {
 	}
 
 	/*
 	 * RATING: 4 stars. Solid Design Pattern, but could use more unit tests + advanced functionality ported from C++
 	 * CODE REVIEW: 6.30.19
 	 */
-	public class GenericGridBoard<Tile> : AbstractGridBoard where Tile : GridTile
+	public class GridBoard<Tile> : SomeGridBoard where Tile : GridTile
 	{
 		#region Constants
 		struct Events
@@ -25,7 +25,7 @@ namespace PJ
 		#region Fields
 		protected HashSet<Tile> tiles = new HashSet<Tile>();
 		protected Vector3Int size = new Vector3Int(0, 0, 0);
-		protected List<GenericGridLayer<Tile>> layers = new List<GenericGridLayer<Tile>>();
+		protected List<GridLayer<Tile>> layers = new List<GridLayer<Tile>>();
 		protected bool suspendEvents;   // If true, don't broadcast events
 		#endregion
 
@@ -134,17 +134,17 @@ namespace PJ
 			return result;
 		}
 
-		public virtual GenericGridCell<Tile> NewCell() { return new GenericGridCell<Tile>(); }
-		public virtual GenericGridLayer<Tile> NewLayer(Vector2Int size) { return new GenericGridLayer<Tile>(size); }
+		public virtual GridCell<Tile> NewCell() { return new GridCell<Tile>(); }
+		public virtual GridLayer<Tile> NewLayer(Vector2Int size) { return new GridLayer<Tile>(size); }
 
-		public GenericGridCell<Tile> GetCell(Vector3Int _loc)
+		public GridCell<Tile> GetCell(Vector3Int _loc)
 		{
 			if (!IsValidLoc(_loc)) { return null; }
-			GenericGridCell<Tile> result;
+			GridCell<Tile> result;
 
 			var loc = new Vector2Int(_loc.x, _loc.y);
 
-			GenericGridLayer<Tile> grid = layers[_loc.z];
+			GridLayer<Tile> grid = layers[_loc.z];
 			result = grid.GetCell(loc);
 			if (null == result)
 			{
@@ -170,7 +170,7 @@ namespace PJ
 
 		public Tile GetTile(Vector3Int loc)
 		{
-			GenericGridCell<Tile> cell = GetCell(loc);
+			GridCell<Tile> cell = GetCell(loc);
 			if (null != cell)
 			{
 				return cell.tile;
@@ -193,7 +193,7 @@ namespace PJ
 			// Add new layers.
 			while (layers.Count < newLayerCount)
 			{
-				GenericGridLayer<Tile> layer = NewLayer(gridSize);
+				GridLayer<Tile> layer = NewLayer(gridSize);
 				layers.Add(layer);
 			}
 			if (layers.Count > newLayerCount)
@@ -202,7 +202,7 @@ namespace PJ
 				layers.RemoveRange(layers.Count - diff, diff);
 			}
 
-			foreach (GenericGridLayer<Tile> layer in layers)
+			foreach (GridLayer<Tile> layer in layers)
 			{
 				layer.Resize(gridSize);
 			}

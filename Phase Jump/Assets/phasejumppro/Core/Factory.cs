@@ -3,9 +3,9 @@ namespace PJ
 	/// <summary>
 	/// Creates simple type
 	/// </summary>
-	struct Factory<Type> : AnyFactory<Type> where Type : new()
+	public struct Factory<Type> : AnyFactory where Type : new()
 	{
-		Type AnyFactory<Type>.New()
+		public Type New()
 		{
 			return new Type();
 		}

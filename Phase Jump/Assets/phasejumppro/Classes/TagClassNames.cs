@@ -1,7 +1,7 @@
 ﻿
 /*
  * RATING: 5 stars. Simple constants.
- * CODE REVIEW: 3.31.18
+ * CODE REVIEW: 2.15.21
  */
 namespace PJ {
 
@@ -23,7 +23,7 @@ namespace PJ {
 		public const string Bool = "bool";
 		public const string Color = "color";
 		public const string Enum = "enum";
-		public const string NFloat = "nfloat";	// Normalized float (0-1.0)
+		public const string NormalFloat = "nfloat";	// Normalized float (0-1.0)
 		public const string String = "str";
 		public const string Vector2D = "v2";
 		public const string Vector2DInt = "v2i";

@@ -85,7 +85,7 @@ namespace PJ
 
 		public InterpolateTimer turnOnTimer;
 		public InterpolateTimer turnOffTimer;
-		protected GenericStateMachine<State> state;
+		protected StateMachine<State> state;
 		public bool isLocked;
 		private float _valveState; // 1.0 is on
 
@@ -102,7 +102,7 @@ namespace PJ
 		}
 
 		public Valve() {
-			state = new GenericStateMachine<State>();
+			state = new StateMachine<State>();
 			SetStateMachine(state);
 		}
 
@@ -138,7 +138,7 @@ namespace PJ
 			base.EvtUpdate(time);
 		}
 
-		protected override void EvtStateFinished(AbstractStateMachine state) {
+		protected override void EvtStateFinished(SomeStateMachine state) {
 			if (isLocked)
 			{
 				return;
@@ -162,7 +162,7 @@ namespace PJ
 			}
 		}
 
-		protected override void EvtStateChanged(AbstractStateMachine state)
+		protected override void EvtStateChanged(SomeStateMachine state)
 		{
 			if (state != this.state) { return; }
 

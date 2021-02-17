@@ -6,7 +6,7 @@ namespace PJ
 	/// <summary>
 	/// Records mouse position on update
 	/// </summary>
-	public class MouseInputController : AbstractInputController
+	public class MouseInputController : SomeInputController
 	{
 		public Vector3 position { get; protected set; }
 		public Ray ray { get; protected set; }

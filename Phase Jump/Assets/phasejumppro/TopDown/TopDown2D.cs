@@ -25,9 +25,18 @@ namespace PJ
 	/// </summary>
 	public class TopDown2D	// Do not subclass MonoBehaviour (so we can use new)
 	{
-		public GenericStateMachine<DirectionState> directionState = new GenericStateMachine<DirectionState>();
+		public StateMachine<DirectionState> directionState = new StateMachine<DirectionState>();
 
 		public float moveSpeed; // Applied to move direction
+
+		public TopDown2D()
+        {
+        }
+
+		public TopDown2D(float moveSpeed)
+        {
+			this.moveSpeed = moveSpeed;
+        }
 
 		// Start is called before the first frame update
 		void Start()
@@ -41,7 +50,12 @@ namespace PJ
 
 		public Vector2 UpdateVelocity()
 		{
-			Vector2 velocity = new Vector2(0, 0);
+			Vector2 velocity = Vector2.zero;
+
+			if (moveSpeed == 0)
+            {
+				return velocity;
+            }
 
 			switch (directionState.State)
 			{

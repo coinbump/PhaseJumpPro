@@ -7,9 +7,9 @@
 namespace PJ {
 
 	/// <summary>
-	/// Abstract state machine.
+	/// Some state machine.
 	/// </summary>
-	public abstract class AbstractStateMachine {
+	public abstract class SomeStateMachine {
 		public abstract void AddListener(Listener listener);
 		public abstract void EvtUpdate(TimeSlice time);
     }
@@ -17,7 +17,7 @@ namespace PJ {
 	/// <summary>
 	/// Generic state machine (typically T is an enum).
 	/// </summary>
-	public class GenericStateMachine<T> : AbstractStateMachine where T : IConvertible
+	public class StateMachine<T> : SomeStateMachine where T : IConvertible
 	{
 		// USAGE: best practice: the T type should have a default value that represents an invalid state
 		public T state { get; protected set; }
@@ -29,6 +29,15 @@ namespace PJ {
 		protected bool isLocked;
 		public float timeInState { get; protected set; }
 		public Broadcaster broadcaster = new Broadcaster();
+
+		public StateMachine()
+        {
+        }
+
+		public StateMachine(Listener listener)
+        {
+			AddListener(listener);
+        }
 
 		public override void AddListener(Listener listener)
 		{
@@ -78,7 +87,7 @@ namespace PJ {
 					return;
 				}
 
-				SetStateValue(newState);
+				SetStateNoBroadcast(newState);
 				EvtStateChanged(newState);
 			}
 		}
@@ -87,7 +96,7 @@ namespace PJ {
 		/// Sets the state value without broadcasting.
 		/// </summary>
 		/// <param name="newState">New state.</param>
-		public void SetStateValue(T newState)
+		public void SetStateNoBroadcast(T newState)
 		{
 			if (newState.Equals(state))
 			{

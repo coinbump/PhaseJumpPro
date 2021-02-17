@@ -10,7 +10,7 @@ namespace PJ
 		{
 			public int numPulses;
 
-			public PulseTimer() : base(AbstractTimed.Type.Persistent) { }
+			public PulseTimer() : base(SomeTimed.Type.Persistent) { }
 
 			// OVERRIDE:
 			public override void EvtPulse(int pulseIndex)

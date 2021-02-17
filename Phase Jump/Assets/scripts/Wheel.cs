@@ -9,8 +9,8 @@ public class Wheel : Node2D {
 		public Valve() {
 			TimeOn = 2.0f;
 			TimeOff = 2.0f;
-			turnOnTimer = new InterpolateTimer(new InterpolateSquared(), 1.0f, AbstractTimed.Type.Persistent);
-			turnOffTimer = new InterpolateTimer(new InterpolateLinear(), 2.0f, AbstractTimed.Type.Persistent);
+			turnOnTimer = new InterpolateTimer(new InterpolateSquared(), 1.0f, SomeTimed.Type.Persistent);
+			turnOffTimer = new InterpolateTimer(new InterpolateLinear(), 2.0f, SomeTimed.Type.Persistent);
 		}
 	}
 	private Valve valve = new Valve();

@@ -6,14 +6,14 @@ using System.Collections.Generic;
  * CODE REVIEW: 4.7.18
  */
 namespace PJ {
-	public abstract class AbstractBroadcaster {
+	public abstract class SomeBroadcaster {
 		public virtual void RemoveListener(Listener listener) {}
 	}
 
 	/// <summary>
 	/// Broadcaster sends messages to listeners.
 	/// </summary>
-	public class Broadcaster : AbstractBroadcaster
+	public class Broadcaster : SomeBroadcaster
 	{
 		public HashSet<WeakReference> listeners { get; protected set; }
 

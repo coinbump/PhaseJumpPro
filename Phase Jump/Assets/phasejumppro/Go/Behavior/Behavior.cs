@@ -35,7 +35,7 @@ namespace PJ {
 			Success,		// Run finished with success
 			Fail			// Run finished with failure
 		}
-		protected GenericStateMachine<State> state = new GenericStateMachine<State>();
+		protected StateMachine<State> state = new StateMachine<State>();
 
 		public Behavior()
 		{
@@ -69,7 +69,7 @@ namespace PJ {
 			return result;
 		}
 
-		protected override void EvtStateChanged(AbstractStateMachine state) {
+		protected override void EvtStateChanged(SomeStateMachine state) {
 			if (state != this.state) { return; }
 
 			switch (this.state.state) {

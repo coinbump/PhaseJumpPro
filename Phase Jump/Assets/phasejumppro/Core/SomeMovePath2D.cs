@@ -5,7 +5,7 @@ using UnityEngine;
 namespace PJ
 {
 	[ExecuteInEditMode]	// Works for class, not methods
-	public abstract class AbstractMovePath2D : MonoBehaviour
+	public abstract class SomeMovePath2D : MonoBehaviour
 	{
 		public float speed = 1.0f;
 		public List<GameObject> targets;

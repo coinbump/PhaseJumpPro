@@ -25,12 +25,12 @@ namespace PJ {
 		}
 
 		public TimedBehavior() {
-			timer = new Timer(0.0f, AbstractTimed.Type.Persistent);
+			timer = new Timer(0.0f, SomeTimed.Type.Persistent);
 		}
 
 		public TimedBehavior(float duration)
 		{
-			timer = new Timer(duration, AbstractTimed.Type.Persistent);
+			timer = new Timer(duration, SomeTimed.Type.Persistent);
 		}
 
 		public override void EvtUpdate(TimeSlice time)

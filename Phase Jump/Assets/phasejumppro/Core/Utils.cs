@@ -11,18 +11,6 @@ namespace PJ
 		}
 	}
 
-	public static class RandomUtils
-	{
-		public static float VaryFloat(float value, float vary)
-		{
-			bool isVaryForward = Random.value < 0.5f;
-			float factor = isVaryForward ? 1.0f : -1.0f;
-			float result = Mathf.Max(0, value + (UnityEngine.Random.value * vary * factor));
-
-			return result;
-		}
-	}
-
 	public static class EditorUtils
 	{
 		public enum RenderState
@@ -98,6 +86,31 @@ namespace PJ
 			}
 
 			Gizmos.DrawLine(pos, lastPos);
+		}
+
+		public static void RenderRectGizmo(Vector3 center, float width, float height, RenderState renderState)
+		{
+			switch (renderState)
+			{
+				case RenderState.Default:
+					Gizmos.color = Color.white;
+					break;
+				case RenderState.Selected:
+					Gizmos.color = GUI.skin.settings.selectionColor;
+					break;
+			}
+
+			float halfWidth = width / 2.0f;
+			float halfHeight = height / 2.0f;
+			Vector3 topLeft = new Vector3(center.x - halfWidth, center.y - halfHeight, 0);
+			Vector3 topRight = new Vector3(center.x + halfWidth, center.y - halfHeight, 0);
+			Vector3 bottomRight = new Vector3(center.x + halfWidth, center.y + halfHeight, 0);
+			Vector3 bottomLeft = new Vector3(center.x - halfWidth, center.y + halfHeight, 0);
+
+			Gizmos.DrawLine(topLeft, topRight);
+			Gizmos.DrawLine(topRight, bottomRight);
+			Gizmos.DrawLine(bottomRight, bottomLeft);
+			Gizmos.DrawLine(bottomLeft, topLeft);
 		}
 	}
 }

@@ -17,7 +17,7 @@ namespace PJ {
 			Emit,   // Emitting
 			Cooldown    // Cooldown until we can emit again
 		}
-		GenericStateMachine<State> stateMachine;
+		StateMachine<State> stateMachine;
 
 		// After emit, cooldown until next emit is possible (spaces emits)
 		public float cooldownTime;
@@ -104,7 +104,7 @@ namespace PJ {
 			base.Start();
 
 			// MonoBehavior subclasses require creating child objects in Start
-			stateMachine = new GenericStateMachine<State>();
+			stateMachine = new StateMachine<State>();
 			aliveEmits = new WeakObjectSet();
 			cooldownTimer = new Timer();
 		}

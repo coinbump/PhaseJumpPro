@@ -7,10 +7,10 @@ using System.Collections.Generic;
  */
 namespace PJ {
 
-	public class AttributeMap : Dictionary<string, Attribute> {
+	public class AttributeMap : Dictionary<string, StringsAttribute> {
 
 		public void AddAttribute(string key, string value) {
-			this.Add(key, new Attribute(key, value));
+			this.Add(key, new StringsAttribute(key, value));
 		}
 
 		public bool BoolValue(string key, bool defaultVal)

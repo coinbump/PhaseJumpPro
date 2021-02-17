@@ -1,4 +1,7 @@
-﻿
+﻿/*
+ * RATING: 5 stars. Simple base class.
+ * CODE REVIEW: 2.15.21
+ */
 namespace PJ {
 
 	/// <summary>

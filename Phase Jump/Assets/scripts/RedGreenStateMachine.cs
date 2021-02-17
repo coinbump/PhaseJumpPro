@@ -6,5 +6,5 @@ public enum RedGreenState {
 	Invalid, Green, Red
 }
 
-public class RedGreenStateMachine : PJ.GenericStateMachine<RedGreenState> {
+public class RedGreenStateMachine : PJ.StateMachine<RedGreenState> {
 }

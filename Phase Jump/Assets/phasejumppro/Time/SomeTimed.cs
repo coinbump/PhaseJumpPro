@@ -11,7 +11,7 @@ namespace PJ {
 	/// 
 	/// Supports an internal time scale for animating an object's time
 	/// </summary>
-	public abstract class AbstractTimed {
+	public abstract class SomeTimed {
 		public enum Type {
 			RunOnce,	// Destroyed when finished
 			Persistent	// Stays around
@@ -24,7 +24,7 @@ namespace PJ {
 		public float duration;
 		public float timeScale = 1.0f;
 
-		public AbstractTimed(Type type) {
+		public SomeTimed(Type type) {
 			this.timedType = type;
 		}
 

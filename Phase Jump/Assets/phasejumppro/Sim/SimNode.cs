@@ -10,9 +10,11 @@ namespace PJ {
 	{
 		private WeakReference<SimNode> parent;
 
-		public string typeIdentifier;
-
 		public string Identifier { get; set; }
+		public string TypeIdentifier { get; set; }
+		public string Title { get; set; }
+		public string Description { get; set; }
+		public Class Class { get; set; }
 
 		// For tree-type graphs (optional)
 		public AnyGraphNode Parent

@@ -16,11 +16,11 @@ namespace PJ
 	{
 		public virtual float Transform(float factor) { return factor; }
 
-		static FactoryRegister factories = new FactoryRegister();
+		static FactoryRegistry factories = new FactoryRegistry();
 
-		public class Factory<T>: GenericFactory<Interpolate> where T: Interpolate, new()
+		public class Factory<T> : PJ.AnyFactory where T: Interpolate, new()
 		{
-			public override Interpolate FactoryNew() { return new T(); }
+			public Interpolate New() { return new T(); }
 		}
 	}
 
@@ -33,24 +33,25 @@ namespace PJ
 	/// <summary>
 	/// Registers factories for each interpolate type
 	/// </summary>
-	public class FactoryRegister
+	public class FactoryRegistry
 	{
-		public Dictionary<string, GenericFactory<Interpolate>> registry = new Dictionary<string, GenericFactory<Interpolate>>();
-		public FactoryRegister()
-		{
-			registry.Add(InterpolateType.Linear.ToString(), new Interpolate.Factory<InterpolateLinear>());
-			registry.Add(InterpolateType.Squared.ToString(), new Interpolate.Factory<InterpolateSquared>());
-			registry.Add(InterpolateType.Cubed.ToString(), new Interpolate.Factory<InterpolateCubed>());
-			registry.Add(InterpolateType.OutSquared.ToString(), new Interpolate.Factory<InterpolateOutSquared>());
-			registry.Add(InterpolateType.OutCubed.ToString(), new Interpolate.Factory<InterpolateOutCubed>());
-		}
+		// TODO: re-evaluate this.
+		//public Dictionary<string, AnyFactory> registry = new Dictionary<string, AnyFactory>();
+		//public FactoryRegistry()
+		//{
+		//	registry.Add(InterpolateType.Linear.ToString(), new Interpolate.Factory<InterpolateLinear>());
+		//	registry.Add(InterpolateType.Squared.ToString(), new Interpolate.Factory<InterpolateSquared>());
+		//	registry.Add(InterpolateType.Cubed.ToString(), new Interpolate.Factory<InterpolateCubed>());
+		//	registry.Add(InterpolateType.OutSquared.ToString(), new Interpolate.Factory<InterpolateOutSquared>());
+		//	registry.Add(InterpolateType.OutCubed.ToString(), new Interpolate.Factory<InterpolateOutCubed>());
+		//}
 
-		public Interpolate FactoryNew(InterpolateType type)
-		{
-			var element = registry[type.ToString()];
-			if (null == element) { return new Interpolate(); }
-			return element.FactoryNew();
-		}
+		//public Interpolate New(InterpolateType type)
+		//{
+		//	var element = registry[type.ToString()];
+		//	if (null == element) { return new Interpolate(); }
+		//	return element.New();
+		//}
 	}
 
 	public class InterpolateLinear : Interpolate

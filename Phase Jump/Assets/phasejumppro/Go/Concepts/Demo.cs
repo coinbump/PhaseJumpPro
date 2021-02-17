@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 
 /*
@@ -21,7 +21,7 @@ namespace PJ {
 			}
 		}
 
-		protected override void EvtStateChanged(AbstractStateMachine state) {
+		protected override void EvtStateChanged(SomeStateMachine state) {
 			if (state == this.state)
 			{
 				switch (this.state.state)
@@ -38,7 +38,7 @@ namespace PJ {
 			Ready,
 			Finished
 		}
-		protected GenericStateMachine<State> state = new GenericStateMachine<State>();
+		protected StateMachine<State> state = new StateMachine<State>();
 
 		public Demo() {
 			SetStateMachine(state);

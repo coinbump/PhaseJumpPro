@@ -15,7 +15,7 @@ namespace PJ {
 				Invalid, On, Off
 			}
 
-			public class StateMachine : GenericStateMachine<State> {
+			public class StateMachine : StateMachine<State> {
 				
 			}
 			public StateMachine state = new StateMachine(); 
@@ -28,13 +28,13 @@ namespace PJ {
 				SetStateMachine(this.state);
 			}
 
-			protected override void EvtStateChanged(AbstractStateMachine state) {
+			protected override void EvtStateChanged(SomeStateMachine state) {
 				base.EvtStateChanged(state);
 
 				stateChangedCount++;
 			}
 
-			protected override void EvtStateFinished(AbstractStateMachine state) {
+			protected override void EvtStateFinished(SomeStateMachine state) {
 				base.EvtStateFinished(state);
 
 				stateFinishedCount++;

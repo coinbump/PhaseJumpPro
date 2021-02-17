@@ -1,10 +1,9 @@
-namespace PJ
+﻿namespace PJ
 {
 	/// <summary>
-	/// Abstracts factory implementation
+	/// Somes factory implementation
 	/// </summary>
-	interface AnyFactory<Type>
+	public interface AnyFactory
 	{
-		Type New();
 	}
 }

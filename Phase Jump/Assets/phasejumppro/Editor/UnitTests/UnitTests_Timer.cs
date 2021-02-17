@@ -9,7 +9,7 @@ namespace PJ
 		[Test]
 		public void UnitTests()
 		{
-			var timer = new Timer(1.0f, PJ.AbstractTimed.Type.Persistent);
+			var timer = new Timer(1.0f, PJ.SomeTimed.Type.Persistent);
 			timer.EvtUpdate(new TimeSlice(.3f));
 			Assert.AreEqual(.3f, timer.TimerState);
 			Assert.AreEqual(.3f, timer.GetProgress());

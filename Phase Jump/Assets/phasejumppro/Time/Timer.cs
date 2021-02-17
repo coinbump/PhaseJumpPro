@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 
 /*
@@ -6,7 +6,7 @@ using System.Collections;
  * CODE REVIEW: 4.1.17
  */
 namespace PJ {
-	public class Timer : AbstractTimed
+	public class Timer : SomeTimed
 	{
 		private float _timerState;  // Time state of the timer
 

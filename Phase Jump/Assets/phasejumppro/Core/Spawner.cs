@@ -29,7 +29,7 @@ namespace PJ
 			}
 		}
 
-		private Timer spawnTimer = new Timer(AbstractTimed.Type.Persistent);
+		private Timer spawnTimer = new Timer(SomeTimed.Type.Persistent);
 
 		protected override void Start()
 		{

@@ -20,10 +20,10 @@ namespace PJ
 	public class Node2D : MonoBehaviour
 	{
 		private float _rotation;    // Simplifies basic 2D rotation
-		public bool isKinematic;
+		public bool isKinematic;	// If true, motion is handled without rigidobdy/physics
 
 		[HideInInspector]
-		public Tagged tags = new Tagged();
+		public Tags tags = new Tags();
 
 		public string initialState;
 
@@ -65,7 +65,7 @@ namespace PJ
 		}
 		public CullType cullType = CullType.None;
 
-		protected GenericStateMachine<string> state = new GenericStateMachine<string>();
+		protected StateMachine<string> state = new StateMachine<string>();
 		protected Rigidbody2D rb;
 
 		/// <summary>
@@ -77,20 +77,32 @@ namespace PJ
 
 			public Core(Node2D owner)
 			{
-				this.Owner = new WeakReference<Node2D>(owner);
+				Owner = new WeakReference<Node2D>(owner);
 				SetStateMachine(owner.state);
 			}
 
-			protected override void EvtStateChanged(AbstractStateMachine state)
+			protected override void EvtStateChanged(SomeStateMachine state)
 			{
 				base.EvtStateChanged(state);
 
 				if (!Owner.TryGetTarget(out Node2D owner)) { return; }
 				if (null == owner) { return; }
+
+				owner.EvtStateChanged(state);
+			}
+
+            protected override void EvtStateFinished(SomeStateMachine state)
+            {
+                base.EvtStateFinished(state);
+
+				if (!Owner.TryGetTarget(out Node2D owner)) { return; }
+				if (null == owner) { return; }
+
+				owner.EvtStateFinished(state);
 			}
 		}
 
-		private Core core;
+		protected Core core;
 
 		// Normalized rotation value (0-1.0)
 		public float RotationNormal
@@ -136,7 +148,7 @@ namespace PJ
 			transform.eulerAngles = new Vector3(0, 0, -360.0f * _rotation);
 
 			if (null == pathInfo.path) { return; }
-			AbstractMovePath2D movePath = pathInfo.path.GetComponent<AbstractMovePath2D>();
+			SomeMovePath2D movePath = pathInfo.path.GetComponent<SomeMovePath2D>();
 			if (null == movePath) { return; }
 
 			if (!movePath.targets.Contains(gameObject))
@@ -150,7 +162,7 @@ namespace PJ
 		protected virtual void Awake()
 		{
 			core = new Core(this);
-			tags = new Tagged();
+			tags = new Tags();
 		}
 
 		protected virtual void Start()
@@ -188,7 +200,7 @@ namespace PJ
 		public void SnapToPath(bool force = false)
 		{
 			if (null == pathInfo.path) { return; }
-			AbstractMovePath2D movePath = pathInfo.path.GetComponent<AbstractMovePath2D>();
+			SomeMovePath2D movePath = pathInfo.path.GetComponent<SomeMovePath2D>();
 			if (null == movePath)
 			{
 				Debug.Log("Warning. Path is missing Path2D component"); return;
@@ -224,7 +236,7 @@ namespace PJ
 		{
 			if (!ShouldMoveForUpdate(updateType)) { return; }
 			if (null == pathInfo.path) { return; }
-			AbstractMovePath2D movePath = pathInfo.path.GetComponent<AbstractMovePath2D>();
+			SomeMovePath2D movePath = pathInfo.path.GetComponent<SomeMovePath2D>();
 			if (null == movePath)
 			{
 				Debug.Log("Warning. Path is missing Path2D component"); return;
@@ -284,7 +296,12 @@ namespace PJ
 
 		public bool HasTag(string name) => tags.ContainsKey(name) || gameObject.CompareTag(name);
 
-		protected virtual void EvtStateChanged(AbstractStateMachine state)
+		protected virtual void EvtStateChanged(SomeStateMachine state)
+		{
+			// Implemented by subclass
+		}
+
+		protected virtual void EvtStateFinished(SomeStateMachine state)
 		{
 			// Implemented by subclass
 		}

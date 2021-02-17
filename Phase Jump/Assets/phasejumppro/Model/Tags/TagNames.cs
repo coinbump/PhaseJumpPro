@@ -19,7 +19,7 @@ namespace PJ {
 			Used in XML files, and when identifying tags attached to objects.
 			
 	 	*/
-		public const string Abstract = "a";
+		public const string Some = "a";
 		public const string Anchor = "anchor";
 		public const string Alpha = "alpha";
 		public const string Art = "art";

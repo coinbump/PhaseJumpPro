@@ -40,11 +40,14 @@ SpriteAtlas:
       allowAlphaSplitting: 0
       enableRotation: 1
       enableTightPacking: 1
+    secondaryTextureSettings: {}
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 5eea5f2e7ed4343848e24cc8f54ef212, type: 3}
     totalSpriteSurfaceArea: 1742400
     bindAsDefault: 1
+    isAtlasV2: 0
+    cachedData: {fileID: 0}
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
   - {fileID: 21300000, guid: 22d16e40b61794d3fa59687ac356e962, type: 3}
@@ -114,5 +117,6 @@ SpriteAtlas:
   - man walk0031
   - man walk0032
   - man walk0020
+  m_RenderDataMap: {}
   m_Tag: atlas_man_walks
   m_IsVariant: 0

@@ -7,7 +7,7 @@ namespace PJ {
 	/// Moves objects around a circle radius
 	/// FUTURE: support rotated ellipses, sin paths, etc.
 	/// </summary>
-	public class CirclePath2D : AbstractMovePath2D
+	public class CirclePath2D : SomeMovePath2D
 	{
 		public float radius = 3.0f;
 

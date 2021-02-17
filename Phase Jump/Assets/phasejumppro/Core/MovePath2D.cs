@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace PJ
 {
-	public class MovePath2D : AbstractMovePath2D
+	public class MovePath2D : SomeMovePath2D
 	{
 		public bool isLooping = false;
 

@@ -12,7 +12,7 @@ namespace PJ
 	/// Emits a pulse event after N time has passed.
 	/// Useful for game objects that emit things like projectiles every N seconds.
 	/// </summary>
-	public class PulseTimer : AbstractTimed
+	public class PulseTimer : SomeTimed
 	{
 		protected int pulseIndex;
 		protected float timeInPulse;
@@ -33,7 +33,7 @@ namespace PJ
 			}
 		}
 
-		public PulseTimer(AbstractTimed.Type type) : base(type)
+		public PulseTimer(SomeTimed.Type type) : base(type)
 		{
 
 		}

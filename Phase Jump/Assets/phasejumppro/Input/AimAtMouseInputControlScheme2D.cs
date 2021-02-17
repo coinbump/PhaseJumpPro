@@ -6,7 +6,7 @@ namespace PJ
 	/// <summary>
 	/// Rotates the Node2D to aim at the mouse
 	/// </summary>
-	public class AimAtMouseInputControlScheme2D : AbstractInputControlScheme
+	public class AimAtMouseInputControlScheme2D : SomeInputControlScheme
 	{
 		/// <summary>
 		/// if null, use the associated GameObject

@@ -7,7 +7,7 @@ using NUnit.Framework;
  * CODE REVIEW: 4.7.18
  */
 namespace PJ {
-	public abstract class AbstractBroadcaster {
+	public abstract class SomeBroadcaster {
 		public virtual void RemoveListener(Listener listener) {}
 	}
 

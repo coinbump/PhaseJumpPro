@@ -23,7 +23,7 @@ namespace PJ
 		protected abstract void UndoCommand();
 		protected abstract void ExecuteCommand(bool redo);
 
-		GenericStateMachine<State> state = new GenericStateMachine<State>();
+		StateMachine<State> state = new StateMachine<State>();
 
 		public virtual void Execute()
 		{

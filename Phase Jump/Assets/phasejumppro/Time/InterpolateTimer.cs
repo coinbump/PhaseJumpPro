@@ -16,7 +16,7 @@ namespace PJ
 	{
 		public Interpolate interpolate;
 
-		public InterpolateTimer(Interpolate interpolate, float duration, AbstractTimed.Type type)
+		public InterpolateTimer(Interpolate interpolate, float duration, SomeTimed.Type type)
 			: base(duration, type)
 		{
 			this.interpolate = interpolate;

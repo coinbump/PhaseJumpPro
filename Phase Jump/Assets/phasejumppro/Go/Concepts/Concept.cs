@@ -27,7 +27,7 @@ namespace PJ
 			Ready,
 			Finished
 		};
-		protected GenericStateMachine<State> state = new GenericStateMachine<State>();
+		protected StateMachine<State> state = new StateMachine<State>();
 
 		protected virtual bool CheckFinished()
 		{

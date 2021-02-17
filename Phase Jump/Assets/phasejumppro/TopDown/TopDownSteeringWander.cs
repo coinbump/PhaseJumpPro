@@ -26,7 +26,7 @@ namespace PJ
 		private float currentValue = 0.0f;
 
 		protected Vector3 startPosition;
-		protected Timer restTimer = new Timer(AbstractTimed.Type.Persistent);
+		protected Timer restTimer = new Timer(SomeTimed.Type.Persistent);
 		protected DirectionState nextDirection;
 
 		protected void ResetTimer()

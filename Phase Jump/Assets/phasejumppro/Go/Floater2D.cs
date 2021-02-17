@@ -23,7 +23,7 @@ namespace PJ {
 			Hold,
 			Fade
 		}
-		protected GenericStateMachine<State> stateMachine;
+		protected StateMachine<State> stateMachine;
 
 		[System.Serializable]
 		public class FloatInfo
@@ -45,7 +45,7 @@ namespace PJ {
 				SetStateMachine(owner.stateMachine);
 			}
 
-			protected override void EvtStateChanged(AbstractStateMachine state)
+			protected override void EvtStateChanged(SomeStateMachine state)
 			{
 				base.EvtStateChanged(state);
 
@@ -55,7 +55,7 @@ namespace PJ {
 				}
 			}
 
-			protected override void EvtStateFinished(AbstractStateMachine state)
+			protected override void EvtStateFinished(SomeStateMachine state)
 			{
 				base.EvtStateFinished(state);
 
@@ -139,7 +139,7 @@ namespace PJ {
 		{
 			base.Awake();
 
-			stateMachine = new GenericStateMachine<State>();
+			stateMachine = new StateMachine<State>();
 			core = new Core(this);
 
 			SetupDefaults();

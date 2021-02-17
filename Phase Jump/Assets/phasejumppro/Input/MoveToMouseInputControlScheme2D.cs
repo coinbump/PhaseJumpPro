@@ -6,7 +6,7 @@ namespace PJ
 	/// <summary>
 	/// Moves the center of the gameObject to the mouse position
 	/// </summary>
-	public class MoveToMouseInputControlScheme2D : AbstractInputControlScheme
+	public class MoveToMouseInputControlScheme2D : SomeInputControlScheme
 	{
 		private MouseInputController mouseInputController;
 

@@ -2,7 +2,7 @@
 
 /*
  * RATING: 5 stars. Simple design pattern
- * CODE REVIEW: 4.7.17
+ * CODE REVIEW: 2.16.21
  */
 namespace PJ {
 	/// <summary>
@@ -15,6 +15,3 @@ namespace PJ {
 	}
 
 }
-
-
-

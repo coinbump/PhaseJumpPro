@@ -28,7 +28,7 @@ namespace PJ
 		/// <summary>
 		/// Handles state machine.
 		/// </summary>
-		protected class Core : PJ.Core
+		new protected class Core : PJ.Core
 		{
 			TopDownNode2D owner;
 
@@ -37,7 +37,7 @@ namespace PJ
 				this.owner = owner;
 			}
 
-			protected override void EvtStateChanged(AbstractStateMachine state)
+			protected override void EvtStateChanged(SomeStateMachine state)
 			{
 				base.EvtStateChanged(state);
 

@@ -11,7 +11,7 @@ namespace PJ
 
 		// TODO: port C++ Unit Tests to C#
 
-		class TestGridLayer : GenericGridLayer<GridTile>
+		class TestGridLayer : GridLayer<GridTile>
 		{
 			public Rect2Int lastCellsBlocked;
 			public Rect2Int lastCellsUnblocked;
@@ -34,10 +34,10 @@ namespace PJ
 			}
 		}
 
-		class TestGridBoard : GenericGridBoard<GridTile>
+		class TestGridBoard : GridBoard<GridTile>
 		{
 			// OVERRIDE:
-			public override GenericGridLayer<GridTile> NewLayer(Vector2Int size)
+			public override GridLayer<GridTile> NewLayer(Vector2Int size)
 			{
 				return new TestGridLayer(size);
 			}
@@ -246,7 +246,7 @@ namespace PJ
 			Assert.IsTrue(gridBoard.IsValidLoc(new Vector3Int(19, 19, 1)));
 			Assert.IsTrue(gridBoard.IsValidLoc(new Vector3Int(0, 0, 0)));
 
-			GenericGridCell<GridTile> gridCell = gridBoard.GetCell(new Vector3Int(0, 0, 0));
+			GridCell<GridTile> gridCell = gridBoard.GetCell(new Vector3Int(0, 0, 0));
 			Assert.AreEqual(null, gridCell.tile);
 			Assert.AreEqual(null, gridBoard.GetTile(new Vector3Int(0, 0, 0)));
 
@@ -300,7 +300,7 @@ namespace PJ
 		[Test]
 		public void AxialUnitTests() {
 
-			var board = new GenericGridBoard<GridTile>();
+			var board = new GridBoard<GridTile>();
 			Assert.AreEqual(1, board.GetNextAxialIndex(0, AxialDirection.Right));
 			Assert.AreEqual(2, board.GetNextAxialIndex(1, AxialDirection.Right));
 			Assert.AreEqual(3, board.GetNextAxialIndex(2, AxialDirection.Right));
