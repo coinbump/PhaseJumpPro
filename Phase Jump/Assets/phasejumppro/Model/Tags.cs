@@ -28,15 +28,16 @@ namespace PJ
 
 	/// <summary>
 	/// Holds a set of type tag strings
+    ///
+    /// Example: "enemy", "ghost" tags for an arcade game
 	/// </summary>
-	public class TypeTags : HashSet<string>
+	public class TypeTagsSet : HashSet<string>
 	{
-		public TypeTags() : base()
+		public TypeTagsSet() : base()
 		{
-
 		}
 
-		public TypeTags(IEnumerable<string> collection) : base(collection)
+		public TypeTagsSet(IEnumerable<string> collection) : base(collection)
 		{
 		}
 	}

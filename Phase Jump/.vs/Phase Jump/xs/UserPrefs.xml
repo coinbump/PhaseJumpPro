@@ -1,41 +1,21 @@
 ﻿<Properties StartupConfiguration="{51BDC8AF-8B4E-EDCD-CD37-EADF80C84D5E}|">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/scripts/Human.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/phasejumppro/Model/Tags.cs">
     <Files>
-      <File FileName="Assets/phasejumppro/Editor/Scripts/BuildAnimations.cs" Line="1" Column="1" />
-      <File FileName="Assets/phasejumppro/Core/GridLoc.cs" />
-      <File FileName="Assets/phasejumppro/Core/Base.cs" />
-      <File FileName="Assets/phasejumppro/Core/AutoEmitter2D.cs" />
-      <File FileName="Assets/scripts/CircleController.cs" Line="9" Column="50" />
-      <File FileName="Assets/scripts/Human.cs" Line="82" Column="9" />
-      <File FileName="Assets/scripts/Wheel.cs" Line="13" Column="71" />
-      <File FileName="Assets/phasejumppro/Classes/Class.cs" Line="2" Column="1" />
-      <File FileName="Assets/scripts/RedGreenStateMachine.cs" Line="9" Column="40" />
+      <File FileName="Assets/scripts/Human.cs" Line="91" Column="9" />
+      <File FileName="Assets/phasejumppro/Time/TimeSlice.cs" />
+      <File FileName="Assets/phasejumppro/Core/Node2D.cs" Line="165" Column="16" />
+      <File FileName="Assets/phasejumppro/Model/StateMachine.cs" Line="138" Column="1" />
+      <File FileName="Assets/phasejumppro/Model/Event.cs" Line="31" Column="1" />
+      <File FileName="Assets/phasejumppro/Model/Broadcaster.cs" Line="64" Column="1" />
+      <File FileName="Assets/phasejumppro/Core/Core.cs" Line="68" Column="1" />
+      <File FileName="Assets/phasejumppro/Model/Tags.cs" Line="34" Column="26" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
           <Node name="Phase Jump" expanded="True">
             <Node name="Assets" expanded="True">
-              <Node name="phasejumppro" expanded="True">
-                <Node name="Classes" expanded="True" />
-                <Node name="Core" expanded="True" />
-                <Node name="Editor" expanded="True">
-                  <Node name="Scripts" expanded="True" />
-                  <Node name="UnitTests" expanded="True" />
-                </Node>
-                <Node name="Go" expanded="True">
-                  <Node name="Behavior" expanded="True" />
-                </Node>
-                <Node name="Input" expanded="True" />
-                <Node name="Model" expanded="True">
-                  <Node name="Boards" expanded="True" />
-                  <Node name="Patterns" expanded="True" />
-                </Node>
-                <Node name="Time" expanded="True" />
-              </Node>
-              <Node name="scripts" expanded="True">
-                <Node name="Human.cs" selected="True" />
-              </Node>
+              <Node name="scripts" expanded="True" />
             </Node>
           </Node>
         </State>
@@ -45,7 +25,7 @@
   <MonoDevelop.Ide.ItemProperties.Phase_220Jump PreferredExecutionTarget="Unity.Editor" />
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="8f950b68-5d1d-48e4-ba3d-79af99391420" />
+  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="739f90bb-bc60-48f5-bcef-2ac571113c37" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
       <Breakpoint enabled="false" file="/Users/alpha/Projects/PhaseJumpPro/Phase Jump/Assets/phasejumppro/Input/MoveToMouseInputControlScheme2D.cs" relfile="Assets/phasejumppro/Input/MoveToMouseInputControlScheme2D.cs" line="41" column="1" />
@@ -57,6 +37,7 @@
       <Breakpoint file="/Users/alpha/Projects/PhaseJumpPro/Phase Jump/Assets/phasejumppro/Model/Boards/GenericGridStorage.cs" relfile="Assets/phasejumppro/Model/Boards/GenericGridStorage.cs" line="73" column="1" />
       <Breakpoint file="/Users/alpha/Projects/PhaseJumpPro/Phase Jump/Assets/phasejumppro/Model/Boards/GenericGridStorage.cs" relfile="Assets/phasejumppro/Model/Boards/GenericGridStorage.cs" line="69" column="1" />
       <Breakpoint file="/Users/alpha/Projects/PhaseJumpPro/Phase Jump/Assets/phasejumppro/Model/Boards/GenericGrid.cs" relfile="Assets/phasejumppro/Model/Boards/GenericGrid.cs" line="92" column="1" />
+      <Breakpoint file="/Users/alpha/Projects/PhaseJumpPro/Phase Jump/Assets/scripts/Human.cs" relfile="Assets/scripts/Human.cs" line="125" column="1" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MultiItemStartupConfigurations />

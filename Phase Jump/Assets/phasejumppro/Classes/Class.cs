@@ -11,11 +11,11 @@ namespace PJ
 	{
 		public string Identifier { get; set; }
 		public AnyFactory Factory { get; set; }
-		public TypeTags TypeTags { get; set; } = new TypeTags();
+		public TypeTagsSet TypeTags { get; set; } = new TypeTagsSet();
 		public Tags Tags { get; set; } = new Tags();
 
 		// FUTURE: add functionality as needed
-		public Class(string identifier, AnyFactory factory, TypeTags typeTags)
+		public Class(string identifier, AnyFactory factory, TypeTagsSet typeTags)
 		{
 			Identifier = identifier;
 			Factory = factory;

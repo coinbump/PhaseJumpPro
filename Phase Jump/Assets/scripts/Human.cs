@@ -7,15 +7,15 @@ using PJ;
 /// <summary>
 /// Has a basic behavior tree: walks for awhile, gets bored, does some running
 /// </summary>
-public class Human : PJ.Node2D
+public class Human : Node2D
 {
-	public enum State
-	{
-		Invalid,
-		WalkLeft,
-		WalkRight,
-		RunLeft,
-		RunRight
+	static class State
+    {
+		public const string Invalid = "invalid";
+		public const string WalkLeft = "walk-left";
+		public const string WalkRight = "walk-right";
+		public const string RunLeft = "run-left";
+        public const string RunRight = "run-right";
 	}
 
 	Behavior behavior;
@@ -41,10 +41,10 @@ public class Human : PJ.Node2D
 			var human = owner.Target as Human;
 
 			if (human.IsMovingRight()) {
-				human.core.state.State = Human.State.WalkRight;
+				human.state.State = Human.State.WalkRight;
 			}
 			else {
-				human.core.state.State = Human.State.WalkLeft;
+				human.state.State = Human.State.WalkLeft;
 			}
 			state.State = State.Success;
 		}
@@ -64,49 +64,25 @@ public class Human : PJ.Node2D
 
 			if (human.IsMovingRight())
 			{
-				human.core.state.State = Human.State.RunRight;
+				human.state.State = Human.State.RunRight;
 			}
 			else
 			{
-				human.core.state.State = Human.State.RunLeft;
+				human.state.State = Human.State.RunLeft;
 			}
 		}
 	}
 
 	float boredom;
 
-	class Core : PJ.Core
-	{
-		WeakReference owner;
+	new Core core;
 
-		public StateMachine<State> state = new StateMachine<State>();
-
-		public Core(WeakReference owner)
-		{
-			this.owner = owner;
-			state.State = State.WalkLeft;
-			SetStateMachine(state);
-		}
-
-		protected override void EvtStateChanged(SomeStateMachine state)
-		{
-			base.EvtStateChanged(state);
-
-			if (!owner.IsAlive) { return; }
-			var human = owner.Target as Human;
-
-			human.EvtStateChanged();
-		}
-	}
-
-	Core core;
-	Animator animator;
-
-	void EvtStateChanged() {
+    protected override void EvtStateChanged(SomeStateMachine state) {
 		
 		UpdateVelocity();
 
 		GetComponent<SpriteRenderer>().flipX = IsMovingRight();
+		var animator = GetComponent<Animator>();
 
 		if (IsRunning()) {
 			boredom = 0;
@@ -119,7 +95,7 @@ public class Human : PJ.Node2D
 
 	bool IsRunning()
 	{
-		switch (core.state.State)
+		switch (state.State)
 		{
 			case State.RunLeft:
 			case State.RunRight:
@@ -130,7 +106,7 @@ public class Human : PJ.Node2D
 
 	bool IsMovingRight() {
 
-		switch (core.state.State)
+		switch (state.State)
 		{
 			case State.WalkRight:
 			case State.RunRight:
@@ -139,11 +115,16 @@ public class Human : PJ.Node2D
 		return false;
 	}
 
-	protected override void Start() {
-		base.Start();
+    protected override void Awake()
+    {
+        base.Awake();
+    }
 
-		core = new Core(new WeakReference(this));
-		animator = gameObject.GetComponent<Animator>();
+    protected override void Start() {
+		//base.Start();
+		Debug.Log("Log: Start");
+
+		state.State = State.WalkLeft;
 
 		// Build the behavior tree (simple)
 		behavior = new Behavior(new WeakReference(this));
@@ -165,19 +146,19 @@ public class Human : PJ.Node2D
 		{
 			activeColliders.Add(coll.collider);	// Ignore the floor
 
-			switch (core.state.State)
+			switch (state.State)
 			{
 				case State.WalkLeft:
-					core.state.State = State.WalkRight;
+					state.State = State.WalkRight;
 					break;
 				case State.WalkRight:
-					core.state.State = State.WalkLeft;
+					state.State = State.WalkLeft;
 					break;
 				case State.RunLeft:
-					core.state.State = State.RunRight;
+					state.State = State.RunRight;
 					break;
 				case State.RunRight:
-					core.state.State = State.RunLeft;
+					state.State = State.RunLeft;
 					break;
 			}
 		}
@@ -210,7 +191,7 @@ public class Human : PJ.Node2D
 
 		behavior.EvtUpdate(new TimeSlice(Time.deltaTime));
 
-		switch (core.state.State)
+		switch (state.State)
 		{
 			case State.WalkLeft:
 			case State.WalkRight:
