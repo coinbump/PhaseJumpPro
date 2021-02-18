@@ -22,7 +22,7 @@ public class Human : Node2D
 
 	class IsBoredBehavior : ConditionBehavior
 	{
-		public override bool Evaluate()
+		public override bool EvaluateCondition()
 		{
 			if (!owner.IsAlive) { return false; }
 			var human = owner.Target as Human;
@@ -33,11 +33,9 @@ public class Human : Node2D
 
 	class WalkBehavior : Behavior
 	{
-		protected override void _Run()
+        protected override State Evaluate()
 		{
-			base._Run();
-
-			if (!owner.IsAlive) { return; }
+			if (!owner.IsAlive) { return State.Fail; }
 			var human = owner.Target as Human;
 
 			if (human.IsMovingRight()) {
@@ -46,7 +44,7 @@ public class Human : Node2D
 			else {
 				human.state.State = Human.State.WalkLeft;
 			}
-			state.State = State.Success;
+			return State.Success;
 		}
 	}
 
@@ -56,10 +54,10 @@ public class Human : Node2D
 
 		}
 
-		protected override void _Run() {
-			base._Run();
+		protected override State Evaluate() {
+			var result = base.Evaluate();
 
-			if (!owner.IsAlive) { return; }
+			if (!owner.IsAlive) { return State.Fail; }
 			var human = owner.Target as Human;
 
 			if (human.IsMovingRight())
@@ -70,6 +68,8 @@ public class Human : Node2D
 			{
 				human.state.State = Human.State.RunLeft;
 			}
+
+			return result;
 		}
 	}
 
@@ -127,7 +127,7 @@ public class Human : Node2D
 		state.State = State.WalkLeft;
 
 		// Build the behavior tree (simple)
-		behavior = new Behavior(new WeakReference(this));
+		behavior = new RootBehavior(new WeakReference(this));
 		var isBoredBehavior = new IsBoredBehavior();
 		behavior.AddChild(isBoredBehavior);
 		var runBehavior = new RunBehavior();

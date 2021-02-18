@@ -3,7 +3,7 @@ using System.Collections;
 
 /*
  * RATING: 5 stars. Simple design pattern with Unit Tests (with Behavior)
- * CODE REVIEW: 4.10.18
+ * CODE REVIEW: 2.17.21
  */
 namespace PJ {
 
@@ -17,10 +17,11 @@ namespace PJ {
 
 		public float Duration {
 			get {
-				return timer.duration;
+				return timer != null ? timer.duration : 0;
 			}
 			set {
-				timer.duration = value;
+                if (timer == null) { return; }
+                timer.duration = value;
 			}
 		}
 
@@ -47,16 +48,16 @@ namespace PJ {
 			}
 		}
 
-		protected override void _Run()
+		protected override State Evaluate()
 		{
-			if (null == timer) { return; }
+			if (null == timer) { return State.Success; }
 
 			timer.Reset();
 			if (timer.duration > 0) {
-				state.State = State.RunningNode;
+				return State.Running;
 			}
 			else {
-				state.State = State.Success;
+				return State.Success;
 			}
 		}
 	}

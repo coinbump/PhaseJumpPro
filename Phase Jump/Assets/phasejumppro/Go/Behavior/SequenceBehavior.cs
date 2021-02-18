@@ -3,7 +3,7 @@ using System.Collections;
 
 /*
  * RATING: 4 stars. Has Unit Tests, could use visual tests
- * CODE REVIEW: 4.10.18
+ * CODE REVIEW: 2.17.21
  */
 namespace PJ
 {
@@ -14,11 +14,11 @@ namespace PJ
 	{
 		protected int childIndex;
 
-		protected override void EvtChildFinished(Behavior child)
+		protected override void EvtChildFinished(Behavior child, bool wasRunningNode)
 		{
-			base.EvtChildFinished(child);
+			base.EvtChildFinished(child, wasRunningNode);
 
-			if (!IsRunning()) { return; }
+			if (!wasRunningNode) { return; }
 
 			switch (child.GetState())
 			{
@@ -26,7 +26,7 @@ namespace PJ
 					state.State = State.Fail;
 					return;
 				case Behavior.State.Success:
-					if (childIndex == children.Count - 1)
+					if (childIndex >= children.Count - 1)
 					{
 						state.State = State.Success;
 						return;
@@ -34,7 +34,7 @@ namespace PJ
 					else
 					{
 						childIndex++;
-						_Run();
+						Run();
 					}
 					break;
 			}
@@ -47,8 +47,12 @@ namespace PJ
 			childIndex = 0;
 		}
 
-		protected override void _Run()
+		protected override State Evaluate()
 		{
+			// As long as the children are being evaluated, we are running
+			// Add to run stack before children
+			state.State = State.Running;
+
 			for (; childIndex < children.Count; childIndex++)
 			{
 				var child = children[childIndex];
@@ -57,22 +61,14 @@ namespace PJ
 				switch (result)
 				{
 					case State.Fail:
-						state.State = result;
-						return;
-					case State.Success:
-						if (childIndex == children.Count - 1) {
-							state.State = State.Success;
-							return;
-						}
-						break;
-				}
-
-				if (child.IsRunning())
-				{
-					state.State = State.RunningChild;
-					return;
+						return result;
+					case State.Running:
+						// If child is running, sequence is still running
+						return result;
 				}
 			}
+
+			return State.Success;
 		}
 	}
 }

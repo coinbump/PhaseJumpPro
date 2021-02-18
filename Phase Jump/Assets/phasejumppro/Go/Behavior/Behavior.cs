@@ -3,37 +3,39 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace PJ {
+/*
+ * RATING: 4 stars. Has Unit Tests, could use visual tests
+ * CODE REVIEW: 2.17.21
+ */
+namespace PJ
+{
 	/// <summary>
 	/// Nodes in a behavior tree allow us to model complex behaviors
 	/// </summary>
-	public class Behavior : Core {
+	public class Behavior : Core
+	{
 		public WeakReference parent { get; protected set; }
 		protected List<Behavior> children = new List<Behavior>();
-		private Behavior _runningChild; // Only root node sets this value
 
-		// Optional:
+		// Optional: useful to store a game object to alter its behavior
 		public WeakReference owner;
 
-		public Behavior RunningChild {
-			get {
-				return RootNode()._runningChild;
-			}
-			set {
-				if (null == parent && _runningChild != null && value != _runningChild) {
-					Debug.Log("ERROR. Can't run behavior if already running.");
-				}
-				RootNode()._runningChild = value;
+		public Behavior RunningNode
+		{
+			get
+			{
+				var rootNode = RootNode();
+				return rootNode.runStack.Count == 0 ? null : rootNode.runStack.Peek();
 			}
 		}
 
-		public enum State {
-			Invalid,
-			Evalute,		// Run has been called, no result yet
-			RunningNode,	// This node is running (set state to Finished when done)
-			RunningChild,	// This node is evaluating a child node (sequences, selectors)
-			Success,		// Run finished with success
-			Fail			// Run finished with failure
+		public enum State
+		{
+			Default,        // Default state
+			Evalute,        // Run has been called, no result yet
+			Running,        // This node is running (set state to Success/Fail when done)
+			Success,        // Run finished with success
+			Fail            // Run finished with failure
 		}
 		protected StateMachine<State> state = new StateMachine<State>();
 
@@ -48,106 +50,148 @@ namespace PJ {
 			SetStateMachine(state);
 		}
 
-		public void AddChild(Behavior node) {
+		public void AddChild(Behavior node)
+		{
 			node.parent = new WeakReference(this);
 			children.Add(node);
 
-			if (node.owner == null) {
+			if (node.owner == null)
+			{
 				var rootOwner = RootNode().owner;
 				node.owner = rootOwner;
 			}
 		}
 
-		public Behavior RootNode() {
-			var result = this;
+		public RootBehavior RootNode()
+		{
+			Behavior result = this;
 
 			var navParent = parent;
-			while (navParent != null && navParent.IsAlive) {
+			while (navParent != null && navParent.IsAlive)
+			{
 				result = navParent.Target as Behavior;
 				navParent = result.parent;
 			}
-			return result;
+
+			Debug.Assert(result is RootBehavior, "Root of behavior tree must be RootBehavior");
+			return result as RootBehavior;
 		}
 
-		protected override void EvtStateChanged(SomeStateMachine state) {
+		protected override void EvtStateChanged(SomeStateMachine state)
+		{
 			if (state != this.state) { return; }
 
-			switch (this.state.state) {
+			switch (this.state.state)
+			{
 				case State.Fail:
 				case State.Success:
-					if (null != parent && parent.IsAlive) {
-						var parentBehavior = parent.Target as Behavior;
-						parentBehavior.EvtChildFinished(this);
-					}
-					if (this == RunningChild)
+					var isRunningNode = this == RunningNode;
+					if (isRunningNode)
 					{
-						RunningChild = null;
+						var runStack = RootNode().runStack;
+						runStack.Pop();
+					}
+					if (null != parent && parent.IsAlive)
+					{
+						var parentBehavior = parent.Target as Behavior;
+						parentBehavior.EvtChildFinished(this, isRunningNode);
 					}
 					EvtFinished();
 					break;
-				case State.RunningNode:
-					RunningChild = this;
+				case State.Running:
+					if (RunningNode != this)
+					{
+						RootNode().runStack.Push(this);
+					}
 					break;
 			}
 		}
 
-		protected virtual void EvtFinished() {}
-		protected virtual void EvtChildFinished(Behavior child) {}
+		protected virtual void EvtFinished() { }
+		protected virtual void EvtChildFinished(Behavior child, bool wasRunningNode) { }
 
 		// Call this when you get an Update event
-		public override void EvtUpdate(TimeSlice time) {
+		public override void EvtUpdate(TimeSlice time)
+		{
 			base.EvtUpdate(time);
 
 			// Only root node kickstarts Run
 			if (null == parent)
 			{
-				Run();
+				// Can't run if there is a node actively running
+				if (null == RunningNode)
+				{
+					Run();
+				}
 			}
 
 			// Do this last (Don't Run immediately after child finishes).
-			foreach (Behavior child in children) {
+			foreach (Behavior child in children)
+			{
 				child.EvtUpdate(time);
 			}
 		}
 
 		public State Run()
 		{
-			// Can't run if there is a child behavior actively running
-			var runningChild = RunningChild;
-			if (null != runningChild) { return GetState(); }
-			if (IsRunning()) { return GetState(); }
-
 			state.State = State.Evalute;
-			_Run();
+			state.State = Evaluate();
 
-			switch (state.State) {
+			switch (state.State)
+			{
 				case State.Evalute:
-					Debug.Log("ERROR. Behavior node must set state after _Run.");
+					Debug.Log("ERROR. Behavior node must set state after Evaluate.");
 					break;
 			}
 
 			return state.State;
 		}
 
-		// Don't call this directly (Run wraps common behavior)
+		// Don't call this directly (called by Run)
 		// Must set the new state via _Run
-		protected virtual void _Run() {
-
-			foreach (Behavior child in children) {
-				switch (child.Run()) {
+		/// <summary>
+		/// Evaluate the behavior
+		/// </summary>
+		protected virtual State Evaluate()
+		{
+			foreach (Behavior child in children)
+			{
+				var childState = child.Run();
+				switch (childState)
+				{
 					case State.Fail:
 						continue;
 					default:
-						state.State = State.Success;
-						return;
+						// If child is success or running, it evaluated, so quit looking for a node
+						return State.Success;
 				}
 			}
 
-			state.State = State.Success;
+			return State.Success;
 		}
 
-		public State GetState() { return state.State;  }
-		public bool IsRunning() { return state.State == State.RunningNode || state.State == State.RunningChild; }
+		public State GetState() { return state.State; }
+		public bool IsRunning() { return state.State == State.Running; }
 		public bool IsFinished() { return state.State == State.Success || state.State == State.Fail; }
+	}
+
+	/// <summary>
+	/// Holds run stack for entire behavior tree
+	/// </summary>
+	public class RootBehavior : Behavior
+	{
+		public Stack<Behavior> runStack = new Stack<Behavior>();
+
+		public RootBehavior()
+			:	base()
+        {
+
+        }
+
+		public RootBehavior(WeakReference owner)
+			: base(owner)
+		{
+
+		}
 	}
 }

@@ -13,7 +13,7 @@ namespace PJ
 		{
 			public bool evaluate;
 
-			public override bool Evaluate()
+			public override bool EvaluateCondition()
 			{
 				return evaluate;
 			}
@@ -31,11 +31,13 @@ namespace PJ
 		[Test]
 		public void UnitTests()
 		{
-			var t1 = new Behavior(new WeakReference(this));
+			var root = new RootBehavior(new WeakReference(this));
+			var t1 = new Behavior();
 			var c1 = new TestConditionBehavior();
 			var c11 = new TestTimedBehavior();
 			var c12 = new Behavior();
 
+			root.AddChild(t1);
 			t1.AddChild(c1);
 			Assert.AreEqual(c1.owner, t1.owner);
 
@@ -48,17 +50,18 @@ namespace PJ
 			c1.AddChild(c11);
 			c1.AddChild(c12);
 
-			Assert.AreEqual(t1, t1.RootNode());
-			Assert.AreEqual(t1, c1.RootNode());
-			Assert.AreEqual(t1, c11.RootNode());
-			Assert.AreEqual(t1, c12.RootNode());
+			Assert.AreEqual(root, t1.RootNode());
+			Assert.AreEqual(root, c1.RootNode());
+			Assert.AreEqual(root, c11.RootNode());
+			Assert.AreEqual(root, c12.RootNode());
 
 			t1.Run();
-			Assert.AreEqual(t1.RunningChild, c11);
+			Assert.AreEqual(t1.RunningNode, c11);
 			Assert.IsTrue(c11.IsRunning());
 			t1.Run();
 			t1.EvtUpdate(new TimeSlice(1.0f));
 			Assert.IsTrue(c11.IsFinished());
+			Assert.IsNull(t1.RunningNode);
 		}
 	}
 }

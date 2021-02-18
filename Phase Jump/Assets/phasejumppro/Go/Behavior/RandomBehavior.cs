@@ -1,5 +1,9 @@
 ﻿using System.Collections;
 
+/*
+ * RATING: 4 stars. Has Unit Tests, could use visual tests
+ * CODE REVIEW: 2.17.21
+ */
 namespace PJ
 {
 	/// <summary>

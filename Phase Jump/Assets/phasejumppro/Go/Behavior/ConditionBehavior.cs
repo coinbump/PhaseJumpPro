@@ -1,6 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+/*
+ * RATING: 4 stars. Has Unit Tests, could use visual tests
+ * CODE REVIEW: 2.17.21
+ */
 namespace PJ {
 
 	/// <summary>
@@ -9,22 +13,22 @@ namespace PJ {
 	/// </summary>
 	public abstract class ConditionBehavior : Behavior
 	{
-		public abstract bool Evaluate();
+		public abstract bool EvaluateCondition();
 
-		protected override void _Run()
+		protected override State Evaluate()
 		{
-			if (Evaluate())
+			if (EvaluateCondition())
 			{
-				state.State = State.Success;
 				if (children.Count > 0)
 				{
 					var child = children[0];
 					child.Run();
 				}
+				return State.Success;
 			}
 			else
 			{
-				state.State = State.Fail;
+				return State.Fail;
 			}
 		}
 	}

@@ -20,15 +20,15 @@ namespace PJ
 				this.evaluate = evaluate;
 			}
 
-			public override bool Evaluate()
+			public override bool EvaluateCondition()
 			{
 				return evaluate;
 			}
 
-			protected override void _Run()
+			protected override State Evaluate()
 			{
-				base._Run();
 				runCount++;
+				return base.Evaluate();
 			}
 		}
 
@@ -44,10 +44,12 @@ namespace PJ
 		[Test]
 		public void UnitTests()
 		{
+			var root = new RootBehavior();
 			var t1 = new SequenceBehavior();
 			var c1 = new TestConditionBehavior(false);
 			var c2 = new TestConditionBehavior(true);
 			var c3 = new TestConditionBehavior(true);
+			root.AddChild(t1);
 			t1.AddChild(c1);
 			t1.AddChild(c2);
 			t1.AddChild(c3);
@@ -57,7 +59,7 @@ namespace PJ
 			Assert.AreEqual(0, c2.runCount);
 			Assert.IsFalse(c1.IsRunning());
 			Assert.IsFalse(c2.IsRunning());
-			Assert.AreEqual(null, t1.RunningChild);
+			Assert.AreEqual(null, t1.RunningNode);
 			Assert.AreEqual(Behavior.State.Fail, t1.GetState());
 			Assert.AreEqual(Behavior.State.Fail, c1.GetState());
 
@@ -82,10 +84,10 @@ namespace PJ
 			var c0 = new TestTimedBehavior();
 			t1.AddChild(c0);
 			t1.Run();
-			Assert.AreEqual(t1.RunningChild, c0);
+			Assert.AreEqual(t1.RunningNode, c0);
 			Assert.IsTrue(t1.IsRunning());
 			t1.EvtUpdate(new TimeSlice(1.0f));
-			Assert.AreEqual(null, t1.RunningChild);
+			Assert.AreEqual(null, t1.RunningNode);
 			Assert.AreEqual(Behavior.State.Success, t1.GetState());
 			Assert.AreEqual(Behavior.State.Success, c0.GetState());
 		}
