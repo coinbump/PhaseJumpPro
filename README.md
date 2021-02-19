@@ -28,7 +28,8 @@ The code contains common design patterns for games in C#:
 
 # Special Effects
 - SpriteTrail2D shows a trail of fading sprite samples behind a moving sprite (for ghost trail effect)
-- FXFade will fade from startAlpha to endAlpha, and (optionally) cull after fade out is copmlete
+- FXFade will fade from startAlpha to endAlpha, and (optionally) cull after fade out is complete
+- CameraShake2D will do a basic camera shake
 
 # Editor Scripts
 
