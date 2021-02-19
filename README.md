@@ -27,7 +27,7 @@ The code contains common design patterns for games in C#:
 - Grid-Based Games (Bejeweled, Tetris, etc.)
 
 # Special Effects
-- SpriteTrail2D shows a trail of fading sprite samples behind a moving sprite (for ghost trail effect)
+- SpriteTrail2D shows a trail of fading sprite samples behind a moving sprite (for ghost trail effect): ![alt text](https://github.com/CoinBump/PhaseJumpPro/blob/master/Documentation/Resources/Art/SpriteTrail2D.png)
 - FXFade will fade from startAlpha to endAlpha, and (optionally) cull after fade out is complete
 - CameraShake2D will do a basic camera shake
 
