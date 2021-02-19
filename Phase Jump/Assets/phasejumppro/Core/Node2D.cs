@@ -19,6 +19,8 @@ namespace PJ
 	/// </summary>
 	public class Node2D : MonoBehaviour
 	{
+        [Header("Node2D Properties")]
+
 		private float _rotation;    // Simplifies basic 2D rotation
 		public bool isKinematic;	// If true, motion is handled without rigidobdy/physics
 
@@ -103,6 +105,19 @@ namespace PJ
 		}
 
 		protected Core core;
+
+		// State
+		public string NodeState
+		{
+			get
+			{
+				return state.State;
+			}
+			set
+			{
+				state.State = value;
+			}
+		}
 
 		// Normalized rotation value (0-1.0)
 		public float RotationNormal

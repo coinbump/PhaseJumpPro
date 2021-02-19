@@ -25,10 +25,6 @@ namespace PJ {
 			}
 		}
 
-		public TimedBehavior() {
-			timer = new Timer(0.0f, SomeTimed.Type.Persistent);
-		}
-
 		public TimedBehavior(float duration)
 		{
 			timer = new Timer(duration, SomeTimed.Type.Persistent);
@@ -47,6 +43,14 @@ namespace PJ {
 				}
 			}
 		}
+
+		public void SetDurationAndReset(float duration)
+        {
+			if (timer == null) { return; }
+
+			timer.duration = duration;
+			timer.Reset();
+        }
 
 		protected override State Evaluate()
 		{

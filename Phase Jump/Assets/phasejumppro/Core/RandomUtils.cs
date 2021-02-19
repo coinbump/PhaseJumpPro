@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 
 namespace PJ
 {
@@ -6,9 +7,17 @@ namespace PJ
 	{
 		public static Type ChooseFrom<Type>(Type[] choices)
 		{
-			if (choices.Length == 0) { return default(Type); }
+			if (choices.Length == 0) { return default; }
 
 			int index = Random.Range(0, choices.Length);
+			return choices[index];
+		}
+
+		public static Type ChooseFrom<Type>(List<Type> choices)
+        {
+			if (choices.Count == 0) { return default; }
+
+			int index = Random.Range(0, choices.Count);
 			return choices[index];
 		}
 

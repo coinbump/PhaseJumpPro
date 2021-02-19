@@ -199,7 +199,7 @@ namespace PJ {
 			{
 				case State.Fade:
 					var interpolate = new InterpolateOutSquared();
-					float progress = interpolate.Transform(stateMachine.Progress);
+					float progress = interpolate.Evaluate(stateMachine.Progress);
 					float alpha = 1.0f - progress;
 					var sr = GetComponent<SpriteRenderer>();
 					var color = sr.color;

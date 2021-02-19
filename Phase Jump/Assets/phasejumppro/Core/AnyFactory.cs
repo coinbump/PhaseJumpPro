@@ -1,7 +1,7 @@
 ﻿namespace PJ
 {
 	/// <summary>
-	/// Somes factory implementation
+	/// Type erasure for generic factory
 	/// </summary>
 	public interface AnyFactory
 	{

@@ -2,10 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-/*
- * RATING: 4 stars. Simple FX, could use interpolate customization.
- * CODE REVIEW: 12/19/18
- */
+// TODO: needs to be modernized (See FXFadeIn)
 namespace PJ
 {
 	/// <summary>
@@ -15,7 +12,7 @@ namespace PJ
 	{
 		public float duration = 1.0f;
 		public float startScale = 1.0f;
-		public bool isGhostUntilFinished;	// If true, make this non colliding kinematic while scaling.
+		public bool isGhostWhileRunning;	// If true, make this non colliding kinematic while scaling.
 
 		protected Timer timer = new Timer();
 		protected bool wasKinematic;
@@ -31,7 +28,7 @@ namespace PJ
 			color.a = 0;
 			spriteRenderer.color = color;
 
-			if (isGhostUntilFinished)
+			if (isGhostWhileRunning)
 			{
 				var r = GetComponent<Rigidbody>();
 				if (r != null)
@@ -65,11 +62,11 @@ namespace PJ
 
 			Color color = spriteRenderer.color;
 			float progress = timer.GetProgress();
-			color.a = interpolate.Transform(progress);
+			color.a = interpolate.Evaluate(progress);
 
 			interpolate = new InterpolateCubed();
 
- 			float scale = 1.0f + (startScale - 1.0f) * interpolate.Transform(1.0f-progress);
+ 			float scale = 1.0f + (startScale - 1.0f) * interpolate.Evaluate(1.0f-progress);
 			transform.localScale = new Vector3(scale, scale, scale);
 
 			if (timer.IsFinished)
@@ -77,7 +74,7 @@ namespace PJ
 				color.a = 1.0f;
 				enabled = false;
 
-				if (isGhostUntilFinished)
+				if (isGhostWhileRunning)
 				{
 					var r = GetComponent<Rigidbody>();
 					if (r != null)

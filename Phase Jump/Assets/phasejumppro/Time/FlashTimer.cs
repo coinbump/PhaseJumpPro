@@ -37,6 +37,7 @@ namespace PJ
 			curFlashCount = 0;
 			isFlashOn = false;
 			timer.Reset();
+			Pause(false);
 		}
 
 		public override void EvtUpdate(TimeSlice time)

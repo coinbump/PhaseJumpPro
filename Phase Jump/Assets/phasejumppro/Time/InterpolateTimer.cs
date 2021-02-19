@@ -29,7 +29,7 @@ namespace PJ
 				return progress;
 			}
 
-			return interpolate.Transform(progress);
+			return interpolate.Evaluate(progress);
 		}
 
 	}

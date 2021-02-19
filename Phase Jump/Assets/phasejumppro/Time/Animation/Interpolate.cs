@@ -2,28 +2,11 @@
 using System.Collections.Generic;
 
 /*
- * RATING: 5 stars. Works, missing some interpolation curves.
+ * RATING: 4 stars. Works, missing some interpolation curves.
  * CODE REVIEW: Modern. 3.31.18
  */
 namespace PJ
 {
-	/// <summary>
-	/// Interpolate a normalized float.(0-1.0)
-	/// Used for animation curves
-	/// </summary>
-	/// TODO: can this be integrated with Unity's AnimationCurve?
-	public class Interpolate
-	{
-		public virtual float Transform(float factor) { return factor; }
-
-		static FactoryRegistry factories = new FactoryRegistry();
-
-		public class Factory<T> : PJ.AnyFactory where T: Interpolate, new()
-		{
-			public Interpolate New() { return new T(); }
-		}
-	}
-
 	// For editors to pick from list
 	public enum InterpolateType
 	{
@@ -31,97 +14,117 @@ namespace PJ
 	}
 
 	/// <summary>
-	/// Registers factories for each interpolate type
+	/// Interpolate a normalized float.(0-1.0)
+	/// Used for animation curves
+	///
+	/// Analogous to Unity's AnimationCurve, but with more built-in equation curves
 	/// </summary>
-	public class FactoryRegistry
+	public class Interpolate
 	{
-		// TODO: re-evaluate this.
-		//public Dictionary<string, AnyFactory> registry = new Dictionary<string, AnyFactory>();
-		//public FactoryRegistry()
-		//{
-		//	registry.Add(InterpolateType.Linear.ToString(), new Interpolate.Factory<InterpolateLinear>());
-		//	registry.Add(InterpolateType.Squared.ToString(), new Interpolate.Factory<InterpolateSquared>());
-		//	registry.Add(InterpolateType.Cubed.ToString(), new Interpolate.Factory<InterpolateCubed>());
-		//	registry.Add(InterpolateType.OutSquared.ToString(), new Interpolate.Factory<InterpolateOutSquared>());
-		//	registry.Add(InterpolateType.OutCubed.ToString(), new Interpolate.Factory<InterpolateOutCubed>());
-		//}
+		public virtual float Evaluate(float time) { return time; }
 
-		//public Interpolate New(InterpolateType type)
-		//{
-		//	var element = registry[type.ToString()];
-		//	if (null == element) { return new Interpolate(); }
-		//	return element.New();
-		//}
+		/// <summary>
+		/// Registers classes for each interpolate type
+		/// </summary>
+		public class FactoryRegistry
+		{
+			public static Dictionary<string, AnyFactory> registry = new Dictionary<string, AnyFactory>();
+
+			public FactoryRegistry()
+			{
+				registry.Add(InterpolateType.Linear.ToString().ToLower(), new Factory<InterpolateLinear>());
+				registry.Add(InterpolateType.Squared.ToString().ToLower(), new Factory<InterpolateSquared>());
+				registry.Add(InterpolateType.Cubed.ToString().ToLower(), new Factory<InterpolateCubed>());
+				registry.Add(InterpolateType.OutSquared.ToString().ToLower(), new Factory<InterpolateOutSquared>());
+				registry.Add(InterpolateType.OutCubed.ToString().ToLower(), new Factory<InterpolateOutCubed>());
+			}
+
+			public Interpolate New(InterpolateType type)
+			{
+				return New(type.ToString().ToLower());
+			}
+
+			public Interpolate New(string type)
+			{
+				if (type.Length <= 0) { return null; }
+
+				var registryValue = registry[type];
+				var element = registryValue as SomeFactory;
+				if (null == element) { return null; }
+
+				var result = element.New() as Interpolate;
+				return result;
+			}
+		}
+		static public FactoryRegistry factory = new FactoryRegistry();
 	}
 
 	public class InterpolateLinear : Interpolate
 	{
-		public override float Transform(float factor)
+		public override float Evaluate(float time)
 		{
-			return factor;
+			return time;
 		}
 	}
 
 	public class InterpolateSquared : Interpolate
 	{
-		public override float Transform(float factor)
+		public override float Evaluate(float time)
 		{
-			return factor * factor;
+			return time * time;
 		}
 	}
 
 	public class InterpolateCubed : Interpolate
 	{
-		public override float Transform(float factor)
+		public override float Evaluate(float time)
 		{
-			return factor * factor * factor;
+			return time * time * time;
 		}
 	}
 
 	public class InterpolateOutSquared : Interpolate
 	{
-		public override float Transform(float factor)
+		public override float Evaluate(float time)
 		{
-			factor = 1.0f - factor;
-			var result = 1.0f - (factor * factor);
+			time = 1.0f - time;
+			var result = 1.0f - (time * time);
 			return result;
 		}
 	}
 
 	public class InterpolateOutCubed : Interpolate
 	{
-		public override float Transform(float factor)
+		public override float Evaluate(float time)
 		{
-			factor = 1.0f - factor;
-			var result = 1.0f - (factor * factor * factor);
+			time = 1.0f - time;
+			var result = 1.0f - (time * time * time);
 			return result;
 		}
 	}
 
-	// FUTURE: evaluate this curve.
+	// FUTURE: evaluate this curve (is the equation correct?)
 	public class InterpolateLeadUp : Interpolate
 	{
-		public override float Transform(float factor)
+		public override float Evaluate(float time)
 		{
 			// Lead up before ease in
-			var s = factor;
-			var result = (s + 1.0f) * (factor * factor * factor) - (s * factor * factor);
+			var s = time;
+			var result = (s + 1.0f) * (time * time * time) - (s * time * time);
 			return result;
 		}
 	}
 
-	// FUTURE: evaluate this curve.
+	// FUTURE: evaluate this curve (is the equation correct?)
 	public class InterpolateOvershootOut : Interpolate
 	{
-		public override float Transform(float factor)
+		public override float Evaluate(float time)
 		{
 			// Go past final value, then return
-			var s = factor;
-			factor = 1.0f - factor;
-			var result = 1.0f - ((s + 1.0f) * (factor * factor * factor) - (s * factor * factor));
+			var s = time;
+			time = 1.0f - time;
+			var result = 1.0f - ((s + 1.0f) * (time * time * time) - (s * time * time));
 			return result;
 		}
 	}
-
 }
-
