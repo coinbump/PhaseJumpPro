@@ -26,6 +26,10 @@ The code contains common design patterns for games in C#:
 - Input Schemes (Move to Mouse for Cursors, Aim at Mouse for shooters)
 - Grid-Based Games (Bejeweled, Tetris, etc.)
 
+# Special Effects
+- SpriteTrail2D shows a trail of fading sprite samples behind a moving sprite (for ghost trail effect)
+- FXFade will fade from startAlpha to endAlpha, and (optionally) cull after fade out is copmlete
+
 # Editor Scripts
 
 I created some scripts to make life easier for 2D Game developers:
