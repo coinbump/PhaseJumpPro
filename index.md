@@ -14,6 +14,10 @@ Used to manipulate the camera.
 
 _Todo_
 
+### Core
+
+[Core](modules/core.md)
+
 ### Extensions
 
 Utility extensions for existing classes.
