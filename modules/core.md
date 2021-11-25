@@ -1,5 +1,7 @@
 # Module: Core
 
+Core contains classes and utilities that are common to many games.
+
 ## Class: RandomUtils
 
 ### Description
