@@ -2,6 +2,8 @@
 
 ## Class: ListExtensions
 
-### Method: `Shuffle`
+### Method: Shuffle
 
 *Description*: shuffles the list contents randomly.
+
+*Example*: `myList.Shuffle()`
