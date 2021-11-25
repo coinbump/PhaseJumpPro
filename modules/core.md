@@ -2,6 +2,18 @@
 
 Classes and utilities that are common to many games.
 
+## Class: MonoBehaviour
+
+Common extensions to Unity's `MonoBehaviour` class.
+
+### Methods
+
+**RenderGizmos(EditorUtils.RenderState)**: Wraps multiple separate Unity calls into one, using a `RenderState` type.
+
+### Stability
+
+Stable.
+
 ## Class: RandomUtils
 
 ### Description
