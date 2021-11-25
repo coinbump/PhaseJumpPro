@@ -36,6 +36,14 @@ _Note:_ GameObject tags are defined in the Unity editor. PhaseJump tags are stor
 
 **OnBecameInvisible**: Optionally culls the object when it leaves the visible camera space, depending on the `cullType` property.
 
+### Internal Properties
+
+**Core core**: Propagates state machine message to the Node2D owner.
+
+**StateMachine\<string> state**: Default state machine for all Node2D objects. Uses `string` instead of a concrete type for maximum flexibility.
+
+_Note:_ Subclasses of Node2D can implement their own state machines with concrete types as needed, but generally strings are easier to deal with.
+
 ### Stability
 
 Changes often to improve the 2D node workflow.
