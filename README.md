@@ -1,13 +1,13 @@
 # PhaseJumpPro
-Some utility classes for making games with Unity
-
-The code contains common design patterns for games in C#:
+Utility classes for making games with Unity.
 
 # Documentation
 
-The documentation very limited right now. It is a work in progress here: (Link)[https://coinbump.github.io/PhaseJumpPro/]
+The documentation very limited right now. It is a work in progress here: [Link](https://coinbump.github.io/PhaseJumpPro/)
 
 # Modules
+
+The code contains common design patterns for games in C#:
 
 - Behavior Trees
 - Basic objects for building node graphs/simulation graphs (for city builders, sims, etc.)
