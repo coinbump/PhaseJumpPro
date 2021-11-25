@@ -10,7 +10,7 @@ The core class for all 2D game objects in a Phase Jump project. Provides built-i
 
 **Bool dontModRotation**: _Default: false_. If true, don't mod rotation values between 0-360.0f and 0-1.0f.
 
-**bool isKinematic**: _TODO: Re-evaluate. Can we determine this from the Rigidbody2D?_
+**bool isKinematic**: Cached value, determined by rigidbody.
 
 **Tags tags**: Container for custom properties.
 
