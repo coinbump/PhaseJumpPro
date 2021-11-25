@@ -1,6 +1,6 @@
 # Phase Jump Pro Documentation
 
-## Naming Convtions
+## Naming Conventions
 
 - **SomeXXX**. Used for abstract classes. _Example:_ `public abstract class SomeStateMachine`
 - **AnyXXX**. Used for type erasure. _Example:_ `public interface AnyFactory`
