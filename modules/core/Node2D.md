@@ -6,13 +6,19 @@ The core class for all 2D game objects in a Phase Jump project. Provides built-i
 
 ## Public Properties
 
-**isKinematic**: _TODO: Re-evaluate. Can we determine this from the Rigidbody2D?_
+**CullType cullType**: Determines how this object is culled, if at all.
 
-**cullType**: Determines how this object is culled, if at all.
+**Bool dontModRotation**: _Default: false_. If true, don't mod rotation values between 0-360.0f and 0-1.0f.
 
-**dontModRotation**: _Default: false_. If true, don't mod rotation values between 0-360.0f and 0-1.0f.
+**bool isKinematic**: _TODO: Re-evaluate. Can we determine this from the Rigidbody2D?_
 
-**tags**: Container for custom properties.
+**Tags tags**: Container for custom properties.
+
+**float RotationDegreeAngle**: Value of 0-360.0f for the node's rotation degree angle.
+
+**float RotationNormal**: Value of 0-1.0f for the node's normalized rotation degree angle.
+
+_NOTE:_ if property `dontModRotation` is true, this value can exceed the normalized float value range.
 
 ### Public Methods
 
@@ -25,11 +31,6 @@ _Example:_ A state that lasts for N seconds.
 **HasTag(string name)**: Returns true if either a GameObject tag, or a PhaseJump tag exists with a matching name.
 
 _Note:_ GameObject tags are defined in the Unity editor. PhaseJump tags are stored in the `tags` property inside `Node2D`.
-
-**float RotationDegreeAngle**: Value of 0-360.0f for the node's rotation degree angle.
-
-
-**float RotationNormal**: Value of 0-1.0f for the node's normalized rotation degree angle. NOTE: if property `dontModRotation` is true, this value can exceed the normalized float value range.
 
 
 ### Internal Methods
