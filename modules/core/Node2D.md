@@ -36,6 +36,9 @@ _Example:_ A state that lasts for N seconds.
 
 _Note:_ GameObject tags are defined in the Unity editor. PhaseJump tags are stored in the `tags` property inside `Node2D`.
 
+**MoveToPosition(Vector2 position, bool force)**: Moves the object to a specific position in 2D space.
+
+_Note:_ Generally this is not a good practice when simulating physics.
 
 ### Internal Methods
 
