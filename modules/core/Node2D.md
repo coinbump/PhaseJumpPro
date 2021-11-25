@@ -51,4 +51,4 @@ _Note:_ Subclasses of Node2D can implement their own state machines with concret
 
 ### Stability
 
-To keep this stable, custom game shortcut code is added to `GoNode2D`.
+Fairly stable.
