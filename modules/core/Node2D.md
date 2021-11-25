@@ -14,6 +14,10 @@ The core class for all 2D game objects in a Phase Jump project. Provides built-i
 
 **bool isKinematic**: Cached value, determined by rigidbody.
 
+**string NodeState**: Get/set the current string-based Node state.
+
+_Note:_ Strings are used for flexibility. If you prefer a concrete type, override the behavior.
+
 **List\<NodeTag> nodeTags**: _Editor only_. The Unity editor doesn't support dictionaries, so we have to present this as a list, then transform it to a dictionary later.
   
 **Tags tags**: Container for custom properties.
@@ -48,7 +52,7 @@ _Note:_ Generally this is not a good practice when simulating physics.
 
 **Core core**: Propagates state machine message to the Node2D owner.
 
-**StateMachine\<string> state**: Default state machine for all Node2D objects. Uses `string` instead of a concrete type for maximum flexibility.
+**StateMachine\<string> state**: Default state machine for all Node2D objects. Uses `string` instead of a concrete type for flexibility.
 
 _Note:_ Subclasses of Node2D can implement their own state machines with concrete types as needed, but generally strings are easier to deal with.
 
