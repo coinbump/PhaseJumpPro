@@ -1,15 +1,17 @@
 ﻿<Properties StartupConfiguration="{51BDC8AF-8B4E-EDCD-CD37-EADF80C84D5E}|">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/phasejumppro/Classes/Class.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/phasejumppro/TopDown/TopDownSteering.cs">
     <Files>
-      <File FileName="Assets/scripts/Human.cs" Line="132" Column="38" />
+      <File FileName="Assets/phasejumppro/FX/SpriteTrail2D.cs" Line="1" Column="1" />
+      <File FileName="Assets/scripts/Human.cs" />
       <File FileName="Assets/phasejumppro/Time/TimeSlice.cs" />
       <File FileName="Assets/phasejumppro/Core/Node2D.cs" />
       <File FileName="Assets/phasejumppro/Model/StateMachine.cs" />
       <File FileName="Assets/phasejumppro/Model/Event.cs" />
       <File FileName="Assets/phasejumppro/Model/Broadcaster.cs" />
       <File FileName="Assets/phasejumppro/Core/Core.cs" />
-      <File FileName="Assets/phasejumppro/Model/Tags.cs" Line="34" Column="26" />
+      <File FileName="Assets/phasejumppro/Model/Tags.cs" />
       <File FileName="Assets/phasejumppro/Classes/Class.cs" Line="2" Column="14" />
+      <File FileName="Assets/phasejumppro/TopDown/TopDownSteering.cs" Line="1" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -17,10 +19,11 @@
           <Node name="Phase Jump" expanded="True">
             <Node name="Assets" expanded="True">
               <Node name="phasejumppro" expanded="True">
-                <Node name="Classes" expanded="True">
-                  <Node name="Class.cs" selected="True" />
-                </Node>
+                <Node name="Classes" expanded="True" />
                 <Node name="Model" expanded="True" />
+                <Node name="TopDown" expanded="True">
+                  <Node name="TopDownSteering.cs" selected="True" />
+                </Node>
               </Node>
               <Node name="scripts" expanded="True" />
             </Node>
@@ -32,7 +35,7 @@
   <MonoDevelop.Ide.ItemProperties.Phase_220Jump PreferredExecutionTarget="Unity.Editor" />
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="739f90bb-bc60-48f5-bcef-2ac571113c37" />
+  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="6ef0ae76-aa3c-4546-a15a-72c8e2db0648" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
       <Breakpoint enabled="false" file="/Users/alpha/Projects/PhaseJumpPro/Phase Jump/Assets/phasejumppro/Input/MoveToMouseInputControlScheme2D.cs" relfile="Assets/phasejumppro/Input/MoveToMouseInputControlScheme2D.cs" line="41" column="1" />

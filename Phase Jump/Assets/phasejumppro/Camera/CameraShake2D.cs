@@ -4,7 +4,7 @@ using System.Collections;
 namespace PJ
 {
     /// <summary>
-    /// Attach to camera for basic camera shake effect.
+    /// A very basic camera shake effect.
     ///
     /// NOTE: this might cause issues with a moving camera.
     /// </summary>

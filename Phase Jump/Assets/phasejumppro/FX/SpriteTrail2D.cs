@@ -32,12 +32,14 @@ namespace PJ {
 			public Vector3 position;
 			public Vector3 localScale;
 			public Quaternion rotation;
+			public Material material;
 
 			public Sample(SpriteRenderer spriteRenderer, Transform transform)
             {
 				sprite = spriteRenderer.sprite;
 				flipX = spriteRenderer.flipX;
 				flipY = spriteRenderer.flipY;
+				material = spriteRenderer.material;
 				position = transform.position;
 				localScale = transform.localScale;
 				rotation = transform.rotation;
@@ -94,6 +96,8 @@ namespace PJ {
 			spriteRenderer.sprite = sample.sprite;
 			spriteRenderer.flipX = sample.flipX;
 			spriteRenderer.flipY = sample.flipY;
+
+			spriteRenderer.material = sample.material;
 
 			var fxFade = newObject.AddComponent<FXFade>();
 			fxFade.cullAtFadeOut = true;
