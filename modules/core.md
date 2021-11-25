@@ -20,6 +20,10 @@ _Example_: `float(10, 3)` produces random values between 7-13.
 
 **Delta(float delta)**: Returns a random value between -delta...delta
 
+### Stability
+
+Simple utilities. Stable.
+
 ## Class: RectSpawner2D
 
 ### Description
@@ -28,4 +32,4 @@ Spawns a game object inside a 2D rectangle determined by width, height. The spaw
 
 ### Stability
 
-Simple class, no changes expected.
+Simple class. Stable.
