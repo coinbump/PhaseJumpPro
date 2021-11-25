@@ -10,8 +10,12 @@ The core class for all 2D game objects in a Phase Jump project. Provides built-i
 
 **Bool dontModRotation**: _Default: false_. If true, don't mod rotation values between 0-360.0f and 0-1.0f.
 
+**string initialState**: Initial state of Node.
+
 **bool isKinematic**: Cached value, determined by rigidbody.
 
+**List\<NodeTag> nodeTags**: _Editor only_. The Unity editor doesn't support dictionaries, so we have to present this as a list, then transform it to a dictionary later.
+  
 **Tags tags**: Container for custom properties.
 
 **float RotationDegreeAngle**: Value of 0-360.0f for the node's rotation degree angle.
