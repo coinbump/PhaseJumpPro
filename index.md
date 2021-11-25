@@ -1,6 +1,9 @@
 # Phase Jump Pro Documentation
 
-_(Work in Progress)_
+## Naming Convtions
+
+- **SomeXXX**. Used for abstract classes. _Example:_ `public abstract class SomeStateMachine`
+- **AnyXXX**. Used for type erasure. _Example:_ `public interface AnyFactory`
 
 ## Modules
 
