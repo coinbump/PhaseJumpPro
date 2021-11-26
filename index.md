@@ -1,5 +1,7 @@
 # Phase Jump Pro Documentation
 
+_NOTE: This is a work in progress_
+
 ## Naming Conventions
 
 - **SomeXXX**. Used for abstract classes. _Example:_ `public abstract class SomeStateMachine`
