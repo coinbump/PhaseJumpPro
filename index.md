@@ -35,6 +35,12 @@ Utilities for dealing with geometry (angles, and so on).
 
 **Link:** [Geometry](modules/geometry.md)
 
+### Go
+
+Common game design patterns: behavior trees, etc.
+
+**Link:** [Go](modules/go.md)
+
 ### Templates
 
 Templates to help you get started creating new classes. (Templates are for guidance, and are generally non-functional).
