@@ -8,6 +8,12 @@
 
 _Example:_ returns false for mouse input when using a joystick.
 
+## Interface: SomeInputControlScheme
+
+### Description
+
+Empty abstract interface class.
+
 ## Class: MouseInputController
 
 ### Description
