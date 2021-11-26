@@ -2,7 +2,22 @@
 
 Classes and utilities that are common to many games.
 
+## Class: Base
+
+### Description
+
+Provides common interface for all objects.
+
+### Stability
+
+Simple class. Stable.
+
+
+
+
 ## Class: MonoBehaviour
+
+### Description
 
 Common extensions to Unity's `MonoBehaviour` class.
 
