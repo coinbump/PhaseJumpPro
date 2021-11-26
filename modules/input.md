@@ -23,3 +23,13 @@ On every update cycle, records the mouse position in screen space and the Ray th
 ### Stability
 
 Simple class. Stable.
+
+## Class: MoveToMouseInputControlScheme2D
+
+### Description
+
+On every update cycle, moves the attached GameObject to the mouse position (kinematic objects only).
+
+### Stability
+
+Stable.
