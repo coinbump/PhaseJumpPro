@@ -11,21 +11,27 @@
 
 Used to manipulate the camera.
 
-[Camera](modules/camera.md)
+**Link:** [Camera](modules/camera.md)
 
 ### Classes
 
-[Classes](modules/classes.md)
+**Link:** [Classes](modules/classes.md)
 
 ### Core
 
-[Core](modules/core.md)
+**Link:** [Core](modules/core.md)
 
 ### Extensions
 
 Utility extensions for existing classes.
 
-[Extensions](modules/extensions.md)
+**Link:** [Extensions](modules/extensions.md)
+
+### Geometry
+
+Utilities for dealing with geometry (angles, and so on).
+
+**Link:** [Geometry](modules/geometry.md)
 
 ### Templates
 
