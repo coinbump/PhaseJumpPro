@@ -8,11 +8,22 @@ Classes and utilities that are common to many games.
 
 Provides common interface for all objects.
 
+_Example:_ Go() is a common interface for game objects that need to be kickstarted in some way.
+
 ### Stability
 
 Simple class. Stable.
 
 
+## Class: CircleSpawner2D
+
+### Description
+
+Spawns a game object inside a 2D circle determined by its radius. The spawn area extends from the spawner's position, which defines the center of the circle.
+
+### Stability
+
+Stable.
 
 
 ## Class: MonoBehaviour
@@ -55,6 +66,7 @@ _Example_: `float(10, 3)` produces random values between 7-13.
 
 Simple utilities. Stable.
 
+
 ## Class: RectSpawner2D
 
 ### Description
@@ -63,4 +75,4 @@ Spawns a game object inside a 2D rectangle determined by width, height. The spaw
 
 ### Stability
 
-Simple class. Stable.
+Stable.
