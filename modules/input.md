@@ -1,5 +1,20 @@
 # Module: Input
 
+## Class: AimAtMouseInputControlScheme2D
+
+### Description
+
+On every update cycle, rotates the GameObject to point at the mouse position.
+
+### Requirements
+
+The GameObject must have a `Node2D` script attached.
+
+### Stability
+
+Stable.
+
+
 ## Interface: SomeInputController
 
 ### Methods
