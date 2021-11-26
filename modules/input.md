@@ -1,5 +1,7 @@
 # Module: Input
 
+Utilities for dealing with user input: Mouse, Joystick, Keyboard, etc.
+
 ## Class: AimAtMouseInputControlScheme2D
 
 ### Description
