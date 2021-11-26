@@ -1,5 +1,7 @@
 # Module: Geometry
 
+Utilities for dealing with geometry (angles, and so on).
+
 ## Class: Angle2D
 
 ### Description
