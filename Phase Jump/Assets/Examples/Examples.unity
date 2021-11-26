@@ -265,9 +265,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6495502890e24e8cbd73f7fcd699269, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isKinematic: 0
   initialState: 
   nodeTags: []
+  cullType: 0
+  dontModRotation: 0
   pathInfo:
     path: {fileID: 0}
     speed: 1
@@ -278,8 +279,6 @@ MonoBehaviour:
   directionVelocity: 0
   velocity: {x: 0, y: 0}
   rotationSpeed: 0
-  dontModRotation: 0
-  cullType: 0
 --- !u!212 &171679662
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -572,24 +571,23 @@ MonoBehaviour:
   m_GameObject: {fileID: 365772962}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3d0a89e4501794c1b92be71e68dc2eec, type: 3}
+  m_Script: {fileID: 11500000, guid: 402e1a3042d7f4592941033ed3254a84, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isKinematic: 1
   initialState: 
   nodeTags: []
+  cullType: 0
+  dontModRotation: 0
   pathInfo:
     path: {fileID: 1045397201}
     speed: 1
     waypointOrigin: 0
-    waypointProgress: 0.177
+    waypointProgress: 0.3
     isMovingForward: 1
     orientToPath: 0
   directionVelocity: 0
   velocity: {x: 0, y: 0}
   rotationSpeed: 0
-  dontModRotation: 0
-  cullType: 0
 --- !u!212 &365772964
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -649,7 +647,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 365772962}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 4.116641, y: -2.9872417, z: 0}
+  m_LocalPosition: {x: 4.1710567, y: -3.7390172, z: 0}
   m_LocalScale: {x: 2, y: 2, z: 1}
   m_Children: []
   m_Father: {fileID: 342014822}
@@ -771,7 +769,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 11, y: -284}
+  m_AnchoredPosition: {x: -6, y: -212}
   m_SizeDelta: {x: 230.75, y: 18.98}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &465408792
@@ -843,24 +841,23 @@ MonoBehaviour:
   m_GameObject: {fileID: 660216751}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3d0a89e4501794c1b92be71e68dc2eec, type: 3}
+  m_Script: {fileID: 11500000, guid: 402e1a3042d7f4592941033ed3254a84, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isKinematic: 1
   initialState: 
   nodeTags: []
+  cullType: 0
+  dontModRotation: 0
   pathInfo:
     path: {fileID: 1045397201}
     speed: 1
     waypointOrigin: 0
-    waypointProgress: 0.345
+    waypointProgress: 0
     isMovingForward: 1
     orientToPath: 0
   directionVelocity: 0
   velocity: {x: 0, y: 0}
   rotationSpeed: 0
-  dontModRotation: 0
-  cullType: 0
 --- !u!212 &660216753
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -920,7 +917,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 660216751}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 4.0470805, y: -3.9920835, z: 0}
+  m_LocalPosition: {x: 3.22, y: -2.43, z: 0}
   m_LocalScale: {x: 2, y: 2, z: 1}
   m_Children: []
   m_Father: {fileID: 342014822}
@@ -1044,24 +1041,23 @@ MonoBehaviour:
   m_GameObject: {fileID: 929886945}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3d0a89e4501794c1b92be71e68dc2eec, type: 3}
+  m_Script: {fileID: 11500000, guid: 402e1a3042d7f4592941033ed3254a84, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isKinematic: 1
   initialState: 
   nodeTags: []
+  cullType: 0
+  dontModRotation: 0
   pathInfo:
     path: {fileID: 348449684}
     speed: 1
     waypointOrigin: 0
-    waypointProgress: 0.355
+    waypointProgress: 0
     isMovingForward: 1
-    orientToPath: 1
+    orientToPath: 0
   directionVelocity: 0
   velocity: {x: 0, y: 0}
   rotationSpeed: 0
-  dontModRotation: 0
-  cullType: 0
 --- !u!212 &929886947
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -1120,8 +1116,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 929886945}
-  m_LocalRotation: {x: 0, y: 0, z: 0.9999891, w: 0.004667937}
-  m_LocalPosition: {x: -6.07839, y: -3.1484401, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -6.072, y: -2.464, z: 0}
   m_LocalScale: {x: 2, y: 2, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -1305,8 +1301,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 995156123}
-  m_LocalRotation: {x: 0, y: 0, z: 0.9999891, w: 0.004667937}
-  m_LocalPosition: {x: -6.072, y: -2.464, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -4.8276963, y: -3.7789922, z: 0}
   m_LocalScale: {x: 2, y: 2, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -1321,24 +1317,23 @@ MonoBehaviour:
   m_GameObject: {fileID: 995156123}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3d0a89e4501794c1b92be71e68dc2eec, type: 3}
+  m_Script: {fileID: 11500000, guid: 402e1a3042d7f4592941033ed3254a84, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isKinematic: 1
   initialState: 
   nodeTags: []
+  cullType: 0
+  dontModRotation: 0
   pathInfo:
     path: {fileID: 348449684}
     speed: 1
-    waypointOrigin: 0
-    waypointProgress: 0
+    waypointOrigin: 1
+    waypointProgress: 0.648
     isMovingForward: 1
-    orientToPath: 1
+    orientToPath: 0
   directionVelocity: 0
   velocity: {x: 0, y: 0}
   rotationSpeed: 0
-  dontModRotation: 0
-  cullType: 0
 --- !u!1 &1045397201
 GameObject:
   m_ObjectHideFlags: 0
@@ -1535,7 +1530,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 8, y: 134}
+  m_AnchoredPosition: {x: 8, y: 259}
   m_SizeDelta: {x: 230.75, y: 18.98}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1083389569
@@ -1962,24 +1957,23 @@ MonoBehaviour:
   m_GameObject: {fileID: 1195101291}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3d0a89e4501794c1b92be71e68dc2eec, type: 3}
+  m_Script: {fileID: 11500000, guid: 402e1a3042d7f4592941033ed3254a84, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isKinematic: 1
   initialState: 
   nodeTags: []
+  cullType: 0
+  dontModRotation: 0
   pathInfo:
     path: {fileID: 348449684}
     speed: 1
     waypointOrigin: 0
-    waypointProgress: 0.721
+    waypointProgress: 0.537
     isMovingForward: 1
-    orientToPath: 1
+    orientToPath: 0
   directionVelocity: 0
   velocity: {x: 0, y: 0}
   rotationSpeed: 0
-  dontModRotation: 0
-  cullType: 0
 --- !u!212 &1195101293
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -2038,8 +2032,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1195101291}
-  m_LocalRotation: {x: 0, y: 0, z: 0.9999891, w: 0.004667937}
-  m_LocalPosition: {x: -6.084978, y: -3.854088, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -6.081666, y: -3.499336, z: 0}
   m_LocalScale: {x: 2, y: 2, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -2211,9 +2205,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20340c9b2f0754cf5b0ef0129e7487eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isKinematic: 0
   initialState: 
   nodeTags: []
+  cullType: 0
+  dontModRotation: 0
   pathInfo:
     path: {fileID: 0}
     speed: 1
@@ -2224,8 +2219,6 @@ MonoBehaviour:
   directionVelocity: 0
   velocity: {x: 0, y: 0}
   rotationSpeed: 0
-  dontModRotation: 0
-  cullType: 0
 --- !u!114 &1250226990
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2538,24 +2531,23 @@ MonoBehaviour:
   m_GameObject: {fileID: 1430548745}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3d0a89e4501794c1b92be71e68dc2eec, type: 3}
+  m_Script: {fileID: 11500000, guid: 402e1a3042d7f4592941033ed3254a84, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isKinematic: 1
   initialState: 
   nodeTags: []
+  cullType: 0
+  dontModRotation: 0
   pathInfo:
     path: {fileID: 1045397201}
     speed: 1
     waypointOrigin: 0
-    waypointProgress: 0
+    waypointProgress: 0.707
     isMovingForward: 1
     orientToPath: 0
   directionVelocity: 0
   velocity: {x: 0, y: 0}
   rotationSpeed: 0
-  dontModRotation: 0
-  cullType: 0
 --- !u!212 &1430548747
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -2615,7 +2607,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1430548745}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 3.22, y: -2.43, z: 0}
+  m_LocalPosition: {x: 2.2562764, y: -3.696902, z: 0}
   m_LocalScale: {x: 2, y: 2, z: 1}
   m_Children: []
   m_Father: {fileID: 342014822}
@@ -3244,21 +3236,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 566cf5ffc4e7a45a1b4aa5499172d22a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isKinematic: 0
   initialState: 
   nodeTags: []
-  pathInfo:
-    path: {fileID: 0}
-    speed: 1
-    waypointOrigin: 0
-    waypointProgress: 0
-    isMovingForward: 1
-    orientToPath: 0
-  directionVelocity: 0
-  velocity: {x: 0, y: 0}
-  rotationSpeed: 0
-  dontModRotation: 0
   cullType: 0
+  dontModRotation: 0
 --- !u!1 &2108914213
 GameObject:
   m_ObjectHideFlags: 0
@@ -3290,7 +3271,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04a40966d49594b619140e82aba4a0a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  target: {fileID: 0}
 --- !u!114 &2108914215
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3303,21 +3283,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d0a89e4501794c1b92be71e68dc2eec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isKinematic: 1
   initialState: 
   nodeTags: []
-  pathInfo:
-    path: {fileID: 0}
-    speed: 1
-    waypointOrigin: 0
-    waypointProgress: 0
-    isMovingForward: 1
-    orientToPath: 0
-  directionVelocity: 0
-  velocity: {x: 0, y: 0}
-  rotationSpeed: 0
-  dontModRotation: 0
   cullType: 0
+  dontModRotation: 0
 --- !u!212 &2108914216
 SpriteRenderer:
   m_ObjectHideFlags: 0

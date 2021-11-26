@@ -8,12 +8,6 @@ namespace PJ
 	/// </summary>
 	public class AimAtMouseInputControlScheme2D : SomeInputControlScheme
 	{
-		/// <summary>
-		/// if null, use the associated GameObject
-		/// </summary>
-		[SerializeField]
-		private GameObject target;
-
 		private MouseInputController mouseInputController;
 
 		private void Awake()
@@ -29,11 +23,6 @@ namespace PJ
 			mouseInputController = new MouseInputController();
 		}
 
-		public AimAtMouseInputControlScheme2D(GameObject target)
-		{
-			this.target = target;
-		}
-
 		/// <summary>
 		/// On update, aim at the mouse
 		/// </summary>
@@ -41,11 +30,7 @@ namespace PJ
 		{
 			if (null == mouseInputController || !mouseInputController.IsAvailable()) { return; }
 
-			var target = this.target;
-			if (null == target)
-			{
-				target = this.gameObject;
-			}
+			var target = this.gameObject;
 			if (null == target) { return; }
 
 			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -74,5 +59,4 @@ namespace PJ
 			EvtUpdate(timeSlice);
 		}
 	}
-
 }

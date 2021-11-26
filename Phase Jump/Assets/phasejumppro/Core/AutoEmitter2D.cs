@@ -129,7 +129,7 @@ namespace PJ {
 
 				GameObject go = Instantiate(spawn, position, Quaternion.identity);    // Clone it
 
-				Node2D node2D = go.GetComponent<Node2D>();
+				GoNode2D node2D = go.GetComponent<GoNode2D>();
 				if (null != node2D)
 				{
 					node2D.RotationDegreeAngle = degreeAngle;

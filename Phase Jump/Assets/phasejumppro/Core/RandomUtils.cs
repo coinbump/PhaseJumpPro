@@ -31,7 +31,7 @@ namespace PJ
 		}
 
 		/// <summary>
-		/// Returns a random value between [-delta...delta].
+		/// Returns a random value between -delta...delta.
 		/// </summary>
 		/// <param name="delta">Max delta, positive or negative to be returned</param>
 		/// <returns></returns>

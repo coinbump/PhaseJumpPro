@@ -51,7 +51,7 @@ namespace PJ
 		{
 			foreach (GameObject target in targets)
 			{
-				Node2D node = target.GetComponent<Node2D>();
+				GoNode2D node = target.GetComponent<GoNode2D>();
 				if (null != node)
 				{
 					node.pathInfo.waypointOrigin = Math.Min(node.pathInfo.waypointOrigin, Waypoints.Count - 1);
@@ -134,7 +134,7 @@ namespace PJ
 		}
 #endif
 
-		public override void SnapNodeToPath(Node2D node, bool force = false)
+		public override void SnapNodeToPath(GoNode2D node, bool force = false)
 		{
 			int origin = node.pathInfo.waypointOrigin;
 			var positions = GetWaypointPositions2D();
@@ -156,11 +156,11 @@ namespace PJ
 			}
 		}
 
-		public override void UpdateNodeOnPath(Node2D node)
+		public override void UpdateNodeOnPath(GoNode2D node)
 		{
 			var positions = this.GetWaypointPositions2D();
 
-			Node2D.PathInfo pathInfo = node.pathInfo;
+			GoNode2D.PathInfo pathInfo = node.pathInfo;
 
 			// TODO: this only works with simple paths, we need better logic here.
 			pathInfo.waypointProgress += Time.deltaTime * speed * pathInfo.speed;
@@ -205,7 +205,7 @@ namespace PJ
 			}
 		}
 
-		protected void GetPathPositions(Node2D node, out Vector2 positionStart, out Vector2 positionEnd)
+		protected void GetPathPositions(GoNode2D node, out Vector2 positionStart, out Vector2 positionEnd)
 		{
 			int origin = node.pathInfo.waypointOrigin;
 			var positions = GetWaypointPositions2D();

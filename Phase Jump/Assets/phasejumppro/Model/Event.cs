@@ -14,9 +14,7 @@ namespace PJ {
 		// OPTIONAL:
 		public WeakReference sentFrom;
 		public string name;	// Unique identifier
-		public int value;	// Unique value
-		// FUTURE: add Fragment support as needed (see PJ C++).
-
+		
 		public Event() {
 		}
 
@@ -28,10 +26,6 @@ namespace PJ {
 		{
 			this.name = name;
 			this.sentFrom = sentFrom;
-		}
-
-		public Event(int value) {
-			this.value = value;
 		}
 	}
 }

@@ -18,7 +18,7 @@ namespace PJ {
 		}
 #endif
 
-		public override void SnapNodeToPath(Node2D node, bool force)
+		public override void SnapNodeToPath(GoNode2D node, bool force)
 		{
 			float progress = node.pathInfo.waypointProgress;
 			float theta = -Mathf.PI * 2 * progress;
@@ -26,7 +26,7 @@ namespace PJ {
 			node.MoveToPosition(new Vector2(center.x - radius * Mathf.Sin(theta), center.y + radius * Mathf.Cos(theta)), force);
 		}
 
-		public override void UpdateNodeOnPath(Node2D node)
+		public override void UpdateNodeOnPath(GoNode2D node)
 		{
 			float timeDelta = Time.deltaTime * speed * node.pathInfo.speed;
 

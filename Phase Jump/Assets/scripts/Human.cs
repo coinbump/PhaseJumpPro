@@ -7,7 +7,7 @@ using PJ;
 /// <summary>
 /// Has a basic behavior tree: walks for awhile, gets bored, does some running
 /// </summary>
-public class Human : Node2D
+public class Human : GoNode2D
 {
 	static class State
     {

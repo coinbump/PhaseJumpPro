@@ -3,13 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using PJ;
 
-public class Ship : PJ.Node2D {
+public class Ship : PJ.GoNode2D {
 
 	protected override void Awake()
 	{
 		base.Awake();
-
-		isKinematic = true;
 	}
 
 	// Use this for initialization

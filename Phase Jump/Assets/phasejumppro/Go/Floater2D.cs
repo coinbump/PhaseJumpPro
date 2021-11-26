@@ -15,7 +15,7 @@ namespace PJ {
 	/// EXAMPLE: enemy is hit, show damage floating off and fade it out
 	/// EXAMPLE: player matches something, gets a score, float that up
 	/// </summary>
-	public class Floater2D : Node2D
+	public class Floater2D : GoNode2D
 	{
 		public enum State
 		{
@@ -152,8 +152,6 @@ namespace PJ {
 		}
 
 		protected void SetupDefaults() {
-			isKinematic = true;
-
 			if (floatInfos.Count == 0)
 			{
 				floatInfos.Add(new FloatInfo

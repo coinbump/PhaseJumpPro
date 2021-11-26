@@ -7,7 +7,7 @@ namespace PJ
 	/// <summary>
 	/// Node with TopDown and core compnents.
 	/// </summary>
-	public class TopDownNode2D : Node2D
+	public class TopDownNode2D : GoNode2D
 	{
 		public class TopDown2D : PJ.TopDown2D
 		{
