@@ -76,3 +76,20 @@ Spawns a game object inside a 2D rectangle determined by width, height. The spaw
 ### Stability
 
 Stable.
+
+
+
+## Class: SnapToGridLoc2D
+
+### Description
+
+Specifies a grid location for a game object, with a screen offset. Will snap the object to the grid position in the editor.
+
+### Public Properties
+
+**Vector3Int value**: Location in grid space (z axis is used for layers)
+**Vector3 offset**: Offset in screen space
+
+### Stability
+
+Stable.
