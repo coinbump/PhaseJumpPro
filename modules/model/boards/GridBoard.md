@@ -2,7 +2,7 @@
 
 **Parent:** [Model.Boards](boards.md)
 
-## Class: GridBoard
+## Template Class: GridBoard\<Tile>
 
 Stores `GridTile` inside `GridCell` across N grid layers. Useful for games where we want to store the state of the board.
 
