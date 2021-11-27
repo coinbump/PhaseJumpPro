@@ -41,6 +41,12 @@ Common game design patterns: behavior trees, etc.
 
 **Link:** [Go](modules/go.md)
 
+### Model
+
+Common model objects used in games.
+
+**Link:** [Model](modules/model/model.md)
+
 ### Templates
 
 Templates to help you get started creating new classes. (Templates are for guidance, and are generally non-functional).
