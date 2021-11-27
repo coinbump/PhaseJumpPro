@@ -2,6 +2,10 @@
 
 Boards arrange game objects according to a format/rule. The most common board type is the grid: checkers, chess, Tetris, tile-based games, etc.
 
+## Module: BoardTypes
+
+**Link:** [BoardTypes](BoardTypes.md)
+
 ## Class: GridCell
 
 ### Description
