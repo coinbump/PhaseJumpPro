@@ -9,3 +9,22 @@ A grid board consists of cells, each cell records which tile is assigned to that
 ### Stability
 
 Stable.
+
+
+## Class: GridTile
+
+### Description
+
+A grid tile can be placed in a grid board, and will occupy 1 or more grid cells.
+
+### Limitations
+
+Currently only square shaped tiles are supported.
+
+### Future Improvements
+
+Support non-square tiles, such as Tetronimos.
+
+### Stability
+
+Stable.
