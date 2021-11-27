@@ -69,7 +69,7 @@ Stable.
 
 ### Description
 
-Specialization of a Grid that uses `GridCell` and `GridTile`.
+Specialization of Grid that uses `GridCell` and `GridTile`. Used by `GridBoard` to define the layers of a multi-layer grid.
 
 ### Stability
 
