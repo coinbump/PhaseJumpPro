@@ -8,6 +8,28 @@ Boards arrange game objects according to a format/rule. The most common board ty
 
 **Link:** [BoardTypes](BoardTypes.md)
 
+
+## Class: Grid
+
+### Description
+
+The most common board type for games, can be a hex or square grid.
+
+### Public Methods
+
+**Grid(Vector2Int size)**: Initalize the grid with a specific size.
+
+**Row GetRow(int index)**: Grids are stored as rows. Eeach row is a list with X elements.
+
+**Resize(Vector2Int newSize)**: Resize the grid and its underlying storage.
+
+**bool IsValidLoc(Vector2Int loc)**: Returns true if the grid location is valid.
+
+**T GetCell(Vector2Int loc)**: Returns type `T` at the specified grid location, or null if it doesn't exist.
+
+**SetCell(Vector2Int loc, T content)**: Set the T value for the cell at the specified location.
+
+
 ## Class: GridCell
 
 ### Description
