@@ -10,4 +10,4 @@ A reversable command. Used for undo, redo stacks.
 
 ### Stability
 
-Stable.
+Stable, with unit tests.
