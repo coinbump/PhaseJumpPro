@@ -34,6 +34,13 @@ A model object for storing objects in grids. Each grid is composed of Y List row
 Stable, with Unit Tests.
 
 
+## Class: GridBoard
+
+Model for a grid with multiple layers.
+
+**Link:**[GridBoard](GridBoard.md)
+
+
 ## Class: GridCell
 
 ### Description
