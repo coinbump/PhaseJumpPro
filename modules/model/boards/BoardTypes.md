@@ -1,6 +1,6 @@
 # Module: Model.Boards.BoardTypes
 
-**Link:** [Model.Boards](boards.md)
+**Parent:** [Model.Boards](boards.md)
 
 ## Enum: MapDirection
 
