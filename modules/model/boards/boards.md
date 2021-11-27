@@ -13,7 +13,7 @@ Boards arrange game objects according to a format/rule. The most common board ty
 
 ### Description
 
-The most common board type for games, can be a hex or square grid.
+A model object for storing objects in grids. Each grid is composed of Y List rows, each of which contains X elements.
 
 ### Public Methods
 
@@ -58,6 +58,18 @@ Currently only square shaped tiles are supported.
 ### Future Improvements
 
 Support non-square tiles, such as Tetronimos.
+
+### Stability
+
+Stable.
+
+
+
+## Class: GridLayer
+
+### Description
+
+Specialization of a Grid that uses `GridCell` and `GridTile`.
 
 ### Stability
 
