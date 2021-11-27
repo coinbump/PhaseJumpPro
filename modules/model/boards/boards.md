@@ -38,7 +38,7 @@ Stable, with Unit Tests.
 
 Model for a grid with multiple layers.
 
-**Link:**[GridBoard](GridBoard.md)
+**Link:** [GridBoard](GridBoard.md)
 
 
 ## Class: GridCell
