@@ -83,7 +83,7 @@ Stable.
 
 ### Description
 
-Specifies a grid location for a game object, with a screen offset. Will snap the object to the grid position in the editor.
+Specifies a grid location for a game object, with a screen offset. Causes the object to snap to the grid position in the editor.
 
 ### Public Properties
 
