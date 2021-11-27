@@ -2,7 +2,7 @@
 
 Common low level design patterns.
 
-## Class: Command
+## Class: SomeCommand
 
 ### Description
 
