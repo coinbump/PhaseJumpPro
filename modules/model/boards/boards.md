@@ -71,6 +71,11 @@ Stable.
 
 Specialization of Grid that uses `GridCell` and `GridTile`. Used by `GridBoard` to define the layers of a multi-layer grid.
 
+### Public Methods
+
+**bool IsCellBlocked(Vector2Int loc)**: Returns true if the cell at the specified location is occupied by a `GridTile`.
+**bool IsBlocked(Rect2Int bounds)**: Returns true if any of the cells covered by the Rectangle are occupied by a `GridTile`.
+
 ### Stability
 
 Stable.
