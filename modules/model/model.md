@@ -1,5 +1,5 @@
 # Module: Model
-
+**Parent:** [Index](../../index.md)
 
 ## Module: Model.Boards
 
