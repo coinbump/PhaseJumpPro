@@ -9,7 +9,7 @@ Boards arrange game objects according to a format/rule. The most common board ty
 **Link:** [BoardTypes](BoardTypes.md)
 
 
-## Class: Grid
+## Template Class: Grid\<T>
 
 ### Description
 
@@ -41,7 +41,7 @@ Model for a grid with multiple layers.
 **Link:** [GridBoard](GridBoard.md)
 
 
-## Class: GridCell
+## Template Class: GridCell\<Tile>
 
 ### Description
 
@@ -72,7 +72,7 @@ Stable.
 
 
 
-## Class: GridLayer
+## Template Class: GridLayer\<Tile>
 
 ### Description
 
