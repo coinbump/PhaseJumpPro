@@ -41,6 +41,12 @@ Common game design patterns: behavior trees, etc.
 
 **Link:** [Go](modules/go.md)
 
+### Interface
+
+Handles UI interactions.
+
+**Link:** [Interface](modules/interface/interface.md)
+
 ### Model
 
 Common model objects used in games.
