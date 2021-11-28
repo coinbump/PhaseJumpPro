@@ -2,6 +2,23 @@
 
 Tools for dealing with UI.
 
+## Class: AttachFocusable
+
+### Description
+
+When the object has focus, a child object is attached.
+
+_Example_ place a halo or cursor around the object that has focus. Or point to it.
+
+### Usage
+
+Use in conjunction with an object such as `MouseOverFocuser2D` that sets the `hasFocus` state.
+
+### Stability
+
+Stable.
+
+
 ## Class: ScaleFocusable
 
 ### Description
