@@ -12,7 +12,8 @@ _Example_ place a halo or cursor around the object that has focus. Or point to i
 
 ### Usage
 
-Use in conjunction with an object such as `MouseOverFocuser2D` that sets the `hasFocus` state.
+- Use in conjunction with an object such as `MouseOverFocuser2D` that sets the `hasFocus` state.
+- Objects must have a collider for the mouse detection to work
 
 ### Stability
 
@@ -27,7 +28,8 @@ When the object has focus, it is scaled.
 
 ### Usage
 
-Use in conjunction with an object such as `MouseOverFocuser2D` that sets the `hasFocus` state.
+- Use in conjunction with an object such as `MouseOverFocuser2D` that sets the `hasFocus` state.
+- Objects must have a collider for the mouse detection to work
 
 ### Stability
 
@@ -43,7 +45,8 @@ When the object has focus, it is transformed.
 
 ### Usage
 
-Use in conjunction with an object such as `MouseOverFocuser2D` that sets the `hasFocus` state.
+- Use in conjunction with an object such as `MouseOverFocuser2D` that sets the `hasFocus` state.
+- Objects must have a collider for the mouse detection to work
 
 ### Stability
 
