@@ -12,12 +12,12 @@ namespace PJ
 	/// Commands are reversible. Typically a command will store a Memento that allows it to reverse
 	/// the state
 	/// </summary>
-	public abstract class Command
+	public abstract class SomeCommand
 	{
 		public enum State {
-			Invalid,
+			Default,
 			Complete,
-			Reverse
+			Reversed
 		}
 
 		protected abstract void UndoCommand();
@@ -29,11 +29,11 @@ namespace PJ
 		{
 			switch (state.state)
 			{
-				case State.Invalid:
+				case State.Default:
 					ExecuteCommand(false);
 					state.State = State.Complete;
 					break;
-				case State.Reverse:
+				case State.Reversed:
 					ExecuteCommand(true);
 					state.State = State.Complete;
 					break;
@@ -49,9 +49,8 @@ namespace PJ
 		{
 			if (State.Complete == state.state) {
 				UndoCommand();
-				state.State = State.Reverse;
+				state.State = State.Reversed;
 			}
 		}
 	}
-
 }

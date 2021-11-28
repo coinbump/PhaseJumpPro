@@ -27,12 +27,12 @@ namespace PJ
 
 		}
 
-		private GridLoc GridLocFor(GameObject go)
+		private SnapToGridLoc2D GridLocFor(GameObject go)
 		{
-			var gridLoc = go.GetComponent<GridLoc>();
+			var gridLoc = go.GetComponent<SnapToGridLoc2D>();
 			if (null == gridLoc)
 			{
-				gridLoc = go.AddComponent<GridLoc>();
+				gridLoc = go.AddComponent<SnapToGridLoc2D>();
 
 				// TODO: find the nearest empty grid loc and assign it to the object <- what if there is no empty cell?
 			}
@@ -69,7 +69,6 @@ namespace PJ
 
 		private void ResizeChildren()
 		{
-
 			foreach (Transform child in transform)
 			{
 				var go = child.gameObject;

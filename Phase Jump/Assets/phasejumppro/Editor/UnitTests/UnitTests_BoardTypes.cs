@@ -10,9 +10,9 @@ namespace EnumExtension
 		[Test]
 		public void UnitTests()
 		{
-			var direction = PJ.HexBoardDirection.North;
+			var direction = PJ.MapDirection.North;
 			direction = direction.Opposite();
-			Assert.AreEqual(PJ.HexBoardDirection.South, direction);
+			Assert.AreEqual(PJ.MapDirection.South, direction);
 		}
 	}
 }

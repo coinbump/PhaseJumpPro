@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -11,31 +12,24 @@ namespace PJ
 	 * RATING: 4 stars. Solid Design Pattern, but could use more unit tests + advanced functionality ported from C++
 	 * CODE REVIEW: 6.30.19
 	 */
-	public class GridBoard<Tile> : SomeGridBoard where Tile : GridTile
+	public partial class GridBoard<Tile> : SomeGridBoard where Tile : GridTile
 	{
-		#region Constants
 		struct Events
 		{
 			public const string EvtAddTile = "tile_add";
 			public const string EvtWillRemoveTile = "tile_will_remove";
 			public const string EvtRemovedTile = "tile_removed";
 		}
-		#endregion
 
-		#region Fields
 		protected HashSet<Tile> tiles = new HashSet<Tile>();
 		protected Vector3Int size = new Vector3Int(0, 0, 0);
 		protected List<GridLayer<Tile>> layers = new List<GridLayer<Tile>>();
 		protected bool suspendEvents;   // If true, don't broadcast events
-		#endregion
 
-		#region Properties
 		public int Width => size.x;
 		public int Height => size.y;
 		public int Depth => size.z;
-		#endregion
 
-		#region Builders
 		public bool PutTile(Tile tile, Vector3Int loc)
 		{
 			if (!IsValidLoc(loc)) { return false; }
@@ -58,7 +52,7 @@ namespace PJ
 			// Store all tiles here for easy iteration.
 			tiles.Add(tile);
 
-			tile.board = this;
+			tile.board = new WeakReference<SomeGridBoard>(this);
 			tile.origin = loc;
 
 			// A tile might extend across several cells, fill them all
@@ -83,7 +77,8 @@ namespace PJ
 		public virtual void RemoveTile(Tile tile)
 		{
 			if (null == tile) { return; }
-			if (tile.board != this) { return; }
+			if (!tile.board.TryGetTarget(out SomeGridBoard owner)) { return; }
+			if (owner != this) { return; }
 
 			if (!suspendEvents)
 			{
@@ -123,10 +118,11 @@ namespace PJ
 				RemoveTile(tile);
 			}
 		}
+	}
 
-		#endregion
+	// Utilities
 
-		#region Utilities
+	public partial class GridBoard<Tile> : SomeGridBoard where Tile : GridTile {
 
 		public Rect2Int GetDestTileBounds(Tile tile, Vector3Int loc)
 		{
@@ -314,9 +310,7 @@ namespace PJ
 
 			return foundTiles.Count;
 		}
-		#endregion
 
-		#region Events
 		public override void EvtUpdate(TimeSlice time)
 		{
 			base.EvtUpdate(time);
@@ -352,9 +346,7 @@ namespace PJ
 		{
 
 		}
-		#endregion
 
-		#region Axial
 		/*
 		  AXIAL:
 		  Axial directions can be used to navigate a grid by moving in a specific
@@ -501,7 +493,5 @@ namespace PJ
 			return result;
 
 		}
-		#endregion
 	}
 }
-

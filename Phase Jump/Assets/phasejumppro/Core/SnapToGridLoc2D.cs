@@ -7,10 +7,10 @@ namespace PJ
 	/// <summary>
 	/// Lets us attach the exact grid location of an object as a component.
 	/// </summary>
-	public class GridLoc : MonoBehaviour
+	public class SnapToGridLoc2D : MonoBehaviour
 	{
-		public Vector3Int value;
-		public Vector3 offset;
+		public Vector3Int value;	// Location in grid space (z axis is used for layers)
+		public Vector3 offset;	// Offset in screen space
 
 		private void OnValidate()
 		{
@@ -23,5 +23,4 @@ namespace PJ
 			grid2D.ResizeChild(gameObject);
 		}
 	}
-
 }

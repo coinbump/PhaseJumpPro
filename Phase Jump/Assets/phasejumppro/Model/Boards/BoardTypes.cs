@@ -6,9 +6,9 @@ using PJ;
 namespace PJ
 {
 	/// <summary>
-	/// Direction of movement on a hexagonal board
+	/// 8-way direction of movement on a board/map
 	/// </summary>
-	public enum HexBoardDirection
+	public enum MapDirection
 	{
 		Northwest,
 		North,
@@ -48,7 +48,6 @@ namespace PJ
 		AxialAny,   // Any axial tile that touches the origin tile
 		AxialEdge   // Any axial tile that has an edge touching the origin tile (no square diagonal)
 	}
-
 }
 
 
@@ -56,25 +55,25 @@ namespace EnumExtension
 {
 	public static class HexBoardDirectionExtensions
 	{
-		public static HexBoardDirection Opposite(this HexBoardDirection direction)
+		public static MapDirection Opposite(this MapDirection direction)
 		{
 			switch (direction)
 			{
-				case HexBoardDirection.Northwest:
-					return HexBoardDirection.Southeast;
-				case HexBoardDirection.North:
-					return HexBoardDirection.South;
-				case HexBoardDirection.Northeast:
-					return HexBoardDirection.Southwest;
-				case HexBoardDirection.Southeast:
-					return HexBoardDirection.Northwest;
-				case HexBoardDirection.South:
-					return HexBoardDirection.North;
-				case HexBoardDirection.Southwest:
-					return HexBoardDirection.Northeast;
+				case MapDirection.Northwest:
+					return MapDirection.Southeast;
+				case MapDirection.North:
+					return MapDirection.South;
+				case MapDirection.Northeast:
+					return MapDirection.Southwest;
+				case MapDirection.Southeast:
+					return MapDirection.Northwest;
+				case MapDirection.South:
+					return MapDirection.North;
+				case MapDirection.Southwest:
+					return MapDirection.Northeast;
 			}
 
-			return HexBoardDirection.North;
+			return MapDirection.North;
 		}
 	}
 }

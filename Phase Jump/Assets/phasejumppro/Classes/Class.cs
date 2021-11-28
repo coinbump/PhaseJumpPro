@@ -14,7 +14,6 @@ namespace PJ
 		public TypeTagsSet TypeTags { get; set; } = new TypeTagsSet();
 		public Tags Tags { get; set; } = new Tags();
 
-		// FUTURE: add functionality as needed
 		public Class(string identifier, AnyFactory factory, TypeTagsSet typeTags)
 		{
 			Identifier = identifier;

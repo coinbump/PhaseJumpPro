@@ -11,12 +11,12 @@ namespace PJ
 	/// <summary>
 	/// Tile placement information in a grid (1 large tile might extend across multiple spaces)
 	///
-	/// Grids are 2-dimensional, but we use Vector3Int for layers
+	/// Grids are 2-dimensional. Use z axis for layers
 	/// </summary>
 	public class GridCell<Tile> where Tile : GridTile
 	{
 		public Tile tile;
-		public Vector3Int origin;	// Z is for multi-layer grids
+		public Vector3Int origin;
 
 		public GridCell()
 		{

@@ -9,12 +9,11 @@ using System.Collections.Generic;
 namespace PJ
 {
 	/// <summary>
-	/// Stores objects in an XxY grid structure (Y rows of X cells)
+	/// Stores objects in an X,Y grid structure (Y rows of X cells)
 	/// </summary>
 	/// <typeparam name="T">Type of thing to store</typeparam>
 	public class Grid<T> where T : new()
 	{
-		#region Types
 		public class Row : List<T>
 		{
 			public Row(int capacity)
@@ -27,19 +26,13 @@ namespace PJ
 				}
 			}
 		}
-		#endregion
 
-		#region Fields
 		protected List<Row> rows;
 		protected Vector2Int size;
-		#endregion
 
-		#region Properties
 		public int Width => size.x;
 		public int Height => size.y;
-		#endregion
 
-		#region Initializers
 		public Grid()
 		{
 		}
@@ -62,9 +55,7 @@ namespace PJ
 				rows.Add(row);
 			}
 		}
-		#endregion
 
-		#region Utilities
 		Row GetRow(int index) { return index < rows.Count ? rows[index] : null; }
 
 		public void Resize(Vector2Int newSize)
@@ -155,7 +146,6 @@ namespace PJ
 				}
 			}
 		}
-		#endregion
 	}
 
 	class GridBool : Grid<bool>

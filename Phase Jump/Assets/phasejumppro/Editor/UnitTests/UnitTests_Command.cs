@@ -7,7 +7,7 @@ namespace PJ
 {
 	public class UnitTests_Command
 	{
-		private class TestCommand : Command
+		private class TestCommand : SomeCommand
 		{
 			public int value;
 			public bool didRedo;

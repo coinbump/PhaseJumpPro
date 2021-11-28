@@ -25,10 +25,9 @@ namespace PJ {
 		public const string Enum = "enum";
 		public const string NormalFloat = "nfloat";	// Normalized float (0-1.0)
 		public const string String = "str";
-		public const string Vector2D = "v2";
-		public const string Vector2DInt = "v2i";
+		public const string Vector2 = "v2";
+		public const string Vector2Int = "v2i";
 		public const string Object = "obj";
 		public const string Class = "class";
 	}
-
 }

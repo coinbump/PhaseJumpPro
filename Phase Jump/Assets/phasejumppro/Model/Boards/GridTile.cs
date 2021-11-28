@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 namespace PJ
 {
@@ -12,10 +13,6 @@ namespace PJ
 		public Vector3Int origin;	// Z is used for multi-layer grids
 		public Vector2Int size;
 
-		public SomeGridBoard board;
-
-		// OPTIONAL attributes:
-		public bool isPainted;  // True: was painted for render
-		public bool isGhost;    // True: ignore for collision tests
+		public WeakReference<SomeGridBoard> board;	// Owner. null if not in a board.
 	}
 }
