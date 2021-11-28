@@ -15,3 +15,19 @@ Use in conjunction with an object such as `MouseOverFocuser2D` that sets the `ha
 ### Stability
 
 Stable.
+
+
+
+## Class: TransformFocusable
+
+### Description
+
+When the object has focus, it is transformed.
+
+### Usage
+
+Use in conjunction with an object such as `MouseOverFocuser2D` that sets the `hasFocus` state.
+
+### Stability
+
+Stable.
