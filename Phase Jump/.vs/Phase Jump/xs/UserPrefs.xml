@@ -1,6 +1,7 @@
 ﻿<Properties StartupConfiguration="{51BDC8AF-8B4E-EDCD-CD37-EADF80C84D5E}|">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/phasejumppro/Layout/VFlow.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/phasejumppro/Layout/GridFlow.cs">
     <Files>
+      <File FileName="Assets/phasejumppro/Layout/Layout2D.cs" Line="1" Column="1" />
       <File FileName="Assets/Examples/F2 Example/F2Enemy1.cs" />
       <File FileName="Assets/scripts/Ship.cs" />
       <File FileName="Assets/phasejumppro/FX/SpriteTrail2D.cs" />
@@ -14,10 +15,9 @@
       <File FileName="Assets/phasejumppro/Classes/Class.cs" />
       <File FileName="Assets/phasejumppro/TopDown/TopDownSteering.cs" />
       <File FileName="Assets/Examples/F2 Example/F2Hero.cs" />
-      <File FileName="Assets/phasejumppro/Graph/Graph.Node.cs" Line="29" Column="21" />
-      <File FileName="Assets/phasejumppro/Layout/GridFlow.cs" Line="94" Column="31" />
-      <File FileName="Assets/phasejumppro/Layout/HFlow.cs" Line="21" Column="10" />
-      <File FileName="Assets/phasejumppro/Layout/VFlow.cs" Line="31" Column="59" />
+      <File FileName="Assets/phasejumppro/Layout/GridFlow.cs" Line="62" Column="14" />
+      <File FileName="Assets/phasejumppro/Layout/HFlow.cs" />
+      <File FileName="Assets/phasejumppro/Layout/VFlow.cs" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -31,7 +31,7 @@
                 <Node name="Classes" expanded="True" />
                 <Node name="Core" expanded="True" />
                 <Node name="Layout" expanded="True">
-                  <Node name="VFlow.cs" selected="True" />
+                  <Node name="Layout2D.cs" selected="True" />
                 </Node>
                 <Node name="Model" expanded="True" />
                 <Node name="TopDown" expanded="True" />
@@ -46,7 +46,7 @@
   <MonoDevelop.Ide.ItemProperties.Phase_220Jump PreferredExecutionTarget="Unity.Editor" />
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="e47d7989-2579-4e53-9df8-d69e1419b797" />
+  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="75193ff5-20a9-4873-a6cb-fb20edb22d9b" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
       <Breakpoint enabled="false" file="/Users/beta/Documents/Projects/PhaseJumpPro/Phase Jump/Assets/phasejumppro/Input/MoveToMouseInputControlScheme2D.cs" relfile="Assets/phasejumppro/Input/MoveToMouseInputControlScheme2D.cs" line="41" column="1" />
