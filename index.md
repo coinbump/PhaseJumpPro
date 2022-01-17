@@ -43,9 +43,17 @@ Common game design patterns: behavior trees, etc.
 
 ### Interface
 
-Handles UI interactions.
+UI interactions.
 
 **Link:** [Interface](modules/interface/interface.md)
+
+
+### Layout
+
+Game object layout.
+
+**Link:** [Layout](modules/layout/layout.md)
+
 
 ### Model
 
