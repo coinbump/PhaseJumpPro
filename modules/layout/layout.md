@@ -10,7 +10,7 @@ Allows us to arrange game objects outside of Unity's UI canvas.
 ### Description
 
 - Arranges child game objects in a grid. Does not take object size into account.
-- Attach a `Location` behaviour to an object to override the default grid position for that object.
+- Attach a `Location` behavior to an object to override the default grid position for that object.
 
 ## Class: HFlow
 
