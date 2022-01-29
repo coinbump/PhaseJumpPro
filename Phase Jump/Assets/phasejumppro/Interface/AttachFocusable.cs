@@ -15,17 +15,17 @@ namespace PJ
         {
             base.Start();
 
-            UpdateAttachement();
+            UpdateAttachment();
         }
 
         protected override void Update()
         {
             base.Update();
 
-            UpdateAttachement();
+            UpdateAttachment();
         }
 
-        protected void UpdateAttachement()
+        protected void UpdateAttachment()
         {
             var valveState = focusValve.ValveState;
 
