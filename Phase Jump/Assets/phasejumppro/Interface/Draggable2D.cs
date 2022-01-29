@@ -2,6 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+ * RATING: 5 stars
+ * Standard behavior
+ * CODE REVIEW: 1/28/22
+ */
 namespace PJ
 {
     public class Draggable2D : MonoBehaviour
