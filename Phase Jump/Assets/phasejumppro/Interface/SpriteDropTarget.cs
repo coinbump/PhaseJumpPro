@@ -1,6 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+/*
+ * RATING: 5 stars
+ * Standard behavior
+ * CODE REVIEW: 1/28/22
+ */
 namespace PJ
 {
     /// <summary>
