@@ -39,7 +39,7 @@ namespace PJ
 
 			mouseInputController.EvtUpdate(time);
 
-			var raycastHits = Physics2D.RaycastAll(Camera.main.ScreenToWorldPoint(mouseInputController.position), Vector2.zero);
+			var raycastHits = Utils.Raycast2DHitsAtScreenPosition(mouseInputController.position);
 			Focusable hitFocusable = null;
 
 			// Debug.Log("Raycast hits size:" + raycastHits.Length.ToString());
