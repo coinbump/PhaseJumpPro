@@ -47,10 +47,10 @@ namespace PJ
             var didMouseButtonUp = Input.GetMouseButtonUp(0);
             var didMouseButtonDown = Input.GetMouseButtonDown(0);
             var isMouseButtonDown = Input.GetMouseButton(0);
-            if (didMouseButtonDown)
-            {
-                Debug.Log("isMouseButtonDown: " + isMouseButtonDown.ToString() + "didMouseButtonDown: " + didMouseButtonDown.ToString());
-            }
+            //if (didMouseButtonDown)
+            //{
+            //    Debug.Log("isMouseButtonDown: " + isMouseButtonDown.ToString() + "didMouseButtonDown: " + didMouseButtonDown.ToString());
+            //}
 
             if (!mouseInputController.IsAvailable()) { return; }
             mouseInputController.EvtUpdate(new TimeSlice(Time.deltaTime));
