@@ -5,7 +5,7 @@ using UnityEngine;
 namespace PJ
 {
     /// <summary>
-    /// Target that can accept trag items
+    /// Target that can accept drag items
     /// </summary>
     public class DropTarget : PJ.MonoBehaviour
     {
