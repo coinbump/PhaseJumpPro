@@ -1,23 +1,23 @@
 ﻿<Properties StartupConfiguration="{51BDC8AF-8B4E-EDCD-CD37-EADF80C84D5E}|">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/phasejumppro/Layout/GridFlow.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/phasejumppro/Core/Base.cs">
     <Files>
-      <File FileName="Assets/phasejumppro/Layout/Layout2D.cs" Line="1" Column="1" />
-      <File FileName="Assets/Examples/F2 Example/F2Enemy1.cs" />
-      <File FileName="Assets/scripts/Ship.cs" />
+      <File FileName="Assets/phasejumppro/Interface/Dragger2D.cs" Line="1" Column="1" />
+      <File FileName="Assets/phasejumppro/Core/Grid2D.cs" />
+      <File FileName="Assets/phasejumppro/Core/Formation.cs" />
+      <File FileName="Assets/phasejumppro/Core/Factory.cs" />
       <File FileName="Assets/phasejumppro/FX/SpriteTrail2D.cs" />
-      <File FileName="Assets/scripts/Human.cs" />
-      <File FileName="Assets/phasejumppro/Time/TimeSlice.cs" />
-      <File FileName="Assets/phasejumppro/Core/Node2D.cs" />
-      <File FileName="Assets/phasejumppro/Model/StateMachine.cs" />
-      <File FileName="Assets/phasejumppro/Model/Event.cs" />
-      <File FileName="Assets/phasejumppro/Model/Broadcaster.cs" />
+      <File FileName="Assets/phasejumppro/Core/Utils.cs" />
+      <File FileName="Assets/phasejumppro/Core/RandomUtils.cs" />
+      <File FileName="Assets/phasejumppro/Core/Node.cs" />
+      <File FileName="Assets/phasejumppro/Core/MovePath2D.cs" />
+      <File FileName="Assets/phasejumppro/Core/MonoBehaviour.cs" />
+      <File FileName="Assets/phasejumppro/Core/GoNode2D.cs" />
+      <File FileName="Assets/phasejumppro/Core/Extensions_DirectionState.cs" />
+      <File FileName="Assets/phasejumppro/Core/Emitter.cs" />
       <File FileName="Assets/phasejumppro/Core/Core.cs" />
-      <File FileName="Assets/phasejumppro/Classes/Class.cs" />
-      <File FileName="Assets/phasejumppro/TopDown/TopDownSteering.cs" />
-      <File FileName="Assets/Examples/F2 Example/F2Hero.cs" />
-      <File FileName="Assets/phasejumppro/Layout/GridFlow.cs" Line="62" Column="14" />
-      <File FileName="Assets/phasejumppro/Layout/HFlow.cs" />
-      <File FileName="Assets/phasejumppro/Layout/VFlow.cs" />
+      <File FileName="Assets/phasejumppro/Core/CircleSpawner2D.cs" />
+      <File FileName="Assets/phasejumppro/Core/CirclePath2D.cs" />
+      <File FileName="Assets/phasejumppro/Core/Base.cs" Line="3" Column="24" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -30,10 +30,15 @@
               <Node name="phasejumppro" expanded="True">
                 <Node name="Classes" expanded="True" />
                 <Node name="Core" expanded="True" />
-                <Node name="Layout" expanded="True">
-                  <Node name="Layout2D.cs" selected="True" />
+                <Node name="FX" expanded="True" />
+                <Node name="Interface" expanded="True">
+                  <Node name="Dragger2D.cs" selected="True" />
                 </Node>
-                <Node name="Model" expanded="True" />
+                <Node name="Layout" expanded="True" />
+                <Node name="Model" expanded="True">
+                  <Node name="Tags" expanded="True" />
+                </Node>
+                <Node name="Time" expanded="True" />
                 <Node name="TopDown" expanded="True" />
               </Node>
               <Node name="scripts" expanded="True" />
@@ -46,7 +51,7 @@
   <MonoDevelop.Ide.ItemProperties.Phase_220Jump PreferredExecutionTarget="Unity.Editor" />
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="75193ff5-20a9-4873-a6cb-fb20edb22d9b" />
+  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="238a9310-6949-40bf-be03-d3fe7535b092" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
       <Breakpoint enabled="false" file="/Users/beta/Documents/Projects/PhaseJumpPro/Phase Jump/Assets/phasejumppro/Input/MoveToMouseInputControlScheme2D.cs" relfile="Assets/phasejumppro/Input/MoveToMouseInputControlScheme2D.cs" line="41" column="1" />
