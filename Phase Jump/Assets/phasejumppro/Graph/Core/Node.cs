@@ -1,6 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 
+/*
+ * RATING: 5 stars
+ * Standard model, with unit tests
+ * CODE REVIEW: 3/6/22
+ */
 namespace PJ
 {
     namespace Graph
@@ -30,7 +35,10 @@ namespace PJ
             Bidirectional
         }
 
-        // Future: support Connector class type to define inputs, outputs (if needed)
+        /// <summary>
+        /// Use to build trees, graphs, state machines with forward or bidirectional edges
+        /// </summary>
+        /// <typeparam name="EdgeModel"></typeparam>
         public class Node<EdgeModel>
         {
             public class Edge
