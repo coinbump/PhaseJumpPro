@@ -1,7 +1,7 @@
 ﻿<Properties StartupConfiguration="{51BDC8AF-8B4E-EDCD-CD37-EADF80C84D5E}|">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/phasejumppro/Interface/AttachFocusable.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/phasejumppro/Interface/SpriteDropTarget.cs">
     <Files>
-      <File FileName="Assets/phasejumppro/Interface/Dragger2D.cs" Line="53" Column="16" />
+      <File FileName="Assets/phasejumppro/Interface/Dragger2D.cs" Line="70" Column="41" />
       <File FileName="Assets/phasejumppro/Core/Grid2D.cs" />
       <File FileName="Assets/phasejumppro/Core/Formation.cs" />
       <File FileName="Assets/phasejumppro/Core/Factory.cs" />
@@ -18,15 +18,15 @@
       <File FileName="Assets/phasejumppro/Core/CircleSpawner2D.cs" />
       <File FileName="Assets/phasejumppro/Core/CirclePath2D.cs" />
       <File FileName="Assets/phasejumppro/Core/Base.cs" Line="3" Column="24" />
-      <File FileName="Assets/phasejumppro/Interface/AttachFocusable.cs" Line="15" Column="10" />
+      <File FileName="Assets/phasejumppro/Interface/AttachFocusable.cs" Line="32" Column="55" />
       <File FileName="Assets/phasejumppro/Interface/TransformFocusable.cs" Line="1" Column="1" />
-      <File FileName="Assets/phasejumppro/Interface/SpriteDropTarget.cs" Line="1" Column="1" />
+      <File FileName="Assets/phasejumppro/Interface/SpriteDropTarget.cs" Line="26" Column="19" />
       <File FileName="Assets/phasejumppro/Interface/ScaleFocusable.cs" Line="1" Column="1" />
       <File FileName="Assets/phasejumppro/Interface/Focusable.cs" Line="1" Column="1" />
-      <File FileName="Assets/phasejumppro/Interface/DropTarget.cs" Line="1" Column="1" />
-      <File FileName="Assets/phasejumppro/Interface/DragModel.cs" Line="1" Column="1" />
-      <File FileName="Assets/phasejumppro/Interface/DragItems.cs" Line="1" Column="1" />
-      <File FileName="Assets/phasejumppro/Interface/Draggable2D.cs" Line="1" Column="1" />
+      <File FileName="Assets/phasejumppro/Interface/DropTarget.cs" Line="29" Column="1" />
+      <File FileName="Assets/phasejumppro/Interface/DragModel.cs" Line="9" Column="13" />
+      <File FileName="Assets/phasejumppro/Interface/DragItems.cs" Line="5" Column="1" />
+      <File FileName="Assets/phasejumppro/Interface/Draggable2D.cs" Line="2" Column="34" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -41,7 +41,7 @@
                 <Node name="Core" expanded="True" />
                 <Node name="FX" expanded="True" />
                 <Node name="Interface" expanded="True">
-                  <Node name="AttachFocusable.cs" selected="True" />
+                  <Node name="SpriteDropTarget.cs" selected="True" />
                 </Node>
                 <Node name="Layout" expanded="True" />
                 <Node name="Model" expanded="True">
