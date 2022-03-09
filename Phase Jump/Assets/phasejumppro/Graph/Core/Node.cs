@@ -4,15 +4,14 @@ using System.Collections.Generic;
 /*
  * RATING: 5 stars
  * Standard model, with unit tests
- * CODE REVIEW: 3/6/22
+ * CODE REVIEW: 3/8/22
  */
 namespace PJ
 {
     namespace Graph
     {
         /// <summary>
-        /// Direction allows us to use the weak reference in the destination node to refer
-        /// back to the parent without creating a circular reference.
+        /// Edge direction
         /// </summary>
         public enum Direction
         {
@@ -20,23 +19,7 @@ namespace PJ
         }
 
         /// <summary>
-        /// Specifies how edges in a graph are constructed
-        /// </summary>
-        public enum EdgeLinkType
-        {
-            /// <summary>
-            /// Edges point forward (state machine)
-            /// </summary>
-            Forward,
-
-            /// <summary>
-            /// Edges point forward and back (trees)
-            /// </summary>
-            Bidirectional
-        }
-
-        /// <summary>
-        /// Use to build trees, graphs, state machines with forward or bidirectional edges
+        /// Use to build trees, graphs, state machines, etc.
         /// </summary>
         /// <typeparam name="EdgeModel"></typeparam>
         public class Node<EdgeModel>
@@ -46,22 +29,16 @@ namespace PJ
                 public WeakReference<Node<EdgeModel>> fromNode { get; set; }
                 public EdgeModel model;
                 public Node<EdgeModel> toNode;
-                public Direction direction;
 
-                // For bidirectional edges, link the  edges together for removal
-                public WeakReference<Edge> backEdge { get; set; }
-
-                public Edge(WeakReference<Node<EdgeModel>> fromNode, EdgeModel model, Node<EdgeModel> toNode, Direction direction)
+                public Edge(WeakReference<Node<EdgeModel>> fromNode, EdgeModel model, Node<EdgeModel> toNode)
                 {
                     this.fromNode = fromNode;
                     this.model = model;
                     this.toNode = toNode;
-                    this.direction = direction;
                 }
             }
 
             public string identifier;
-            public EdgeLinkType edgeLinkType = EdgeLinkType.Forward;
 
             /// <summary>
             /// Custom properties
@@ -72,77 +49,30 @@ namespace PJ
             /// In some graphs, order matters (layers, selectors).
             /// </summary>
             protected List<Edge> edges = new List<Edge>();
+            protected HashSet<HashedWeakReference<Node<EdgeModel>>> fromNodes = new HashSet<HashedWeakReference<Node<EdgeModel>>>();
+            protected HashedWeakReference<Node<EdgeModel>> WeakThis { get { return new HashedWeakReference<Node<EdgeModel>>(this); } }
 
             public List<Edge> Edges { get { return edges; } }
+            public HashSet<HashedWeakReference<Node<EdgeModel>>> FromNodes { get { return fromNodes; } }
 
             public string Identifier => identifier;
 
             public void AddEdge(EdgeModel model, Node<EdgeModel> toNode)
             {
-                switch (edgeLinkType)
-                {
-                    case EdgeLinkType.Forward:
-                        var forwardEdge = new Edge(new WeakReference<Node<EdgeModel>>(this), model, toNode, Direction.Forward);
-                        edges.Add(forwardEdge);
-                        break;
-                    case EdgeLinkType.Bidirectional:
-                        AddBidirectionalEdges(model, toNode, model);
-                        break;
-                }
-            }
-
-            public void AddBidirectionalEdges(EdgeModel forwardModel, Node<EdgeModel> toNode, EdgeModel backModel)
-            {
-                var forwardEdge = new Edge(new WeakReference<Node<EdgeModel>>(this), forwardModel, toNode, Direction.Forward);
+                var forwardEdge = new Edge(new WeakReference<Node<EdgeModel>>(this), model, toNode);
                 edges.Add(forwardEdge);
-                var backEdge = new Edge(new WeakReference<Node<EdgeModel>>(this), backModel, toNode, Direction.Back);
-                toNode.edges.Add(backEdge);
-
-                forwardEdge.backEdge = new WeakReference<Edge>(backEdge);
-                backEdge.backEdge = new WeakReference<Edge>(forwardEdge);
+                toNode.FromNodes.Add(new HashedWeakReference<Node<EdgeModel>>(this));
             }
 
             public void RemoveEdge(Edge edge)
             {
-                if (!edges.Contains(edge)) { return; }
-
                 edges.Remove(edge);
-
-                if (null != edge.backEdge && edge.backEdge.TryGetTarget(out Edge backEdge))
-                {
-                    switch (backEdge.direction)
-                    {
-                        case Direction.Forward:
-                            if (edge.fromNode.TryGetTarget(out Node<EdgeModel> fromNode))
-                            {
-                                fromNode.RemoveEdge(backEdge);
-                            }
-                            break;
-                        case Direction.Back:
-                            edge.toNode.RemoveEdge(backEdge);
-                            break;
-                    }
-                }
+                edge.toNode.FromNodes.Remove(WeakThis);
             }
 
             public void RemoveEdgesFrom(Node<EdgeModel> fromNode)
             {
-                var iterEdges = new List<Edge>(edges);
-                foreach (Edge edge in iterEdges)
-                {
-                    if (edge.fromNode.TryGetTarget(out Node<EdgeModel> iterFromNode))
-                    {
-                        if (iterFromNode == fromNode)
-                        {
-                            RemoveEdge(edge);
-                        }
-                    }
-                    else
-                    {
-                        // Prune edges to deallocated nodes
-                        edges.Remove(edge);
-                    }
-                }
+                fromNode.RemoveEdgesTo(this);
             }
 
             public void RemoveEdgesTo(Node<EdgeModel> toNode)
@@ -177,30 +107,27 @@ namespace PJ
                 var searchedNodes = new HashSet<Node<EdgeModel>>();
                 nodes.Add(this);
 
-                return CollectEdgeNodes(nodes, searchedNodes, Direction.Forward, true);
+                return CollectEdgeNodesTo(nodes, searchedNodes, true);
             }
 
-            public HashSet<Node<EdgeModel>> CollectConnected(Direction direction, bool isDeep)
+            public HashSet<Node<EdgeModel>> CollectConnectedTo(bool isDeep)
             {
                 var nodes = new HashSet<Node<EdgeModel>>();
                 var searchedNodes = new HashSet<Node<EdgeModel>>();
-                return CollectEdgeNodes(nodes, searchedNodes, Direction.Forward, isDeep);
+                return CollectEdgeNodesTo(nodes, searchedNodes, isDeep);
             }
 
-            protected HashSet<Node<EdgeModel>> CollectEdgeNodes(HashSet<Node<EdgeModel>> nodes, HashSet<Node<EdgeModel>> searchedNodes, Direction direction, bool isDeep)
+            protected HashSet<Node<EdgeModel>> CollectEdgeNodesTo(HashSet<Node<EdgeModel>> nodes, HashSet<Node<EdgeModel>> searchedNodes, bool isDeep)
             {
                 var iterEdges = new List<Edge>(edges);
                 foreach (Edge edge in iterEdges)
                 {
-                    if (edge.direction == direction)
-                    {
-                        nodes.Add(edge.toNode);
+                    nodes.Add(edge.toNode);
 
-                        // Prevent infinite loop
-                        if (isDeep && !searchedNodes.Contains(edge.toNode)) {
-                           searchedNodes.Add(edge.toNode);
-                           edge.toNode.CollectEdgeNodes(nodes, searchedNodes, direction, true);
-                        }
+                    // Prevent infinite loop
+                    if (isDeep && !searchedNodes.Contains(edge.toNode)) {
+                        searchedNodes.Add(edge.toNode);
+                        edge.toNode.CollectEdgeNodesTo(nodes, searchedNodes, true);
                     }
                 }
 

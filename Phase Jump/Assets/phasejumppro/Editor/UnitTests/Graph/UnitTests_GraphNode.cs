@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using NUnit.Framework;
+using System;
 
 namespace PJ
 {
@@ -23,9 +24,12 @@ namespace PJ
 			var childNode = new Node();
 			node.AddEdge(new Graph.StandardEdgeModel(), childNode);
 
-			var connectedNodes = node.CollectConnected(Graph.Direction.Forward, true);
+			var connectedNodes = node.CollectConnectedTo(true);
 			Assert.AreEqual(connectedNodes.Count, 1);
 			Assert.IsTrue(connectedNodes.Contains(childNode));
+			Assert.AreEqual(node.Edges.Count, 1);
+			Assert.AreEqual(childNode.Edges.Count, 0);
+			Assert.AreEqual(childNode.FromNodes.Count, 1);
 		}
 
 		[Test]
@@ -38,10 +42,15 @@ namespace PJ
 			var childNode2 = new Node();
 			node.AddEdge(new Graph.StandardEdgeModel(), childNode2);
 
-			var connectedNodes = node.CollectConnected(Graph.Direction.Forward, true);
+			var connectedNodes = node.CollectConnectedTo(true);
 			Assert.AreEqual(connectedNodes.Count, 2);
 			Assert.IsTrue(connectedNodes.Contains(childNode1));
 			Assert.IsTrue(connectedNodes.Contains(childNode2));
+			Assert.AreEqual(node.Edges.Count, 2);
+			Assert.AreEqual(childNode1.Edges.Count, 0);
+			Assert.AreEqual(childNode1.FromNodes.Count, 1);
+			Assert.AreEqual(childNode2.Edges.Count, 0);
+			Assert.AreEqual(childNode2.FromNodes.Count, 1);
 		}
 
 		[Test]
@@ -54,12 +63,18 @@ namespace PJ
 			var childNode2 = new Node();
 			node.AddEdge(new Graph.StandardEdgeModel(), childNode2);
 
-			node.Clear();
-            var connectedNodes = node.CollectConnected(Graph.Direction.Forward, true);
-            Assert.AreEqual(connectedNodes.Count, 0);
-		}
+			Assert.AreEqual(childNode1.FromNodes.Count, 1);
+			Assert.AreEqual(childNode2.FromNodes.Count, 1);
 
-		[Test]
+			node.Clear();
+            var connectedNodes = node.CollectConnectedTo(true);
+            Assert.AreEqual(connectedNodes.Count, 0);
+			Assert.AreEqual(node.Edges.Count, 0);
+            Assert.AreEqual(childNode1.FromNodes.Count, 0);
+            Assert.AreEqual(childNode2.FromNodes.Count, 0);
+        }
+
+        [Test]
 		public void TestUpdateRoot_UpdatesAll()
 		{
 			Node node = new Node();
@@ -105,74 +120,19 @@ namespace PJ
 		}
 
 		[Test]
-		public void TestAddBidirectionalEdges()
+		public void TestRemoveEdgeFromParent_RemovesBoth()
 		{
 			Node node = new Node();
-			var childNode1 = new Node();
-			node.AddBidirectionalEdges(new Graph.StandardEdgeModel(), childNode1, new Graph.StandardEdgeModel());
-
-			Assert.AreEqual(node.Edges.Count, 1);
-			Assert.AreEqual(node.Edges[0].direction, Graph.Direction.Forward);
-			Assert.AreEqual(childNode1.Edges.Count, 1);
-			Assert.AreEqual(childNode1.Edges[0].direction, Graph.Direction.Back);
-
-			childNode1.Edges[0].backEdge.TryGetTarget(out Node.Edge childNodeBackEdge);
-			Assert.AreEqual(childNodeBackEdge, node.Edges[0]);
-
-			node.Edges[0].backEdge.TryGetTarget(out Node.Edge nodeBackEdge);
-			Assert.AreEqual(nodeBackEdge, childNode1.Edges[0]);
-		}
-
-		[Test]
-		public void TestRemoveBidirectionalEdgeFromParent_RemovesBoth()
-		{
-			Node node = new Node();
-			var childNode1 = new Node();
-			node.AddBidirectionalEdges(new Graph.StandardEdgeModel(), childNode1, new Graph.StandardEdgeModel());
-
-			Assert.AreEqual(node.Edges.Count, 1);
-			Assert.AreEqual(childNode1.Edges.Count, 1);
-
-			node.RemoveEdge(node.Edges[0]);
-
-			Assert.AreEqual(node.Edges.Count, 0);
-			Assert.AreEqual(childNode1.Edges.Count, 0);
-		}
-
-		[Test]
-		public void TestRemoveBidirectionalEdgeFromChild_RemovesBoth()
-		{
-			Node node = new Node();
-			var childNode1 = new Node();
-			node.AddBidirectionalEdges(new Graph.StandardEdgeModel(), childNode1, new Graph.StandardEdgeModel());
-
-			Assert.AreEqual(node.Edges.Count, 1);
-			Assert.AreEqual(childNode1.Edges.Count, 1);
-
-			childNode1.RemoveEdge(childNode1.Edges[0]);
-
-			Assert.AreEqual(node.Edges.Count, 0);
-			Assert.AreEqual(childNode1.Edges.Count, 0);
-		}
-
-		[Test]
-		public void TestAutoAddBidirectionalEdge()
-		{
-			Node node = new Node();
-			node.edgeLinkType = Graph.EdgeLinkType.Bidirectional;
 			var childNode1 = new Node();
 			node.AddEdge(new Graph.StandardEdgeModel(), childNode1);
 
 			Assert.AreEqual(node.Edges.Count, 1);
-			Assert.AreEqual(node.Edges[0].direction, Graph.Direction.Forward);
-			Assert.AreEqual(childNode1.Edges.Count, 1);
-			Assert.AreEqual(childNode1.Edges[0].direction, Graph.Direction.Back);
+			Assert.AreEqual(childNode1.FromNodes.Count, 1);
 
-			childNode1.Edges[0].backEdge.TryGetTarget(out Node.Edge childNodeBackEdge);
-			Assert.AreEqual(childNodeBackEdge, node.Edges[0]);
+			node.RemoveEdge(node.Edges[0]);
 
-			node.Edges[0].backEdge.TryGetTarget(out Node.Edge nodeBackEdge);
-			Assert.AreEqual(nodeBackEdge, childNode1.Edges[0]);
+			Assert.AreEqual(node.Edges.Count, 0);
+			Assert.AreEqual(childNode1.FromNodes.Count, 0);
 		}
 
 		[Test]
@@ -187,42 +147,49 @@ namespace PJ
 			node.AddEdge(new Graph.StandardEdgeModel(), childNode2);
 
 			Assert.AreEqual(node.Edges.Count, 2);
+			Assert.AreEqual(childNode1.Edges.Count, 0);
+			Assert.AreEqual(childNode1.FromNodes.Count, 1);
+			Assert.AreEqual(childNode2.FromNodes.Count, 1);
+
 			node.RemoveEdgesTo(childNode1);
 			Assert.AreEqual(node.Edges.Count, 1);
 			Assert.AreEqual(node.Edges[0].toNode, childNode2);
+			Assert.AreEqual(childNode1.FromNodes.Count, 0);
+			Assert.AreEqual(childNode2.FromNodes.Count, 1);
 		}
 
 		[Test]
 		public void TestRemoveEdgesFrom()
 		{
 			Node node = new Node();
-			node.edgeLinkType = Graph.EdgeLinkType.Bidirectional;
 			var childNode1 = new Node();
 			node.AddEdge(new Graph.StandardEdgeModel(), childNode1);
 
 			var deepNode = new Node();
-			deepNode.edgeLinkType = Graph.EdgeLinkType.Bidirectional;
 			deepNode.AddEdge(new Graph.StandardEdgeModel(), childNode1);
 
 			Assert.AreEqual(node.Edges.Count, 1);
-			Assert.AreEqual(childNode1.Edges.Count, 2);
+			Assert.AreEqual(childNode1.FromNodes.Count, 2);
 			Assert.AreEqual(deepNode.Edges.Count, 1);
+			Assert.AreEqual(deepNode.FromNodes.Count, 0);
 
 			childNode1.RemoveEdgesFrom(node);
 
 			Assert.AreEqual(node.Edges.Count, 0);
-			Assert.AreEqual(childNode1.Edges.Count, 1);
+			Assert.AreEqual(childNode1.FromNodes.Count, 1);
 			Assert.AreEqual(deepNode.Edges.Count, 1);
+			Assert.AreEqual(deepNode.FromNodes.Count, 0);
 
 			childNode1.RemoveEdgesFrom(deepNode);
 
 			Assert.AreEqual(node.Edges.Count, 0);
 			Assert.AreEqual(childNode1.Edges.Count, 0);
+			Assert.AreEqual(childNode1.FromNodes.Count, 0);
 			Assert.AreEqual(deepNode.Edges.Count, 0);
 		}
 
 		[Test]
-		public void TestCollectGraphWithForwardEdges()
+		public void TestCollectGraph()
 		{
 			Node node = new Node();
 			var childNode1 = new Node();
@@ -244,31 +211,7 @@ namespace PJ
 		}
 
 		[Test]
-		public void TestCollectGraphWithBidirectionalEdges()
-		{
-			Node node = new Node();
-			node.edgeLinkType = Graph.EdgeLinkType.Bidirectional;
-			var childNode1 = new Node();
-			node.AddEdge(new Graph.StandardEdgeModel(), childNode1);
-
-			var childNode2 = new Node();
-			node.AddEdge(new Graph.StandardEdgeModel(), childNode2);
-
-			var deepNode = new Node();
-			childNode1.edgeLinkType = Graph.EdgeLinkType.Bidirectional;
-			childNode1.AddEdge(new Graph.StandardEdgeModel(), deepNode);
-			deepNode.AddEdge(new Graph.StandardEdgeModel(), node);  // Circular connection
-
-			var graph = node.CollectGraph();
-			Assert.AreEqual(graph.Count, 4);
-			Assert.IsTrue(graph.Contains(node));
-			Assert.IsTrue(graph.Contains(childNode1));
-			Assert.IsTrue(graph.Contains(childNode2));
-			Assert.IsTrue(graph.Contains(deepNode));
-		}
-
-		[Test]
-		public void TestCollectConnectedForwardNotDeep()
+		public void TestCollectConnectedToNotDeep()
 		{
 			Node node = new Node();
 			var childNode1 = new Node();
@@ -280,14 +223,14 @@ namespace PJ
 			var deepNode = new Node();
 			childNode1.AddEdge(new Graph.StandardEdgeModel(), deepNode);
 
-			var graph = node.CollectConnected(Graph.Direction.Forward, false);
+			var graph = node.CollectConnectedTo(false);
 			Assert.AreEqual(graph.Count, 2);
 			Assert.IsTrue(graph.Contains(childNode1));
 			Assert.IsTrue(graph.Contains(childNode2));
 		}
 
 		[Test]
-		public void TestCollectConnectedForwardDeep()
+		public void TestCollectConnectedToDeep()
 		{
 			Node node = new Node();
 			var childNode1 = new Node();
@@ -299,7 +242,7 @@ namespace PJ
 			var deepNode = new Node();
 			childNode1.AddEdge(new Graph.StandardEdgeModel(), deepNode);
 
-			var graph = node.CollectConnected(Graph.Direction.Forward, true);
+			var graph = node.CollectConnectedTo(true);
 			Assert.AreEqual(graph.Count, 3);
 			Assert.IsTrue(graph.Contains(childNode1));
 			Assert.IsTrue(graph.Contains(childNode2));
@@ -307,7 +250,7 @@ namespace PJ
 		}
 
 		[Test]
-		public void TestCollectConnectedForwardCircular()
+		public void TestCollectConnectedToCircular()
 		{
 			Node node = new Node();
 			var childNode1 = new Node();
@@ -320,7 +263,7 @@ namespace PJ
 			childNode1.AddEdge(new Graph.StandardEdgeModel(), deepNode);
 			deepNode.AddEdge(new Graph.StandardEdgeModel(), node);	// Circular connection
 
-			var graph = node.CollectConnected(Graph.Direction.Forward, true);
+			var graph = node.CollectConnectedTo(true);
 			Assert.AreEqual(graph.Count, 4);
 			Assert.IsTrue(graph.Contains(node));
 			Assert.IsTrue(graph.Contains(childNode1));
