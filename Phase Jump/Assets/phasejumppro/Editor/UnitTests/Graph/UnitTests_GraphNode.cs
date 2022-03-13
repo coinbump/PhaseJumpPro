@@ -10,7 +10,7 @@ namespace PJ
 		private class Node : Graph.Node<Graph.StandardEdgeModel>
         {
 			public float time = 0;
-
+					
 			public override void EvtUpdate(TimeSlice time)
             {
 				this.time += time.delta;

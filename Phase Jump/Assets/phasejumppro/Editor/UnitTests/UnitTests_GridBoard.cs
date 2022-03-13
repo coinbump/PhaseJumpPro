@@ -41,15 +41,11 @@ namespace PJ
 			{
 				return new TestGridLayer(size);
 			}
-
-			public int deconstruct;
 		}
 
 		class TestGridTile : GridTile
 		{
 			public int deconstruct;
-			public Vector3Int oldOrigin;
-			public string value;
 
 			public TestGridTile(int deconstruct)
 			{

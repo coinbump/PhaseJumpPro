@@ -17,6 +17,12 @@ namespace PJ
     {
         protected WeakReference<T> reference;
 
+        public WeakReference<T> Reference {
+            get {
+                return reference;
+            }
+        }
+
         public HashedWeakReference(T reference)
         {
             this.reference = new WeakReference<T>(reference);

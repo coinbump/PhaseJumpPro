@@ -9,7 +9,7 @@ namespace PJ
 		[Test]
 		public void UnitTests()
 		{
-			float sqrt2 = Mathf.Sqrt(2);
+            float sqrt2 = Mathf.Sqrt(2);
 			float distX = 1;
 			float distY = 1*Vector2.down.y;
 			float hyp = AngleUtils.Hypotenuse(distX, distY);

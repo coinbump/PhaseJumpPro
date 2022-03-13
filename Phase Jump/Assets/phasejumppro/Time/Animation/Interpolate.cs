@@ -32,11 +32,11 @@ namespace PJ
 
 			public FactoryRegistry()
 			{
-				registry.Add(InterpolateType.Linear.ToString().ToLower(), new Factory<InterpolateLinear>());
-				registry.Add(InterpolateType.Squared.ToString().ToLower(), new Factory<InterpolateSquared>());
-				registry.Add(InterpolateType.Cubed.ToString().ToLower(), new Factory<InterpolateCubed>());
-				registry.Add(InterpolateType.OutSquared.ToString().ToLower(), new Factory<InterpolateOutSquared>());
-				registry.Add(InterpolateType.OutCubed.ToString().ToLower(), new Factory<InterpolateOutCubed>());
+                registry.Add(InterpolateType.Linear.ToString().ToLower(), new FactoryNew<InterpolateLinear>());
+				registry.Add(InterpolateType.Squared.ToString().ToLower(), new FactoryNew<InterpolateSquared>());
+				registry.Add(InterpolateType.Cubed.ToString().ToLower(), new FactoryNew<InterpolateCubed>());
+				registry.Add(InterpolateType.OutSquared.ToString().ToLower(), new FactoryNew<InterpolateOutSquared>());
+				registry.Add(InterpolateType.OutCubed.ToString().ToLower(), new FactoryNew<InterpolateOutCubed>());
 			}
 
 			public Interpolate New(InterpolateType type)
@@ -52,7 +52,7 @@ namespace PJ
 				var element = registryValue as SomeFactory;
 				if (null == element) { return null; }
 
-				var result = element.New() as Interpolate;
+				var result = element.NewObject() as Interpolate;
 				return result;
 			}
 		}
