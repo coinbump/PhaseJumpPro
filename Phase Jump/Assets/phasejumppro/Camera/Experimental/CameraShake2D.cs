@@ -1,6 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+/*
+ * RATING: 3 stars
+ * Works, but limited. Not tested with moving camera
+ */
 namespace PJ
 {
     /// <summary>
