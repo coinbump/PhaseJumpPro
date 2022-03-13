@@ -1,4 +1,4 @@
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine;
 using PJ;
 
@@ -10,45 +10,34 @@ using PJ;
 namespace PJ
 {
     /// <summary>
-    /// Warps a plane mesh with a sine wave across a specified axis
+    /// Warp a plane mesh with perlin noise
     /// </summary>
-    public class SinMeshBuilder : SomeMeshBuilder
+    public class PerlinNoiseMeshBuilder : SomeMeshBuilder
     {
         public Vector2Int meshSize = new Vector2Int(3, 3);
         public Vector2 worldSize = new Vector2(1.0f, 1.0f);
         public Axis faceAxis = Axis.Z;
-        public Axis2D mapAxis = Axis2D.X;
+        public Vector2 perlinOffset = Vector2.zero;
+        public Vector2 perlinScale = new Vector2(1.0f, 1.0f);
         public Axis modifierAxis = Axis.Z;
         public float modifierScale = 1.0f;
-        public float animationSpeed = 0;
 
         protected float offset = 0;
 
         public override Mesh BuildMesh()
         {
-            var sinMap = new Graph.SinMap1DNode(true, offset);
-            var graphBuilder = new Graph.SerialBuilder(sinMap);
-            graphBuilder = graphBuilder.ToMap2D(Axis2D.X);
+            var warpMap = new Graph.PerlinNoiseNode(perlinOffset, perlinScale);
+            var graphBuilder = new Graph.SerialBuilder(warpMap);
             var modifierNode = new Graph.PlaneMeshModifierNode(new PlaneMesh(meshSize, worldSize, faceAxis), modifierAxis, modifierScale, true);
-            
+
             graphBuilder.OutputTo("value", modifierNode, "map");
 
             modifierNode.Go();
             return modifierNode.planeMesh.mesh;
         }
 
-        public void Update()
-        {
-            if (animationSpeed <= 0) { return; }
-
-            offset += animationSpeed * Time.deltaTime;
-            offset %= 1.0f;
-
-            Build();
-        }
-
 #if UNITY_EDITOR
-        [CustomEditor(typeof(SinMeshBuilder))]
+        [CustomEditor(typeof(PerlinNoiseMeshBuilder))]
         public class Editor : UnityEditor.Editor
         {
             public override void OnInspectorGUI()
