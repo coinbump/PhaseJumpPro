@@ -73,3 +73,12 @@ crashlytics-build.properties
 # Mac files
 *.DS_Store
 *.log
+
+# *******
+# Xcode
+## User settings
+xcuserdata/
+
+## Xcode 8 and earlier
+*.xcscmblueprint
+*.xccheckout
