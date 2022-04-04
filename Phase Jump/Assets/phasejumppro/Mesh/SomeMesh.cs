@@ -59,14 +59,14 @@ namespace PJ
             mesh.uv = uv;
 
             // Debug Logs:
-            //for (int i = 0; i < verticesSize; i++)
+            //for (int i = 0; i < vertices.Length; i++)
             //{
-            //    //Debug.Log("Vertex at " + i.ToString() + "is " + vertices[i].ToString());
+            //    Debug.Log("Vertex at " + i.ToString() + "is " + vertices[i].ToString());
             //    Debug.Log("UV at " + i.ToString() + "is " + uv[i].ToString());
             //}
-            //for (int i = 0; i < trianglesSize; i++)
+            //for (int i = 0; i < triangles.Length; i++)
             //{
-            //    //Debug.Log("Triangle at " + i.ToString() + "is " + triangles[i].ToString());
+            //    Debug.Log("Triangle at " + i.ToString() + "is " + triangles[i].ToString());
             //}
 
             mesh.RecalculateBounds();

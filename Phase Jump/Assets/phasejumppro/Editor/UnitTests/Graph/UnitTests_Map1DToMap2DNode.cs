@@ -15,7 +15,7 @@ namespace PJ
 		public void TestMap_XAxis()
 		{
 			Graph.SinMap1DNode map1DNode = new Graph.SinMap1DNode(false, 0);
-			Graph.Map1DToMap2DNode transformNode = new Graph.Map1DToMap2DNode(Axis2D.X);
+			Graph.Map1DToMap2DNode transformNode = new Graph.Map1DToMap2DNode (Axis2D.X);
 			map1DNode.AddOutput("value", transformNode, "value");
 
 			SomeMap<Vector2, float> map = transformNode.ValueForOutput<SomeMap<Vector2, float>>("value", null, null) as SomeMap<Vector2, float>;
