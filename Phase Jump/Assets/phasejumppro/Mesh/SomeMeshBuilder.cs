@@ -7,6 +7,10 @@
  */
 namespace PJ
 {
+    /// <summary>
+    /// For Mesh builders.
+    /// Requires a MeshFilter component
+    /// </summary>
 	public abstract class SomeMeshBuilder : PJ.MonoBehaviour
 	{
 		// Use this for initialization
@@ -20,8 +24,7 @@ namespace PJ
             var meshFilter = GetComponent<MeshFilter>();
             if (null == meshFilter)
             {
-                Debug.Log("WARNING. MeshBuilder requires a MeshFilter");
-                return;
+                meshFilter = gameObject.AddComponent<MeshFilter>();
             }
 
             meshFilter.mesh = BuildMesh();

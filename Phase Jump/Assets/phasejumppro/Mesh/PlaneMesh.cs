@@ -8,23 +8,11 @@ using UnityEngine;
  */
 namespace PJ
 {
-    public enum Axis2D
-    {
-        X, Y
-    }
-
-    public enum Axis
-    {
-        X, Y, Z
-    }
-
-    public class PlaneMesh
+    public class PlaneMesh : SomePlaneMesh
     {
         public Vector2Int meshSize = new Vector2Int(3, 3);
         public Vector2 worldSize = new Vector2(1.0f, 1.0f);
         public Axis faceAxis = Axis.Z;
-
-        public Mesh mesh;
 
         public Vector2Int VerticesSize
         {
@@ -36,19 +24,9 @@ namespace PJ
             }
         }
 
-        public Vector3[] Vertices
-        {
-            get
-            {
-                return null != mesh ? mesh.vertices : null;
-            }
-            set
-            {
-                if (null != mesh)
-                {
-                    mesh.vertices = value;
-                    mesh.RecalculateBounds();
-                }
+        public override int MeshVertexCount {
+            get {
+                return VerticesSize.x * VerticesSize.y;
             }
         }
 
@@ -59,15 +37,8 @@ namespace PJ
             this.faceAxis = faceAxis;
         }
 
-        public Mesh Build(bool rebuild = false)
+        public override Mesh BuildMesh(Mesh mesh)
         {
-            if (!rebuild && mesh != null)
-            {
-                return mesh;
-            }
-
-            mesh = new Mesh();
-
             int vertexXCount = meshSize.x + 1;
             int vertexZCount = meshSize.y + 1;
             int verticesSize = vertexXCount * vertexZCount;
@@ -114,24 +85,7 @@ namespace PJ
                 }
             }
 
-            mesh.Clear();
-            mesh.vertices = vertices;
-            mesh.triangles = triangles;
-            mesh.uv = uv;
-
-            // Debug Logs:
-            //for (int i = 0; i < verticesSize; i++)
-            //{
-            //    Debug.Log("Vertex at " + i.ToString() + "is " + vertices[i].ToString());
-            //    //Debug.Log("UV at " + i.ToString() + "is " + uv[i].ToString());
-            //}
-            //for (int i = 0; i < trianglesSize; i++)
-            //{
-            //    Debug.Log("Triangle at " + i.ToString() + "is " + triangles[i].ToString());
-            //}
-
-            mesh.RecalculateBounds();
-            mesh.RecalculateNormals();
+            UpdateMesh(mesh, vertices, triangles, uv);
 
             return mesh;
         }

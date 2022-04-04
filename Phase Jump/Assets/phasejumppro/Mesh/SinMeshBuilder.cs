@@ -19,7 +19,7 @@ namespace PJ
         public Axis faceAxis = Axis.Z;
         public Axis2D mapAxis = Axis2D.X;
         public Axis modifierAxis = Axis.Z;
-        public float modifierScale = 1.0f;
+        public float scale = 1.0f;
         public float animationSpeed = 0;
 
         protected float offset = 0;
@@ -29,7 +29,7 @@ namespace PJ
             var sinMap = new Graph.SinMap1DNode(true, offset);
             var graphBuilder = new Graph.SerialBuilder(sinMap);
             graphBuilder = graphBuilder.ToMap2D(Axis2D.X);
-            var modifierNode = new Graph.PlaneMeshModifierNode(new PlaneMesh(meshSize, worldSize, faceAxis), modifierAxis, modifierScale, true);
+            var modifierNode = new Graph.PlaneMeshModifierNode(new PlaneMesh(meshSize, worldSize, faceAxis), modifierAxis, scale, true);
             
             graphBuilder.OutputTo("value", modifierNode, "map");
 
