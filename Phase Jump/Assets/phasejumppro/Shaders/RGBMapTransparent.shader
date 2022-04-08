@@ -2,7 +2,7 @@
     Maps each color channel (R, G, B) to a new color
     Useful for quickly recoloring a texture that has 3 primary colors
  */
-Shader "Phase Jump/RGBMapTransparent"
+Shader "PhaseJump/RGBMapTransparent"
 {
 	Properties
 	{

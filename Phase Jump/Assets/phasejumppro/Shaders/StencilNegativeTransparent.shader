@@ -1,7 +1,7 @@
 ﻿/*
     Uses the red channel of texture as a stencil
  */
-Shader "Phase Jump/StencilNegativeTransparent"
+Shader "PhaseJump/StencilNegativeTransparent"
 {
 	Properties
 	{

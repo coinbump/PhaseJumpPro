@@ -1,19 +1,18 @@
-﻿/*
-    Uses the red channel of texture as a stencil
+/*
+    Renders a uniform color, with alpha
  */
-Shader "PhaseJump/StencilTransparent"
+Shader "PhaseJump/ColorOpaque"
 {
 	Properties
 	{
-		_MainTex ("Texture", 2D) = "white" {}
-        _StencilTex ("Stencil Texture", 2D) = "red" {}
+        _Color ("Color", Color) = (1.0, 1.0, 1.0, 1.0)
 	}
     SubShader {
-        Tags {"Queue"="Transparent" "RenderType"="Transparent"}
+        Tags {"Queue"="Geometry" "RenderType"="Opaque"}
         LOD 100
         
-        ZWrite Off
-        Blend SrcAlpha OneMinusSrcAlpha
+        ZWrite On
+        Blend Off
         
         Pass {
             CGPROGRAM
@@ -21,8 +20,7 @@ Shader "PhaseJump/StencilTransparent"
             #pragma vertex vert
             #pragma fragment frag
             
-            sampler2D _MainTex;
-            sampler2D _StencilTex;
+            fixed4 _Color;
              
             struct vertIn {
                 float4 vertex : POSITION;
@@ -42,10 +40,7 @@ Shader "PhaseJump/StencilTransparent"
             }
 
             half4 frag(vertOut vi) : COLOR {
-                half4 texColor = tex2D(_MainTex, vi.texcoord);
-                half4 stencilColor = tex2D(_StencilTex, vi.texcoord);
-                
-                return half4(texColor.rgb, stencilColor.a*stencilColor.r*texColor.a);
+                return half4(_Color[0],_Color[1],_Color[2],1.0);
             }
             ENDCG
         }

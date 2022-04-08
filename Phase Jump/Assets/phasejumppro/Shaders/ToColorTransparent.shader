@@ -1,7 +1,7 @@
 ﻿/*
     Transforms pixels to uniform color (multiplied by texture alpha)
  */
-Shader "Phase Jump/ToColorTransparent"
+Shader "PhaseJump/ToColorTransparent"
 {
 	Properties
 	{

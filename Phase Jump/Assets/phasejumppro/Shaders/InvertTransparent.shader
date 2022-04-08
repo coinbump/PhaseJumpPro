@@ -1,7 +1,7 @@
 ﻿/*
     Inverts the texture color
  */
-Shader "Phase Jump/InvertTransparent"
+Shader "PhaseJump/InvertTransparent"
 {
 	Properties
 	{

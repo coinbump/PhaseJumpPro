@@ -1,7 +1,7 @@
 ﻿/*
     Desaturates texture color by specified factor
  */
-Shader "Phase Jump/DesaturateTransparent"
+Shader "PhaseJump/DesaturateTransparent"
 {
 	Properties
 	{
@@ -12,9 +12,11 @@ Shader "Phase Jump/DesaturateTransparent"
         Tags {"Queue"="Transparent" "RenderType"="Transparent"}
         LOD 100
         
-        ZWrite Off
+        ZWrite Off  // Off for transparent
         Blend SrcAlpha OneMinusSrcAlpha
-        
+        Lighting Off
+        Cull Off    // To render rotated/flipped sprites
+
         Pass {
             CGPROGRAM
             
@@ -26,11 +28,13 @@ Shader "Phase Jump/DesaturateTransparent"
              
             struct vertIn {
                 float4 vertex : POSITION;
+				float4 color : COLOR;
                 float2 texcoord : TEXCOORD0;
             };
 
             struct vertOut {
                 float4 vertex : POSITION;
+				float4 color : COLOR;
                 float2 texcoord : TEXCOORD0;
             };
 
@@ -38,7 +42,13 @@ Shader "Phase Jump/DesaturateTransparent"
                 vertOut vo;
                 vo.vertex = UnityObjectToClipPos(vi.vertex);
                 vo.texcoord = vi.texcoord;
+				vo.color = vi.color;
                 return vo;
+            }
+
+            float random (float2 uv)
+            {
+                return frac(sin(dot(uv,float2(12.9898,78.233)))*43758.5453123);
             }
 
             half4 frag(vertOut vi) : COLOR {
@@ -48,7 +58,7 @@ Shader "Phase Jump/DesaturateTransparent"
                 float factor = _Factor;
                
                 half4 mixColor = lerp(texColor, destColor, _Factor);
-                mixColor[3] = texColor[3];
+                mixColor[3] = texColor[3] * random(vi.texcoord) * vi.color.a;
                 return mixColor;
             }
             ENDCG
