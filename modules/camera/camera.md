@@ -1,5 +1,9 @@
 # Module: Camera
 
+## Class: SimplmeCameraInputControlScheme
+
+[SimplmeCameraInputControlScheme](SimplmeCameraInputControlScheme.md)
+
 ## Class: CameraShake2D
 
-[Link](experimental/camerashake2d.md)
+[CameraShake2D](experimental/CameraShake2D.md)
