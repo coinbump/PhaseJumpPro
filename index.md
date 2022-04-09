@@ -25,7 +25,7 @@ Used to manipulate the camera.
 
 ### Core
 
-[Core](modules/core.md)
+[Core](modules/core/core.md)
 
 ### Extensions
 
