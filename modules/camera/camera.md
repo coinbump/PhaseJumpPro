@@ -1,7 +1,5 @@
-## Module: Camera
+# Module: Camera
 
-[Index](../index.md)
+## Class: CameraShake2D
 
-### Classes:
-
-[CameraShake2D](experimental/camerashake2d.md)
+[Link](experimental/camerashake2d.md)
