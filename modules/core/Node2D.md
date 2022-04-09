@@ -18,7 +18,7 @@ The core class for all 2D game objects in a Phase Jump project. Provides built-i
 
 **bool isKinematic**: Cached value, determined by rigidbody.
 
-**string NodeState**: Get/set the current string-based Node state.
+**string State**: Get/set the current string-based Node state.
 
 _Note:_ Strings are used for flexibility. If you prefer a concrete type, override the behavior.
 
@@ -40,7 +40,7 @@ _NOTE:_ if property `dontModRotation` is true, this value can exceed the normali
 
 _Example:_ A state that lasts for N seconds.
 
-**HasTag(string name)**: Returns true if either a GameObject tag, or a PhaseJump tag exists with a matching name.
+**HasTag(string name)**: Returns true if either a GameObject tag, or a type tag exists with a matching name.
 
 _Note:_ GameObject tags are defined in the Unity editor. PhaseJump tags are stored in the `tags` property inside `Node2D`.
 
