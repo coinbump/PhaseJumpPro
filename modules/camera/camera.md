@@ -1,8 +1,8 @@
 # Module: Camera
 
-## Class: SimplmeCameraInputControlScheme
+## Class: SimpleCameraInputControlScheme
 
-[SimplmeCameraInputControlScheme](SimplmeCameraInputControlScheme.md)
+[SimpleCameraInputControlScheme](SimpleCameraInputControlScheme.md)
 
 ## Class: CameraShake2D
 
