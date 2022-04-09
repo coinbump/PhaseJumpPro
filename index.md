@@ -17,7 +17,11 @@ Used to manipulate the camera.
 
 ### Classes
 
-[Classes](modules/classes.md)
+[Classes](modules/classes/classes.md)
+
+### Collections
+
+[Collections](modules/collections/collections.md)
 
 ### Core
 
