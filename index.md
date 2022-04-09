@@ -13,53 +13,53 @@ _NOTE: This is a work in progress_
 
 Used to manipulate the camera.
 
-**Link:** [Camera](modules/camera/camera.md)
+[Camera](modules/camera/camera.md)
 
 ### Classes
 
-**Link:** [Classes](modules/classes.md)
+[Classes](modules/classes.md)
 
 ### Core
 
-**Link:** [Core](modules/core.md)
+[Core](modules/core.md)
 
 ### Extensions
 
 Utility extensions for existing classes.
 
-**Link:** [Extensions](modules/extensions.md)
+[Extensions](modules/extensions.md)
 
 ### Geometry
 
 Utilities for dealing with geometry (angles, and so on).
 
-**Link:** [Geometry](modules/geometry.md)
+[Geometry](modules/geometry.md)
 
 ### Go
 
 Common game design patterns: behavior trees, etc.
 
-**Link:** [Go](modules/go.md)
+[Go](modules/go.md)
 
 ### Interface
 
 UI interactions.
 
-**Link:** [Interface](modules/interface/interface.md)
+[Interface](modules/interface/interface.md)
 
 
 ### Layout
 
 Game object layout.
 
-**Link:** [Layout](modules/layout/layout.md)
+[Layout](modules/layout/layout.md)
 
 
 ### Model
 
 Common model objects used in games.
 
-**Link:** [Model](modules/model/model.md)
+[Model](modules/model/model.md)
 
 ### Templates
 
