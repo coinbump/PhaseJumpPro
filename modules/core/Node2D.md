@@ -1,6 +1,6 @@
 # Module: Core
 
-Link: [Core](../core.md)
+Link: [Core](core.md)
 
 ## Class: Node2D
 
