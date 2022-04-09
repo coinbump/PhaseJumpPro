@@ -40,6 +40,20 @@ Common extensions to Unity's `MonoBehaviour` class.
 
 Stable.
 
+
+## Class: Node
+
+### Description
+
+Base class for all Phase Jump nodes in 3D/2D space.
+
+Contains state machine and auto culling for off camera objects.
+
+### Stability
+
+Stable.
+
+
 ## Class: Node2D
 
 [Node2D](Node2D.md)
