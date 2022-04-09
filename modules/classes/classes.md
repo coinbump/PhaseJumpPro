@@ -12,3 +12,13 @@ Provides metadata for all objects of a certain type.
 ### Stability
 
 Simple class. Stable.
+
+## Class: TagClassNames
+
+### Description
+
+Optional properties for encoding value types in XML.
+
+### Stability
+
+Static const properties. Stable.
