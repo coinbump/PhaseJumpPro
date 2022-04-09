@@ -42,7 +42,7 @@ Stable.
 
 ## Class: Node2D
 
-[Node2D](core/Node2D.md)
+[Node2D](Node2D.md)
 
 ## Class: RandomUtils
 
