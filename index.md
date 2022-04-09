@@ -13,7 +13,7 @@ _NOTE: This is a work in progress_
 
 Used to manipulate the camera.
 
-**Link:** [Camera](modules/camera.md)
+**Link:** [Camera](modules/camera/camera.md)
 
 ### Classes
 
