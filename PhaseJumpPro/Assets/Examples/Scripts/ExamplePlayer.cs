@@ -75,7 +75,7 @@ public class ExamplePlayer : Node2D
         }
 
         var angle = AngleUtils.Vector2ToDegreeAngle(inputVector);
-        var bulletObjects = weaponEmitter.Fire(angle);
+        weaponEmitter.Fire(angle);
     }
 
     protected void OnHealthChange(int health)
