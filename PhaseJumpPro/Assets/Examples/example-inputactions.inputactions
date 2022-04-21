@@ -1,0 +1,54 @@
+{
+    "name": "example-inputactions",
+    "maps": [
+        {
+            "name": "Dual Stick",
+            "id": "6afc5c2b-2d05-4bc6-ab92-7dbaa03d10b9",
+            "actions": [
+                {
+                    "name": "Move",
+                    "type": "PassThrough",
+                    "id": "ca685cb2-2ce0-40b7-bb52-bd70a3b21887",
+                    "expectedControlType": "Stick",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Move Right",
+                    "type": "PassThrough",
+                    "id": "5ac37f45-178d-4a3a-bf78-5d1856fdbc45",
+                    "expectedControlType": "Stick",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "36173fa3-569c-4d21-bb34-573c8c172ad0",
+                    "path": "<Gamepad>/leftStick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d8f6c8a5-8380-4104-93de-b4001ee81911",
+                    "path": "<Gamepad>/rightStick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Move Right",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
