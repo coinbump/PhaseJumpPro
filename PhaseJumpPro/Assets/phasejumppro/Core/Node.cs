@@ -25,5 +25,28 @@ namespace PJ
 
             rigidbody = GetComponent<Rigidbody>();
         }
+
+        /// <summary>
+        /// Move this node to the position in 3D space
+        /// </summary>
+        public override void MoveToPosition(Vector3 position, bool force = false)
+        {
+            if (IsKinematic || force)
+            {
+                //Debug.Log("Move to Position: Kinematic");
+
+                transform.position = position;
+            }
+            else
+            {
+                if (null != rigidbody)
+                {
+                    //Debug.Log("Move to Position: Physics");
+
+                    // MovePosition is for physics-based objects (non kinematic)
+                    rigidbody.MovePosition(position);
+                }
+            }
+        }
     }
 }

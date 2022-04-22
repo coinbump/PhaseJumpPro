@@ -17,7 +17,7 @@ namespace PJ
 
 	/// <summary>
 	/// Allows us to write code that will work with multiple types of renderers
-	/// without knowing which one is attached ot the object
+	/// without knowing which one is attached to the object
 	/// </summary>
 	public class MultiRenderer : SomeRenderer
 	{

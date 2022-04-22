@@ -19,7 +19,7 @@ namespace PJ
 #if UNITY_EDITOR
 		protected override void RenderGizmos(EditorUtils.RenderState renderState)
 		{
-			EditorUtils.RenderRect(transform.position, worldSize.x, worldSize.y, renderState);
+			EditorUtils.DrawRect(transform.position, worldSize.x, worldSize.y, renderState);
 		}
 #endif
 

@@ -268,8 +268,9 @@ namespace PJ
 
 		/// <summary>
         /// Move this node to the position in 2D space
+        /// (NOTE: This uses Vector3, but Rigidbody2D ignores the z component)
         /// </summary>
-		public void MoveToPosition(Vector3 position, bool force = false)
+		public override void MoveToPosition(Vector3 position, bool force = false)
 		{
 			if (IsKinematic || force)
 			{

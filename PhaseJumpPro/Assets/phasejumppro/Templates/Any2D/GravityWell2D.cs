@@ -118,7 +118,7 @@ namespace PJ
 #if UNITY_EDITOR
         protected override void RenderGizmos(EditorUtils.RenderState renderState)
         {
-            EditorUtils.RenderCircle(transform.position, radius, renderState);
+            EditorUtils.DrawCircle(transform.position, radius, renderState);
         }
 #endif
     }

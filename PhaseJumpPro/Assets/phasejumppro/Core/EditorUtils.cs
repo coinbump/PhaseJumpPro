@@ -16,7 +16,7 @@ namespace PJ
 			Selected
 		}
 
-		public static void RenderConnectingLines(List<GameObject> objects, RenderState renderState)
+		public static void DrawConnectingLines(List<GameObject> objects, RenderState renderState)
 		{
 			if (objects.Count == 0) { return; }
 
@@ -48,7 +48,22 @@ namespace PJ
 			}
 		}
 
-		public static void RenderCircle(Vector3 center, float radius, RenderState renderState)
+		public static void DrawLine(Vector3 start, Vector3 end, RenderState renderState)
+        {
+			switch (renderState)
+			{
+				case RenderState.Default:
+					Gizmos.color = Color.white;
+					break;
+				case RenderState.Selected:
+					Gizmos.color = GUI.skin.settings.selectionColor;
+					break;
+			}
+
+			Gizmos.DrawLine(start, end);
+		}
+
+		public static void DrawCircle(Vector3 center, float radius, RenderState renderState)
 		{
 			switch (renderState)
 			{
@@ -78,7 +93,7 @@ namespace PJ
 			Gizmos.DrawLine(pos, lastPos);
 		}
 
-		public static void RenderRect(Vector3 center, float width, float height, RenderState renderState)
+		public static void DrawRect(Vector3 center, float width, float height, RenderState renderState)
 		{
 			switch (renderState)
 			{

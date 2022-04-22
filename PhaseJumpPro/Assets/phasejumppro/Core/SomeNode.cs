@@ -181,5 +181,7 @@ namespace PJ
         public virtual void OnListen(Event theEvent)
         {
         }
-    }
+
+		public abstract void MoveToPosition(Vector3 position, bool force = false);
+	}
 }
