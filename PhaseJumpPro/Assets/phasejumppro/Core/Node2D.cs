@@ -12,6 +12,7 @@ namespace PJ
 	/// <summary>
 	/// Provides utility methods for simplifying common 2D game scenarios
 	/// </summary>
+	[RequireComponent(typeof(Rigidbody2D))]
 	public class Node2D : SomeNode
 	{
 		/// <summary>

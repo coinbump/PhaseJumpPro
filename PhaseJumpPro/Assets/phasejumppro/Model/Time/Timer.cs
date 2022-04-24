@@ -13,7 +13,11 @@ namespace PJ {
     /// </summary>
 	public class Timer : SomeTimed
 	{
-		public string identifier;	// Optional (for debugging)
+		/// <summary>
+        /// Optional identifier for hashing, debug logs
+        /// </summary>
+		public string identifier;
+
 		protected float timerState;  // Time state of the timer
 		
 		public float TimerState {

@@ -14,9 +14,16 @@ namespace PJ
     /// Moves objects around a circle radius
     /// FUTURE: support rotated ellipses, sin paths, etc.
     /// </summary>
-    public class CircleMovePath2D : SomeMovePath
+    public class CircleMovePath2D : MovePath
     {
         public float radius = 1.0f;
+
+        protected override void Awake()
+        {
+            base.Awake();
+
+            path = new CirclePath(radius);
+        }
 
 #if UNITY_EDITOR
         protected override void RenderGizmos(EditorUtils.RenderState renderState)
@@ -25,26 +32,10 @@ namespace PJ
         }
 #endif
 
-        protected override void SnapPathMover(PathMover pathMover, float progress, bool force)
-        {
-            var vector = AngleUtils.DegreeAngleToVector2(progress * 360.0f, radius);
-            MovePathMoverToLocalPosition(pathMover, vector, force);
-        }
-
 #if UNITY_EDITOR
         [CustomEditor(typeof(CircleMovePath2D))]
-        public class Editor : UnityEditor.Editor
+        public new class Editor : MovePath.Editor
         {
-            public override void OnInspectorGUI()
-            {
-                DrawDefaultInspector();
-
-                if (GUILayout.Button("Snap"))
-                {
-                    CircleMovePath2D movePath = (CircleMovePath2D)target;
-                    movePath.SnapAllToStartPosition();
-                }
-            }
         }
 #endif
     }

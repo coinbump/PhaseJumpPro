@@ -113,6 +113,7 @@ namespace PJ
 					switch (meshMaterialType)
 					{
 						case MeshMaterialType.Shared:
+							//Debug.Log("Multi Shared Color: " + value.ToString());
 							meshRenderer.sharedMaterial.color = value;
 							break;
 						default:

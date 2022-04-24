@@ -36,18 +36,8 @@ namespace PJ
 
 #if UNITY_EDITOR
         [CustomEditor(typeof(LineMovePath))]
-        public class Editor : UnityEditor.Editor
+        public new class Editor : SomeMovePath.Editor
         {
-            public override void OnInspectorGUI()
-            {
-                DrawDefaultInspector();
-
-                if (GUILayout.Button("Snap"))
-                {
-                    LineMovePath movePath = (LineMovePath)target;
-                    movePath.SnapAllToStartPosition();
-                }
-            }
         }
 #endif
     }

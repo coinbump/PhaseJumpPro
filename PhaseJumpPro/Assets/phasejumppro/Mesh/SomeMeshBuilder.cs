@@ -11,7 +11,9 @@ namespace PJ
     /// For Mesh builders.
     /// Requires a MeshFilter component
     /// </summary>
-	public abstract class SomeMeshBuilder : PJ.MonoBehaviour
+    [RequireComponent(typeof(MeshFilter))]
+    [RequireComponent(typeof(MeshRenderer))]
+    public abstract class SomeMeshBuilder : PJ.MonoBehaviour
 	{
 		// Use this for initialization
 		void Start()

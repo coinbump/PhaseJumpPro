@@ -32,23 +32,24 @@ namespace PJ
 		protected bool wasColliderEnabled = true;
 
 		// FUTURE: support custom interpolate if needed
-		protected SomeTransform<float> interpolate = new InterpolateOutSquared();
+		protected SomeTransform<float> interpolate = new InterpolateLinear();
 
 		protected MultiCollider multiCollider;
+		protected RendererAlphaAttributeAnimator attributeAnimator;
 
 		protected override void Awake()
 		{
 			base.Awake();
 
+			attributeAnimator = new RendererAlphaAttributeAnimator(gameObject);
+
 			timer.duration = duration;
 			multiCollider = new MultiCollider(gameObject);
-			multiRenderer = new MultiRenderer(gameObject);
 
 			if (!enabled) { return;  }
-			Color color = multiRenderer.Color;
-			color.a = startAlpha;
-			multiRenderer.Color = color;
 
+			attributeAnimator.ApplyAttributeValueFor(startAlpha, endAlpha, 0);
+			
 			wasColliderEnabled = multiCollider.Enabled;
 			if (disableCollisions)
 			{
@@ -70,13 +71,8 @@ namespace PJ
 			var timeSlice = new TimeSlice(Time.deltaTime);
 			timer.OnUpdate(timeSlice);
 
-			Color color = multiRenderer.Color;
-			color.a = startAlpha + (endAlpha - startAlpha) * interpolate.Transform(timer.Progress);
-
 			if (timer.IsFinished)
 			{
-				color.a = endAlpha;
-
 				// Stop receiving update events, animation is finished
 				enabled = false;
 
@@ -86,7 +82,7 @@ namespace PJ
 				}
 			}
 
-			multiRenderer.Color = color;
+			attributeAnimator.ApplyAttributeValueFor(startAlpha, endAlpha, interpolate.Transform(timer.Progress));
 		}
 	}
 }

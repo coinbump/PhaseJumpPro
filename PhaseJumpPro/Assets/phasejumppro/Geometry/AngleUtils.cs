@@ -56,15 +56,15 @@ namespace PJ
 			return DegreeAngleToVector2(angle.angle * 360.0f, angle.magnitude);
 		}
 
-		public static Vector2 DegreeAngleToVector2(float degreeAngle, float distance)
+		public static Vector2 DegreeAngleToVector2(float degreeAngle, float magnitude)
 		{
 			Vector2 result = new Vector2(0, 0);
 
 			float sinVal = Mathf.Sin(degreeAngle * Mathf.Deg2Rad);
 			float cosVal = Mathf.Cos(degreeAngle * Mathf.Deg2Rad);
 
-			float x = distance * sinVal;
-			float y = distance * cosVal * Vector2.up.y;
+			float x = magnitude * sinVal;
+			float y = magnitude * cosVal * Vector2.up.y;
 			result.x = x;
 			result.y = y;
 

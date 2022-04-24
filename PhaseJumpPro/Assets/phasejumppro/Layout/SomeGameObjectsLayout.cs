@@ -28,7 +28,9 @@ namespace PJ
         /// </summary>
         public abstract void ApplyLayout();
 
-        public virtual void Start()
+        protected virtual void Awake() { }
+
+        protected virtual void Start()
         {
             ApplyLayout();
         }
@@ -39,7 +41,8 @@ namespace PJ
         }
 
 #if UNITY_EDITOR
-        public virtual void OnValidate()
+
+        protected virtual void OnValidate()
         {
             ApplyLayout();
         }

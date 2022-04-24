@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 /*
@@ -170,5 +171,22 @@ namespace PJ
 
 			SnapPathMover(pathMover, pathMover.Progress, force);
 		}
+
+#if UNITY_EDITOR
+		[CustomEditor(typeof(SomeMovePath))]
+		public class Editor : UnityEditor.Editor
+		{
+			public override void OnInspectorGUI()
+			{
+				DrawDefaultInspector();
+
+				if (GUILayout.Button("Snap"))
+				{
+					SomeMovePath movePath = (SomeMovePath)target;
+					movePath.SnapAllToStartPosition();
+				}
+			}
+		}
+#endif
 	}
 }

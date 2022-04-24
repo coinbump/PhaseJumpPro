@@ -16,39 +16,27 @@ namespace PJ
 			Selected
 		}
 
-		public static void DrawConnectingLines(List<GameObject> objects, RenderState renderState)
-		{
-			if (objects.Count == 0) { return; }
+		public const float DefaultPathStep = 0.025f;
 
-			bool hasFirstPosition = false;
-			Vector3 prevPosition = new Vector3();
-			Vector3 positionStart, positionEnd;
+		public static void DrawPath(SomePath path, float step, Transform inTransform, RenderState renderState)
+        {
+			PreDraw(renderState);
 
-			foreach (GameObject go in objects)
-			{
-				Vector3 position = go.transform.position;
-				positionStart = prevPosition;
-				positionEnd = position;
+			for (float i = 0; i < 1.0f; i += step)
+            {
+				var start = path.PositionAt(i);
+				var end = path.PositionAt(Mathf.Min(1.0f, i + step));
 
-				if (hasFirstPosition)
-				{
-					switch (renderState)
-					{
-						case RenderState.Default:
-							Gizmos.color = Color.white;
-							break;
-						case RenderState.Selected:
-							Gizmos.color = GUI.skin.settings.selectionColor;
-							break;
-					}
-					Gizmos.DrawLine(positionStart, positionEnd);
+				if (null != inTransform) {
+					start = inTransform.TransformPoint(start);
+					end = inTransform.TransformPoint(end);
 				}
-				hasFirstPosition = true;
-				prevPosition = position;
-			}
-		}
 
-		public static void DrawLine(Vector3 start, Vector3 end, RenderState renderState)
+				Gizmos.DrawLine(start, end);
+			}
+        }
+
+		public static void PreDraw(RenderState renderState)
         {
 			switch (renderState)
 			{
@@ -59,22 +47,42 @@ namespace PJ
 					Gizmos.color = GUI.skin.settings.selectionColor;
 					break;
 			}
+		}
 
+		public static void DrawConnectingLines(List<GameObject> objects, RenderState renderState)
+		{
+			if (objects.Count == 0) { return; }
+
+			bool hasFirstPosition = false;
+			Vector3 prevPosition = new Vector3();
+			Vector3 positionStart, positionEnd;
+
+			PreDraw(renderState);
+
+			foreach (GameObject go in objects)
+			{
+				Vector3 position = go.transform.position;
+				positionStart = prevPosition;
+				positionEnd = position;
+
+				if (hasFirstPosition)
+				{
+					Gizmos.DrawLine(positionStart, positionEnd);
+				}
+				hasFirstPosition = true;
+				prevPosition = position;
+			}
+		}
+
+		public static void DrawLine(Vector3 start, Vector3 end, RenderState renderState)
+        {
+			PreDraw(renderState);
 			Gizmos.DrawLine(start, end);
 		}
 
 		public static void DrawCircle(Vector3 center, float radius, RenderState renderState)
 		{
-			switch (renderState)
-			{
-				case RenderState.Default:
-					Gizmos.color = Color.white;
-					break;
-				case RenderState.Selected:
-					Gizmos.color = GUI.skin.settings.selectionColor;
-					break;
-			}
-
+			PreDraw(renderState);
 			float theta = 0.0f;
 			float x = radius * Mathf.Cos(theta);
 			float y = radius * Mathf.Sin(theta);
@@ -95,16 +103,7 @@ namespace PJ
 
 		public static void DrawRect(Vector3 center, float width, float height, RenderState renderState)
 		{
-			switch (renderState)
-			{
-				case RenderState.Default:
-					Gizmos.color = Color.white;
-					break;
-				case RenderState.Selected:
-					Gizmos.color = GUI.skin.settings.selectionColor;
-					break;
-			}
-
+			PreDraw(renderState);
 			float halfWidth = width / 2.0f;
 			float halfHeight = height / 2.0f;
 			Vector3 topLeft = new Vector3(center.x - halfWidth, center.y - halfHeight, 0);

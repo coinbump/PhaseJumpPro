@@ -13,7 +13,7 @@ namespace PJ
     /// </summary>
     public class HFlow : Layout2D
     {
-        public float spacing = 0;
+        public float spacing = 1.0f;
 
         public override Vector3 Size()
         {
