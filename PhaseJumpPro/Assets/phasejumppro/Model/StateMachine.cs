@@ -34,8 +34,8 @@ namespace PJ
 			}
         }
 
-		public T state { get; protected set; }
-		public T prevState { get; protected set; }
+		protected T state;
+		protected T prevState;
 
 		/// <summary>
         /// Broadcast state change events
@@ -71,6 +71,8 @@ namespace PJ
 				isLocked = value;
             }
         }
+
+		public T PrevState => prevState;
 
 		public StateMachine()
         {

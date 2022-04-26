@@ -14,7 +14,7 @@ namespace PJ
     /// </summary>
     public class BezierPath : SomePath
     {
-        public List<Vector3> controlPoints;
+        public List<Vector3> controlPoints = new List<Vector3>();
 
         public BezierPath(List<Vector3> controlPoints)
         {

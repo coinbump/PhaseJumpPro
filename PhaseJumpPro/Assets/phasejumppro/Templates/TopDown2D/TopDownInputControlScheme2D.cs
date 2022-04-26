@@ -20,7 +20,7 @@ namespace PJ
 
         public float minMoveSpeed;
         public float maxMoveSpeed = 1.0f;
-        public float deadZone;
+        public float deadZone = 0.025f;
 
         /// <summary>
         /// Limits axes of movement to N axes
@@ -51,7 +51,7 @@ namespace PJ
 
             //Debug.Log("Input Move: " + context.ToString());
 
-            var angleAxisLiter = new AngleAxisLimiter2D(axisLimit);
+            var angleAxisLimiter = new AngleAxisLimiter2D(axisLimit);
 
             var axisVector = context.ReadValue<Vector2>();
             var angle = AngleUtils.Vector2ToDegreeAngle(axisVector);
@@ -66,7 +66,7 @@ namespace PJ
             var interpolatedFactor = interpolate.Transform(factor);
             var moveSpeed = minMoveSpeed + ((maxMoveSpeed - minMoveSpeed) * interpolatedFactor);
 
-            var limitedAngle = angleAxisLiter.LimitAngle(angle);
+            var limitedAngle = angleAxisLimiter.LimitAngle(angle);
             var velocity = AngleUtils.DegreeAngleToVector2(limitedAngle, moveSpeed);
 
             node.Velocity = velocity;

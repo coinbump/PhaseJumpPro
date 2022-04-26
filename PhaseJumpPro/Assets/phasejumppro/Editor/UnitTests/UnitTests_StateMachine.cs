@@ -68,7 +68,7 @@ namespace PJ {
 			Assert.AreEqual(test.finishedCount, 2);
 
 			test.State = TestEnum.Test2;
-			Assert.AreEqual(TestEnum.Test1, test.prevState);
+			Assert.AreEqual(TestEnum.Test1, test.PrevState);
 		}
     }
    }

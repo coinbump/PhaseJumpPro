@@ -121,7 +121,7 @@ namespace PJ
         [Test]
         public void TextGridBoard_Axial()
         {
-            var board = new GridBoard<GridTile>();
+            var board = new MatrixAxial();
             Assert.AreEqual(1, board.NextAxialIndex(0, AxialDirection.Right));
             Assert.AreEqual(2, board.NextAxialIndex(1, AxialDirection.Right));
             Assert.AreEqual(3, board.NextAxialIndex(2, AxialDirection.Right));

@@ -50,7 +50,7 @@ namespace PJ
 
 		public void Undo()
 		{
-			if (StateType.Complete == stateMachine.state) {
+			if (StateType.Complete == stateMachine.State) {
 				OnUndo();
 				stateMachine.State = StateType.Reversed;
 			}

@@ -40,14 +40,14 @@ namespace PJ
             return Vector3.zero;
         }
 
-#if UNITY_EDITOR
-
         protected virtual void OnValidate()
         {
             ApplyLayout();
         }
 
-		[CustomEditor(typeof(SomeGameObjectsLayout))]
+#if UNITY_EDITOR
+
+        [CustomEditor(typeof(SomeGameObjectsLayout))]
 		public class Editor : UnityEditor.Editor
 		{
 			public override void OnInspectorGUI()

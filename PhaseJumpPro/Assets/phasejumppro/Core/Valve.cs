@@ -38,7 +38,7 @@ namespace PJ
 			set {
 				onStateDuration = value;
 
-				if (stateMachine.state == StateType.On) { 
+				if (stateMachine.State == StateType.On) { 
 					if (onStateDuration == null)
 					{
 						stateMachine.SetStateDuration(0);
@@ -61,7 +61,7 @@ namespace PJ
 			{
 				offStateDuration = value;
 
-				if (stateMachine.state == StateType.Off)
+				if (stateMachine.State == StateType.Off)
 				{
 					if (offStateDuration == null)
 					{
@@ -115,7 +115,7 @@ namespace PJ
 				return;
 			}
 
-			switch (stateMachine.state)
+			switch (stateMachine.State)
 			{
 				case StateType.TurnOn:
 					if (turnOnTimer != null) {
@@ -144,7 +144,7 @@ namespace PJ
 		}
 
 		protected override void OnStateFinish(StateMachine<StateType> inStateMachine) {
-			switch (stateMachine.state)
+			switch (stateMachine.State)
 			{
 				case StateType.Off:
 					if (turnOnTimer != null) {
@@ -166,7 +166,7 @@ namespace PJ
 		{
 			if (inStateMachine != stateMachine) { return; }
 
-			switch (stateMachine.state) {
+			switch (stateMachine.State) {
 				case StateType.Off:
 					stateMachine.ResetStateTimer();
 					ValveState = 0;
@@ -186,7 +186,7 @@ namespace PJ
 		}
 
 		protected virtual void OnTurnFinish() {
-			switch (stateMachine.state) {
+			switch (stateMachine.State) {
 				case StateType.TurnOff:
 					stateMachine.State = StateType.Off;
 					break;
@@ -233,7 +233,7 @@ namespace PJ
 				return;
 			}
 
-			switch (stateMachine.state) {
+			switch (stateMachine.State) {
 				case StateType.Off:
 				case StateType.TurnOff:
 					TurnOn(inputEffect);

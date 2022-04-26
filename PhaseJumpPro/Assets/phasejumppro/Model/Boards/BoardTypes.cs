@@ -21,7 +21,18 @@ namespace PJ
 		East,
 		South,
 		Southeast,
-		Southwest
+		Southwest,
+		West
+	}
+
+	/// <summary>
+    /// Axis limits for map direction movement
+    /// </summary>
+	public enum MapDirectionAxisLimit
+	{
+		FourWay,
+
+		EightWay
 	}
 
 	/// <summary>
@@ -56,10 +67,13 @@ namespace PJ
 }
 
 
-namespace EnumExtension
+namespace PJ
 {
-	public static class HexBoardDirectionExtensions
+	public static class Extensions_MapDirection
 	{
+		/// <summary>
+        /// Returns the opposite direction
+        /// </summary>
 		public static MapDirection Opposite(this MapDirection direction)
 		{
 			switch (direction)
@@ -79,6 +93,79 @@ namespace EnumExtension
 			}
 
 			return MapDirection.North;
+		}
+
+		/// <summary>
+		/// Returns offset in matrix space (top-left is 0, 0)
+		/// </summary>
+		public static Vector2Int Offset(this MapDirection state)
+		{
+			switch (state)
+			{
+				case MapDirection.Northwest:
+					return new Vector2Int(-1, -1);
+				case MapDirection.North:
+					return new Vector2Int(0, -1);
+				case MapDirection.Northeast:
+					return new Vector2Int(1, -1);
+				case MapDirection.East:
+					return new Vector2Int(1, 0);
+				case MapDirection.Southeast:
+					return new Vector2Int(1, 1);
+				case MapDirection.South:
+					return new Vector2Int(0, 1);
+				case MapDirection.Southwest:
+					return new Vector2Int(-1, 1);
+				case MapDirection.West:
+					return new Vector2Int(-1, 0);
+			}
+
+			return new Vector2Int(0, 0);
+		}
+	}
+
+	public static class MapUtils
+    {
+		/// <summary>
+        /// Translate a degree angle to a map direction
+        /// </summary>
+        public static MapDirection DegreeAngleToMapDirection(float degreeAngle, MapDirectionAxisLimit axisLimit)
+		{
+			var axisLimitNumber = 4;
+			switch (axisLimit)
+			{
+				case MapDirectionAxisLimit.EightWay:
+					axisLimitNumber = 8;
+					break;
+			}
+
+			var angleAxisLimiter = new AngleAxisLimiter2D(axisLimitNumber);
+			var limitedAngle = angleAxisLimiter.LimitAngle(degreeAngle);
+
+			var result = MapDirection.North;
+
+			switch (Mathf.RoundToInt(limitedAngle))
+			{
+				case 0:
+				case 360:
+					return MapDirection.North;
+				case 45:
+					return MapDirection.Northeast;
+				case 90:
+					return MapDirection.East;
+				case 135:
+					return MapDirection.Southeast;
+				case 180:
+					return MapDirection.South;
+				case 225:
+					return MapDirection.Southwest;
+				case 270:
+					return MapDirection.West;
+				case 315:
+					return MapDirection.Northwest;
+			}
+
+			return result;
 		}
 	}
 }
