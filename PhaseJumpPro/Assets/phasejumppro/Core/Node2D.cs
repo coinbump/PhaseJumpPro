@@ -99,7 +99,14 @@ namespace PJ
 			}
 		}
 
-		public MoveType VelocityType => velocityType;
+		public MoveType VelocityType
+		{
+			get => velocityType;
+			set
+			{
+				velocityType = value;
+			}
+		}
 
 		/// <summary>
 		/// If true, modulate rotation values (stay within range of 0-1.0)

@@ -49,16 +49,21 @@ namespace PJ
         {
             if (null == node) { return; }
 
+            // Don't use Nod2D velocity (it is constant). Use rigidbody velocity, which decays
+            // This results in more fluid movement
+            node.VelocityType = Node2D.MoveType.None;
+
             //Debug.Log("Input Move: " + context.ToString());
 
             var angleAxisLimiter = new AngleAxisLimiter2D(axisLimit);
+            var rigidbody = node.GetComponent<Rigidbody2D>();
 
             var axisVector = context.ReadValue<Vector2>();
             var angle = AngleUtils.Vector2ToDegreeAngle(axisVector);
             var distance = AngleUtils.Distance(Vector2.zero, axisVector);
             if (distance <= deadZone)
             {
-                node.Velocity = Vector2.zero;
+                rigidbody.velocity = Vector2.zero;
                 return;
             }
 
@@ -69,7 +74,7 @@ namespace PJ
             var limitedAngle = angleAxisLimiter.LimitAngle(angle);
             var velocity = AngleUtils.DegreeAngleToVector2(limitedAngle, moveSpeed);
 
-            node.Velocity = velocity;
+            rigidbody.velocity = velocity;
         }
     }
 }
