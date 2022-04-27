@@ -495,6 +495,7 @@ GameObject:
   - component: {fileID: 1327761516}
   - component: {fileID: 1327761512}
   - component: {fileID: 1327761517}
+  - component: {fileID: 1327761518}
   m_Layer: 0
   m_Name: bke-paddle
   m_TagString: Untagged
@@ -529,7 +530,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1327761510}
-  m_BodyType: 0
+  m_BodyType: 1
   m_Simulated: 1
   m_UseFullKinematicContacts: 1
   m_UseAutoMass: 0
@@ -641,6 +642,52 @@ MonoBehaviour:
   maxMoveSpeed: 10
   deadZone: 0.025
   axisLimit: 0
+--- !u!114 &1327761518
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1327761510}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Actions: {fileID: -944628639613478452, guid: 274d509d598504395afa22fc76c56e50, type: 3}
+  m_NotificationBehavior: 2
+  m_UIInputModule: {fileID: 0}
+  m_DeviceLostEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_DeviceRegainedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ControlsChangedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ActionEvents:
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1327761517}
+        m_TargetAssemblyTypeName: PJ.TopDownInputControlScheme2D, Assembly-CSharp
+        m_MethodName: OnInputMove
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 4865e950-5fed-4ef2-9245-8901232f9144
+    m_ActionName: Paddle/Move[/DualShock4GamepadHID/leftStick]
+  m_NeverAutoSwitchControlSchemes: 0
+  m_DefaultControlScheme: 
+  m_DefaultActionMap: Paddle
+  m_SplitScreenIndex: -1
+  m_Camera: {fileID: 0}
 --- !u!1 &1622377598
 GameObject:
   m_ObjectHideFlags: 0
@@ -793,7 +840,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   initialState: 
   valueTags: []
-  typeTags: []
+  typeTags:
+  - ball
   cullTypes: 
   rotationDegreeAngle: 0
   velocityType: 2
