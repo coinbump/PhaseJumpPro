@@ -343,7 +343,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 68818881}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.98, y: 6.44, z: 0}
+  m_LocalPosition: {x: 0, y: 6.44, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -634,9 +634,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 1327761510}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 93d07093e9c6847c88db21d6f9333dad, type: 3}
+  m_Script: {fileID: 11500000, guid: ba6819ca5cb574a929d0d3c9ab7e77d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  minMoveSpeed: 10
+  maxMoveSpeed: 10
+  deadZone: 0.025
+  axisLimit: 0
 --- !u!1 &1622377598
 GameObject:
   m_ObjectHideFlags: 0
@@ -768,7 +772,6 @@ GameObject:
   - component: {fileID: 1862825135}
   - component: {fileID: 1862825138}
   - component: {fileID: 1862825134}
-  - component: {fileID: 1862825133}
   m_Layer: 0
   m_Name: bke-ball
   m_TagString: Untagged
@@ -776,18 +779,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1862825133
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1862825132}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9c3c5bf933e4e43ee889b033e74f3e58, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1862825134
 MonoBehaviour:
   m_ObjectHideFlags: 0

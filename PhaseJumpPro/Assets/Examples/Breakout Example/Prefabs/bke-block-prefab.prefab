@@ -122,7 +122,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   initialState: 
   valueTags: []
-  typeTags: []
+  typeTags:
+  - block
   cullTypes: 
   rotationDegreeAngle: 0
   velocityType: 0
