@@ -8,6 +8,8 @@ using PJ;
 /// </summary>
 public class BKEBall : Node2D
 {
+    public AudioClip hitBlockClip;
+
     protected Vector3 initialPosition;
     protected Vector2 initialVelocity;
 
@@ -35,6 +37,8 @@ public class BKEBall : Node2D
 
             if (isFirst)
             {
+                GetComponent<AudioSource>().PlayOneShot(hitBlockClip);
+
                 isFirst = false;
 
                 var contacts = new List<ContactPoint2D>();
@@ -44,6 +48,8 @@ public class BKEBall : Node2D
 
             Destroy(collider.gameObject);
         }
+
+
     }
 
     protected override void OnBecameInvisible()
