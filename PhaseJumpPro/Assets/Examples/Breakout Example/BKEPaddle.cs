@@ -20,7 +20,7 @@ public class BKEPaddle : Node2D
         var factor = (contactPoint.point.x - myCollider.bounds.center.x) / (myCollider.bounds.size.x / 2.0f);
 
         var reflectDegreeAngle = factor * 45.0f;
-        Debug.Log("Paddle factor: " + factor.ToString() + "Reflect angle: " + reflectDegreeAngle);
+        //Debug.Log("Paddle factor: " + factor.ToString() + "Reflect angle: " + reflectDegreeAngle);
 
         node.Velocity = AngleUtils.DegreeAngleToVector2(reflectDegreeAngle, 10);
     }
