@@ -8,6 +8,17 @@ using PJ;
 /// </summary>
 public class BKEBall : Node2D
 {
+    protected Vector3 initialPosition;
+    protected Vector2 initialVelocity;
+
+    protected override void Awake()
+    {
+        base.Awake();
+
+        initialPosition = transform.position;
+        initialVelocity = GetComponent<Node2D>().Velocity;
+    }
+
     protected void OnCollisionEnter2D(Collision2D collision)
     {
         var myCollider = GetComponent<CircleCollider2D>();
@@ -33,5 +44,11 @@ public class BKEBall : Node2D
 
             Destroy(collider.gameObject);
         }
+    }
+
+    protected override void OnBecameInvisible()
+    {
+        transform.position = initialPosition;
+        GetComponent<Node2D>().Velocity = initialVelocity;
     }
 }
