@@ -4,15 +4,15 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /*
- * RATING: 5 stars. Simple utility class for 2D games with Unit Tests
- * CODE REVIEW: 4.8.22
+ * RATING: 5 stars
+ * Simple utility class for 2D games with Unit Tests
+ * CODE REVIEW: 4.26.22
  */
 namespace PJ
 {
 	/// <summary>
 	/// Provides utility methods for simplifying common 2D game scenarios
 	/// </summary>
-	[RequireComponent(typeof(Rigidbody2D))]
 	public class Node2D : SomeNode
 	{
 		/// <summary>
@@ -20,13 +20,13 @@ namespace PJ
 		/// </summary>
 		public enum MoveType
 		{
-			// No movement
+			// No fixed movement (use forces)
 			None,
 
 			// Moves in direction it is facing (based on 0 degree meaning up)
 			Forward,
 
-			// Moves based on vector
+			// Constant velocity (re-applied each frame)
 			Vector
 		}
 
@@ -90,16 +90,6 @@ namespace PJ
 				acceleration = value;
 			}
 		}
-
-		public float ForwardAcceleration
-        {
-			get => acceleration.x;
-			set
-            {
-				acceleration.x = value;
-				acceleration.y = 0;
-            }
-        }
 
 		public float MaxVelocity
 		{
@@ -224,16 +214,28 @@ namespace PJ
             base.FixedUpdate();
 
 			CheckAcceleration(new TimeSlice(Time.deltaTime), UpdateType.Fixed);
+
+            // Fixed velocity must be re-applied each frame
+            if (ShouldMoveForUpdate(UpdateType.Fixed))
+            {
+                UpdateVelocity();
+            }
         }
 
-		protected override void OnUpdate(TimeSlice time)
+        protected override void OnUpdate(TimeSlice time)
 		{
 			base.OnUpdate(time);
 
 			CheckAcceleration(new TimeSlice(Time.deltaTime), UpdateType.Default);
-		}
 
-		protected void CheckAcceleration(TimeSlice time, UpdateType updateType)
+			// Fixed velocity must be re-applied each frame
+			if (ShouldMoveForUpdate(UpdateType.Default))
+            {
+                UpdateVelocity();
+            }
+        }
+
+        protected void CheckAcceleration(TimeSlice time, UpdateType updateType)
 		{
 			// Check velocity
 			if (!ShouldMoveForUpdate(updateType)) { return; }
