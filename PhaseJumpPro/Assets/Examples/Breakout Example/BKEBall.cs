@@ -48,8 +48,6 @@ public class BKEBall : Node2D
 
             Destroy(collider.gameObject);
         }
-
-
     }
 
     protected override void OnBecameInvisible()
