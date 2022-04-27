@@ -261,6 +261,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1242735870}
   - component: {fileID: 1242735869}
+  - component: {fileID: 1242735871}
+  - component: {fileID: 1242735872}
   m_Layer: 0
   m_Name: Circle
   m_TagString: Untagged
@@ -327,7 +329,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1242735868}
-  m_LocalRotation: {x: 0, y: 0, z: -0.439704, w: 0.89814276}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -2.72, y: -0.05, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -336,6 +338,38 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -52.17}
+--- !u!114 &1242735871
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1242735868}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 522ac825cba574d7d8a6981ba17f12c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  anglesPerSecond: 30
+--- !u!114 &1242735872
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1242735868}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d0a89e4501794c1b92be71e68dc2eec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  initialState: 
+  valueTags: []
+  typeTags: []
+  cullTypes: 
+  rotationDegreeAngle: 0
+  velocityType: 0
+  velocity: {x: 0, y: 0}
 --- !u!1 &1268360597
 GameObject:
   m_ObjectHideFlags: 0
