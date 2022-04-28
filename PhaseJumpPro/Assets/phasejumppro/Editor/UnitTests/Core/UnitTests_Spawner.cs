@@ -27,6 +27,7 @@ namespace PJ
 			spawner.spawnAction = AddSpawn;
 
 			spawner.random = fixedRandom;
+			spawner.spawnItems.Clear();
 			spawner.spawnItems.Add(new SpawnTable.Item(gameObject1, 0.5f));
 			spawner.spawnItems.Add(new SpawnTable.Item(gameObject2, 0.5f));
 

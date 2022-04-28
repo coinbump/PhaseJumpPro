@@ -8,6 +8,11 @@ using UnityEngine;
  */
 namespace PJ
 {
+	public enum StagePosition
+    {
+		Left, Right, Top, Bottom
+    }
+
 	/// <summary>
 	/// A stage entity exists on a stage, which handles common animations for presenting
 	/// and dismissing objects.
