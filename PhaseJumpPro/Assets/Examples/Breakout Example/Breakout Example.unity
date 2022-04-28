@@ -393,6 +393,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 027d23618c74e48ce9c5023e2dced022, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  identifier: 
   initialState: 
   valueTags: []
   typeTags: []
@@ -814,6 +815,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a47b33c7f812349f2b2b7cf11a0bdd28, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  identifier: 
   initialState: 
   valueTags: []
   typeTags:
@@ -1054,6 +1056,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   scanType: 1
   targetLimitType: 1
+  screenCamera: {fileID: 1622377600}
 --- !u!4 &2008986893
 Transform:
   m_ObjectHideFlags: 0
