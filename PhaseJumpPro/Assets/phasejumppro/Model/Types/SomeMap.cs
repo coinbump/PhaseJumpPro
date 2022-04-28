@@ -15,7 +15,7 @@ namespace PJ
     {
         public abstract Value ValueFor(Key key);
 
-        public object this[Key key]
+        public Value this[Key key]
         {
             get { return ValueFor(key); }
         }

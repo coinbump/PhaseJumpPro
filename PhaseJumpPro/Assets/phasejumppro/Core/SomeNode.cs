@@ -13,12 +13,14 @@ namespace PJ
 	/// <summary>
 	/// Provides utility methods for simplifying common game scenarios
 	/// </summary>
-	public abstract class SomeNode : MonoBehaviour, SomeStateListener<string>, SomeListener
+	public abstract class SomeNode : MonoBehaviour, SomeStateListener<string>, SomeListener, Identifiable
 	{
 		public enum CullType
 		{
 			Invisible, ZeroAlpha
 		}
+
+		public string identifier;
 
 		[HideInInspector]
 		public Tags tags = new Tags();
@@ -32,6 +34,7 @@ namespace PJ
 			public string value;    // Type is inferred from value
 		}
 
+		public string Identifier { get => identifier; set => identifier = value; }
 		public abstract bool IsKinematic { get; }
 
 		/// <summary>
@@ -89,7 +92,7 @@ namespace PJ
         /// </summary>
 		protected SomeCore core;
 
-		protected MultiRenderer multiRenderer;
+		public MultiRenderer multiRenderer;
 
 		protected virtual void Awake()
 		{

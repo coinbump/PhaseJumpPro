@@ -31,52 +31,56 @@ namespace PJ
 
 		public float spacing = 0.1f;
 
-		[SerializeField]
-		protected float floatValue = 0;
+		// <summary>
+        // If > 0, layout the progress segments in rows
+        // </summary>
+		public int maxRowWidth = 0;
 
-		[SerializeField]
-		protected int intValue = 0;
+        // TODO: NOT YET IMPLEMENTED!
+        public float rowSpacing = 0.1f;
+
+        [SerializeField]
+		protected float value = 0;
 
 		protected List<GameObject> emptySegments = new List<GameObject>();
 		protected List<SpriteRenderer> emptySpriteRenderers = new List<SpriteRenderer>();
 		protected List<GameObject> filledSegments = new List<GameObject>();
 		protected List<SpriteRenderer> filledSpriteRenderers = new List<SpriteRenderer>();
 
-		public float FloatValue
+		public float Value
         {
-			get => floatValue;
+			get => value;
 			set
             {
-				if (floatValue != value)
+				if (this.value != value)
 				{
-					floatValue = value;
-					if (ValueType.Normal == valueType)
-					{
-						UpdateSegments();
-					}
+					this.value = value;
+                    UpdateSegments();
 				}
             }
         }
 
-		public int IntValue
-		{
-			get => intValue;
-			set
+		/// <summary>
+        /// Width of the node centers (not including node bounds)
+        /// </summary>
+		public float InnerWidth
+        {
+			get
 			{
-				if (intValue != value)
+				var columnCount = segmentCount;
+				if (maxRowWidth > 0)
 				{
-					intValue = value;
-					if (ValueType.Int == valueType)
-					{
-						UpdateSegments();
-					}
+					columnCount = maxRowWidth;
 				}
-			}
-		}
 
-		void Start()
+				var result = spacing * (columnCount - 1);
+				return result;
+			}
+        }
+
+	void Start()
 		{
-			if (null == emptySegment || null == filledSegment)
+			if (null == filledSegment)
             {
 				Debug.Log("Error. Missing segment object for progress bar");
 				return;
@@ -84,6 +88,26 @@ namespace PJ
 
 			BuildSegments();
 			UpdateSegments();
+		}
+
+		protected Vector3 PositionFor(int index)
+        {
+			var column = index;
+
+			float y = 0;
+			if (maxRowWidth > 0)
+			{
+				column = index % maxRowWidth;
+
+				var row = Mathf.FloorToInt((float)index / (float)maxRowWidth);
+				y = (row * rowSpacing) * Vector2.down.y;
+			}
+
+			var halfSize = InnerWidth / 2.0f;
+			var x = -halfSize;
+			x += column * spacing;
+
+			return new Vector3(x, y, 0);
 		}
 
 		protected void BuildSegments()
@@ -100,28 +124,23 @@ namespace PJ
 			filledSpriteRenderers.Clear();
 
 			var size = spacing * (segmentCount - 1);
-			var halfSize = size / 2.0f;
-			var x = -halfSize;
 
 			for (int i = 0; i < segmentCount; i++)
             {
-				var emptySegment = Instantiate(this.emptySegment, Vector3.zero, Quaternion.identity);
-				var filledSegment = Instantiate(this.filledSegment, Vector3.zero, Quaternion.identity);
+				var position = PositionFor(i);
 
-				emptySegment.transform.parent = transform;
-				filledSegment.transform.parent = transform;
-
-				emptySegments.Add(emptySegment);
-                emptySpriteRenderers.Add(emptySegment.GetComponent<SpriteRenderer>());
+				var filledSegment = Instantiate(this.filledSegment, transform);
 				filledSegments.Add(filledSegment);
 				filledSpriteRenderers.Add(filledSegment.GetComponent<SpriteRenderer>());
-
-				var position = new Vector3(x, 0, 0);
-
-				emptySegment.transform.localPosition = position;
 				filledSegment.transform.localPosition = position;
 
-				x += spacing;
+				if (null != this.emptySegment)
+				{
+					var emptySegment = Instantiate(this.emptySegment, transform);
+					emptySegments.Add(emptySegment);
+					emptySpriteRenderers.Add(emptySegment.GetComponent<SpriteRenderer>());
+					emptySegment.transform.localPosition = position;
+				}
 			}
 		}
 
@@ -132,10 +151,10 @@ namespace PJ
 			switch (valueType)
             {
 				case ValueType.Int:
-					numSegmentsFilled = Math.Min(filledSegments.Count, intValue);
+					numSegmentsFilled = Math.Min(filledSegments.Count, (int)value);
 					break;
 				case ValueType.Normal:
-					numSegmentsFilled = (int)(filledSegments.Count * floatValue);
+					numSegmentsFilled = (int)(filledSegments.Count * value);
 					break;
 			}
 
@@ -143,8 +162,15 @@ namespace PJ
             {
 				var isEmpty = (i + 1) > numSegmentsFilled;
 
-				emptySpriteRenderers[i].enabled = isEmpty;
-				filledSpriteRenderers[i].enabled = !isEmpty;
+				if (i < emptySpriteRenderers.Count)
+				{
+					emptySpriteRenderers[i].enabled = isEmpty;
+				}
+
+				if (i < filledSpriteRenderers.Count)
+				{
+					filledSpriteRenderers[i].enabled = !isEmpty;
+				}
 			}
         }
 	}

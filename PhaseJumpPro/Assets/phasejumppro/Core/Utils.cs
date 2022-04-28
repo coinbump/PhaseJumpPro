@@ -42,9 +42,9 @@ namespace PJ
 #endif
 		}
 
-		public static Vector2 ScreenWorldSize()
+		public static Vector2 ScreenWorldSize(Camera camera)
         {
-			var halfScreenHeight = Camera.main.orthographicSize;
+			var halfScreenHeight = camera.orthographicSize;
 			var screenHeight = halfScreenHeight * 2.0f;
 			var ratio = (float)Screen.width / (float)Screen.height;
 			var xSize = screenHeight * ratio;

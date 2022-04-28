@@ -18,7 +18,7 @@ namespace PJ
     {
         public int flashCount = 3;
 
-        protected bool isFlashOn;
+        protected bool isFlashOn = true;
         protected int flashCountState;
         protected float flashDuration;
         protected float timer;
@@ -42,7 +42,7 @@ namespace PJ
             base.Reset();
 
             flashCountState = 0;
-            isFlashOn = false;
+            isFlashOn = true;
             timer = 0;
         }
 
@@ -60,6 +60,11 @@ namespace PJ
             {
                 timer -= flashDuration;
                 OnTimerFinish();
+
+                if (IsFinished)
+                {
+                    break;
+                }
             }
         }
 

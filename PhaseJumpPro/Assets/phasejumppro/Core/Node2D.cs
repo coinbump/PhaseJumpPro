@@ -147,17 +147,6 @@ namespace PJ
 				if (rotationDegreeAngle == newAngle) { return; }
 				rotationDegreeAngle = newAngle;
 
-				// If we are moving forward, update the velocity when the value changes
-				switch (velocityType)
-				{
-					case MoveType.Forward:
-						var velocityVector = AngleUtils.DegreeAngleToVector2(rotationDegreeAngle, velocity.x);
-						rigidbody.velocity = velocityVector;
-						break;
-					default:
-						break;
-				}
-
 				// Try-catch is for the unit test
 				try
 				{

@@ -23,8 +23,8 @@ namespace PJ
 
 			var spawnTable = gameObject1.AddComponent<SpawnTable>();
 			spawnTable.random = fixedRandom;
-			spawnTable.items.Add(new SpawnTable.Item(gameObject1, 0.5f));
-			spawnTable.items.Add(new SpawnTable.Item(gameObject2, 0.5f));
+			spawnTable.spawnItems.Add(new SpawnTable.Item(gameObject1, 0.5f));
+			spawnTable.spawnItems.Add(new SpawnTable.Item(gameObject2, 0.5f));
 
 			// FUTURE: add more unit tests if needed
 			var nextSpawn = spawnTable.NextSpawn();

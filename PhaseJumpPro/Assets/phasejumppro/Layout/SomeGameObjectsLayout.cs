@@ -1,5 +1,6 @@
 ﻿using UnityEditor;
 using UnityEngine;
+using System.Collections.Generic;
 
 /*
  * RATING: 5 stars
@@ -31,6 +32,11 @@ namespace PJ
         protected virtual void Awake() { }
 
         protected virtual void Start()
+        {
+            ApplyLayout();
+        }
+
+        protected virtual void LateUpdate()
         {
             ApplyLayout();
         }

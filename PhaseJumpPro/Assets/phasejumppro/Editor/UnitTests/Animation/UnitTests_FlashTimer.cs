@@ -11,12 +11,6 @@ namespace PJ
 		{
 			var flashTimer = new FlashTimer(2, 1.0f);
 
-			Assert.AreEqual(false, flashTimer.IsFlashOn);
-
-			flashTimer.OnUpdate(new TimeSlice(0.5f));
-			Assert.AreEqual(false, flashTimer.IsFlashOn);
-
-			flashTimer.OnUpdate(new TimeSlice(0.5f));
 			Assert.AreEqual(true, flashTimer.IsFlashOn);
 
 			flashTimer.OnUpdate(new TimeSlice(0.5f));
@@ -24,6 +18,12 @@ namespace PJ
 
 			flashTimer.OnUpdate(new TimeSlice(0.5f));
 			Assert.AreEqual(false, flashTimer.IsFlashOn);
+
+			flashTimer.OnUpdate(new TimeSlice(0.5f));
+			Assert.AreEqual(false, flashTimer.IsFlashOn);
+
+			flashTimer.OnUpdate(new TimeSlice(0.5f));
+			Assert.AreEqual(true, flashTimer.IsFlashOn);
 
 			Assert.AreEqual(false, flashTimer.IsFinished);
 			flashTimer.OnUpdate(new TimeSlice(2.0f));

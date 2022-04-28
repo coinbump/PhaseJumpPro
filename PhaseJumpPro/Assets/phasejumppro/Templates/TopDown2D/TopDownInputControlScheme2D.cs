@@ -49,7 +49,7 @@ namespace PJ
         {
             if (null == node) { return; }
 
-            // Don't use Nod2D velocity (it is constant). Use rigidbody velocity, which decays
+            // Don't use Node2D Velocity (it is constant). Use rigidbody velocity, which decays
             // This results in more fluid movement
             node.VelocityType = Node2D.MoveType.None;
 

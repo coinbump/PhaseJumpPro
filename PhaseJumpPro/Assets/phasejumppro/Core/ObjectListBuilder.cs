@@ -48,7 +48,7 @@ namespace PJ
 				switch (method)
                 {
 					case Method.Random:
-						chooseIndex = Mathf.RoundToInt(random.Value * (objectList.Count - 1));
+						chooseIndex = Mathf.RoundToInt(random.Value * (float)(objectList.Count - 1));
 						break;
                 }
 

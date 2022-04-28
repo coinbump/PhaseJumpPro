@@ -10,7 +10,7 @@ using UnityEngine;
 // FUTURE: add unit tests
 namespace PJ
 {
-    public class WeaponEmitter2D : MonoBehaviour
+    public class WeaponEmitter2D : SomeEmitter
     {
         public class EventEmit : Event
         {
@@ -43,7 +43,6 @@ namespace PJ
             }
         }
 
-        public GameObject bulletObject;
         public bool isEmitterVelocityAdded = false;
 
         public Broadcaster broadcaster { get; protected set; } = new Broadcaster();
@@ -73,8 +72,10 @@ namespace PJ
             }
         }
 
-        public void Awake()
+        protected override void Awake()
         {
+            base.Awake();
+
             node = GetComponent<Node2D>();
             rigidbody2D = GetComponent<Rigidbody2D>();
 
@@ -83,16 +84,20 @@ namespace PJ
             updatables.Add(weaponBurstTimer);
         }
 
-        public void Start()
+        protected override void Start()
         {
+            base.Start();
+
             // Melee weapons need a parent so that their rotation pivot can be altered
             weaponEmitParent = new GameObject();
             weaponEmitParent.transform.parent = transform;
             weaponEmitParent.transform.localPosition = Vector3.zero;
         }
 
-        public void Update()
+        protected override void Update()
         {
+            base.Update();
+
             var iterUpdatables = new HashSet<Updatable>(updatables);
             foreach (Updatable updatable in iterUpdatables)
             {
@@ -118,6 +123,11 @@ namespace PJ
             for (int i = 0; i < weapon.emitCount; i++)
             {
                 var bullet = NewBullet();
+                if (null == bullet)
+                {
+                    break;
+                }
+
                 result.Add(bullet);
 
                 float angle = 0;
@@ -212,7 +222,7 @@ namespace PJ
 
         protected GameObject NewBullet()
         {
-            return Instantiate(bulletObject, transform.position, Quaternion.identity);
+            return Emit();
         }
 
         protected void OnBurstFinish()

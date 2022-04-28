@@ -28,7 +28,12 @@ namespace PJ
 
 		void Update()
 		{
-			if (null == node) { return; }
+			if (null == node) {
+				var eulerAngles = transform.eulerAngles;
+				eulerAngles.z -= anglesPerSecond * Time.deltaTime;
+				transform.localEulerAngles = eulerAngles;
+				return;
+			}
 
 			node.RotationDegreeAngle += anglesPerSecond * Time.deltaTime;
 		}

@@ -18,13 +18,17 @@ namespace PJ
 	public class SpawnTable : MonoBehaviour
 	{
 		[Serializable]
-		public struct Item
+		public class Item
 		{
 			[Tooltip("Object to be spawned (or null for empty)")]
 			public GameObject spawnObject;
 
 			[Tooltip("Weighted value for spawning this element.")]
-			public float weight;
+			public float weight = 1.0f;
+
+			public Item()
+            {
+            }
 
 			public Item(GameObject spawnObject, float weight)
             {
@@ -34,7 +38,7 @@ namespace PJ
 		}
 
 		[Tooltip("Items in the spawn table.")]
-		public List<Item> items = new List<Item>();
+		public List<Item> spawnItems = new List<Item>() { new Item() };
 
 		public SomeRandom random;
 
@@ -48,7 +52,7 @@ namespace PJ
 
 			float totalWeight = 0.0f;
 
-			foreach (Item item in items)
+			foreach (Item item in spawnItems)
 			{
 				totalWeight += item.weight;
 				wr.Add(new Weight(item.weight, item));
