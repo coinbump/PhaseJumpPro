@@ -19,7 +19,7 @@ namespace PJ
         /// If true, layout will be updated automatically.
         /// If false, you must update layout manually
         /// </summary>
-        public bool autoUpdate = true;
+        public bool autoApply = true;
 
         /// <summary>
         /// Return the bounds-size of the layout
@@ -39,7 +39,7 @@ namespace PJ
 
         protected virtual void Start()
         {
-            if (autoUpdate)
+            if (autoApply)
             {
                 ApplyLayout();
             }
@@ -47,7 +47,7 @@ namespace PJ
 
         protected virtual void LateUpdate()
         {
-            if (autoUpdate)
+            if (autoApply)
             {
                 ApplyLayout();
             }

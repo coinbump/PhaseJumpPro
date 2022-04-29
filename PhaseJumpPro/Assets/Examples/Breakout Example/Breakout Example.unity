@@ -326,7 +326,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a76243589eedc41deaae1eacdcde40c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  autoUpdate: 0
+  autoApply: 0
   width: 10
   spacing: {x: 3, y: 1}
 --- !u!114 &68818883
