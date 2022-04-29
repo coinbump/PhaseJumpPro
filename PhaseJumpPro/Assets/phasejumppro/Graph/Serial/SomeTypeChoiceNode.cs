@@ -10,7 +10,7 @@ namespace PJ
     namespace Graph
     {
         /// <summary>
-        /// Chooses a type (string). Types can be used to instantiate based on class name, asseet name, or identifier
+        /// Chooses a type (string). Types can be used to instantiate based on class name, asset name, or identifier
         /// </summary>
         public abstract class SomeTypeChoiceNode : SomeChoiceNode<string>
         {

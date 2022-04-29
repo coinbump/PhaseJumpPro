@@ -16,6 +16,12 @@ namespace PJ
     public abstract class SomeGameObjectsLayout : PJ.MonoBehaviour
     {
         /// <summary>
+        /// If true, layout will be updated automatically.
+        /// If false, you must update layout manually
+        /// </summary>
+        public bool autoUpdate = true;
+
+        /// <summary>
         /// Return the bounds-size of the layout
         /// </summary>
         /// <returns></returns>
@@ -33,12 +39,18 @@ namespace PJ
 
         protected virtual void Start()
         {
-            ApplyLayout();
+            if (autoUpdate)
+            {
+                ApplyLayout();
+            }
         }
 
         protected virtual void LateUpdate()
         {
-            ApplyLayout();
+            if (autoUpdate)
+            {
+                ApplyLayout();
+            }
         }
 
         public virtual Vector3 LayoutPositionAt(int index)

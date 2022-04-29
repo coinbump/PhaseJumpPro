@@ -1,4 +1,5 @@
 ﻿using System;
+using PJ;
 
 /*
  * RATING: 5 stars
@@ -7,10 +8,11 @@
  */
 namespace PJ
 {
-	/// <summary>
-	/// Some state machine.
-	/// </summary>
-	public abstract class SomeStateMachine
-	{
-	}
+    /// <summary>
+    /// Some state machine.
+    /// A state machine is a graph of states, with transition edges
+    /// </summary>
+    public interface SomeStateMachine
+    {
+    }
 }

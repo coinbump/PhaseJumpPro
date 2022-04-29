@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
 
 /*
  * RATING: 5 stars
@@ -10,36 +12,44 @@ namespace PJ
 	/// <summary>
 	/// State machine with state timers, to allow a state to last for N seconds
 	/// </summary>
-	public class StateMachine<T> : SomeStateMachine, Updatable
+	public partial class StateMachine<T> : Graph.CyclicGraph<StateMachine<T>.EdgeModel>, SomeStateMachine, Updatable
 	{
-		public class EventStateChange : Event
-		{
-			public T prevState { get; protected set; }
-			public T state { get; protected set; }
+		/// <summary>
+        /// Modifiers to modify the standard state behavior
+        /// </summary>
+		public HashSet<SomeModifier> modifiers = new HashSet<SomeModifier>();
 
-			public EventStateChange(T prevState, T state, object sentFrom) : base("", sentFrom)
+		public struct EdgeModel
+		{
+			/// <summary>
+            /// Inputs that cause a transition to the next state
+            /// </summary>
+			public List<string> inputs;
+
+			public EdgeModel(List<string> inputs)
 			{
-				this.prevState = prevState;
-				this.state = state;
+				this.inputs = inputs;
 			}
 		}
 
-		public class EventStateFinish : Event
-        {
-			public T state { get; protected set; }
+		public class Node : Graph.CyclicNode<EdgeModel>
+		{
+			public T state;
 
-			public EventStateFinish(T state, object sentFrom) : base("", sentFrom)
-			{
+			public Node(T state)
+            {
 				this.state = state;
-			}
-        }
+            }
+		}
 
 		protected T state;
 		protected T prevState;
 
+		protected Dictionary<T, Node> stateToNodeMap = new Dictionary<T, Node>();
+
 		/// <summary>
-        /// Broadcast state change events
-        /// </summary>
+		/// Broadcast state change events
+		/// </summary>
 		public Broadcaster broadcaster { get; protected set; } = new Broadcaster();
 
 		/// <summary>
@@ -82,6 +92,75 @@ namespace PJ
         {
 			AddListener(listener);
         }
+
+		/// <summary>
+        /// Return a node object for the state (if any)
+        /// </summary>
+		public Node NodeForState(T state)
+        {
+			if (stateToNodeMap.TryGetValue(state, out Node node))
+            {
+				return node;
+            }
+			return null;
+        }
+
+		/// <summary>
+        /// Add a state and a node in the graph
+        /// </summary>
+		public Node AddState(T state)
+		{
+			var node = NodeForState(state);
+			if (null != node)
+            {
+				return node;
+            }
+
+			node = new Node(state);
+			nodes.Add(node);
+
+			stateToNodeMap[state] = node;
+
+			return node;
+		}
+
+		public void OnInput(string input)
+        {
+			var state = this.state;
+			var node = NodeForState(state);
+
+			if (null == node) {
+				Debug.Log("Error. State " + state.ToString() + " has no node in graph");
+				return;
+			}
+
+			// Search for a matching input. If we find it, do a state transition
+			foreach (Node.Edge edge in node.Edges)
+            {
+				foreach (string edgeInput in edge.model.inputs)
+                {
+					if (edgeInput == input)
+                    {
+						var toNode = edge.toNode.Value as Node;
+						if (null == toNode) { continue; }
+
+						State = toNode.state;
+						return;
+                    }
+                }
+            }
+        }
+
+		/// <summary>
+        /// Connect two states via inputs, adding them to the graph if necessary
+        /// </summary>
+		public void ConnectStates(T fromState, List<string> inputs, T toState)
+		{
+			var fromNode = AddState(fromState);
+			var toNode = AddState(toState);
+
+			AddEdge(fromNode, new EdgeModel(inputs), toNode);
+		}
 
 		public void AddListener(SomeListener listener)
 		{
@@ -176,6 +255,27 @@ namespace PJ
 
 		public virtual void OnUpdate(TimeSlice time)
 		{
+			var iterModifiers = new HashSet<SomeModifier>(modifiers);
+			foreach (SomeModifier modifier in iterModifiers) {
+				if (!modifier.IsFinished)
+				{
+					modifier.OnUpdate(time);
+				}
+
+				if (modifier.IsFinished)
+                {
+					switch (modifier.runType)
+                    {
+						case SomeTimed.RunType.RunOnce:
+							modifiers.Remove(modifier);
+							break;
+						case SomeTimed.RunType.KeepRunning:
+							modifier.Reset();
+							break;
+                    }
+                }
+			}
+
 			if (stateCountdownTimer > 0)
 			{
 				stateCountdownTimer -= time.delta;

@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 using NUnit.Framework;
 
 namespace PJ {
@@ -70,5 +70,65 @@ namespace PJ {
 			test.State = TestEnum.Test2;
 			Assert.AreEqual(TestEnum.Test1, test.PrevState);
 		}
-    }
-   }
+
+		[Test]
+		public void Test_StateMachine_Graph()
+		{
+			var sut = new TestStateMachine();
+			var invalidNode = sut.AddState(TestEnum.Invalid);
+			Assert.AreEqual(invalidNode, sut.NodeForState(TestEnum.Invalid));
+			Assert.AreEqual(1, sut.nodes.Count);
+
+			var inputs1 = new List<string>() { "test1" };
+			sut.ConnectStates(TestEnum.Invalid, inputs1, TestEnum.Test1);
+
+			var inputs2 = new List<string>() { "test2" };
+			sut.ConnectStates(TestEnum.Test1, inputs2, TestEnum.Test2);
+
+			Assert.AreEqual(3, sut.nodes.Count);
+			sut.State = TestEnum.Invalid;
+			sut.OnInput("test2");
+			Assert.AreEqual(TestEnum.Invalid, sut.State);
+
+			sut.OnInput("test1");
+			Assert.AreEqual(TestEnum.Test1, sut.State);
+
+			sut.OnInput("test2");
+			Assert.AreEqual(TestEnum.Test2, sut.State);
+		}
+
+		[Test]
+		public void Test_StateMachine_Modifiers()
+        {
+			var sut = new TestStateMachine();
+			var inputs1 = new List<string>() { "test1" };
+			sut.ConnectStates(TestEnum.Invalid, inputs1, TestEnum.Test1);
+			var inputs2 = new List<string>() { "test2" };
+			sut.ConnectStates(TestEnum.Test1, inputs2, TestEnum.Test2);
+			sut.ConnectStates(TestEnum.Test2, inputs2, TestEnum.Invalid);
+
+			sut.modifiers.Add(new TestStateMachine.TimedThenInputModifier(1.0f, "test1", sut, SomeTimed.RunType.RunOnce));
+
+			sut.State = TestEnum.Invalid;
+
+			// Test Run Once
+			sut.OnUpdate(new TimeSlice(1.0f));
+			Assert.AreEqual(TestEnum.Test1, sut.State);
+
+			sut.OnUpdate(new TimeSlice(1.0f));
+			Assert.AreEqual(TestEnum.Test1, sut.State);
+
+			Assert.AreEqual(0, sut.modifiers.Count);
+
+			// Test Keep RUnning
+			sut.modifiers.Add(new TestStateMachine.TimedThenInputModifier(1.0f, "test2", sut, SomeTimed.RunType.KeepRunning));
+			sut.OnUpdate(new TimeSlice(1.0f));
+			Assert.AreEqual(TestEnum.Test2, sut.State);
+
+			Assert.AreEqual(1, sut.modifiers.Count);
+
+			sut.OnUpdate(new TimeSlice(1.0f));
+			Assert.AreEqual(TestEnum.Invalid, sut.State);
+		}
+	}
+}

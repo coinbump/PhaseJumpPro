@@ -10,13 +10,8 @@ namespace PJ
     /// <summary>
     /// A class that transforms a value
     /// </summary>
-    public abstract class SomeTransform<Value> : SomeMap<Value, Value>
+    public abstract class SomeTransform<Value>
     {
         public abstract Value Transform(Value value);
-
-        public override Value ValueFor(Value key)
-        {
-            return Transform(key);
-        }
     }
 }

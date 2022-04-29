@@ -22,7 +22,7 @@ namespace PJ
 
 		public string identifier;
 
-		[HideInInspector]
+		[NonSerialized]
 		public Tags tags = new Tags();
 
 		public string initialState;
