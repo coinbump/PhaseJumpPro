@@ -37,8 +37,12 @@ namespace PJ
             }
 		}
 
+#if UNITY_EDITOR
 		[Tooltip("Items in the spawn table.")]
 		public List<Item> spawnItems = new List<Item>() { new Item() };
+#else
+		public List<Item> spawnItems = new List<Item>();
+#endif
 
 		public SomeRandom random;
 
