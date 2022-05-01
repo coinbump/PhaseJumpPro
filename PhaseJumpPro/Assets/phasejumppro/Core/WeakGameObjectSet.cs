@@ -16,6 +16,16 @@ namespace PJ
 	/// </summary>
 	public class WeakGameObjectSet : HashSet<HashedWeakReference<GameObject>>
 	{
+		public void Add(GameObject gameObject)
+        {
+			Add(new HashedWeakReference<GameObject>(gameObject));
+        }
+
+		public void Remove(GameObject gameObject)
+        {
+			Remove(new HashedWeakReference<GameObject>(gameObject));
+        }
+
 		/// <summary>
 		/// Call this to get rid of old/dead objects
 		/// </summary>

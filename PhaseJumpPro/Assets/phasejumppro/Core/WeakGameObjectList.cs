@@ -16,6 +16,16 @@ namespace PJ
 	/// </summary>
 	public class WeakGameObjectList : List<WeakReference<GameObject>>
 	{
+		public void Add(GameObject gameObject)
+		{
+			Add(new WeakReference<GameObject>(gameObject));
+		}
+
+		public void Remove(GameObject gameObject)
+		{
+			Remove(new WeakReference<GameObject>(gameObject));
+		}
+
 		/// <summary>
 		/// Call this to get rid of old/dead objects
 		/// </summary>
