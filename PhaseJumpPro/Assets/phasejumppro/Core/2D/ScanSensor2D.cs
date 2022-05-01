@@ -32,7 +32,7 @@ namespace PJ
             //}
             List<GameObject> objectList = new List<GameObject>() { target };
 
-            if (CheckOccluders(orientAngle, degreeAngleScan / 2.0f, target)) { return; }
+            if (CheckOccluders(orientAngle, degreeAngleScan / 2.0f, target, false)) { return; }
 
             ForwardSense(objectList, collisionState);
         }

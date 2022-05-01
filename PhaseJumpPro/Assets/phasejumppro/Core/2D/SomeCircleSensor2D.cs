@@ -55,13 +55,15 @@ namespace PJ
         /// Perform a sweep check for occluders, moving from the target's center, outward
         /// until the target is no longer hit by the sweep, or until we have reached degreeAngleSweep from center
         /// </summary>
-        protected virtual CheckOccludersResult SweepCheckOccluders(GameObject target, float startDegreeAngle, float degreeAngleSweep)
+        protected virtual CheckOccludersResult SweepCheckOccluders(GameObject target, float startDegreeAngle, float degreeAngleSweep, bool exitIfTargetNotIn)
         {
             if (occluderTypes.Count <= 0 || degreeAngleSweep == 0) { return CheckOccludersResult.CanSeeTarget; }
 
             var step = degreeAngleSweep < 0 ? -occluderCheckAngleStep : occluderCheckAngleStep;
             int numSteps = Mathf.RoundToInt(Mathf.Ceil(Mathf.Abs(degreeAngleSweep) / occluderCheckAngleStep));
             var angle = startDegreeAngle;
+
+            Debug.Log("Sweep Steps: " + numSteps);
 
             while (numSteps > 0)
             {
@@ -71,8 +73,16 @@ namespace PJ
                 {
                     // We have swept past the target, it was not seen
                     case CanSeeResult.TargetNotIn:
-                        return CheckOccludersResult.TargetOccluded;
+                        // Some sensors start from the object's center and can exit early if the target is not in the current sweep
+                        // Other sensors check an angle range and need to perform the entire sweep
+                        if (exitIfTargetNotIn)
+                        {
+                            Debug.Log("Sweep Target Not In: " + angle);
+                            return CheckOccludersResult.TargetOccluded;
+                        }
+                        break;
                     case CanSeeResult.CanSeeTarget:
+                        Debug.Log("Sweep Can See: " + angle);
                         return CheckOccludersResult.CanSeeTarget;
                 }
 
@@ -88,6 +98,8 @@ namespace PJ
                 {
                     angle = Mathf.Max(startDegreeAngle + degreeAngleSweep, angle);
                 }
+
+                Debug.Log("Sweep Angle: " + angle);
             }
 
             return CheckOccludersResult.TargetOccluded;
@@ -97,17 +109,21 @@ namespace PJ
         /// Check if there are occluders in front of the target via a left and right sweep
         /// If the object is occluded, return true
         /// </summary>
-        protected virtual bool CheckOccluders(float startDegreeAngle, float maxAngleSweep, GameObject target)
+        protected virtual bool CheckOccluders(float startDegreeAngle, float maxAngleSweep, GameObject target, bool exitIfTargetNotIN)
         {
-            var leftSweepCheck = SweepCheckOccluders(target, startDegreeAngle, - maxAngleSweep);
-            var rightSweepCheck = SweepCheckOccluders(target, startDegreeAngle, maxAngleSweep);
-
-            if (leftSweepCheck == CheckOccludersResult.CanSeeTarget || rightSweepCheck == CheckOccludersResult.CanSeeTarget)
+            var leftSweepCheck = SweepCheckOccluders(target, startDegreeAngle, -maxAngleSweep, exitIfTargetNotIN);
+            if (leftSweepCheck == CheckOccludersResult.CanSeeTarget)
             {
                 return false;
             }
 
-            Debug.Log("Check Occluders Exit");
+            var rightSweepCheck = SweepCheckOccluders(target, startDegreeAngle, maxAngleSweep, exitIfTargetNotIN);
+            if (rightSweepCheck == CheckOccludersResult.CanSeeTarget)
+            {
+                return false;
+            }
+
+            //Debug.Log("Check Occluders Exit");
 
             ForwardSense(new List<GameObject>() { target }, CollisionState.Exit);
             return true;
@@ -146,6 +162,7 @@ namespace PJ
                 //Debug.Log("Sensor RaycastHit: " + raycastHit.transform.gameObject.name);
 
                 var hitObject = raycastHit.transform.gameObject;
+                if (hitObject == target) { continue; }
                 if (!IsOccluder(hitObject)) { continue; }
 
                 var hitDistance = raycastHit.distance;
