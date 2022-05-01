@@ -5,7 +5,7 @@ using UnityEngine;
 /*
  * RATING: 5 stars
  * Simple abstract class
- * CODE REVIEW: 4/25/22
+ * CODE REVIEW: 5/1/22
  */
 namespace PJ
 {
@@ -21,6 +21,10 @@ namespace PJ
         Enter, Stay, Exit
     }
 
+    /// <summary>
+    /// Sense states are different than collision states, since an object
+    /// may be in the collider, but not in the sensor area
+    /// </summary>
     public enum SenseState
     {
         Enter, Stay, Exit
