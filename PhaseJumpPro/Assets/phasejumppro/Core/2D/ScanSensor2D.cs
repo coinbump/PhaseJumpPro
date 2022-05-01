@@ -25,18 +25,14 @@ namespace PJ
             if (!this.sensorDelegate.TryGetTarget(out SensorDelegate sensorDelegate)) { return; }
             if (!sensorDelegate.IsSenseTarget(target)) { return; }
 
-            var deltaVector = target.transform.position - transform.position;
-            var angleToTarget = AngleUtils.Vector2ToDegreeAngle(deltaVector);
             var orientAngle = 360.0f -transform.eulerAngles.z;
-            var minOrientAngle = orientAngle - degreeAngleScan / 2.0f;
-            var maxOrientAngle = orientAngle + degreeAngleScan / 2.0f;
 
             //if (collisionState == CollisionState.Enter) {
             //    Debug.Log("Scan angle to Target: " + angleToTarget.ToString() + " orientAngle: " + orientAngle.ToString());
             //}
             List<GameObject> objectList = new List<GameObject>() { target };
 
-            if (CheckOccluders(degreeAngleScan / 2.0f, target)) { return; }
+            if (CheckOccluders(orientAngle, degreeAngleScan / 2.0f, target)) { return; }
 
             ForwardSense(objectList, collisionState);
         }

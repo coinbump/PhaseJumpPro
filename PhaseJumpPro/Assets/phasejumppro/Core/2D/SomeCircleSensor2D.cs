@@ -55,13 +55,9 @@ namespace PJ
         /// Perform a sweep check for occluders, moving from the target's center, outward
         /// until the target is no longer hit by the sweep, or until we have reached degreeAngleSweep from center
         /// </summary>
-        protected virtual CheckOccludersResult SweepCheckOccluders(GameObject target, float degreeAngleSweep)
+        protected virtual CheckOccludersResult SweepCheckOccluders(GameObject target, float startDegreeAngle, float degreeAngleSweep)
         {
             if (occluderTypes.Count <= 0 || degreeAngleSweep == 0) { return CheckOccludersResult.CanSeeTarget; }
-
-            var deltaVector = target.transform.position - transform.position;
-            var distance = AngleUtils.Distance(transform.position, target.transform.position);
-            var startDegreeAngle = AngleUtils.Vector2ToDegreeAngle(deltaVector);
 
             var step = degreeAngleSweep < 0 ? -occluderCheckAngleStep : occluderCheckAngleStep;
             int numSteps = Mathf.RoundToInt(Mathf.Ceil(Mathf.Abs(degreeAngleSweep) / occluderCheckAngleStep));
@@ -101,15 +97,17 @@ namespace PJ
         /// Check if there are occluders in front of the target via a left and right sweep
         /// If the object is occluded, return true
         /// </summary>
-        protected virtual bool CheckOccluders(float maxAngleSweep, GameObject target)
+        protected virtual bool CheckOccluders(float startDegreeAngle, float maxAngleSweep, GameObject target)
         {
-            var leftSweepCheck = SweepCheckOccluders(target, -maxAngleSweep);
-            var rightSweepCheck = SweepCheckOccluders(target, maxAngleSweep);
+            var leftSweepCheck = SweepCheckOccluders(target, startDegreeAngle, - maxAngleSweep);
+            var rightSweepCheck = SweepCheckOccluders(target, startDegreeAngle, maxAngleSweep);
 
             if (leftSweepCheck == CheckOccludersResult.CanSeeTarget || rightSweepCheck == CheckOccludersResult.CanSeeTarget)
             {
                 return false;
             }
+
+            Debug.Log("Check Occluders Exit");
 
             ForwardSense(new List<GameObject>() { target }, CollisionState.Exit);
             return true;
