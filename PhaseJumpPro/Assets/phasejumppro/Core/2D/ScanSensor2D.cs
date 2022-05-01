@@ -36,11 +36,7 @@ namespace PJ
             //}
             List<GameObject> objectList = new List<GameObject>() { target };
 
-            if (CheckOccluders(minOrientAngle, maxOrientAngle, target))
-            {
-                ForwardSense(objectList, CollisionState.Exit);
-                return;
-            }
+            if (CheckOccluders(degreeAngleScan / 2.0f, target)) { return; }
 
             ForwardSense(objectList, collisionState);
         }

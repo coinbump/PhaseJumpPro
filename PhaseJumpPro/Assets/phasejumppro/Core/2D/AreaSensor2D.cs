@@ -26,7 +26,7 @@ namespace PJ
             if (!this.sensorDelegate.TryGetTarget(out SensorDelegate sensorDelegate)) { return; }
             if (!sensorDelegate.IsSenseTarget(target)) { return; }
 
-            if (CheckOccluders(0, 360.0f, target)) { return; }
+            if (CheckOccluders(45.0f, target)) { return; }
 
             List<GameObject> objectList = new List<GameObject>();
             objectList.Add(target);

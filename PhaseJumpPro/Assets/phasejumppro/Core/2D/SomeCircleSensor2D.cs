@@ -97,29 +97,22 @@ namespace PJ
             return CheckOccludersResult.TargetOccluded;
         }
 
-
-
-
         /// <summary>
-        /// Check if there are occluders in front of the target, if so, return true
+        /// Check if there are occluders in front of the target via a left and right sweep
+        /// If the object is occluded, return true
         /// </summary>
-        protected virtual bool CheckOccluders(float minDegreeAngle, float maxDegreeAngle, GameObject target)
+        protected virtual bool CheckOccluders(float maxAngleSweep, GameObject target)
         {
-            // TODO:
-            //// Check the final angle
-            //if (numSteps > 0)
-            //{
+            var leftSweepCheck = SweepCheckOccluders(target, -maxAngleSweep);
+            var rightSweepCheck = SweepCheckOccluders(target, maxAngleSweep);
 
-            //}
+            if (leftSweepCheck == CheckOccludersResult.CanSeeTarget || rightSweepCheck == CheckOccludersResult.CanSeeTarget)
+            {
+                return false;
+            }
 
-            //if (!canSeeTarget)
-            //{
-            //    //Debug.Log("Target " + target.name + " is hidden behind occluder");
-            //    ForwardSense(new List<GameObject>() { target }, CollisionState.Exit);
-            //    return true;
-            //}
-
-            return false;
+            ForwardSense(new List<GameObject>() { target }, CollisionState.Exit);
+            return true;
         }
 
         /// <summary>
