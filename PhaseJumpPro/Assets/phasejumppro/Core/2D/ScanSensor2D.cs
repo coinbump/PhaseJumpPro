@@ -16,29 +16,17 @@ namespace PJ
     // NOTE: because a sensor can be independent of an object's rotation, this might be a child or sibling of the responder
     // USAGE: Attach an ArcMeshBuilder to the object for debugging
     [RequireComponent(typeof(CircleCollider2D))]
-    public class ScanSensor2D : SomeSensor
+    public class ScanSensor2D : SomeCircleSensor2D
     {
         public float degreeAngleScan = 60.0f;
-
-        protected override void Awake()
-        {
-            base.Awake();
-
-            var circleCollider = GetComponent<CircleCollider2D>();
-            if (null == circleCollider)
-            {
-                circleCollider = gameObject.AddComponent<CircleCollider2D>();
-            }
-
-            circleCollider.isTrigger = true;
-        }
 
         protected override void OnSense(GameObject target, CollisionState collisionState)
         {
             if (!this.sensorDelegate.TryGetTarget(out SensorDelegate sensorDelegate)) { return; }
             if (!sensorDelegate.IsSenseTarget(target)) { return; }
 
-            var angleToTarget = AngleUtils.Vector2ToDegreeAngle(target.transform.position - transform.position);
+            var deltaVector = target.transform.position - transform.position;
+            var angleToTarget = AngleUtils.Vector2ToDegreeAngle(deltaVector);
             var orientAngle = 360.0f -transform.localEulerAngles.z;
             var minOrientAngle = orientAngle - degreeAngleScan / 2.0f;
             var maxOrientAngle = orientAngle + degreeAngleScan / 2.0f;
@@ -46,14 +34,24 @@ namespace PJ
             //if (collisionState == CollisionState.Enter) {
             //    Debug.Log("Scan angle to Target: " + angleToTarget.ToString() + " orientAngle: " + orientAngle.ToString());
             //}
+            List<GameObject> objectList = new List<GameObject>() { target };
 
             if (angleToTarget >= minOrientAngle && angleToTarget <= maxOrientAngle)
             {
                 //Debug.Log("Scan Sense in range");
+                if (CheckOccluders(minOrientAngle, maxOrientAngle, target))
+                {
+                    return;
+                }
 
-                List<GameObject> objectList = new List<GameObject>();
-                objectList.Add(target);
                 ForwardSense(objectList, collisionState);
+            }
+            // This is inside the collider, but we are not scanning the entire circle, and it is out of
+            // the angle range, so send an exit event
+            else
+            {
+                //Debug.Log("Forward Exit Sense " + target.name + " Angle: " + angleToTarget);
+                ForwardSense(objectList, CollisionState.Exit);
             }
         }
     }
