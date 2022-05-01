@@ -2,10 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+ * RATING: 5 stars
+ * Tested and works
+ * CODE REVIEW: 5/1/22
+ */
 namespace PJ
 {
     /// <summary>
-    /// A 2D sensor that uses a circle collider
+    /// A 2D sensor that uses a circle collider and checks for occlusions
+    /// occluderCheckAngleStep determine the accuracy (more angle checks cost more, but are more accurate)
     /// </summary>
     public abstract class SomeCircleSensor2D : SomeSensor
     {
@@ -26,7 +32,7 @@ namespace PJ
         /// When a target is sensed, this is the step for checking if the target
         /// is visible within the sensor range
         /// </summary>
-        public float occluderCheckAngleStep = 5.0f;
+        public float occluderCheckAngleStep = 1.0f;
 
         /// <summary>
         /// The list of type tags that mark occluders (Example: "wall", "occlude")
@@ -58,12 +64,11 @@ namespace PJ
         protected virtual CheckOccludersResult SweepCheckOccluders(GameObject target, float startDegreeAngle, float degreeAngleSweep, bool exitIfTargetNotIn)
         {
             if (occluderTypes.Count <= 0 || degreeAngleSweep == 0) { return CheckOccludersResult.CanSeeTarget; }
+            if (occluderCheckAngleStep <= 0) { return CheckOccludersResult.CanSeeTarget; }
 
             var step = degreeAngleSweep < 0 ? -occluderCheckAngleStep : occluderCheckAngleStep;
             int numSteps = Mathf.RoundToInt(Mathf.Ceil(Mathf.Abs(degreeAngleSweep) / occluderCheckAngleStep));
             var angle = startDegreeAngle;
-
-            Debug.Log("Sweep Steps: " + numSteps);
 
             while (numSteps > 0)
             {
@@ -77,12 +82,12 @@ namespace PJ
                         // Other sensors check an angle range and need to perform the entire sweep
                         if (exitIfTargetNotIn)
                         {
-                            Debug.Log("Sweep Target Not In: " + angle);
+                            //Debug.Log("Sweep Target Not In: " + angle);
                             return CheckOccludersResult.TargetOccluded;
                         }
                         break;
                     case CanSeeResult.CanSeeTarget:
-                        Debug.Log("Sweep Can See: " + angle);
+                        //Debug.Log("Sweep Can See: " + angle);
                         return CheckOccludersResult.CanSeeTarget;
                 }
 
@@ -98,8 +103,6 @@ namespace PJ
                 {
                     angle = Mathf.Max(startDegreeAngle + degreeAngleSweep, angle);
                 }
-
-                Debug.Log("Sweep Angle: " + angle);
             }
 
             return CheckOccludersResult.TargetOccluded;

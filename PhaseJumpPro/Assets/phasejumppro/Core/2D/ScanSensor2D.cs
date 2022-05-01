@@ -26,6 +26,8 @@ namespace PJ
             if (!sensorDelegate.IsSenseTarget(target)) { return; }
 
             var orientAngle = 360.0f -transform.eulerAngles.z;
+            var minAngle = orientAngle - degreeAngleScan / 2.0f;
+            var maxAngle = orientAngle + degreeAngleScan / 2.0f;
 
             //if (collisionState == CollisionState.Enter) {
             //    Debug.Log("Scan angle to Target: " + angleToTarget.ToString() + " orientAngle: " + orientAngle.ToString());
