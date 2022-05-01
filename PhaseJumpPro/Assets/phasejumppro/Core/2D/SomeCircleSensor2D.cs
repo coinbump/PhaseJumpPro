@@ -112,15 +112,15 @@ namespace PJ
         /// Check if there are occluders in front of the target via a left and right sweep
         /// If the object is occluded, return true
         /// </summary>
-        protected virtual bool CheckOccluders(float startDegreeAngle, float maxAngleSweep, GameObject target, bool exitIfTargetNotIN)
+        protected virtual bool CheckOccluders(float startDegreeAngle, float maxAngleSweep, GameObject target, bool exitIfTargetNotIn)
         {
-            var leftSweepCheck = SweepCheckOccluders(target, startDegreeAngle, -maxAngleSweep, exitIfTargetNotIN);
+            var leftSweepCheck = SweepCheckOccluders(target, startDegreeAngle, -maxAngleSweep, exitIfTargetNotIn);
             if (leftSweepCheck == CheckOccludersResult.CanSeeTarget)
             {
                 return false;
             }
 
-            var rightSweepCheck = SweepCheckOccluders(target, startDegreeAngle, maxAngleSweep, exitIfTargetNotIN);
+            var rightSweepCheck = SweepCheckOccluders(target, startDegreeAngle, maxAngleSweep, exitIfTargetNotIn);
             if (rightSweepCheck == CheckOccludersResult.CanSeeTarget)
             {
                 return false;
