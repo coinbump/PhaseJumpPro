@@ -15,21 +15,8 @@ namespace PJ
     /// </summary>
     // FUTURE: support occlusion checks for walls
     [RequireComponent(typeof(CircleCollider2D))]
-    public class AreaSensor2D : SomeSensor
+    public class AreaSensor2D : SomeCircleSensor2D
     {
-        protected override void Awake()
-        {
-            base.Update();
-
-            var circleCollider = GetComponent<CircleCollider2D>();
-            if (null == circleCollider)
-            {
-                circleCollider = gameObject.AddComponent<CircleCollider2D>();
-            }
-
-            circleCollider.isTrigger = true;
-        }
-
         protected virtual void OnValidate()
         {
         }
@@ -38,6 +25,8 @@ namespace PJ
         {
             if (!this.sensorDelegate.TryGetTarget(out SensorDelegate sensorDelegate)) { return; }
             if (!sensorDelegate.IsSenseTarget(target)) { return; }
+
+            if (CheckOccluders(0, 360.0f, target)) { return; }
 
             List<GameObject> objectList = new List<GameObject>();
             objectList.Add(target);
