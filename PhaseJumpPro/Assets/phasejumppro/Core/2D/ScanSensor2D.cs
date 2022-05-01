@@ -34,6 +34,7 @@ namespace PJ
             //}
             List<GameObject> objectList = new List<GameObject>() { target };
 
+            // FUTURE: this can be optimized further by using a PolygonCollider2D, which reduces the number of false positives
             if (CheckOccluders(orientAngle, degreeAngleScan / 2.0f, target, false)) { return; }
 
             ForwardSense(objectList, collisionState);

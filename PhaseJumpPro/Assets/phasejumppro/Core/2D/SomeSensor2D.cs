@@ -9,6 +9,9 @@ using UnityEngine;
  */
 namespace PJ
 {
+    /// <summary>
+    /// A 2D sensor. Occlusions are checked by a left/right sweep and an angle step
+    /// </summary>
     public abstract class SomeSensor2D : SomeSensor
     {
         public float MaxOccluderRaycastDistance { get; }
