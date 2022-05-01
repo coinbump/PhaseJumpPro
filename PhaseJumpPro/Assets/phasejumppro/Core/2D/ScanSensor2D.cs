@@ -27,7 +27,7 @@ namespace PJ
 
             var deltaVector = target.transform.position - transform.position;
             var angleToTarget = AngleUtils.Vector2ToDegreeAngle(deltaVector);
-            var orientAngle = 360.0f -transform.localEulerAngles.z;
+            var orientAngle = 360.0f -transform.eulerAngles.z;
             var minOrientAngle = orientAngle - degreeAngleScan / 2.0f;
             var maxOrientAngle = orientAngle + degreeAngleScan / 2.0f;
 
@@ -36,23 +36,13 @@ namespace PJ
             //}
             List<GameObject> objectList = new List<GameObject>() { target };
 
-            if (angleToTarget >= minOrientAngle && angleToTarget <= maxOrientAngle)
+            if (CheckOccluders(minOrientAngle, maxOrientAngle, target))
             {
-                //Debug.Log("Scan Sense in range");
-                if (CheckOccluders(minOrientAngle, maxOrientAngle, target))
-                {
-                    return;
-                }
-
-                ForwardSense(objectList, collisionState);
-            }
-            // This is inside the collider, but we are not scanning the entire circle, and it is out of
-            // the angle range, so send an exit event
-            else
-            {
-                //Debug.Log("Forward Exit Sense " + target.name + " Angle: " + angleToTarget);
                 ForwardSense(objectList, CollisionState.Exit);
+                return;
             }
+
+            ForwardSense(objectList, collisionState);
         }
     }
 }

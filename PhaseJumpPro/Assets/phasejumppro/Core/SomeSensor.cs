@@ -27,7 +27,7 @@ namespace PJ
     }
 
     /// <summary>
-    /// Responsible for determining what should be sensed
+    /// Determines what should be sensed
     /// </summary>
     public interface SensorDelegate
     {
@@ -50,7 +50,7 @@ namespace PJ
     {
         public WeakReference<SensorDelegate> sensorDelegate;
 
-        protected HashSet<HashedWeakReference<SomeSensorListener>> sensorListeners = new();
+        protected HashSet<HashedWeakReference<SomeSensorListener>> sensorListeners = new HashSet<HashedWeakReference<SomeSensorListener>>();
 
         public void AddListener(SomeSensorListener listener)
         {
@@ -87,11 +87,15 @@ namespace PJ
 
         protected virtual void ForwardSense(List<GameObject> objectList, CollisionState collisionState)
         {
-            // We pass enter, stay events, but exit is not sensed
+            var newListeners = new HashSet<HashedWeakReference<SomeSensorListener>>();
+
             foreach (HashedWeakReference<SomeSensorListener> listener in sensorListeners)
             {
                 if (listener.Reference.TryGetTarget(out SomeSensorListener target))
                 {
+                    // Keep listeners that were not disposed
+                    newListeners.Add(listener);
+
                     switch (collisionState)
                     {
                         case CollisionState.Enter:
@@ -106,6 +110,9 @@ namespace PJ
                     }
                 }
             }
+
+            // Clean up any old weak references with null targets
+            sensorListeners = newListeners;
         }
 
         protected abstract void OnSense(GameObject target, CollisionState collisionState);
