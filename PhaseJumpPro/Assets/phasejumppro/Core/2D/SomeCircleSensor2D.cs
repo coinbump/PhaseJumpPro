@@ -17,7 +17,7 @@ namespace PJ
     {
         protected CircleCollider2D circleCollider;
 
-        public float MaxOccluderRaycastDistance => circleCollider.radius;
+        public override float MaxOccluderRaycastDistance => circleCollider.radius;
 
         /// <summary>
         /// Setup the circle collider

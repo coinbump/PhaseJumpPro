@@ -14,7 +14,7 @@ namespace PJ
     /// </summary>
     public abstract class SomeSensor2D : SomeSensor
     {
-        public float MaxOccluderRaycastDistance { get; }
+        public abstract float MaxOccluderRaycastDistance { get; }
 
         /// <summary>
         /// When a target is sensed, this is the step for checking if the target
