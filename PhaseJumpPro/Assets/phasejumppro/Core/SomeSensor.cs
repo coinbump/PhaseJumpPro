@@ -52,6 +52,25 @@ namespace PJ
     /// </summary>
     public abstract class SomeSensor : MonoBehaviour
     {
+        protected enum CheckOccludersResult
+        {
+            CanSeeTarget,
+            TargetOccluded
+        }
+
+        protected enum CanSeeResult
+        {
+            TargetNotIn,
+            CanSeeTarget,
+            TargetOccluded
+        }
+
+        /// <summary>
+        /// The list of type tags that mark occluders (Example: "wall", "occlude")
+        /// NOTE: Not all sensors support occlusion testing
+        /// </summary>
+        public List<string> occluderTypes = new List<string>();
+
         public WeakReference<SensorDelegate> sensorDelegate;
 
         protected HashSet<HashedWeakReference<SomeSensorListener>> sensorListeners = new HashSet<HashedWeakReference<SomeSensorListener>>();
