@@ -23,15 +23,22 @@ namespace PJ
 
     public enum SenseState
     {
-        Enter, Stay
+        Enter, Stay, Exit
     }
 
     /// <summary>
-    /// Response to SomeSensor events
+    /// Responsible for determining what should be sensed
     /// </summary>
     public interface SensorDelegate
     {
         public bool IsSenseTarget(GameObject targetObject);
+    }
+
+    /// <summary>
+    /// Listens to sense events
+    /// </summary>
+    public interface SomeSensorListener
+    {
         public void OnSense(List<GameObject> objectList, SenseState senseState);
     }
 
@@ -42,6 +49,13 @@ namespace PJ
     public abstract class SomeSensor : MonoBehaviour
     {
         public WeakReference<SensorDelegate> sensorDelegate;
+
+        protected HashSet<HashedWeakReference<SomeSensorListener>> sensorListeners = new();
+
+        public void AddListener(SomeSensorListener listener)
+        {
+            sensorListeners.Add(new HashedWeakReference<SomeSensorListener>(listener));
+        }
 
         protected virtual void OnTriggerEnter2D(Collider2D collider)
         {
@@ -55,7 +69,7 @@ namespace PJ
 
         protected virtual void OnTriggerExit2D(Collider2D collider)
         {
-            OnSense(collider.gameObject, CollisionState.Exit);
+            ForwardSense(new List<GameObject>() { collider.gameObject }, CollisionState.Exit);
         }
 
         protected virtual void OnCollisionEnter2D(Collision2D collision)
@@ -73,17 +87,24 @@ namespace PJ
 
         protected virtual void ForwardSense(List<GameObject> objectList, CollisionState collisionState)
         {
-            if (!this.sensorDelegate.TryGetTarget(out SensorDelegate sensorDelegate)) { return; }
-
             // We pass enter, stay events, but exit is not sensed
-            switch (collisionState)
+            foreach (HashedWeakReference<SomeSensorListener> listener in sensorListeners)
             {
-                case CollisionState.Enter:
-                    sensorDelegate.OnSense(objectList, SenseState.Enter);
-                    break;
-                case CollisionState.Stay:
-                    sensorDelegate.OnSense(objectList, SenseState.Stay);
-                    break;
+                if (listener.Reference.TryGetTarget(out SomeSensorListener target))
+                {
+                    switch (collisionState)
+                    {
+                        case CollisionState.Enter:
+                            target.OnSense(objectList, SenseState.Enter);
+                            break;
+                        case CollisionState.Stay:
+                            target.OnSense(objectList, SenseState.Stay);
+                            break;
+                        case CollisionState.Exit:
+                            target.OnSense(objectList, SenseState.Exit);
+                            break;
+                    }
+                }
             }
         }
 
