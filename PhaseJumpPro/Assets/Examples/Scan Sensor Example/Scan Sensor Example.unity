@@ -221,9 +221,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d02513877dec44acb959e9b1de28688, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  occluderCheckAngleStep: 0.5
   occluderTypes:
   - occlude
+  occluderCheckAngleStep: 1
   degreeAngleScan: 60
 --- !u!58 &154853499
 CircleCollider2D:
