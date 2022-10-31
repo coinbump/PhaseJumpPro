@@ -497,7 +497,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1bef0fbe213f473dbae827f2bf7f699, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bulletObject: {fileID: 7337084396908765140, guid: 32205065c9e7e4d4f92a502a78415d89, type: 3}
+  spawnItems:
+  - spawnObject: {fileID: 7337084396908765140, guid: 32205065c9e7e4d4f92a502a78415d89, type: 3}
+    weight: 1
+  maxAlive: 0
   isEmitterVelocityAdded: 0
 --- !u!114 &1319051543
 MonoBehaviour:
@@ -511,11 +514,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8dbe2404db477406fb14dce3be14a745, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  id: 
   initialState: 
   valueTags: []
   typeTags: []
   cullTypes: 
-  rotationDegreeAngle: 0
+  rotation: 0
   velocityType: 0
   velocity: {x: 0, y: 0}
 --- !u!1 &2045890682
