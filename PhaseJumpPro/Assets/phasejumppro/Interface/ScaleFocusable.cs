@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace PJ
 {
-    public class ScaleFocusable : Focusable
+    public class ScaleFocusable : AnimatedFocusable
     {
         public float offScale = 1.0f;
         public float onScale = 2.0f;

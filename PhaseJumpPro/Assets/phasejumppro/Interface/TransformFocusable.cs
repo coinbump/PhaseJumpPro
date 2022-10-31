@@ -24,7 +24,7 @@ namespace PJ
         }
     }
 
-    public class TransformFocusable : Focusable
+    public class TransformFocusable : AnimatedFocusable
     {
         public GeometryTransform offTransform = GeometryTransform.defaultTransform;
         public GeometryTransform onTransform = GeometryTransform.defaultTransform;

@@ -3,7 +3,7 @@ using System.Collections;
 
 namespace PJ
 {
-    public class AttachFocusable : Focusable
+    public class AttachFocusable : AnimatedFocusable
     {
         public GameObject target;
         public GeometryTransform offTransform = GeometryTransform.defaultTransform;
