@@ -8,7 +8,7 @@ namespace PJ
 	{
 		private class TestObject
         {
-			public string identifier = "id";
+			public string id = "id";
         }
 
 		[Test]
@@ -17,7 +17,7 @@ namespace PJ
 			var factory = new Factory<TestObject>(() => new TestObject());
 			object testObject = factory.NewObject();
 			Assert.IsTrue(testObject is TestObject);
-			Assert.AreEqual(factory.New().identifier, "id");
+			Assert.AreEqual(factory.New().id, "id");
 		}
 	}
 }
