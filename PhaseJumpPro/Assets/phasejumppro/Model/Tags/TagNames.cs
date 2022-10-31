@@ -78,7 +78,7 @@ namespace PJ {
 		public const string Version = "version";
 		public const string MinVersion = "min_version";
 		public const string Index = "i";
-		public const string Identifier = "id";
+		public const string Id = "id";
 		public const string VolumeMusic = "vol_music";
 		public const string VolumeSound = "vol_sound";
 		public const string Speed = "speed";

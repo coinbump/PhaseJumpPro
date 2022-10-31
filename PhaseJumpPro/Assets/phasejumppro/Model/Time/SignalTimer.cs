@@ -15,24 +15,24 @@ namespace PJ
     {
         public class Event : PJ.Event
         {
-            public Event(string identifier)
+            public Event(string id)
             {
-                this.identifier = identifier;
+                this.id = id;
             }
         }
 
         public Broadcaster broadcaster = new Broadcaster();
 
-        public SignalTimer(string identifier, float duration, RunType runType) : base(duration, runType)
+        public SignalTimer(string id, float duration, RunType runType) : base(duration, runType)
         {
-            this.identifier = identifier;
+            this.id = id;
         }
 
         protected override void OnFinish()
         {
             base.OnFinish();
 
-            broadcaster.Broadcast(new Event(identifier));
+            broadcaster.Broadcast(new Event(id));
         }
     }
 

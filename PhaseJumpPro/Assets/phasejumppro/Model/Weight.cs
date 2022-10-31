@@ -17,7 +17,7 @@ namespace PJ
 		/// </summary>
 		protected float weight = 1.0f;
 
-		public string identifier;
+		public string id;
 
 		/// <summary>
 		/// Optional object that dynamically adjusts the weight during evaluation
@@ -29,10 +29,10 @@ namespace PJ
 		/// </summary>
 		public object target;
 
-		public Weight(float weight, string identifier = "")
+		public Weight(float weight, string id = "")
 		{
 			this.weight = weight;
-			this.identifier = identifier;
+			this.id = id;
 		}
 
 		public Weight(float weight, object target)

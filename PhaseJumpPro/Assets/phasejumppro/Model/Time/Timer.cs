@@ -14,9 +14,9 @@ namespace PJ {
 	public class Timer : SomeTimed
 	{
 		/// <summary>
-        /// Optional identifier for hashing, debug logs
+        /// Optional id for hashing, debug logs
         /// </summary>
-		public string identifier;
+		public string id;
 
 		protected float timerState;  // Time state of the timer
 		
@@ -63,7 +63,7 @@ namespace PJ {
 			if (IsFinished || duration <= 0) { return; }
 
 			var delta = TimeDeltaFor(time);
-			//Debug.Log(identifier + ": OnUpdate delta: " + delta.ToString());
+			//Debug.Log(id + ": OnUpdate delta: " + delta.ToString());
 			if (delta <= 0) { return; }
 
 			TimerState += delta;
