@@ -24,7 +24,7 @@ namespace PJ
                 this.maxValue = maxValue;
             }
 
-            public override object ValueForOutput<T>(string identifier, Tags parameters, T defaultValue)
+            public override object ValueForOutput<T>(string id, Tags parameters, T defaultValue)
             {
                 if (typeof(T).IsAssignableFrom(typeof(float)))
                 {

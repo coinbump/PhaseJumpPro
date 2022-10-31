@@ -17,7 +17,7 @@ namespace PJ
         {
             public float factor = 1.0f;
 
-            public override object ValueForOutput<T>(string identifier, Tags parameters, T defaultValue)
+            public override object ValueForOutput<T>(string id, Tags parameters, T defaultValue)
             {
                 if (typeof(T).IsAssignableFrom(typeof(SomeMap<Vector2, float>)))
                 {
