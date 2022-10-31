@@ -18,7 +18,7 @@ namespace PJ {
 
 			public void OnListen(Event theEvent) {
 				listenCount++;
-				lastMessage = theEvent.identifier;
+				lastMessage = theEvent.id;
 			}
 		}
 
