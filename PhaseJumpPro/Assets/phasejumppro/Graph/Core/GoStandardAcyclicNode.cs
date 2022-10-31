@@ -31,25 +31,25 @@ namespace PJ
             {
             }
 
-            public virtual void AddOutput(string outputIdentifier, GoStandardAcyclicNode toNode, string inputIdentifier)
+            public virtual void AddOutput(string outputId, GoStandardAcyclicNode toNode, string inputId)
             {
                 if (null == toNode) { return; }
 
                 var tags = new Tags();
-                tags[EdgeType.Output.Value] = outputIdentifier;
-                tags[EdgeType.Input.Value] = inputIdentifier;
+                tags[EdgeType.Output.Value] = outputId;
+                tags[EdgeType.Input.Value] = inputId;
 
-                var outputEdgeModel = new StandardEdgeModel(outputIdentifier, EdgeType.Output.Value, 1.0f, tags);
+                var outputEdgeModel = new StandardEdgeModel(outputId, EdgeType.Output.Value, 1.0f, tags);
                 AddEdge(outputEdgeModel, toNode);
             }
 
-            public virtual GoStandardAcyclicNode OutputNodeFor(string identifier)
+            public virtual GoStandardAcyclicNode OutputNodeFor(string id)
             {
-                var edge = OutputEdgeFor(identifier);
+                var edge = OutputEdgeFor(id);
                 return null != edge ? edge.toNode.Value as GoStandardAcyclicNode : null;
             }
 
-            public virtual GoStandardAcyclicNode InputNodeFor(string identifier)
+            public virtual GoStandardAcyclicNode InputNodeFor(string id)
             {
                 foreach (HashedWeakReference<SomeGraphNode<StandardEdgeModel>> node in fromNodes)
                 {
@@ -60,8 +60,8 @@ namespace PJ
                             if (fromEdge.toNode.Value != this) { continue; }
                             if (null == fromEdge.model.tags) { continue; }
 
-                            var inputIdentifier = fromEdge.model.tags[EdgeType.Input.Value] as string;
-                            if (inputIdentifier == identifier)
+                            var inputId = fromEdge.model.tags[EdgeType.Input.Value] as string;
+                            if (inputId == id)
                             {
                                 return fromNode as GoStandardAcyclicNode;
                             }
@@ -72,9 +72,9 @@ namespace PJ
                 return null;
             }
 
-            public virtual Edge OutputEdgeFor(string identifier)
+            public virtual Edge OutputEdgeFor(string id)
             {
-                var typeEdges = edges.FindAll(edge => edge.model.identifier == identifier);
+                var typeEdges = edges.FindAll(edge => edge.model.id == id);
                 if (typeEdges.Count == 0)
                 {
                     return null;
@@ -84,14 +84,14 @@ namespace PJ
                 return resultEdge;
             }
 
-            public virtual object ValueForInput<T>(string identifier, Tags parameters, T defaultValue)
+            public virtual object ValueForInput<T>(string id, Tags parameters, T defaultValue)
             {
-                var inputNode = InputNodeFor(identifier);
+                var inputNode = InputNodeFor(id);
                 if (null == inputNode) { return defaultValue; }
-                return inputNode.ValueForOutput<T>(identifier, parameters, defaultValue);
+                return inputNode.ValueForOutput<T>(id, parameters, defaultValue);
             }
 
-            public virtual object ValueForOutput<T>(string identifier, Tags parameters, T defaultValue)
+            public virtual object ValueForOutput<T>(string id, Tags parameters, T defaultValue)
             {
                 return defaultValue;
             }
