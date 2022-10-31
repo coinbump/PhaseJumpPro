@@ -34,7 +34,9 @@ namespace PJ
 
 		[SerializeField]
 		[Range(0, 360.0f)]
-		protected float rotationDegreeAngle = 0;
+        [Tooltip("Rotation in degrees")]
+		/// <summary>Rotation in degrees</summary>
+		protected float rotation = 0;
 
 		protected SpriteRenderer spriteRenderer;
 
@@ -126,16 +128,16 @@ namespace PJ
 		// Normalized rotation value (0-1.0)
 		public float RotationNormal
 		{
-			get { return rotationDegreeAngle / 360.0f; }
+			get { return rotation / 360.0f; }
 			set
 			{
-				rotationDegreeAngle = value * 360.0f;
+				rotation = value * 360.0f;
 			}
 		}
 
 		public float RotationDegreeAngle
 		{
-			get { return rotationDegreeAngle; }
+			get { return rotation; }
 			set
 			{
 				var newAngle = value;
@@ -144,15 +146,15 @@ namespace PJ
 					newAngle = AngleUtils.ClipDegreeAngle(newAngle);
 				}
 
-				if (rotationDegreeAngle == newAngle) { return; }
-				rotationDegreeAngle = newAngle;
+				if (rotation == newAngle) { return; }
+				rotation = newAngle;
 
 				// Try-catch is for the unit test
 				try
 				{
 					if (transform)
 					{
-						transform.localEulerAngles = new Vector3(0, 0, -rotationDegreeAngle);
+						transform.localEulerAngles = new Vector3(0, 0, -rotation);
 					}
 				}
 				catch (NullReferenceException ex)
