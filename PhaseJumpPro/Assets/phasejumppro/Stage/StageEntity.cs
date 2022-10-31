@@ -15,6 +15,11 @@ namespace PJ
 	/// </summary>
 	public class StageEntity : MonoBehaviour
 	{
+		public enum StagePosition
+		{
+			Left, Right, Top, Bottom
+		}
+		
 		/// <summary>
         /// If true, this object is visible and presented
         /// If false, this object has been moved out of the way (usually with a fade animation)
