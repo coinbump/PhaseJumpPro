@@ -16,7 +16,7 @@ namespace PJ
 	/// </summary>
 	public abstract class SomeGoal
 	{
-		public string identifier;
+		public string id;
 
 		protected bool isComplete;
 

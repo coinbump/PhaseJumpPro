@@ -18,20 +18,20 @@ namespace PJ {
 		public WeakReference<object> sentFrom;
 
 		/// <summary>
-        /// Event identifier
+        /// Event id
         /// </summary>
-		public string identifier;
+		public string id;
 		
 		public Event() {
 		}
 
-		public Event(string identifier) {
-			this.identifier = identifier;
+		public Event(string id) {
+			this.id = id;
 		}
 
-		public Event(string identifier, object sentFrom)
+		public Event(string id, object sentFrom)
 		{
-			this.identifier = identifier;
+			this.id = id;
 			this.sentFrom = new WeakReference<object>(sentFrom);
 		}
 	}
