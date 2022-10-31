@@ -16,8 +16,8 @@ namespace PJ
 	/// Uses ObservableCollection to notify when changes in a list occur (analagous to List<T>)
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
-	public class PublishedList<T> : PublishedValue<ObservableCollection<T>>
-	{
+	public class PublishedList<T> : PublishedEntity<ObservableCollection<T>>
+    {
 		public PublishedList()
 		{
 			value = new ObservableCollection<T>();

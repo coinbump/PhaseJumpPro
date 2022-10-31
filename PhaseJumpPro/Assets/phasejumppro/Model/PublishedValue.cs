@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.Rendering.DebugUI;
 
 /*
  * RATING: 5 stars
@@ -17,43 +18,64 @@ namespace PJ
     {
     }
 
-	/// <summary>
-	/// Broadcasts when value changes.
-	/// </summary>
-	// FUTURE: support binding value A to B if needed
-	public class PublishedValue<T> : AnyPublishedValue
-	{
-		/// <summary>
-        /// Sent when a value changes
-        /// </summary>
-		public class EventValueChange : Event
-		{
-			public PublishedValue<T> value;
+    /// <summary>
+    /// Broadcasts when value changes.
+    /// </summary>
+    public class PublishedEntity<T> : AnyPublishedValue
+    {
+        protected T value;
+        public Broadcaster broadcaster = new Broadcaster();
 
-			public EventValueChange(PublishedValue<T> value)
-            {
-				this.value = value;
-            }
-		}
-
-		public void OnValueChange(Event theEvent, Action<T> action)
+        public virtual T Value
         {
-			var eventValueChange = theEvent as EventValueChange;
-			if (null != eventValueChange && eventValueChange.value == this)
+            get => value;
+            set
             {
-				action(value);
+                OnValueChange();
             }
         }
 
-		protected T value;
-		public Broadcaster broadcaster = new Broadcaster();
+        /// <summary>
+        /// Sent when a value changes
+        /// </summary>
+        public class EventValueChange : Event
+        {
+            public PublishedEntity<T> value;
 
-		public T Value
+            public EventValueChange(PublishedEntity<T> value)
+            {
+                this.value = value;
+            }
+        }
+
+        public void OnValueChange(Event theEvent, Action<T> action)
+        {
+            var eventValueChange = theEvent as EventValueChange;
+            if (null != eventValueChange && eventValueChange.value == this)
+            {
+                action(value);
+            }
+        }
+
+        protected virtual void OnValueChange()
+        {
+            broadcaster.Broadcast(new EventValueChange(this));
+        }
+    }
+
+    /// <summary>
+    /// Broadcasts when value changes, with Equatable requirement.
+    /// </summary>
+    public class PublishedValue<T> : PublishedEntity<T> where T : IEquatable<T>
+	{
+		public override T Value
 		{
 			get => value;
 			set
 			{
-				if (!value.Equals(this.value))
+				var isNullToValueChange = (this.value == null && value != null) || (this.value != null && value == null);
+
+				if (isNullToValueChange || !value.Equals(this.value))
 				{
 					this.value = value;
 					OnValueChange();
@@ -83,24 +105,29 @@ namespace PJ
 			this.value = value;
 		}
 
-		protected virtual void OnValueChange()
-		{
-			broadcaster.Broadcast(new EventValueChange(this));
-		}
-
 		public bool Equals(T value)
         {
-			return Value.Equals(value);
+			var myValue = Value;
+			if (null == myValue && null == value) { return true; }
+            if (null == myValue || null == value) { return false; }
+
+            return myValue.Equals(value);
         }
 
         public static bool operator ==(PublishedValue<T> lhs, PublishedValue<T> rhs)
         {
-			return lhs == rhs;
+            if (lhs == null && rhs == null) { return true; }
+            if (lhs == null || rhs == null) { return false; }
+
+            return lhs.value.Equals(rhs.value);
         }
 
         public static bool operator !=(PublishedValue<T> lhs, PublishedValue<T> rhs)
         {
-            return lhs != rhs;
+			if (lhs == null && rhs == null) { return true; }
+            if (lhs == null || rhs == null) { return false; }
+
+            return !lhs.value.Equals(rhs.value);
         }
     }
 }

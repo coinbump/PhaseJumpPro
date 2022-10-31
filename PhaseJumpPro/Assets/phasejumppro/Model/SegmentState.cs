@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 /*
@@ -12,7 +13,7 @@ namespace PJ
     /// States are set based on which segment we are in
     /// Example: a day-state timer for morning, afternoon, night
     /// </summary>
-    public class SegmentState<State>
+    public class SegmentState<State> where State : IEquatable<State>
     {
         public class Segment
         {

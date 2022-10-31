@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 /*
@@ -12,7 +13,7 @@ namespace PJ
 	/// A timer that sets a state when it enters a segment (a slice of time within the time size)
 	/// Example: a day-state timer for morning, afternoon, night
 	/// </summary>
-	public class SegmentStateTimer<State> : Timer
+	public class SegmentStateTimer<State> : Timer where State : IEquatable<State>
     {
         public SegmentState<State> segmentState;
 
