@@ -30,9 +30,9 @@ namespace PJ
                 return new SerialBuilder(multiplyNode);
             }
 
-            public SerialBuilder OutputTo(string outputIdentifier, GoStandardAcyclicNode toNode, string inputIdentifier)
+            public SerialBuilder OutputTo(string outputId, GoStandardAcyclicNode toNode, string inputId)
             {
-                node.AddOutput(outputIdentifier, toNode, inputIdentifier);
+                node.AddOutput(outputId, toNode, inputId);
                 return new SerialBuilder(toNode);
             }
 
