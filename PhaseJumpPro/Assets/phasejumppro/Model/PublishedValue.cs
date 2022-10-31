@@ -87,5 +87,20 @@ namespace PJ
 		{
 			broadcaster.Broadcast(new EventValueChange(this));
 		}
-	}
+
+		public bool Equals(T value)
+        {
+			return Value.Equals(value);
+        }
+
+        public static bool operator ==(PublishedValue<T> lhs, PublishedValue<T> rhs)
+        {
+			return lhs == rhs;
+        }
+
+        public static bool operator !=(PublishedValue<T> lhs, PublishedValue<T> rhs)
+        {
+            return lhs != rhs;
+        }
+    }
 }
