@@ -12,6 +12,6 @@ namespace PJ
     /// </summary>
     public interface Identifiable
     {
-        public abstract string Identifier { get; set; }
+        public abstract string Id { get; set; }
     }
 }

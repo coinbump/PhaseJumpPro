@@ -28,22 +28,22 @@ namespace PJ {
 	public partial class Core<StateType> : SomeCore {
 		// OPTIONAL:
 		protected Class _class;
-		protected string classIdentifier;   // If class is not yet assigned
+		protected string classId;   // If class is not yet assigned
 		protected StateMachine<StateType> stateMachine = new StateMachine<StateType>();
 
 		/// <summary>
-		/// If we have a class object, return its identifier, otherwise use the identifier we have
+		/// If we have a class object, return its id, otherwise use the id we have
 		/// </summary>
-		public string ClassIdentifier {
+		public string ClassId {
 			get {
-				string result = classIdentifier;
+				string result = classId;
 				if (_class != null) {
-					result = _class.identifier;
+					result = _class.id;
 				}
 				return result;
 			}
 			set {
-				classIdentifier = value;
+				classId = value;
 			}
 		}
 

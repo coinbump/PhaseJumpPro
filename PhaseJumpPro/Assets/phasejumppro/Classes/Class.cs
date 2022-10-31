@@ -15,21 +15,36 @@ namespace PJ
 	/// </summary>
 	public class Class
 	{
-		public string identifier;
+		public string id;
 
 		/// <summary>
+        /// Optional title, for browsing
+        /// </summary>
+        public string title;
+
+		/// <summary>
+        /// Optional description, for browsing
+        /// </summary>
+        public string description;
+
+        /// <summary>
         /// Set of string tags that define type properties
         /// </summary>
-		public TypeTagsSet typeTags = new TypeTagsSet();
+        public TypeTagsSet typeTags = new TypeTagsSet();
 
-		/// <summary>
+        /// <summary>
         /// Tag metadata
         /// </summary>
-		public Tags tags = new Tags();
+        public Tags tags = new Tags();
 
-		public Class(string identifier, TypeTagsSet typeTags)
+		public Class(string id)
+        {
+			this.id = id;
+        }
+
+		public Class(string id, TypeTagsSet typeTags)
 		{
-			this.identifier = identifier;
+			this.id = id;
 			this.typeTags = typeTags;
 		}
 	}
