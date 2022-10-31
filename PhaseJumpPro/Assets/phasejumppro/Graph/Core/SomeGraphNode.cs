@@ -39,7 +39,7 @@ namespace PJ
             }
         }
 
-        public string identifier;
+        public string id;
 
         /// <summary>
         /// Custom properties
@@ -56,7 +56,7 @@ namespace PJ
         public List<Edge> Edges { get { return edges; } }
         public HashSet<HashedWeakReference<SomeGraphNode<EdgeModel>>> FromNodes { get { return fromNodes; } }
 
-        public string Identifier => identifier;
+        public string Id => id;
 
         public abstract void AddEdge(EdgeModel model, SomeGraphNode<EdgeModel> toNode);
 

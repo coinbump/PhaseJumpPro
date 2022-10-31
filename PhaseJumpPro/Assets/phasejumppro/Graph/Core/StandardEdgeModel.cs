@@ -12,14 +12,14 @@ namespace PJ
         /// </summary>
         public struct StandardEdgeModel
         {
-            public string identifier; // Example: north, west, left, right
+            public string id; // Example: north, west, left, right
             public string type; // Example: input, output
             public float weight;
             public Tags tags;
 
-            public StandardEdgeModel(string identifier, string type, float weight = 1.0f, Tags tags = null)
+            public StandardEdgeModel(string id, string type, float weight = 1.0f, Tags tags = null)
             {
-                this.identifier = identifier;
+                this.id = id;
                 this.type = type;
                 this.weight = weight;
 
@@ -33,7 +33,7 @@ namespace PJ
                 }
             }
 
-            public string Identifier => identifier;
+            public string Id => id;
             public string Type => type;
             public float Weight => weight;
         }
