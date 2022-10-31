@@ -14,7 +14,7 @@ namespace PJ
         [System.Serializable]
         public struct Item<T>
         {
-            public string identifier;
+            public string id;
             public T @object;
         }
 
@@ -22,7 +22,7 @@ namespace PJ
         public List<Item<AudioClip>> audioClipItems;
 
         /// <summary>
-        /// Internal registry for identifier -> GameObject (or Prefab) map
+        /// Internal registry for id -> GameObject (or Prefab) map
         /// </summary>
         protected Dictionary<string, GameObject> gameObjectRegistry = new Dictionary<string, GameObject>();
         protected Dictionary<string, AudioClip> audioClipRegistry = new Dictionary<string, AudioClip>();
@@ -30,11 +30,11 @@ namespace PJ
         public Dictionary<string, GameObject> GameObjectRegistry => gameObjectRegistry;
         public Dictionary<string, AudioClip> AudioClipRegistry => audioClipRegistry;
 
-        public GameObject InstantiateGameObject(string identifier, Vector3 position, Quaternion rotation)
+        public GameObject InstantiateGameObject(string id, Vector3 position, Quaternion rotation)
         {
             try
             {
-                var gameObject = gameObjectRegistry[identifier];
+                var gameObject = gameObjectRegistry[id];
                 return Instantiate(gameObject, position, rotation);
             }
             catch
@@ -54,13 +54,13 @@ namespace PJ
             var anyMissingIds = false;
             foreach (Item<T> item in items)
             {
-                if (item.identifier.Length == 0)
+                if (item.id.Length == 0)
                 {
                     anyMissingIds = true;
                     continue;
                 }
 
-                registry[item.identifier] = item.@object;
+                registry[item.id] = item.@object;
             }
 
             if (anyMissingIds)

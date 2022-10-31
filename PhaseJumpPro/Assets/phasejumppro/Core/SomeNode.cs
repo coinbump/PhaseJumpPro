@@ -20,7 +20,7 @@ namespace PJ
 			Invisible, ZeroAlpha
 		}
 
-		public string identifier;
+		public string id;
 
 		[NonSerialized]
 		public Tags tags = new Tags();
@@ -34,7 +34,7 @@ namespace PJ
 			public string value;    // Type is inferred from value
 		}
 
-		public string Identifier { get => identifier; set => identifier = value; }
+		public string Id { get => id; set => id = value; }
 		public abstract bool IsKinematic { get; }
 
 		/// <summary>
@@ -48,11 +48,6 @@ namespace PJ
 		public List<string> typeTags = new List<string>();
 
 		public List<CullType> cullTypes = new List<CullType>();
-
-		/// <summary>
-		/// Updatables are sent update events (for timers, animations, etc.)
-		/// </summary>
-		protected HashSet<Updatable> updatables = new HashSet<Updatable>();
 
 		/// <summary>
 		/// Handles state machine.

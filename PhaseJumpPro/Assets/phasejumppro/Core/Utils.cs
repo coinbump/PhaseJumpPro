@@ -25,9 +25,9 @@ namespace PJ
 		}
 
 		// FUTURE: need tests for this
-		public static RaycastHit2D[] Raycast2DHitsAtScreenPosition(Vector2 position)
+		public static RaycastHit2D[] Raycast2DHitsAtScreenPosition(Camera camera, Vector2 position)
         {
-			return Physics2D.RaycastAll(Camera.main.ScreenToWorldPoint(position), Vector2.zero);
+			return Physics2D.RaycastAll(camera.ScreenToWorldPoint(position), Vector2.zero);
 		}
 
 		public static Vector2Int ScreenPixelSize()
