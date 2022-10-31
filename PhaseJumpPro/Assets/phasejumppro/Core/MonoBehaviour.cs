@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 
 /*
  * RATING: 5 stars
@@ -13,6 +13,11 @@ namespace PJ
 	/// </summary>
 	public class MonoBehaviour : UnityEngine.MonoBehaviour
 	{
+		/// <summary>
+		/// Updatables are sent update events (for timers, animations, etc.)
+		/// </summary>
+		protected HashSet<Updatable> updatables = new HashSet<Updatable>();
+
 #if UNITY_EDITOR
 		protected virtual void RenderGizmos(EditorUtils.RenderState renderState)
 		{
