@@ -34,7 +34,7 @@ namespace PJ
             Auto
         }
 
-        public string identifier;
+        public string id;
         public WeaponType type = WeaponType.Bullet;
         public FireType fireType = FireType.Once;
 

@@ -28,7 +28,7 @@ namespace PJ
 
             public BurstTimer(WeaponEmitter2D owner) : base(1.0f, SomeTimed.RunType.RunOnce)
             {
-                identifier = "Weapon Burst Timer";
+                id = "Weapon Burst Timer";
                 this.owner = new WeakReference<WeaponEmitter2D>(owner);
             }
 
@@ -54,8 +54,6 @@ namespace PJ
         protected Timer weaponBurstTimer;
         protected int weaponBurstCount;
         protected float weaponBurstAngle;
-
-        protected HashSet<Updatable> updatables = new HashSet<Updatable>();
 
         public Weapon2D Weapon
         {
