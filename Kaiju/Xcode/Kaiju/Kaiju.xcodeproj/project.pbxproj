@@ -1,0 +1,643 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		CD0A848B291CBF630074CA4F /* PhaseJump.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD0A848A291CBF630074CA4F /* PhaseJump.framework */; };
+		CD0A848C291CBF630074CA4F /* PhaseJump.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CD0A848A291CBF630074CA4F /* PhaseJump.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		CD5FB81C291E130D004F2FB4 /* FilesProcessorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD5FB81B291E130D004F2FB4 /* FilesProcessorView.swift */; };
+		CD5FB81E291E13D5004F2FB4 /* SwiftBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD5FB81D291E13D5004F2FB4 /* SwiftBridge.swift */; };
+		CD5FB83229200602004F2FB4 /* ObjCBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD5FB83129200602004F2FB4 /* ObjCBridge.mm */; };
+		CD6FEB5729170AE500F674D3 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD6FEB5629170AE500F674D3 /* AppDelegate.mm */; };
+		CD6FEB5A29170AE500F674D3 /* ViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD6FEB5929170AE500F674D3 /* ViewController.mm */; };
+		CD6FEB5C29170AE600F674D3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CD6FEB5B29170AE600F674D3 /* Assets.xcassets */; };
+		CD6FEB5F29170AE600F674D3 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD6FEB5D29170AE600F674D3 /* Main.storyboard */; };
+		CD6FEB6129170AE600F674D3 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6FEB6029170AE600F674D3 /* main.m */; };
+		CD6FEB6C29170AE600F674D3 /* KaijuTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD6FEB6B29170AE600F674D3 /* KaijuTests.mm */; };
+		CD6FEB7629170AE600F674D3 /* KaijuUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6FEB7529170AE600F674D3 /* KaijuUITests.m */; };
+		CD6FEB7829170AE600F674D3 /* KaijuUITestsLaunchTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6FEB7729170AE600F674D3 /* KaijuUITestsLaunchTests.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		CD6FEB6829170AE600F674D3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CD6FEB4A29170AE500F674D3 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CD6FEB5129170AE500F674D3;
+			remoteInfo = Kaiju;
+		};
+		CD6FEB7229170AE600F674D3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CD6FEB4A29170AE500F674D3 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CD6FEB5129170AE500F674D3;
+			remoteInfo = Kaiju;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		CD0A848D291CBF630074CA4F /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				CD0A848C291CBF630074CA4F /* PhaseJump.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		CD0A848A291CBF630074CA4F /* PhaseJump.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PhaseJump.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CD5FB81A291E130D004F2FB4 /* Kaiju-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Kaiju-Bridging-Header.h"; sourceTree = "<group>"; };
+		CD5FB81B291E130D004F2FB4 /* FilesProcessorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilesProcessorView.swift; sourceTree = "<group>"; };
+		CD5FB81D291E13D5004F2FB4 /* SwiftBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftBridge.swift; sourceTree = "<group>"; };
+		CD5FB83029200602004F2FB4 /* ObjCBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ObjCBridge.h; sourceTree = "<group>"; };
+		CD5FB83129200602004F2FB4 /* ObjCBridge.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ObjCBridge.mm; sourceTree = "<group>"; };
+		CD6FEB5229170AE500F674D3 /* Kaiju.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Kaiju.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CD6FEB5529170AE500F674D3 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		CD6FEB5629170AE500F674D3 /* AppDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AppDelegate.mm; sourceTree = "<group>"; };
+		CD6FEB5829170AE500F674D3 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		CD6FEB5929170AE500F674D3 /* ViewController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ViewController.mm; sourceTree = "<group>"; };
+		CD6FEB5B29170AE600F674D3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		CD6FEB5E29170AE600F674D3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		CD6FEB6029170AE600F674D3 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		CD6FEB6229170AE600F674D3 /* Kaiju.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Kaiju.entitlements; sourceTree = "<group>"; };
+		CD6FEB6729170AE600F674D3 /* KaijuTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KaijuTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		CD6FEB6B29170AE600F674D3 /* KaijuTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = KaijuTests.mm; sourceTree = "<group>"; };
+		CD6FEB7129170AE600F674D3 /* KaijuUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KaijuUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		CD6FEB7529170AE600F674D3 /* KaijuUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KaijuUITests.m; sourceTree = "<group>"; };
+		CD6FEB7729170AE600F674D3 /* KaijuUITestsLaunchTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KaijuUITestsLaunchTests.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		CD6FEB4F29170AE500F674D3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CD0A848B291CBF630074CA4F /* PhaseJump.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CD6FEB6429170AE600F674D3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CD6FEB6E29170AE600F674D3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		CD0A8489291CBF630074CA4F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				CD0A848A291CBF630074CA4F /* PhaseJump.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		CD5FB84029204DD2004F2FB4 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				CD5FB81B291E130D004F2FB4 /* FilesProcessorView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		CD6FEB4929170AE500F674D3 = {
+			isa = PBXGroup;
+			children = (
+				CD6FEB5429170AE500F674D3 /* Kaiju */,
+				CD6FEB6A29170AE600F674D3 /* KaijuTests */,
+				CD6FEB7429170AE600F674D3 /* KaijuUITests */,
+				CD6FEB5329170AE500F674D3 /* Products */,
+				CD0A8489291CBF630074CA4F /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		CD6FEB5329170AE500F674D3 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CD6FEB5229170AE500F674D3 /* Kaiju.app */,
+				CD6FEB6729170AE600F674D3 /* KaijuTests.xctest */,
+				CD6FEB7129170AE600F674D3 /* KaijuUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		CD6FEB5429170AE500F674D3 /* Kaiju */ = {
+			isa = PBXGroup;
+			children = (
+				CD5FB84029204DD2004F2FB4 /* Views */,
+				CD6FEB5529170AE500F674D3 /* AppDelegate.h */,
+				CD6FEB5629170AE500F674D3 /* AppDelegate.mm */,
+				CD6FEB5829170AE500F674D3 /* ViewController.h */,
+				CD6FEB5929170AE500F674D3 /* ViewController.mm */,
+				CD6FEB5B29170AE600F674D3 /* Assets.xcassets */,
+				CD6FEB5D29170AE600F674D3 /* Main.storyboard */,
+				CD6FEB6029170AE600F674D3 /* main.m */,
+				CD6FEB6229170AE600F674D3 /* Kaiju.entitlements */,
+				CD5FB81A291E130D004F2FB4 /* Kaiju-Bridging-Header.h */,
+				CD5FB81D291E13D5004F2FB4 /* SwiftBridge.swift */,
+				CD5FB83029200602004F2FB4 /* ObjCBridge.h */,
+				CD5FB83129200602004F2FB4 /* ObjCBridge.mm */,
+			);
+			path = Kaiju;
+			sourceTree = "<group>";
+		};
+		CD6FEB6A29170AE600F674D3 /* KaijuTests */ = {
+			isa = PBXGroup;
+			children = (
+				CD6FEB6B29170AE600F674D3 /* KaijuTests.mm */,
+			);
+			path = KaijuTests;
+			sourceTree = "<group>";
+		};
+		CD6FEB7429170AE600F674D3 /* KaijuUITests */ = {
+			isa = PBXGroup;
+			children = (
+				CD6FEB7529170AE600F674D3 /* KaijuUITests.m */,
+				CD6FEB7729170AE600F674D3 /* KaijuUITestsLaunchTests.m */,
+			);
+			path = KaijuUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		CD6FEB5129170AE500F674D3 /* Kaiju */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CD6FEB7B29170AE600F674D3 /* Build configuration list for PBXNativeTarget "Kaiju" */;
+			buildPhases = (
+				CD6FEB4E29170AE500F674D3 /* Sources */,
+				CD6FEB4F29170AE500F674D3 /* Frameworks */,
+				CD6FEB5029170AE500F674D3 /* Resources */,
+				CD0A848D291CBF630074CA4F /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Kaiju;
+			productName = Kaiju;
+			productReference = CD6FEB5229170AE500F674D3 /* Kaiju.app */;
+			productType = "com.apple.product-type.application";
+		};
+		CD6FEB6629170AE600F674D3 /* KaijuTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CD6FEB7E29170AE600F674D3 /* Build configuration list for PBXNativeTarget "KaijuTests" */;
+			buildPhases = (
+				CD6FEB6329170AE600F674D3 /* Sources */,
+				CD6FEB6429170AE600F674D3 /* Frameworks */,
+				CD6FEB6529170AE600F674D3 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				CD6FEB6929170AE600F674D3 /* PBXTargetDependency */,
+			);
+			name = KaijuTests;
+			productName = KaijuTests;
+			productReference = CD6FEB6729170AE600F674D3 /* KaijuTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		CD6FEB7029170AE600F674D3 /* KaijuUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CD6FEB8129170AE600F674D3 /* Build configuration list for PBXNativeTarget "KaijuUITests" */;
+			buildPhases = (
+				CD6FEB6D29170AE600F674D3 /* Sources */,
+				CD6FEB6E29170AE600F674D3 /* Frameworks */,
+				CD6FEB6F29170AE600F674D3 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				CD6FEB7329170AE600F674D3 /* PBXTargetDependency */,
+			);
+			name = KaijuUITests;
+			productName = KaijuUITests;
+			productReference = CD6FEB7129170AE600F674D3 /* KaijuUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		CD6FEB4A29170AE500F674D3 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastUpgradeCheck = 1410;
+				TargetAttributes = {
+					CD6FEB5129170AE500F674D3 = {
+						CreatedOnToolsVersion = 14.1;
+						LastSwiftMigration = 1410;
+					};
+					CD6FEB6629170AE600F674D3 = {
+						CreatedOnToolsVersion = 14.1;
+						TestTargetID = CD6FEB5129170AE500F674D3;
+					};
+					CD6FEB7029170AE600F674D3 = {
+						CreatedOnToolsVersion = 14.1;
+						TestTargetID = CD6FEB5129170AE500F674D3;
+					};
+				};
+			};
+			buildConfigurationList = CD6FEB4D29170AE500F674D3 /* Build configuration list for PBXProject "Kaiju" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = CD6FEB4929170AE500F674D3;
+			productRefGroup = CD6FEB5329170AE500F674D3 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				CD6FEB5129170AE500F674D3 /* Kaiju */,
+				CD6FEB6629170AE600F674D3 /* KaijuTests */,
+				CD6FEB7029170AE600F674D3 /* KaijuUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		CD6FEB5029170AE500F674D3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CD6FEB5C29170AE600F674D3 /* Assets.xcassets in Resources */,
+				CD6FEB5F29170AE600F674D3 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CD6FEB6529170AE600F674D3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CD6FEB6F29170AE600F674D3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		CD6FEB4E29170AE500F674D3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CD5FB81C291E130D004F2FB4 /* FilesProcessorView.swift in Sources */,
+				CD6FEB5A29170AE500F674D3 /* ViewController.mm in Sources */,
+				CD6FEB6129170AE600F674D3 /* main.m in Sources */,
+				CD5FB81E291E13D5004F2FB4 /* SwiftBridge.swift in Sources */,
+				CD5FB83229200602004F2FB4 /* ObjCBridge.mm in Sources */,
+				CD6FEB5729170AE500F674D3 /* AppDelegate.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CD6FEB6329170AE600F674D3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CD6FEB6C29170AE600F674D3 /* KaijuTests.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CD6FEB6D29170AE600F674D3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CD6FEB7629170AE600F674D3 /* KaijuUITests.m in Sources */,
+				CD6FEB7829170AE600F674D3 /* KaijuUITestsLaunchTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		CD6FEB6929170AE600F674D3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CD6FEB5129170AE500F674D3 /* Kaiju */;
+			targetProxy = CD6FEB6829170AE600F674D3 /* PBXContainerItemProxy */;
+		};
+		CD6FEB7329170AE600F674D3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CD6FEB5129170AE500F674D3 /* Kaiju */;
+			targetProxy = CD6FEB7229170AE600F674D3 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		CD6FEB5D29170AE600F674D3 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CD6FEB5E29170AE600F674D3 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		CD6FEB7929170AE600F674D3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 12.6;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		CD6FEB7A29170AE600F674D3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 12.6;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		CD6FEB7C29170AE600F674D3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;
+				CODE_SIGN_ENTITLEMENTS = Kaiju/Kaiju.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = SUX6D55KV3;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSMainStoryboardFile = Main;
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = coinbump.Kaiju;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "Kaiju/Kaiju-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		CD6FEB7D29170AE600F674D3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;
+				CODE_SIGN_ENTITLEMENTS = Kaiju/Kaiju.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = SUX6D55KV3;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSMainStoryboardFile = Main;
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = coinbump.Kaiju;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "Kaiju/Kaiju-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		CD6FEB7F29170AE600F674D3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = SUX6D55KV3;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 12.6;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = coinbump.KaijuTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Kaiju.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Kaiju";
+			};
+			name = Debug;
+		};
+		CD6FEB8029170AE600F674D3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = SUX6D55KV3;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 12.6;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = coinbump.KaijuTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Kaiju.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Kaiju";
+			};
+			name = Release;
+		};
+		CD6FEB8229170AE600F674D3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = SUX6D55KV3;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = coinbump.KaijuUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				TEST_TARGET_NAME = Kaiju;
+			};
+			name = Debug;
+		};
+		CD6FEB8329170AE600F674D3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = SUX6D55KV3;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = coinbump.KaijuUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				TEST_TARGET_NAME = Kaiju;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		CD6FEB4D29170AE500F674D3 /* Build configuration list for PBXProject "Kaiju" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CD6FEB7929170AE600F674D3 /* Debug */,
+				CD6FEB7A29170AE600F674D3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CD6FEB7B29170AE600F674D3 /* Build configuration list for PBXNativeTarget "Kaiju" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CD6FEB7C29170AE600F674D3 /* Debug */,
+				CD6FEB7D29170AE600F674D3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CD6FEB7E29170AE600F674D3 /* Build configuration list for PBXNativeTarget "KaijuTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CD6FEB7F29170AE600F674D3 /* Debug */,
+				CD6FEB8029170AE600F674D3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CD6FEB8129170AE600F674D3 /* Build configuration list for PBXNativeTarget "KaijuUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CD6FEB8229170AE600F674D3 /* Debug */,
+				CD6FEB8329170AE600F674D3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = CD6FEB4A29170AE500F674D3 /* Project object */;
+}
