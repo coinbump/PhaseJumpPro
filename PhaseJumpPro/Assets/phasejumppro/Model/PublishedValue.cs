@@ -113,21 +113,5 @@ namespace PJ
 
             return myValue.Equals(value);
         }
-
-        public static bool operator ==(PublishedValue<T> lhs, PublishedValue<T> rhs)
-        {
-            if (lhs == null && rhs == null) { return true; }
-            if (lhs == null || rhs == null) { return false; }
-
-            return lhs.value.Equals(rhs.value);
-        }
-
-        public static bool operator !=(PublishedValue<T> lhs, PublishedValue<T> rhs)
-        {
-			if (lhs == null && rhs == null) { return true; }
-            if (lhs == null || rhs == null) { return false; }
-
-            return !lhs.value.Equals(rhs.value);
-        }
     }
 }

@@ -33,8 +33,27 @@ namespace PJ
 
         public Vector2Int matrixSize = new Vector2Int(5, 5);
         public Vector2 worldSize = new Vector2(1.0f, 1.0f);
-
+        
         public MatrixBoard board;
+
+        [Tooltip("Optional focus indicator")]
+        public GameObject focusIndicator;
+
+        protected Optional<Vector2Int> mouseFocusedCell;
+        protected MouseInputController mouseInputController = new();
+
+        public Vector2 TopLeftWorldPosition
+        {
+            get
+            {
+                var origin = transform.position;
+                var topLeft = new Vector2(
+                    origin.x - worldSize.x / 2.0f,
+                    origin.y + worldSize.y / 2.0f * Vector2.up.y
+                );
+                return topLeft;
+            }
+        }
 
         protected virtual void Awake()
         {
@@ -63,6 +82,39 @@ namespace PJ
             }
         }
 
+        protected virtual void Update()
+        {
+            if (mouseInputController.IsAvailable())
+            {
+                mouseInputController.OnUpdate(new TimeSlice(Time.deltaTime));
+                mouseFocusedCell = CellAtWorldPosition(new Vector2(mouseInputController.worldPosition.x, mouseInputController.worldPosition.y));
+
+                if (focusIndicator)
+                {
+                    if (null != mouseFocusedCell)
+                    {
+                        var cellPosition = CellToWorldPosition(mouseFocusedCell.value);
+
+                        focusIndicator.transform.position = new Vector3(cellPosition.x, cellPosition.y, focusIndicator.transform.position.z);
+                        var meshRenderer = focusIndicator.GetComponent<MeshRenderer>();
+                        if (meshRenderer)
+                        {
+                            meshRenderer.enabled = true;
+                        }
+                    }
+                    else
+                    {
+                        var meshRenderer = focusIndicator.GetComponent<MeshRenderer>();
+                        if (meshRenderer)
+                        {
+                            meshRenderer.enabled = false;
+                        }
+                    }
+                }
+                // Debug.Log(mouseFocusedCell.ToString());
+            }
+        }
+
         public Vector2 CellSize
         {
             get
@@ -71,12 +123,49 @@ namespace PJ
             }
         }
 
-        public Vector2 CellPositionAt(Vector2Int location)
+        public bool IsReadingPositionInside(Vector2 readingPosition)
         {
-            var x = -(worldSize.x / 2.0f) + CellSize.x / 2.0f + location.x * CellSize.x;
-            var y = (worldSize.y / 2.0f) * Vector2.up.y + (CellSize.y / 2.0f + location.y * CellSize.y) * Vector2.down.y;
+            if (readingPosition.x < 0 || readingPosition.y < 0) { return false; }
+            if (readingPosition.x > worldSize.x || readingPosition.y > worldSize.y) { return false; }
+
+            return true;
+        }
+
+        public Optional<Vector2Int> CellAtWorldPosition(Vector2 worldPosition)
+        {
+            var topLeft = TopLeftWorldPosition;
+
+            // The Matrix works in right-hand coordinate space
+            var readingPosition = new Vector2(worldPosition.x - topLeft.x, Mathf.Abs(worldPosition.y - topLeft.y));
+            if (!IsReadingPositionInside(readingPosition)) { return null; }
+
+            var cell = CellAtReadingPosition(readingPosition);
+            return new Optional<Vector2Int>(cell);
+        }
+
+        public Vector2Int CellAtReadingPosition(Vector2 readingPosition)
+        {
+            var column = (int)(readingPosition.x / CellSize.x);
+            var row = (int)(readingPosition.y / CellSize.y);
+
+            return new Vector2Int(column, row);
+        }
+
+        public Vector2 CellToLocalPosition(Vector2Int cell)
+        {
+            var x = -(worldSize.x / 2.0f) + CellSize.x / 2.0f + cell.x * CellSize.x;
+            var y = (worldSize.y / 2.0f) * Vector2.up.y + (CellSize.y / 2.0f + cell.y * CellSize.y) * Vector2.down.y;
 
             return new Vector2(x, y);
+        }
+
+        public Vector3 CellToWorldPosition(Vector2Int cell)
+        {
+            var topLeft = TopLeftWorldPosition;
+            var x = topLeft.x + CellSize.x / 2.0f + cell.x * CellSize.x;
+            var y = topLeft.y + (CellSize.y / 2.0f + cell.y * CellSize.y) * Vector2.down.y;
+
+            return new Vector3(x, y, 0);
         }
 
         public MoveResult MovePiece(MatrixPiece piece, MapDirection direction, float duration)
@@ -137,8 +226,8 @@ namespace PJ
             var pieceOrigin = node.piece.origin;
             var pieceSize = node.piece.Size;
 
-            var topLeftCellPosition = CellPositionAt(pieceOrigin);
-            var bottomRightCellPosition = CellPositionAt(pieceOrigin + new Vector2Int(pieceSize.x - 1, pieceSize.y -1));
+            var topLeftCellPosition = CellToLocalPosition(pieceOrigin);
+            var bottomRightCellPosition = CellToLocalPosition(pieceOrigin + new Vector2Int(pieceSize.x - 1, pieceSize.y -1));
 
             var x = topLeftCellPosition.x + (bottomRightCellPosition.x - topLeftCellPosition.x) / 2.0f;
             var y = topLeftCellPosition.y + Mathf.Abs((bottomRightCellPosition.y - topLeftCellPosition.y) / 2.0f) * Vector2.down.y;

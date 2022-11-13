@@ -11,6 +11,6 @@ namespace PJ
         public T start;
         public T end;
         public float duration;
-        public SomeTransform<float> curve = new InterpolateLinear();
+        public SomeTransform<float> transform = new InterpolateLinear();
     }
 }

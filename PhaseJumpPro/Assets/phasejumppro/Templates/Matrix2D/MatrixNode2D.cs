@@ -67,7 +67,7 @@ namespace PJ
             if (null != moveAnimationCurve)
             {
                 float progress = moveAnimationTimer.Progress;
-                progress = moveAnimationCurve.value.curve.Transform(progress);
+                progress = moveAnimationCurve.value.transform.Transform(progress);
 
                 var position = moveAnimationCurve.value.start + (moveAnimationCurve.value.end - moveAnimationCurve.value.start) * progress;
                 transform.localPosition = position;
