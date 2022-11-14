@@ -322,7 +322,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d37f6e94ba6a4cfba1a9f363294116a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  duration: 0.3
+  duration: 1
 --- !u!114 &442205353
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -337,6 +337,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   matrixSize: {x: 30, y: 30}
   worldSize: {x: 20, y: 20}
+  focusIndicator: {fileID: 0}
 --- !u!1 &1137032080
 GameObject:
   m_ObjectHideFlags: 0
@@ -383,11 +384,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ac471fb5deb64b2f90b45c69cc580d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  id: 
   initialState: 
   valueTags: []
   typeTags: []
   cullTypes: 
-  rotationDegreeAngle: 0
+  rotation: 0
   velocityType: 0
   velocity: {x: 0, y: 0}
   origin: {x: 15, y: 15}
