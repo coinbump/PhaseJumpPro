@@ -55,12 +55,12 @@ namespace PJ
             }
         }
 
-        protected virtual void Awake()
+        protected override void Awake()
         {
             board = new MatrixBoard(matrixSize);
         }
 
-        protected virtual void Start()
+        protected override void Start()
         {
             foreach (Transform childTransform in transform)
             {
@@ -82,12 +82,14 @@ namespace PJ
             }
         }
 
-        protected virtual void Update()
+        protected override void Update()
         {
             if (mouseInputController.IsAvailable())
             {
-                mouseInputController.OnUpdate(new TimeSlice(Time.deltaTime));
-                mouseFocusedCell = CellAtWorldPosition(new Vector2(mouseInputController.worldPosition.x, mouseInputController.worldPosition.y));
+                var worldPosition = mouseInputController.WorldPosition;
+                if (null == worldPosition) { return; }
+
+                mouseFocusedCell = CellAtWorldPosition(new Vector2(worldPosition.value.x, worldPosition.value.y));
 
                 if (focusIndicator)
                 {

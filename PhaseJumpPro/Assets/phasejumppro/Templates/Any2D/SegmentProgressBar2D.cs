@@ -78,7 +78,7 @@ namespace PJ
 			}
         }
 
-	void Start()
+		protected override void Start()
 		{
 			if (null == filledSegment)
             {

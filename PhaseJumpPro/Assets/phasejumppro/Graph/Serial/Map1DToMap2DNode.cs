@@ -23,10 +23,10 @@ namespace PJ
 
             protected class Map : SomeMap<Vector2, float>
             {
-                public Map1D map1D;
+                public SomeMap1D map1D;
                 public Axis2D axis;
 
-                public Map(Map1D map1D, Axis2D axis)
+                public Map(SomeMap1D map1D, Axis2D axis)
                 {
                     this.map1D = map1D;
                     this.axis = axis;
@@ -55,7 +55,7 @@ namespace PJ
                     var inputValue = ValueForInput<SomeMap<float, float>>("value", null, null);
                     if (null != inputValue)
                     {
-                        return new Map(inputValue as Map1D, axis);
+                        return new Map(inputValue as SomeMap1D, axis);
                     }
                 }
 

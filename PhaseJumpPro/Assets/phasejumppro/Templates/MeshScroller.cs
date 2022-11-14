@@ -55,7 +55,7 @@ namespace PJ
             }
         }
 
-        void Start()
+        protected override void Start()
         {
             meshRenderer = gameObject.GetComponent<MeshRenderer>();
             if (null == meshRenderer)
@@ -67,7 +67,7 @@ namespace PJ
             Build();
         }
 
-        void Update()
+        protected override void Update()
         {
             if (scrollTime > 0)
             {

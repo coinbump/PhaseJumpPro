@@ -41,7 +41,7 @@ namespace PJ
 
         public StateMachine<StateType> stateMachine { get; protected set; } = new StateMachine<StateType>();
 
-        protected virtual void Update()
+        protected override void Update()
         {
             switch (stateMachine.State)
             {

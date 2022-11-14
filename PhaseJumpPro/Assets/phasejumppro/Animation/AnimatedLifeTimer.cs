@@ -16,13 +16,13 @@ namespace PJ
     {
         public SomeAnimation exitAnimation;
         public float lifeTime;
-
+        
         [Range(0, 1.0f)]
         public float exitAnimationTrigger;
 
         protected float timer;
 
-        protected virtual void Update()
+        protected override void Update()
         {
             if (lifeTime <= 0) { return; }
 

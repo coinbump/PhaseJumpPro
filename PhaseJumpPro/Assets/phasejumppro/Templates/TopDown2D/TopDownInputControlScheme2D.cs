@@ -31,7 +31,7 @@ namespace PJ
 
         public SomeTransform<float> interpolate = new InterpolateLinear();
 
-        public void Start()
+        protected override void Start()
         {
             node = GetComponent<Node2D>();
             if (null == node)
@@ -41,11 +41,11 @@ namespace PJ
             }
         }
 
-        public void Update()
+        protected override void Update()
         {
         }
 
-        public void OnInputMove(InputAction.CallbackContext context)
+        public void OnInputMove(Vector2 value)
         {
             if (null == node) { return; }
 
@@ -58,7 +58,7 @@ namespace PJ
             var angleAxisLimiter = new AngleAxisLimiter2D(axisLimit);
             var rigidbody = node.GetComponent<Rigidbody2D>();
 
-            var axisVector = context.ReadValue<Vector2>();
+            var axisVector = value;
             var angle = AngleUtils.Vector2ToDegreeAngle(axisVector);
             var distance = AngleUtils.Distance(Vector2.zero, axisVector);
             if (distance <= deadZone)

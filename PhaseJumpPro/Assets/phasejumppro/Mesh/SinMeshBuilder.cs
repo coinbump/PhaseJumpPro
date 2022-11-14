@@ -43,7 +43,7 @@ namespace PJ
             return modifierNode.planeMesh.mesh;
         }
 
-        public void Update()
+        protected override void Update()
         {
             if (animationSpeed <= 0) { return; }
 

@@ -9,7 +9,10 @@ using UnityEngine;
  */
 namespace PJ
 {
-	public class HueAnimation : SomeAnimation
+    /// <summary>
+    /// Animates the material's render color across the range of hues
+    /// </summary>
+    public class HueAnimation : SomeAnimation
 	{
 		/// <summary>
         /// Time for a full cyle across all hues

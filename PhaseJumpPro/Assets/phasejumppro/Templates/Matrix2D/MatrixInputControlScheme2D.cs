@@ -22,7 +22,7 @@ namespace PJ
         protected MatrixBoardRunner2D boardRunner;
         protected MatrixNode2D node;
 
-        public void Start()
+        protected override void Start()
         {
             node = GetComponent<MatrixNode2D>();
             if (null == node)
@@ -39,7 +39,7 @@ namespace PJ
             }
         }
 
-        public void Update()
+        protected override void Update()
         {
         }
 

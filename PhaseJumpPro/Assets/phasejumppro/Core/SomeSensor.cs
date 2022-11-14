@@ -100,11 +100,11 @@ namespace PJ
             Debug.Log("Error. Sensor colliders should be triggers");
         }
 
-        protected virtual void Awake()
+        protected override void Awake()
         {
         }
 
-        protected virtual void Update()
+        protected override void Update()
         {
         }
 

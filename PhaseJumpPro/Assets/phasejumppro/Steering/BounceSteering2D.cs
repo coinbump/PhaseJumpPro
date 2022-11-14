@@ -16,7 +16,7 @@ namespace PJ
 	{
 		protected Node2D node;
 
-		private void Start()
+        protected override void Start()
 		{
 			node = GetComponent<Node2D>();
 			if (null == node)

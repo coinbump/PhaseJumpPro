@@ -15,7 +15,7 @@ namespace PJ
         /// </summary>
         public class SinMap1DNode : GoStandardAcyclicNode
         {
-            public class Map : Map1D
+            public class Map : SomeMap1D
             {
                 public bool isOutputNormal = false;
                 public float offset = 0;

@@ -18,7 +18,7 @@ namespace PJ
         public Vector2 inset = Vector2.zero;
         public Vector2 offset = Vector2.zero;
 
-        public void Awake()
+        protected override void Awake()
         {
             Build();
         }

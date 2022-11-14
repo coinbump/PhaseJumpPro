@@ -5,7 +5,7 @@ using System.Collections.Generic;
 /*
  * RATING: 5 stars
  * Simple abstract class
- * CODE REVIEW: 1/13/22
+ * CODE REVIEW: 11/13/22
  */
 namespace PJ
 {
@@ -35,9 +35,9 @@ namespace PJ
         /// </summary>
         public abstract void ApplyLayout();
 
-        protected virtual void Awake() { }
+        protected override void Awake() { }
 
-        protected virtual void Start()
+        protected override void Start()
         {
             if (autoApply)
             {
@@ -58,12 +58,11 @@ namespace PJ
             return Vector3.zero;
         }
 
+#if UNITY_EDITOR
         protected virtual void OnValidate()
         {
             ApplyLayout();
         }
-
-#if UNITY_EDITOR
 
         [CustomEditor(typeof(SomeGameObjectsLayout))]
 		public class Editor : UnityEditor.Editor

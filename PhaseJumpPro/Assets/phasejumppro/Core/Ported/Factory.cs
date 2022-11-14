@@ -40,14 +40,14 @@ namespace PJ
     /// </summary>
 	public class FactoryNew<Type> : SomeFactory where Type : new()
     {
-		public Type NewType()
+		public Type New()
 		{
 			return new Type();
 		}
 
 		public override object NewObject()
 		{
-			return NewType();
+			return New();
 		}
 	}
 }

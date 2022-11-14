@@ -220,7 +220,7 @@ namespace PJ
             }
         }
 
-        protected override void OnUpdate(TimeSlice time)
+        public override void OnUpdate(TimeSlice time)
 		{
 			base.OnUpdate(time);
 

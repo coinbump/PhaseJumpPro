@@ -69,7 +69,7 @@ namespace PJ
 			return ((Item)weight.target).spawnObject;
 		}
 
-		protected virtual void Start()
+		protected override void Start()
 		{
 		}
 	}

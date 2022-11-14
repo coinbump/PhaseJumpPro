@@ -33,11 +33,11 @@ namespace PJ
         /// </summary>
 		public int buildCount;
 
-		protected virtual void Awake()
+		protected override void Awake()
         {
         }
 
-		protected virtual void Start()
+		protected override void Start()
         {
 			if (objectList.Count <= 0) { return; }
 

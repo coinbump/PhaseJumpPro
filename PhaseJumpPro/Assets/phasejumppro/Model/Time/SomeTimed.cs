@@ -5,6 +5,8 @@ using UnityEngine.Assertions;
  * RATING: 5 stars
  * Has unit tests (via Timer)
  * CODE REVIEW: 4/14/22
+ * 
+ * PORTED TO: C++
  */
 namespace PJ {
 	/// <summary>
@@ -16,9 +18,12 @@ namespace PJ {
 		public abstract float Progress { get; }
 
 		public enum RunType {
-			RunOnce,	// Destroy when finished
-			KeepRunning	// Repeats (example: timer that does an update every N seconds)
-		}
+            // Destroy when finished
+            RunOnce,
+
+            // Repeats (example: timer that does an update every N seconds)
+            KeepRunning
+        }
 
 		public float duration;
 		public RunType runType;

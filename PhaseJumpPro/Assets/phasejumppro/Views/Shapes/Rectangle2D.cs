@@ -3,6 +3,9 @@ using UnityEngine;
 
 namespace PJ
 {
+    /// <summary>
+    /// A Rectangle shape view
+    /// </summary>
     public class Rectangle2D : Shape2D
     {
         protected MeshRenderer meshRenderer;

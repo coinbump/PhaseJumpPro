@@ -51,16 +51,6 @@ public class ExamplePlayer : Node2D
         weaponEmitter.Weapon = burstWeapon;
     }
 
-    protected override void Start()
-    {
-        base.Start();
-    }
-
-    protected override void OnUpdate(TimeSlice time)
-    {
-        base.OnUpdate(time);
-    }
-
     public void OnInputMoveRight(InputAction.CallbackContext context)
     {
         var inputVector = context.ReadValue<Vector2>();

@@ -42,8 +42,8 @@ namespace PJ
 
                 if (GUILayout.Button("Build"))
                 {
-                    GridMeshBuilder GridMeshBuilder = (GridMeshBuilder)target;
-                    GridMeshBuilder.Build();
+                    GridMeshBuilder gridMeshBuilder = (GridMeshBuilder)target;
+                    gridMeshBuilder.Build();
                 }
             }
         }

@@ -30,11 +30,6 @@ namespace PJ
             base.Awake();
         }
 
-        protected override void OnValidate()
-        {
-            base.OnValidate();
-        }
-
         public override void ApplyLayout()
         {
             var path = NewPath();

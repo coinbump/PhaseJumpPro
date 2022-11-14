@@ -55,7 +55,7 @@ namespace PJ
 			return (worldSize.y / 2.0f) * Vector2.up.y + row * CellSize.y * Vector2.down.y;
         }
 
-		public override void Awake()
+        protected override void Awake()
         {
 			base.Awake();
 

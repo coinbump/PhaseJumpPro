@@ -2,9 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+ * RATING: 5 stars
+ * Simple animation utility
+ * CODE REVIEW: 11/13/22
+ */
 namespace PJ
 {
-    public class ScaleFocusable : AnimatedFocusable
+    /// <summary>
+    /// When it receives or loses focus, will scale itself accordingly
+    /// </summary>
+    public class ScaleFocusEffect : AnimatedFocusEffect
     {
         public float offScale = 1.0f;
         public float onScale = 2.0f;
@@ -13,17 +21,17 @@ namespace PJ
         {
             base.Start();
 
-            UpdateScale();
+            UpdateAnimatableProperties();
         }
 
         protected override void Update()
         {
             base.Update();
 
-            UpdateScale();
+            UpdateAnimatableProperties();
         }
 
-        protected void UpdateScale()
+        protected override void UpdateAnimatableProperties()
         {
             var valveState = focusValve.ValveState;
             var transformScale = offScale + (onScale - offScale) * valveState;

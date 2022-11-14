@@ -15,8 +15,8 @@ namespace PJ
     [RequireComponent(typeof(MeshRenderer))]
     public abstract class SomeMeshBuilder : PJ.MonoBehaviour
 	{
-		// Use this for initialization
-		void Start()
+        // Use this for initialization
+        protected override void Start()
 		{
 			Build();
 		}

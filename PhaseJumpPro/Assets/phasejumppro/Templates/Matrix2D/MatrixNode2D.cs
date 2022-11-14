@@ -58,7 +58,7 @@ namespace PJ
             rigidbody.isKinematic = true;
         }
 
-        protected override void OnUpdate(TimeSlice time)
+        public override void OnUpdate(TimeSlice time)
         {
             base.OnUpdate(time);
 

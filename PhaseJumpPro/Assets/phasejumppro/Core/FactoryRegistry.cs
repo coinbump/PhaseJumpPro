@@ -13,6 +13,5 @@ namespace PJ
     /// <typeparam name="Type"></typeparam>
     public class FactoryRegistry<Type> : Dictionary<string, Factory<Type>>
     {
-
     }
 }

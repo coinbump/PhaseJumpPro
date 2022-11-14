@@ -15,7 +15,7 @@ namespace PJ
 	{
 		private MouseInputController mouseInputController;
 
-		private void Awake()
+        protected override void Awake()
 		{
 			if (null == mouseInputController) { 
 				mouseInputController = new MouseInputController();
@@ -27,24 +27,25 @@ namespace PJ
 			mouseInputController = new MouseInputController();
 		}
 
-		/// <summary>
-		/// On update, move at the mouse (for cursors)
-		/// </summary>
-		public virtual void OnUpdate(TimeSlice time)
+        /// <summary>
+        /// On update, move at the mouse (for cursors)
+        /// </summary>
+        public override void OnUpdate(TimeSlice time)
 		{
+			base.OnUpdate(time);
+
 			if (null == mouseInputController || !mouseInputController.IsAvailable()) { return; }
 
 			var target = gameObject;
 			if (null == target) { return; }
 
-			mouseInputController.OnUpdate(time);
+			var worldPosition = mouseInputController.WorldPosition;
+			if (null == worldPosition) { return; }
 
-			var worldPosition = mouseInputController.worldPosition;
-			worldPosition.z = target.transform.position.z;
-			target.transform.position = worldPosition;
+			target.transform.position = new Vector3(worldPosition.value.x, worldPosition.value.y, target.transform.position.z);
 		}
 
-		protected virtual void Update()
+		protected override void Update()
 		{
 			var timeSlice = new TimeSlice(Time.deltaTime);
 			OnUpdate(timeSlice);

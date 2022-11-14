@@ -18,7 +18,7 @@ namespace PJ
 
         protected float timer;
 
-        void Update()
+        protected override void Update()
         {
             if (lifeTime <= 0) { return; }
 

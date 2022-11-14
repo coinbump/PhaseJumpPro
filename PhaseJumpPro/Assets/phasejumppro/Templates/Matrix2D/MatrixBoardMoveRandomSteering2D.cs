@@ -17,7 +17,7 @@ namespace PJ
 
         protected SomeRandom random = new UnityRandom();
 
-        protected virtual void Update()
+        protected override void Update()
         {
             var runner = GetComponent<MatrixBoardRunner2D>();
             if (null == runner)

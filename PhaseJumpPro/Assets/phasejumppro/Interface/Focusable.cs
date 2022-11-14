@@ -2,15 +2,24 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+ * RATING: 5 stars
+ * Standard interface pattern. Could use example scenes
+ * CODE REVIEW: 11/13/22
+ */
 namespace PJ
 {
     /// <summary>
-    /// Allows an object to have focus, and animate in/out of focus.
+    /// Allows an object to have focus
     /// </summary>
     public class Focusable : MonoBehaviour
     {
         [SerializeField]
         protected bool hasFocus = false;
+
+        protected bool canBecomeFocused = true;
+
+        // FUTURE: protected int focusGroupPriority = 0;
 
         public bool HasFocus
         {
@@ -20,7 +29,8 @@ namespace PJ
             }
             set
             {
-                if (hasFocus == value) {
+                if (hasFocus == value)
+                {
                     return;
                 }
 
@@ -29,10 +39,16 @@ namespace PJ
             }
         }
 
+        protected override void Awake()
+        {
+            base.Awake();
+
+            UpdateFocusEffect();
+        }
+
         public virtual Focusable ParentFocusable()
         {
-            var parent = transform.parent.gameObject;
-            return parent.GetComponent<Focusable>();
+            return ParentComponent<Focusable>();
         }
 
         public virtual List<Focusable> SiblingFocusables(bool includeThis)
@@ -59,73 +75,33 @@ namespace PJ
             return result;
         }
 
-        protected virtual void OnChildFocusChange(Focusable focusable)
+        protected void UpdateFocusEffect()
         {
-            var parentFocusable = ParentFocusable();
-            if (null == parentFocusable) { return; }
-            
-            parentFocusable.OnChildFocusChange(this);
-        }
-
-        protected virtual void OnFocusChange()
-        {
-            var parentFocusable = ParentFocusable();
-            if (null != parentFocusable)
+            var focusEffect = GetComponent<SomeFocusEffect>();
+            if (focusEffect)
             {
-                parentFocusable.OnChildFocusChange(this);
+                focusEffect.HasFocus = HasFocus;
             }
         }
 
-        protected virtual void Awake()
-        {
-        }
-
-        protected virtual void Start()
-        {
-        }
-
-        protected virtual void Update()
-        {
-        }
-    }
-
-    public class AnimatedFocusable : Focusable
-    {
-        public float focusInTime = 0.3f;
-        public float focusOutTime = 0.3f;
-
-        /// <summary>
-        /// Used to animate changes in focus over time
-        /// </summary>
-        protected Valve focusValve = new Valve();
-
-        protected override void Awake()
-        {
-            base.Awake();
-
-            focusValve.turnOffTimer = new TransformTimer(new InterpolateOutSquared(), focusOutTime, SomeTimed.RunType.RunOnce);
-            focusValve.turnOnTimer = new TransformTimer(new InterpolateOutSquared(), focusInTime, SomeTimed.RunType.RunOnce);
-        }
-
-        protected override void Start()
-        {
-            base.Start();
-
-            focusValve.InputBinary(hasFocus, InputEffect.Immediate);
-        }
-
-        protected override void Update()
-        {
-            base.Update();
-
-            focusValve.OnUpdate(new TimeSlice(delta: Time.deltaTime));
-        }
-
         protected virtual void OnFocusChange()
         {
-            base.OnFocusChange();
+            UpdateFocusEffect();
 
-            focusValve.InputBinary(hasFocus, InputEffect.Timed);
+            UISystem.shared.UpdateFocusFor(this, hasFocus);
         }
+
+#if UNITY_EDITOR
+        protected virtual void OnValidate()
+        {
+            UpdateFocusEffect();
+
+            var focusEffect = GetComponent<SomeFocusEffect>();
+            if (focusEffect)
+            {
+                focusEffect.OnValidate();
+            }
+        }
+#endif
     }
 }

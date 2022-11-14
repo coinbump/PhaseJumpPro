@@ -2,48 +2,36 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+ * RATING: 5 stars
+ * Simple animation utility
+ * CODE REVIEW: 11/13/22
+ */
 namespace PJ
 {
     /// <summary>
-    /// Needed, because Unity.Transform is not meant to be created separately from a GameObject.
+    /// Interpolates its transform properties when it receives or loses focus
     /// </summary>
-    [System.Serializable]
-    public struct GeometryTransform
+    public class TransformFocusEffect: AnimatedFocusEffect
     {
-        public Vector3 position;
-        public Vector3 rotation;
-        public Vector3 scale;
-
-        public static GeometryTransform defaultTransform = new GeometryTransform(Vector3.zero, Vector3.zero, new Vector3(1.0f, 1.0f, 1.0f));
-
-        public GeometryTransform(Vector3 position, Vector3 rotation, Vector3 scale)
-        {
-            this.position = position;
-            this.rotation = rotation;
-            this.scale = scale;
-        }
-    }
-
-    public class TransformFocusable : AnimatedFocusable
-    {
-        public GeometryTransform offTransform = GeometryTransform.defaultTransform;
-        public GeometryTransform onTransform = GeometryTransform.defaultTransform;
+        public _Transform offTransform = _Transform.defaultTransform;
+        public _Transform onTransform = _Transform.defaultTransform;
 
         protected override void Start()
         {
             base.Start();
 
-            UpdateTransform();
+            UpdateAnimatableProperties();
         }
 
         protected override void Update()
         {
             base.Update();
 
-            UpdateTransform();
+            UpdateAnimatableProperties();
         }
 
-        protected void UpdateTransform()
+        protected override void UpdateAnimatableProperties()
         {
             var valveState = focusValve.ValveState;
 

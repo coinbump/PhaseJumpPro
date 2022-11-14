@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using UnityEngine.UIElements;
 
 /*
  * RATING: 5 stars
@@ -30,20 +31,52 @@ namespace PJ
         public Dictionary<string, GameObject> GameObjectRegistry => gameObjectRegistry;
         public Dictionary<string, AudioClip> AudioClipRegistry => audioClipRegistry;
 
+        /// <summary>
+        /// Instantiate a game object if a prefab exists in the registry
+        /// </summary>
         public GameObject InstantiateGameObject(string id, Vector3 position, Quaternion rotation)
         {
-            try
+            if (TryGetRegisteredGameObject(id, out GameObject gameObject))
             {
-                var gameObject = gameObjectRegistry[id];
                 return Instantiate(gameObject, position, rotation);
             }
-            catch
+            else
             {
                 return null;
             }
         }
 
-        public void Awake()
+        /// <summary>
+        /// Return a registered game object prefab if it exists in the registry
+        /// </summary>
+        public GameObject RegisteredGameObject(string id)
+        {
+            if (TryGetRegisteredGameObject(id, out GameObject gameObject))
+            {
+                return gameObject;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Send out a registered game object prefab if it exists in the registry
+        /// </summary>
+        public bool TryGetRegisteredGameObject(string id, out GameObject gameObject)
+        {
+            var result = gameObjectRegistry.TryGetValue(id, out gameObject);
+
+            if (!result)
+            {
+                Debug.Log("Missing from registry: " + id);
+            }
+
+            return result;
+        }
+
+        protected override void Awake()
         {
             RegisterItems(gameObjectItems, gameObjectRegistry);
             RegisterItems(audioClipItems, audioClipRegistry);

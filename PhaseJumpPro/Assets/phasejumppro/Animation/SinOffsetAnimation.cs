@@ -21,7 +21,7 @@ namespace PJ
 
 		protected float time = 0.0f;
 
-		void Start()
+        protected override void Start()
 		{
 			// We need a parent object as a point of reference for the offset
 			if (null == transform.parent)
@@ -30,7 +30,7 @@ namespace PJ
             }
 		}
 
-		void Update()
+        protected override void Update()
 		{
 			if (null == transform.parent) { return; }
 

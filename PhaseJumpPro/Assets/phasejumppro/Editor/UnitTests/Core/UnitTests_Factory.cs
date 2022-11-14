@@ -12,12 +12,21 @@ namespace PJ
         }
 
 		[Test]
-		public void UnitTests()
+		public void TestFactory()
 		{
 			var factory = new Factory<TestObject>(() => new TestObject());
 			object testObject = factory.NewObject();
 			Assert.IsTrue(testObject is TestObject);
 			Assert.AreEqual(factory.New().id, "id");
 		}
+
+        [Test]
+		public void TestFactoryNew()
+        {
+			var factory = new FactoryNew<TestObject>();
+            object testObject = factory.NewObject();
+            Assert.IsTrue(testObject is TestObject);
+            Assert.AreEqual(factory.New().id, "id");
+        }
 	}
 }

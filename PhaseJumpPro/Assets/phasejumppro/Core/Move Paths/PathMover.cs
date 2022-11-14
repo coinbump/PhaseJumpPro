@@ -45,7 +45,7 @@ namespace PJ
             get => animator.Progress;
         }
 
-        protected virtual void Awake()
+        protected override void Awake()
         {
         }
 
@@ -58,7 +58,7 @@ namespace PJ
             //Debug.Log("PathMover Go cycle time: " + animator.CycleTime.ToString());
         }
 
-        protected virtual void Update()
+        protected override void Update()
         {
             var time = new TimeSlice(Time.deltaTime);
             animator.OnUpdate(time);

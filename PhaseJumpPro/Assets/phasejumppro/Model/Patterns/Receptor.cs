@@ -11,7 +11,7 @@ namespace PJ {
 	/// A receptor responds to signals. A receptor is activated when the signal matches
 	/// a key that the receptor responds to
 	/// </summary>
-	public abstract class Receptor<Key>
+	public abstract class SomeReceptor<Key>
 	{
 		protected abstract void OnSignalMatch(Signal<Key> signal);
 

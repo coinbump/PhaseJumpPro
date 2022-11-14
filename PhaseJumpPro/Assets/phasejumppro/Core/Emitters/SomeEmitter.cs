@@ -22,24 +22,6 @@ namespace PJ
 
         protected WeakGameObjectSet aliveEmits = new WeakGameObjectSet();
 
-        protected virtual void Awake()
-        {
-        }
-
-        protected override void Start()
-        {
-            base.Start();
-        }
-
-        protected virtual void Update()
-        {
-            OnUpdate(new TimeSlice(Time.deltaTime));
-        }
-
-        protected virtual void OnUpdate(TimeSlice time)
-        {
-        }
-
         public virtual GameObject Spawn()
         {
             GameObject spawn = NextSpawn();

@@ -53,7 +53,7 @@ namespace PJ
             }
         }
 
-        void Start()
+        protected override void Start()
         {
             node = GetComponent<Node2D>();
             if (null == node)
@@ -65,7 +65,7 @@ namespace PJ
             node.ForwardVelocity = velocity;
         }
 
-        void Update()
+        protected override void Update()
         {
             if (!IsSeeking) { return; }
             if (null == target) {

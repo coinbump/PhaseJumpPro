@@ -39,7 +39,7 @@ namespace PJ
             }
         }
 
-        public virtual void Awake()
+        protected override void Awake()
         {
             var scanSensor = GetComponent<ScanSensor2D>();
             if (null == scanSensor)

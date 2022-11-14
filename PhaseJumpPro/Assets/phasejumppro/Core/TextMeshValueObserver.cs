@@ -41,10 +41,11 @@ namespace PJ
 
         public TextMeshValueObserver()
         {
+            if (null == stringValue) { return; }
             stringValue.broadcaster.AddListener(this);
         }
 
-        protected virtual void Awake()
+        protected override void Awake()
         {
             textMeshPro = GetComponent<TextMeshPro>();
             if (null == textMeshPro)
@@ -58,8 +59,8 @@ namespace PJ
 
         public void OnListen(Event theEvent)
         {
-            var stringChangeEvent = theEvent as PublishedValue<string>.EventValueChange;
-            if (null != stringChangeEvent && stringChangeEvent.value == stringValue)
+            var stringChangeEvent = theEvent as EventPublishedChange<string>;
+            if (null != stringChangeEvent && null != stringChangeEvent.value && stringChangeEvent.value.Equals(stringValue))
             {
                 UpdateText();
             }

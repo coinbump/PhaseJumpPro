@@ -92,17 +92,6 @@ namespace PJ
             weaponEmitParent.transform.localPosition = Vector3.zero;
         }
 
-        protected override void Update()
-        {
-            base.Update();
-
-            var iterUpdatables = new HashSet<Updatable>(updatables);
-            foreach (Updatable updatable in iterUpdatables)
-            {
-                updatable.OnUpdate(new TimeSlice(Time.deltaTime));
-            }
-        }
-
         /// <summary>
         /// Call this to fire the weapon, emitting either a bullet, or pattern of bullets, or a melee "bullet"
         /// </summary>
@@ -220,7 +209,14 @@ namespace PJ
 
         protected GameObject NewBullet()
         {
-            return Emit();
+            var result = Emit();
+            var bullet = result.GetComponent<Bullet2D>();
+            if (null != bullet)
+            {
+                bullet.damageValue = weapon.bulletDamage;
+            }
+
+            return result;
         }
 
         protected void OnBurstFinish()

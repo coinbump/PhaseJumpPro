@@ -13,7 +13,7 @@ namespace PJ
 	/// <summary>
 	/// Provides utility methods for simplifying common game scenarios
 	/// </summary>
-	public abstract class SomeNode : MonoBehaviour, SomeStateListener<string>, SomeListener, Identifiable
+	public abstract class SomeNode : MonoBehaviour, SomeStateListener<string>, SomeListener, StringIdentifiable
 	{
 		public enum CullType
 		{
@@ -89,14 +89,14 @@ namespace PJ
 
 		public MultiRenderer multiRenderer;
 
-		protected virtual void Awake()
+		protected override void Awake()
 		{
 			core = new Core<string>(this);
 			tags = new Tags();
 			multiRenderer = new MultiRenderer(gameObject);
 		}
 
-		protected virtual void Start()
+		protected override void Start()
         {
 			foreach (NodeTag tag in valueTags)
 			{
@@ -114,8 +114,10 @@ namespace PJ
 		{
 		}
 
-		protected virtual void Update()
+		protected override void Update()
 		{
+			base.Update();
+
 			if (cullTypes.Contains(CullType.ZeroAlpha) && multiRenderer.Color.a == 0)
 			{
 				Destroy(gameObject);
@@ -123,14 +125,6 @@ namespace PJ
 			}
 
 			UpdateNode(UpdateType.Default);
-
-			var timeSlice = new TimeSlice(Time.deltaTime);
-			var iterUpdatables = new HashSet<Updatable>(updatables);
-			foreach (Updatable updatable in iterUpdatables)
-            {
-				updatable.OnUpdate(timeSlice);
-            }
-			core.OnUpdate(timeSlice);
 		}
 
 		protected virtual void FixedUpdate()
@@ -149,10 +143,6 @@ namespace PJ
 					break;
             }
 		}
-
-		protected virtual void OnUpdate(TimeSlice time)
-        {
-        }
 
 		/// <summary>
         /// Auto-cull off-camera objects if needed

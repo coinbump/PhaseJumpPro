@@ -17,16 +17,12 @@ namespace PJ
 
 		protected Node2D node;
 
-		void Start()
+		protected override void Start()
 		{
 			node = GetComponent<Node2D>();
-			if (null == node)
-            {
-				Debug.Log("Error. Node2D required for 2D animation");
-            }
 		}
 
-		void Update()
+        protected override void Update()
 		{
 			if (null == node) {
 				var eulerAngles = transform.eulerAngles;

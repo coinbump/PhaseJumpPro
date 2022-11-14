@@ -7,7 +7,7 @@
  */
 namespace PJ
 {
-    public abstract class Map2D : SomeMap<Vector2, float>
+    public abstract class SomeMap2D : SomeMap<Vector2, float>
     {
     }
 }

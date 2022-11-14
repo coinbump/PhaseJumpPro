@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 /*
  * RATING: 5 stars
  * Tested and works
- * CODE REVIEW: 5/9/22
+ * CODE REVIEW: 11/13/22
  */
 namespace PJ
 {
@@ -18,23 +18,47 @@ namespace PJ
         /// </summary>
 		public Camera inputCamera;
 
-		public Vector3 screenPosition { get; protected set; }
-		public Vector3 worldPosition { get; protected set; }
-		public Ray ray { get; protected set; }
+        public Camera InputCamera
+        {
+            get
+            {
+                return inputCamera != null ? inputCamera : Camera.main;
+            }
+        }
 
-		public Mouse mouse;
-
-		public virtual void OnUpdate(TimeSlice time)
+        public Optional<Vector3> ScreenPosition
 		{
-			mouse = Mouse.current;
-			if (null == mouse) { return; }
+			get
+			{
+                var mouse = Mouse.current;
+                if (null == mouse) { return null; }
 
-			var position = mouse.position.ReadValue();
+				var position = mouse.position.ReadValue();
+				return new Optional<Vector3>(new Vector3(position.x, position.y, 0));
+            }
+        }
 
-			var camera = this.inputCamera != null ? this.inputCamera : Camera.main;
-			worldPosition = camera.ScreenToWorldPoint(position);
-			ray = Camera.main.ScreenPointToRay(position);
-		}
+		public Optional<Vector3> WorldPosition
+		{
+			get
+			{
+				var screenPosition = ScreenPosition;
+				if (null == screenPosition) { return null; }
+
+                return new Optional<Vector3>(InputCamera.ScreenToWorldPoint(screenPosition.value));
+            }
+        }
+
+        public Optional<Ray> ScreenRay
+        {
+            get
+            {
+                var screenPosition = ScreenPosition;
+                if (null == screenPosition) { return null; }
+
+                return new Optional<Ray>(Camera.main.ScreenPointToRay(screenPosition.value));
+            }
+        }
 
 		public override bool IsAvailable()
 		{

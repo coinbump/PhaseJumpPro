@@ -8,6 +8,7 @@ namespace PJ
     /// Allows gameObjects to be treated as 2D views in reading (right hand) coordinates where positive Y is down
     /// Each view has a frame and applies the layout for its child views
     /// </summary>
+    /// TBD: Do we need LateUpdate for ApplyLayout?
     public class View2D : Node
     {
         /// <summary>
@@ -102,6 +103,20 @@ namespace PJ
             }
         }
 
+        public View2D RootView()
+        {
+            var result = this;
+
+            while (result.transform.parent) {
+                var parentView = result.transform.parent.GetComponent<View2D>();
+                if (!parentView) { break; }
+
+                result = parentView;
+            }
+
+            return result;
+        }
+
         protected override void Start()
         {
             base.Start();
@@ -110,6 +125,12 @@ namespace PJ
         }
 
 #if UNITY_EDITOR
+        protected override void OnValidate()
+        {
+            base.OnValidate();
+            RootView().ApplyLayout();
+        }
+
         protected override void RenderGizmos(EditorUtils.RenderState renderState)
         {
             EditorUtils.DrawRect(transform.position, WorldSize.x, WorldSize.y, renderState);

@@ -11,7 +11,7 @@ namespace PJ
 	/// <summary>
 	/// Logic operation
 	/// </summary>
-	public abstract class LogicTransform : SomeMap<(bool, bool), bool> {
+	public abstract class SomeLogicTransform : SomeMap<(bool, bool), bool> {
 		public abstract bool Transform(bool v1, bool v2);
 
         public override bool ValueFor((bool, bool) key)
@@ -20,13 +20,13 @@ namespace PJ
 		}
     }
 
-	public class LogicOrTransform : LogicTransform {
+	public class LogicOrTransform : SomeLogicTransform {
 		public override bool Transform(bool v1, bool v2) {
 			return v1 || v2;
 		}
 	}
 
-	public class LogAndTransform : LogicTransform
+	public class LogAndTransform : SomeLogicTransform
 	{
 		public override bool Transform(bool v1, bool v2)
 		{
@@ -34,7 +34,7 @@ namespace PJ
 		}
 	}
 
-	public class LogicXorTransform : LogicTransform
+	public class LogicXorTransform : SomeLogicTransform
 	{
 		public override bool Transform(bool v1, bool v2)
 		{

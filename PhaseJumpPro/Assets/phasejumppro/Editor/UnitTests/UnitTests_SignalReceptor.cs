@@ -6,7 +6,7 @@ namespace PJ
 {
 	public class UnitTests_SignalReceptor
 	{
-		private class TestReceptor : Receptor<string>
+		private class TestReceptor : SomeReceptor<string>
 		{
 			public int matchCount;
 

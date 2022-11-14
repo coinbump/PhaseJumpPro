@@ -11,7 +11,7 @@ namespace PJ
     /// <summary>
     /// Evaluates a condition and if true, continues to first child node
     /// </summary>
-    public abstract class ConditionBehaviorNode : BehaviorNode
+    public abstract class SomeConditionBehaviorNode : BehaviorNode
     {
         public abstract bool EvaluateCondition();
 

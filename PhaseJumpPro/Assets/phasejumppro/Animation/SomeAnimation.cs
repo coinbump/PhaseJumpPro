@@ -14,7 +14,7 @@ namespace PJ
 
 		protected MultiRenderer multiRenderer;
 
-		protected virtual void Awake()
+		protected override void Awake()
 		{
 			Setup();
 		}
@@ -26,11 +26,11 @@ namespace PJ
 			multiRenderer.meshMaterialType = meshMaterialType;
 		}
 
-		protected virtual void Start()
+		protected override void Start()
         {
         }
 
-		protected virtual void Update()
+		protected override void Update()
 		{
 		}
 

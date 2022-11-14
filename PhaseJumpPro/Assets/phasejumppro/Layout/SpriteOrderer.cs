@@ -20,7 +20,7 @@ namespace PJ
         public int offset = 1;
         public bool isReverse = false;
 
-        public virtual void Start()
+        protected override void Start()
         {
             ApplyOrder();
         }

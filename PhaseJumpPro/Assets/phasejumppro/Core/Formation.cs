@@ -63,11 +63,11 @@ namespace PJ
             return result;
         }
 
-        protected virtual void Awake()
+        protected override void Awake()
         {
         }
 
-        protected virtual void Start()
+        protected override void Start()
         {
             Build();
         }

@@ -90,7 +90,7 @@ namespace PJ
 			slideValve.TurnOff(InputEffect.Timed);
 		}
 
-		protected virtual void Awake()
+		protected override void Awake()
 		{
 			node = GetComponent<SomeNode>();
 
@@ -141,13 +141,13 @@ namespace PJ
             }
 		}
 
-		protected virtual void Update()
+		protected override void Update()
         {
 			slideValve.OnUpdate(new TimeSlice(Time.deltaTime));
 			//Debug.Log("Stage Update: " + slideValve.ValveState.ToString());
 		}
 
-		protected virtual void Start()
+		protected override void Start()
 		{
 			//Debug.Log("Start Reference x" + referenceLocalPosition.x.ToString());
 

@@ -1,6 +1,9 @@
 ﻿/*
- * RATING: 5 stars. Simple base class.
+ * RATING: 5 stars
+ * Simple base class
  * CODE REVIEW: 4/18/22
+ * 
+ * PORTED TO: C++
  */
 namespace PJ {
 

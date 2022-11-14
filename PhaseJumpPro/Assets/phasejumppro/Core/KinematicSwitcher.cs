@@ -37,7 +37,7 @@ namespace PJ
 		public float gravityScale = 1.0f;
 		public OptionalBoolType freezeRotation = OptionalBoolType.None;
 
-		protected virtual void Start()
+		protected override void Start()
 		{
 			var objects = FindObjectsOfType<GameObject>();
 			foreach (GameObject gameObject in objects)
@@ -80,7 +80,7 @@ namespace PJ
             }
 		}
 
-		protected virtual void Update()
+		protected override void Update()
 		{
 		}
 	}

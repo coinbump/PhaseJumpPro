@@ -2,11 +2,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using PJ;
 
 /*
  * RATING: 5 stars
  * Simple, has unit tests
  * Code review: 1/7/21
+ * 
+ * PORTED TO: C++
  */
 namespace PJ
 {
@@ -48,10 +51,25 @@ namespace PJ
 			return constructor();
 		}
 
-		/// <summary>
-		/// Returns true if the value exists, and is of the correct type
-		/// </summary>
-		public bool ContainsTypedValue<T>(string key) where T : new()
+		// TBD: Can this be done? (can't convert T to null)
+        //public PJ.Optional<T> Value<T>(string key) where T : new()
+        //{
+        //    try
+        //    {
+        //        T result = (T)this[key];
+        //        return new Optional<T>(result);
+        //    }
+        //    catch
+        //    {
+        //    }
+
+        //    return new Optional<T>(null);
+        //}
+
+        /// <summary>
+        /// Returns true if the value exists, and is of the correct type
+        /// </summary>
+        public bool ContainsTypedValue<T>(string key) where T : new()
 		{
 			try
 			{

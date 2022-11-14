@@ -16,7 +16,7 @@ namespace PJ
 		public Vector2 tiling = new Vector2(1.0f, 1.0f);
 		public Vector2 offset = new Vector2(0.0f, 0.0f);
 
-		void Start()
+		protected override void Start()
 		{
 			Build();
 		}

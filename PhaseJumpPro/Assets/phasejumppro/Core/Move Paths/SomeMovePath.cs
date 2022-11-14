@@ -69,7 +69,7 @@ namespace PJ
 			}
 		}
 
-		protected virtual void Awake()
+		protected override void Awake()
 		{
 			foreach (Transform childTransform in transform)
 			{
@@ -97,7 +97,7 @@ namespace PJ
 			SnapAllToStartPosition();
 		}
 
-		protected virtual void Update()
+		protected override void Update()
 		{
 			var time = new TimeSlice(Time.deltaTime);
 

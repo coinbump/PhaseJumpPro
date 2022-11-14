@@ -10,7 +10,7 @@ namespace PJ
 	/// <summary>
 	/// Temporarily adjust the weight, based on the default weight
 	/// </summary>
-	public abstract class AdjustWeight
+	public abstract class SomeAdjustWeight
 	{
 		public abstract float AdjustedWeightFor(Weight weight);
 	}

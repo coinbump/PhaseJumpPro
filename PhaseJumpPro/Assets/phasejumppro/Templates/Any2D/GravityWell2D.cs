@@ -43,7 +43,7 @@ namespace PJ
 
         protected new Rigidbody2D rigidbody;
 
-        protected virtual void Start()
+        protected override void Start()
         {
             var circleCollider = GetComponent<CircleCollider2D>();
             if (null == circleCollider)
