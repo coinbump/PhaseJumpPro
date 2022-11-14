@@ -520,6 +520,52 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   m_MaxRayIntersections: 0
+--- !u!1 &324447534
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 324447535}
+  - component: {fileID: 324447536}
+  m_Layer: 0
+  m_Name: UISystem
+  m_TagString: Untagged
+  m_Icon: {fileID: 5721338939258241955, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &324447535
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 324447534}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -6.23, y: 1.79, z: 1.4188864}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &324447536
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 324447534}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc940fcf6e7314d46832ff22477db6ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lockDrag: 0
+  inputCamera: {fileID: 0}
 --- !u!1 &478133009
 GameObject:
   m_ObjectHideFlags: 0
@@ -546,7 +592,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 478133009}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b0e33812dd63a4280ad96a88919c9aa3, type: 3}
+  m_Script: {fileID: 11500000, guid: 44ad52ebb2c5943d1b4f40b27f5c02f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   inputCamera: {fileID: 0}
@@ -1206,7 +1252,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1292514903}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1289,6 +1335,7 @@ GameObject:
   - component: {fileID: 2013232060}
   - component: {fileID: 2013232063}
   - component: {fileID: 2013232064}
+  - component: {fileID: 2013232065}
   m_Layer: 0
   m_Name: Scale Focus Effect
   m_TagString: Untagged
@@ -1409,3 +1456,17 @@ CapsuleCollider2D:
   m_Offset: {x: 0, y: 0}
   m_Size: {x: 1.1, y: 1.5}
   m_Direction: 0
+--- !u!114 &2013232065
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2013232059}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf94bd215717a4a8e8c303ce92bde0de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  uiSystem: {fileID: 0}
+  dropType: 0

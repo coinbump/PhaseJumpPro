@@ -3,47 +3,74 @@ using UnityEngine;
 
 namespace PJ
 {
-	/// <summary>
-	/// Manages common UI patterns like focus
-	/// </summary>
-	public class UISystem : MonoBehaviour
+    /// <summary>
+    /// Manages common UI patterns like focus and drag and drop
+    /// </summary>
+    /// REQUIREMENTS:
+    /// 1. Attach a Physics2DRaycaster to the camera
+    /// 2. Create an EventSystem object and upgrade to the new Input system
+    /// 3. Attach a non-trigger collider to objects that need interactive behavior
+    public partial class UISystem : MonoBehaviour
 	{
-		public static UISystem shared = new();
+		public static UISystem shared;
 
-		/// <summary>
-		/// Item that has focus
-		/// </summary>
-		public Focusable focusedItem;
+        /// <summary>
+        /// Optional. Allows input system to work with overlay cameras
+        /// </summary>
+        public Camera inputCamera;
 
-		public UISystem()
+        /// <summary>
+        /// Item that has focus
+        /// </summary>
+        protected WeakReference<Focusable> focusedItem;
+        protected MouseInputController mouseInputController = new MouseInputController();
+
+        public Camera InputCamera
+        {
+            get
+            {
+                return inputCamera != null ? inputCamera : Camera.main;
+            }
+        }
+
+        Focusable ActiveFocus
+        {
+            get
+            {
+                if (null != focusedItem && focusedItem.TryGetTarget(out Focusable focusable))
+                {
+                    return focusable;
+                }
+                return null;
+            }
+            set
+            {
+                if (null == value)
+                {
+                    focusedItem = null;
+                }
+                else
+                {
+                    focusedItem = new WeakReference<Focusable>(value);
+                }
+            }
+        }
+
+        public UISystem()
 		{
-		}
-
-		public void UpdateFocusFor(Focusable focusable, bool hasFocus)
-		{
-			if (hasFocus)
-			{
-				// Take focus away from the current focusable
-				if (focusedItem)
-				{
-					if (focusedItem == focusable) { return; }
-					var oldFocusedItem = focusedItem;
-					focusedItem = null;
-                    oldFocusedItem.HasFocus = false;
-				}
-
-				focusedItem = focusable;
-			} else if (focusedItem == focusable) {
-				focusedItem = null;
+            // UISystem is a MonoBehavior and must be attached to an object in the scene
+            // for Update events
+            if (null == shared)
+            {
+                shared = this;
             }
 		}
 
-		public void RemoveFocus()
-		{
-			if (focusedItem)
-			{
-				focusedItem.HasFocus = false;
-            }
-		}
-	}
+        public override void OnUpdate(TimeSlice time)
+        {
+            base.OnUpdate(time);
+
+            OnUpdateDrag();
+        }
+    }
 }

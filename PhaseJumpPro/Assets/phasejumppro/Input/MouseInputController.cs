@@ -18,6 +18,11 @@ namespace PJ
         /// </summary>
 		public Camera inputCamera;
 
+        public Mouse mouse
+        {
+            get => Mouse.current;
+        }
+
         public Camera InputCamera
         {
             get

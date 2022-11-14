@@ -11,35 +11,6 @@ using UnityEngine;
 namespace PJ
 {
     /// <summary>
-    /// A focus effect is applied when an object has focus
-    /// </summary>
-    public abstract class SomeFocusEffect : MonoBehaviour
-    {
-        public bool hasFocus = false;
-
-        public bool HasFocus
-        {
-            get
-            {
-                return hasFocus;
-            }
-            set
-            {
-                if (hasFocus == value)
-                {
-                    return;
-                }
-
-                hasFocus = value;
-                OnFocusChange();
-            }
-        }
-
-        protected abstract void OnFocusChange();
-        public virtual void OnValidate() { }
-    }
-
-    /// <summary>
     /// Uses a valve to perform animated changes when focus changes
     /// When this object receives focus, the valve is opened over N time
     /// Check the valve's state to find a normalized value (0-1.0) to use for animations
