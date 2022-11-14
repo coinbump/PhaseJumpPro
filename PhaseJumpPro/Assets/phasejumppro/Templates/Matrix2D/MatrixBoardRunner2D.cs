@@ -84,6 +84,8 @@ namespace PJ
 
         protected override void Update()
         {
+            base.Update();
+
             if (mouseInputController.IsAvailable())
             {
                 var worldPosition = mouseInputController.WorldPosition;
