@@ -49,6 +49,12 @@ namespace PJ
             var raycastHits = Utils.Raycast2DHitsAtScreenPosition(InputCamera, screenPosition.value);
 			Focusable hitFocusable = null;
 
+            if (null == raycastHits || raycastHits.Length == 0)
+            {
+                UISystem.shared.RemoveFocus();
+                return;
+            }
+
 			//Debug.Log("Raycast hits size:" + raycastHits.Length.ToString());
 
 			foreach (RaycastHit2D raycastHit in raycastHits)

@@ -37,5 +37,13 @@ namespace PJ
 				focusedItem = null;
             }
 		}
+
+		public void RemoveFocus()
+		{
+			if (focusedItem)
+			{
+				focusedItem.HasFocus = false;
+            }
+		}
 	}
 }
