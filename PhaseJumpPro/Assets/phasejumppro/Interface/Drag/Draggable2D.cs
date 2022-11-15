@@ -34,6 +34,12 @@ namespace PJ
         public UISystem uiSystem;
         public DropType dropType = DropType.Stay;
 
+        /// <summary>
+        /// If true, drag the parent game object when this object is tapped
+        /// Useful if this object has its own transform modifier which interferes with the drag
+        /// </summary>
+        public bool dragParent = false;
+
         public UISystem UISystem
         {
             get
@@ -70,6 +76,20 @@ namespace PJ
             dragStartInputWorldPosition = inputWorldPosition;
 
             var uiSystem = UISystem;
+
+            if (dragParent)
+            {
+                var parent = gameObject.transform.parent.gameObject;
+                if (parent)
+                {
+                    var parentDraggable = parent.GetComponent<Draggable2D>();
+                    if (parentDraggable)
+                    {
+                        parentDraggable.StartDrag(inputWorldPosition);
+                        return;
+                    }
+                }
+            }
 
             var dragModel = new DragModel(this);
             uiSystem.StartDrag(dragModel);

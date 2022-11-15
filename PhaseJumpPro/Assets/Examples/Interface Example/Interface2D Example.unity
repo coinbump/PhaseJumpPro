@@ -1244,6 +1244,54 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 746602295}
   m_Mesh: {fileID: 44766557}
+--- !u!1 &1178168762
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1178168763}
+  - component: {fileID: 1178168764}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1178168763
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1178168762}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1292514906}
+  m_Father: {fileID: 1488266297}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1178168764
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1178168762}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf94bd215717a4a8e8c303ce92bde0de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  uiSystem: {fileID: 0}
+  dropType: 0
+  dragParent: 0
 --- !u!1 &1229836385
 GameObject:
   m_ObjectHideFlags: 0
@@ -1335,6 +1383,7 @@ GameObject:
   - component: {fileID: 1292514904}
   - component: {fileID: 1292514907}
   - component: {fileID: 1292514908}
+  - component: {fileID: 1292514909}
   m_Layer: 0
   m_Name: Transform Focus Effect
   m_TagString: Untagged
@@ -1429,8 +1478,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1488266297}
-  m_RootOrder: 1
+  m_Father: {fileID: 1178168763}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1292514907
 MonoBehaviour:
@@ -1461,6 +1510,21 @@ CapsuleCollider2D:
   m_Offset: {x: 0, y: 0}
   m_Size: {x: 1.1, y: 1.5}
   m_Direction: 0
+--- !u!114 &1292514909
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1292514903}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf94bd215717a4a8e8c303ce92bde0de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  uiSystem: {fileID: 0}
+  dropType: 0
+  dragParent: 1
 --- !u!1 &1488266296
 GameObject:
   m_ObjectHideFlags: 0
@@ -1490,7 +1554,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2013232062}
-  - {fileID: 1292514906}
+  - {fileID: 1178168763}
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1642,3 +1706,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   uiSystem: {fileID: 0}
   dropType: 0
+  dragParent: 0
