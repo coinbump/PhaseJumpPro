@@ -1,10 +1,3 @@
-//
-//  Vectro2.h
-//  PhaseJump
-//
-//  Created by Jeremy Vineyard on 11/11/22.
-//
-
 #ifndef PJVECTOR2_H
 #define PJVECTOR2_H
 
@@ -41,12 +34,12 @@ namespace PJ {
     };
 
     namespace _Vector2 {
-        static Vector2 const down = Vector2(0, -1);
-        static Vector2 const left = Vector2(-1, 0);
-        static Vector2 const one = Vector2(1, 1);
-        static Vector2 const right = Vector2(1, 0);
-        static Vector2 const up = Vector2(0, 1);
-        static Vector2 const zero = Vector2(0, 0);
+        static Vector2 const down(0, -1);
+        static Vector2 const left(-1, 0);
+        static Vector2 const one(1, 1);
+        static Vector2 const right(1, 0);
+        static Vector2 const up(0, 1);
+        static Vector2 const zero(0, 0);
     }
 }
 

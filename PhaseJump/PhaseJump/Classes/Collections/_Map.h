@@ -1,9 +1,7 @@
 #ifndef PJMAP_H
 #define PJMAP_H
 
-#include <string>
 #include <map>
-#include "Factory.h"
 
 /*
  RATING: 5 stars

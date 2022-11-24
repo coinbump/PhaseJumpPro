@@ -15,7 +15,7 @@ namespace PJ
     /// </summary>
     public class StringIdentifiable
     {
-        public virtual std::string Id() = 0;
+        public virtual std::string Id() const = 0;
     }
 }
 

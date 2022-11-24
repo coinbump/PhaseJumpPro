@@ -24,7 +24,7 @@ namespace PJ
 
         FloatTransform *transform = new FloatMultiplyTransform(1.0f);
 
-        AnimationCurve() {
+        AnimationCurve(T const& start, T const& end) : start(start), end(end) {
         }
         virtual ~AnimationCurve {}
     };

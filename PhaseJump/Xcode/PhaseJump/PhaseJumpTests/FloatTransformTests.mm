@@ -1,10 +1,3 @@
-//
-//  PhaseJumpTests.m
-//  PhaseJumpTests
-//
-//  Created by Jeremy Vineyard on 11/5/22.
-//
-
 #import <XCTest/XCTest.h>
 #include "Types/_String.h"
 #include "Types/FloatClamp.h"

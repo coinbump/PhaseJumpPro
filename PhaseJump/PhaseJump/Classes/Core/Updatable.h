@@ -1,7 +1,7 @@
 #ifndef PJANIMATOR_H_
 #define PJANIMATOR_H_
 
-#include "Model/TimeSlice.h"
+#include "TimeSlice.h"
 
 /*
  * RATING: 5 stars
@@ -17,6 +17,7 @@ namespace PJ
     {
     public:
         virtual void OnUpdate(TimeSlice time) = 0;
+        virtual bool IsFinished() const = 0;
     };
 }
 

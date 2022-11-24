@@ -4,8 +4,7 @@
 #include <math.h>
 
 namespace PJ {
-    class IntMath {
-    public:
+    struct IntMath {
         typedef int Type;
 
         static int Sqrt(int value) {

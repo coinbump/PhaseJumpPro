@@ -39,7 +39,7 @@ namespace PJ
         /// Creates a value if it doesn't exist
         /// </summary>
         template <class T>
-        T SafeValue(Key key)
+        T SafeValue(Key key) const
         {
             auto value = tags.find(key);
             if (value != tags.end()) {
@@ -57,7 +57,7 @@ namespace PJ
         }
 
         template <class T>
-        std::optional<T> Value(Key key)
+        std::optional<T> Value(Key key) const
         {
             auto value = tags.find(key);
             if (value != tags.end()) {
@@ -78,7 +78,7 @@ namespace PJ
         /// Returns true if the value exists, and is of the correct type
         /// </summary>
         template <class T>
-        bool ContainsTypedValue(Key key)
+        bool ContainsTypedValue(Key key) const
         {
             auto value = tags.find(key);
             if (value != tags.end()) {

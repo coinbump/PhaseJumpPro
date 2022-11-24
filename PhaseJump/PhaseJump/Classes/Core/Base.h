@@ -1,6 +1,8 @@
 #ifndef PJBASE_H
 #define PJBASE_H
 
+#include "_String.h"
+
 /*
  * RATING: 5 stars. Simple base class.
  * CODE REVIEW: 11/7/22
@@ -15,6 +17,7 @@ namespace PJ {
         virtual ~Base() {}
 
         virtual void Go() {}    // Initiate some behavior
+        virtual String ToString() const { return ""; }
     };
 }
 

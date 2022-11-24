@@ -10,7 +10,6 @@ namespace PJ {
 	/// </summary>
 	struct TimeSlice
 	{
-    public:
 		float delta;
 
 		TimeSlice(float delta) : delta(delta) {

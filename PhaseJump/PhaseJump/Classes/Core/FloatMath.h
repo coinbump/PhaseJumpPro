@@ -4,8 +4,7 @@
 #include <math.h>
 
 namespace PJ {
-    class FloatMath {
-    public:
+    struct FloatMath {
         typedef float Type;
 
         static float Sqrt(float value) {

@@ -1,31 +1,36 @@
 #ifndef PJTIMER_H_
 #define PJTIMER_H_
 
+#include "SomeTimed.h"
 #include <algorithm>
 #include <string>
 
 /*
- * RATING: 4 stars
- * Simple timer (needs Unit Tests ported from C#)
+ * RATING: 5 stars
+ * Simple timer with unit tests
  * CODE REVIEW: 11/5/22
  */
 namespace PJ {
 	/// <summary>
     /// Keeps track of time for N seconds duration, and then triggers OnFinish
     /// </summary>
-	class Timer : SomeTimed
+	class Timer : public SomeTimed
 	{
+    protected:
+        float timerState = 0;  // Time state of the timer
+
     public:
-		/// <summary>
+        /// <summary>
         /// Optional id for hashing, debug logs
         /// </summary>
-		std::string id;
+        std::string id;
 
-    protected:
-		float timerState;  // Time state of the timer
+        Timer(float duration, RunType runType)
+        : SomeTimed(duration, runType)
+        {
+        }
 
-    public:
-        float TimerState() {
+        float TimerState() const {
             return timerState;
         }
 
@@ -34,15 +39,10 @@ namespace PJ {
             SetIsFinished(timerState >= duration);
 		}
 
-		float Progress() override
+		float Progress() const override
 		{
             if (duration <= 0) { return 0; }
             return std::min(1.0f, TimerState() / duration);
-		}
-
-		Timer(float duration, RunType runType)
-        : SomeTimed(duration, runType)
-		{
 		}
 
 		void Reset() override

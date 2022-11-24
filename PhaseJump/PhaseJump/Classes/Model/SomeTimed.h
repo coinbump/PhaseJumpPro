@@ -1,6 +1,8 @@
 #ifndef PJSOMETIMED_H_
 #define PJSOMETIMED_H_
 
+#include "Updatable.h"
+
 /*
  * RATING: 5 stars
  * Has unit tests (via Timer)
@@ -13,43 +15,43 @@ namespace PJ {
 	/// Supports an internal time scale for animating an object's time
 	/// </summary>
 	class SomeTimed : Updatable {
-    public:
-        virtual ~SomeTimed() {}
-
-        virtual float Progress() = 0;
-
-		enum class RunType {
-            // Destroy when finished
-			RunOnce,
-
-            // Repeats (example: timer that does an update every N seconds)
-			KeepRunning
-        };
-
-		float duration;
-		RunType runType;
-
-		/// <summary>
-		/// Used to speed up/slow down timer
-		/// </summary>
-		float timeScale = 1.0f;
-
     protected:
-		/// <summary>
+        /// <summary>
         /// If true, timer has reached the end of its duration
         /// </summary>
-		bool isFinished;
+        bool isFinished = false;
 
-		/// <summary>
+        /// <summary>
         /// If true, timer will stop receiving time events
         /// </summary>
-		bool isPaused;
+        bool isPaused = false;
+
+        virtual void OnFinish() {}
 
     public:
-        SomeTimed(float duration, RunType runType) : duration(duration), runType(runType) {
-		}
+        enum class RunType {
+            // Destroy when finished
+            RunOnce,
 
-		bool IsFinished()
+            // Repeats (example: timer that does an update every N seconds)
+            KeepRunning
+        };
+
+        /// <summary>
+        /// Used to speed up/slow down timer
+        /// </summary>
+        float timeScale = 1.0f;
+
+        float duration;
+        RunType runType;
+
+        SomeTimed(float duration, RunType runType) : duration(duration), runType(runType) {
+        }
+        virtual ~SomeTimed() {}
+
+        virtual float Progress() const = 0;
+
+		bool IsFinished() const override
         {
             return isFinished;
         }
@@ -69,12 +71,11 @@ namespace PJ {
                         default:
                             break;
                     }
-
                 }
             }
 		}
 
-		bool IsRunning()
+		bool IsRunning() const
         {
             return !isPaused;
         }
@@ -106,11 +107,7 @@ namespace PJ {
 			return result;
 		}
 
-		virtual void OnUpdate(TimeSlice time) {}
 		virtual void Go() {}
-
-    protected:
-        virtual void OnFinish() {}
     };
 }
 

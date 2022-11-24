@@ -1,6 +1,11 @@
 #ifndef PJCLASSIDS_H
 #define PJCLASSIDS_H
 
+/*
+ RATING: 5 stars
+ Simple types
+ CODE REVIEW: 11/20/22
+ */
 namespace PJ {
     namespace ClassIds {
         static auto const foo = "foo";

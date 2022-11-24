@@ -36,7 +36,7 @@ namespace PJ
             return typeClass->factory->New();
         }
 
-        Base* New(std::string key) {
+        Base* New(std::string key) const {
             auto iterator = this->find(key);
             if (iterator == this->end()) { return NULL; }
 
