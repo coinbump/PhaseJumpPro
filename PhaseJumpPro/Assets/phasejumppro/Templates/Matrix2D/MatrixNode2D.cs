@@ -55,7 +55,10 @@ namespace PJ
             piece.owner = new WeakReference<object>(this);
 
             // Matrix nodes must be kinematic only
-            rigidbody.isKinematic = true;
+            if (rigidbody)
+            {
+                rigidbody.isKinematic = true;
+            }
         }
 
         public override void OnUpdate(TimeSlice time)

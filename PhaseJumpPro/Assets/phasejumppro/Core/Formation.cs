@@ -208,7 +208,7 @@ namespace PJ
     }
 
 #if UNITY_EDITOR
-    [CustomEditor(typeof(Formation))]
+    [CustomEditor(typeof(Formation), true)]
     public class FormationEditor : Editor
     {
         public override void OnInspectorGUI()

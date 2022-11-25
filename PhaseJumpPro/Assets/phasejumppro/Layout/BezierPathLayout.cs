@@ -21,17 +21,5 @@ namespace PJ
         {
             return new BezierPath(controlPoints);
         }
-
-#if UNITY_EDITOR
-        protected override void RenderGizmos(EditorUtils.RenderState renderState)
-        {
-            EditorUtils.DrawPath(NewPath(), EditorUtils.DefaultPathStep, transform, renderState);
-        }
-
-        [CustomEditor(typeof(BezierPathLayout))]
-        public new class Editor : SomeGameObjectsLayout.Editor
-        {
-        }
-#endif
     }
 }

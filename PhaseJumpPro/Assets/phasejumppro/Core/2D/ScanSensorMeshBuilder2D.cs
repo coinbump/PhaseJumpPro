@@ -95,22 +95,5 @@ namespace PJ
                 GetComponent<MeshRenderer>().material.color = noSenseColor;
             }
         }
-
-#if UNITY_EDITOR
-        [CustomEditor(typeof(ScanSensorMeshBuilder2D))]
-        public class Editor : UnityEditor.Editor
-        {
-            public override void OnInspectorGUI()
-            {
-                DrawDefaultInspector();
-
-                if (GUILayout.Button("Build"))
-                {
-                    ScanSensorMeshBuilder2D meshBuilder = (ScanSensorMeshBuilder2D)target;
-                    meshBuilder.Build();
-                }
-            }
-        }
-#endif
     }
 }

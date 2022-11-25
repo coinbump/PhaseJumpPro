@@ -13,55 +13,51 @@ namespace PJ
     /// </summary>
     public class MouseInputController : SomeInputController
 	{
-		/// <summary>
-        /// By default, main camera is used, or link to overlay camera if needed
+        /// <summary>
+        /// Optional. Allows us to work with overlay cameras as well as the main camera
         /// </summary>
-		public Camera inputCamera;
+		public Camera camera;
 
         public Mouse mouse
         {
             get => Mouse.current;
         }
 
-        public Camera InputCamera
+        public Camera Camera
         {
             get
             {
-                return inputCamera != null ? inputCamera : Camera.main;
+                return camera != null ? camera : Camera.main;
             }
         }
 
-        public Optional<Vector3> ScreenPosition
+        public Vector3 ScreenPosition
 		{
 			get
 			{
                 var mouse = Mouse.current;
-                if (null == mouse) { return null; }
+                if (null == mouse) { return Vector3.zero; }
 
 				var position = mouse.position.ReadValue();
-				return new Optional<Vector3>(new Vector3(position.x, position.y, 0));
+				return new Vector3(position.x, position.y, 0);
             }
         }
 
-		public Optional<Vector3> WorldPosition
+		public Vector3 WorldPosition
 		{
 			get
 			{
 				var screenPosition = ScreenPosition;
-				if (null == screenPosition) { return null; }
-
-                return new Optional<Vector3>(InputCamera.ScreenToWorldPoint(screenPosition.value));
+                return Camera.ScreenToWorldPoint(screenPosition);
             }
         }
 
-        public Optional<Ray> ScreenRay
+        public Ray ScreenRay
         {
             get
             {
                 var screenPosition = ScreenPosition;
-                if (null == screenPosition) { return null; }
-
-                return new Optional<Ray>(Camera.main.ScreenPointToRay(screenPosition.value));
+                return Camera.main.ScreenPointToRay(screenPosition);
             }
         }
 

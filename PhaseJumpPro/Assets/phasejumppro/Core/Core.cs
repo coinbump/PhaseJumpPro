@@ -17,6 +17,7 @@ namespace PJ {
 	public abstract class SomeCore : Base, Updatable
     {
 		public virtual void OnUpdate(TimeSlice time) { }
+		public bool IsFinished { get => false; }
 	}
 
 	/// <summary>

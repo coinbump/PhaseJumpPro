@@ -51,25 +51,53 @@ namespace PJ
 			return constructor();
 		}
 
-		// TBD: Can this be done? (can't convert T to null)
-        //public PJ.Optional<T> Value<T>(string key) where T : new()
-        //{
-        //    try
-        //    {
-        //        T result = (T)this[key];
-        //        return new Optional<T>(result);
-        //    }
-        //    catch
-        //    {
-        //    }
+        public PJ.Optional<T> Value<T>(string key)
+        {
+           try
+           {
+               T result = (T)this[key];
+               return new Optional<T>(result);
+           }
+           catch
+           {
+           }
 
-        //    return new Optional<T>(null);
-        //}
+           return null;
+        }
+
+        public T DefaultValue<T>(string key, T defaultValue)
+        {
+           try
+           {
+               T result = (T)this[key];
+               return result;
+           }
+           catch
+           {
+           }
+
+           return defaultValue;
+        }
+		
+		public T ParseValue<T>(string key, Func<string, T> parser, T defaultValue)
+        {
+           try
+           {
+               	var value = this[key] as String;
+                var result = parser(value);
+               	return result;
+           }
+           catch
+           {
+           }
+
+           return defaultValue;
+        }
 
         /// <summary>
         /// Returns true if the value exists, and is of the correct type
         /// </summary>
-        public bool ContainsTypedValue<T>(string key) where T : new()
+        public bool ContainsTypedValue<T>(string key)
 		{
 			try
 			{
@@ -82,20 +110,21 @@ namespace PJ
 
 			return false;
 		}
+	}
 
-		public bool ContainsTypedValue<T>(string key, Func<T> constructor)
-		{
-			try
-			{
-				T result = (T)this[key];
-				return true;
-			}
-			catch
-			{
-			}
+	/// <summary>
+    /// Used for generic storage of tag values
+    /// </summary>
+	[Serializable]
+	public struct TagValue
+	{
+		public string name;
+		public string value;    // Type is inferred from value
 
-			return false;
-		}
+		public TagValue(string name, string value) {
+            this.name = name;
+            this.value = value;
+        }
 	}
 
 	/// <summary>

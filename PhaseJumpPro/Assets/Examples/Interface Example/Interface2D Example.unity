@@ -737,7 +737,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   lockDrag: 0
-  inputCamera: {fileID: 0}
+  camera: {fileID: 0}
 --- !u!1 &478133009
 GameObject:
   m_ObjectHideFlags: 0
@@ -767,7 +767,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44ad52ebb2c5943d1b4f40b27f5c02f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputCamera: {fileID: 0}
+  camera: {fileID: 0}
 --- !u!4 &478133011
 Transform:
   m_ObjectHideFlags: 0
@@ -1291,7 +1291,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   uiSystem: {fileID: 0}
   dropType: 0
-  dragParent: 0
+  dragInstead: {fileID: 0}
 --- !u!1 &1229836385
 GameObject:
   m_ObjectHideFlags: 0
@@ -1524,7 +1524,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   uiSystem: {fileID: 0}
   dropType: 0
-  dragParent: 1
+  dragInstead: {fileID: 1178168764}
 --- !u!1 &1488266296
 GameObject:
   m_ObjectHideFlags: 0
@@ -1706,4 +1706,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   uiSystem: {fileID: 0}
   dropType: 0
-  dragParent: 0
+  dragInstead: {fileID: 0}

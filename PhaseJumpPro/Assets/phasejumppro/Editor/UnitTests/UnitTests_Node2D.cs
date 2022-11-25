@@ -10,9 +10,9 @@ namespace PJ
 		public void UnitTests()
 		{
 			var test = new Node2D();
-			test.RotationDegreeAngle = 180.0f;
+			test.Rotation = 180.0f;
 			Assert.AreEqual(test.RotationNormal, .5f);
-			test.RotationDegreeAngle += 360.0f;
+			test.Rotation += 360.0f;
 			Assert.AreEqual(test.RotationNormal, .5f);
 		}
 	}

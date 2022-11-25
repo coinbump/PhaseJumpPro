@@ -107,12 +107,5 @@ namespace PJ
                 index += 1;
             }
         }
-
-#if UNITY_EDITOR
-        [CustomEditor(typeof(GridFlow))]
-        public new class Editor : SomeGameObjectsLayout.Editor
-        {
-        }
-#endif
     }
 }

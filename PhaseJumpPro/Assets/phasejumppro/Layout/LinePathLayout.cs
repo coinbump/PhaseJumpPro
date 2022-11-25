@@ -22,20 +22,5 @@ namespace PJ
         {
             return new LinePath(start, end);
         }
-
-#if UNITY_EDITOR
-        protected override void RenderGizmos(EditorUtils.RenderState renderState)
-        {
-            var worldStart = transform.TransformPoint(start);
-            var worldEnd = transform.TransformPoint(end);
-
-            EditorUtils.DrawLine(worldStart, worldEnd, renderState);
-        }
-
-        [CustomEditor(typeof(LinePathLayout))]
-        public new class Editor : SomeGameObjectsLayout.Editor
-        {
-        }
-#endif
     }
 }

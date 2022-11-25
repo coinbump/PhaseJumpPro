@@ -173,7 +173,7 @@ namespace PJ
 		}
 
 #if UNITY_EDITOR
-		[CustomEditor(typeof(SomeMovePath))]
+		[CustomEditor(typeof(SomeMovePath), true)]
 		public class Editor : UnityEditor.Editor
 		{
 			public override void OnInspectorGUI()

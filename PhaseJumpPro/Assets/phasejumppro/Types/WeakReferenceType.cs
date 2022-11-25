@@ -11,7 +11,7 @@ namespace PJ
     /// Holds weak reference to object
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class WeakReferenceType<T> : SomeReferenceType<T> where T : class
+    public class WeakReferenceType<T> : SomeReference<T> where T : class
     {
         protected WeakReference<T> weakValue;
 

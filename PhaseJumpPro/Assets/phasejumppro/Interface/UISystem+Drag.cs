@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using PJ;
 using UnityEngine;
-using static TreeEditor.TreeGroup;
-using static UnityEditor.PlayerSettings.SplashScreen;
 
 namespace PJ
 {
@@ -86,7 +84,7 @@ namespace PJ
                 if (null == inputWorldPosition) { return; }
                 var internalOffset = dragged.dragStartPosition - dragged.dragStartInputWorldPosition;
 
-                dragged.transform.position = inputWorldPosition.value + internalOffset;
+                dragged.transform.position = inputWorldPosition + internalOffset;
             }
             else
             {
@@ -100,7 +98,7 @@ namespace PJ
             var worldPosition = mouseInputController.WorldPosition;
             if (null == worldPosition) { return; }
 
-            var raycastHits = Physics2D.RaycastAll(worldPosition.value, Vector2.zero);
+            var raycastHits = Physics2D.RaycastAll(worldPosition, Vector2.zero);
             DropTarget hitBehavior = null;
 
             //Debug.Log("Drop: RaycastHits: " + raycastHits.ToString());

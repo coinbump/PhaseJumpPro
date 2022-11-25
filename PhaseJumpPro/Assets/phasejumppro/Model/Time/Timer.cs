@@ -6,6 +6,7 @@ using UnityEngine;
  * RATING: 5 stars
  * Simple timer with Unit Tests
  * CODE REVIEW: 4/14/22
+ * PORTED TO: C++
  */
 namespace PJ {
 	/// <summary>
@@ -24,6 +25,7 @@ namespace PJ {
 			get => timerState;
 			set {
 				timerState = Mathf.Min(duration, Mathf.Max(0, value));
+
 				IsFinished = timerState >= duration;
 			}
 		}

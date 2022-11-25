@@ -20,17 +20,5 @@ namespace PJ
         {
             return new CirclePath(radius);
         }
-
-#if UNITY_EDITOR
-        protected override void RenderGizmos(EditorUtils.RenderState renderState)
-        {
-            EditorUtils.DrawCircle(transform.position, radius, renderState);
-        }
-
-        [CustomEditor(typeof(CirclePathLayout))]
-        public new class Editor : SomeGameObjectsLayout.Editor
-        {
-        }
-#endif
     }
 }

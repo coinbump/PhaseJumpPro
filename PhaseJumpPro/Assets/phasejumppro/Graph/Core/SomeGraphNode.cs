@@ -8,17 +8,6 @@ using System.Collections.Generic;
  */
 namespace PJ
 {
-    namespace Graph
-    {
-        /// <summary>
-        /// Edge direction
-        /// </summary>
-        public enum Direction
-        {
-            Forward, Back
-        }
-    }
-
     /// <summary>
     /// Use to build trees, graphs, state machines, etc.
     /// </summary>
@@ -29,9 +18,9 @@ namespace PJ
         {
             public WeakReference<SomeGraphNode<EdgeModel>> fromNode { get; set; }
             public EdgeModel model;
-            public SomeReferenceType<SomeGraphNode<EdgeModel>> toNode;
+            public SomeReference<SomeGraphNode<EdgeModel>> toNode;
 
-            public Edge(WeakReference<SomeGraphNode<EdgeModel>> fromNode, EdgeModel model, SomeReferenceType<SomeGraphNode<EdgeModel>> toNode)
+            public Edge(WeakReference<SomeGraphNode<EdgeModel>> fromNode, EdgeModel model, SomeReference<SomeGraphNode<EdgeModel>> toNode)
             {
                 this.fromNode = fromNode;
                 this.model = model;
@@ -55,12 +44,13 @@ namespace PJ
 
         public List<Edge> Edges { get { return edges; } }
         public HashSet<HashedWeakReference<SomeGraphNode<EdgeModel>>> FromNodes { get { return fromNodes; } }
+        public bool IsFinished { get => false; }
 
         public string Id => id;
 
         public abstract void AddEdge(EdgeModel model, SomeGraphNode<EdgeModel> toNode);
 
-        public void AddEdgeInternal(EdgeModel model, SomeReferenceType<SomeGraphNode<EdgeModel>> toNode)
+        public void AddEdgeInternal(EdgeModel model, SomeReference<SomeGraphNode<EdgeModel>> toNode)
         {
             var forwardEdge = new Edge(new WeakReference<SomeGraphNode<EdgeModel>>(this), model, toNode);
             edges.Add(forwardEdge);

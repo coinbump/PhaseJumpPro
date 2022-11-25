@@ -12,7 +12,7 @@ namespace PJ
     /// Steering in 2D space to reach a waypoint until we are near enough
     /// </summary>
     // FUTURE: support speed up, slow down for more realistic looking travel
-    public class WaypointSteering2D : MonoBehaviour
+    public class WaypointSteering2D : SomeSteering2D
     {
         public enum StateType
         {
@@ -66,7 +66,7 @@ namespace PJ
             switch (orientType)
             {
                 case OrientType.Rotate:
-                    node.RotationDegreeAngle = degreeAngle;
+                    node.Rotation = degreeAngle;
                     break;
             }
         }

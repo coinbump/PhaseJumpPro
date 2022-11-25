@@ -15,9 +15,9 @@ namespace PJ
 		public static UISystem shared;
 
         /// <summary>
-        /// Optional. Allows input system to work with overlay cameras
+        /// Optional. Allows us to work with overlay cameras as well as the main camera
         /// </summary>
-        public Camera inputCamera;
+        public new Camera camera;
 
         /// <summary>
         /// Item that has focus
@@ -25,11 +25,11 @@ namespace PJ
         protected WeakReference<Focusable> focusedItem;
         protected MouseInputController mouseInputController = new MouseInputController();
 
-        public Camera InputCamera
+        public Camera Camera
         {
             get
             {
-                return inputCamera != null ? inputCamera : Camera.main;
+                return camera != null ? camera : Camera.main;
             }
         }
 

@@ -36,6 +36,8 @@ namespace PJ
         public int Height => size.y;
         public int Depth => size.z;
 
+        public bool IsFinished { get => false; }
+        
         public bool PutTile(Tile tile, Vector3Int loc)
         {
             if (!IsValidLoc(loc)) { return false; }

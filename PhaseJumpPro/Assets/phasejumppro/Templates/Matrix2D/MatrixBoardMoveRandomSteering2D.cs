@@ -19,7 +19,7 @@ namespace PJ
 
         protected override void Update()
         {
-            var runner = GetComponent<MatrixBoardRunner2D>();
+            var runner = GetComponent<MatrixBoardView2D>();
             if (null == runner)
             {
                 Debug.Log("Error. Matrix steering requires runner");

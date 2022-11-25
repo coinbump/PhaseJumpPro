@@ -14,6 +14,8 @@ using System.Collections.Generic;
 namespace PJ
 {
     public class Weapon : Updatable {
+        public bool IsFinished { get => false; }
+        
         public enum WeaponType
         {
             Bullet,

@@ -13,7 +13,7 @@ namespace PJ
 	/// <summary>
 	/// Provides utility methods for simplifying common 2D game scenarios
 	/// </summary>
-	public class Node2D : SomeNode
+	public class Node2D : NodeCore2D
 	{
 		/// <summary>
 		/// Type for velocity
@@ -32,21 +32,7 @@ namespace PJ
 
 		[Header("Node2D Properties")]
 
-		[SerializeField]
-		[Range(0, 360.0f)]
-        [Tooltip("Rotation in degrees")]
-		/// <summary>Rotation in degrees</summary>
-		protected float rotation = 0;
-
 		protected SpriteRenderer spriteRenderer;
-
-		public override bool IsKinematic
-        {
-			get
-            {
-				return rigidbody == null || rigidbody.isKinematic;
-            }
-        }
 
 		public Vector2 Velocity
         {
@@ -110,11 +96,6 @@ namespace PJ
 			}
 		}
 
-		/// <summary>
-		/// If true, modulate rotation values (stay within range of 0-1.0)
-		/// </summary>
-		protected bool clipRotation = true;
-
 		[SerializeField]
 		protected MoveType velocityType = MoveType.None;
 
@@ -123,60 +104,15 @@ namespace PJ
 
 		protected Vector2 acceleration = Vector2.zero;
 		protected Optional<float> maxVelocity;
-		protected new Rigidbody2D rigidbody;
-
-		// Normalized rotation value (0-1.0)
-		public float RotationNormal
-		{
-			get { return rotation / 360.0f; }
-			set
-			{
-				rotation = value * 360.0f;
-			}
-		}
-
-		public float RotationDegreeAngle
-		{
-			get { return rotation; }
-			set
-			{
-				var newAngle = value;
-				if (clipRotation)
-				{
-					newAngle = AngleUtils.ClipDegreeAngle(newAngle);
-				}
-
-				if (rotation == newAngle) { return; }
-				rotation = newAngle;
-
-				// Try-catch is for the unit test
-				try
-				{
-					if (transform)
-					{
-						transform.localEulerAngles = new Vector3(0, 0, -rotation);
-					}
-				}
-				catch (NullReferenceException ex)
-				{
-					Debug.Log(ex.Message);
-				}
-			}
-		}
-
-        protected override void OnValidate()
-        {
-            base.OnValidate();
-
-			transform.localEulerAngles = new Vector3(0, 0, -RotationDegreeAngle);
-		}
 
         protected override void Awake()
         {
             base.Awake();
 
-			spriteRenderer = GetComponent<SpriteRenderer>();
-			rigidbody = GetComponent<Rigidbody2D>();
+			// Some 2D objects use sprites for rendering
+			if (TryGetComponent(out SpriteRenderer spriteRenderer)) {
+                this.spriteRenderer = spriteRenderer;
+            }
 		}
 
 		protected override void Start()
@@ -197,7 +133,7 @@ namespace PJ
 				case MoveType.None:
 					return;
 				case MoveType.Forward:
-					velocityVector = AngleUtils.DegreeAngleToVector2(RotationDegreeAngle, velocity.x);
+					velocityVector = AngleUtils.DegreeAngleToVector2(Rotation, velocity.x);
 					break;
 				case MoveType.Vector:
 					velocityVector = velocity;
@@ -266,31 +202,5 @@ namespace PJ
 
 			return isFixedUpdate;
 		}
-
-		/// <summary>
-        /// Move this node to the position in 2D space
-        /// (NOTE: This uses Vector3, but Rigidbody2D ignores the z component)
-        /// </summary>
-		public override void MoveToPosition(Vector3 position, bool force = false)
-		{
-			if (IsKinematic || force)
-			{
-				//Debug.Log("Move to Position: Kinematic");
-
-				transform.position = position;
-			}
-			else
-			{
-				if (null != rigidbody)
-				{
-					//Debug.Log("Move to Position: Physics");
-
-					// MovePosition is for physics-based objects (non kinematic)
-					rigidbody.MovePosition(position);
-				}
-			}
-		}
-
-		public virtual void OnTransformLimited() { }
 	}
 }

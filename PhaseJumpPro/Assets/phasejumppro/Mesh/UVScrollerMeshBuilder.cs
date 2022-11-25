@@ -30,22 +30,5 @@ namespace PJ
             var mesh = uvScrollerMesh.Build(true);
             return mesh;
         }
-
-#if UNITY_EDITOR
-        [CustomEditor(typeof(UVScrollerMeshBuilder))]
-        public class Editor : UnityEditor.Editor
-        {
-            public override void OnInspectorGUI()
-            {
-                DrawDefaultInspector();
-
-                if (GUILayout.Button("Build"))
-                {
-                    UVScrollerMeshBuilder meshBuilder = (UVScrollerMeshBuilder)target;
-                    meshBuilder.Build();
-                }
-            }
-        }
-#endif
     }
 }

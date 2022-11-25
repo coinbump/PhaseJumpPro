@@ -32,22 +32,5 @@ namespace PJ
             var mesh = shapeMesh.Build(true);
             return mesh;
         }
-
-#if UNITY_EDITOR
-        [CustomEditor(typeof(ConvexPolyMeshBuilder))]
-        public class Editor : UnityEditor.Editor
-        {
-            public override void OnInspectorGUI()
-            {
-                DrawDefaultInspector();
-
-                if (GUILayout.Button("Build"))
-                {
-                    ConvexPolyMeshBuilder ConvexPolyMeshBuilder = (ConvexPolyMeshBuilder)target;
-                    ConvexPolyMeshBuilder.Build();
-                }
-            }
-        }
-#endif
     }
 }

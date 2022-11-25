@@ -12,13 +12,15 @@ namespace PJ
 	/// <summary>
 	/// Move the object in one direction. When it collides, bounce
 	/// </summary>
-	public class BounceSteering2D : MonoBehaviour
+	public class BounceSteering2D : SomeSteering2D
 	{
 		protected Node2D node;
 
         protected override void Start()
 		{
-			node = GetComponent<Node2D>();
+            base.Start();
+			
+            node = GetComponent<Node2D>();
 			if (null == node)
 			{
 				Debug.Log("Error. Bounce steering requires node");

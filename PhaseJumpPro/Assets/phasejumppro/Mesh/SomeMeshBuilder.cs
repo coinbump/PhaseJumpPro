@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEditor;
 
 /*
  * RATING: 5 stars
@@ -40,5 +41,22 @@ namespace PJ
 
         public abstract Mesh BuildMesh();
         public abstract Vector2 WorldSize { get; set; }
+
+#if UNITY_EDITOR
+        [CustomEditor(typeof(SomeMeshBuilder), true)]
+        public class Editor : UnityEditor.Editor
+        {
+            public override void OnInspectorGUI()
+            {
+                DrawDefaultInspector();
+
+                if (GUILayout.Button("Build"))
+                {
+                    SomeMeshBuilder someMeshBuilder = (SomeMeshBuilder)target;
+                    someMeshBuilder.Build();
+                }
+            }
+        }
+#endif
     }
 }

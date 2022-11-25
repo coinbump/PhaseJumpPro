@@ -40,10 +40,18 @@ namespace PJ
 
         public virtual void OnUpdate(TimeSlice time) {
             var iterUpdatables = new HashSet<Updatable>(updatables);
+			var unfinishedUpdatables = new HashSet<Updatable>();
+
             foreach (Updatable updatable in iterUpdatables)
             {
                 updatable.OnUpdate(time);
+
+				if (!updatable.IsFinished) {
+                    unfinishedUpdatables.Add(updatable);
+                }
             }
+
+            updatables = unfinishedUpdatables;
         }
 
 #if UNITY_EDITOR

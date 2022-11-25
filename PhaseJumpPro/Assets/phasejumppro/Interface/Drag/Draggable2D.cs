@@ -35,10 +35,10 @@ namespace PJ
         public DropType dropType = DropType.Stay;
 
         /// <summary>
-        /// If true, drag the parent game object when this object is tapped
+        /// If true, drag the instead game object when this object is tapped
         /// Useful if this object has its own transform modifier which interferes with the drag
         /// </summary>
-        public bool dragParent = false;
+        public Draggable2D dragInstead;
 
         public UISystem UISystem
         {
@@ -77,18 +77,10 @@ namespace PJ
 
             var uiSystem = UISystem;
 
-            if (dragParent)
+            if (dragInstead)
             {
-                var parent = gameObject.transform.parent.gameObject;
-                if (parent)
-                {
-                    var parentDraggable = parent.GetComponent<Draggable2D>();
-                    if (parentDraggable)
-                    {
-                        parentDraggable.StartDrag(inputWorldPosition);
-                        return;
-                    }
-                }
+                dragInstead.StartDrag(inputWorldPosition);
+                return;
             }
 
             var dragModel = new DragModel(this);
@@ -100,7 +92,7 @@ namespace PJ
             //Debug.Log("Draggable2D OnPointerDown at: " + eventData.pressPosition.ToString());
 
             var inputScreenPosition = eventData.pointerPressRaycast.screenPosition;
-            var inputWorldPosition = UISystem.InputCamera.ScreenToWorldPoint(inputScreenPosition);
+            var inputWorldPosition = UISystem.Camera.ScreenToWorldPoint(inputScreenPosition);
             StartDrag(inputWorldPosition);
         }
     }

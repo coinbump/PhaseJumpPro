@@ -10,8 +10,7 @@ namespace PJ
 {
     /// <summary>
     /// Flashes on and off N times
-    /// Used for game objects that flash (usually after they receive damage)
-    /// 
+    /// Used for flash animations
     /// SEE ALSO: PulseTimer (more generalized)
     /// </summary>
     public class FlashTimer : SomeTimed

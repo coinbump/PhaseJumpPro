@@ -23,30 +23,27 @@ namespace PJ
 		public string id;
 
 		[NonSerialized]
-		public Tags tags = new Tags();
+		public Tags tags = new();
 
 		public string initialState;
-
-		[Serializable]
-		public struct NodeTag
-		{
-			public string name;
-			public string value;    // Type is inferred from value
-		}
 
 		public string Id { get => id; set => id = value; }
 		public abstract bool IsKinematic { get; }
 
 		/// <summary>
-		/// Defines key-value pairs for object ("health: 10", "energy: 20", etc.)
+		/// Defines key-value pairs for custom properties ("health: 10", "energy: 20", etc.)
+        /// (EDITOR ONLY: values are moved into `tags` on Awake)
 		/// </summary>
-		public List<NodeTag> valueTags = new List<NodeTag>();
+		public List<TagValue> valueTags = new List<TagValue>();
 
 		/// <summary>
         /// Defines type values for object ("enemy", "hero", "bullet", etc.)
         /// </summary>
 		public List<string> typeTags = new List<string>();
 
+		/// <summary>
+		/// Tags for ways this object can be culled: "invisible", "zeroAlpha", etc.
+		/// </summary>
 		public List<CullType> cullTypes = new List<CullType>();
 
 		/// <summary>
@@ -91,18 +88,35 @@ namespace PJ
 
 		protected override void Awake()
 		{
-			core = new Core<string>(this);
-			tags = new Tags();
+            CopyInValueTags();
+
+            valueTags.Clear();
+            valueTags.Add(new("TEMP", "EDITOR ONLY"));
+
+            core = new Core<string>(this);
 			multiRenderer = new MultiRenderer(gameObject);
+		}
+
+		public virtual void CopyInValueTags()
+		{
+			foreach (TagValue tag in valueTags)
+			{
+				try
+				{
+                    var floatValue = float.Parse(tag.value);
+					tags.Add(tag.name, floatValue);
+                    continue;
+                }
+				catch
+				{
+				}
+
+				tags.Add(tag.name, tag.value);
+			}
 		}
 
 		protected override void Start()
         {
-			foreach (NodeTag tag in valueTags)
-			{
-				tags.Add(tag.name, tag.value);
-			}
-
 			var stringCore = core as Core<string>;
 			if (null != stringCore)
 			{
@@ -112,7 +126,9 @@ namespace PJ
 
 		protected virtual void OnValidate()
 		{
-		}
+            tags.Clear();
+            CopyInValueTags();
+        }
 
 		protected override void Update()
 		{

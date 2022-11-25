@@ -32,12 +32,5 @@ namespace PJ
                 position += spacing;
             }
         }
-
-#if UNITY_EDITOR
-        [CustomEditor(typeof(HFlow))]
-        public new class Editor : SomeGameObjectsLayout.Editor
-        {
-        }
-#endif
     }
 }

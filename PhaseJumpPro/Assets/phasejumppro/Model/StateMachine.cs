@@ -19,7 +19,9 @@ namespace PJ
         /// </summary>
 		public HashSet<SomeModifier> modifiers = new HashSet<SomeModifier>();
 
-		public struct EdgeModel
+		public bool IsFinished { get => false; }
+		
+        public struct EdgeModel
 		{
 			/// <summary>
             /// Inputs that cause a transition to the next state

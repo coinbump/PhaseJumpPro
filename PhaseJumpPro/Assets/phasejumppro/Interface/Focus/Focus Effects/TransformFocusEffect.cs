@@ -14,8 +14,8 @@ namespace PJ
     /// </summary>
     public class TransformFocusEffect: AnimatedFocusEffect
     {
-        public _Transform offTransform = _Transform.defaultTransform;
-        public _Transform onTransform = _Transform.defaultTransform;
+        public GeoTransform offTransform = GeoTransform.defaultTransform;
+        public GeoTransform onTransform = GeoTransform.defaultTransform;
 
         protected override void Start()
         {

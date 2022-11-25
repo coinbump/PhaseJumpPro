@@ -2,6 +2,8 @@
  * RATING: 5 stars
  * Simple model type
  * CODE REVIEW: 3/6/22
+ *
+ * PORTED TO: C++
  */
 namespace PJ
 {

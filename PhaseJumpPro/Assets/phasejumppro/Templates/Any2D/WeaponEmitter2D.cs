@@ -159,7 +159,7 @@ namespace PJ
                         bulletNode.transform.parent = gameObject.transform.parent;
 
                         var bulletVelocityValue = RandomUtils.VaryFloat(weapon.velocity, weapon.varyVelocity);
-                        bulletNode.RotationDegreeAngle = weaponAngle;
+                        bulletNode.Rotation = weaponAngle;
 
                         // In the real world, emitter velocity is taken to account
                         // but this can look strange in some games

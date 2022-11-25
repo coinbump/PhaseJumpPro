@@ -12,7 +12,7 @@ namespace PJ
     /// <summary>
     /// Use for homing missiles, a seeker seeks its target for N seconds at N turn speed
     /// </summary>
-    public class SeekerSteering2D : MonoBehaviour
+    public class SeekerSteering2D : SomeSteering2D
     {
         public GameObject target;
 
@@ -55,6 +55,8 @@ namespace PJ
 
         protected override void Start()
         {
+            base.Start();
+
             node = GetComponent<Node2D>();
             if (null == node)
             {
@@ -65,15 +67,17 @@ namespace PJ
             node.ForwardVelocity = velocity;
         }
 
-        protected override void Update()
+        public override void OnUpdate(TimeSlice time)
         {
+            base.OnUpdate(time);
+
             if (!IsSeeking) { return; }
             if (null == target) {
                 Debug.Log("Error. Seeker needs a target");
                 return;
             }
 
-            seekTimer += Time.deltaTime;
+            seekTimer += time.delta;
             if (!IsSeeking)
             {
                 OnDoneSeeking();
@@ -81,7 +85,7 @@ namespace PJ
 
             var seekerPosition = transform.position;
             var targetPosition = target.transform.position;
-            var seekerAngle = node.RotationDegreeAngle;
+            var seekerAngle = node.Rotation;
             var toTargetAngle = AngleUtils.Vector2ToDegreeAngle(targetPosition - seekerPosition);
 
             float leftTurnAngle;
@@ -111,7 +115,7 @@ namespace PJ
                 newSeekerAngle = Mathf.Min(toTargetAngle, seekerAngle + Time.deltaTime * turnSpeedDegrees);
             }
 
-            node.RotationDegreeAngle = newSeekerAngle;
+            node.Rotation = newSeekerAngle;
         }
 
         /// <summary>

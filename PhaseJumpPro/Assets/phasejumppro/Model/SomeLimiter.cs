@@ -15,6 +15,8 @@ namespace PJ
     /// </summary>
     public abstract class SomeLimiter : Updatable
     {
+        public bool IsFinished { get => false; }
+        
         public bool Fire()
         {
             bool result = CanFire();

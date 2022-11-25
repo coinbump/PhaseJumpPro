@@ -64,7 +64,7 @@ namespace PJ
             ApplyLayout();
         }
 
-        [CustomEditor(typeof(SomeGameObjectsLayout))]
+        [CustomEditor(typeof(SomeGameObjectsLayout), true)]
 		public class Editor : UnityEditor.Editor
 		{
 			public override void OnInspectorGUI()

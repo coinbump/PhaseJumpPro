@@ -31,22 +31,5 @@ namespace PJ
             var mesh = planeMesh.Build(true);
             return mesh;
         }
-
-#if UNITY_EDITOR
-        [CustomEditor(typeof(PlaneMeshBuilder))]
-        public class Editor : UnityEditor.Editor
-        {
-            public override void OnInspectorGUI()
-            {
-                DrawDefaultInspector();
-
-                if (GUILayout.Button("Build"))
-                {
-                    PlaneMeshBuilder planeMeshBuilder = (PlaneMeshBuilder)target;
-                    planeMeshBuilder.Build();
-                }
-            }
-        }
-#endif
     }
 }

@@ -33,22 +33,5 @@ namespace PJ
             var mesh = shapeMesh.Build(true);
             return mesh;
         }
-
-#if UNITY_EDITOR
-        [CustomEditor(typeof(UniformPolyMeshBuilder))]
-        public class Editor : UnityEditor.Editor
-        {
-            public override void OnInspectorGUI()
-            {
-                DrawDefaultInspector();
-
-                if (GUILayout.Button("Build"))
-                {
-                    UniformPolyMeshBuilder UniformPolyMeshBuilder = (UniformPolyMeshBuilder)target;
-                    UniformPolyMeshBuilder.Build();
-                }
-            }
-        }
-#endif
     }
 }

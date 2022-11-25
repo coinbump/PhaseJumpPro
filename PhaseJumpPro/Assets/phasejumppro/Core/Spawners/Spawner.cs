@@ -73,15 +73,6 @@ namespace PJ
 
 		protected Timer spawnTimer;
 
-        protected override void Awake()
-		{
-		}
-
-		protected override void Update()
-		{
-			OnUpdate(new TimeSlice(Time.deltaTime));
-		}
-
 		public override void OnUpdate(TimeSlice time)
 		{
 			base.OnUpdate(time);

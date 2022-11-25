@@ -29,22 +29,5 @@ namespace PJ
             var mesh = quadMesh.Build(true);
             return mesh;
         }
-
-#if UNITY_EDITOR
-        [CustomEditor(typeof(QuadMeshBuilder))]
-        public class Editor : UnityEditor.Editor
-        {
-            public override void OnInspectorGUI()
-            {
-                DrawDefaultInspector();
-
-                if (GUILayout.Button("Build"))
-                {
-                    QuadMeshBuilder meshBuilder = (QuadMeshBuilder)target;
-                    meshBuilder.Build();
-                }
-            }
-        }
-#endif
     }
 }

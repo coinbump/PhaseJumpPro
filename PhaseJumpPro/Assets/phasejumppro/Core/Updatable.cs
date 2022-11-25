@@ -15,5 +15,6 @@ namespace PJ
     public interface Updatable
     {
         public void OnUpdate(TimeSlice time);
+        public bool IsFinished { get; }
     }
 }

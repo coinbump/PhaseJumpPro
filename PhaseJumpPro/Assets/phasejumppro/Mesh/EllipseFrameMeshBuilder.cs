@@ -30,22 +30,5 @@ namespace PJ
             var mesh = shapeMesh.Build(true);
             return mesh;
         }
-
-#if UNITY_EDITOR
-        [CustomEditor(typeof(EllipseFrameMeshBuilder))]
-        public class Editor : UnityEditor.Editor
-        {
-            public override void OnInspectorGUI()
-            {
-                DrawDefaultInspector();
-
-                if (GUILayout.Button("Build"))
-                {
-                    EllipseFrameMeshBuilder EllipseFrameMeshBuilder = (EllipseFrameMeshBuilder)target;
-                    EllipseFrameMeshBuilder.Build();
-                }
-            }
-        }
-#endif
     }
 }

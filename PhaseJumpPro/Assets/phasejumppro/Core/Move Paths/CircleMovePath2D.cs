@@ -31,12 +31,5 @@ namespace PJ
             EditorUtils.DrawCircle(transform.position, radius, renderState);
         }
 #endif
-
-#if UNITY_EDITOR
-        [CustomEditor(typeof(CircleMovePath2D))]
-        public new class Editor : MovePath.Editor
-        {
-        }
-#endif
     }
 }

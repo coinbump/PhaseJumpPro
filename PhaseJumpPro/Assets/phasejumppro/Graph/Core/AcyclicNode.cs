@@ -19,7 +19,7 @@ namespace PJ
             public override void AddEdge(EdgeModel model, SomeGraphNode<EdgeModel> toNode)
             {
                 // Acyclic graph nodes hold a strong reference to their next node
-                AddEdgeInternal(model, new StrongReferenceType<SomeGraphNode<EdgeModel>>(toNode));
+                AddEdgeInternal(model, new StrongReference<SomeGraphNode<EdgeModel>>(toNode));
             }
 
             public AcyclicNode<EdgeModel> RootNode

@@ -1,96 +1,183 @@
-﻿using System;
+using System;
 using UnityEngine;
-using UnityEditor;
+using System.Collections.Generic;
 
 namespace PJ
 {
     /// <summary>
-    /// Allows gameObjects to be treated as 2D views in reading (right hand) coordinates where positive Y is down
-    /// Each view has a frame and applies the layout for its child views
+    /// - Allows reading (right hand) coordinates where positive Y is down
+    /// - Provides bounding frame for an object
+    /// - Allows for standard UI system layouts and event management
+    ///
+    /// COORDINATE SYSTEMS:
+    /// - World: World position in scene
+    /// - Local: Local position in component's owner object
+    /// - View: Position in view space, where the top left is (0, 0) inside the view frame and the bottom right is (frame.size.x, frame.size.y)
+    /// 
     /// </summary>
     /// TBD: Do we need LateUpdate for ApplyLayout?
-    public class View2D : Node
+    public partial class View2D : NodeCore2D
     {
-        /// <summary>
-        /// Frame in view space (positive Y is down)
-        /// </summary>
-        public Bounds2D frame;
+        private Bounds2D frame = new Bounds2D();
 
         /// <summary>
-        /// Local bounds (origin is always zero)
+        /// Optional. Allows us to work with overlay cameras as well as the main camera
         /// </summary>
-        public Bounds2D Bounds
-        {
+        public new Camera camera;
+
+        protected Optional<float> intrinsicWidth;
+        protected Optional<float> intrinsicHeight;
+
+        public bool ignoreIntrinsicWidth = false;
+        public bool ignoreIntrinsicHeight = false;
+
+        /// <summary>
+        /// Local z position for child view
+        /// </summary>
+        public float zStep = 0.1f;
+
+        public virtual Optional<float> IntrinsicWidth {
             get
             {
-                var result = frame;
-                result.origin = Vector2.zero;
-                return result;
+                var fixedWidth = FixedWidth;
+                if (null != fixedWidth) {
+                    return fixedWidth;
+                }
+
+                if (ignoreIntrinsicWidth) { return null; }
+                return intrinsicWidth;
+            }
+            set {
+                intrinsicWidth = value;
             }
         }
 
-        /// <summary>
-        /// Returns the top-left world position of this view (topmost view only)
-        /// Do not use this for child views
-        /// </summary>
-        public Vector3 TopLeftWorldPosition
-        {
+        public float DefaultIntrinsicWidth {
+            get {
+                var result = IntrinsicWidth;
+                if (null == result) { return 0; }
+                return result.value;
+            }
+        }
+        
+        public virtual Optional<float> IntrinsicHeight {
             get
             {
-                var origin = transform.position;
-                var topLeft = new Vector3(
-                    origin.x - WorldSize.x / 2.0f,
-                    origin.y + WorldSize.y / 2.0f * Vector2.up.y,
-                    transform.position.z
-                );
-                return topLeft;
+                var fixedHeight = FixedHeight;
+                if (null != fixedHeight)
+                {
+                    return fixedHeight;
+                }
+
+                if (ignoreIntrinsicHeight) { return null; }
+                return intrinsicHeight;
+            }
+            set {
+                intrinsicHeight = value;
             }
         }
 
-        /// <summary>
-        /// Returns the top-left local position of this view
-        /// </summary>
-        public Vector3 TopLeftLocalPositionIn(Bounds2D parentFrame)
-        {
-            var topLeft = new Vector3(
-                -parentFrame.size.x / 2.0f + frame.origin.x,
-                parentFrame.size.y / 2.0f * Vector2.up.y + frame.origin.y * Vector2.down.y,
-                transform.localPosition.z
-            );
-            return topLeft;
+        public float DefaultIntrinsicHeight {
+            get {
+                var result = IntrinsicHeight;
+                if (null == result) { return 0; }
+                return result.value;
+            }
         }
 
-        public Vector3 LocalPositionIn(Bounds2D parentFrame)
+        public Camera Camera
         {
-            var topLeft = TopLeftLocalPositionIn(parentFrame);
-            var result = new Vector3(
-                topLeft.x + frame.size.x / 2.0f,
-                topLeft.y + (frame.size.y / 2.0f) * Vector2.down.y,
-                topLeft.z
-            );
-
-            return result;
-        }
-
-        public Vector2 WorldSize
-        {
-            get => frame.size;
+            get
+            {
+                return camera != null ? camera : Camera.main;
+            }
         }
 
         public View2D()
         {
         }
 
-        public void ApplyLayout()
+        protected virtual void _ApplyLayout(Bounds2D parentBounds) {
+            var childViews = ChildViews();
+
+            // Default layout: center child views
+            foreach (var view in childViews) {
+                var intrinsicWidth = view.IntrinsicWidth;
+                var intrinsicHeight = view.IntrinsicHeight;
+
+                var width = intrinsicWidth != null ? intrinsicWidth.value : parentBounds.size.x;
+                var height = intrinsicHeight != null ? intrinsicHeight.value : parentBounds.size.y;
+
+                var origin = new Vector2(
+                    parentBounds.size.x / 2.0f - (width / 2.0f),
+                    parentBounds.size.y / 2.0f - (height / 2.0f)
+                );
+                var size = new Vector2(width, height);
+                view.Frame = new Bounds2D(origin, size);
+            }
+        }
+
+        protected virtual void _PostApplyLayout() {
+            var childViews = ChildViews();
+            foreach (var view in childViews) {
+                view._ApplyLayout(view.Bounds);
+                view._PostApplyLayout();
+            }
+        }
+
+        public virtual void ApplyLayout() {
+            Debug.Log(GetType() + ": ApplyLayout");
+
+            Bounds2D parentBounds = ParentBounds();
+            if (null == ParentView()) {
+                // Top view needs a size
+                Bounds2D frame = new Bounds2D();
+
+                var intrinsicWidth = IntrinsicWidth;
+                var intrinsicHeight = IntrinsicHeight;
+
+                if (null != intrinsicWidth) {
+                    frame.size.x = intrinsicWidth.value;
+                } else {
+                    frame.size.x = parentBounds.size.x;
+                }
+
+                if (null != intrinsicHeight) {
+                    frame.size.y = intrinsicHeight.value;
+                } else {
+                    frame.size.y = parentBounds.size.y;
+                }
+
+                Frame = frame;
+                parentBounds = new Bounds2D(Vector2.zero, frame.size);
+            }
+
+            _ApplyLayout(parentBounds);
+            _PostApplyLayout();
+
+            // Subclasses can apply their own layout if needed
+            UpdatePositions();
+        }
+
+        public void UpdatePositions()
         {
+            float baseZ = transform.localPosition.z;
+
+            var zIndex = 0;
             foreach (Transform childTransform in gameObject.transform)
             {
                 var childObject = childTransform.gameObject;
                 var childView = childObject.GetComponent<View2D>();
                 if (!childView) { continue; }
 
-                var childPosition = childView.LocalPositionIn(frame);
+                var childPosition = childView.LocalPositionIn(Frame, transform.localPosition);
+
+                var z = baseZ -(Mathf.Abs(zStep)) * (zIndex + 1);
+                childPosition.z = z;
+
                 childObject.transform.localPosition = childPosition;
+
+                zIndex++;
             }
 
             foreach (Transform childTransform in gameObject.transform)
@@ -99,15 +186,53 @@ namespace PJ
                 var childView = childObject.GetComponent<View2D>();
                 if (!childView) { continue; }
 
-                childView.ApplyLayout();
+                childView.UpdatePositions();
             }
+        }
+
+        public View2D ParentView() {
+            if (!transform.parent) { return null; }
+            
+            var parentGameObject = transform.parent.gameObject;
+            if (null != parentGameObject) {
+                if (parentGameObject.TryGetComponent(out View2D parentView)) {
+                    return parentView;
+                }
+            }
+            return null;
+        } // TESTED
+
+        public List<View2D> ChildViews() {
+            var result = new List<View2D>();
+            
+            foreach (Transform childTransform in transform) {
+                if (childTransform.gameObject.TryGetComponent(out View2D view)) {
+                    result.Add(view);
+                }
+            }
+            return result;
+        } // TESTED
+
+        public List<View2D> FilteredChildViews(Func<View2D, bool> filter) {
+            var result = new List<View2D>();
+            
+            foreach (Transform childTransform in transform) {
+                if (childTransform.gameObject.TryGetComponent(out View2D view)) {
+                    if (filter(view))
+                    {
+                        result.Add(view);
+                    }
+                }
+            }
+            return result;
         }
 
         public View2D RootView()
         {
             var result = this;
 
-            while (result.transform.parent) {
+            while (result.transform.parent)
+            {
                 var parentView = result.transform.parent.GetComponent<View2D>();
                 if (!parentView) { break; }
 
@@ -115,7 +240,7 @@ namespace PJ
             }
 
             return result;
-        }
+        } // TESTED
 
         protected override void Start()
         {
@@ -124,32 +249,15 @@ namespace PJ
             ApplyLayout();
         }
 
-#if UNITY_EDITOR
-        protected override void OnValidate()
+        protected override void Awake()
         {
-            base.OnValidate();
-            RootView().ApplyLayout();
-        }
+            base.Awake();
 
-        protected override void RenderGizmos(EditorUtils.RenderState renderState)
-        {
-            EditorUtils.DrawRect(transform.position, WorldSize.x, WorldSize.y, renderState);
-        }
-
-        [CustomEditor(typeof(View2D))]
-        public class Editor : UnityEditor.Editor
-        {
-            public override void OnInspectorGUI()
+            // Make sure our collider fits the view size
+            if (TryGetComponent(out BoxCollider2D boxCollider))
             {
-                DrawDefaultInspector();
-
-                if (GUILayout.Button("Apply Layout"))
-                {
-                    View2D _target = (View2D)target;
-                    _target.ApplyLayout();
-                }
+                boxCollider.size = Frame.size;
             }
         }
-#endif
     }
 }

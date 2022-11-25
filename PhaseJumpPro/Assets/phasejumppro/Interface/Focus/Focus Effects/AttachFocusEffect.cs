@@ -16,8 +16,8 @@ namespace PJ
     public class AttachFocusEffect : AnimatedFocusEffect
     {
         public GameObject attachment;
-        public _Transform offTransform = _Transform.defaultTransform;
-        public _Transform onTransform = _Transform.defaultTransform;
+        public GeoTransform offTransform = GeoTransform.defaultTransform;
+        public GeoTransform onTransform = GeoTransform.defaultTransform;
 
         protected GameObject _attachment = null;
 

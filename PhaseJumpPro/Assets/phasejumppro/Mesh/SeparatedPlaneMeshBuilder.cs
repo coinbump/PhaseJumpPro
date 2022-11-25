@@ -42,22 +42,5 @@ namespace PJ
 
             return mesh;
         }
-
-#if UNITY_EDITOR
-        [CustomEditor(typeof(SeparatedPlaneMeshBuilder))]
-        public class Editor : UnityEditor.Editor
-        {
-            public override void OnInspectorGUI()
-            {
-                DrawDefaultInspector();
-
-                if (GUILayout.Button("Build"))
-                {
-                    SeparatedPlaneMeshBuilder meshBuilder = (SeparatedPlaneMeshBuilder)target;
-                    meshBuilder.Build();
-                }
-            }
-        }
-#endif
     }
 }

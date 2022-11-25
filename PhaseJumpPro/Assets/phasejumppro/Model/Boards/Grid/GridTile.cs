@@ -15,6 +15,8 @@ namespace PJ
 
 		public WeakReference<SomeGridBoard> board;  // Owner. null if not in a board.
 
+		public bool IsFinished { get => false; }
+		
         public virtual void OnUpdate(TimeSlice time)
         {
         }

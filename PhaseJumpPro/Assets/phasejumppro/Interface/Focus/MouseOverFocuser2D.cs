@@ -18,15 +18,15 @@ namespace PJ
     public class MouseOverFocuser2D : MonoBehaviour
     {
         /// <summary>
-        /// Optional. Allows input system to work with overlay cameras
+        /// Optional. Allows us to work with overlay cameras as well as the main camera
         /// </summary>
-        public Camera inputCamera;
+        public new Camera camera;
 
-        public Camera InputCamera
+        public Camera Camera
         {
             get
             {
-                return inputCamera != null ? inputCamera : Camera.main;
+                return camera != null ? camera : Camera.main;
             }
         }
 
@@ -46,7 +46,7 @@ namespace PJ
 
             //Debug.Log("Screen position:" + mouseInputController.ScreenPosition.ToString());
 
-            var raycastHits = Utils.Raycast2DHitsAtScreenPosition(InputCamera, screenPosition.value);
+            var raycastHits = Utils.Raycast2DHitsAtScreenPosition(Camera, screenPosition);
 			Focusable hitFocusable = null;
 
             if (null == raycastHits || raycastHits.Length == 0)

@@ -19,7 +19,7 @@ namespace PJ
         public float moveTime = .5f;
         public float deadZone = 0.025f;
 
-        protected MatrixBoardRunner2D boardRunner;
+        protected MatrixBoardView2D boardRunner;
         protected MatrixNode2D node;
 
         protected override void Start()
@@ -31,7 +31,7 @@ namespace PJ
                 return;
             }
 
-            boardRunner = GetComponentInParent<MatrixBoardRunner2D>();
+            boardRunner = GetComponentInParent<MatrixBoardView2D>();
             if (null == boardRunner)
             {
                 Debug.Log("Error. Matrix Control Scheme requires a Board Runner");
@@ -65,6 +65,6 @@ namespace PJ
         }
 
         protected virtual bool CanMove() => true;
-        protected virtual void OnMoveResult(MatrixNode2D node, MapDirection direction, MatrixBoardRunner2D.MoveResult moveResult) { }
+        protected virtual void OnMoveResult(MatrixNode2D node, MapDirection direction, MatrixBoardView2D.MoveResult moveResult) { }
     }
 }

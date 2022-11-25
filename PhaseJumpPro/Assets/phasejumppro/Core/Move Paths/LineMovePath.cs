@@ -33,12 +33,5 @@ namespace PJ
             Vector3 position = start + (end - start) * progress;
             MovePathMoverToLocalPosition(pathMover, position, force);
         }
-
-#if UNITY_EDITOR
-        [CustomEditor(typeof(LineMovePath))]
-        public new class Editor : SomeMovePath.Editor
-        {
-        }
-#endif
     }
 }

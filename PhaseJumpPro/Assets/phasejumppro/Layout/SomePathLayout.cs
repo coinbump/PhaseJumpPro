@@ -86,12 +86,5 @@ namespace PJ
         }
 
         protected abstract SomePath NewPath();
-
-#if UNITY_EDITOR
-        [CustomEditor(typeof(SomePathLayout))]
-        public new class Editor : SomeGameObjectsLayout.Editor
-        {
-        }
-#endif
     }
 }

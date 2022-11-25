@@ -42,7 +42,7 @@ namespace PJ
 			var worldPosition = mouseInputController.WorldPosition;
 			if (null == worldPosition) { return; }
 
-			target.transform.position = new Vector3(worldPosition.value.x, worldPosition.value.y, target.transform.position.z);
+			target.transform.position = new Vector3(worldPosition.x, worldPosition.y, target.transform.position.z);
 		}
 
 		protected override void Update()

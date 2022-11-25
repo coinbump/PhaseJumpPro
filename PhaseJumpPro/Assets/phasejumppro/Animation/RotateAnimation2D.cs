@@ -31,7 +31,7 @@ namespace PJ
 				return;
 			}
 
-			node.RotationDegreeAngle += anglesPerSecond * Time.deltaTime;
+			node.Rotation += anglesPerSecond * Time.deltaTime;
 		}
 	}
 }
