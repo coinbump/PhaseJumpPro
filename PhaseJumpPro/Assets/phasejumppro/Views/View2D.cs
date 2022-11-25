@@ -128,8 +128,9 @@ namespace PJ
         public virtual void ApplyLayout() {
             Debug.Log(GetType() + ": ApplyLayout");
 
-            Bounds2D parentBounds = ParentBounds();
             if (null == ParentView()) {
+                var parentBounds = ParentBounds();
+
                 // Top view needs a size
                 Bounds2D frame = new Bounds2D();
 
@@ -149,10 +150,11 @@ namespace PJ
                 }
 
                 Frame = frame;
-                parentBounds = new Bounds2D(Vector2.zero, frame.size);
             }
 
-            _ApplyLayout(parentBounds);
+            Bounds2D layoutBounds = Bounds;
+            
+            _ApplyLayout(layoutBounds);
             _PostApplyLayout();
 
             // Subclasses can apply their own layout if needed

@@ -35,10 +35,11 @@ namespace PJ
         public DropType dropType = DropType.Stay;
 
         /// <summary>
-        /// If true, drag the instead game object when this object is tapped
-        /// Useful if this object has its own transform modifier which interferes with the drag
+        /// (OPTIONAL). If not null, drag the target object when this object is tapped
+        /// Useful if the object with th ecollider has its own transform modifier which interferes with the drag
+        /// or wants to be used as a drag handle for something else.
         /// </summary>
-        public Draggable2D dragInstead;
+        public Draggable2D dragTarget;
 
         public UISystem UISystem
         {
@@ -77,9 +78,9 @@ namespace PJ
 
             var uiSystem = UISystem;
 
-            if (dragInstead)
+            if (dragTarget)
             {
-                dragInstead.StartDrag(inputWorldPosition);
+                dragTarget.StartDrag(inputWorldPosition);
                 return;
             }
 

@@ -378,7 +378,7 @@ MonoBehaviour:
   ignoreIntrinsicHeight: 0
   zStep: 0.1
   strokeMaterial: {fileID: 0}
-  fillMaterial: {fileID: 2100000, guid: af9dd7d0eafb04c7591dbd430951ebc1, type: 2}
+  fillMaterial: {fileID: 2100000, guid: a4951712d6de94d22ae1ea3abde80293, type: 2}
 --- !u!1 &1134215588
 GameObject:
   m_ObjectHideFlags: 0
@@ -551,7 +551,7 @@ MonoBehaviour:
   ignoreIntrinsicHeight: 0
   zStep: 0.1
   strokeMaterial: {fileID: 0}
-  fillMaterial: {fileID: 2100000, guid: af9dd7d0eafb04c7591dbd430951ebc1, type: 2}
+  fillMaterial: {fileID: 2100000, guid: a4951712d6de94d22ae1ea3abde80293, type: 2}
 --- !u!1 &1718365516
 GameObject:
   m_ObjectHideFlags: 0
@@ -607,7 +607,7 @@ MonoBehaviour:
   ignoreIntrinsicHeight: 0
   zStep: 0.1
   strokeMaterial: {fileID: 0}
-  fillMaterial: {fileID: 2100000, guid: af9dd7d0eafb04c7591dbd430951ebc1, type: 2}
+  fillMaterial: {fileID: 2100000, guid: a4951712d6de94d22ae1ea3abde80293, type: 2}
 --- !u!1 &2042069085
 GameObject:
   m_ObjectHideFlags: 0

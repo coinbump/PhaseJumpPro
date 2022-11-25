@@ -80,9 +80,9 @@ namespace PJ
                 }
             } // TESTED
 
-            protected override void _ApplyLayout(Bounds2D parentBounds)
+            protected override void _ApplyLayout(Bounds2D layoutBounds)
             {
-                base._ApplyLayout(parentBounds);
+                base._ApplyLayout(layoutBounds);
 
                 var childViews = ChildViews();
                 if (childViews.Count < 1)
@@ -99,13 +99,13 @@ namespace PJ
                 if (null != childIntrinsicWidth) {
                     frame.size.x = childIntrinsicWidth.value;
                 } else {
-                    frame.size.x = parentBounds.size.x;
+                    frame.size.x = layoutBounds.size.x;
                 }
 
                 if (null != childIntrinsicHeight) {
                     frame.size.y = childIntrinsicHeight.value;
                 } else {
-                    frame.size.y = parentBounds.size.y;
+                    frame.size.y = layoutBounds.size.y;
                 }
 
                 var padLeading = PadLeading;

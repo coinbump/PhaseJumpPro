@@ -1255,7 +1255,7 @@ GameObject:
   - component: {fileID: 1178168763}
   - component: {fileID: 1178168764}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: Draggable Parent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1291,7 +1291,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   uiSystem: {fileID: 0}
   dropType: 0
-  dragInstead: {fileID: 0}
+  dragTarget: {fileID: 0}
 --- !u!1 &1229836385
 GameObject:
   m_ObjectHideFlags: 0
@@ -1524,7 +1524,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   uiSystem: {fileID: 0}
   dropType: 0
-  dragInstead: {fileID: 1178168764}
+  dragTarget: {fileID: 1178168764}
 --- !u!1 &1488266296
 GameObject:
   m_ObjectHideFlags: 0
@@ -1706,4 +1706,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   uiSystem: {fileID: 0}
   dropType: 0
-  dragInstead: {fileID: 0}
+  dragTarget: {fileID: 0}
