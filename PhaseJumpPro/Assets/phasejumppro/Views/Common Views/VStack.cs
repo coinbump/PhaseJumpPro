@@ -27,7 +27,7 @@ namespace PJ
                 set => base.IntrinsicWidth = value;
             }
 
-            protected override void _ApplyLayout(Bounds2D parentBounds)
+            protected override void _ApplyLayout(Bounds2D layoutBounds)
             {
                 var childViews = ChildViews();
 
@@ -38,7 +38,7 @@ namespace PJ
                 var intrinsicHeightChildViews = new List<View2D>();
                 var intrinsicWidthChildViews = new List<View2D>();
 
-                var heightAvailable = parentBounds.size.y - (childViews.Count - 1) * spacing;
+                var heightAvailable = layoutBounds.size.y - (childViews.Count - 1) * spacing;
                 var maxIntrinsicWidth = 0f;
                 foreach (var view in childViews)
                 {
@@ -70,7 +70,7 @@ namespace PJ
                 // If there are no intrinsic child views to determine width, use all available width
                 if (intrinsicWidthChildViews.Count == 0)
                 {
-                    maxIntrinsicWidth = parentBounds.size.x;
+                    maxIntrinsicWidth = layoutBounds.size.x;
                 }
 
                 var totalIntrinsicHeight = 0f;
@@ -125,10 +125,10 @@ namespace PJ
                             frame.origin.x = 0;
                             break;
                         case HorizontalAlignment.Center:
-                            frame.origin.x = parentBounds.size.x / 2.0f - frame.size.x / 2.0f;
+                            frame.origin.x = layoutBounds.size.x / 2.0f - frame.size.x / 2.0f;
                             break;
                         case HorizontalAlignment.Trailing:
-                            frame.origin.x = parentBounds.size.x - frame.size.x;
+                            frame.origin.x = layoutBounds.size.x - frame.size.x;
                             break;
                     }
                     

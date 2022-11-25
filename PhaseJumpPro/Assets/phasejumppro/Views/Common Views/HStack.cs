@@ -27,7 +27,7 @@ namespace PJ
                 set => base.IntrinsicHeight = value;
             }
 
-            protected override void _ApplyLayout(Bounds2D parentBounds)
+            protected override void _ApplyLayout(Bounds2D layoutBounds)
             {
                 var childViews = ChildViews();
 
@@ -38,7 +38,7 @@ namespace PJ
                 var intrinsicWidthChildViews = new List<View2D>();
                 var intrinsicHeightChildViews = new List<View2D>();
 
-                var widthAvailable = parentBounds.size.x - (childViews.Count - 1) * spacing;
+                var widthAvailable = layoutBounds.size.x - (childViews.Count - 1) * spacing;
                 var maxIntrinsicHeight = 0f;
                 foreach (var view in childViews)
                 {
@@ -70,7 +70,7 @@ namespace PJ
                 // If there are no intrinsic child views to determine height, use all available height
                 if (intrinsicHeightChildViews.Count == 0)
                 {
-                    maxIntrinsicHeight = parentBounds.size.y;
+                    maxIntrinsicHeight = layoutBounds.size.y;
                 }
 
                 var totalIntrinsicWidth = 0f;
@@ -125,10 +125,10 @@ namespace PJ
                             frame.origin.y = 0;
                             break;
                         case VerticalAlignment.Center:
-                            frame.origin.y = parentBounds.size.y / 2.0f - frame.size.y / 2.0f;
+                            frame.origin.y = layoutBounds.size.y / 2.0f - frame.size.y / 2.0f;
                             break;
                         case VerticalAlignment.Bottom:
-                            frame.origin.y = parentBounds.size.y - frame.size.y;
+                            frame.origin.y = layoutBounds.size.y - frame.size.y;
                             break;
                     }
                     

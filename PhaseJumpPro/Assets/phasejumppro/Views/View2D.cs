@@ -97,7 +97,7 @@ namespace PJ
         {
         }
 
-        protected virtual void _ApplyLayout(Bounds2D parentBounds) {
+        protected virtual void _ApplyLayout(Bounds2D layoutBounds) {
             var childViews = ChildViews();
 
             // Default layout: center child views
@@ -105,12 +105,12 @@ namespace PJ
                 var intrinsicWidth = view.IntrinsicWidth;
                 var intrinsicHeight = view.IntrinsicHeight;
 
-                var width = intrinsicWidth != null ? intrinsicWidth.value : parentBounds.size.x;
-                var height = intrinsicHeight != null ? intrinsicHeight.value : parentBounds.size.y;
+                var width = intrinsicWidth != null ? intrinsicWidth.value : layoutBounds.size.x;
+                var height = intrinsicHeight != null ? intrinsicHeight.value : layoutBounds.size.y;
 
                 var origin = new Vector2(
-                    parentBounds.size.x / 2.0f - (width / 2.0f),
-                    parentBounds.size.y / 2.0f - (height / 2.0f)
+                    layoutBounds.size.x / 2.0f - (width / 2.0f),
+                    layoutBounds.size.y / 2.0f - (height / 2.0f)
                 );
                 var size = new Vector2(width, height);
                 view.Frame = new Bounds2D(origin, size);
@@ -153,7 +153,7 @@ namespace PJ
             }
 
             Bounds2D layoutBounds = Bounds;
-            
+
             _ApplyLayout(layoutBounds);
             _PostApplyLayout();
 
