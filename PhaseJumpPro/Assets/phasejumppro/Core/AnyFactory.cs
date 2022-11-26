@@ -2,7 +2,6 @@
  * RATING: 5 stars
  * Abstract
  * CODE REVIEW: 4/8/22
- * 
  * PORTED TO: C++
  */
 namespace PJ

@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /*
- * RATING: 5 stars
- * Tested and works
- * CODE REVIEW: 4/21/22
- */
+RATING: 5 stars
+Tested and works
+CODE REVIEW: 11/26/22
+*/
 namespace PJ
 {
     /// <summary>
@@ -21,49 +21,75 @@ namespace PJ
         /// <summary>
         /// Normalized position along path (0-1.0)
         /// </summary>
+        [Range(0, 1.0f)]
         public float startPosition;
 
         /// <summary>
         /// Time to complete one cycle from 0-1.0
         /// </summary>
-        public float cycleTime = 3.0f;
+        [SerializeField]
+        protected float cycleTime = 3.0f;
 
         /// <summary>
         /// Object's relative mode speed on the path
         /// </summary>
         public float moveSpeed = 1.0f;
 
+        public float CycleTime {
+            get => cycleTime;
+            set {
+                cycleTime = value;
+                if (null != cycleTimer)
+                {
+                    cycleTimer.CycleTime = cycleTime / moveSpeed;
+                }
+            }
+        }
+
         /// <summary>
         /// Start state for the animation cycle
         /// </summary>
         public AnimationCycleState startCycleState;
 
-        public Animator animator = new Animator();
+        public AnimationCycleTimer cycleTimer;
 
         public float Progress
         {
-            get => animator.Progress;
+            get => cycleTimer.Progress;
         }
 
-        protected override void Awake()
+        public PathMover()
         {
+            cycleTimer = new AnimationCycleTimer(cycleTime / moveSpeed, AnimationCycleType.PingPong);
         }
 
-        public virtual void Go()
+        protected override void Start()
         {
-            animator.CycleTime = cycleTime / moveSpeed; // Must set cycle time before progress
-            animator.SetProgress(startPosition);
-            animator.CycleState = startCycleState;
+            base.Start();
 
-            //Debug.Log("PathMover Go cycle time: " + animator.CycleTime.ToString());
+            cycleTimer.CycleTime = cycleTime;
+            cycleTimer.CycleState = startCycleState;
+            cycleTimer.SetProgress(startPosition);
         }
 
-        protected override void Update()
+        public override void OnUpdate(TimeSlice time)
         {
-            var time = new TimeSlice(Time.deltaTime);
-            animator.OnUpdate(time);
+            base.OnUpdate(time);
+            cycleTimer.OnUpdate(time);
 
             //Debug.Log("PathMover Update progress " + Progress.ToString());
         }
+
+#if UNITY_EDITOR
+        protected virtual void OnValidate() 
+        {
+            var parent = transform.parent.gameObject;
+            if (null == parent) { return; }
+
+            if (parent.TryGetComponent(out SomeMovePath movePath)) {
+                movePath.SnapAllToStartPosition();
+            }
+        }
+#endif
     }
 }

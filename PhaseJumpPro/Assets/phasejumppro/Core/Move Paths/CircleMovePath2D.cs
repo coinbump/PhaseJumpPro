@@ -6,7 +6,7 @@ using UnityEngine;
 /*
  * RATING: 5 stars
  * Tested and works
- * CODE REVIEW: 4/21/22
+ * CODE REVIEW: 11/26/22
  */
 namespace PJ
 {
@@ -18,11 +18,9 @@ namespace PJ
     {
         public float radius = 1.0f;
 
-        protected override void Awake()
+        protected override SomePath BuildPath()
         {
-            base.Awake();
-
-            path = new CirclePath(radius);
+            return new CirclePath(radius);
         }
 
 #if UNITY_EDITOR

@@ -16,7 +16,7 @@ namespace PJ
 		/// <summary>
 		/// Updatables are sent update events (for timers, animations, etc.)
 		/// </summary>
-		protected HashSet<Updatable> updatables = new HashSet<Updatable>();
+		public HashSet<Updatable> updatables = new HashSet<Updatable>();
 
 		public T ParentComponent<T>() where T : class {
 			var parent = transform.parent.gameObject;

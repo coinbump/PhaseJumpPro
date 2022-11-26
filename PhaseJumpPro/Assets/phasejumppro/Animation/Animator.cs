@@ -1,105 +1,56 @@
-﻿using System;
+using System;
+using UnityEngine;
 
 /*
  * RATING: 5 stars
- * Has unit tests
- * CODE REVIEW: 4/21/22
+ * Tested and works
+ * CODE REVIEW: 11/26/22
  */
 namespace PJ
 {
     /// <summary>
-    /// Animator handles animation cycle logic for an animation
+    /// Performs an interpolated property change over time
     /// </summary>
-    public class Animator
+    public class Animator<T> : Updatable
     {
-        public Timer timer = new Timer(0, SomeTimed.RunType.RunOnce);
+        /// <summary>
+        /// Interpolation, start, and end values
+        /// </summary>
+        public AnimationCurve<T> curve;
 
-        protected AnimationCycleType cycleType;
-        protected AnimationCycleState cycleState;
+        /// <summary>
+        /// Cycle progress for Once, Loop, PingPong
+        /// </summary>
+        public AnimationCycleTimer timer;
 
-        public float Progress
+        /// <summary>
+        /// Value binding to modify value
+        /// </summary>
+        public Binding<T> binding;
+
+        public Animator(AnimationCurve<T> curve, AnimationCycleTimer timer, Binding<T> binding)
         {
-            get
-            {
-                switch (cycleState)
-                {
-                    case AnimationCycleState.Reverse:
-                        return 1.0f - timer.Progress;
-                    default:
-                        return timer.Progress;
-                }
-            }
+            this.curve = curve;
+            this.timer = timer;
+            this.binding = binding;
         }
 
-        public bool IsFinished
-        {
+        public float Progress {
+            get => timer.Progress;
+        }
+
+        public bool IsFinished {
             get => timer.IsFinished;
         }
 
-        public float CycleTime
+        public void OnUpdate(TimeSlice time)
         {
-            get => timer.duration;
-            set
-            {
-                timer.duration = value;
-            }
-        }
+            if (IsFinished) { return; }
 
-        public AnimationCycleState CycleState
-        {
-            get => cycleState;
-            set
-            {
-                if (cycleState == value) { return; }
-                cycleState = value;
-            }
-        }
+            timer.OnUpdate(time);
 
-        public AnimationCycleType CycleType
-        {
-            get => cycleType;
-            set
-            {
-                if (cycleType == value) { return; }
-                cycleType = value;
-            }
-        }
-
-        public void SetProgress(float progress)
-        {
-            switch (cycleState)
-            {
-                case AnimationCycleState.Reverse:
-                    timer.SetProgress(1.0f - progress);
-                    break;
-                default:
-                    timer.SetProgress(progress);
-                    break;
-            }
-        }
-
-        public virtual void OnUpdate(TimeSlice time)
-        {
-            if (!timer.IsFinished)
-            {
-                timer.OnUpdate(time);
-
-                if (timer.IsFinished)
-                {
-                    switch (cycleType)
-                    {
-                        case AnimationCycleType.Once:
-                            break;
-                        case AnimationCycleType.Loop:
-                            timer.Reset();
-                            break;
-                        case AnimationCycleType.PingPong:
-                            cycleState = cycleState.Flip();
-                            timer.Reset();
-                            break;
-                    }
-                }
-            }
+            var curveValue = curve.ValueAt(Progress);
+            binding.Value = curveValue;
         }
     }
 }

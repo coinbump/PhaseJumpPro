@@ -172,12 +172,12 @@ namespace PJ
 
             if (duration > 0)
             {
-                node.moveAnimationCurve = new Optional<AnimationCurve<Vector2>>(new AnimationCurve<Vector2>());
-                node.moveAnimationCurve.value.start = node.transform.localPosition;
-                node.moveAnimationCurve.value.end = endPosition;
-
-                node.moveAnimationTimer.duration = duration;
-                node.moveAnimationTimer.Reset();
+                node.moveAnimator = new(
+                    new AnimationCurve<Vector2>(node.transform.localPosition, endPosition, new Vector2ValueAnimator()),
+                    new(duration, AnimationCycleType.Once),
+                    new Binding<Vector2>(() => node.transform.localPosition, (Vector2 position) => node.transform.localPosition = position)
+                );
+                node.updatables.Add(node.moveAnimator);
             }
             else
             {

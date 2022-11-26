@@ -5,7 +5,6 @@ using UnityEngine.Assertions;
  * RATING: 5 stars
  * Has unit tests (via Timer)
  * CODE REVIEW: 4/14/22
- * 
  * PORTED TO: C++
  */
 namespace PJ {

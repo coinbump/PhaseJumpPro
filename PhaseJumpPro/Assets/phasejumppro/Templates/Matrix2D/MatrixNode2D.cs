@@ -27,14 +27,13 @@ namespace PJ
 
         public MatrixPiece piece;
 
-        public Optional<AnimationCurve<Vector2>> moveAnimationCurve;
-        public Timer moveAnimationTimer = new Timer(1.0f, SomeTimed.RunType.RunOnce);
-
+        public Animator<Vector2> moveAnimator;
+        
         public bool IsAnimating
         {
             get
             {
-                return !moveAnimationTimer.IsFinished && null != moveAnimationCurve;
+                return null != moveAnimator && !moveAnimator.IsFinished;
             }
         }
 
@@ -58,27 +57,6 @@ namespace PJ
             if (rigidbody)
             {
                 rigidbody.isKinematic = true;
-            }
-        }
-
-        public override void OnUpdate(TimeSlice time)
-        {
-            base.OnUpdate(time);
-
-            moveAnimationTimer.OnUpdate(time);
-
-            if (null != moveAnimationCurve)
-            {
-                float progress = moveAnimationTimer.Progress;
-                progress = moveAnimationCurve.value.transform.Transform(progress);
-
-                var position = moveAnimationCurve.value.start + (moveAnimationCurve.value.end - moveAnimationCurve.value.start) * progress;
-                transform.localPosition = position;
-
-                if (moveAnimationTimer.IsFinished)
-                {
-                    moveAnimationCurve = null;
-                }
             }
         }
     }

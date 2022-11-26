@@ -8,12 +8,12 @@ namespace PJ
         /// <summary>
         /// A view for rendering a 2D shape
         /// </summary>
-        public class Shape : View2D
+        public abstract class SomeShape : View2D
         {
             public Material strokeMaterial;
             public Material fillMaterial;
 
-            public Shape()
+            public SomeShape()
             {
             }
 
@@ -28,6 +28,26 @@ namespace PJ
                     }
                 }
             }
+
+            protected void ClearParts()
+            {
+                foreach (Transform childTransform in transform)
+                {
+                    if (childTransform.TryGetComponent(out SomeMeshBuilder meshBuilder)) {
+                        Destroy(childTransform.gameObject);
+                    }
+                }
+            }
+
+            protected override void Awake()
+            {
+                base.Awake();
+
+                ClearParts();
+                BuildShape();
+            }
+
+            protected abstract void BuildShape();
 
             /// <summary>
             /// Shapes are composed of multiple parts (frame, fill, etc.)

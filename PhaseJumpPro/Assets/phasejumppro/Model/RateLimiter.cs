@@ -1,8 +1,9 @@
 ﻿
 /*
  * RATING: 5 stars
- * Simple design pattern
- * CODE REVIEW: 4/13/22
+ * Simple utility
+ * CODE REVIEW: 11/26/22
+ * PORTED TO: C++
  */
 namespace PJ
 {

@@ -22,7 +22,7 @@ namespace PJ
 		/// <summary>
 		/// Optional object that dynamically adjusts the weight during evaluation
 		/// </summary>
-		public SomeAdjustWeight adjust;
+		public SomeTransform<Weight> adjust;
 
 		/// <summary>
 		/// Optional object that corresponds with the weight

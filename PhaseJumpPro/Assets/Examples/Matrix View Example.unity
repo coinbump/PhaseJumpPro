@@ -222,7 +222,7 @@ GameObject:
   - component: {fileID: 442205353}
   - component: {fileID: 442205352}
   m_Layer: 0
-  m_Name: Matrix Board Runner
+  m_Name: Matrix Board View
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -335,8 +335,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 662cf0d5eaa3747fd8d040ccab4b3058, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  id: 
+  initialState: 
+  valueTags: []
+  typeTags: []
+  cullTypes: 
+  rotation: 0
+  camera: {fileID: 0}
+  ignoreIntrinsicWidth: 0
+  ignoreIntrinsicHeight: 0
+  zStep: 0.1
   matrixSize: {x: 30, y: 30}
-  worldSize: {x: 20, y: 20}
   focusIndicator: {fileID: 0}
 --- !u!1 &1137032080
 GameObject:

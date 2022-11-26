@@ -2,8 +2,9 @@
 
 /*
  * RATING: 5 stars
- * Simple class
- * CODE REVIEW: 3/12/22
+ * Simple utility
+ * CODE REVIEW: 11/26/22
+ * PORTED TO: C++
  */
 namespace PJ
 {

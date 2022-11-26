@@ -4,10 +4,10 @@ using UnityEditor;
 using UnityEngine;
 
 /*
- * RATING: 5 stars
- * Tested and works
- * CODE REVIEW: 4/21/22
- */
+RATING: 5 stars
+Tested and works
+CODE REVIEW: 11/26/22
+*/
 namespace PJ
 {
 	/// <summary>
@@ -24,6 +24,9 @@ namespace PJ
 			// FUTURE: Velocity
         }
 
+		/// <summary>
+		/// Determines who decides a move path property: the path or the PathMover attached to the child object
+		/// </summary>
 		public enum ComponentType
         {
 			Path,
@@ -39,7 +42,7 @@ namespace PJ
 		public AnimationCycleType cycleType;
 
 		/// <summary>
-        /// Time for a cycle from 0-1.0
+        /// Time for a complete cycle movement across the path
         /// </summary>
 		public float cycleTime = 3.0f;
 
@@ -58,43 +61,36 @@ namespace PJ
 		/// </summary>
 		protected virtual void UpdatePathMover(PathMover pathMover, TimeSlice time) { }
 
-		protected void SnapAllToStartPosition()
+		public void SnapAllToStartPosition()
 		{
 			foreach (Transform childTransform in transform)
 			{
-				var pathMover = childTransform.gameObject.GetComponent<PathMover>();
-				if (null == pathMover) { continue; }
-
-				SnapPathMover(pathMover, pathMover.startPosition, true);
-			}
+                if (childTransform.TryGetComponent(out PathMover pathMover))
+                {
+                    SnapPathMover(pathMover, pathMover.startPosition, true);
+                }
+            }
 		}
 
 		protected override void Awake()
 		{
 			foreach (Transform childTransform in transform)
 			{
-				var pathMover = childTransform.gameObject.GetComponent<PathMover>();
-				if (null == pathMover) { continue; }
-
-				pathMover.animator.CycleType = cycleType;
-
-				// Either the path chooses the cycle time, or the path mover does
-				switch (cycleTimeComponent)
+                if (childTransform.TryGetComponent(out PathMover pathMover))
                 {
-					case ComponentType.Path:
-						pathMover.cycleTime = cycleTime;
-						break;
-					case ComponentType.Mover:
-						break;
-				}
+                    pathMover.cycleTimer.CycleType = cycleType;
 
-				pathMover.Go();
-			}
-		}
-
-		protected virtual void OnValidate()
-		{
-			SnapAllToStartPosition();
+                    // Either the path chooses the cycle time, or the path mover does
+                    switch (cycleTimeComponent)
+                    {
+                        case ComponentType.Path:
+                            pathMover.CycleTime = cycleTime;
+                            break;
+                        case ComponentType.Mover:
+                            break;
+                    }
+                }
+            }
 		}
 
 		protected override void Update()
@@ -173,7 +169,12 @@ namespace PJ
 		}
 
 #if UNITY_EDITOR
-		[CustomEditor(typeof(SomeMovePath), true)]
+        protected virtual void OnValidate()
+        {
+            SnapAllToStartPosition();
+        }
+
+        [CustomEditor(typeof(SomeMovePath), true)]
 		public class Editor : UnityEditor.Editor
 		{
 			public override void OnInspectorGUI()

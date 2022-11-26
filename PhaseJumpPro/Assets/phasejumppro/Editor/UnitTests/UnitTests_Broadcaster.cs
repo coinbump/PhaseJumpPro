@@ -25,27 +25,27 @@ namespace PJ {
 		[Test]
 		public void TestBroadcaster()
 		{
-			var test = new Broadcaster();
+			var sut = new Broadcaster();
 			var listener = new TestListener();
 			var listener2 = new TestListener();
-			test.AddListener(listener);
-			Assert.AreEqual(1, test.listeners.Count);
-			test.RemoveListener(listener);
-			Assert.AreEqual(0, test.listeners.Count);
+			sut.AddListener(listener);
+			Assert.AreEqual(1, sut.listeners.Count);
+			sut.RemoveListener(listener);
+			Assert.AreEqual(0, sut.listeners.Count);
 
-			test.AddListener(listener);
-			test.AddListener(listener2);
-			test.Broadcast(new Event("hello"));
+			sut.AddListener(listener);
+			sut.AddListener(listener2);
+			sut.Broadcast(new Event("hello"));
 			Assert.AreEqual("hello", listener.lastMessage);
 			Assert.AreEqual("hello", listener2.lastMessage);
 
-			test.RemoveListener(listener);
-			test.Broadcast(new Event("goodbye"));
+			sut.RemoveListener(listener);
+			sut.Broadcast(new Event("goodbye"));
 			Assert.AreEqual("hello", listener.lastMessage);
 			Assert.AreEqual("goodbye", listener2.lastMessage);
 
-			test.Clear();
-			Assert.AreEqual(0, test.listeners.Count);
+			sut.Clear();
+			Assert.AreEqual(0, sut.listeners.Count);
 		}
 	}
 }

@@ -22,11 +22,9 @@ namespace PJ
                             case SpriteDrawMode.Sliced:
                             case SpriteDrawMode.Tiled:
                                 return new(spriteRenderer.size.x * scale.x);
-                                break;
                             case SpriteDrawMode.Simple:
                                 var bounds = spriteRenderer.sprite.bounds;
                                 return new(bounds.size.x * scale.x);
-                                break;
                         }
                     }
                     return base.IntrinsicWidth;
@@ -46,11 +44,9 @@ namespace PJ
                             case SpriteDrawMode.Sliced:
                             case SpriteDrawMode.Tiled:
                                 return new(spriteRenderer.size.y * scale.y);
-                                break;
                             case SpriteDrawMode.Simple:
                                 var bounds = spriteRenderer.sprite.bounds;
                                 return new(bounds.size.y * scale.y);
-                                break;
                         }
                     }
                     return base.IntrinsicHeight;

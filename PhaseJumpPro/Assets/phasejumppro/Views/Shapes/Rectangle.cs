@@ -8,15 +8,10 @@ namespace PJ
         /// <summary>
         /// A Rectangle shape view
         /// </summary>
-        public class Rectangle : Shape
+        public class Rectangle : SomeShape
         {
-            protected MeshRenderer meshRenderer;
-            protected QuadFrameMeshBuilder meshBuilder;
-
-            protected override void Start()
+            protected override void BuildShape()
             {
-                base.Start();
-
                 var fillPart = AddPartObject<QuadMeshBuilder>(fillMaterial, 0);
                 if (fillPart)
                 {

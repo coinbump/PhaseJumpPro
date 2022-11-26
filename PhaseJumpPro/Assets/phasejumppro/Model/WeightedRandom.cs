@@ -42,7 +42,7 @@ namespace PJ
 				var adjustedWeight = wr.Value;
 				if (null != wr.adjust)
                 {
-					adjustedWeight = wr.adjust.AdjustedWeightFor(wr);
+					adjustedWeight = wr.adjust.Transform(wr).Value;
                 }
 
 				adjustedWeights.Add(new Weight(adjustedWeight, wr));

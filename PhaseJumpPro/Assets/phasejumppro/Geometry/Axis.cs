@@ -3,7 +3,8 @@
 /*
  * RATING: 5 stars
  * Simple types
- * CODE REVIEW: 4/3/22
+ * CODE REVIEW: 11/26/22
+ * PORTED TO: C++
  */
 namespace PJ
 {

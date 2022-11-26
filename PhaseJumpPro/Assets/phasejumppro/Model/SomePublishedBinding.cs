@@ -11,12 +11,12 @@ namespace PJ
     /// A binding transforms one published value to another
     /// Example: Int: 10 -> String: "ten"
     /// </summary>
-    public abstract class SomeBinding<FromType, ToType> : SomeListener
+    public abstract class SomePublishedBinding<FromType, ToType> : SomeListener
     {
         protected WeakReference<SomePublished<FromType>> fromValue;
         protected WeakReference<SomePublished<ToType>> toValue;
 
-        public SomeBinding(SomePublished<FromType> fromValue, SomePublished<ToType> toValue)
+        public SomePublishedBinding(SomePublished<FromType> fromValue, SomePublished<ToType> toValue)
         {
             if (null == fromValue || null == toValue) { return; }
 
@@ -46,7 +46,7 @@ namespace PJ
         public abstract ToType Transform(FromType fromValue);
     }
 
-    public class StringBinding : SomeBinding<string, string>
+    public class StringBinding : SomePublishedBinding<string, string>
     {
         public override string Transform(string fromValue) => fromValue;
 
@@ -55,7 +55,7 @@ namespace PJ
         }
     }
 
-    public class IntToStringBinding : SomeBinding<int, string>
+    public class IntToStringBinding : SomePublishedBinding<int, string>
     {
         public override string Transform(int fromValue) => fromValue.ToString();
 

@@ -31,24 +31,24 @@ namespace PJ
 		protected Timer timer = new Timer(1.0f, SomeTimed.RunType.RunOnce);
 		protected bool wasColliderEnabled = true;
 
-		// FUTURE: support custom interpolate if needed
-		protected SomeTransform<float> interpolate = new InterpolateLinear();
+        protected AnimationCurve<float> animationCurve;
 
-		protected MultiCollider multiCollider;
-		protected RendererAlphaAttributeAnimator attributeAnimator;
+        protected MultiCollider multiCollider;
+		protected RendererAlphaBinding alphaBinding;
 
 		protected override void Awake()
 		{
 			base.Awake();
 
-			attributeAnimator = new RendererAlphaAttributeAnimator(gameObject);
+            animationCurve = new(startAlpha, endAlpha, new FloatValueAnimator());
+            alphaBinding = new RendererAlphaBinding(gameObject);
 
 			timer.duration = duration;
 			multiCollider = new MultiCollider(gameObject);
 
 			if (!enabled) { return;  }
 
-			attributeAnimator.ApplyAttributeValueFor(startAlpha, endAlpha, 0);
+            alphaBinding.Value = animationCurve.ValueAt(0);
 			
 			wasColliderEnabled = multiCollider.Enabled;
 			if (disableCollisions)
@@ -82,7 +82,7 @@ namespace PJ
 				}
 			}
 
-			attributeAnimator.ApplyAttributeValueFor(startAlpha, endAlpha, interpolate.Transform(timer.Progress));
+            alphaBinding.Value = animationCurve.ValueAt(timer.Progress);
 		}
 	}
 }

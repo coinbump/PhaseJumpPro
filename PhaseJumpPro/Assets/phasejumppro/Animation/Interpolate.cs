@@ -24,6 +24,8 @@ namespace PJ
 		{
 			return value;
 		}
+
+		public static Interpolate linear = new InterpolateLinear();
 	}
 
 	public class InterpolateLinear : Interpolate
@@ -34,7 +36,7 @@ namespace PJ
 		}
 	}
 
-	public class InterpolateSquared : Interpolate
+    public class InterpolateSquared : Interpolate
 	{
 		public override float Transform(float time)
 		{
