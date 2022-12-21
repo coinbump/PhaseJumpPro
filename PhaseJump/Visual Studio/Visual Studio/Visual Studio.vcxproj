@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{2c8a865b-2a76-45e8-8b3f-2be8780ffaab}</ProjectGuid>
+    <RootNamespace>VisualStudio</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>C:\CoreWin\Projects\Oasis\PhaseJump\PhaseJump\Classes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\PhaseJump\Classes\Animation\AnimationCurve.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Animation\AnimationCycleType.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Animation\SomeAnimatedValue.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Animation\SomeInterpolate.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Animation\SomeValueAnimator.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Collections\Array.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Collections\List.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Collections\_Map.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Collections\_Set.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\AnyFactory.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\Base.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\Class.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\ClassIds.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\ClassRegistry.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\Factory.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\FactoryRegistry.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\FloatMath.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\IntMath.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\Macros_Operators.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\Modules.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\StringIdentifiable.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\Tags.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\Updatable.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Geometry\Angle.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Geometry\Axis.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Geometry\GeoTransform.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Geometry\Paths\LinePath.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Geometry\Paths\SomePath.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Geometry\SomeVector.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Geometry\Vector2.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Geometry\Vector3.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Graph\Core\StandardEdgeModel.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Input\SomeInputController.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\Broadcaster.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\Event.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\RateLimiter.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\SomeBroadcaster.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\SomeLimiter.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\SomeListener.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\TimeSlice.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\Time\SomeTimed.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\Time\Timer.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\Time\TransformTimer.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Processors\FileProcessor.Utility.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Processors\FilesProcessor.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Processors\SomeProcessor.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Types\Alignment.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Types\FloatClamp.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Types\FloatTransform.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Types\HorizontalAlignment.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Types\Range.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Types\SomeBinding.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Types\SomeMap.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Types\SomeMap1D.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Types\SomeReference.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Types\SomeTransform.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Types\StrongReference.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Types\Types.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Types\VerticalAlignment.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Types\WeakReference.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Types\_String.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Utils\StringUtils.h" />
+    <ClInclude Include="framework.h" />
+    <ClInclude Include="Resource.h" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="Visual Studio.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\PhaseJump\Classes\Geometry\Angle.cpp" />
+    <ClCompile Include="..\..\PhaseJump\Classes\Types\_String.cpp" />
+    <ClCompile Include="Visual Studio.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Visual Studio.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="small.ico" />
+    <Image Include="Visual Studio.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="PhaseJump" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

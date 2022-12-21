@@ -19,11 +19,11 @@ namespace PJ
         Map() {}
         virtual ~Map() {}
 
-        bool ContainsKey(Key const& key) {
+        bool ContainsKey(Key const& key) const {
             return this->find(key) != this->end();
         }
 
-        bool ContainsWhere(std::function<bool(Value)> check) {
+        bool ContainsWhere(std::function<bool(Value const&)> check) const {
             for (auto const& pair : *this) {
                 auto value = pair.second;
 

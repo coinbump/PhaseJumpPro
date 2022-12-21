@@ -16,18 +16,26 @@ namespace PJ
     template <class Value> class Set : public std::set<Value>
     {
     public:
-        typedef std::set<Value> Base;
+        using Base = std::set<Value>;
 
         Set() {}
         virtual ~Set() {}
 
         void Add(Value const& value) {
-            Base::insert(value);
+            this->insert(value);
         }
 
         void Remove(Value const& value) {
-            Base::erase(value);
+            this->erase(value);
         }
+
+        bool Contains(Value const& value) const {
+            return this->find(value) != this->end();
+        }
+
+        size_t Count() const { return this->size(); }
+        
+        bool IsEmpty() const { return this->empty(); }
     };
 }
 

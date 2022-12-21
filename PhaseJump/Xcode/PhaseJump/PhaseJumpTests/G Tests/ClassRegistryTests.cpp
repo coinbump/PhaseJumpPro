@@ -21,10 +21,10 @@ namespace ClassRegistryTests {
 using namespace ClassRegistryTests;
 
 TEST(ClassRegistry, New) {
-    auto testClass = new TestClass();
+    shared_ptr<TestClass> testClass = make_shared<TestClass>();
 
     ClassRegistry sut;
-    sut["test"] = shared_ptr<Class>(testClass);
+    sut["test"] = testClass;
 
     auto object = sut.NewType<TestType>("test");
 

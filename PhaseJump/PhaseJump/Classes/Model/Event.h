@@ -1,7 +1,7 @@
 #ifndef PJEVENT_H
 #define PJEVENT_H
 
-#include "_String.h"
+#include "Types/_String.h"
 #include <memory>
 
 /*

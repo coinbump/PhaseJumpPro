@@ -1,7 +1,7 @@
 #ifndef PJCLASS_H_
 #define PJCLASS_H_
 
-#include <string>
+#include "_String.h"
 #include "Base.h"
 #include "Tags.h"
 #include "Factory.h"
@@ -19,17 +19,17 @@ namespace PJ {
     /// </summary>
     class Class {
     public:
-        std::string id;
+        String id;
 
         /// <summary>
         /// Optional title, for browsing
         /// </summary>
-        std::string title;
+        String title;
 
         /// <summary>
         /// Optional description, for browsing
         /// </summary>
-        std::string description;
+        String description;
 
         /// <summary>
         /// Set of string tags that define type properties
@@ -41,7 +41,7 @@ namespace PJ {
         /// </summary>
         Tags tags;
 
-        Class(std::string id) : id(id) {
+        Class(String id) : id(id) {
         }
 
         virtual ~Class() {}
@@ -51,14 +51,14 @@ namespace PJ {
 
     template <class Type> class TypeClass : public Class {
     public:
-        typedef Class Base;
-        typedef Type* NewType;
-        typedef Factory<NewType> Factory;
-        typedef std::shared_ptr<Factory> FactorySharedPtr;
+        using Base = Class;
+        using NewType = Type*;
+        using Factory = Factory<NewType>;
+        using FactorySharedPtr = std::shared_ptr<Factory>;
 
         FactorySharedPtr factory;
 
-        TypeClass(std::string id, FactorySharedPtr factory = std::make_shared<Factory>([] () -> NewType { return new Type(); })) : Base(id), factory(factory) {
+        TypeClass(String id, FactorySharedPtr factory = std::make_shared<Factory>([] () -> NewType { return new Type(); })) : Base(id), factory(factory) {
         }
 
         PJ::Base* New() override {

@@ -24,7 +24,12 @@ namespace PJ
         {
         }
 
-        std::shared_ptr<T> Value() override {
+        WeakReference(WeakReference const& b)
+        {
+            value = b.value;
+        }
+
+        std::shared_ptr<T> Value() const override {
             return value.lock();
         }
 

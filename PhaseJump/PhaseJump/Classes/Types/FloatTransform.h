@@ -10,7 +10,7 @@
  */
 namespace PJ
 {
-    class FloatTransform : public SomeTransform<float>
+    class FloatTransform : public SomeValueTransform<float>
     {
     };
 

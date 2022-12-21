@@ -1,10 +1,10 @@
 #include "_String.h"
-#include <iomanip>
+#include <algorithm>
 
 using namespace std;
 using namespace PJ;
 
-String String::ToLower()
+String String::ToLower() const
 {
     string result(*this);
     std::transform(result.begin(), result.end(), result.begin(), ::tolower);
@@ -12,7 +12,7 @@ String String::ToLower()
     return result;
 }
 
-String String::ToUpper()
+String String::ToUpper() const
 {
     string result(*this);
     std::transform(result.begin(), result.end(), result.begin(), ::toupper);
@@ -20,13 +20,13 @@ String String::ToUpper()
     return result;
 }
 
-String String::Prefix(size_t size) {
+String String::Prefix(size_t size) const {
     if (size > this->size()) { return String(); }
 
     return substr(0, size);
 }
 
-String String::Suffix(size_t size) {
+String String::Suffix(size_t size) const {
     if (size > this->size()) { return String(); }
 
     return substr(this->size() - size, size);

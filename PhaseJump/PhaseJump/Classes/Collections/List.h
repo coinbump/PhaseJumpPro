@@ -1,8 +1,10 @@
 #ifndef PJLIST_H
 #define PJLIST_H
 
-#include <vector>
+#include "Macros_Collections.h"
+#include <list>
 #include <algorithm>
+#include <memory>
 
 /*
  RATING: 5 stars
@@ -11,23 +13,30 @@
  */
 namespace PJ {
     /// <summary>
-    /// Extends std::vector with convenience methods
+    /// Extends std::list with convenience methods
     /// </summary>
-    template <class T> class List : public std::vector<T> {
+    template <class T, class Allocator = std::allocator<T>> class List : public std::list<T> {
     public:
-        typedef std::vector<T> Base;
+        using Base = std::list<T>;
+
+        List() {}
+
+        constexpr List(std::initializer_list<T> init,
+                       const Allocator& alloc = Allocator()) : Base(init, alloc) {
+        }
 
         // Convenience
-        void Append(T const& value) { Base::push_back(value); }
-        void Add(T const& value) { Base::push_back(value); }
+        void Append(T const& value) { this->push_back(value); }
+        void Add(T const& value) { this->push_back(value); }
+        bool IsEmpty() const { return this->empty(); }
 
-        // NOTE: Avoid List.Remove for large lists, it is inefficient
-        void Remove(T const& value) {
-            auto i = std::find(this->begin(), this->end(), value);
-            if (i == this->end()) { return; }
-
-            this->erase(i);
+        bool Contains(T const& value) const {
+            return this->find(value) != this->end();
         }
+
+        size_t Count() const { return this->size(); }
+
+        COLLECTION_METHODS(T)
     };
 }
 

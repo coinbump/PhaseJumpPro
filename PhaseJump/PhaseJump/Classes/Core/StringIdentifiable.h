@@ -1,7 +1,7 @@
 #ifndef PJSTRINGIDENTIFIABLE_H
 #define PJSTRINGIDENTIFIABLE_H
 
-#include <string>
+#include "_String.h"
 
 /*
  * RATING: 5 stars
@@ -13,10 +13,11 @@ namespace PJ
     /// <summary>
     /// Interface for identifiable objects
     /// </summary>
-    public class StringIdentifiable
+    class StringIdentifiable
     {
-        public virtual std::string Id() const = 0;
-    }
+    public:
+        virtual String Id() const = 0;
+    };
 }
 
 #endif

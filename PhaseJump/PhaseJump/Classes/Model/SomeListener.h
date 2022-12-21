@@ -2,6 +2,7 @@
 #define PJLISTENER_H
 
 #include "Event.h"
+#include <memory>
 
 /*
  RATING: 5 stars
@@ -15,7 +16,10 @@ namespace PJ {
     class SomeListener
     {
     public:
-        virtual void OnListen(Event event) = 0;
+        using EventSharedPtr = std::shared_ptr<Event>;
+        using EventPtr = EventSharedPtr const&;
+
+        virtual void OnListen(EventPtr event) = 0;
     };
 }
 

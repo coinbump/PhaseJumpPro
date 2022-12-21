@@ -11,17 +11,17 @@ namespace PJ
     struct GeoTransform
     {
         Vector3 position;
+
+        // TODO: should we be storing quaternion/eulerAngles here?
         Vector3 rotation;
         Vector3 scale;
 
         GeoTransform(Vector3 position, Vector3 rotation, Vector3 scale) : position(position), rotation(rotation), scale(scale)
         {
         }
-    };
 
-    namespace _GeoTransform {
-        static GeoTransform const defaultTransform(_Vector3::zero, _Vector3::zero, Vector3(1.0f, 1.0f, 1.0f));
-    }
+        static GeoTransform const defaultTransform;
+    };
 }
 
 #endif

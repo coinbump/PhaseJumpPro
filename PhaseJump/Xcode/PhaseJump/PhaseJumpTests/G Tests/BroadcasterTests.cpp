@@ -1,65 +1,45 @@
 #include "gtest/gtest.h"
 #include "Broadcaster.h"
-
-#include <memory>
+#include "SomeListener.h"
 
 using namespace PJ;
 using namespace std;
 
 namespace BroadcasterTests {
-    class TestClass {
+    class TestListener : public SomeListener {
     public:
-        int value = 1;
+        int listenCount = 0;
+        String lastMessage;
+
+        void OnListen(EventPtr event) override {
+            listenCount++;
+            lastMessage = event->id;
+        }
     };
 }
 
 using namespace BroadcasterTests;
 
 TEST(Broadcaster, Factory) {
-}
+    Broadcaster sut;
+    auto listener = make_shared<TestListener>();
+    auto listener2 = make_shared<TestListener>();
+    sut.AddListener(listener);
+    EXPECT_EQ(1, sut.listeners.size());
+    sut.RemoveListener(listener);
+    EXPECT_EQ(0, sut.listeners.size());
 
-//public abstract class SomeBroadcaster {
-//    public virtual void RemoveListener(SomeListener listener) {}
-//}
-//
-///// <summary>
-///// Broadcaster sends messages to listeners.
-///// </summary>
-//public class UnitTests_Broadcaster
-//{
-//    private class TestListener : SomeListener {
-//        public int listenCount;
-//        public string lastMessage;
-//
-//        public void OnListen(Event theEvent) {
-//            listenCount++;
-//            lastMessage = theEvent.id;
-//        }
-//    }
-//
-//    [Test]
-//    public void TestBroadcaster()
-//    {
-//        var test = new Broadcaster();
-//        var listener = new TestListener();
-//        var listener2 = new TestListener();
-//        test.AddListener(listener);
-//        Assert.AreEqual(1, test.listeners.Count);
-//        test.RemoveListener(listener);
-//        Assert.AreEqual(0, test.listeners.Count);
-//
-//        test.AddListener(listener);
-//        test.AddListener(listener2);
-//        test.Broadcast(new Event("hello"));
-//        Assert.AreEqual("hello", listener.lastMessage);
-//        Assert.AreEqual("hello", listener2.lastMessage);
-//
-//        test.RemoveListener(listener);
-//        test.Broadcast(new Event("goodbye"));
-//        Assert.AreEqual("hello", listener.lastMessage);
-//        Assert.AreEqual("goodbye", listener2.lastMessage);
-//
-//        test.Clear();
-//        Assert.AreEqual(0, test.listeners.Count);
-//    }
-//}
+    sut.AddListener(listener);
+    sut.AddListener(listener2);
+    sut.Broadcast(make_shared<Event>("hello"));
+    EXPECT_EQ("hello", listener->lastMessage);
+    EXPECT_EQ("hello", listener2->lastMessage);
+
+    sut.RemoveListener(listener);
+    sut.Broadcast(make_shared<Event>("goodbye"));
+    EXPECT_EQ("hello", listener->lastMessage);
+    EXPECT_EQ("goodbye", listener2->lastMessage);
+
+    sut.Clear();
+    EXPECT_EQ(0, sut.listeners.size());
+}

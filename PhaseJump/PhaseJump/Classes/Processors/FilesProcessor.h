@@ -2,9 +2,10 @@
 #define PJFILESPROCESSOR_H
 
 #include "SomeProcessor.h"
-#include "FilePath.h"
-#include "List.h"
+#include "Storage/Local/FilePath.h"
+#include "Collections/Array.h"
 #include <memory>
+#include <filesystem>
 
 namespace fs = std::filesystem;
 
@@ -24,7 +25,7 @@ namespace PJ {
     };
 
     /// Process a list of file paths (Example: rename files)
-    class FilesProcessor : public SomeProcessor<List<FilePath>> {
+    class FilesProcessor : public SomeProcessor<Array<FilePath>> {
     public:
         struct Settings {
             bool isRecursive;
@@ -39,7 +40,7 @@ namespace PJ {
         Settings settings;
 
     public:
-        typedef SomeProcessor<List<FilePath>> Base;
+        using Base = SomeProcessor<Array<FilePath>>;
 
         FilesProcessor(Int filesCount, std::shared_ptr<SomeFileProcessor> fileProcessor, Settings settings = Settings())
         : Base(filesCount),

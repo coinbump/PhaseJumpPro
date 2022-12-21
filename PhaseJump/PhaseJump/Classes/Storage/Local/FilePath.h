@@ -12,7 +12,7 @@ namespace PJ {
     /// <summary>
     /// Wraps a file path for easily joining path segments
     /// </summary>
-    typedef std::filesystem::path FilePath;
+    using FilePath = std::filesystem::path;
 }
 
 #endif

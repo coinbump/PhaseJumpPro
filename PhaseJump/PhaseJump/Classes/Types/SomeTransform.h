@@ -12,17 +12,27 @@ namespace PJ {
     /// <summary>
     /// A class that transforms a value
     /// </summary>
-    template <class Value>
-    class SomeTransform : public SomeMap<Value, Value>
+    template <class Value, class Result>
+    class SomeTransform
     {
     public:
-        virtual Value Transform(Value value) const = 0;
+        virtual Result Transform(Value value) const = 0;
+    };
 
-        virtual Value ValueFor(Value key) const
+    template <class Value>
+    class SomeValueTransform : public SomeTransform<Value, Value>
+    {
+    };
+
+    template <class Value>
+    class IdentityTransform : public SomeValueTransform<Value>
+    {
+    public:
+        Value Transform(Value value) const override
         {
-            return Transform(key);
+            return value;
         }
     };
 }
 
-#endif  // SOME_TRANSFORM_H_
+#endif

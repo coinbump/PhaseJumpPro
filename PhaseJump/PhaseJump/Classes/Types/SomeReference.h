@@ -14,12 +14,12 @@ namespace PJ
     /// <summary>
     /// Interface for a reference type. Allows either strong or weak reference to value
     /// </summary>
-    template <class T> struct SomeReference
+    template <class T>
+    struct SomeReference
     {
-    public:
         virtual ~SomeReference() {}
         
-        virtual std::shared_ptr<T> Value() = 0;
+        virtual std::shared_ptr<T> Value() const = 0;
         virtual void SetValue(std::shared_ptr<T> const& value) = 0;
     };
 }

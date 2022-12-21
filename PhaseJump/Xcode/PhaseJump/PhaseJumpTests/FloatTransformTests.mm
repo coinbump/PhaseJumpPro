@@ -2,10 +2,10 @@
 #include "Types/_String.h"
 #include "Types/FloatClamp.h"
 #include "Types/FloatTransform.h"
-#include "Animation/AnimationCycleType.h"
+#include "AnimationCycleTypes.h"
 #include "Core/Updatable.h"
-#include "Model/SomeTimed.h"
-#include "Model/Timer.h"
+#include "SomeTimed.h"
+#include "Timer.h"
 #include "gtest/gtest.h"
 
 using namespace PJ;

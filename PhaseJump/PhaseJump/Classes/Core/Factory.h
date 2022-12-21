@@ -23,16 +23,16 @@ namespace PJ
     template <class Type> class Factory : public SomeFactory
     {
     protected:
-        std::function<Type()> constructor;
+        std::function<Type()> allocator;
 
     public:
-        Factory(std::function<Type()> constructor) : constructor(constructor)
+        Factory(std::function<Type()> allocator) : allocator(allocator)
         {
         }
 
         Type New()
         {
-            return constructor();
+            return allocator();
         }
 
         void* NewObject() override

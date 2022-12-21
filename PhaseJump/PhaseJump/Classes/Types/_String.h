@@ -2,9 +2,10 @@
 #ifndef PJSTRING_H_
 #define PJSTRING_H_
 
-#include "StringUtils.h"
+#include "Utils/StringUtils.h"
 #include <string>
 #include <sstream>
+#include <stdio.h>
 
 /*
  RATING: 5 stars
@@ -22,10 +23,10 @@ namespace PJ {
         String(const char* s) : std::string(s) {}
 
         // Standard
-        bool HasPrefix(std::string findString) { return StringUtils().HasPrefix(*this, findString); }
-        bool HasSuffix(std::string findString) { return StringUtils().HasSuffix(*this, findString); }
-        bool StartsWith(std::string findString) { return HasPrefix(findString); }
-        bool EndsWith(std::string findString) { return HasSuffix(findString); }
+        bool HasPrefix(std::string findString) const { return StringUtils().HasPrefix(*this, findString); }
+        bool HasSuffix(std::string findString) const { return StringUtils().HasSuffix(*this, findString); }
+        bool StartsWith(std::string findString) const { return HasPrefix(findString); }
+        bool EndsWith(std::string findString) const { return HasSuffix(findString); }
 
         template <class T>
         T TypeValue() const {
@@ -39,12 +40,12 @@ namespace PJ {
 
         int64_t Int64Value() const { return TypeValue<int64_t>(); }
         int IntValue() const { return TypeValue<int>(); }
-        unsigned int UIntValue() const { return TypeValue<uint>(); }
+        unsigned int UIntValue() const { return TypeValue<unsigned int>(); }
         float FloatValue() const { return TypeValue<float>(); }
         double DoubleValue() const { return TypeValue<double>(); }
         bool BoolValue() const { return TypeValue<bool>(); }
 
-        String ReplacingSuffix(String search, String replace) {
+        String ReplacingSuffix(String search, String replace) const {
             auto result = *this;
             if (!HasSuffix(search)) { return result; }
 
@@ -54,13 +55,13 @@ namespace PJ {
             return result;
         }
 
-        String Suffix(size_t size);
-        String Prefix(size_t size);
+        String Suffix(size_t size) const;
+        String Prefix(size_t size) const;
 
-        String ToLower();
-        String ToUpper();
-        String Lowercased() { return ToLower(); }
-        String Uppercased() { return ToUpper(); }
+        String ToLower() const;
+        String ToUpper() const;
+        String Lowercased() const { return ToLower(); }
+        String Uppercased() const { return ToUpper(); }
     };
 }
 

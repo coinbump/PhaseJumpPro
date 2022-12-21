@@ -14,8 +14,9 @@ namespace DefaultValueTests {
     public:
         int valueHasDefault = 1;
         int valueNoDefault;
-        Foo* pointerDefault = new Foo();
-        Foo* pointerNoDefault;
+
+        shared_ptr<Foo> pointerDefault = make_shared<Foo>();
+        shared_ptr<Foo> pointerNoDefault;
 
         void foo() {}
     };
@@ -24,8 +25,8 @@ namespace DefaultValueTests {
     public:
         int valueHasDefault = 1;
         int valueNoDefault;
-        Foo* pointerDefault = new Foo();
-        Foo* pointerNoDefault;
+        shared_ptr<Foo> pointerDefault = make_shared<Foo>();
+        shared_ptr<Foo> pointerNoDefault;
 
         // Class must have constructor, constructor must be defined outside of class
         // or tests will fail
@@ -51,7 +52,7 @@ TEST(DefaultValue, Class_OnStack) {
 }
 
 TEST(DefaultValue, Class_OnHeap) {
-    TestClass* sut = new TestClass();
+    shared_ptr<TestClass> sut = make_shared<TestClass>();
 
     // Values without a default are random memory
     EXPECT_EQ(1, sut->valueHasDefault);

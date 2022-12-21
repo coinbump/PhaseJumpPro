@@ -6,15 +6,15 @@
 
 /*
  * RATING: 5 stars
- * Simple utility
- * CODE REVIEW: 11/5/22
+ * Simple utility with unit tests
+ * CODE REVIEW: 12/7/22
  */
 namespace PJ
 {
     /// <summary>
     /// Clamp a float
     /// </summary>
-    class FloatClamp : public SomeTransform<float>
+    class FloatClamp : public SomeValueTransform<float>
     {
     public:
         float minValue;
@@ -24,7 +24,7 @@ namespace PJ
         {
         }
 
-        virtual float Transform(float value)
+        float Transform(float value) const override
         {
             return std::clamp(value, minValue, maxValue);
         }

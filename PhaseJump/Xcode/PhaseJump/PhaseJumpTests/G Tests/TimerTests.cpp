@@ -10,7 +10,7 @@ namespace TimerTests {
     class TestTimer : public Timer
     {
     public:
-        typedef Timer Base;
+        using Base = Timer;
 
         int finishedCount = 0;
 

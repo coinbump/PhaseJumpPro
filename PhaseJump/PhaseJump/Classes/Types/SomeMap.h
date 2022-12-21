@@ -22,4 +22,4 @@ namespace PJ {
     };
 }
 
-#endif  // SOME_MAP_H_
+#endif

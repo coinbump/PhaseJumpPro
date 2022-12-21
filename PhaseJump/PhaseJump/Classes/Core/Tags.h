@@ -7,7 +7,7 @@
 
 /*
  RATING: 5 stars
- Utility, with unit tests
+ Has unit tests
  CODE REVIEW: 11/6/22
  */
 namespace PJ
@@ -18,9 +18,9 @@ namespace PJ
     struct Tags
     {
     protected:
-        typedef std::string Key;
-        typedef std::any MapValue;
-        typedef std::map<Key, MapValue> TagsMap;
+        using Key = std::string;
+        using MapValue = std::any;
+        using TagsMap = std::map<Key, MapValue>;
 
         TagsMap tags;
 

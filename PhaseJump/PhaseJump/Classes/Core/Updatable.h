@@ -1,7 +1,7 @@
 #ifndef PJANIMATOR_H_
 #define PJANIMATOR_H_
 
-#include "TimeSlice.h"
+#include "Model/TimeSlice.h"
 
 /*
  * RATING: 5 stars

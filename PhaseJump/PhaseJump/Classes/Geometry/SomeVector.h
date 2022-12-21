@@ -13,9 +13,9 @@ namespace PJ {
     class SomeVector : public std::array<typename Math::Type, dim>
     {
     public:
-        typedef typename std::array<typename Math::Type, dim> Base;
-        typedef typename Math::Type MathType;
-        typedef SomeVector<Math, dim> This;
+        using Base = typename std::array<typename Math::Type, dim>;
+        using MathType = typename Math::Type;
+        using This = SomeVector<Math, dim>;
 
         SomeVector() : Base {0} {}
 

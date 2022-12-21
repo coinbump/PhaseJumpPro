@@ -5,12 +5,15 @@
 
 namespace PJ {
     struct IntMath {
-        typedef int Type;
+        using Type = int;
 
         static int Sqrt(int value) {
             return sqrtf((float)value);
         }
     };
+
+    // Convenience names
+    using MathInt = IntMath;
 }
 
 #endif

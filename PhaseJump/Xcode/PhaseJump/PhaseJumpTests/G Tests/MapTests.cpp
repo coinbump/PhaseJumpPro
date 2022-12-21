@@ -22,8 +22,8 @@ TEST(Map, ContainsKeyWhere) {
     sut["1"] = 1;
     sut["2"] = 100;
 
-    typedef pair<std::string, int> Pair;
-    EXPECT_TRUE(sut.ContainsWhere([] (int value) -> bool { return value == 1; }));
-    EXPECT_TRUE(sut.ContainsWhere([] (int value) -> bool { return value == 100; }));
-    EXPECT_FALSE(sut.ContainsWhere([] (int value) -> bool { return value == 90; }));
+    using Pair = pair<std::string, int>;
+    EXPECT_TRUE(sut.ContainsWhere([](int value) -> bool { return value == 1; }));
+    EXPECT_TRUE(sut.ContainsWhere([](int value) -> bool { return value == 100; }));
+    EXPECT_FALSE(sut.ContainsWhere([](int value) -> bool { return value == 90; }));
 }

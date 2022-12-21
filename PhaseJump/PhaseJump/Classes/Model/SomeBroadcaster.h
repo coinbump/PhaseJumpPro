@@ -1,12 +1,14 @@
 #ifndef PJSOMEBROADCASTER_H
 #define PJSOMEBROADCASTER_H
 
-class SomeListener;
+#include <memory>
 
 namespace PJ {
+    class SomeListener;
+
     class SomeBroadcaster {
-        virtual void AddListener(SomeListener listener) = 0;
-        virtual void RemoveListener(SomeListener listener) = 0;
+        virtual void AddListener(std::weak_ptr<SomeListener> listener) = 0;
+        virtual void RemoveListener(std::weak_ptr<SomeListener> listener) = 0;
     };
 }
 

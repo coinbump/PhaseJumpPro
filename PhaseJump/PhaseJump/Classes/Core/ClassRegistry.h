@@ -1,14 +1,14 @@
 #ifndef PJCLASSREGISTRY_H
 #define PJCLASSREGISTRY_H
 
-#include <string>
+#include "_String.h"
 #include <map>
 #include "Factory.h"
-#include "_Map.h"
+#include "Collections/_Map.h"
 
 /*
  RATING: 5 stars
- Simple wrapper class with unit tests
+ Has unit tests
  CODE REVIEW: 11/10/22
  */
 namespace PJ
@@ -17,13 +17,13 @@ namespace PJ
     /// Registry for classes
     /// </summary>
     /// <typeparam name="Type"></typeparam>
-    class ClassRegistry : public Map<std::string, std::shared_ptr<Class>>
+    class ClassRegistry : public Map<String, std::shared_ptr<Class>>
     {
     public:
         ClassRegistry() {
         }
 
-        template <class T> T* NewType(std::string key) {
+        template <class T> T* NewType(String key) {
             auto iterator = this->find(key);
             if (iterator == this->end()) { return NULL; }
 
@@ -36,7 +36,7 @@ namespace PJ
             return typeClass->factory->New();
         }
 
-        Base* New(std::string key) const {
+        Base* New(String key) const {
             auto iterator = this->find(key);
             if (iterator == this->end()) { return NULL; }
 

@@ -24,11 +24,16 @@ namespace PJ
         {
         }
 
-        std::shared_ptr<T> Value() override {
+        StrongReference(StrongReference const& b)
+        {
+            value = b.value;
+        }
+
+        std::shared_ptr<T> Value() const override {
             return value;
         }
 
-        void SetValue(std::shared_ptr<T> const& value) {
+        void SetValue(std::shared_ptr<T> const& value) override {
             this->value = value;
         }
     };
