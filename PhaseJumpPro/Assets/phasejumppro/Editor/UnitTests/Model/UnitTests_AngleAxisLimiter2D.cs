@@ -11,24 +11,24 @@ namespace PJ
 		{
 			var limiter = new AngleAxisLimiter2D(4);
 
-			Assert.AreEqual(0, limiter.LimitAngle(0));
-			Assert.AreEqual(0, limiter.LimitAngle(44));
-			Assert.AreEqual(0, limiter.LimitAngle(-44));
+			Assert.AreEqual(0, limiter.LimitAngle(Angle.DegreesAngle(0)).Degrees);
+			Assert.AreEqual(0, limiter.LimitAngle(Angle.DegreesAngle(44)).Degrees);
+			Assert.AreEqual(0, limiter.LimitAngle(Angle.DegreesAngle(-44)).Degrees);
 
-			Assert.AreEqual(90, limiter.LimitAngle(46));
-			Assert.AreEqual(90, limiter.LimitAngle(90));
-			Assert.AreEqual(90, limiter.LimitAngle(134));
+			Assert.AreEqual(90, limiter.LimitAngle(Angle.DegreesAngle(46)).Degrees);
+			Assert.AreEqual(90, limiter.LimitAngle(Angle.DegreesAngle(90)).Degrees);
+			Assert.AreEqual(90, limiter.LimitAngle(Angle.DegreesAngle(134)).Degrees);
 
-			Assert.AreEqual(180, limiter.LimitAngle(136));
-			Assert.AreEqual(180, limiter.LimitAngle(180));
-			Assert.AreEqual(180, limiter.LimitAngle(214));
+			Assert.AreEqual(180, limiter.LimitAngle(Angle.DegreesAngle(136)).Degrees);
+			Assert.AreEqual(180, limiter.LimitAngle(Angle.DegreesAngle(180)).Degrees);
+			Assert.AreEqual(180, limiter.LimitAngle(Angle.DegreesAngle(214)).Degrees);
 
-			Assert.AreEqual(270, limiter.LimitAngle(226));
-			Assert.AreEqual(270, limiter.LimitAngle(270));
-			Assert.AreEqual(270, limiter.LimitAngle(314));
+			Assert.AreEqual(270, limiter.LimitAngle(Angle.DegreesAngle(226)).Degrees);
+			Assert.AreEqual(270, limiter.LimitAngle(Angle.DegreesAngle(270)).Degrees);
+			Assert.AreEqual(270, limiter.LimitAngle(Angle.DegreesAngle(314)).Degrees);
 
-			Assert.AreEqual(360, limiter.LimitAngle(316));
-			Assert.AreEqual(360, limiter.LimitAngle(360));
+			Assert.AreEqual(360, limiter.LimitAngle(Angle.DegreesAngle(316)).Degrees);
+			Assert.AreEqual(360, limiter.LimitAngle(Angle.DegreesAngle(360)).Degrees);
 		}
 	}
 }

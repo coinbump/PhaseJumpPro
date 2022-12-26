@@ -12,7 +12,7 @@ namespace PJ
     /// Use to build trees, graphs, state machines, etc.
     /// </summary>
     /// <typeparam name="EdgeModel"></typeparam>
-    public abstract class SomeGraphNode<EdgeModel> : Updatable
+    public abstract class SomeGraphNode<EdgeModel> : Core, Updatable
     {
         public class Edge
         {
@@ -29,11 +29,6 @@ namespace PJ
         }
 
         public string id;
-
-        /// <summary>
-        /// Custom properties
-        /// </summary>
-        public Tags tags = new Tags();
 
         /// <summary>
         /// In some graphs, order matters (layers, selectors).
@@ -213,23 +208,7 @@ namespace PJ
             return nodes;
         }
 
-        /// <summary>
-        /// Only the root node should have OnUpdate called, every other node should override OnUpdateNode instead
-        /// </summary>
-        public void OnUpdate(TimeSlice time)
-        {
-            var nodes = CollectGraph();
-            foreach (SomeGraphNode<EdgeModel> node in nodes)
-            {
-                node.OnUpdateNode(time);
-            }
-        }
-
-        /// <summary>
-        /// Override if graph node needs to respond to time updates
-        /// </summary>
-        /// <param name="time"></param>
-        public virtual void OnUpdateNode(TimeSlice time)
+        public virtual void OnUpdate(TimeSlice time)
         {
         }
     }

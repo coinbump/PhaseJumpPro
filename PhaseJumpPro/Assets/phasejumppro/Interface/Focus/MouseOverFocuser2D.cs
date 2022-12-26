@@ -15,7 +15,7 @@ namespace PJ
 	/// - Objects must have Collider2D
 	/// - Camera must have PhysicsRaycaster2D
     /// </summary>
-    public class MouseOverFocuser2D : MonoBehaviour
+    public class MouseOverFocuser2D : WorldComponent
     {
         /// <summary>
         /// Optional. Allows us to work with overlay cameras as well as the main camera
@@ -30,24 +30,24 @@ namespace PJ
             }
         }
 
-        protected MouseInputController mouseInputController = new MouseInputController();
+        protected MouseDevice mouseDevice = new MouseDevice();
 
-		/// <summary>
-		/// On update, check the mouse position and set focus to the first raycast hit object with a Focusable component
-		/// </summary>
-		public override void OnUpdate(TimeSlice time)
-		{
-			base.OnUpdate(time);
+        /// <summary>
+        /// On update, check the mouse position and set focus to the first raycast hit object with a FocusHandler component
+        /// </summary>
+        public override void OnUpdate(TimeSlice time)
+        {
+            base.OnUpdate(time);
 
-			if (null == mouseInputController || !mouseInputController.IsAvailable()) { return; }
+            if (null == mouseDevice || !mouseDevice.IsAvailable()) { return; }
 
-            var screenPosition = mouseInputController.ScreenPosition;
+            var screenPosition = mouseDevice.ScreenPosition;
             if (null == screenPosition) { return; }
 
-            //Debug.Log("Screen position:" + mouseInputController.ScreenPosition.ToString());
+            //Debug.Log("Screen position:" + mouseDevice.ScreenPosition.ToString());
 
             var raycastHits = Utils.Raycast2DHitsAtScreenPosition(Camera, screenPosition);
-			Focusable hitFocusable = null;
+            FocusHandler hitFocusable = null;
 
             if (null == raycastHits || raycastHits.Length == 0)
             {
@@ -55,22 +55,22 @@ namespace PJ
                 return;
             }
 
-			//Debug.Log("Raycast hits size:" + raycastHits.Length.ToString());
+            //Debug.Log("Raycast hits size:" + raycastHits.Length.ToString());
 
-			foreach (RaycastHit2D raycastHit in raycastHits)
+            foreach (RaycastHit2D raycastHit in raycastHits)
             {
-				if (raycastHit.collider != null)
-				{
-					hitFocusable = raycastHit.collider.gameObject.GetComponent<Focusable>();
-				}
-
-				// Only react to the first focusable object
-				if (hitFocusable)
+                if (raycastHit.collider != null)
                 {
-					hitFocusable.HasFocus = true;
+                    hitFocusable = raycastHit.collider.gameObject.GetComponent<FocusHandler>();
+                }
+
+                // Only react to the first focusable object
+                if (hitFocusable)
+                {
+                    hitFocusable.HasFocus = true;
                     break;
                 }
-			}
-		}
-	}
+            }
+        }
+    }
 }

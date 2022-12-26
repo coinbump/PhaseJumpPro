@@ -2,21 +2,22 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using PJ;
 
-public class ExampleRotateAnimator : PJ.MonoBehaviour, IPointerClickHandler
+public class ExampleRotateAnimator : PJ.WorldComponent, IPointerClickHandler
 {
-    protected Animator<float> rotateAnimator;
+    protected CycleAnimator<float> rotateAnimator;
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (null == rotateAnimator || rotateAnimator.IsFinished) {
+        if (null == rotateAnimator || rotateAnimator.IsFinished)
+        {
             updatables.Clear();
 
-            if (TryGetComponent(out Node2D node))
+            if (TryGetComponent(out GoNode2D node))
             {
                 rotateAnimator = new(
-                    new AnimationCurve<float>(0, 360, new FloatValueAnimator()),
+                    new Interpolator<float>(0, 360, new FloatValueInterpolator()),
                     new(0.3f, AnimationCycleType.Once),
-                    new Binding<float>(() => node.Rotation, (float value) => node.Rotation = value)
+                    new Binding<float>(() => node.Rotation.Degrees, (float value) => node.Rotation = Angle.DegreesAngle(value))
                 );
                 updatables.Add(rotateAnimator);
             }

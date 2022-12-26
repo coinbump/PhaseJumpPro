@@ -13,7 +13,7 @@ namespace PJ
     /// Destroys objects that collide with it
     /// Can be placed outside screen bounds to get rid of objects that move offscren
     /// </summary>
-    public class Culler2D : MonoBehaviour
+    public class Culler2D : WorldComponent
     {
         /// <summary>
         /// Restricts culling to nodes with these type tags

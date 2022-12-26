@@ -3,8 +3,7 @@
 /*
  * RATING: 5 stars
  * Simple interface
- * CODE REVIEW: 11/13/22
- * 
+ * CODE REVIEW: 12/19/22
  * PORTED TO: C++
  */
 namespace PJ

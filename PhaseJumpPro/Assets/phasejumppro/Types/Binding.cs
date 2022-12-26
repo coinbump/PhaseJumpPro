@@ -29,4 +29,22 @@ namespace PJ
             set => setAction(value);
         }
     }
+
+    /// <summary>
+    /// Set-only binding (one way)
+    /// </summary>
+    public class SetBinding<T> : SomeSetBinding<T>
+    {
+        Action<T> setAction;
+
+        public SetBinding(Action<T> setAction)
+        {
+            this.setAction = setAction;
+        }
+
+        public override T Value
+        {
+            set => setAction(value);
+        }
+    }
 }

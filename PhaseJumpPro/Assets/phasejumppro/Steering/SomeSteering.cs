@@ -5,7 +5,7 @@ namespace PJ {
     /// <summary>
     /// A component that steers an object
     /// </summary>
-    public class SomeSteering : MonoBehaviour
+    public class SomeSteering : WorldComponent
     {
     }
 }

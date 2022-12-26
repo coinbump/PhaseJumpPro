@@ -30,7 +30,7 @@ namespace PJ
 			}
 			catch (System.Exception e)
 			{
-				Debug.Log(e.Message);
+				// Debug.Log(e.Message);
 			}
 
 			return new T();
@@ -45,7 +45,7 @@ namespace PJ
 			}
 			catch (System.Exception e)
 			{
-				Debug.Log(e.Message);
+				// Debug.Log(e.Message);
 			}
 
 			return constructor();

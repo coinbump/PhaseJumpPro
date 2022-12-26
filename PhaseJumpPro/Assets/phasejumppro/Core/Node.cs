@@ -1,22 +1,23 @@
 ﻿using System;
 using UnityEngine;
 
+/*
+RATING: 5 stars
+Simple component
+CODE REVIEW: 12/18/22
+*/
 namespace PJ
 {
+    /// <summary>
+    /// Base 3D world node
+    /// </summary>
     public class Node : SomeNode
     {
         protected new Rigidbody rigidbody;
 
         public override bool IsKinematic
         {
-            get
-            {
-                if (null == rigidbody)
-                {
-                    return false;
-                }
-                return rigidbody.isKinematic;
-            }
+            get => null == rigidbody ? true : rigidbody.isKinematic;
         }
 
         protected override void Awake()
@@ -33,19 +34,11 @@ namespace PJ
         {
             if (IsKinematic || force)
             {
-                //Debug.Log("Move to Position: Kinematic");
-
                 transform.position = position;
             }
             else
             {
-                if (null != rigidbody)
-                {
-                    //Debug.Log("Move to Position: Physics");
-
-                    // MovePosition is for physics-based objects (non kinematic)
-                    rigidbody.MovePosition(position);
-                }
+                rigidbody.MovePosition(position);
             }
         }
     }

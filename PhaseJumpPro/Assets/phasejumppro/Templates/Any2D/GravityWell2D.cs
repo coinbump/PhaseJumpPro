@@ -14,7 +14,7 @@ namespace PJ
     /// <summary>
     /// Applies a 2D gravity force within its radius (kinematic objects not supported)
     /// </summary>
-    public class GravityWell2D : MonoBehaviour
+    public class GravityWell2D : WorldComponent
     {
         public enum ForceType
         {

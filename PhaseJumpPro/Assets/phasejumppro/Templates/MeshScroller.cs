@@ -13,7 +13,7 @@ namespace PJ
     /// <summary>
     /// Scrolls a mesh texture horizontally over time or manually via scrollProgress
     /// </summary>
-    public class MeshScroller : MonoBehaviour
+    public class MeshScroller : WorldComponent
     {
         public enum Mode
         {

@@ -8,47 +8,48 @@ using System;
  */
 namespace PJ
 {
-	/// <summary>
-	/// Moves the center of the gameObject to the mouse position
-	/// </summary>
-	public class MoveToMouseInputControlScheme2D : SomeInputControlScheme
-	{
-		private MouseInputController mouseInputController;
+    /// <summary>
+    /// Moves the center of the gameObject to the mouse position
+    /// </summary>
+    public class MoveToMouseInputControlScheme2D : SomeInputControlScheme
+    {
+        private MouseDevice mouseDevice;
 
         protected override void Awake()
-		{
-			if (null == mouseInputController) { 
-				mouseInputController = new MouseInputController();
-			}
-		}
+        {
+            if (null == mouseDevice)
+            {
+                mouseDevice = new MouseDevice();
+            }
+        }
 
-		public MoveToMouseInputControlScheme2D()
-		{
-			mouseInputController = new MouseInputController();
-		}
+        public MoveToMouseInputControlScheme2D()
+        {
+            mouseDevice = new MouseDevice();
+        }
 
         /// <summary>
         /// On update, move at the mouse (for cursors)
         /// </summary>
         public override void OnUpdate(TimeSlice time)
-		{
-			base.OnUpdate(time);
+        {
+            base.OnUpdate(time);
 
-			if (null == mouseInputController || !mouseInputController.IsAvailable()) { return; }
+            if (null == mouseDevice || !mouseDevice.IsAvailable()) { return; }
 
-			var target = gameObject;
-			if (null == target) { return; }
+            var target = gameObject;
+            if (null == target) { return; }
 
-			var worldPosition = mouseInputController.WorldPosition;
-			if (null == worldPosition) { return; }
+            var worldPosition = mouseDevice.WorldPosition;
+            if (null == worldPosition) { return; }
 
-			target.transform.position = new Vector3(worldPosition.x, worldPosition.y, target.transform.position.z);
-		}
+            target.transform.position = new Vector3(worldPosition.x, worldPosition.y, target.transform.position.z);
+        }
 
-		protected override void Update()
-		{
-			var timeSlice = new TimeSlice(Time.deltaTime);
-			OnUpdate(timeSlice);
-		}
-	}
+        protected override void Update()
+        {
+            var timeSlice = new TimeSlice(Time.deltaTime);
+            OnUpdate(timeSlice);
+        }
+    }
 }

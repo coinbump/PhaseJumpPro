@@ -9,17 +9,17 @@ using System.Collections.Generic;
  */
 namespace PJ
 {
-	/// <summary>
-	/// A timer that sets a state when it enters a segment (a slice of time within the time size)
-	/// Example: a day-state timer for morning, afternoon, night
-	/// </summary>
-	public class SegmentStateTimer<State> : Timer where State : IEquatable<State>
+    /// <summary>
+    /// A timer that sets a state when it enters a segment (a slice of time within the time size)
+    /// Example: a day-state timer for morning, afternoon, night
+    /// </summary>
+    public class SegmentStateTimer<State> : Timer where State : IEquatable<State>
     {
         public SegmentState<State> segmentState;
 
-		public SegmentStateTimer(State initialState, float duration, SomeTimed.RunType type = SomeTimed.RunType.KeepRunning)
-			: base(duration, type)
-		{
+        public SegmentStateTimer(State initialState, float duration, SomeRunner.RunType type = SomeRunner.RunType.KeepRunning)
+            : base(duration, type)
+        {
             segmentState = new SegmentState<State>(initialState);
         }
 

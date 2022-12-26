@@ -130,5 +130,44 @@ namespace PJ
             Assert.AreEqual(1, sut.ChildViews().Count);
             Assert.AreEqual(childView, sut.ChildViews()[0]);
         }
+
+        [Test]
+        public void Test_PreferredSize_NoIntrinsicSize()
+        {
+            var gameObject = new GameObject();
+            var sut = gameObject.AddComponent<View2D>();
+
+            Assert.AreEqual(10.0f, sut.PreferredWidth(10.0f));
+            Assert.AreEqual(10.0f, sut.PreferredHeight(10.0f));
+        }
+
+        [Test]
+        public void Test_PreferredSize_HasIntrinsicSize()
+        {
+            var gameObject = new GameObject();
+            var sut = gameObject.AddComponent<View2D>();
+            sut.IntrinsicWidth = new(3.0f);
+            sut.IntrinsicHeight = new(7.0f);
+
+            Assert.AreEqual(3.0f, sut.PreferredWidth(10.0f));
+            Assert.AreEqual(7.0f, sut.PreferredHeight(10.0f));
+        }
+
+        [Test]
+        public void Test_PreferredSize_HasMinMaxSize()
+        {
+            var gameObject = new GameObject();
+            var sut = gameObject.AddComponent<View2D>();
+            sut.tags["width.min"] = 3.0f;
+            sut.tags["width.max"] = 4.0f;
+            sut.tags["height.min"] = 2.0f;
+            sut.tags["height.max"] = 7.0f;
+
+            Assert.AreEqual(4.0f, sut.PreferredWidth(10.0f));
+            Assert.AreEqual(7.0f, sut.PreferredHeight(10.0f));
+
+            Assert.AreEqual(3.0f, sut.PreferredWidth(3.0f));
+            Assert.AreEqual(3.0f, sut.PreferredHeight(3.0f));
+        }
     }
 }

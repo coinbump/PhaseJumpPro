@@ -4,6 +4,7 @@
  * RATING: 5 stars
  * Simple utility
  * CODE REVIEW: 11/1/22
+ * PORTED TO: C++
  */
 namespace PJ
 {

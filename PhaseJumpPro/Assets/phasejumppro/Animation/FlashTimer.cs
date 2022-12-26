@@ -30,7 +30,7 @@ namespace PJ
             get => flashCount * flashDuration * 2.0f;
         }
 
-        public FlashTimer(int flashCount, float flashDuration) : base(0, SomeTimed.RunType.RunOnce)
+        public FlashTimer(int flashCount, float flashDuration) : base(0, SomeRunner.RunType.RunOnce)
         {
             this.flashCount = flashCount;
             this.flashDuration = flashDuration;
@@ -67,7 +67,7 @@ namespace PJ
             }
         }
 
-        protected virtual void OnFlashChange() {}
+        protected virtual void OnFlashChange() { }
 
         protected void OnTimerFinish()
         {

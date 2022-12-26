@@ -3,19 +3,14 @@ using UnityEngine;
 
 namespace PJ
 {
-	public partial class UISystem
-	{
-        public enum FocusDirection
-        {
-            Forward, Back, Up, Down, Left, Right
-        }
-
-        public virtual void SetFocus(Focusable focusable)
+    public partial class UISystem
+    {
+        public virtual void SetFocus(FocusHandler focusable)
         {
             focusable.HasFocus = true;
         }
 
-        public void UpdateFocusFor(Focusable focusable, bool hasFocus)
+        public void UpdateFocusFor(FocusHandler focusable, bool hasFocus)
         {
             var focusedItem = ActiveFocus;
 

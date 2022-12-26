@@ -7,6 +7,7 @@ using UnityEngine;
  * RATING: 5 stars
  * Simple design pattern with Unit Test
  * CODE REVIEW: 11/5/22
+ * PORTED TO: C++
  */
 namespace PJ
 {
@@ -30,23 +31,23 @@ namespace PJ
     {
     }
 
-    public interface SomePublished<T>
+    public abstract class SomePublished<T> : AnyPublished
     {
-        T Value { get; set; }
+        public abstract T Value { get; set; }
 
-        void AddListener(SomeListener listener);
+        public abstract void AddListener(SomeListener listener);
     }
 
     /// <summary>
     /// Broadcasts when value changes.
     /// </summary>
-    public class PublishedEntity<T> : AnyPublished, SomePublished<T>
+    public class PublishedEntity<T> : SomePublished<T>
     {
         protected T value;
         public Broadcaster broadcaster = new Broadcaster();
-        public SomeTransform<T> transform = new IdentityTransform<T>();
+        public SomeValueTransform<T> transform = new IdentityTransform<T>();
 
-        public virtual T Value
+        public override T Value
         {
             get => value;
             set
@@ -68,7 +69,7 @@ namespace PJ
             this.value = value;
         }
 
-        public void AddListener(SomeListener listener)
+        public override void AddListener(SomeListener listener)
         {
             broadcaster.AddListener(listener);
         }

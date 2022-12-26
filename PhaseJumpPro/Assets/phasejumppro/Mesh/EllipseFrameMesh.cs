@@ -13,7 +13,7 @@ namespace PJ
     /// </summary>
     public class EllipseFrameMesh : SomeMesh
     {
-        public float angleStep = 10.0f;
+        public Angle angleStep = Angle.DegreesAngle(10.0f);
         public Vector2 worldSize = new Vector2(1.0f, 1.0f);
         public float strokeWidth = 0.1f;
 
@@ -23,13 +23,13 @@ namespace PJ
         {
             get
             {
-                if (0 == angleStep)
+                if (0 == angleStep.Degrees)
                 {
                     // Avoid divide-by-zero
                     return 1;
                 }
 
-                return (int)(360.0f / Mathf.Abs(angleStep));
+                return (int)(360.0f / Mathf.Abs(angleStep.Degrees));
             }
         }
 
@@ -42,7 +42,7 @@ namespace PJ
             }
         }
 
-        public EllipseFrameMesh(float angleStep, Vector2 size, float strokeWidth)
+        public EllipseFrameMesh(Angle angleStep, Vector2 size, float strokeWidth)
         {
             this.angleStep = angleStep;
             this.worldSize = size;
@@ -51,14 +51,14 @@ namespace PJ
             var polygon = new Polygon();
             for (int i = 0; i < SliceCount; i++)
             {
-                polygon.vertices.Add(MeshVertexFor(angleStep * i));
+                polygon.vertices.Add(MeshVertexFor(Angle.DegreesAngle(angleStep.Degrees * i)));
             }
             polyFrameMesh = new PolyFrameMesh(polygon, true, strokeWidth);
         }
 
-        public Vector3 MeshVertexFor(float degreeAngle)
+        public Vector3 MeshVertexFor(Angle angle)
         {
-            var vector = AngleUtils.DegreeAngleToVector2(degreeAngle, 1.0f);
+            var vector = (Vector2)angle;
             return new Vector3(vector.x * worldSize.x / 2.0f, vector.y * worldSize.y / 2.0f, 0);
         }
 

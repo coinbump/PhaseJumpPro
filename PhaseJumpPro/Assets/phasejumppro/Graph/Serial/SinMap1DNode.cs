@@ -26,7 +26,7 @@ namespace PJ
                     this.offset = offset;
                 }
 
-                public override float ValueFor(float key)
+                public override float Transform(float key)
                 {
                     var result = Mathf.Sin((key + offset) * 2.0f * Mathf.PI);
 

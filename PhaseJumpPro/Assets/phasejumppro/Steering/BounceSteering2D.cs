@@ -9,46 +9,46 @@ using UnityEngine;
  */
 namespace PJ
 {
-	/// <summary>
-	/// Move the object in one direction. When it collides, bounce
-	/// </summary>
-	public class BounceSteering2D : SomeSteering2D
-	{
-		protected Node2D node;
+    /// <summary>
+    /// Move the object in one direction. When it collides, bounce
+    /// </summary>
+    public class BounceSteering2D : SomeSteering2D
+    {
+        protected GoNode2D node;
 
         protected override void Start()
-		{
+        {
             base.Start();
-			
-            node = GetComponent<Node2D>();
-			if (null == node)
-			{
-				Debug.Log("Error. Bounce steering requires node");
-				return;
-			}
-		}
 
-		public void OnCollisionEnter2D(Collision2D collision)
-		{
-			if (null == node) { return; }
+            node = GetComponent<GoNode2D>();
+            if (null == node)
+            {
+                Debug.Log("Error. Bounce steering requires node");
+                return;
+            }
+        }
 
-			switch (node.VelocityType)
-			{
-				case Node2D.MoveType.Vector:
-					break;
-				default:
-					Debug.Log("Error. Bounce steering requires vector velocity");
-					return;
-			}
+        public void OnCollisionEnter2D(Collision2D collision)
+        {
+            if (null == node) { return; }
 
-			var contacts = new List<ContactPoint2D>();
+            switch (node.VelocityType)
+            {
+                case GoNode2D.MoveType.Vector:
+                    break;
+                default:
+                    Debug.Log("Error. Bounce steering requires vector velocity");
+                    return;
+            }
 
-			collision.GetContacts(contacts);
-			foreach (ContactPoint2D contact in contacts)
-			{
-				var velocity = node.Velocity;
-				node.Velocity = Vector2.Reflect(velocity, contact.normal);
-			}
-		}
-	}
+            var contacts = new List<ContactPoint2D>();
+
+            collision.GetContacts(contacts);
+            foreach (ContactPoint2D contact in contacts)
+            {
+                var velocity = node.Velocity;
+                node.Velocity = Vector2.Reflect(velocity, contact.normal);
+            }
+        }
+    }
 }

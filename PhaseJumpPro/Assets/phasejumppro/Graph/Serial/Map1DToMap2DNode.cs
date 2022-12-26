@@ -37,9 +37,9 @@ namespace PJ
                     switch (axis)
                     {
                         case Axis2D.X:
-                            return map1D.ValueFor(key.x);
+                            return map1D.Transform(key.x);
                         default:
-                            return map1D.ValueFor(key.y);
+                            return map1D.Transform(key.y);
                     }
                 }
             }

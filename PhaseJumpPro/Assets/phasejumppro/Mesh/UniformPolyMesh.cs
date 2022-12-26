@@ -31,7 +31,7 @@ namespace PJ
         {
             this.vertexCount = vertexCount;
             this.radius = radius;
-            circleMesh = new CircleMesh(360.0f / vertexCount, radius);
+            circleMesh = new CircleMesh(Angle.DegreesAngle(360.0f / vertexCount), radius);
         }
 
         public override Mesh BuildMesh(Mesh mesh)

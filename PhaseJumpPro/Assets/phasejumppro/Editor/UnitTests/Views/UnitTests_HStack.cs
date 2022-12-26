@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using NUnit.Framework;
 
@@ -8,9 +6,9 @@ namespace PJ
 {
     public class UnitTests_HStack
     {
-        protected class TestHStack : PJ.View.HStack {
+        protected class TestHStack : PJ.HStack {
             public void TestApplyLayout(Bounds2D parentBounds) {
-                _ApplyLayout(parentBounds);
+                _ApplyLayout(parentBounds.size);
             }
         }
 

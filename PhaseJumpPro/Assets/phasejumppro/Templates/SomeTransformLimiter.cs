@@ -8,7 +8,7 @@ using UnityEngine;
  */
 namespace PJ
 {
-    public abstract class SomeTransformLimiter : MonoBehaviour
+    public abstract class SomeTransformLimiter : WorldComponent
     {
         public enum ScanType
         {

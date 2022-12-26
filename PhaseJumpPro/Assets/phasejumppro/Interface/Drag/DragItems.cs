@@ -15,11 +15,11 @@ namespace PJ
     /// </summary>
     public struct DragItems
     {
-        public List<Draggable2D> draggables;
+        public List<SomeDragHandler> dragHandlers;
 
-        public DragItems(List<Draggable2D> draggables)
+        public DragItems(List<SomeDragHandler> dragHandlers)
         {
-            this.draggables = draggables;
+            this.dragHandlers = dragHandlers;
         }
     }
 }

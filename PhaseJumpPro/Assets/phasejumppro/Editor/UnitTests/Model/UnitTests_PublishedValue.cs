@@ -47,8 +47,10 @@ namespace PJ
         }
 
         [Test]
-        public void TestNullChange()
+        public void Test_NullChange()
         {
+            // NOTE: C# tests using Equals, which acts differently than C++ ==
+            // The tests do not produce the same results
             var test = new TestValue<TestClass>();
             Assert.AreEqual(null, test.Value);
             test.Value = new();
@@ -61,7 +63,7 @@ namespace PJ
         }
 
         [Test]
-        public void TestTransform()
+        public void Test_Transform()
         {
             var test = new TestValue<int>();
             var transform = new IntClamp(0, 10);

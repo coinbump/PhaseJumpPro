@@ -98,11 +98,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 25d1c4a13ff274e5a8e2e68151776d3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  id: 
   initialState: 
-  valueTags: []
-  typeTags: []
-  cullTypes: 00000000
-  rotationDegreeAngle: 0
+  _tags: []
+  _typeTags: []
+  _stateTags: []
+  _cullTypes: 0000000001000000
+  rotation:
+    value: 0
   velocityType: 0
   velocity: {x: 0, y: 0}
   damageValue: 1

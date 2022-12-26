@@ -14,7 +14,7 @@ namespace PJ
     /// </summary>
     public class EllipseFrameMeshBuilder : SomeMeshBuilder
     {
-        public float angleStep = 10.0f;
+        public Angle angleStep = Angle.DegreesAngle(10.0f);
         public Vector2 worldSize = new Vector2(1.0f, 1.0f);
         public float strokeWidth = 0.1f;
 

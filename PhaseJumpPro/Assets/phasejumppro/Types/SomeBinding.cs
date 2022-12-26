@@ -26,4 +26,12 @@ namespace PJ
     {
         public abstract T Value { get; set; }
     }
+
+    /// <summary>
+    /// Wrapper used to alter the attribute of an object
+    /// </summary>
+    public abstract class SomeSetBinding<T> : AnyBinding
+    {
+        public abstract T Value { set; }
+    }
 }

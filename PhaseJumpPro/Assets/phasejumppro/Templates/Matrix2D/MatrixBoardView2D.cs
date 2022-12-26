@@ -32,14 +32,14 @@ namespace PJ
         }
 
         public Vector2Int matrixSize = new Vector2Int(5, 5);
-        
+
         public MatrixBoard board;
 
         [Tooltip("Optional focus indicator")]
         public GameObject focusIndicator;
 
         protected Optional<Vector2Int> mouseFocusedCell;
-        protected MouseInputController mouseInputController = new();
+        protected MouseDevice mouseDevice = new();
 
         protected override void Awake()
         {
@@ -57,14 +57,58 @@ namespace PJ
                 var childNode = childTransform.gameObject.GetComponent<MatrixNode2D>();
                 if (null == childNode) { continue; }
 
-                Put(childNode, childNode.origin);
+                Put(childNode, childNode.initialOrigin);
             }
         }
 
-        public void Put(MatrixNode2D node, Vector2Int origin) {
-            if (null == node.piece) {
+        public void RemoveAt(Vector2Int location, bool destroyGameObject = true)
+        {
+            if (destroyGameObject)
+            {
+                var gameObject = GameObjectAt(location);
+                if (gameObject)
+                {
+                    Destroy(gameObject);
+                }
+            }
+            board.RemovePieceAt(location);
+        }
+
+        public void RemoveAll()
+        {
+            for (int x = 0; x < matrixSize.x; x++)
+            {
+                for (int y = 0; y < matrixSize.y; y++)
+                {
+                    RemoveAt(new Vector2Int(x, y));
+                }
+            }
+        }
+
+        public bool Replace(MatrixNode2D node, Vector2Int origin)
+        {
+            var pieceLocations = board.PieceLocationsAt(origin, node.piece);
+            if (null == pieceLocations) { return false; }
+
+            foreach (var location in pieceLocations)
+            {
+                var worldNode = WorldNodeAt(location);
+                if (worldNode)
+                {
+                    Destroy(worldNode);
+                }
+                board.RemovePieceAt(location);
+            }
+
+            return Put(node, origin);
+        }
+
+        public bool Put(MatrixNode2D node, Vector2Int origin)
+        {
+            if (null == node.piece)
+            {
                 Debug.Log("Error. Matrix node is missing a piece");
-                return;
+                return false;
             }
 
             var putResult = board.PutPiece(node.piece, origin);
@@ -75,6 +119,7 @@ namespace PJ
 
             var nodePosition = NodePosition(node);
             node.transform.localPosition = nodePosition;
+            return putResult;
         }
 
         public override void OnUpdate(TimeSlice time)
@@ -92,7 +137,7 @@ namespace PJ
             }
         }
 
-        public Optional<Vector2Int> CellAtWorldPosition(Vector2 worldPosition)
+        public Optional<Vector2Int> LocationAtWorldPosition(Vector2 worldPosition)
         {
             var topLeft = TopLeftWorldPosition(transform.position);
 
@@ -100,16 +145,16 @@ namespace PJ
             var viewPosition = new Vector2(worldPosition.x - topLeft.x, Mathf.Abs(worldPosition.y - topLeft.y));
             if (!IsViewPositionInside(viewPosition)) { return null; }
 
-            var cell = CellAtViewPosition(viewPosition);
+            var cell = LocationAtViewPosition(viewPosition);
             return new Optional<Vector2Int>(cell);
         }
 
-        public Optional<Vector2Int> CellAtLocalPosition(Vector2 localPosition)
+        public Optional<Vector2Int> LocationAtLocalPosition(Vector2 localPosition)
         {
-            return CellAtWorldPosition(transform.TransformPoint(localPosition));
+            return LocationAtWorldPosition(transform.TransformPoint(localPosition));
         }
 
-        public Vector2Int CellAtViewPosition(Vector2 viewPosition)
+        public Vector2Int LocationAtViewPosition(Vector2 viewPosition)
         {
             var column = (int)(viewPosition.x / CellSize.x);
             var row = (int)(viewPosition.y / CellSize.y);
@@ -117,7 +162,7 @@ namespace PJ
             return new Vector2Int(column, row);
         }
 
-        public Vector2 CellToLocalPosition(Vector2Int cell)
+        public Vector2 LocationToLocalPosition(Vector2Int cell)
         {
             var x = -(WorldSize.x / 2.0f) + CellSize.x / 2.0f + cell.x * CellSize.x;
             var y = (WorldSize.y / 2.0f) * Vector2.up.y + (CellSize.y / 2.0f + cell.y * CellSize.y) * Vector2.down.y;
@@ -125,7 +170,7 @@ namespace PJ
             return new Vector2(x, y);
         }
 
-        public Vector3 CellToWorldPosition(Vector2Int cell)
+        public Vector3 LocationToWorldPosition(Vector2Int cell)
         {
             var topLeft = TopLeftWorldPosition(transform.position);
             var x = topLeft.x + CellSize.x / 2.0f + cell.x * CellSize.x;
@@ -135,6 +180,16 @@ namespace PJ
         }
 
         public MoveResult MovePiece(MatrixPiece piece, MapDirection direction, float duration)
+        {
+            if (null == piece) { return MoveResult.Fail; }
+
+            var oldOrigin = piece.origin;
+            var newOrigin = oldOrigin + direction.Offset();
+
+            return MovePiece(piece, newOrigin, duration);
+        }
+
+        public virtual MoveResult MovePiece(MatrixPiece piece, Vector2Int newOrigin, float duration)
         {
             if (null == piece) { return MoveResult.Fail; }
 
@@ -154,8 +209,6 @@ namespace PJ
             if (node.IsAnimating) { return MoveResult.Animating; }
 
             var oldOrigin = piece.origin;
-            var newOrigin = oldOrigin + direction.Offset();
-
             if (newOrigin == oldOrigin) { return MoveResult.Fail; }
 
             var excludeList = new HashSet<MatrixPiece>();
@@ -173,7 +226,7 @@ namespace PJ
             if (duration > 0)
             {
                 node.moveAnimator = new(
-                    new AnimationCurve<Vector2>(node.transform.localPosition, endPosition, new Vector2ValueAnimator()),
+                    new Interpolator<Vector2>(node.transform.localPosition, endPosition, new Vector2ValueInterpolator()),
                     new(duration, AnimationCycleType.Once),
                     new Binding<Vector2>(() => node.transform.localPosition, (Vector2 position) => node.transform.localPosition = position)
                 );
@@ -192,13 +245,36 @@ namespace PJ
             var pieceOrigin = node.piece.origin;
             var pieceSize = node.piece.Size;
 
-            var topLeftCellPosition = CellToLocalPosition(pieceOrigin);
-            var bottomRightCellPosition = CellToLocalPosition(pieceOrigin + new Vector2Int(pieceSize.x - 1, pieceSize.y -1));
+            var topLeftCellPosition = LocationToLocalPosition(pieceOrigin);
+            var bottomRightCellPosition = LocationToLocalPosition(pieceOrigin + new Vector2Int(pieceSize.x - 1, pieceSize.y - 1));
 
             var x = topLeftCellPosition.x + (bottomRightCellPosition.x - topLeftCellPosition.x) / 2.0f;
             var y = topLeftCellPosition.y + Mathf.Abs((bottomRightCellPosition.y - topLeftCellPosition.y) / 2.0f) * Vector2.down.y;
 
             return new Vector2(x, y);
         }
-    }    
+
+        public GameObject GameObjectAt(Vector2Int cell)
+        {
+            return WorldNodeAt(cell);
+        }
+
+        public GameObject WorldNodeAt(Vector2Int cell)
+        {
+            var piece = board.PieceAt(cell);
+            if (null == piece) { return null; }
+
+            var cellOwner = piece.owner;
+            if (cellOwner.TryGetTarget(out object cellObject))
+            {
+                var matrixNode = cellObject as MatrixNode2D;
+                if (matrixNode)
+                {
+                    return matrixNode.gameObject;
+                }
+            }
+
+            return null;
+        }
+    }
 }

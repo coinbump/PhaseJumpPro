@@ -14,7 +14,7 @@ namespace PJ
     /// Sets render sort order for child objects based on their order in the parent.
     /// Useful for a stack of things, like cards
     /// </summary>
-    public class SpriteOrderer : MonoBehaviour
+    public class SpriteOrderer : WorldComponent
     {
         public int startOrder = 0;
         public int offset = 1;

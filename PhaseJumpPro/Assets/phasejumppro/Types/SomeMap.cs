@@ -5,7 +5,6 @@ using UnityEngine;
  * RATING: 5 stars
  * Simple class
  * CODE REVIEW: 3/12/22
- * 
  * PORTED TO: C++
  */
 namespace PJ

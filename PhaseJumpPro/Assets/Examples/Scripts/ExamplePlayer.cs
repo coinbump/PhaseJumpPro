@@ -6,9 +6,9 @@ using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using TMPro;
 
-public class ExamplePlayer : Node2D
+public class ExamplePlayer : GoNode2D
 {
-    public class Model : PJ.Core<Model.StateType>
+    public class Model : PJ.GoCore<Model.StateType>
     {
         public const int MaxHealth = 5;
 
@@ -31,7 +31,7 @@ public class ExamplePlayer : Node2D
 
     public bool IsDead
     {
-        get => model.StateMachine.State == Model.StateType.Dead;
+        get => model.sm.State == Model.StateType.Dead;
     }
 
     protected override void Awake()
@@ -64,7 +64,7 @@ public class ExamplePlayer : Node2D
             return;
         }
 
-        var angle = AngleUtils.Vector2ToDegreeAngle(inputVector);
+        var angle = new Angle(inputVector);
         weaponEmitter.Fire(angle);
     }
 

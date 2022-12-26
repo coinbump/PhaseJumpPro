@@ -8,9 +8,9 @@ namespace PJ
 {
     public class UnitTests_PadView
     {
-        protected class TestPadView : PJ.View.PadView {
+        protected class TestPadView : PJ.PadView {
             public void TestApplyLayout(Bounds2D parentBounds) {
-                _ApplyLayout(parentBounds);
+                _ApplyLayout(parentBounds.size);
             }
         }
 
@@ -77,7 +77,7 @@ namespace PJ
         }
 
         [Test]
-        public void TestApplyLayout_ChildHasIntrinsicSize()
+        public void TestApplyLayout_ChildHasNoIntrinsicSize()
         {
             var gameObject = new GameObject();
             var sut = gameObject.AddComponent<TestPadView>();
@@ -97,7 +97,7 @@ namespace PJ
         }
 
         [Test]
-        public void TestApplyLayout_ChildHasNoIntrinsicSize()
+        public void TestApplyLayout_ChildHasIntrinsicSize()
         {
             var gameObject = new GameObject();
             var sut = gameObject.AddComponent<TestPadView>();

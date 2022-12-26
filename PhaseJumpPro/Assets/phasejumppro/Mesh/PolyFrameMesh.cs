@@ -69,11 +69,11 @@ namespace PJ
 
                 var angleVector = new Vector2(nextVertex.x - vertex.x, nextVertex.y - vertex.y);
                 //Debug.Log("Angle Vector: " + angleVector.ToString());
-                var degreeAngle = AngleUtils.Vector2ToDegreeAngle(angleVector);
+                var degreeAngle = new Angle(angleVector);
                 //Debug.Log("Degree Angle: " + degreeAngle.ToString());
 
-                var outerOffset = AngleUtils.DegreeAngleToVector2(degreeAngle - 90.0f, strokeWidth / 2.0f);
-                var innerOffset = AngleUtils.DegreeAngleToVector2(degreeAngle + 90.0f, strokeWidth / 2.0f);
+                var outerOffset = Angle.DegreesAngle(degreeAngle.Degrees - 90.0f).ToVector2(strokeWidth / 2.0f);
+                var innerOffset = Angle.DegreesAngle(degreeAngle.Degrees + 90.0f).ToVector2(strokeWidth / 2.0f);
 
                 //Debug.Log("Outer Offset: " + outerOffset.ToString());
                 //Debug.Log("Inner Offset: " + innerOffset.ToString());

@@ -8,7 +8,7 @@ using System.Collections;
  */
 namespace PJ
 {
-	public abstract class SomeAnimation : MonoBehaviour
+	public abstract class SomeAnimation : WorldComponent
 	{
 		public MeshMaterialType meshMaterialType = MeshMaterialType.Shared;
 

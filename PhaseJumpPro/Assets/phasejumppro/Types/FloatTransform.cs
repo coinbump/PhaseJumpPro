@@ -9,7 +9,7 @@
  */
 namespace PJ
 {
-    public abstract class SomeFloatTransform : SomeTransform<float>
+    public abstract class SomeFloatTransform : SomeValueTransform<float>
     {
     }
 

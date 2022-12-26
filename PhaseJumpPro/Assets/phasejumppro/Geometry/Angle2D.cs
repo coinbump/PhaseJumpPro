@@ -39,12 +39,12 @@ namespace PJ {
 			magnitude = Mathf.Sqrt(squaredMagnitude);
 			
 			Vector2	vp = new Vector2(vector.x, vector.y);
-			angle = AngleUtils.Vector2ToDegreeAngle(vp)/360.0f;	// Normalize it
+			angle = new Angle(vp).Degrees/360.0f;	// Normalize it
 		}
 
 		public Vector2 ToVector2()
 		{
-			return AngleUtils.DegreeAngleToVector2(this.angle * 360.0f, this.magnitude);
+			return Angle.DegreesAngle(this.angle * 360.0f).ToVector2(this.magnitude);
 		}
 	}
 }

@@ -14,6 +14,52 @@ namespace PJ
     [Serializable]
     public partial class View2D
     {
+        public virtual float PreferredWidth(float layoutSize)
+        {
+            var optionalResult = IntrinsicWidth;
+
+            if (null == optionalResult)
+            {
+                var result = layoutSize;
+                var maxWidth = MaxWidth;
+                if (null != maxWidth) {
+                    result = Mathf.Min(maxWidth.value, result);
+                }
+                
+                var minWidth = MinWidth;
+                if (null != minWidth) {
+                    result = Mathf.Max(minWidth.value, result);
+                }
+
+                return result;
+            }
+
+            return optionalResult.value;
+        }
+
+        public virtual float PreferredHeight(float layoutSize)
+        {
+            var optionalResult = IntrinsicHeight;
+
+            if (null == optionalResult)
+            {
+                var result = layoutSize;
+                var maxHeight = MaxHeight;
+                if (null != maxHeight) {
+                    result = Mathf.Min(maxHeight.value, result);
+                }
+                
+                var minHeight = MinHeight;
+                if (null != minHeight) {
+                    result = Mathf.Max(minHeight.value, result);
+                }
+
+                return result;
+            }
+
+            return optionalResult.value;
+        }
+
         public Vector3 WorldToViewPosition(Vector3 worldPosition)
         {
             var localPosition = transform.InverseTransformPoint(worldPosition);
@@ -74,5 +120,60 @@ namespace PJ
         public Optional<float> MinHeight => tags.Value<float>("height.min");
         public Optional<float> MaxWidth => tags.Value<float>("width.max");
         public Optional<float> MaxHeight => tags.Value<float>("height.max");
+
+        protected virtual void _ApplyLayout(Vector2 layoutSize) {
+            var childViews = ChildViews();
+
+            // Default layout: center child views
+            foreach (var view in childViews) {
+                var intrinsicWidth = view.IntrinsicWidth;
+                var intrinsicHeight = view.IntrinsicHeight;
+
+                var width = intrinsicWidth != null ? intrinsicWidth.value : layoutSize.x;
+                var height = intrinsicHeight != null ? intrinsicHeight.value : layoutSize.y;
+
+                var origin = new Vector2(
+                    layoutSize.x / 2.0f - (width / 2.0f),
+                    layoutSize.y / 2.0f - (height / 2.0f)
+                );
+                var size = new Vector2(width, height);
+                view.Frame = new Bounds2D(origin, size);
+            }
+        }
+
+        protected virtual void _PostApplyLayout() {
+            var childViews = ChildViews();
+            foreach (var view in childViews) {
+                view._ApplyLayout(view.Bounds.size);
+                view._PostApplyLayout();
+            }
+        }
+
+        public virtual void ApplyLayout() {
+            Debug.Log(GetType() + ": ApplyLayout");
+
+            if (null == ParentView()) {
+                var parentBounds = ParentBounds();
+
+                // Top view needs a size
+                Bounds2D frame = new Bounds2D();
+
+                var preferredWidth = PreferredWidth(parentBounds.size.x);
+                var preferredHeight = PreferredHeight(parentBounds.size.y);
+
+                frame.size.x = preferredWidth;
+                frame.size.y = preferredHeight;
+
+                Frame = frame;
+            }
+
+            Bounds2D layoutBounds = Bounds;
+
+            _ApplyLayout(layoutBounds.size);
+            _PostApplyLayout();
+
+            // Subclasses can apply their own layout if needed
+            UpdatePositions();
+        }
     }
 }

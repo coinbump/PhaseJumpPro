@@ -6,11 +6,12 @@ using UnityEngine;
  * RATING: 5 stars
  * Tested and works
  * CODE REVIEW: 4/27/22
+ * PORTED TO: C++
  */
 namespace PJ
 {
     /// <summary>
-    /// Model that defines a circle path
+    /// Model that defines a line path
     /// </summary>
     public class LinePath : SomePath
     {
@@ -23,9 +24,9 @@ namespace PJ
             this.end = end;
         }
 
-        public Vector3 PositionAt(float position)
+        public override Vector3 PositionAt(float progress)
         {
-            return start + (end - start) * position;
+            return start + (end - start) * progress;
         }
     }
 }

@@ -5,10 +5,10 @@ using UnityEngine;
 
 namespace PJ
 {
-	/// <summary>
-	/// Nodes in a behavior tree allow us to model complex behaviors
-	/// </summary>
-	public class BehaviorNode : Graph.GoStandardAcyclicNode, SomeListener
+    /// <summary>
+    /// Nodes in a behavior tree allow us to model complex behaviors
+    /// </summary>
+    public class BehaviorNode : Graph.GoStandardAcyclicNode, SomeListener
     {
         public enum StateType
         {
@@ -27,7 +27,7 @@ namespace PJ
         /// </summary>
         public WeakReference<object> owner;
 
-        protected StateMachine<StateType> stateMachine = new StateMachine<StateType>();
+        protected GoStateMachine<StateType> stateMachine = new GoStateMachine<StateType>();
 
         public BehaviorNode()
         {
@@ -42,7 +42,7 @@ namespace PJ
 
         public void AddChild(BehaviorNode node)
         {
-            AddEdge(new Graph.StandardEdgeModel(), node);
+            AddEdge(new StandardEdgeModel(), node);
             node.owner = owner;
         }
 
@@ -55,14 +55,14 @@ namespace PJ
         {
             if (!theEvent.sentFrom.TryGetTarget(out object target)) { return; }
 
-            var stateChangeEvent = theEvent as StateMachine<StateType>.EventStateChange;
+            var stateChangeEvent = theEvent as EventStateChange<StateType>;
             if (null != stateChangeEvent)
             {
-                OnStateChange(target as SomeStateMachine);
+                OnStateChange(target as SomeStateMachine<StateType>);
             }
         }
 
-        protected virtual void OnStateChange(SomeStateMachine stateMachine)
+        protected virtual void OnStateChange(SomeStateMachine<StateType> stateMachine)
         {
             if (stateMachine != this.stateMachine) { return; }
 
@@ -116,9 +116,9 @@ namespace PJ
             return StateType.Fail;
         }
 
-        public override void OnUpdateNode(TimeSlice time)
+        public override void OnUpdate(TimeSlice time)
         {
-            base.OnUpdateNode(time);
+            base.OnUpdate(time);
 
             // Only root node kickstarts behavior
             if (IsRootNode)

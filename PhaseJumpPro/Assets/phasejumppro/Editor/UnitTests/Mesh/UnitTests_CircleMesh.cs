@@ -10,11 +10,11 @@ namespace PJ
 		public void TestCircleMesh()
 		{
             var radius = 2.5f;
-			var shapeMesh = new CircleMesh(120.0f, radius);
+			var shapeMesh = new CircleMesh(Angle.DegreesAngle(120.0f), radius);
 			var mesh = shapeMesh.Build();
 
 			var vertices = mesh.vertices;
-			Assert.AreEqual(4, vertices.Length);
+			Assert.AreEqual(5, vertices.Length);
 
 			var triangles = mesh.triangles;
 			Assert.AreEqual(3 * 3, triangles.Length);
@@ -30,7 +30,7 @@ namespace PJ
             Assert.AreEqual(3, triangles[5]);
             Assert.AreEqual(0, triangles[6]);
             Assert.AreEqual(3, triangles[7]);
-            Assert.AreEqual(1, triangles[8]);
+            Assert.AreEqual(4, triangles[8]);
 
             Assert.AreEqual(new Vector2(0.5f, 0.5f), uv[0]);
             Assert.AreEqual(new Vector2(0.5f, 1), uv[1]);

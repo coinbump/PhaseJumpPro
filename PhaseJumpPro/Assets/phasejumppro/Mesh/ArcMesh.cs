@@ -13,22 +13,22 @@ namespace PJ
     /// </summary>
     public class ArcMesh : SomeMesh
     {
-        public float startDegreeAngle = 0;
-        public float endDegreeAngle = 360.0f;
-        public float angleStep = 10.0f;
+        public Angle startAngle = Angle.DegreesAngle(0);
+        public Angle endAngle = Angle.DegreesAngle(360.0f);
+        public Angle angleStep = Angle.DegreesAngle(10.0f);
         public Vector2 worldSize = new Vector2(1.0f, 1.0f);
 
         public int SliceCount
         {
             get
             {
-                if (0 == angleStep)
+                if (0 == angleStep.Degrees)
                 {
                     // Avoid divide-by-zero
                     return 1;
                 }
 
-                return (int)((endDegreeAngle - startDegreeAngle) / Mathf.Abs(angleStep));
+                return (int)(Mathf.Ceil((endAngle.Degrees - startAngle.Degrees) / Mathf.Abs(angleStep.Degrees)));
             }
         }
 
@@ -41,23 +41,23 @@ namespace PJ
             }
         }
 
-        public ArcMesh(float startDegreeAngle, float endDegreeAngle, float angleStep, Vector2 worldSize)
+        public ArcMesh(Angle startAngle, Angle endAngle, Angle angleStep, Vector2 worldSize)
         {
-            this.startDegreeAngle = startDegreeAngle;
-            this.endDegreeAngle = endDegreeAngle;
+            this.startAngle = startAngle;
+            this.endAngle = endAngle;
             this.angleStep = angleStep;
             this.worldSize = worldSize;
         }
 
-        public Vector3 MeshVertexFor(float degreeAngle)
+        public Vector3 MeshVertexFor(Angle degreeAngle)
         {
-            var vector = AngleUtils.DegreeAngleToVector2(degreeAngle, 1.0f);
+            var vector = (Vector2)degreeAngle;
             return new Vector3(vector.x * worldSize.x / 2.0f, vector.y * worldSize.y / 2.0f, 0);
         }
 
-        public Vector2 UVFor(float degreeAngle)
+        public Vector2 UVFor(Angle degreeAngle)
         {
-            var vector = AngleUtils.DegreeAngleToVector2(degreeAngle, 1.0f);
+            var vector = (Vector2)degreeAngle;
             return new Vector2((vector.x + 1.0f) / 2.0f, (vector.y + 1.0f) / 2.0f);
         }
 
@@ -79,7 +79,7 @@ namespace PJ
             // Edge vertices
             for (int i = 0; i < (vertexCount - 1); i++)
             {
-                var angle = startDegreeAngle + angleStep * i;
+                var angle = Angle.DegreesAngle(Mathf.Min(endAngle.Degrees, startAngle.Degrees + angleStep.Degrees * i));
                 vertices[i + 1] = MeshVertexFor(angle);
                 uv[i + 1] = UVFor(angle);
             }

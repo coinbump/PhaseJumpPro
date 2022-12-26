@@ -4,6 +4,7 @@
  * RATING: 5 stars
  * Has unit tests
  * CODE REVIEW: 4/21/22
+ * PORTED TO: C++
  */
 namespace PJ
 {
@@ -19,7 +20,7 @@ namespace PJ
 
         public AnimationCycleTimer(float duration, AnimationCycleType cycleType)
         {
-            timer = new Timer(duration, SomeTimed.RunType.RunOnce);
+            timer = new Timer(duration, SomeRunner.RunType.RunOnce);
             this.cycleType = cycleType;
         }
 
@@ -87,7 +88,7 @@ namespace PJ
         public virtual void OnUpdate(TimeSlice time)
         {
             if (timer.IsFinished) { return; }
-            
+
             timer.OnUpdate(time);
 
             if (timer.IsFinished)

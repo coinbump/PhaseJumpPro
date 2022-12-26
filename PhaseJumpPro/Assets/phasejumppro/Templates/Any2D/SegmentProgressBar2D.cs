@@ -13,7 +13,7 @@ namespace PJ
     /// Displays progress as a series of empty/filled segments
     /// </summary>
     // FUTURE: support editor building of segments if needed
-	public class SegmentProgressBar2D : MonoBehaviour
+	public class SegmentProgressBar2D : WorldComponent
 	{
 		public enum ValueType
         {

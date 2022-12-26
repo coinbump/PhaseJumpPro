@@ -3,6 +3,11 @@ using System.Collections.Generic;
 using PJ;
 using UnityEngine;
 
+/*
+RATING: 5 stars
+Tested and works
+CODE REVIEW: 12/25/22
+*/
 namespace PJ
 {
     public partial class UISystem
@@ -18,7 +23,7 @@ namespace PJ
         public bool lockDrag = false;
 
         protected DragModel dragModel;
-        protected WeakGameObjectList dropTargetsOver;
+        protected WeakReference<GameObject> dropTargetOverObject;
         protected DragState dragState = DragState.Default;
 
         public DragItems DraggedItems
@@ -27,7 +32,7 @@ namespace PJ
             {
                 if (null != dragModel)
                 {
-                    var list = new List<Draggable2D> { dragModel.dragged };
+                    var list = new List<SomeDragHandler> { dragModel.dragHandler };
                     return new DragItems(list);
                 }
                 else
@@ -36,13 +41,13 @@ namespace PJ
                 }
             }
         }
-    
-        protected virtual void OnUpdateDrag()
+
+        protected virtual void OnDragUpdate()
         {
-            if (!mouseInputController.IsAvailable()) { return; }
-            var didMouseButtonUp = mouseInputController.mouse.leftButton.wasReleasedThisFrame;
-            var didMouseButtonDown = mouseInputController.mouse.leftButton.wasPressedThisFrame;
-            var isMouseButtonDown = mouseInputController.mouse.leftButton.isPressed;
+            if (!mouseDevice.IsAvailable()) { return; }
+            var didMouseButtonUp = mouseDevice.mouse.leftButton.wasReleasedThisFrame;
+            var didMouseButtonDown = mouseDevice.mouse.leftButton.wasPressedThisFrame;
+            var isMouseButtonDown = mouseDevice.mouse.leftButton.isPressed;
 
             //if (didMouseButtonDown)
             //{
@@ -62,7 +67,7 @@ namespace PJ
                     case DragState.LockDragMouseUp:
                         if (didMouseButtonDown)
                         {
-                            DropDragged();
+                            OnDragEnd();
                             return;
                         }
                         break;
@@ -75,27 +80,26 @@ namespace PJ
             {
                 if (null == dragModel) { return; }
 
-                var dragged = dragModel.dragged;
+                var dragged = dragModel.dragHandler;
                 if (null == dragged) { return; }
 
                 CheckDropTargets();
 
-                var inputWorldPosition = mouseInputController.WorldPosition;
+                var inputWorldPosition = mouseDevice.WorldPosition;
                 if (null == inputWorldPosition) { return; }
-                var internalOffset = dragged.dragStartPosition - dragged.dragStartInputWorldPosition;
 
-                dragged.transform.position = inputWorldPosition + internalOffset;
+                dragged.OnDragUpdate(new WorldPosition(inputWorldPosition));
             }
             else
             {
-                DropDragged();
+                OnDragEnd();
             }
         }
 
         protected virtual void CheckDropTargets()
         {
-            //Debug.Log("Drop: Position: " + mouseInputController.position.ToString());
-            var worldPosition = mouseInputController.WorldPosition;
+            //Debug.Log("Drop: Position: " + mouseDevice.position.ToString());
+            var worldPosition = mouseDevice.WorldPosition;
             if (null == worldPosition) { return; }
 
             var raycastHits = Physics2D.RaycastAll(worldPosition, Vector2.zero);
@@ -107,7 +111,7 @@ namespace PJ
 
             foreach (RaycastHit2D raycastHit in raycastHits)
             {
-                if (raycastHit.collider.gameObject == dragModel.dragged.gameObject)
+                if (raycastHit.collider.gameObject == dragModel.dragHandler.gameObject)
                 {
                     continue;
                 }
@@ -124,34 +128,28 @@ namespace PJ
             }
 
             bool isAlreadyIn = false;
-            if (null != dropTargetsOver)
+            if (null != dropTargetOverObject && dropTargetOverObject.TryGetTarget(out GameObject dropTargetTarget))
             {
-                foreach (WeakReference<GameObject> dropTargetReference in dropTargetsOver)
+                var activeDropTarget = dropTargetTarget.GetComponent<DropTarget>();
+                if (activeDropTarget != hitBehavior)
                 {
-                    if (dropTargetReference.TryGetTarget(out GameObject dropTargetObject))
-                    {
-                        var dropTarget = dropTargetObject.GetComponent<DropTarget>();
-                        if (dropTarget != hitBehavior)
-                        {
-                            dropTarget.OnDragLeave();
-                        }
-                        else
-                        {
-                            isAlreadyIn = true;
-                        }
-                    }
+                    activeDropTarget.OnDragLeave();
+                }
+                else
+                {
+                    isAlreadyIn = true;
                 }
             }
 
             if (null == hitBehavior)
             {
-                dropTargetsOver = new WeakGameObjectList();
+                dropTargetOverObject = null;
                 return;
             }
-            dropTargetsOver = new WeakGameObjectList { hitBehavior.gameObject };
 
             if (!isAlreadyIn)
             {
+                dropTargetOverObject = new WeakReference<GameObject>(hitBehavior.gameObject);
                 hitBehavior.OnDragEnter(dragItems);
             }
         }
@@ -166,29 +164,28 @@ namespace PJ
                     return;
             }
 
-            DropDragged();
+            OnDragEnd();
             this.dragModel = dragModel;
 
             dragState = lockDrag ? DragState.LockDragMouseDown : DragState.Drag;
         }
 
-        public virtual void DropDragged()
+        public virtual void OnDragEnd()
         {
-            if (null != dropTargetsOver)
+            if (null != dropTargetOverObject && dropTargetOverObject.TryGetTarget(out GameObject dropTargetTarget))
             {
-                dropTargetsOver.Refresh();
+                var dropTarget = dropTargetTarget.GetComponent<DropTarget>();
+                dropTarget.OnDragLeave();
 
-                foreach (WeakReference<GameObject> dropTargetReference in dropTargetsOver)
+                if (dropTarget.CanAcceptDrag(DraggedItems))
                 {
-                    if (dropTargetReference.TryGetTarget(out GameObject dropTargetObject))
-                    {
-                        dropTargetObject.GetComponent<DropTarget>().OnDragLeave();
-                    }
+                    dropTarget.OnAcceptDrag(DraggedItems);
                 }
             }
+            dropTargetOverObject = null;
 
             if (null == dragModel) { return; }
-            dragModel.dragged.Drop();
+            dragModel.dragHandler.OnDragEnd();
             dragModel = null;
             dragState = DragState.Default;
         }

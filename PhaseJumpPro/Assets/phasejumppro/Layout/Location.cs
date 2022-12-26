@@ -8,7 +8,7 @@ using System.Collections;
  */
 namespace PJ
 {
-    public class Location : MonoBehaviour
+    public class Location : WorldComponent
     {
         public Vector3 location = Vector3.zero;
     }

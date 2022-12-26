@@ -15,7 +15,7 @@ namespace PJ
     /// and exits the stage by reversing the direction of the path.
     /// Useful for sliding UI panels and visual novels
     /// </summary>
-    public class Stage2D : MonoBehaviour
+    public class Stage2D : WorldComponent
     {
         public void EnterAll()
         {

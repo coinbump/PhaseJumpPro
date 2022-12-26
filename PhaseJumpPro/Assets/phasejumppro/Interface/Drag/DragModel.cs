@@ -13,11 +13,11 @@ namespace PJ
     /// </summary>
     public class DragModel
     {
-        public Draggable2D dragged;
+        public SomeDragHandler dragHandler;
 
-        public DragModel(Draggable2D dragged)
+        public DragModel(SomeDragHandler dragHandler)
         {
-            this.dragged = dragged;
+            this.dragHandler = dragHandler;
         }
     }
 }

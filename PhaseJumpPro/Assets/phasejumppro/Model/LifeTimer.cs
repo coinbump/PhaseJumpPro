@@ -6,27 +6,30 @@ using UnityEngine;
  * Simple utility behavior
  * CODE REVIEW: 4/13/22
  */
+// TODO: Get rid of this? Use Destroy(, time) instead?
 namespace PJ
 {
     /// <summary>
     /// Destroys an object after N seconds have passed
     /// Example: shotgun bullets have short lifespan
     /// </summary>
-    public class LifeTimer : MonoBehaviour
+    public class LifeTimer : WorldComponent
     {
         public float lifeTime;
 
         protected float timer;
 
-        protected override void Update()
+        public override void OnUpdate(TimeSlice time)
         {
+            base.OnUpdate(time);
+
             if (lifeTime <= 0) { return; }
 
-            timer += Time.deltaTime;
+            timer += time.delta;
 
             if (timer >= lifeTime)
             {
-                Destroy(gameObject);
+                DestroyOwner();
             }
         }
     }

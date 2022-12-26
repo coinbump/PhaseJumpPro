@@ -129,9 +129,10 @@ namespace PJ
 		/// <summary>
         /// Translate a degree angle to a map direction
         /// </summary>
-        public static MapDirection DegreeAngleToMapDirection(float degreeAngle, MapDirectionAxisLimit axisLimit)
+        public static MapDirection AngleToMapDirection(Angle angle, MapDirectionAxisLimit axisLimit)
 		{
-			var axisLimitNumber = 4;
+            var degreeAngle = angle.Degrees;
+            var axisLimitNumber = 4;
 			switch (axisLimit)
 			{
 				case MapDirectionAxisLimit.EightWay:
@@ -140,11 +141,11 @@ namespace PJ
 			}
 
 			var angleAxisLimiter = new AngleAxisLimiter2D(axisLimitNumber);
-			var limitedAngle = angleAxisLimiter.LimitAngle(degreeAngle);
+			var limitedAngle = angleAxisLimiter.LimitAngle(Angle.DegreesAngle(degreeAngle));
 
 			var result = MapDirection.North;
 
-			switch (Mathf.RoundToInt(limitedAngle))
+			switch (Mathf.RoundToInt(limitedAngle.Degrees))
 			{
 				case 0:
 				case 360:

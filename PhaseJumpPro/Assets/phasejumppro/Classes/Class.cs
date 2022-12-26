@@ -5,26 +5,25 @@ using UnityEngine;
  * RATING: 5 stars
  * Simple class
  * CODE REVIEW: 4/8/22
- * 
  * PORTED TO: C++
  */
 namespace PJ
 {
-	/// <summary>
-	/// Class objects are useful for defining modular behavior based on object type
-	/// We might want to have properties that are defined dynamically (during runtime),
+    /// <summary>
+    /// Class objects are useful for defining modular behavior based on object type
+    /// We might want to have properties that are defined dynamically (during runtime),
     /// but also shared by multiple objects of the same type
-	/// </summary>
-	public class Class
-	{
-		public string id;
+    /// </summary>
+    public class Class
+    {
+        public string id;
 
-		/// <summary>
+        /// <summary>
         /// Optional title, for browsing
         /// </summary>
         public string title;
 
-		/// <summary>
+        /// <summary>
         /// Optional description, for browsing
         /// </summary>
         public string description;
@@ -39,15 +38,15 @@ namespace PJ
         /// </summary>
         public Tags tags = new Tags();
 
-		public Class(string id)
+        public Class(string id)
         {
-			this.id = id;
+            this.id = id;
         }
 
-		public Class(string id, TypeTagsSet typeTags)
-		{
-			this.id = id;
-			this.typeTags = typeTags;
-		}
-	}
+        public Class(string id, TypeTagsSet typeTags)
+        {
+            this.id = id;
+            this.typeTags = typeTags;
+        }
+    }
 }

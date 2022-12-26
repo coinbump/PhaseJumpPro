@@ -27,13 +27,13 @@ namespace PJ
         /// </summary>
         public int axisLimit = 0;
 
-        protected Node2D node;
+        protected GoNode2D node;
 
-        public SomeTransform<float> interpolate = new InterpolateLinear();
+        public SomeValueTransform<float> interpolate = new LinearInterpolate();
 
         protected override void Start()
         {
-            node = GetComponent<Node2D>();
+            node = GetComponent<GoNode2D>();
             if (null == node)
             {
                 Debug.LogWarning("Axis Control Scheme requires a Node2D");
@@ -51,7 +51,7 @@ namespace PJ
 
             // Don't use Node2D Velocity (it is constant). Use rigidbody velocity, which decays
             // This results in more fluid movement
-            node.VelocityType = Node2D.MoveType.None;
+            node.VelocityType = GoNode2D.MoveType.None;
 
             //Debug.Log("Input Move: " + context.ToString());
 
@@ -59,7 +59,7 @@ namespace PJ
             var rigidbody = node.GetComponent<Rigidbody2D>();
 
             var axisVector = value;
-            var angle = AngleUtils.Vector2ToDegreeAngle(axisVector);
+            var angle = new Angle(axisVector);
             var distance = AngleUtils.Distance(Vector2.zero, axisVector);
             if (distance <= deadZone)
             {
@@ -72,7 +72,7 @@ namespace PJ
             var moveSpeed = minMoveSpeed + ((maxMoveSpeed - minMoveSpeed) * interpolatedFactor);
 
             var limitedAngle = angleAxisLimiter.LimitAngle(angle);
-            var velocity = AngleUtils.DegreeAngleToVector2(limitedAngle, moveSpeed);
+            var velocity = limitedAngle.ToVector2(moveSpeed);
 
             rigidbody.velocity = velocity;
         }

@@ -43,6 +43,33 @@ namespace PJ
             return IsPieceBlockedAt(origin, piece, new HashSet<MatrixPiece>());
         }
 
+        /// <summary>
+        /// Returns the cells this piece would cover in the board if it was placed at the origin, or null if can't be placed there
+        /// </summary>
+        public List<Vector2Int> PieceLocationsAt(Vector2Int origin, MatrixPiece piece)
+        {
+            List<Vector2Int> result = new();
+
+            for (int x = 0; x < piece.Width; x++)
+            {
+                for (int y = 0; y < piece.Height; y++)
+                {
+                    var pieceLocation = new Vector2Int(x, y);
+                    var isOccupiedByPiece = piece.CellAt(pieceLocation);
+                    if (!isOccupiedByPiece) { continue; }
+
+                    var location = origin + pieceLocation;
+                    if (!IsValidLocation(location))
+                    {
+                        return null;
+                    }
+                    result.Add(location);
+                }
+            }
+
+            return result;
+        }
+
         public bool IsPieceBlockedAt(Vector2Int origin, MatrixPiece piece, HashSet<MatrixPiece> excludePieces)
         {
             for (int x = 0; x < piece.Width; x++)
@@ -136,22 +163,16 @@ namespace PJ
             }
             piece.board = null;
 
-            for (int x = 0; x < piece.Width; x++)
+            var pieceLocations = PieceLocationsAt(piece.origin, piece);
+            foreach (var location in pieceLocations)
             {
-                for (int y = 0; y < piece.Height; y++)
+                var cell = CellAt(location);
+                if (cell.piece != piece)
                 {
-                    var pieceLocation = new Vector2Int(x, y);
-                    var isOccupiedByPiece = piece.CellAt(pieceLocation);
-                    if (!isOccupiedByPiece) { continue; }
-
-                    var cell = CellAt(piece.origin + pieceLocation);
-                    if (cell.piece != piece)
-                    {
-                        Debug.Log("Error. Cell/piece mismatch");
-                        continue;
-                    }
-                    cell.piece = null;
+                    Debug.Log("Error. Cell/piece mismatch");
+                    continue;
                 }
+                cell.piece = null;
             }
         }
     }

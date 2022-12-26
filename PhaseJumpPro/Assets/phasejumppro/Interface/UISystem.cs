@@ -10,9 +10,9 @@ namespace PJ
     /// 1. Attach a Physics2DRaycaster to the camera
     /// 2. Create an EventSystem object and upgrade to the new Input system
     /// 3. Attach a non-trigger collider to objects that need interactive behavior
-    public partial class UISystem : MonoBehaviour
-	{
-		public static UISystem shared;
+    public partial class UISystem : WorldComponent
+    {
+        public static UISystem shared;
 
         /// <summary>
         /// Optional. Allows us to work with overlay cameras as well as the main camera
@@ -22,8 +22,8 @@ namespace PJ
         /// <summary>
         /// Item that has focus
         /// </summary>
-        protected WeakReference<Focusable> focusedItem;
-        protected MouseInputController mouseInputController = new MouseInputController();
+        protected WeakReference<FocusHandler> focusedItem;
+        protected MouseDevice mouseDevice = new MouseDevice();
 
         public Camera Camera
         {
@@ -33,11 +33,11 @@ namespace PJ
             }
         }
 
-        Focusable ActiveFocus
+        public FocusHandler ActiveFocus
         {
             get
             {
-                if (null != focusedItem && focusedItem.TryGetTarget(out Focusable focusable))
+                if (null != focusedItem && focusedItem.TryGetTarget(out FocusHandler focusable))
                 {
                     return focusable;
                 }
@@ -51,26 +51,26 @@ namespace PJ
                 }
                 else
                 {
-                    focusedItem = new WeakReference<Focusable>(value);
+                    focusedItem = new WeakReference<FocusHandler>(value);
                 }
             }
         }
 
         public UISystem()
-		{
+        {
             // UISystem is a MonoBehavior and must be attached to an object in the scene
             // for Update events
             if (null == shared)
             {
                 shared = this;
             }
-		}
+        }
 
         public override void OnUpdate(TimeSlice time)
         {
             base.OnUpdate(time);
 
-            OnUpdateDrag();
+            OnDragUpdate();
         }
     }
 }

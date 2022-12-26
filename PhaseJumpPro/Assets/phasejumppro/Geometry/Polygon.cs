@@ -5,6 +5,7 @@ using UnityEngine;
  * RATING: 5 stars
  * Has unit tests
  * CODE REVIEW: 4/3/22
+ * PORTED TO: C++
  */
 namespace PJ
 {
@@ -24,7 +25,7 @@ namespace PJ
 
                 var result = vertices[0];
 
-                foreach (Vector3 vertex in vertices)
+                foreach (var vertex in vertices)
                 {
                     result = new Vector3(Mathf.Min(result.x, vertex.x), Mathf.Min(result.y, vertex.y), Mathf.Min(result.z, vertex.z));
                 }
@@ -41,7 +42,7 @@ namespace PJ
 
                 var result = vertices[0];
 
-                foreach (Vector3 vertex in vertices)
+                foreach (var vertex in vertices)
                 {
                     result = new Vector3(Mathf.Max(result.x, vertex.x), Mathf.Max(result.y, vertex.y), Mathf.Max(result.z, vertex.z));
                 }

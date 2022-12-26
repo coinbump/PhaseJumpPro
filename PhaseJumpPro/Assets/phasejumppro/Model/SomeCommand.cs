@@ -24,7 +24,7 @@ namespace PJ
 		protected abstract void OnUndo();
 		protected abstract void OnExecute(bool redo);
 
-		StateMachine<StateType> stateMachine = new StateMachine<StateType>();
+		GoStateMachine<StateType> stateMachine = new GoStateMachine<StateType>();
 
 		public StateType State => stateMachine.State;
 

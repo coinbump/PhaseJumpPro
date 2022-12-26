@@ -26,7 +26,7 @@ namespace PJ
         {
             public WeakReference<WeaponEmitter2D> owner;
 
-            public BurstTimer(WeaponEmitter2D owner) : base(1.0f, SomeTimed.RunType.RunOnce)
+            public BurstTimer(WeaponEmitter2D owner) : base(1.0f, SomeRunner.RunType.RunOnce)
             {
                 id = "Weapon Burst Timer";
                 this.owner = new WeakReference<WeaponEmitter2D>(owner);
@@ -48,12 +48,12 @@ namespace PJ
         public Broadcaster broadcaster { get; protected set; } = new Broadcaster();
 
         protected Weapon2D weapon;
-        protected Node2D node;
+        protected GoNode2D node;
         protected new Rigidbody2D rigidbody2D;
         protected GameObject weaponEmitParent;
         protected Timer weaponBurstTimer;
         protected int weaponBurstCount;
-        protected float weaponBurstAngle;
+        protected Angle weaponBurstAngle;
 
         public Weapon2D Weapon
         {
@@ -74,7 +74,7 @@ namespace PJ
         {
             base.Awake();
 
-            node = GetComponent<Node2D>();
+            node = GetComponent<GoNode2D>();
             rigidbody2D = GetComponent<Rigidbody2D>();
 
             weaponBurstTimer = new BurstTimer(this);
@@ -95,7 +95,7 @@ namespace PJ
         /// <summary>
         /// Call this to fire the weapon, emitting either a bullet, or pattern of bullets, or a melee "bullet"
         /// </summary>
-        public List<GameObject> Fire(float directionAngle)
+        public List<GameObject> Fire(Angle directionAngle)
         {
             // Weapon object handles rate limiting timer
             if (!weapon.Fire()) { return new List<GameObject>(); }
@@ -103,7 +103,7 @@ namespace PJ
             return OnFire(directionAngle, true);
         }
 
-        protected List<GameObject> OnFire(float directionAngle, bool isBurstEnabled)
+        protected List<GameObject> OnFire(Angle directionAngle, bool isBurstEnabled)
         {
             var result = new List<GameObject>();
 
@@ -131,14 +131,14 @@ namespace PJ
                     }
                 }
 
-                var bulletNode = bullet.GetComponent<Node2D>();
+                var bulletNode = bullet.GetComponent<GoNode2D>();
                 if (null == bulletNode)
                 {
                     Debug.Log("Error. Node required for bullets");
                     return result;
                 }
 
-                var weaponAngle = angle + directionAngle;
+                var weaponAngle = angle + directionAngle.Degrees;
 
                 /// If requested, destroy the bullet after N seconds (for short range weapons)
                 if (weapon.lifeTime > 0)
@@ -159,14 +159,14 @@ namespace PJ
                         bulletNode.transform.parent = gameObject.transform.parent;
 
                         var bulletVelocityValue = RandomUtils.VaryFloat(weapon.velocity, weapon.varyVelocity);
-                        bulletNode.Rotation = weaponAngle;
+                        bulletNode.Rotation = Angle.DegreesAngle(weaponAngle);
 
                         // In the real world, emitter velocity is taken to account
                         // but this can look strange in some games
                         if (isEmitterVelocityAdded && null != rigidbody2D)
                         {
                             var emitterBaseVelocity = rigidbody2D.velocity;
-                            var forwardBulletVelocity = AngleUtils.DegreeAngleToVector2(weaponAngle, bulletVelocityValue);
+                            var forwardBulletVelocity = Angle.DegreesAngle(weaponAngle).ToVector2(bulletVelocityValue);
                             forwardBulletVelocity += emitterBaseVelocity;
                             bulletVelocityValue = forwardBulletVelocity.magnitude;
                         }

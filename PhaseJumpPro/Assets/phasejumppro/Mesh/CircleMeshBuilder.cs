@@ -14,7 +14,7 @@ namespace PJ
     /// </summary>
     public class CircleMeshBuilder : SomeMeshBuilder
     {
-        public float angleStep = 10.0f;
+        public Angle angleStep = Angle.DegreesAngle(10.0f);
         public float radius = 1.0f;
 
         public override Vector2 WorldSize

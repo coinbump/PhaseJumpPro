@@ -16,19 +16,19 @@ namespace PJ
     /// This should be used for Kinematic objects only, without colliders
     /// </summary>
     /// FUTURE: support HexNode2D, HexBoardRunner if needed
-    public class MatrixNode2D : Node2D
+    public class MatrixNode2D : GoNode2D
     {
         [Space(10)]
         [Header("MatrixNode2D Properties")]
-        public Vector2Int origin;
+        public Vector2Int initialOrigin;
 
         // For editor
         public List<string> pieceShape = new List<string>();
 
         public MatrixPiece piece;
 
-        public Animator<Vector2> moveAnimator;
-        
+        public CycleAnimator<Vector2> moveAnimator;
+
         public bool IsAnimating
         {
             get

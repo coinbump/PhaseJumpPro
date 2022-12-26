@@ -14,9 +14,9 @@ namespace PJ
     /// </summary>
     public class ArcMeshBuilder : SomeMeshBuilder
     {
-        public float startDegreeAngle = 0;
-        public float endDegreeAngle = 360.0f;
-        public float angleStep = 10.0f;
+        public Angle startAngle = Angle.DegreesAngle(0);
+        public Angle endAngle = Angle.DegreesAngle(360.0f);
+        public Angle angleStep = Angle.DegreesAngle(10.0f);
         public Vector2 worldSize = new Vector2(1.0f, 1.0f);
 
         public override Vector2 WorldSize
@@ -27,7 +27,7 @@ namespace PJ
 
         public override Mesh BuildMesh()
         {
-            var shapeMesh = new ArcMesh(startDegreeAngle, endDegreeAngle, angleStep, worldSize);
+            var shapeMesh = new ArcMesh(startAngle, endAngle, angleStep, worldSize);
             var mesh = shapeMesh.Build(true);
             return mesh;
         }

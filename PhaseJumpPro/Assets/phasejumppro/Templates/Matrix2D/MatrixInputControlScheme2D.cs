@@ -57,8 +57,8 @@ namespace PJ
                 return;
             }
 
-            var angle = AngleUtils.Vector2ToDegreeAngle(axisVector);
-            var direction = MapUtils.DegreeAngleToMapDirection(angle, axisLimit);
+            var angle = new Angle(axisVector);
+            var direction = MapUtils.AngleToMapDirection(angle, axisLimit);
 
             var moveResult = boardRunner.MovePiece(node.piece, direction, moveTime);
             OnMoveResult(node, direction, moveResult);

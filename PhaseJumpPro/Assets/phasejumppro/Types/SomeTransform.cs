@@ -4,7 +4,6 @@
  * RATING: 5 stars
  * Simple class
  * CODE REVIEW: 3/12/22
- * 
  * Ported to: C++
  */
 namespace PJ
@@ -12,12 +11,16 @@ namespace PJ
     /// <summary>
     /// A class that transforms a value
     /// </summary>
-    public abstract class SomeTransform<Value>
+    public abstract class SomeTransform<Value, Result>
     {
-        public abstract Value Transform(Value value);
+        public abstract Result Transform(Value value);
     }
 
-    public class IdentityTransform<Value> : SomeTransform<Value>
+    public abstract class SomeValueTransform<Value> : SomeTransform<Value, Value>
+    {
+    }
+
+    public class IdentityTransform<Value> : SomeValueTransform<Value>
     {
         public override Value Transform(Value value)
         {

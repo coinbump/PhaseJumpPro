@@ -12,7 +12,7 @@ namespace PJ
     /// <summary>
     /// Clamp a float
     /// </summary>
-    public class FloatClamp : SomeTransform<float>
+    public class FloatClamp : SomeValueTransform<float>
     {
         public float minValue;
         public float maxValue;

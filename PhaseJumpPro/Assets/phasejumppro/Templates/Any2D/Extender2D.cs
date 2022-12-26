@@ -7,35 +7,35 @@ using UnityEditor;
 /*
  * RATING: 5 stars
  * Useful 2D pattern. Tested and works
- * CODE REVIEW: 11/13/22
+ * CODE REVIEW: 12/18/22
  */
 namespace PJ
 {
-	/// <summary>
-	/// Extends child objects away from the center of the parent
-	/// Useful for animations where the children extend away and collapse in
-	/// Example: a selection frame where the corner pieces move away and towards the selection
-	/// </summary>
-	public class Extender2D : MonoBehaviour
-	{
-		[Serializable]
-		public struct Element
-		{
-			/// <summary>
-			/// Angle at which the distance-extension occurs in 2D space (in degrees)
-			/// </summary>
-			[Range(0, 360.0f)]
-			public float extendAngle;
+    /// <summary>
+    /// Extends child objects away from the center of the parent
+    /// Useful for animations where the children extend away and collapse in
+    /// Example: a selection frame where the corner pieces move away and towards the selection
+    /// </summary>
+    public class Extender2D : WorldComponent
+    {
+        [Serializable]
+        public struct Item
+        {
+            /// <summary>
+            /// Angle at which the distance-extension occurs in 2D space (in degrees)
+            /// </summary>
+            [Range(0, 360.0f)]
+            public float extendAngle;
 
-			/// <summary>
-			/// Min distance from center of parent 
-			/// </summary>
+            /// <summary>
+            /// Min distance from center of parent 
+            /// </summary>
             public float minDistance;
 
-			/// <summary>
-			/// Max distance from center of parent
-			/// </summary>
-			public float maxDistance;
+            /// <summary>
+            /// Max distance from center of parent
+            /// </summary>
+            public float maxDistance;
 
             /// <summary>
             /// Normalized distance (0-1.0)
@@ -43,75 +43,77 @@ namespace PJ
             [Range(0, 1.0f)]
             public float normalDistance;
 
-			public float Distance
-			{
-				get
-				{
+            public float Distance
+            {
+                get
+                {
                     return minDistance + normalDistance * (maxDistance - minDistance);
-				}
-			}
-		}
+                }
+            }
+        }
 
-		/// <summary>
-		/// Links all child objects to share the same normal distance
-		/// </summary>
-		public bool linkNormalDistances = false;
+        /// <summary>
+        /// Links all child objects to share the same distance values
+        /// </summary>
+        public bool linkDistances = true;
 
-		/// <summary>
-		/// If normal distances are linked, parent normal distance will be used for all child objects
-		/// Otherwise this is ignored
-		/// </summary>
-		public float normalDistance = 0;
+        public float minDistance;
+        public float maxDistance;
 
-		public List<Element> elements = new List<Element>();
+        /// <summary>
+        /// If normal distances are linked, parent normal distance will be used for all child objects
+        /// Otherwise this is ignored
+        /// </summary>
+        public float normalDistance = 0;
 
-        protected override void Start()
-		{
-		}
+        public List<Item> items = new();
 
-		protected override void Update()
-		{
-		}
+        public override void OnUpdate(TimeSlice time)
+        {
+            base.OnUpdate(time);
 
-		public virtual Vector2 LocalPositionForElement(Element element)
-		{
-			var distance = element.Distance;
-			if (linkNormalDistances)
-			{
-				distance = normalDistance;
-			}
+            ApplyLayout();
+        }
 
-            var offsetVector = AngleUtils.DegreeAngleToVector2(element.extendAngle, distance);
-			return offsetVector;
+        public virtual Vector2 LocalPositionForElement(Item element)
+        {
+            var distance = element.Distance;
+            if (linkDistances)
+            {
+                distance = minDistance + normalDistance * (maxDistance - minDistance);
+            }
+
+            var offsetVector = Angle.DegreesAngle(element.extendAngle).ToVector2(distance);
+            return offsetVector;
         }
 
         public virtual void ApplyLayout()
-		{
-			var index = 0;
-			foreach (Transform childTransform in transform)
+        {
+            var index = 0;
+            foreach (Transform childTransform in transform)
             {
-                if (index >= elements.Count) { break; }
+                if (index >= items.Count) { break; }
                 var childObject = childTransform.gameObject;
 
-				var element = elements[index];
-				var position = LocalPositionForElement(element);
+                var element = items[index];
+                var position = LocalPositionForElement(element);
                 childObject.transform.localPosition = new Vector3(position.x, position.y, childObject.transform.localPosition.z);
 
                 index++;
-			}
+            }
         }
 
 #if UNITY_EDITOR
         protected virtual void OnValidate()
         {
-			ApplyLayout();
+            ApplyLayout();
         }
 
         protected override void RenderGizmos(EditorUtils.RenderState renderState)
         {
-			foreach (Element element in elements)
-			{
-				var position = transform.TransformPoint(LocalPositionForElement(element));
+            foreach (Item element in items)
+            {
+                var position = transform.TransformPoint(LocalPositionForElement(element));
                 EditorUtils.DrawRect(position, 0.05f, 0.05f, renderState);
             }
         }
@@ -131,5 +133,5 @@ namespace PJ
             }
         }
 #endif
-	}
+    }
 }

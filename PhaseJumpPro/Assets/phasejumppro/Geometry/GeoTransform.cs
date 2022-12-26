@@ -2,10 +2,8 @@
 using UnityEngine;
 
 /*
-RATING: 5 stars
-Simple model
-CODE REVIEW: 11/23/22
-PORTED TO: C++
+RATING: ? stars
+TODO: should we be using quaternions/eulerAngles here? Or somewhere else?
 */
 namespace PJ
 {

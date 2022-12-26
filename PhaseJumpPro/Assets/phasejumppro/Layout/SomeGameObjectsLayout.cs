@@ -13,7 +13,7 @@ namespace PJ
     /// Defines the layout of child game objects
     /// (different than Unity's Layout Group for UI, which requires a Canvas)
     /// </summary>
-    public abstract class SomeGameObjectsLayout : PJ.MonoBehaviour
+    public abstract class SomeGameObjectsLayout : PJ.WorldComponent
     {
         /// <summary>
         /// If true, layout will be updated automatically.
@@ -34,8 +34,6 @@ namespace PJ
         /// Arrange child objects according to the layout
         /// </summary>
         public abstract void ApplyLayout();
-
-        protected override void Awake() { }
 
         protected override void Start()
         {

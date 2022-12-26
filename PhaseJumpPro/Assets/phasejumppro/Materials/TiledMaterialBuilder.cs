@@ -11,7 +11,7 @@ namespace PJ
 	/// <summary>
     /// Sets up material for tiled rendering
     /// </summary>
-	public class TiledMaterialBuilder : MonoBehaviour
+	public class TiledMaterialBuilder : WorldComponent
 	{
 		public Vector2 tiling = new Vector2(1.0f, 1.0f);
 		public Vector2 offset = new Vector2(0.0f, 0.0f);

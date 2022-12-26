@@ -7,7 +7,7 @@ namespace PJ
     /// <summary>
     /// Bullet nodes have some common behavior in all games
     /// </summary>
-    public class Bullet2D : Node2D
+    public class Bullet2D : GoNode2D
     {
         [Space(10)]
         [Header("Bullet2D Values")]

@@ -21,19 +21,19 @@ namespace PJ
             this.axisLimit = axisLimit;
         }
 
-        public float LimitAngle(float angle)
+        public Angle LimitAngle(Angle angle)
         {
             if (axisLimit <= 0) { return angle; }
 
-            if (angle < 0)
+            if (angle.Degrees < 0)
             {
-                return 0;
+                return Angle.DegreesAngle(0);
             }
 
             // If there are 4 axes available, then angles -45 to 45 are up (90 degrees total)
             var sliceAngle = 360.0f / axisLimit;
-            angle = Mathf.Round(angle / sliceAngle);
-            return angle * sliceAngle;
+            var result = Mathf.Round(angle.Degrees / sliceAngle);
+            return Angle.DegreesAngle(result * sliceAngle);
         }
     }
 }

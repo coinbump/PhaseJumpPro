@@ -8,30 +8,30 @@ CODE REVIEW: 11/19/22
 */
 namespace PJ
 {
-	/// <summary>
-	/// Rotates the Node2D to aim at the mouse
-	/// </summary>
-	public class AimAtMouseInputControlScheme2D : SomeInputControlScheme
-	{
-        protected MouseInputController mouseInputController = new MouseInputController();
+    /// <summary>
+    /// Rotates the Node2D to aim at the mouse
+    /// </summary>
+    public class AimAtMouseInputControlScheme2D : SomeInputControlScheme
+    {
+        protected MouseDevice mouseDevice = new MouseDevice();
 
-		/// <summary>
-		/// On update, aim at the mouse
-		/// </summary>
-		public override void OnUpdate(TimeSlice time)
-		{
-			base.OnUpdate(time);
+        /// <summary>
+        /// On update, aim at the mouse
+        /// </summary>
+        public override void OnUpdate(TimeSlice time)
+        {
+            base.OnUpdate(time);
 
-			if (null == mouseInputController || !mouseInputController.IsAvailable()) { return; }
+            if (null == mouseDevice || !mouseDevice.IsAvailable()) { return; }
 
-            if (gameObject.TryGetComponent(out Node2D node))
+            if (gameObject.TryGetComponent(out GoNode2D node))
             {
-				var mouseScreenPosition = mouseInputController.ScreenPosition;
-				var mouseWorldPosition = Camera.main.ScreenToWorldPoint(new Vector3(mouseScreenPosition.x, mouseScreenPosition.y, 0));
-				var myWorldPosition = transform.position;
-				var angle = AngleUtils.Vector2ToDegreeAngle(new Vector2(mouseWorldPosition.x, mouseWorldPosition.y) - new Vector2(myWorldPosition.x, myWorldPosition.y));
-				node.Rotation = angle;
+                var mouseScreenPosition = mouseDevice.ScreenPosition;
+                var mouseWorldPosition = Camera.main.ScreenToWorldPoint(new Vector3(mouseScreenPosition.x, mouseScreenPosition.y, 0));
+                var myWorldPosition = transform.position;
+                var angle = new Angle(new Vector2(mouseWorldPosition.x, mouseWorldPosition.y) - new Vector2(myWorldPosition.x, myWorldPosition.y));
+                node.Rotation = angle;
             }
         }
-	}
+    }
 }

@@ -12,72 +12,85 @@ using System.Collections.Generic;
  */
 namespace PJ
 {
-    namespace Graph
+    public class AcyclicGraphNode<EdgeModel> : SomeGraphNode<EdgeModel>
     {
-        public class AcyclicNode<EdgeModel> : SomeGraphNode<EdgeModel>
+        public override void AddEdge(EdgeModel model, SomeGraphNode<EdgeModel> toNode)
         {
-            public override void AddEdge(EdgeModel model, SomeGraphNode<EdgeModel> toNode)
-            {
-                // Acyclic graph nodes hold a strong reference to their next node
-                AddEdgeInternal(model, new StrongReference<SomeGraphNode<EdgeModel>>(toNode));
-            }
+            // Acyclic graph nodes hold a strong reference to their next node
+            AddEdgeInternal(model, new StrongReference<SomeGraphNode<EdgeModel>>(toNode));
+        }
 
-            public AcyclicNode<EdgeModel> RootNode
+        public AcyclicGraphNode<EdgeModel> RootNode
+        {
+            /* HAS UNIT TEST */
+            get
             {
-                /* HAS UNIT TEST */
-                get
+                var node = this;
+
+                var searchedNodes = new HashSet<AcyclicGraphNode<EdgeModel>>();
+
+                while (node.FromNodes.Count > 0)
                 {
-                    var node = this;
+                    searchedNodes.Add(node);
 
-                    var searchedNodes = new HashSet<AcyclicNode<EdgeModel>>();
-
-                    while (node.FromNodes.Count > 0)
-                    {
-                        searchedNodes.Add(node);
-
-                        foreach (HashedWeakReference<SomeGraphNode<EdgeModel>> weakFromNode in node.FromNodes)
-                        {
-                            if (weakFromNode.Reference.TryGetTarget(out SomeGraphNode<EdgeModel> target))
-                            {
-                                node = (AcyclicNode<EdgeModel>)target;
-                                break;
-                            }
-                        }
-
-                        // Graph shouldn't be cyclic, but prevent the edge case of an infinite loop
-                        if (searchedNodes.Contains(node))
-                        {
-                            return null;
-                        }
-                    }
-
-                    return node;
-                }
-            }
-
-            public AcyclicNode<EdgeModel> Parent
-            {
-                /* HAS UNIT TEST */
-                get
-                {
-                    foreach (HashedWeakReference<SomeGraphNode<EdgeModel>> weakFromNode in FromNodes)
+                    foreach (HashedWeakReference<SomeGraphNode<EdgeModel>> weakFromNode in node.FromNodes)
                     {
                         if (weakFromNode.Reference.TryGetTarget(out SomeGraphNode<EdgeModel> target))
                         {
-                            return (AcyclicNode<EdgeModel>)target;
+                            node = (AcyclicGraphNode<EdgeModel>)target;
+                            break;
                         }
                     }
 
-                    return null;
+                    // Graph shouldn't be cyclic, but prevent the edge case of an infinite loop
+                    if (searchedNodes.Contains(node))
+                    {
+                        return null;
+                    }
                 }
-            }
 
-            public bool IsRootNode
+                return node;
+            }
+        }
+
+        public AcyclicGraphNode<EdgeModel> Parent
+        {
+            /* HAS UNIT TEST */
+            get
             {
-                /* HAS UNIT TEST */
-                get
+                foreach (HashedWeakReference<SomeGraphNode<EdgeModel>> weakFromNode in FromNodes)
                 {
-                    return FromNodes.Count <= 0;
+                    if (weakFromNode.Reference.TryGetTarget(out SomeGraphNode<EdgeModel> target))
+                    {
+                        return (AcyclicGraphNode<EdgeModel>)target;
+                    }
+                }
+
+                return null;
+            }
+        }
+
+        public bool IsRootNode
+        {
+            /* HAS UNIT TEST */
+            get
+            {
+                return FromNodes.Count <= 0;
+            }
+        }
+
+        /// <summary>
+        /// Only the root node should have OnUpdate called, every other node should override OnUpdateNode instead
+        /// </summary>
+        public override void OnUpdate(TimeSlice time)
+        {
+            if (IsRootNode)
+            {
+                var nodes = CollectGraph();
+                foreach (SomeGraphNode<EdgeModel> node in nodes)
+                {
+                    if (node == this) { continue; }
+                    node.OnUpdate(time);
                 }
             }
         }

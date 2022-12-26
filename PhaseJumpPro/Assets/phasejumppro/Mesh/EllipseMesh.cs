@@ -13,7 +13,7 @@ namespace PJ
     /// </summary>
     public class EllipseMesh : SomeMesh
     {
-        public float angleStep = 10.0f;
+        public Angle angleStep = Angle.DegreesAngle(10.0f);
         public Vector2 worldSize = new Vector2(1.0f, 1.0f);
 
         protected ArcMesh arcMesh;
@@ -23,11 +23,11 @@ namespace PJ
             get => arcMesh.MeshVertexCount;
         }
 
-        public EllipseMesh(float angleStep, Vector2 worldSize)
+        public EllipseMesh(Angle angleStep, Vector2 worldSize)
         {
             this.angleStep = angleStep;
             this.worldSize = worldSize;
-            arcMesh = new ArcMesh(0, 360.0f, angleStep, worldSize);
+            arcMesh = new ArcMesh(Angle.DegreesAngle(0), Angle.DegreesAngle(360.0f), angleStep, worldSize);
         }
 
         public override Mesh BuildMesh(Mesh mesh)

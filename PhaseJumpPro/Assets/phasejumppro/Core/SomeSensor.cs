@@ -50,7 +50,7 @@ namespace PJ
     /// A sensor works in conjunction with colliders and sends sense events
     /// Use these instead of simple colliders, and eventually sensors will add collusion checks for walls
     /// </summary>
-    public abstract class SomeSensor : MonoBehaviour
+    public abstract class SomeSensor : WorldComponent
     {
         protected enum CheckOccludersResult
         {

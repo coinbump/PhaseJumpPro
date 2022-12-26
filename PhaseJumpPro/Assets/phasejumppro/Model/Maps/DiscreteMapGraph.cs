@@ -11,7 +11,7 @@ namespace PJ
 	/// <summary>
     /// Some room on a map
     /// </summary>
-	public abstract class SomeRoom : CyclicNode<StandardEdgeModel>
+	public abstract class SomeRoom : CyclicGraphNode<StandardEdgeModel>
     {
 
     }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using PJ;
 
-public class ExampleAudioVolumeScaler : PJ.MonoBehaviour
+public class ExampleAudioVolumeScaler : PJ.WorldComponent
 {
     protected AudioVolumeMonitor audioVolumeMonitor;
 

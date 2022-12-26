@@ -21,9 +21,9 @@ namespace PJ
             this.controlPoints = controlPoints;
         }
 
-        public Vector3 PositionAt(float position)
+        public override Vector3 PositionAt(float progress)
         {
-            var t = position;
+            var t = progress;
 
             if (controlPoints.Count == 3)
             {

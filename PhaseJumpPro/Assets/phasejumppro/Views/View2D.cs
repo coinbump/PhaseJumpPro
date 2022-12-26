@@ -20,6 +20,7 @@ namespace PJ
     {
         private Bounds2D frame = new Bounds2D();
 
+        [Header("View2D Properties")]
         /// <summary>
         /// Optional. Allows us to work with overlay cameras as well as the main camera
         /// </summary>
@@ -36,31 +37,37 @@ namespace PJ
         /// </summary>
         public float zStep = 0.1f;
 
-        public virtual Optional<float> IntrinsicWidth {
+        public virtual Optional<float> IntrinsicWidth
+        {
             get
             {
                 var fixedWidth = FixedWidth;
-                if (null != fixedWidth) {
+                if (null != fixedWidth)
+                {
                     return fixedWidth;
                 }
 
                 if (ignoreIntrinsicWidth) { return null; }
                 return intrinsicWidth;
             }
-            set {
+            set
+            {
                 intrinsicWidth = value;
             }
         }
 
-        public float DefaultIntrinsicWidth {
-            get {
+        public float DefaultIntrinsicWidth
+        {
+            get
+            {
                 var result = IntrinsicWidth;
                 if (null == result) { return 0; }
                 return result.value;
             }
         }
-        
-        public virtual Optional<float> IntrinsicHeight {
+
+        public virtual Optional<float> IntrinsicHeight
+        {
             get
             {
                 var fixedHeight = FixedHeight;
@@ -72,13 +79,16 @@ namespace PJ
                 if (ignoreIntrinsicHeight) { return null; }
                 return intrinsicHeight;
             }
-            set {
+            set
+            {
                 intrinsicHeight = value;
             }
         }
 
-        public float DefaultIntrinsicHeight {
-            get {
+        public float DefaultIntrinsicHeight
+        {
+            get
+            {
                 var result = IntrinsicHeight;
                 if (null == result) { return 0; }
                 return result.value;
@@ -97,70 +107,6 @@ namespace PJ
         {
         }
 
-        protected virtual void _ApplyLayout(Bounds2D layoutBounds) {
-            var childViews = ChildViews();
-
-            // Default layout: center child views
-            foreach (var view in childViews) {
-                var intrinsicWidth = view.IntrinsicWidth;
-                var intrinsicHeight = view.IntrinsicHeight;
-
-                var width = intrinsicWidth != null ? intrinsicWidth.value : layoutBounds.size.x;
-                var height = intrinsicHeight != null ? intrinsicHeight.value : layoutBounds.size.y;
-
-                var origin = new Vector2(
-                    layoutBounds.size.x / 2.0f - (width / 2.0f),
-                    layoutBounds.size.y / 2.0f - (height / 2.0f)
-                );
-                var size = new Vector2(width, height);
-                view.Frame = new Bounds2D(origin, size);
-            }
-        }
-
-        protected virtual void _PostApplyLayout() {
-            var childViews = ChildViews();
-            foreach (var view in childViews) {
-                view._ApplyLayout(view.Bounds);
-                view._PostApplyLayout();
-            }
-        }
-
-        public virtual void ApplyLayout() {
-            Debug.Log(GetType() + ": ApplyLayout");
-
-            if (null == ParentView()) {
-                var parentBounds = ParentBounds();
-
-                // Top view needs a size
-                Bounds2D frame = new Bounds2D();
-
-                var intrinsicWidth = IntrinsicWidth;
-                var intrinsicHeight = IntrinsicHeight;
-
-                if (null != intrinsicWidth) {
-                    frame.size.x = intrinsicWidth.value;
-                } else {
-                    frame.size.x = parentBounds.size.x;
-                }
-
-                if (null != intrinsicHeight) {
-                    frame.size.y = intrinsicHeight.value;
-                } else {
-                    frame.size.y = parentBounds.size.y;
-                }
-
-                Frame = frame;
-            }
-
-            Bounds2D layoutBounds = Bounds;
-
-            _ApplyLayout(layoutBounds);
-            _PostApplyLayout();
-
-            // Subclasses can apply their own layout if needed
-            UpdatePositions();
-        }
-
         public void UpdatePositions()
         {
             float baseZ = transform.localPosition.z;
@@ -174,7 +120,7 @@ namespace PJ
 
                 var childPosition = childView.LocalPositionIn(Frame, transform.localPosition);
 
-                var z = baseZ -(Mathf.Abs(zStep)) * (zIndex + 1);
+                var z = baseZ - (Mathf.Abs(zStep)) * (zIndex + 1);
                 childPosition.z = z;
 
                 childObject.transform.localPosition = childPosition;
@@ -192,34 +138,55 @@ namespace PJ
             }
         }
 
-        public View2D ParentView() {
+        public View2D ParentView()
+        {
             if (!transform.parent) { return null; }
-            
+
             var parentGameObject = transform.parent.gameObject;
-            if (null != parentGameObject) {
-                if (parentGameObject.TryGetComponent(out View2D parentView)) {
+            if (null != parentGameObject)
+            {
+                if (parentGameObject.TryGetComponent(out View2D parentView))
+                {
                     return parentView;
                 }
             }
             return null;
         } // TESTED
 
-        public List<View2D> ChildViews() {
+        public List<View2D> ChildViews()
+        {
             var result = new List<View2D>();
-            
-            foreach (Transform childTransform in transform) {
-                if (childTransform.gameObject.TryGetComponent(out View2D view)) {
+
+            foreach (Transform childTransform in transform)
+            {
+                if (childTransform.gameObject.TryGetComponent(out View2D view))
+                {
                     result.Add(view);
                 }
             }
             return result;
         } // TESTED
 
-        public List<View2D> FilteredChildViews(Func<View2D, bool> filter) {
+        public View2D FirstChildView()
+        {
+            foreach (Transform childTransform in transform)
+            {
+                if (childTransform.gameObject.TryGetComponent(out View2D view))
+                {
+                    return view;
+                }
+            }
+            return null;
+        }
+
+        public List<View2D> FilteredChildViews(Func<View2D, bool> filter)
+        {
             var result = new List<View2D>();
-            
-            foreach (Transform childTransform in transform) {
-                if (childTransform.gameObject.TryGetComponent(out View2D view)) {
+
+            foreach (Transform childTransform in transform)
+            {
+                if (childTransform.gameObject.TryGetComponent(out View2D view))
+                {
                     if (filter(view))
                     {
                         result.Add(view);
@@ -255,11 +222,7 @@ namespace PJ
         {
             base.Awake();
 
-            // Make sure our collider fits the view size
-            if (TryGetComponent(out BoxCollider2D boxCollider))
-            {
-                boxCollider.size = Frame.size;
-            }
+            UpdateFrameComponents();
         }
     }
 }

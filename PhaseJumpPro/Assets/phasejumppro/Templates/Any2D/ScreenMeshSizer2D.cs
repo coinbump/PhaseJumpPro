@@ -12,7 +12,7 @@ namespace PJ
     /// <summary>
     /// Sizes a mesh to fit the screen size
     /// </summary>
-    public class ScreenMeshSizer2D : MonoBehaviour
+    public class ScreenMeshSizer2D : WorldComponent
     {
         public Camera screenCamera;
         public Vector2 inset = Vector2.zero;

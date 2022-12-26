@@ -5,7 +5,7 @@ using UnityEngine;
 /*
  * RATING: 5 stars
  * Tested and works
- * CODE REVIEW: 11/13/22
+ * CODE REVIEW: 12/25/22
  */
 namespace PJ
 {
@@ -13,8 +13,10 @@ namespace PJ
     /// Target that can accept drag items
     /// Requres that the object have a collider attached for raycast checks
     /// </summary>
-    public class DropTarget : PJ.MonoBehaviour
+    public class DropTarget : WorldComponent
     {
+        public SomeEffect acceptDragEffect;
+
         public enum StateType
         {
             NotOver, DragOverAccept, DragOverReject
@@ -45,34 +47,37 @@ namespace PJ
 
         public virtual bool CanAcceptDrag(DragItems items)
         {
-            //Debug.Log("CanAcceptDrag");
+            // Debug.Log("CanAcceptDrag");
             return true;
         }
 
         public virtual void OnDragEnter(DragItems items)
         {
-            Debug.Log("OnDragEnter");
+            // Debug.Log("OnDragEnter");
             State = CanAcceptDrag(items) ? StateType.DragOverAccept : StateType.DragOverReject;
         }
 
         public virtual void OnDragLeave()
         {
-            Debug.Log("OnDragLeave");
+            // Debug.Log("OnDragLeave");
             State = StateType.NotOver;
         }
 
-        protected void UpdateDropTargetEffect()
+        public virtual void OnAcceptDrag(DragItems items)
         {
-            var dropTargetEffect = GetComponent<SomeDropTargetEffect>();
-            if (dropTargetEffect)
+        }
+
+        protected void UpdateAcceptDragEffect()
+        {
+            if (acceptDragEffect)
             {
-                dropTargetEffect.State = state;
+                acceptDragEffect.IsOn = State == StateType.DragOverAccept;
             }
         }
 
         protected virtual void OnStateChange()
         {
-            UpdateDropTargetEffect();
+            UpdateAcceptDragEffect();
         }
     }
 }

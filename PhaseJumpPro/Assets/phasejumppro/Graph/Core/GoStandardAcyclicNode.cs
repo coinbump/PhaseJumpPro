@@ -13,7 +13,7 @@ namespace PJ
         /// <summary>
         /// Standard node for building complex behavior/algorithms from graph nodes
         /// </summary>
-        public class GoStandardAcyclicNode : GoAcyclicNode<PJ.Graph.StandardEdgeModel>
+        public class GoStandardAcyclicNode : GoAcyclicGraphNode<PJ.StandardEdgeModel>
         {
             // FUTURE: Evaluate Enumeration as an alternative:
             // https://docs.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/enumeration-classes-over-enum-types?

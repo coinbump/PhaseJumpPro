@@ -16,7 +16,7 @@ namespace PJ
 
             base.OnPositionUpdated(target);
 
-            var node = target.GetComponent<Node2D>();
+            var node = target.GetComponent<GoNode2D>();
             if (null == node)
             {
                 Debug.Log("Limiter2D requires Node2D");

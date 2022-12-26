@@ -11,7 +11,7 @@ namespace PJ
     /// <summary>
     /// Monitors audio volume at intervals and sets a value with the average volume over time
     /// </summary>
-    public class AudioVolumeMonitor : MonoBehaviour
+    public class AudioVolumeMonitor : WorldComponent
     {
         public AudioSource audioSource;
 

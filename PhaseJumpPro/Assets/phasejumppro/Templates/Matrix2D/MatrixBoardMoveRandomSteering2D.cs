@@ -11,7 +11,7 @@ namespace PJ
     /// <summary>
     /// Move objects in matrix board at random (for testing, or idle animations)
     /// </summary>
-    public class MatrixBoardMoveRandomSteering2D : MonoBehaviour
+    public class MatrixBoardMoveRandomSteering2D : WorldComponent
     {
         public float duration = 1.0f;
 

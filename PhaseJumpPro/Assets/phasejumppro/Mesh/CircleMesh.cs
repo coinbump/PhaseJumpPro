@@ -13,7 +13,7 @@ namespace PJ
     /// </summary>
     public class CircleMesh : SomeMesh
     {
-        public float angleStep = 10.0f;
+        public Angle angleStep = Angle.DegreesAngle(10.0f);
         public float radius = 1.0f;
 
         protected EllipseMesh ellipseMesh;
@@ -25,7 +25,7 @@ namespace PJ
             }
         }
 
-        public CircleMesh(float angleStep, float radius)
+        public CircleMesh(Angle angleStep, float radius)
         {
             this.angleStep = angleStep;
             this.radius = radius;

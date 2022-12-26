@@ -39,7 +39,7 @@ namespace PJ
         /// </summary>
         public float arriveDistance = 0.025f;
 
-        public StateMachine<StateType> stateMachine { get; protected set; } = new StateMachine<StateType>();
+        public GoStateMachine<StateType> stateMachine { get; protected set; } = new GoStateMachine<StateType>();
 
         protected override void Update()
         {
@@ -49,7 +49,7 @@ namespace PJ
                     return;
             }
 
-            var node = GetComponent<Node2D>();
+            var node = GetComponent<GoNode2D>();
             if (null == node) { return; }
 
             var distanceToTarget = AngleUtils.Distance(new Vector2(transform.position.x, transform.position.y), waypoint);
@@ -60,8 +60,8 @@ namespace PJ
                 return;
             }
 
-            var degreeAngle = AngleUtils.Vector2ToDegreeAngle(new Vector2(waypoint.x - transform.position.x, waypoint.y - transform.position.y));
-            node.Velocity = AngleUtils.DegreeAngleToVector2(degreeAngle, velocity);
+            var degreeAngle = new Angle(new Vector2(waypoint.x - transform.position.x, waypoint.y - transform.position.y));
+            node.Velocity = degreeAngle.ToVector2(velocity);
 
             switch (orientType)
             {

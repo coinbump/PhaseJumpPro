@@ -12,7 +12,7 @@ namespace PJ
     /// Destroys the object after N seconds
     /// When the object reaches the trigger time (0-1.0) of its total lifetime, the exit animation is enabled
     /// </summary>
-    public class AnimatedLifeTimer : MonoBehaviour
+    public class AnimatedLifeTimer : WorldComponent
     {
         public SomeAnimation exitAnimation;
         public float lifeTime;

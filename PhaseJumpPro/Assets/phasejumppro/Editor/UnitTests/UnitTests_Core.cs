@@ -6,50 +6,54 @@ using NUnit.Framework;
  * RATING: 5 stars. Provides common design patterns for all game objects
  * CODE REVIEW: 4.8.18
  */
-namespace PJ {
+namespace PJ
+{
 
-	class UnitTests_Core { 
-		private class TestCore : Core<TestCore.StateType>
-		{
-			public enum StateType {
-				Invalid, On, Off
-			}
+    class UnitTests_Core
+    {
+        private class TestCore : GoCore<TestCore.StateType>
+        {
+            public enum StateType
+            {
+                Invalid, On, Off
+            }
 
-			public int stateChangedCount;
-			public int stateFinishedCount;
+            public int stateChangedCount;
+            public int stateFinishedCount;
 
-			public TestCore() :base()
-			{
-			}
+            public TestCore() : base()
+            {
+            }
 
-			protected override void OnStateChange(StateMachine<StateType> inStateMachine)
-			{
-				base.OnStateChange(inStateMachine);
+            protected override void OnStateChange(GoStateMachine<StateType> inStateMachine)
+            {
+                base.OnStateChange(inStateMachine);
 
-				stateChangedCount++;
-			}
+                stateChangedCount++;
+            }
 
-			protected override void OnStateFinish(StateMachine<StateType> inStateMachine)
-			{
-				base.OnStateFinish(inStateMachine);
+            protected override void OnStateFinish(GoStateMachine<StateType> inStateMachine)
+            {
+                base.OnStateFinish(inStateMachine);
 
-				stateFinishedCount++;
-			}
-		}
+                stateFinishedCount++;
+            }
+        }
 
-		[Test]
-		public void UnitTests() {
-			var testCore = new TestCore();
-			testCore.State = TestCore.StateType.On;
-			Assert.AreEqual(1, testCore.stateChangedCount);
-			testCore.State = TestCore.StateType.On;
-			Assert.AreEqual(1, testCore.stateChangedCount);
-			testCore.State = TestCore.StateType.Off;
-			Assert.AreEqual(2, testCore.stateChangedCount);
+        [Test]
+        public void UnitTests()
+        {
+            var testCore = new TestCore();
+            testCore.State = TestCore.StateType.On;
+            Assert.AreEqual(1, testCore.stateChangedCount);
+            testCore.State = TestCore.StateType.On;
+            Assert.AreEqual(1, testCore.stateChangedCount);
+            testCore.State = TestCore.StateType.Off;
+            Assert.AreEqual(2, testCore.stateChangedCount);
 
-			testCore.StateMachine.SetStateDuration(1.0f);
-			testCore.StateMachine.OnUpdate(new TimeSlice(1.0f));
-			Assert.AreEqual(1, testCore.stateFinishedCount);
-		}
-	}
+            testCore.sm.SetStateDuration(1.0f);
+            testCore.sm.OnUpdate(new TimeSlice(1.0f));
+            Assert.AreEqual(1, testCore.stateFinishedCount);
+        }
+    }
 }

@@ -1,191 +1,162 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+RATING: 5 stars
+Solid foundation
+CODE REVIEW: 12/20/22
+*/
 namespace PJ
 {
-	public enum UpdateType
-	{
-		Default, Fixed
-	}
+    public enum UpdateType
+    {
+        Default, Fixed
+    }
 
-	/// <summary>
-	/// Provides utility methods for simplifying common game scenarios
-	/// </summary>
-	public abstract class SomeNode : MonoBehaviour, SomeStateListener<string>, SomeListener, StringIdentifiable
-	{
-		public enum CullType
-		{
-			Invisible, ZeroAlpha
-		}
+    public enum NodeCullType
+    {
+        Invisible, ZeroAlpha
+    }
 
-		public string id;
+    /// <summary>
+    /// Provides utility methods for simplifying common game scenarios
+    /// </summary>
+    public abstract class SomeNode : WorldComponent, SomeListener, StringIdentifiable
+    {
+        public string id;
 
-		[NonSerialized]
-		public Tags tags = new();
+        /// <summary>
+        /// Optionally used by subclass to determine initial state
+        /// </summary>
+        public string initialState;
 
-		public string initialState;
+        public string Id { get => id; set => id = value; }
+        public abstract bool IsKinematic { get; }
 
-		public string Id { get => id; set => id = value; }
-		public abstract bool IsKinematic { get; }
+        /// <summary>
+        /// Defines key-value pairs for custom properties ("health: 10", "energy: 20", etc.)
+        /// (EDITOR ONLY: values are moved on Awake)
+        /// </summary>
+        public List<TagValue> _tags = new();
+        [NonSerialized]
+        public Tags tags = new();
 
-		/// <summary>
-		/// Defines key-value pairs for custom properties ("health: 10", "energy: 20", etc.)
-        /// (EDITOR ONLY: values are moved into `tags` on Awake)
-		/// </summary>
-		public List<TagValue> valueTags = new List<TagValue>();
-
-		/// <summary>
+        /// <summary>
         /// Defines type values for object ("enemy", "hero", "bullet", etc.)
+        /// (EDITOR ONLY: values are moved on Awake)
         /// </summary>
-		public List<string> typeTags = new List<string>();
+        public List<string> _typeTags = new();
+        [NonSerialized]
+        public HashSet<string> typeTags = new();
 
-		/// <summary>
-		/// Tags for ways this object can be culled: "invisible", "zeroAlpha", etc.
-		/// </summary>
-		public List<CullType> cullTypes = new List<CullType>();
-
-		/// <summary>
-		/// Handles state machine.
-		/// </summary>
-		protected class Core<StateType> : PJ.Core<StateType>
-		{
-			public WeakReference<SomeStateListener<StateType>> Owner { get; }
-
-			public Core(SomeStateListener<StateType> owner)
-			{
-				Owner = new WeakReference<SomeStateListener<StateType>>(owner);
-			}
-
-			protected override void OnStateChange(StateMachine<StateType> inStateMachine)
-			{
-				base.OnStateChange(inStateMachine);
-
-				if (!Owner.TryGetTarget(out SomeStateListener<StateType> owner)) { return; }
-				if (null == owner) { return; }
-
-				owner.OnStateChange(inStateMachine);
-			}
-
-			protected override void OnStateFinish(StateMachine<StateType> inStateMachine)
-			{
-				base.OnStateFinish(inStateMachine);
-
-				if (!Owner.TryGetTarget(out SomeStateListener<StateType> owner)) { return; }
-				if (null == owner) { return; }
-
-				owner.OnStateFinish(inStateMachine);
-			}
-		}
-
-		/// <summary>
-        /// String type states are used by default, but if you prefer enums, create your own core
+        /// <summary>
+        /// Defines state values for object ("focused", "selected", "dragged", etc.)
+        /// (EDITOR ONLY: values are moved on Awake)
         /// </summary>
-		protected SomeCore core;
+        public List<string> _stateTags = new();
+        [NonSerialized]
+        public HashSet<string> stateTags = new();
 
-		public MultiRenderer multiRenderer;
+        /// <summary>
+        /// Tags for ways this object can be culled: "invisible", "zeroAlpha", etc.
+        /// (EDITOR ONLY: values are moved on Awake)
+        /// </summary>
+        public List<NodeCullType> _cullTypes = new();
+        [NonSerialized]
+        public HashSet<NodeCullType> cullTypes = new();
 
-		protected override void Awake()
-		{
-            CopyInValueTags();
+        public MultiRenderer multiRenderer;
 
-            valueTags.Clear();
-            valueTags.Add(new("TEMP", "EDITOR ONLY"));
+        protected override void Awake()
+        {
+            base.Awake();
 
-            core = new Core<string>(this);
-			multiRenderer = new MultiRenderer(gameObject);
-		}
+            UpdateFromSerializedProperties();
 
-		public virtual void CopyInValueTags()
-		{
-			foreach (TagValue tag in valueTags)
-			{
-				try
-				{
+            // EDITOR ONLY:
+            _tags.Clear();
+            _typeTags.Clear();
+            _stateTags.Clear();
+            _cullTypes.Clear();
+
+            multiRenderer = new MultiRenderer(gameObject);
+        }
+
+        public virtual void UpdateFromSerializedProperties()
+        {
+            foreach (TagValue tag in _tags)
+            {
+                try
+                {
                     var floatValue = float.Parse(tag.value);
-					tags.Add(tag.name, floatValue);
+                    tags[tag.name] = floatValue;
                     continue;
                 }
-				catch
-				{
-				}
+                catch
+                {
+                }
 
-				tags.Add(tag.name, tag.value);
-			}
-		}
+                tags[tag.name] = tag.value;
+            }
 
-		protected override void Start()
-        {
-			var stringCore = core as Core<string>;
-			if (null != stringCore)
-			{
-				stringCore.State = initialState;
-			}
-		}
-
-		protected virtual void OnValidate()
-		{
-            tags.Clear();
-            CopyInValueTags();
+            stateTags = new(_stateTags);
+            typeTags = new(_typeTags);
+            cullTypes = new(_cullTypes);
         }
 
-		protected override void Update()
-		{
-			base.Update();
+        protected virtual void OnValidate()
+        {
+            tags.Clear();
+            UpdateFromSerializedProperties();
+        }
 
-			if (cullTypes.Contains(CullType.ZeroAlpha) && multiRenderer.Color.a == 0)
-			{
-				Destroy(gameObject);
-				return;
-			}
+        protected override void Update()
+        {
+            base.Update();
 
-			UpdateNode(UpdateType.Default);
-		}
-
-		protected virtual void FixedUpdate()
-		{
-			UpdateNode(UpdateType.Fixed);
-		}
-
-		protected virtual void UpdateNode(UpdateType updateType)
-		{
-			switch (updateType)
+            if (multiRenderer.Color.a == 0 && cullTypes.Contains(NodeCullType.ZeroAlpha))
             {
-				case UpdateType.Default:
-					OnUpdate(new TimeSlice(Time.deltaTime));
-					break;
-				case UpdateType.Fixed:
-					break;
+                Destroy(gameObject);
+                return;
             }
-		}
 
-		/// <summary>
+            UpdateNode(UpdateType.Default);
+        }
+
+        protected virtual void FixedUpdate()
+        {
+            UpdateNode(UpdateType.Fixed);
+        }
+
+        protected virtual void UpdateNode(UpdateType updateType)
+        {
+            switch (updateType)
+            {
+                case UpdateType.Default:
+                    OnUpdate(new TimeSlice(Time.deltaTime));
+                    break;
+                case UpdateType.Fixed:
+                    break;
+            }
+        }
+
+        /// <summary>
         /// Auto-cull off-camera objects if needed
         /// </summary>
-		protected virtual void OnBecameInvisible()
-		{
-			if (cullTypes.Contains(CullType.Invisible)) {
-				Destroy(gameObject);
-			}
-		}
-
-		public bool HasTypeTag(string name) => typeTags.Contains(name);
-
-		public virtual void OnStateChange(StateMachine<string> state)
-		{
-			// Implemented by subclass
-		}
-
-		public virtual void OnStateFinish(StateMachine<string> state)
-		{
-			// Implemented by subclass
-		}
-
-        public virtual void OnListen(Event theEvent)
+        protected virtual void OnBecameInvisible()
         {
+            if (cullTypes.Contains(NodeCullType.Invisible))
+            {
+                Destroy(gameObject);
+            }
         }
 
-		public abstract void MoveToPosition(Vector3 position, bool force = false);
-	}
+        public bool HasTypeTag(string name) => typeTags.Contains(name);
+        public bool HasStateTag(string name) => stateTags.Contains(name);
+
+        public virtual void OnListen(Event theEvent) { }
+
+        public abstract void MoveToPosition(Vector3 position, bool force = false);
+    }
 }

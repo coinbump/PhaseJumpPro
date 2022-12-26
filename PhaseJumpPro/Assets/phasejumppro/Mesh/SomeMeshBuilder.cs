@@ -14,7 +14,7 @@ namespace PJ
     /// </summary>
     [RequireComponent(typeof(MeshFilter))]
     [RequireComponent(typeof(MeshRenderer))]
-    public abstract class SomeMeshBuilder : PJ.MonoBehaviour
+    public abstract class SomeMeshBuilder : PJ.WorldComponent
 	{
         // Use this for initialization
         protected override void Start()
@@ -55,6 +55,14 @@ namespace PJ
                     SomeMeshBuilder someMeshBuilder = (SomeMeshBuilder)target;
                     someMeshBuilder.Build();
                 }
+            }
+        }
+
+        protected virtual void OnValidate()
+        {
+            if (TryGetComponent(out MeshFilter meshFilter))
+            {
+                meshFilter.mesh = BuildMesh();
             }
         }
 #endif

@@ -17,16 +17,16 @@ namespace PJ
 	/// </summary>
 	public class Factory<Type> : SomeFactory
 	{	
-        private readonly Func<Type> constructor;
+        private readonly Func<Type> allocator;
 
-		public Factory(Func<Type> constructor)
+		public Factory(Func<Type> allocator)
 		{
-			this.constructor = constructor;
+			this.allocator = allocator;
 		}
 		
 		public Type New()
 		{
-			return constructor();
+			return allocator();
 		}
 
         public override object NewObject()

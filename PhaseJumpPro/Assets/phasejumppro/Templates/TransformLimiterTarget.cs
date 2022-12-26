@@ -8,7 +8,7 @@ using UnityEngine;
  */
 namespace PJ
 {
-    public class TransformLimiterTarget : MonoBehaviour
+    public class TransformLimiterTarget : WorldComponent
     {
         public GameObject transformLimiter;
         public bool isEnabled = true;

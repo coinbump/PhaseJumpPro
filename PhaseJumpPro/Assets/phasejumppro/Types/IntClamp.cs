@@ -5,13 +5,14 @@ using UnityEngine;
  * RATING: 5 stars
  * Simple utility
  * CODE REVIEW: 11/5/22
+ * PORTED TO: C++
  */
 namespace PJ
 {
     /// <summary>
     /// Clamp a int
     /// </summary>
-    public class IntClamp : SomeTransform<int>
+    public class IntClamp : SomeValueTransform<int>
     {
         public int minValue;
         public int maxValue;

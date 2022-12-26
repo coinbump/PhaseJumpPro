@@ -12,7 +12,7 @@ namespace PJ
     ///
     /// NOTE: this might cause issues with a moving camera.
     /// </summary>
-    public class CameraShake2D : MonoBehaviour
+    public class CameraShake2D : WorldComponent
     {
         // FUTURE: support impulse modulation of camera using noise/oscillators/waves
         public IEnumerator Shake(float magnitude, float duration)

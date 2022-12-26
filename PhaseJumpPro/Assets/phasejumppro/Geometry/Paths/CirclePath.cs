@@ -5,6 +5,7 @@ using UnityEngine;
  * RATING: 5 stars
  * Simple path
  * CODE REVIEW: 4/23/22
+ * PORTED TO: C++
  */
 namespace PJ
 {
@@ -20,9 +21,9 @@ namespace PJ
             this.radius = radius;
         }
 
-        public Vector3 PositionAt(float position)
+        public override Vector3 PositionAt(float progress)
         {
-            var result = AngleUtils.DegreeAngleToVector2(position * 360.0f, radius);
+            var result = Angle.DegreesAngle(progress * 360.0f).ToVector2(radius);
             return result;
         }
     }

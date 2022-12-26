@@ -29,7 +29,7 @@ namespace PJ
         [SerializeField]
         protected float velocity = 1.0f;
 
-        protected Node2D node;
+        protected GoNode2D node;
         protected float seekTimer = 0;
 
         public bool IsSeeking
@@ -57,7 +57,7 @@ namespace PJ
         {
             base.Start();
 
-            node = GetComponent<Node2D>();
+            node = GetComponent<GoNode2D>();
             if (null == node)
             {
                 Debug.Log("Error. Seeker2D requires a Node2D for ForwardVelocity");
@@ -72,7 +72,8 @@ namespace PJ
             base.OnUpdate(time);
 
             if (!IsSeeking) { return; }
-            if (null == target) {
+            if (null == target)
+            {
                 Debug.Log("Error. Seeker needs a target");
                 return;
             }
@@ -86,36 +87,36 @@ namespace PJ
             var seekerPosition = transform.position;
             var targetPosition = target.transform.position;
             var seekerAngle = node.Rotation;
-            var toTargetAngle = AngleUtils.Vector2ToDegreeAngle(targetPosition - seekerPosition);
+            var toTargetAngle = new Angle(targetPosition - seekerPosition);
 
             float leftTurnAngle;
             float rightTurnAngle;
-            if (seekerAngle < toTargetAngle)
+            if (seekerAngle.Degrees < toTargetAngle.Degrees)
             {
-                rightTurnAngle = toTargetAngle - seekerAngle;
+                rightTurnAngle = toTargetAngle.Degrees - seekerAngle.Degrees;
                 leftTurnAngle = 360.0f - rightTurnAngle;
             }
             else
             {
-                leftTurnAngle = seekerAngle - toTargetAngle;
+                leftTurnAngle = seekerAngle.Degrees - toTargetAngle.Degrees;
                 rightTurnAngle = 360.0f - leftTurnAngle;
             }
 
             //Debug.Log("Seeker Angle: " + seekerAngle.ToString() + "Target Angle: " + toTargetAngle.ToString() + "LeftTurn Angle: " + leftTurnAngle.ToString() + "RightTurn Angle: " + rightTurnAngle.ToString());
 
-            float newSeekerAngle = seekerAngle;
+            float newSeekerAngle = seekerAngle.Degrees;
 
             // Use min/max to avoid wobble with fast turns
             if (leftTurnAngle < rightTurnAngle)
             {
-                newSeekerAngle = Mathf.Max(toTargetAngle, seekerAngle - Time.deltaTime * turnSpeedDegrees);
+                newSeekerAngle = Mathf.Max(toTargetAngle.Degrees, seekerAngle.Degrees - Time.deltaTime * turnSpeedDegrees);
             }
             else
             {
-                newSeekerAngle = Mathf.Min(toTargetAngle, seekerAngle + Time.deltaTime * turnSpeedDegrees);
+                newSeekerAngle = Mathf.Min(toTargetAngle.Degrees, seekerAngle.Degrees + Time.deltaTime * turnSpeedDegrees);
             }
 
-            node.Rotation = newSeekerAngle;
+            node.Rotation = Angle.DegreesAngle(newSeekerAngle);
         }
 
         /// <summary>

@@ -1,8 +1,10 @@
 using System;
 using UnityEngine;
 
-namespace PJ {
-    public partial class View2D {
+namespace PJ
+{
+    public partial class View2D
+    {
         public Bounds2D Frame
         {
             get => frame;
@@ -38,9 +40,22 @@ namespace PJ {
             }
         } // TESTED
 
-        protected virtual void OnFrameChange() { }
+        protected virtual void OnFrameChange()
+        {
+            UpdateFrameComponents();
+        }
 
-        public Bounds2D ParentBounds() {
+        protected virtual void UpdateFrameComponents()
+        {
+            // Make sure our collider fits the view size
+            if (TryGetComponent(out BoxCollider2D boxCollider))
+            {
+                boxCollider.size = Frame.size;
+            }
+        }
+
+        public Bounds2D ParentBounds()
+        {
             var parent = ParentView();
             var parentBounds = new Bounds2D();
             if (parent)

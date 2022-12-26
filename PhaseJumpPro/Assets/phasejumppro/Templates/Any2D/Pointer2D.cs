@@ -11,9 +11,10 @@ namespace PJ
     /// Points at a target (with offset) or position
     /// </summary>
     /// FUTURE: support screen edge layout, bouncing arrow animation (need plugin animations tech first)
-    public class Pointer2D : Node2D
+    public class Pointer2D : GoNode2D
     {
-        public enum LayoutType {
+        public enum LayoutType
+        {
             None,       // Don't change position
             // FUTURE: ScreenEdge  // Keep at screen edge, unless target position is onscreen
         }
@@ -67,8 +68,8 @@ namespace PJ
                 targetPosition.x += target.transform.position.x;
                 targetPosition.y += target.transform.position.y;
             }
-            
-            var degreeAngle = AngleUtils.Vector2ToDegreeAngle(new Vector2(targetPosition.x - transform.position.x, targetPosition.y - transform.position.y));
+
+            var degreeAngle = new Angle(new Vector2(targetPosition.x - transform.position.x, targetPosition.y - transform.position.y)).Degrees;
             rotationObject.transform.eulerAngles = new Vector3(0, 0, -degreeAngle);
 
             switch (layoutType)

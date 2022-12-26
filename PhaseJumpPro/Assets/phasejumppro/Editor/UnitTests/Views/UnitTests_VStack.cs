@@ -8,9 +8,9 @@ namespace PJ
 {
     public class UnitTests_VStack
     {
-        protected class TestVStack : PJ.View.VStack {
+        protected class TestVStack : PJ.VStack {
             public void TestApplyLayout(Bounds2D parentBounds) {
-                _ApplyLayout(parentBounds);
+                _ApplyLayout(parentBounds.size);
             }
         }
 

@@ -25,19 +25,19 @@ namespace PJ
             }
             set
             {
-                if (timer == null) { timer = new Timer(value, SomeTimed.RunType.RunOnce); }
+                if (timer == null) { timer = new Timer(value, SomeRunner.RunType.RunOnce); }
                 timer.duration = value;
             }
         }
 
         public TimedBehaviorNode(float duration)
         {
-            timer = new Timer(duration, SomeTimed.RunType.RunOnce);
+            timer = new Timer(duration, SomeRunner.RunType.RunOnce);
         }
 
-        public override void OnUpdateNode(TimeSlice time)
+        public override void OnUpdate(TimeSlice time)
         {
-            base.OnUpdateNode(time);
+            base.OnUpdate(time);
 
             if (IsRunning && null != timer && !timer.IsFinished)
             {

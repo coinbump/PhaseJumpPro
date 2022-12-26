@@ -72,7 +72,7 @@ namespace PJ
                         nextPosition = Mathf.Min(1.0f, nextPosition + orientDelta);
                     }
 
-                    var rotationDegreeAngle = AngleUtils.Vector2ToDegreeAngle(path.PositionAt(nextPosition) - path.PositionAt(prevPosition));
+                    var rotationDegreeAngle = new Angle(path.PositionAt(nextPosition) - path.PositionAt(prevPosition)).Degrees;
                     rotationDegreeAngle += orientDegreeAngle;
                     childObject.transform.localEulerAngles = new Vector3(0, 0, -rotationDegreeAngle);
                 }
