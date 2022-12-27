@@ -15,9 +15,9 @@ public class ExampleRotateAnimator : PJ.WorldComponent, IPointerClickHandler
             if (TryGetComponent(out GoNode2D node))
             {
                 rotateAnimator = new(
-                    new Interpolator<float>(0, 360, new FloatValueInterpolator()),
+                    new FloatInterpolator(0, 360),
                     new(0.3f, AnimationCycleType.Once),
-                    new Binding<float>(() => node.Rotation.Degrees, (float value) => node.Rotation = Angle.DegreesAngle(value))
+                    new SetBinding<float>((float value) => node.Rotation = Angle.DegreesAngle(value))
                 );
                 updatables.Add(rotateAnimator);
             }

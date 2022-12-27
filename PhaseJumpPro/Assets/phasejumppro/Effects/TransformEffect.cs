@@ -5,21 +5,21 @@ using UnityEngine;
 /*
  * RATING: 5 stars
  * Simple animation utility
- * CODE REVIEW: 11/13/22
+ * CODE REVIEW: 12/26/22
  */
 namespace PJ
 {
     /// <summary>
     /// Interpolates its transform properties when it receives or loses focus
     /// </summary>
-    public class TransformEffect : AnimatedEffect
+    public class TransformEffect : SomeAnimatedEffect
     {
         public GeoTransform offTransform = GeoTransform.defaultTransform;
         public GeoTransform onTransform = GeoTransform.defaultTransform;
 
-        protected override void UpdateAnimatableProperties()
+        public override void UpdateEffectProperties()
         {
-            base.UpdateAnimatableProperties();
+            base.UpdateEffectProperties();
 
             var valveState = valve.ValveState;
 

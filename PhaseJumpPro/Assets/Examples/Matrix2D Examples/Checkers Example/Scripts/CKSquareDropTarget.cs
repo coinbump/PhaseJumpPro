@@ -14,11 +14,6 @@ public class CKSquareDropTarget : DropTarget
     [NonSerialized]
     public Vector2Int location;
 
-    protected override void OnAwake()
-    {
-        base.OnAwake();
-    }
-
     public override bool CanAcceptDrag(DragItems items)
     {
         return boardView.IsValidMove(items, location);

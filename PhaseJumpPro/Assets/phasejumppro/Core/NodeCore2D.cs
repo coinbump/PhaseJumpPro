@@ -17,11 +17,6 @@ namespace PJ
     {
         [Header("NodeCore2D Properties")]
 
-        [SerializeField]
-        [Tooltip("Rotation in degrees")]
-        /// <summary>Rotation in degrees</summary>
-        protected Angle rotation;
-
         /// <summary>
         /// If true, clip rotation values between 0-360
         /// </summary>
@@ -30,16 +25,16 @@ namespace PJ
         // Normalized rotation value (0-1.0)
         public float RotationNormal
         {
-            get => rotation.Degrees / 360.0f;
+            get => Rotation.Degrees / 360.0f;
             set
             {
-                rotation.Degrees = value * 360.0f;
+                Rotation = Angle.DegreesAngle(360.0f * value);
             }
         }
 
         public Angle Rotation
         {
-            get => rotation;
+            get => Angle.DegreesAngle(-transform.localEulerAngles.z);
             set
             {
                 var newAngle = value;
@@ -48,16 +43,12 @@ namespace PJ
                     newAngle.Clip();
                 }
 
-                if (rotation.Degrees == newAngle.Degrees) { return; }
-                rotation = newAngle;
+                if (Rotation.Degrees == newAngle.Degrees) { return; }
 
                 // Try-catch is for the unit test
                 try
                 {
-                    if (transform)
-                    {
-                        transform.localEulerAngles = new Vector3(0, 0, -rotation.Degrees);
-                    }
+                    transform.localEulerAngles = new Vector3(0, 0, -newAngle.Degrees);
                 }
                 catch (NullReferenceException ex)
                 {
@@ -67,14 +58,5 @@ namespace PJ
         }
 
         public virtual void OnTransformLimited() { }
-
-#if UNITY_EDITOR
-        protected override void OnValidate()
-        {
-            base.OnValidate();
-
-            transform.localEulerAngles = new Vector3(0, 0, -Rotation.Degrees);
-        }
-#endif
     }
 }

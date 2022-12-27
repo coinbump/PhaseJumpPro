@@ -3,7 +3,8 @@ using UnityEngine;
 /*
 RATING: 5 stars
 Simple pattern
-CODE REVIEW: 12/19/22
+CODE REVIEW: 12/26/22
+PORTED TO: C++
 */
 namespace PJ
 {
@@ -32,7 +33,7 @@ namespace PJ
 
         protected virtual void OnSwitchChange() { }
 
-        public virtual void OnValidate()
+        protected virtual void OnValidate()
         {
             OnSwitchChange();
         }

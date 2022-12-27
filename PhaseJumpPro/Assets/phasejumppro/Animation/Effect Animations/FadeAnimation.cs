@@ -6,7 +6,7 @@ using TMPro;
 /*
  * RATING: 5 stars
  * Tested and works
- * CODE REVIEW: 4/18/22
+ * CODE REVIEW: 12/26/22
  */
 namespace PJ
 {
@@ -30,25 +30,23 @@ namespace PJ
 
         protected Timer timer = new Timer(1.0f, SomeRunner.RunType.RunOnce);
         protected bool wasColliderEnabled = true;
-
-        protected Interpolator<float> animationCurve;
-
+        protected Interpolator<float> interpolator;
         protected MultiCollider multiCollider;
-        protected RendererAlphaBinding alphaBinding;
+        protected RenderAlphaBinding alphaBinding;
 
         protected override void Awake()
         {
             base.Awake();
 
-            animationCurve = new(startAlpha, endAlpha, new FloatValueInterpolator());
-            alphaBinding = new RendererAlphaBinding(gameObject);
+            interpolator = new(startAlpha, endAlpha, new FloatValueInterpolator());
+            alphaBinding = new RenderAlphaBinding(gameObject);
 
             timer.duration = duration;
             multiCollider = new MultiCollider(gameObject);
 
             if (!enabled) { return; }
 
-            alphaBinding.Value = animationCurve.ValueAt(0);
+            alphaBinding.Value = interpolator.ValueAt(0);
 
             wasColliderEnabled = multiCollider.Enabled;
             if (disableCollisions)
@@ -57,19 +55,12 @@ namespace PJ
             }
         }
 
-        protected override void Start()
+        public override void OnUpdate(TimeSlice time)
         {
-            base.Start();
-        }
-
-        protected override void Update()
-        {
-            base.Update();
+            base.OnUpdate(time);
 
             if (timer.IsFinished) { return; }
-
-            var timeSlice = new TimeSlice(Time.deltaTime);
-            timer.OnUpdate(timeSlice);
+            timer.OnUpdate(time);
 
             if (timer.IsFinished)
             {
@@ -82,7 +73,7 @@ namespace PJ
                 }
             }
 
-            alphaBinding.Value = animationCurve.ValueAt(timer.Progress);
+            alphaBinding.Value = interpolator.ValueAt(timer.Progress);
         }
     }
 }

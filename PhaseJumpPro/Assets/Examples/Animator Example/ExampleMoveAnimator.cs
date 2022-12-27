@@ -21,9 +21,9 @@ public class ExampleMoveAnimator : PJ.WorldComponent, IPointerClickHandler
             }
 
             moveAnimator = new(
-                new Interpolator<float>(transform.position.y, -3.0f * modify, new FloatValueInterpolator(), new EaseInOutBack()),
+                new FloatInterpolator(transform.position.y, -3.0f * modify, new EaseInOutBack()),
                 new(1.0f, AnimationCycleType.Once),
-                new Binding<float>(() => transform.position.y, UpdateTransformPosition)
+                new SetBinding<float>(UpdateTransformPosition)
             );
             updatables.Add(moveAnimator);
         }

@@ -4,6 +4,7 @@ using UnityEngine;
 RATING: 5 stars
 Simple component
 CODE REVIEW: 12/18/22
+PORTED TO: C++
 */
 namespace PJ
 {
@@ -40,7 +41,7 @@ namespace PJ
             {
                 transform.position = position;
             }
-            else
+            else if (rigidbody)
             {
                 rigidbody.MovePosition(position);
             }

@@ -4,9 +4,10 @@ using PJ;
 using UnityEngine;
 
 /*
- * RATING: 5 stars
- * Simple animation utility
- * CODE REVIEW: 11/13/22
+ * RATING: 4 stars
+ * Could use unit tests
+ * CODE REVIEW: 12/26/22
+ * PORTED TO: C++
  */
 namespace PJ
 {
@@ -15,10 +16,10 @@ namespace PJ
     /// When this object receives focus, the valve is opened over N time
     /// Check the valve's state to find a normalized value (0-1.0) to use for animations
     /// </summary>
-    public abstract class AnimatedEffect : SomeEffect
+    public abstract class SomeAnimatedEffect : SomeEffect
     {
-        public float turnOnTime = 0.3f;
-        public float turnOffTime = 0.3f;
+        protected float turnOnTime = 0.3f;
+        protected float turnOffTime = 0.3f;
 
         public float TurnOnTime
         {
@@ -26,8 +27,6 @@ namespace PJ
             set
             {
                 turnOnTime = value;
-
-                if (null == valve.turnOnTimer) { return; }
                 valve.turnOnTimer.duration = value;
             }
         }
@@ -38,8 +37,6 @@ namespace PJ
             set
             {
                 turnOffTime = value;
-
-                if (null == valve.turnOffTimer) { return; }
                 valve.turnOffTimer.duration = value;
             }
         }
@@ -49,12 +46,18 @@ namespace PJ
         /// </summary>
         protected Valve valve = new Valve();
 
+        public SomeAnimatedEffect()
+        {
+            valve.turnOffTimer = new TransformTimer(turnOffTime, SomeRunner.RunType.RunOnce, new EaseOutSquared());
+            valve.turnOnTimer = new TransformTimer(turnOnTime, SomeRunner.RunType.RunOnce, new EaseOutSquared());
+        }
+
         protected override void Awake()
         {
             base.Awake();
 
-            valve.turnOffTimer = new TransformTimer(turnOffTime, SomeRunner.RunType.RunOnce, new EaseOutSquared());
-            valve.turnOnTimer = new TransformTimer(turnOnTime, SomeRunner.RunType.RunOnce, new EaseOutSquared());
+            valve.turnOffTimer.duration = turnOffTime;
+            valve.turnOnTimer.duration = turnOnTime;
         }
 
         protected override void Start()
@@ -62,7 +65,7 @@ namespace PJ
             base.Start();
 
             valve.InputBinary(isOn, InputEffect.Immediate);
-            UpdateAnimatableProperties();
+            UpdateEffectProperties();
         }
 
         public override void OnUpdate(TimeSlice time)
@@ -70,7 +73,7 @@ namespace PJ
             base.OnUpdate(time);
 
             valve.OnUpdate(time);
-            UpdateAnimatableProperties();
+            UpdateEffectProperties();
         }
 
         protected override void OnSwitchChange()
@@ -78,15 +81,11 @@ namespace PJ
             valve.InputBinary(isOn, InputEffect.Timed);
         }
 
-        protected virtual void UpdateAnimatableProperties()
-        {
-        }
-
 #if UNITY_EDITOR
-        public override void OnValidate()
+        protected override void OnValidate()
         {
             valve.InputBinary(isOn, InputEffect.Immediate);
-            UpdateAnimatableProperties();
+            UpdateEffectProperties();
         }
 #endif
     }

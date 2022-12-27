@@ -15,7 +15,8 @@ namespace PJ
     /// </summary>
     public class CycleAnimator<T> : Updatable
     {
-        public enum ReverseType {
+        public enum ReverseType
+        {
             /// <summary>
             /// On reverse direction, apply the interpolation of the animation curve in reverse
             /// </summary>
@@ -40,22 +41,31 @@ namespace PJ
         /// <summary>
         /// Value binding to modify value
         /// </summary>
-        public Binding<T> binding;
+        public SetBinding<T> binding;
 
         public ReverseType reverseType = ReverseType.Match;
 
-        public CycleAnimator(Interpolator<T> interpolator, AnimationCycleTimer timer, Binding<T> binding)
+        public CycleAnimator(Interpolator<T> interpolator, AnimationCycleTimer timer, SetBinding<T> binding)
         {
             this.interpolator = interpolator;
             this.timer = timer;
             this.binding = binding;
         }
 
-        public float Progress {
+        public CycleAnimator(Interpolator<T> interpolator, AnimationCycleTimer timer, Binding<T> binding)
+        {
+            this.interpolator = interpolator;
+            this.timer = timer;
+            this.binding = new SetBinding<T>(binding.setAction);
+        }
+
+        public float Progress
+        {
             get => timer.Progress;
         }
 
-        public bool IsFinished {
+        public bool IsFinished
+        {
             get => timer.IsFinished;
         }
 
@@ -66,8 +76,9 @@ namespace PJ
             timer.OnUpdate(time);
 
             var curveValue = interpolator.ValueAt(Progress);
-            
-            switch (timer.CycleState) {
+
+            switch (timer.CycleState)
+            {
                 case AnimationCycleState.Forward:
                     break;
                 case AnimationCycleState.Reverse:

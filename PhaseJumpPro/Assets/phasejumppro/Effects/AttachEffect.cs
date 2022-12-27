@@ -13,7 +13,7 @@ namespace PJ
     /// and animates the child object's opacity and transform
     /// Example: add a focus frame to the object
     /// </summary>
-    public class AttachEffect : AnimatedEffect
+    public class AttachEffect : SomeAnimatedEffect
     {
         public GameObject attachment;
         public GeoTransform offTransform = GeoTransform.defaultTransform;
@@ -21,9 +21,9 @@ namespace PJ
 
         protected GameObject _attachment = null;
 
-        protected override void UpdateAnimatableProperties()
+        public override void UpdateEffectProperties()
         {
-            base.UpdateAnimatableProperties();
+            base.UpdateEffectProperties();
 
             var valveState = valve.ValveState;
 

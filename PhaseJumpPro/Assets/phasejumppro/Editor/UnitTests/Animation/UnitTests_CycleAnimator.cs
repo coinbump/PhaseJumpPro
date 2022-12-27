@@ -12,9 +12,9 @@ namespace PJ
             var testValue = -1.0f;
 
             var sut = new CycleAnimator<float>(
-                new Interpolator<float>(0, 360, new FloatValueInterpolator()),
+                new FloatInterpolator(0, 360),
                 new(1.0f, AnimationCycleType.Once),
-                new Binding<float>(() => 0f, (float value) => testValue = value)
+                new SetBinding<float>((float value) => testValue = value)
             );
 
             sut.OnUpdate(new TimeSlice(0.5f));
@@ -34,9 +34,9 @@ namespace PJ
             var testValue = -1.0f;
 
             var sut = new CycleAnimator<float>(
-                new Interpolator<float>(0, 360, new FloatValueInterpolator()),
+                new FloatInterpolator(0, 360),
                 new(1.0f, AnimationCycleType.PingPong),
-                new Binding<float>(() => 0f, (float value) => testValue = value)
+                new SetBinding<float>((float value) => testValue = value)
             );
             sut.reverseType = CycleAnimator<float>.ReverseType.Match;
             sut.interpolator.transform = _InterpolateType.easeInSquared;
@@ -55,9 +55,9 @@ namespace PJ
             var testValue = -1.0f;
 
             var sut = new CycleAnimator<float>(
-                new Interpolator<float>(0, 360, new FloatValueInterpolator()),
+                new FloatInterpolator(0, 360),
                 new(1.0f, AnimationCycleType.PingPong),
-                new Binding<float>(() => 0f, (float value) => testValue = value)
+                new SetBinding<float>((float value) => testValue = value)
             );
             sut.reverseType = CycleAnimator<float>.ReverseType.Rewind;
             sut.interpolator.transform = _InterpolateType.easeInSquared;

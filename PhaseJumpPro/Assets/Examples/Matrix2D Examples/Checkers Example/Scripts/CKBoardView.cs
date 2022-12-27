@@ -11,16 +11,16 @@ public class CKBoardView : MatrixBoardView2D
 {
     protected SceneObjectRegistry sceneObjectRegistry;
 
-    protected override void OnAwake()
+    protected override void Awake()
     {
-        base.OnAwake();
+        base.Awake();
 
         sceneObjectRegistry = FindObjectOfType<SceneObjectRegistry>();
     }
 
-    protected override void OnStart()
+    protected override void Start()
     {
-        base.OnStart();
+        base.Start();
 
         BuildCheckerboard();
         PopulatePieces();
@@ -191,9 +191,9 @@ public class CKBoardView : MatrixBoardView2D
             var destinationY = UnityEngine.Random.Range(0, screenWorldSize.y) + screenWorldSize.y / 2.0f * Vector2.down.y;
 
             var animator = new CycleAnimator<Vector3>(
-                new Interpolator<Vector3>(jumpedPieceNode.transform.position, new Vector3(destinationX, destinationY, 0), new Vector3ValueInterpolator(), new EaseInCubed()),
+                new Vector3Interpolator(jumpedPieceNode.transform.position, new Vector3(destinationX, destinationY, 0), new EaseInCubed()),
                 new(0.4f, AnimationCycleType.Once),
-                new Binding<Vector3>(() => Vector3.zero, (Vector3 value) => jumpedPieceNode.transform.position = value)
+                new SetBinding<Vector3>((Vector3 value) => jumpedPieceNode.transform.position = value)
             );
 
             updatables.Add(animator);

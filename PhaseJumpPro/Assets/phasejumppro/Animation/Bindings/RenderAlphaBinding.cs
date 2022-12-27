@@ -4,7 +4,7 @@ using System;
 /*
  * RATING: 5 stars
  * Simple class
- * CODE REVIEW: 4/23/22
+ * CODE REVIEW: 12/26/22
  */
 namespace PJ
 {
@@ -12,7 +12,7 @@ namespace PJ
     /// Animates the renderer's alpha color for fade animations
     /// </summary>
     // NOTE: this will not work with opaque materials
-    public class RendererAlphaBinding : SomeBinding<float>
+    public class RenderAlphaBinding : SomeBinding<float>
     {
         public WeakReference<GameObject> target;
 
@@ -29,10 +29,9 @@ namespace PJ
             }
         }
 
-        public RendererAlphaBinding(GameObject target)
+        public RenderAlphaBinding(GameObject target)
         {
             this.target = new WeakReference<GameObject>(target);
-
             multiRenderer = new MultiRenderer(target);
         }
     }

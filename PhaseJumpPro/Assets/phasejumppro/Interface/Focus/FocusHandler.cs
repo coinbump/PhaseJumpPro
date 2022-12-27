@@ -111,7 +111,7 @@ namespace PJ
             var focusEffect = GetComponent<SomeEffect>();
             if (focusEffect)
             {
-                focusEffect.OnValidate();
+                focusEffect.UpdateEffectProperties();
             }
         }
 #endif

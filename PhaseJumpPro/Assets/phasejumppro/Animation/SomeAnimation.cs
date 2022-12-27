@@ -4,39 +4,30 @@ using System.Collections;
 /*
  * RATING: 5 stars
  * Simple base class
- * CODE REVIEW: 4.20/22
+ * CODE REVIEW: 12/26/22
  */
 namespace PJ
 {
-	public abstract class SomeAnimation : WorldComponent
-	{
-		public MeshMaterialType meshMaterialType = MeshMaterialType.Shared;
+    /// <summary>
+    /// For animations that affect an object
+    /// </summary>
+    public abstract class SomeAnimation : WorldComponent
+    {
+        public MeshMaterialType meshMaterialType = MeshMaterialType.Copy;
 
-		protected MultiRenderer multiRenderer;
+        private MultiRenderer multiRenderer;
 
-		protected override void Awake()
-		{
-			Setup();
-		}
-
-		protected virtual void Setup()
+        protected MultiRenderer MultiRenderer
         {
-			if (null != multiRenderer) { return; }
-			multiRenderer = new MultiRenderer(gameObject);
-			multiRenderer.meshMaterialType = meshMaterialType;
-		}
-
-		protected override void Start()
-        {
+            get
+            {
+                if (null == multiRenderer)
+                {
+                    multiRenderer = new(gameObject);
+                    multiRenderer.meshMaterialType = meshMaterialType;
+                }
+                return multiRenderer;
+            }
         }
-
-		protected override void Update()
-		{
-		}
-
-		protected virtual void OnValidate()
-        {
-			Setup();
-        }
-	}
+    }
 }

@@ -14,8 +14,8 @@ namespace PJ
 {
     public class Binding<T> : SomeBinding<T>
     {
-        Func<T> getFunc;
-        Action<T> setAction;
+        public Func<T> getFunc;
+        public Action<T> setAction;
 
         public Binding(Func<T> getFunc, Action<T> setAction)
         {
@@ -35,7 +35,7 @@ namespace PJ
     /// </summary>
     public class SetBinding<T> : SomeSetBinding<T>
     {
-        Action<T> setAction;
+        public Action<T> setAction;
 
         public SetBinding(Action<T> setAction)
         {

@@ -10,7 +10,7 @@ namespace PJ
     /// <summary>
     /// Interpolates its transform properties when it receives or loses focus
     /// </summary>
-    public class ExtenderEffect2D : AnimatedEffect
+    public class ExtenderEffect2D : SomeAnimatedEffect
     {
         [Header("ExtenderEffect2D Properties")]
         public float offValue = 1.0f;
@@ -22,12 +22,12 @@ namespace PJ
         {
             base.Start();
 
-            UpdateAnimatableProperties();
+            UpdateEffectProperties();
         }
 
-        protected override void UpdateAnimatableProperties()
+        public override void UpdateEffectProperties()
         {
-            base.UpdateAnimatableProperties();
+            base.UpdateEffectProperties();
             var valveState = valve.ValveState;
 
             if (TryGetComponent(out Extender2D extender))

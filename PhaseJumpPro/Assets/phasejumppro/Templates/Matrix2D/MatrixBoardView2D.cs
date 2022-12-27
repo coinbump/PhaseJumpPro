@@ -226,9 +226,9 @@ namespace PJ
             if (duration > 0)
             {
                 node.moveAnimator = new(
-                    new Interpolator<Vector2>(node.transform.localPosition, endPosition, new Vector2ValueInterpolator()),
+                    new Vector2Interpolator(node.transform.localPosition, endPosition),
                     new(duration, AnimationCycleType.Once),
-                    new Binding<Vector2>(() => node.transform.localPosition, (Vector2 position) => node.transform.localPosition = position)
+                    new SetBinding<Vector2>((Vector2 position) => node.transform.localPosition = position)
                 );
                 node.updatables.Add(node.moveAnimator);
             }

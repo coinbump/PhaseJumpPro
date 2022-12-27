@@ -32,16 +32,11 @@ namespace PJ
 
         protected virtual void Awake()
         {
-            OnAwake();
         }
 
         protected virtual void Start()
         {
-            OnStart();
         }
-
-        protected virtual void OnAwake() { }
-        protected virtual void OnStart() { }
 
         protected virtual void Update()
         {
