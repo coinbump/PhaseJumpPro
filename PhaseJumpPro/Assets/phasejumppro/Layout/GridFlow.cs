@@ -12,7 +12,7 @@ namespace PJ
     /// <summary>
     /// Flow the objects with non-contextual spacing (object size doesn't matter)
     /// </summary>
-    public class GridFlow : Layout2D
+    public class GridFlow : SomeLayout2D
     {
         /// <summary>
         /// Seperate logic model for unit tests

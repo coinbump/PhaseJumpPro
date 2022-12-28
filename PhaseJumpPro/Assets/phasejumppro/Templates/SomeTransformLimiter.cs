@@ -42,7 +42,7 @@ namespace PJ
 
         public abstract void Scan(GameObject target);
 
-        public void LateUpdate()
+        protected override void LateUpdate()
         {
             switch (scanType)
             {

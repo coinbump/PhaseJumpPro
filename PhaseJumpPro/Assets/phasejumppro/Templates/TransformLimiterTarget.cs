@@ -14,10 +14,10 @@ namespace PJ
         public bool isEnabled = true;
 
         // FUTURE: support sample recording previous positions for smart limiters if needed
-        public void LateUpdate()
+        protected override void LateUpdate()
         {
             if (null == this.transformLimiter) { return; }
-            if (!isEnabled) { return;  }
+            if (!isEnabled) { return; }
 
             var transformLimiter = this.transformLimiter.GetComponent<SomeTransformLimiter>();
             if (null == transformLimiter) { return; }

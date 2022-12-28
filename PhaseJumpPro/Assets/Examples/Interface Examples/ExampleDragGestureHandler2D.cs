@@ -4,7 +4,7 @@ using UnityEngine;
 using PJ;
 using TMPro;
 
-public class ExampleDragGestureHandler2D : DragGestureHandler2D
+public class ExampleDragGestureHandler2D : SomeDragGestureHandler2D
 {
     public TextMeshPro textMesh;
 

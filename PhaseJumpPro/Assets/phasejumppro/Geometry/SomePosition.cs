@@ -53,5 +53,10 @@ namespace PJ
             get => new Vector3(position.x, position.y, 0);
             set => position = new Vector2(value.x, value.y);
         }
+
+        public ScreenPosition(Vector2 position)
+        {
+            this.position = position;
+        }
     }
 }

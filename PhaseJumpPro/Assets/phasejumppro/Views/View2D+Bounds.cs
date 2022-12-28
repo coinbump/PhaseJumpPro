@@ -65,7 +65,7 @@ namespace PJ
             else
             {
                 var screenWorldSize = Utils.ScreenWorldSize(Camera);
-                Debug.Log("ScreenWorldSize: " + screenWorldSize.ToString());
+                // Debug.Log("ScreenWorldSize: " + screenWorldSize.ToString());
                 parentBounds.size = screenWorldSize;
             }
 

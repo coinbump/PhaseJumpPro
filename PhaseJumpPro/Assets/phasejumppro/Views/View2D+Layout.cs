@@ -22,12 +22,14 @@ namespace PJ
             {
                 var result = layoutSize;
                 var maxWidth = MaxWidth;
-                if (null != maxWidth) {
+                if (null != maxWidth)
+                {
                     result = Mathf.Min(maxWidth.value, result);
                 }
-                
+
                 var minWidth = MinWidth;
-                if (null != minWidth) {
+                if (null != minWidth)
+                {
                     result = Mathf.Max(minWidth.value, result);
                 }
 
@@ -45,12 +47,14 @@ namespace PJ
             {
                 var result = layoutSize;
                 var maxHeight = MaxHeight;
-                if (null != maxHeight) {
+                if (null != maxHeight)
+                {
                     result = Mathf.Min(maxHeight.value, result);
                 }
-                
+
                 var minHeight = MinHeight;
-                if (null != minHeight) {
+                if (null != minHeight)
+                {
                     result = Mathf.Max(minHeight.value, result);
                 }
 
@@ -121,11 +125,13 @@ namespace PJ
         public Optional<float> MaxWidth => tags.Value<float>("width.max");
         public Optional<float> MaxHeight => tags.Value<float>("height.max");
 
-        protected virtual void _ApplyLayout(Vector2 layoutSize) {
+        protected virtual void _ApplyLayout(Vector2 layoutSize)
+        {
             var childViews = ChildViews();
 
             // Default layout: center child views
-            foreach (var view in childViews) {
+            foreach (var view in childViews)
+            {
                 var intrinsicWidth = view.IntrinsicWidth;
                 var intrinsicHeight = view.IntrinsicHeight;
 
@@ -141,18 +147,22 @@ namespace PJ
             }
         }
 
-        protected virtual void _PostApplyLayout() {
+        protected virtual void _PostApplyLayout()
+        {
             var childViews = ChildViews();
-            foreach (var view in childViews) {
+            foreach (var view in childViews)
+            {
                 view._ApplyLayout(view.Bounds.size);
                 view._PostApplyLayout();
             }
         }
 
-        public virtual void ApplyLayout() {
-            Debug.Log(GetType() + ": ApplyLayout");
+        public virtual void ApplyLayout()
+        {
+            // Debug.Log(GetType() + ": ApplyLayout");
 
-            if (null == ParentView()) {
+            if (null == ParentView())
+            {
                 var parentBounds = ParentBounds();
 
                 // Top view needs a size

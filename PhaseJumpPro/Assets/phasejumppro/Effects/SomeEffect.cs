@@ -16,8 +16,7 @@ namespace PJ
     /// </summary>
     public abstract class SomeEffect : SwitchHandler
     {
-        public MeshMaterialType meshMaterialType = MeshMaterialType.Copy;
-
+        protected MeshMaterialType meshMaterialType = MeshMaterialType.Copy;
         private MultiRenderer multiRenderer;
 
         protected MultiRenderer MultiRenderer

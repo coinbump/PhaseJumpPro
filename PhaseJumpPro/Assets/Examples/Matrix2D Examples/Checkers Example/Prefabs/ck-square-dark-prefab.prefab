@@ -153,7 +153,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isOn: 0
-  meshMaterialType: 1
+  turnOnTime: 0.3
+  turnOffTime: 0.3
   offColor:
     serializedVersion: 2
     rgba: 4288627264

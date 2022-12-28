@@ -15,7 +15,8 @@ namespace PJ
         {
             base.UpdateEffectProperties();
 
-            MultiRenderer.Enabled = isOffVisible ? !IsOn : IsOn;
+            var value = isOffVisible ? !IsOn : IsOn;
+            gameObject.SetActive(value);
         }
     }
 }

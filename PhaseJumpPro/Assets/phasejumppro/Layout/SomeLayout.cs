@@ -5,7 +5,8 @@ using System.Collections.Generic;
 /*
  * RATING: 5 stars
  * Simple abstract class
- * CODE REVIEW: 11/13/22
+ * CODE REVIEW: 12/27/22
+ * PORTED TO: C++
  */
 namespace PJ
 {
@@ -13,7 +14,7 @@ namespace PJ
     /// Defines the layout of child game objects
     /// (different than Unity's Layout Group for UI, which requires a Canvas)
     /// </summary>
-    public abstract class SomeGameObjectsLayout : PJ.WorldComponent
+    public abstract class SomeLayout : PJ.WorldComponent
     {
         /// <summary>
         /// If true, layout will be updated automatically.
@@ -37,14 +38,18 @@ namespace PJ
 
         protected override void Start()
         {
+            base.Start();
+
             if (autoApply)
             {
                 ApplyLayout();
             }
         }
 
-        protected virtual void LateUpdate()
+        protected override void LateUpdate()
         {
+            base.LateUpdate();
+
             if (autoApply)
             {
                 ApplyLayout();
@@ -62,20 +67,20 @@ namespace PJ
             ApplyLayout();
         }
 
-        [CustomEditor(typeof(SomeGameObjectsLayout), true)]
-		public class Editor : UnityEditor.Editor
-		{
-			public override void OnInspectorGUI()
-			{
-				DrawDefaultInspector();
+        [CustomEditor(typeof(SomeLayout), true)]
+        public class Editor : UnityEditor.Editor
+        {
+            public override void OnInspectorGUI()
+            {
+                DrawDefaultInspector();
 
-                SomeGameObjectsLayout layout = (SomeGameObjectsLayout)target;
+                SomeLayout layout = (SomeLayout)target;
                 if (GUILayout.Button("Apply Layout"))
-				{
+                {
                     layout.ApplyLayout();
-				}
-			}
-		}
+                }
+            }
+        }
 #endif
-	}
+    }
 }

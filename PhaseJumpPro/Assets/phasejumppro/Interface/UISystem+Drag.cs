@@ -26,6 +26,11 @@ namespace PJ
         protected WeakReference<GameObject> dropTargetOverObject;
         protected DragState dragState = DragState.Default;
 
+        public bool IsDragging
+        {
+            get => dragState != DragState.Default;
+        }
+
         public DragItems DraggedItems
         {
             get

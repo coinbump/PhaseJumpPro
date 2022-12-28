@@ -10,6 +10,70 @@ namespace PJ
             focusable.HasFocus = true;
         }
 
+        /// <summary>
+        /// On update, check the mouse position and set focus to the first raycast hit object with a FocusHandler component
+        /// </summary>
+        public virtual void OnMouseMove()
+        {
+            switch (mouseOverAction)
+            {
+                case MouseOverAction.Focus:
+                    UpdateMouseOverFocus();
+                    break;
+                case MouseOverAction.Ignore:
+                    break;
+            }
+
+            UpdateMouseOverHover();
+        }
+
+        protected virtual T MouseOverHitComponent<T>() where T : WorldComponent
+        {
+            if (null == mouseDevice || !mouseDevice.IsAvailable()) { return null; }
+
+            var screenPosition = mouseDevice.ScreenPosition;
+            if (null == screenPosition) { return null; }
+
+            //Debug.Log("Screen position:" + mouseDevice.ScreenPosition.ToString());
+
+            var raycastHits = Utils.Raycast2DHitsAtScreenPosition(Camera, screenPosition);
+            T hitComponent = null;
+
+            //Debug.Log("Raycast hits size:" + raycastHits.Length.ToString());
+
+            foreach (RaycastHit2D raycastHit in raycastHits)
+            {
+                if (raycastHit.collider != null)
+                {
+                    hitComponent = raycastHit.collider.gameObject.GetComponent<T>();
+
+                    if (hitComponent)
+                    {
+                        return hitComponent;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        public virtual void UpdateMouseOverHover()
+        {
+            var hitComponent = MouseOverHitComponent<SomeHoverGestureHandler>();
+            ActiveHover = hitComponent;
+        }
+
+        public virtual void UpdateMouseOverFocus()
+        {
+            var hitFocusable = MouseOverHitComponent<FocusHandler>();
+
+            // Only react to the first focusable object
+            if (hitFocusable)
+            {
+                hitFocusable.HasFocus = true;
+            }
+        }
+
         public void UpdateFocusFor(FocusHandler focusable, bool hasFocus)
         {
             var focusedItem = ActiveFocus;

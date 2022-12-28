@@ -14,7 +14,7 @@ namespace PJ
     /// <summary>
     /// Updates with deltas of the drag while it is in progress
     /// </summary>
-    public abstract class DragGestureHandler2D : SomeDragHandler
+    public abstract class SomeDragGestureHandler2D : SomeDragHandler
     {
         public override void OnDragUpdate(WorldPosition inputPosition)
         {

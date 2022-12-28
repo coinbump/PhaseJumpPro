@@ -15,7 +15,7 @@ namespace PJ
     /// Distribute children along a path
     /// </summary>
     /// FUTURE: support orient to path
-    public abstract class SomePathLayout : SomeGameObjectsLayout
+    public abstract class SomePathLayout : SomeLayout
     {
         public Vector3 offset = Vector3.zero;
 

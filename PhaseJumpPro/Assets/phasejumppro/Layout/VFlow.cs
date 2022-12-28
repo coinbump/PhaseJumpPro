@@ -5,14 +5,15 @@ using UnityEngine;
 /*
  * RATING: 5 stars
  * Simple flow layout
- * CODE REVIEW: 1/14/22
+ * CODE REVIEW: 12/27/22
+ * PORTED TO: C++
  */
 namespace PJ
 {
     /// <summary>
     /// Flow the objects with non-contextual spacing (object size doesn't matter)
     /// </summary>
-    public class VFlow : Layout2D
+    public class VFlow : SomeLayout2D
     {
         public float spacing = 1.0f;
 
@@ -23,20 +24,20 @@ namespace PJ
 
         public override void ApplyLayout()
         {
-            var firstPos = Size().y / 2;
+            var firstPos = (Size().y / 2) * Vector2.up.y;
             var position = firstPos;
 
             foreach (Transform childTransform in gameObject.transform)
             {
                 childTransform.localPosition = new Vector3(0, position, 0);
 
-                position -= spacing;
+                position += spacing * Vector2.down.y;
             }
         }
 
 #if UNITY_EDITOR
         [CustomEditor(typeof(VFlow))]
-        public new class Editor : SomeGameObjectsLayout.Editor
+        public new class Editor : SomeLayout.Editor
         {
         }
 #endif

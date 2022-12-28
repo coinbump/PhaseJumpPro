@@ -44,6 +44,8 @@ namespace PJ
             OnUpdate(timeSlice);
         }
 
+        protected virtual void LateUpdate() { }
+
         public virtual void OnUpdate(TimeSlice time)
         {
             var iterUpdatables = new HashSet<Updatable>(updatables);

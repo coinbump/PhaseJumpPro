@@ -12,6 +12,16 @@ namespace PJ
     /// 3. Attach a non-trigger collider to objects that need interactive behavior
     public partial class UISystem : WorldComponent
     {
+        public enum MouseOverAction
+        {
+            // Do nothing
+            Ignore,
+
+            // Give the object focus
+            Focus
+        }
+
+        [NonSerialized]
         public static UISystem shared;
 
         /// <summary>
@@ -20,10 +30,18 @@ namespace PJ
         public new Camera camera;
 
         /// <summary>
+        /// Determine how a mouse over affects the state of the object under the cursor
+        /// </summary>
+        public MouseOverAction mouseOverAction;
+
+        /// <summary>
         /// Item that has focus
         /// </summary>
         protected WeakReference<FocusHandler> focusedItem;
+        protected WeakReference<SomeHoverGestureHandler> hoverItem;
         protected MouseDevice mouseDevice = new MouseDevice();
+        protected ScreenPosition mousePosition;
+        protected bool hasMousePosition = false;
 
         public Camera Camera
         {
@@ -37,21 +55,41 @@ namespace PJ
         {
             get
             {
-                if (null != focusedItem && focusedItem.TryGetTarget(out FocusHandler focusable))
+                if (null != focusedItem && focusedItem.TryGetTarget(out FocusHandler handler))
                 {
-                    return focusable;
+                    return handler;
                 }
                 return null;
             }
             set
             {
-                if (null == value)
+                focusedItem = null == value ? null : new WeakReference<FocusHandler>(value);
+            }
+        }
+
+        public SomeHoverGestureHandler ActiveHover
+        {
+            get
+            {
+                if (null != hoverItem && hoverItem.TryGetTarget(out SomeHoverGestureHandler handler))
                 {
-                    focusedItem = null;
+                    return handler;
                 }
-                else
+                return null;
+            }
+            set
+            {
+                if (null != hoverItem && hoverItem.TryGetTarget(out SomeHoverGestureHandler handler))
                 {
-                    focusedItem = new WeakReference<FocusHandler>(value);
+                    if (handler == value) { return; }
+                    handler.IsHovering = false;
+                }
+
+                hoverItem = null == value ? null : new WeakReference<SomeHoverGestureHandler>(value);
+
+                if (value)
+                {
+                    value.IsHovering = true;
                 }
             }
         }
@@ -70,7 +108,20 @@ namespace PJ
         {
             base.OnUpdate(time);
 
+            var oldMousePosition = mousePosition;
+            mousePosition = new ScreenPosition(mouseDevice.ScreenPosition);
+
             OnDragUpdate();
+
+            if (!IsDragging)
+            {
+                // Update mouse over focus only when the mouse moves
+                if (!hasMousePosition || !oldMousePosition.Equals(mousePosition))
+                {
+                    OnMouseMove();
+                }
+            }
+            hasMousePosition = true;
         }
     }
 }
