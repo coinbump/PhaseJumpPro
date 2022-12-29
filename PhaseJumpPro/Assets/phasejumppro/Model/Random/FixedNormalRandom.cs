@@ -2,12 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+RATING: 5 stars
+Simple utility
+CODE REVIEW: 12/29/22
+*/
 namespace PJ
 {
     /// <summary>
     /// Returns a fixed set of random values (for testing, debugging)
     /// </summary>
-    public class FixedRandom : SomeRandom
+    public class FixedNormalRandom : SomeNormalRandom
     {
         public List<float> values = new List<float>();
 

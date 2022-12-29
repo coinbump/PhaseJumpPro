@@ -3,17 +3,19 @@
 /*
  * RATING: 5 stars
  * Simple type
- * CODE REVIEW: 4/11/22
+ * CODE REVIEW: 12/29/22
  */
-namespace PJ {
+namespace PJ
+{
 
-	/// <summary>
-	/// Some markup formats (JSON) allow unique attribute-value types
-	/// </summary>
-	public enum AttributeType {
-		Default = 0,
-		String,
-		Number,
-		Bool
-	}
+    /// <summary>
+    /// Some markup formats (JSON) allow unique attribute-value types
+    /// </summary>
+    public enum AttributeType
+    {
+        Default = 0,
+        String,
+        Number,
+        Bool
+    }
 }

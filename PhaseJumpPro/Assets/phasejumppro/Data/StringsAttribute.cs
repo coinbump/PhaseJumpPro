@@ -3,18 +3,19 @@
 /*
  * RATING: 5 stars
  * Simple type
- * CODE REVIEW: 4/11/22
+ * CODE REVIEW: 12/29/22
  */
-namespace PJ {
+namespace PJ
+{
 
-	/// <summary>
-	/// Key-value pair of strings
-	/// </summary>
-	public class StringsAttribute : Attribute<string, string>
-	{
-		public StringsAttribute(string key, string value)
-			: base(key, value)
-		{
-		}
-	}
+    /// <summary>
+    /// Key-value pair of strings
+    /// </summary>
+    public class StringsAttribute : Attribute<string, string>
+    {
+        public StringsAttribute(string key, string value)
+            : base(key, value)
+        {
+        }
+    }
 }

@@ -9,72 +9,72 @@ using UnityEngine;
  */
 namespace PJ
 {
-	/// <summary>
-	/// Each choice has a weight that affects its random probability
-	/// Useful for cases where we want randomness, but prefer certain outcomes
-	/// </summary>
-	public class WeightedRandom : List<Weight>
-	{
-		/// <summary>
+    /// <summary>
+    /// Each choice has a weight that affects its random probability
+    /// Useful for cases where we want randomness, but prefer certain outcomes
+    /// </summary>
+    public class WeightedRandom : List<Weight>
+    {
+        /// <summary>
         /// Injected random for testability
         /// </summary>
-		protected SomeRandom random;
+        protected SomeNormalRandom random;
 
-		public WeightedRandom(SomeRandom random)
+        public WeightedRandom(SomeNormalRandom random)
         {
-			this.random = random;
+            this.random = random;
         }
 
-		public Weight ChooseRandom()
-		{
-			float factor = random.Value;
-			var result = ChooseFactor(factor);
-			return result;
-		}
+        public Weight ChooseRandom()
+        {
+            float factor = random.Value;
+            var result = ChooseFactor(factor);
+            return result;
+        }
 
-		public Weight ChooseFactor(float factor)
-		{
-			List<Weight> adjustedWeights = new List<Weight>();
+        public Weight ChooseFactor(float factor)
+        {
+            List<Weight> adjustedWeights = new List<Weight>();
 
-			float totalWeight = 0;
-			foreach (Weight wr in this)
-			{
-				var adjustedWeight = wr.Value;
-				if (null != wr.adjust)
+            float totalWeight = 0;
+            foreach (Weight wr in this)
+            {
+                var adjustedWeight = wr.Value;
+                if (null != wr.adjust)
                 {
-					adjustedWeight = wr.adjust.Transform(wr).Value;
+                    adjustedWeight = wr.adjust.Transform(wr).Value;
                 }
 
-				adjustedWeights.Add(new Weight(adjustedWeight, wr));
+                adjustedWeights.Add(new Weight(adjustedWeight, wr));
 
-				totalWeight += adjustedWeight;
-			}
+                totalWeight += adjustedWeight;
+            }
 
-			// No viable choices
-			if (totalWeight.Equals(0))
-			{
-				return null;
-			}
+            // No viable choices
+            if (totalWeight.Equals(0))
+            {
+                return null;
+            }
 
-			float random = totalWeight * factor;
+            float random = totalWeight * factor;
 
-			float curWeight = 0;
-			foreach (Weight wr in adjustedWeights)
-			{
-				float weight = wr.Value;
-				if (weight <= 0)
-				{
-					continue;   // Ignore this, invalid
-				}
+            float curWeight = 0;
+            foreach (Weight wr in adjustedWeights)
+            {
+                float weight = wr.Value;
+                if (weight <= 0)
+                {
+                    continue;   // Ignore this, invalid
+                }
 
-				curWeight += weight;
-				if (random <= curWeight)
-				{
-					return (Weight)wr.target;
-				}
-			}
+                curWeight += weight;
+                if (random <= curWeight)
+                {
+                    return (Weight)wr.target;
+                }
+            }
 
-			return null;
-		}
-	}
+            return null;
+        }
+    }
 }

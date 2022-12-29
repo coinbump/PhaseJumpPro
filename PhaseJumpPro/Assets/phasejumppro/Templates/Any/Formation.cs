@@ -31,7 +31,7 @@ namespace PJ
 
         public Method method;
 
-        public SomeRandom random = new UnityRandom();
+        public SomeNormalRandom random = new UnityRandom();
 
         /// <summary>
         /// Objects to populate in formation

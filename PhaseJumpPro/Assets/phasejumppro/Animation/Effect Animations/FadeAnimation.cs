@@ -32,21 +32,19 @@ namespace PJ
         protected bool wasColliderEnabled = true;
         protected Interpolator<float> interpolator;
         protected MultiCollider multiCollider;
-        protected RenderAlphaBinding alphaBinding;
 
         protected override void Awake()
         {
             base.Awake();
 
             interpolator = new(startAlpha, endAlpha, new FloatValueInterpolator());
-            alphaBinding = new RenderAlphaBinding(gameObject);
 
             timer.duration = duration;
             multiCollider = new MultiCollider(gameObject);
 
             if (!enabled) { return; }
 
-            alphaBinding.Value = interpolator.ValueAt(0);
+            MultiRenderer.Alpha = interpolator.ValueAt(0);
 
             wasColliderEnabled = multiCollider.Enabled;
             if (disableCollisions)
@@ -73,7 +71,7 @@ namespace PJ
                 }
             }
 
-            alphaBinding.Value = interpolator.ValueAt(timer.Progress);
+            MultiRenderer.Alpha = interpolator.ValueAt(timer.Progress);
         }
     }
 }

@@ -5,7 +5,7 @@ using UnityEngine;
 /*
  * RATING: 5 stars
  * Tested and works
- * CODE REVIEW: 4/13/22
+ * CODE REVIEW: 12/29/22
  */
 namespace PJ
 {
@@ -24,7 +24,7 @@ namespace PJ
         /// <summary>
         /// How fast it can turn to target (angles per second)
         /// </summary>
-        public float turnSpeedDegrees = 360.0f;
+        public Angle turnSpeed = Angle.DegreesAngle(360.0f);
 
         [SerializeField]
         protected float velocity = 1.0f;
@@ -105,15 +105,16 @@ namespace PJ
             //Debug.Log("Seeker Angle: " + seekerAngle.ToString() + "Target Angle: " + toTargetAngle.ToString() + "LeftTurn Angle: " + leftTurnAngle.ToString() + "RightTurn Angle: " + rightTurnAngle.ToString());
 
             float newSeekerAngle = seekerAngle.Degrees;
+            var turnSpeed = this.turnSpeed.Degrees;
 
             // Use min/max to avoid wobble with fast turns
             if (leftTurnAngle < rightTurnAngle)
             {
-                newSeekerAngle = Mathf.Max(toTargetAngle.Degrees, seekerAngle.Degrees - Time.deltaTime * turnSpeedDegrees);
+                newSeekerAngle = seekerAngle.Degrees - Mathf.Min(leftTurnAngle, Time.deltaTime * turnSpeed);
             }
             else
             {
-                newSeekerAngle = Mathf.Min(toTargetAngle.Degrees, seekerAngle.Degrees + Time.deltaTime * turnSpeedDegrees);
+                newSeekerAngle = seekerAngle.Degrees + Mathf.Min(rightTurnAngle, Time.deltaTime * turnSpeed);
             }
 
             node.Rotation = Angle.DegreesAngle(newSeekerAngle);

@@ -4,7 +4,7 @@ using UnityEngine;
 /*
  * RATING: 5 stars
  * Tested and works
- * CODE REVIEW: 4/23/22
+ * CODE REVIEW: 12/29/22
  */
 namespace PJ
 {
@@ -12,7 +12,7 @@ namespace PJ
     /// Steering in 2D space to reach a waypoint until we are near enough
     /// </summary>
     // FUTURE: support speed up, slow down for more realistic looking travel
-    public class WaypointSteering2D : SomeSteering2D
+    public class WaypointSteering2D : SomeSteering2D, SomeGoStateListener<WaypointSteering2D.StateType>
     {
         public enum StateType
         {
@@ -39,11 +39,16 @@ namespace PJ
         /// </summary>
         public float arriveDistance = 0.025f;
 
-        public GoStateMachine<StateType> stateMachine { get; protected set; } = new GoStateMachine<StateType>();
+        public GoCore<StateType> core;
+
+        public WaypointSteering2D()
+        {
+            this.core = new(this);
+        }
 
         protected override void Update()
         {
-            switch (stateMachine.State)
+            switch (core.State)
             {
                 case StateType.Arrived:
                     return;
@@ -55,7 +60,7 @@ namespace PJ
             var distanceToTarget = AngleUtils.Distance(new Vector2(transform.position.x, transform.position.y), waypoint);
             if (distanceToTarget <= arriveDistance)
             {
-                stateMachine.State = StateType.Arrived;
+                core.State = StateType.Arrived;
                 node.Velocity = Vector2.zero;
                 return;
             }
@@ -69,6 +74,25 @@ namespace PJ
                     node.Rotation = degreeAngle;
                     break;
             }
+        }
+
+        public void OnStateChange(GoStateMachine<StateType> inStateMachine)
+        {
+            var node = GetComponent<GoNode2D>();
+            if (null == node) { return; }
+
+            switch (core.State)
+            {
+                case StateType.Arrived:
+                    node.Velocity = Vector2.zero;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        public void OnStateFinish(GoStateMachine<StateType> inStateMachine)
+        {
         }
     }
 }

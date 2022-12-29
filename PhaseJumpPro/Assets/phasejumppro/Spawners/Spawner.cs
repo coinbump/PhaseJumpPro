@@ -6,16 +6,19 @@ using UnityEngine;
 /*
  * RATING: 5 stars
  * Has unit tests
- * CODE REVIEW: 4/15/22
+ * CODE REVIEW: 12/29/22
  */
 namespace PJ
 {
     /// <summary>
-    /// Spawn after N seconds
+    /// Spawn a new object every N seconds
     /// </summary>
     // FUTURE: add unit tests if needed
     public class Spawner : SpawnTable
     {
+        /// <summary>
+        /// (OPTIONAL) The parent object to spawn the new objects into
+        /// </summary>
         public GameObject spawnParent;
 
         /// <summary>

@@ -62,13 +62,13 @@ namespace PJ
                     {
                         case Axis.Y:
                             {
-                                var faceValue = worldSize.y / 2.0f * Vector2.up.y + (float)z / (vertexZCount - 1) * worldSize.y * Vector2.down.y;
+                                var faceValue = worldSize.y * 0.5f * Vector2.up.y + ((float)z / (vertexZCount - 1)) * worldSize.y * Vector2.down.y;
                                 vertices[i] = new Vector3((float)x / (vertexXCount - 1) * worldSize.x - worldSize.x / 2.0f, faceValue, 0);
                             }
                             break;
                         default:
                             {
-                                var faceValue = worldSize.y / 2.0f * Vector3.forward.z + (float)z / (vertexZCount - 1) * worldSize.y * Vector3.back.z;
+                                var faceValue = worldSize.y * 0.5f * Vector3.forward.z + (float)z / (vertexZCount - 1) * worldSize.y * Vector3.back.z;
                                 vertices[i] = new Vector3((float)x / (vertexXCount - 1) * worldSize.x - worldSize.x / 2.0f, 0, faceValue);
                             }
                             break;
