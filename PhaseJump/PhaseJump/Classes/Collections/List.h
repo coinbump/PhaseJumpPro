@@ -28,13 +28,10 @@ namespace PJ {
         // Convenience
         void Append(T const& value) { this->push_back(value); }
         void Add(T const& value) { this->push_back(value); }
-        bool IsEmpty() const { return this->empty(); }
 
         bool Contains(T const& value) const {
             return this->find(value) != this->end();
         }
-
-        size_t Count() const { return this->size(); }
 
         COLLECTION_METHODS(T)
     };

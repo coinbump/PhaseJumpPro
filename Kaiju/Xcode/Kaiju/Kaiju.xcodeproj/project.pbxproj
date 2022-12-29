@@ -9,6 +9,12 @@
 /* Begin PBXBuildFile section */
 		CD0A848B291CBF630074CA4F /* PhaseJump.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD0A848A291CBF630074CA4F /* PhaseJump.framework */; };
 		CD0A848C291CBF630074CA4F /* PhaseJump.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CD0A848A291CBF630074CA4F /* PhaseJump.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		CD420AA82957F3CE00C5D3E1 /* resources in Resources */ = {isa = PBXBuildFile; fileRef = CD420AA72957F3CE00C5D3E1 /* resources */; };
+		CD420AE92959FE6900C5D3E1 /* SDLTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD420AE82959FE6900C5D3E1 /* SDLTest.cpp */; };
+		CD420AEE2959FFA700C5D3E1 /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD420AEC2959FFA700C5D3E1 /* SDL2.framework */; };
+		CD420AEF2959FFA700C5D3E1 /* SDL2.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CD420AEC2959FFA700C5D3E1 /* SDL2.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		CD420AF02959FFA700C5D3E1 /* SDL2_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD420AED2959FFA700C5D3E1 /* SDL2_image.framework */; };
+		CD420AF12959FFA700C5D3E1 /* SDL2_image.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CD420AED2959FFA700C5D3E1 /* SDL2_image.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CD5FB81C291E130D004F2FB4 /* FilesProcessorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD5FB81B291E130D004F2FB4 /* FilesProcessorView.swift */; };
 		CD5FB81E291E13D5004F2FB4 /* SwiftBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD5FB81D291E13D5004F2FB4 /* SwiftBridge.swift */; };
 		CD5FB83229200602004F2FB4 /* ObjCBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD5FB83129200602004F2FB4 /* ObjCBridge.mm */; };
@@ -46,7 +52,9 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				CD420AF12959FFA700C5D3E1 /* SDL2_image.framework in Embed Frameworks */,
 				CD0A848C291CBF630074CA4F /* PhaseJump.framework in Embed Frameworks */,
+				CD420AEF2959FFA700C5D3E1 /* SDL2.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -55,6 +63,11 @@
 
 /* Begin PBXFileReference section */
 		CD0A848A291CBF630074CA4F /* PhaseJump.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PhaseJump.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CD420AA72957F3CE00C5D3E1 /* resources */ = {isa = PBXFileReference; lastKnownFileType = folder; path = resources; sourceTree = "<group>"; };
+		CD420AE72959FE6900C5D3E1 /* SDLTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDLTest.h; sourceTree = "<group>"; };
+		CD420AE82959FE6900C5D3E1 /* SDLTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SDLTest.cpp; sourceTree = "<group>"; };
+		CD420AEC2959FFA700C5D3E1 /* SDL2.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SDL2.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CD420AED2959FFA700C5D3E1 /* SDL2_image.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SDL2_image.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CD5FB81A291E130D004F2FB4 /* Kaiju-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Kaiju-Bridging-Header.h"; sourceTree = "<group>"; };
 		CD5FB81B291E130D004F2FB4 /* FilesProcessorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilesProcessorView.swift; sourceTree = "<group>"; };
 		CD5FB81D291E13D5004F2FB4 /* SwiftBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftBridge.swift; sourceTree = "<group>"; };
@@ -81,7 +94,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CD420AF02959FFA700C5D3E1 /* SDL2_image.framework in Frameworks */,
 				CD0A848B291CBF630074CA4F /* PhaseJump.framework in Frameworks */,
+				CD420AEE2959FFA700C5D3E1 /* SDL2.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -105,6 +120,8 @@
 		CD0A8489291CBF630074CA4F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CD420AEC2959FFA700C5D3E1 /* SDL2.framework */,
+				CD420AED2959FFA700C5D3E1 /* SDL2_image.framework */,
 				CD0A848A291CBF630074CA4F /* PhaseJump.framework */,
 			);
 			name = Frameworks;
@@ -121,6 +138,7 @@
 		CD6FEB4929170AE500F674D3 = {
 			isa = PBXGroup;
 			children = (
+				CD420AA72957F3CE00C5D3E1 /* resources */,
 				CD6FEB5429170AE500F674D3 /* Kaiju */,
 				CD6FEB6A29170AE600F674D3 /* KaijuTests */,
 				CD6FEB7429170AE600F674D3 /* KaijuUITests */,
@@ -142,6 +160,8 @@
 		CD6FEB5429170AE500F674D3 /* Kaiju */ = {
 			isa = PBXGroup;
 			children = (
+				CD420AE82959FE6900C5D3E1 /* SDLTest.cpp */,
+				CD420AE72959FE6900C5D3E1 /* SDLTest.h */,
 				CD5FB84029204DD2004F2FB4 /* Views */,
 				CD6FEB5529170AE500F674D3 /* AppDelegate.h */,
 				CD6FEB5629170AE500F674D3 /* AppDelegate.mm */,
@@ -282,6 +302,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CD6FEB5C29170AE600F674D3 /* Assets.xcassets in Resources */,
+				CD420AA82957F3CE00C5D3E1 /* resources in Resources */,
 				CD6FEB5F29170AE600F674D3 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -309,6 +330,7 @@
 			files = (
 				CD5FB81C291E130D004F2FB4 /* FilesProcessorView.swift in Sources */,
 				CD6FEB5A29170AE500F674D3 /* ViewController.mm in Sources */,
+				CD420AE92959FE6900C5D3E1 /* SDLTest.cpp in Sources */,
 				CD6FEB6129170AE600F674D3 /* main.m in Sources */,
 				CD5FB81E291E13D5004F2FB4 /* SwiftBridge.swift in Sources */,
 				CD5FB83229200602004F2FB4 /* ObjCBridge.mm in Sources */,

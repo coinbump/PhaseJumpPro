@@ -2,8 +2,8 @@
 #define PJVECTOR2_H
 
 #include "SomeVector.h"
-#include "Core/FloatMath.h"
-#include "Core/IntMath.h"
+#include "FloatMath.h"
+#include "IntMath.h"
 
 /*
  RATING: 5 stars
@@ -46,10 +46,15 @@ namespace PJ {
             (*this)[0] = x;
             (*this)[1] = y;
         }
+
+        int x() const { return (*this)[0]; }
+        int y() const { return (*this)[1]; }
+        int& x() { return (*this)[0]; }
+        int& y() { return (*this)[1]; }
     };
 
     // Convenience names
-    using Vec2f = Vector2;
+    using Vec2 = Vector2;
 }
 
 #endif

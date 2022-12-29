@@ -2,7 +2,7 @@
 #ifndef PJSTRING_H_
 #define PJSTRING_H_
 
-#include "Utils/StringUtils.h"
+#include "StringUtils.h"
 #include <string>
 #include <sstream>
 #include <stdio.h>
@@ -21,6 +21,12 @@ namespace PJ {
         String() : std::string() {}
         String(const std::string& str) : std::string(str) {}
         String(const char* s) : std::string(s) {}
+        String(float value)
+        {
+            std::stringstream stream;
+            stream << value;
+            (*this) = stream.str();
+        }
 
         // Standard
         bool HasPrefix(std::string findString) const { return StringUtils().HasPrefix(*this, findString); }

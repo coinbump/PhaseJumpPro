@@ -2,6 +2,9 @@
 #define PJMACROS_COLLECTIONS_H
 
 #define COLLECTION_METHODS(Type) \
+size_t Count() const { return this->size(); } \
+bool IsEmpty() const { return Count() <= 0; } \
+\
 void Remove(Type const& value) { \
     auto i = std::find(this->begin(), this->end(), value); \
     if (i == this->end()) { return; } \

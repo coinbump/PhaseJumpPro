@@ -17,7 +17,7 @@ namespace PJ {
     class SomeRunner : public Updatable {
     protected:
         /// <summary>
-        /// If true, timer has reached the end of its duration
+        /// If true, we are finished running
         /// </summary>
         bool isFinished = false;
 

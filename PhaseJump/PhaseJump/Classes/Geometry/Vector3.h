@@ -4,6 +4,7 @@
 #include "SomeVector.h"
 #include "FloatMath.h"
 #include "IntMath.h"
+#include "Vector2.h"
 
 /*
  RATING: 5 stars
@@ -27,6 +28,17 @@ namespace PJ {
 
         static Vector3 const one;
         static Vector3 const zero;
+
+        float x() const { return (*this)[0]; }
+        float y() const { return (*this)[1]; }
+        float z() const { return (*this)[2]; }
+        float& x() { return (*this)[0]; }
+        float& y() { return (*this)[1]; }
+        float& z() { return (*this)[2]; }
+
+        operator Vector2() const {
+            return Vector2(x(), y());
+        }
     };
 
     class Vector3Int : public SomeVector<IntMath, 3> {

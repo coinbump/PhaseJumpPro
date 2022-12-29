@@ -13,14 +13,14 @@ using namespace PJ;
 using namespace std;
 
 ObjCBridge* _sharedInstance;
-FilesProcessor *filesProcessor = nil;
+shared_ptr<FilesProcessor> filesProcessor;
 
 @implementation ObjCBridge
 
 // Future: support generic operations with parameters: Swift -> ObjC -> C++ bridge
 - (void)startFilesProcessorWithFilePathsCount:(NSInteger)filePathsCount
 {
-    filesProcessor = new FilesProcessor(filePathsCount, make_shared<FileProcessor::Utility::RenameCSToHFileProcessor>());
+    filesProcessor = make_shared<FilesProcessor>(filePathsCount, make_shared<FileProcessor::Utility::RenameCSToHFileProcessor>());
 }
 
 - (void)provideFilePath:(NSString*)filePath

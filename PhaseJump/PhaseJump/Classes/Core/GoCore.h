@@ -35,10 +35,18 @@ namespace PJ
         using GoStateMachinePtr = GoStateMachineSharedPtr const&;
         
         GoStateMachineSharedPtr sm = std::make_shared<GoStateMachine<StateType>>();
+        std::weak_ptr<SomeGoStateListener<StateType>> owner;
 
     protected:
-        virtual void OnStateChange(GoStateMachinePtr inStateMachine) { }
-        virtual void OnStateFinish(GoStateMachinePtr inStateMachine) { }
+        virtual void OnStateChange(GoStateMachinePtr inStateMachine) {
+            if (owner.expired()) { return; }
+            owner.lock()->OnStateChange(inStateMachine);
+        }
+
+        virtual void OnStateFinish(GoStateMachinePtr inStateMachine) {
+            if (owner.expired()) { return; }
+            owner.lock()->OnStateFinish(inStateMachine);
+        }
 
         // Due to a limitation of C++ and shared_ptr, we must manually kickstart this using Go
         void GoInternal() override {
@@ -61,6 +69,10 @@ namespace PJ
         std::shared_ptr<Broadcaster> broadcaster = std::make_shared<Broadcaster>();
 
         GoCore()
+        {
+        }
+
+        GoCore(std::shared_ptr<SomeGoStateListener<StateType>> owner) : owner(owner)
         {
         }
 

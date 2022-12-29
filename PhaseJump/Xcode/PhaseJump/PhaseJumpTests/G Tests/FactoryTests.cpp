@@ -5,7 +5,7 @@ using namespace PJ;
 using namespace std;
 
 namespace FactoryTests {
-    class TestClass {
+    class TestClass : public Base {
     public:
         int value = 1;
 
@@ -18,13 +18,13 @@ using namespace FactoryTests;
 TEST(Factory, FactoryNew) {
     FactoryNew<TestClass> factory;
     EXPECT_NE(factory.New(), nullptr);
-    EXPECT_NE(dynamic_cast<TestClass*>(factory.New()), nullptr);
+    EXPECT_NE(dynamic_pointer_cast<TestClass>(factory.New()), nullptr);
 }
 
 TEST(Factory, Factory) {
-    auto constructor = [] () -> TestClass* { return new TestClass(); };
+    auto constructor = [] () -> std::shared_ptr<TestClass> { return make_shared<TestClass>(); };
 
-    Factory<TestClass*> factory(constructor);
+    Factory<TestClass> factory(constructor);
     EXPECT_NE(factory.New(), nullptr);
-    EXPECT_NE(dynamic_cast<TestClass*>(factory.New()), nullptr);
+    EXPECT_NE(dynamic_pointer_cast<TestClass>(factory.New()), nullptr);
 }

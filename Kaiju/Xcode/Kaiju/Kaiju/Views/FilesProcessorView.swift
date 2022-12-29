@@ -1,10 +1,3 @@
-//
-//  HelloSwiftUI.swift
-//  Kaiju
-//
-//  Created by Jeremy Vineyard on 11/10/22.
-//
-
 import SwiftUI
 
 /// Processes files when dropped onto it

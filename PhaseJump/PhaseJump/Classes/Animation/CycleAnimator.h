@@ -44,11 +44,13 @@ namespace PJ
         /// <summary>
         /// Value binding to modify value
         /// </summary>
-        std::shared_ptr<Binding<T>> binding;
+        std::shared_ptr<SetBinding<T>> binding;
 
         ReverseType reverseType = ReverseType::Match;
 
-        CycleAnimator(std::shared_ptr<Interpolator<T>> interpolator, std::shared_ptr<AnimationCycleTimer> timer, std::shared_ptr<Binding<T>> binding)
+        CycleAnimator(std::shared_ptr<Interpolator<T>> interpolator,
+                      std::shared_ptr<AnimationCycleTimer> timer,
+                      std::shared_ptr<SetBinding<T>> binding)
         : interpolator(interpolator),
         timer(timer),
         binding(binding)

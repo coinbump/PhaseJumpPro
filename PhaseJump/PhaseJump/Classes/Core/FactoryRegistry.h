@@ -17,7 +17,7 @@ namespace PJ
     /// Store factories accessed by a class ID
     /// </summary>
     /// <typeparam name="Type"></typeparam>
-    template <class Type> class FactoryRegistry : public Map<std::string, std::shared_ptr<Factory<Type*>>>
+    template <class Type> class FactoryRegistry : public Map<std::string, std::shared_ptr<Factory<Type>>>
     {
     public:
         FactoryRegistry() {

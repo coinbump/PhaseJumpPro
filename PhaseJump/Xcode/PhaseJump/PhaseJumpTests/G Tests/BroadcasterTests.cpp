@@ -2,6 +2,66 @@
 #include "Broadcaster.h"
 #include "SomeListener.h"
 
+// TODO: Temp for build tests
+#include "RateLimiter.h"
+#include "Alignment.h"
+#include "AnimationCycleTimer.h"
+#include "CirclePath.h"
+#include "PublishedValue.h"
+
+#include "SomeGraphNode.h"
+
+#include "Axis.h"
+#include "Interpolator.h"
+#include "SomeInterpolate.h"
+#include "Alignment.h"
+#include "SomePath.h"
+#include "LinePath.h"
+#include "TransformTimer.h"
+#include "SomeFocusCoordinator.h"
+#include "Angle.h"
+#include "Color32.h"
+#include "SomePosition.h"
+#include "Polygon.h"
+#include "Node2D.h"
+#include "SwitchHandler.h"
+#include "SomeEffect.h"
+#include "SomeAnimatedEffect.h"
+#include "SomeLayout.h"
+#include "SomeLayout2D.h"
+#include "HFlow.h"
+#include "VFlow.h"
+#include "SomeGoal.h"
+#include "GoalEvents.h"
+#include "Signal.h"
+#include "SomeReceptor.h"
+#include "SomeNormalRandom.h"
+#include "FixedNormalRandom.h"
+#include "StandardNormalRandom.h"
+
+#include <memory>
+
+// TODO: temp code
+#include "SomeAligner.h"
+#include "IntClamp.h"
+#include "SomeGraphNode.h"
+#include "AcyclicGraphNode.h"
+#include "World.h"
+#include "SomeStateMachine.h"
+#include "StateMachine.h"
+#include "PublishedValue.h"
+#include "CycleAnimator.h"
+#include "SomeInterpolatorKey.h"
+#include "SomeKeyframe.h"
+#include "ValueKeyframe.h"
+#include "ActionKeyframe.h"
+#include "Switchable.h"
+#include "GoStateMachine.h"
+#include "SomeRunner.h"
+#include "Valve.h"
+#include "GoCore.h"
+#include "SomeNode.h"
+
 using namespace PJ;
 using namespace std;
 

@@ -1,5 +1,4 @@
 #include "gtest/gtest.h"
-#include "Core/Class.h"
 #include "GoCore.h"
 
 using namespace PJ;

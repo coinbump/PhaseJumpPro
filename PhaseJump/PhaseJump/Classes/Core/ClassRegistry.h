@@ -23,20 +23,20 @@ namespace PJ
         ClassRegistry() {
         }
 
-        template <class T> T* NewType(String key) {
+        template <class T> std::shared_ptr<T> NewType(String key) {
             auto iterator = this->find(key);
             if (iterator == this->end()) { return NULL; }
 
             auto ptr = iterator->second;
             auto value = ptr.get();
             auto typeClass = dynamic_cast<TypeClass<T>*>(value);
-            if (NULL == typeClass) { return NULL; }
-            if (NULL == typeClass->factory.get()) { return NULL; }
+            if (nullptr == typeClass) { return nullptr; }
+            if (nullptr == typeClass->factory.get()) { return nullptr; }
 
             return typeClass->factory->New();
         }
 
-        Base* New(String key) const {
+        std::shared_ptr<Base> New(String key) const {
             auto iterator = this->find(key);
             if (iterator == this->end()) { return NULL; }
 

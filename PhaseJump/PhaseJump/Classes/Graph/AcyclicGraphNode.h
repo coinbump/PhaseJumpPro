@@ -22,9 +22,10 @@ namespace PJ
         using AcyclicNodeSharedPtr = std::shared_ptr<AcyclicNode>;
         using NodeStrongReference = StrongReference<SomeGraphNode<EdgeModel>>;
 
-        void AddEdge(EdgeModel model, typename Base::NodeSharedPtr toNode) override {
+        typename Base::NodeSharedPtr AddEdge(EdgeModel model, typename Base::NodeSharedPtr toNode) override {
             // Acyclic graph nodes hold a strong reference to their next node
             this->AddEdgeInternal(model, std::make_shared<StrongReference<SomeGraphNode<EdgeModel>>>(toNode));
+            return toNode;
         }
 
         AcyclicNodeSharedPtr RootNode() {

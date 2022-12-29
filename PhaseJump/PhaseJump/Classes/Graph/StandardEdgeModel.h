@@ -1,8 +1,8 @@
 #ifndef PJSTANDARDEDGEMODEL_H
 #define PJSTANDARDEDGEMODEL_H
 
-#include "Types/_String.h"
-#include "Core/Tags.h"
+#include "_String.h"
+#include "Tags.h"
 #include <memory>
 
 /*

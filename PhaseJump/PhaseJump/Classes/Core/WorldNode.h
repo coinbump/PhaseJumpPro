@@ -2,8 +2,9 @@
 #define PJWORLDNODE_H
 
 #include "AcyclicGraphNode.h"
-#include "WorldComponent.h"
+#include "SomeWorldComponent.h"
 #include "List.h"
+#include "GeoTransform.h"
 #include <memory>
 
 namespace PJ {
@@ -12,7 +13,7 @@ namespace PJ {
     /// </summary>
     class WorldNode : public AcyclicGraphNode<> {
     public:
-        using ComponentSharedPtr = std::shared_ptr<WorldComponent>;
+        using ComponentSharedPtr = std::shared_ptr<SomeWorldComponent>;
         using ComponentPtr = ComponentSharedPtr const&;
 
     protected:
@@ -22,8 +23,31 @@ namespace PJ {
 
     public:
         using Base = AcyclicGraphNode<>;
+        std::shared_ptr<GeoTransform> transform = std::make_shared<GeoTransform>();
 
         bool IsDestroyed() const { return isDestroyed; }
+
+        List<ComponentSharedPtr> const& Components() const { return components; }
+
+        void AddComponent(ComponentPtr component)
+        {
+            if (!component) { return; }
+            components.Add(component);
+            component->owner = static_pointer_cast<WorldNode>(shared_from_this());
+        }
+
+        template <class T>
+        std::shared_ptr<T> GetComponent() const
+        {
+            for (auto component : components) {
+                auto typeComponent = dynamic_pointer_cast<T>(component);
+                if (typeComponent) {
+                    return typeComponent;
+                }
+            }
+
+            return nullptr;
+        }
 
         void Destroy(float countdown = 0)
         {
@@ -33,10 +57,6 @@ namespace PJ {
             }
 
             destroyCountdown = countdown;
-        }
-
-        void AddComponent(ComponentPtr component) {
-            components.Add(component);
         }
 
         /// Called for every object before Start
@@ -68,6 +88,20 @@ namespace PJ {
                 if (!component->IsEnabled()) { continue; }
                 component->OnUpdate(time);
             }
+        }
+
+        std::shared_ptr<List<std::shared_ptr<WorldNode>>> ChildNodes() const
+        {
+            auto result = std::make_shared<List<std::shared_ptr<WorldNode>>>();
+
+            for (auto edge : edges) {
+                auto worldNode = dynamic_pointer_cast<WorldNode>(edge->toNode->Value());
+                if (worldNode) {
+                    result->Add(worldNode);
+                }
+            }
+
+            return result;
         }
     };
 }

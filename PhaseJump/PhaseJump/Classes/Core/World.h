@@ -1,15 +1,17 @@
-#ifndef PJSCENE_H
-#define PJSCENE_H
+#ifndef PJWORLD_H
+#define PJWORLD_H
 
 #include "WorldNode.h"
 #include "Updatable.h"
+#include "SomeRenderContext.h"
 #include <memory>
 
 namespace PJ
 {
-    class Scene : public Updatable {
+    class World : public Base, public Updatable {
     public:
         std::shared_ptr<WorldNode> root = std::make_shared<WorldNode>();
+        std::shared_ptr<SomeRenderContext> renderContext;
 
         bool IsFinished() const override { return false; }
         void OnUpdate(TimeSlice time) override

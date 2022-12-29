@@ -33,6 +33,20 @@ namespace PJ
         T Value() override { return getFunc(); }
         void SetValue(T const& value) override { setFunc(value); }
     };
+
+    template <class T>
+    class SetBinding
+    {
+    public:
+        using SetFunc = std::function<void(T const&)>;
+
+        SetFunc setFunc;
+
+        SetBinding(SetFunc setFunc) : setFunc(setFunc) {
+        }
+
+        void SetValue(T const& value) { setFunc(value); }
+    };
 }
 
 #endif

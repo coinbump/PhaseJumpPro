@@ -21,7 +21,6 @@ namespace PJ {
         // Convenience
         void Append(T const& value) { this->push_back(value); }
         void Add(T const& value) { this->push_back(value); }
-        size_t Count() const { return this->size(); }
 
         // NOTE: Avoid Remove for large lists, it is inefficient
         COLLECTION_METHODS(T)

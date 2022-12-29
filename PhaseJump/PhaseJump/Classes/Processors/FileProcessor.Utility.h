@@ -2,7 +2,7 @@
 #define PJFILEPROCESSOR_UTILITY_H
 
 #include "FilesProcessor.h"
-#include "Types/_String.h"
+#include "_String.h"
 #include <filesystem>
 
 namespace PJ {

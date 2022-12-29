@@ -18,6 +18,7 @@ namespace PJ {
 
     // Convenience names
     using MathF = FloatMath;
+    using Mathf = FloatMath;
 }
 
 #endif

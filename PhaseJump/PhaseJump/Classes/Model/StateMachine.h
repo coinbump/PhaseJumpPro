@@ -69,8 +69,8 @@ namespace PJ
         using NodeSharedPtr = std::shared_ptr<Node>;
 
     protected:
-        T state;
-        T prevState;
+        T state = T();
+        T prevState = T();
 
         Map<T, NodeSharedPtr> stateToNodeMap;
 
@@ -83,7 +83,7 @@ namespace PJ
         /// <summary>
         /// If true, state transitions can't occur
         /// </summary>
-        bool isLocked;
+        bool isLocked = false;
 
     public:
         bool IsLocked() const { return isLocked; }

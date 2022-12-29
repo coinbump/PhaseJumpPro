@@ -69,7 +69,7 @@ namespace PJ
 
         SomeGraphNode() {}
 
-        virtual void AddEdge(EdgeModel model, NodeSharedPtr toNode) = 0;
+        virtual NodeSharedPtr AddEdge(EdgeModel model, NodeSharedPtr toNode) = 0;
 
         void AddEdgeInternal(EdgeModel model, NodeReferenceSharedPtr toNode)
         {

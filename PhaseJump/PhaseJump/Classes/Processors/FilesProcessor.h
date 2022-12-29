@@ -2,8 +2,8 @@
 #define PJFILESPROCESSOR_H
 
 #include "SomeProcessor.h"
-#include "Storage/Local/FilePath.h"
-#include "Collections/Array.h"
+#include "FilePath.h"
+#include "Array.h"
 #include <memory>
 #include <filesystem>
 

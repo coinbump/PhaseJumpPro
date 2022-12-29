@@ -7,18 +7,25 @@ namespace PJ
 {
     /// <summary>
     /// Geometry transform for a world node
+    /// Currently this is missing support for hierarchical coordinates
     /// </summary>
     struct GeoTransform
     {
         Vector3 position;
 
-        // TODO: should we be storing quaternion/eulerAngles here?
+        // FUTURE: evaluate storing quaternion/eulerAngles here if we add 3D support
         Vector3 rotation;
         Vector3 scale;
 
-        GeoTransform(Vector3 position, Vector3 rotation, Vector3 scale) : position(position), rotation(rotation), scale(scale)
+        GeoTransform(Vector3 position = Vector3::zero, Vector3 rotation = Vector3::zero, Vector3 scale = Vector3::zero) : position(position), rotation(rotation), scale(scale)
         {
         }
+
+        // FUTURE: support hierarchical positions
+        Vector3 LocalPosition() const { return position; }
+        Vector3 Position() const { return position; }
+        void SetLocalPosition(Vector3 position) { this->position = position; }
+        void SetPosition(Vector3 position) { this->position = position; }
 
         static GeoTransform const defaultTransform;
     };

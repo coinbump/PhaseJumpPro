@@ -1,7 +1,10 @@
 #ifndef PJWORLDCOMPONENT_H
 #define PJWORLDCOMPONENT_H
 
+#include "SomeWorldComponent.h"
+#include "WorldNode.h"
 #include "AcyclicGraphNode.h"
+#include "GeoTransform.h"
 #include "Updatable.h"
 #include <memory>
 
@@ -11,22 +14,24 @@ namespace PJ {
     /// <summary>
     /// A component that can be attached to world nodes
     /// </summary>
-    class WorldComponent : public Updatable {
-    protected:
-        bool isEnabled = true;
-
+    class WorldComponent : public SomeWorldComponent {
     public:
-        std::weak_ptr<WorldNode> owner;
+        std::shared_ptr<GeoTransform> Transform() const;
 
-        bool IsEnabled() const { return false; }
-
-        // Called before Start
-        virtual void Awake() {}
-
-        // Called after Awake
-        virtual void Start() {}
+        template <class T>
+        std::shared_ptr<T> GetComponent() const
+        {
+            if (owner.expired()) { return nullptr; }
+            return owner.lock()->GetComponent<T>();
+        }
 
         void DestroyOwner(float afterSeconds = 0);
+
+        std::shared_ptr<List<std::shared_ptr<WorldNode>>> ChildNodes() const
+        {
+            if (owner.expired()) { return nullptr; }
+            return owner.lock()->ChildNodes();
+        }
     };
 }
 

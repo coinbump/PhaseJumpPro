@@ -16,7 +16,7 @@ TEST(CycleAnimator, CycleOnceForward)
     CycleAnimator<float> sut(
                              make_shared<Interpolator<float>>(0, 360),
                              make_shared<AnimationCycleTimer>(1.0f, AnimationCycleType::Once),
-                             make_shared<Binding<float>>([] () -> float { return 0.0f; }, [&testValue] (float value) { testValue = value; })
+                             make_shared<SetBinding<float>>([&testValue] (float value) { testValue = value; })
                              );
 
     sut.OnUpdate(TimeSlice(0.5f));
@@ -37,7 +37,7 @@ TEST(CycleAnimator, MatchInReverse)
     CycleAnimator<float> sut(
                              make_shared<Interpolator<float>>(0, 360),
                              make_shared<AnimationCycleTimer>(1.0f, AnimationCycleType::PingPong),
-                             make_shared<Binding<float>>([] () -> float { return 0.0f; }, [&testValue] (float value) { testValue = value; })
+                             make_shared<SetBinding<float>>([&testValue] (float value) { testValue = value; })
                              );
 
     sut.reverseType = CycleAnimator<float>::ReverseType::Match;
@@ -58,7 +58,7 @@ TEST(CycleAnimator, RewindInReverse)
     CycleAnimator<float> sut(
                              make_shared<Interpolator<float>>(0, 360),
                              make_shared<AnimationCycleTimer>(1.0f, AnimationCycleType::PingPong),
-                             make_shared<Binding<float>>([] () -> float { return 0.0f; }, [&testValue] (float value) { testValue = value; })
+                             make_shared<SetBinding<float>>([&testValue] (float value) { testValue = value; })
                              );
 
     sut.reverseType = CycleAnimator<float>::ReverseType::Rewind;

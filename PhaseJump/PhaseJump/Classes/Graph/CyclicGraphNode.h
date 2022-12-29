@@ -20,9 +20,10 @@ namespace PJ
     public:
         using Base = SomeGraphNode<EdgeModel>;
 
-        void AddEdge(EdgeModel model, typename Base::NodeSharedPtr toNode) override
+        typename Base::NodeSharedPtr AddEdge(EdgeModel model, typename Base::NodeSharedPtr toNode) override
         {
             std::cout << "Error. Call CyclicGraph.AddEdge instead";
+            return nullptr;
         }
     };
 }

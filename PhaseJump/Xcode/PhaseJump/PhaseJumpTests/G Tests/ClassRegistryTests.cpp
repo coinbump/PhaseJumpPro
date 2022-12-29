@@ -6,14 +6,14 @@ using namespace PJ;
 using namespace std;
 
 namespace ClassRegistryTests {
-    class TestType : public Base {
+    class TestType : public PJ::Base {
     };
 
     class TestClass: public TypeClass<TestType> {
     public:
         int value = 1;
 
-        TestClass() : TypeClass<TestType>("id", make_shared<Factory>([] () -> TestType* { return new TestType(); })) {
+        TestClass() : TypeClass<TestType>("id", make_shared<Factory>([] () -> std::shared_ptr<TestType> { return make_shared<TestType>(); })) {
         }
     };
 }
@@ -29,5 +29,5 @@ TEST(ClassRegistry, New) {
     auto object = sut.NewType<TestType>("test");
 
     EXPECT_NE(nullptr, object);
-    EXPECT_NE(nullptr, dynamic_cast<TestType*>(object));
+    EXPECT_NE(nullptr, dynamic_pointer_cast<TestType>(object));
 }

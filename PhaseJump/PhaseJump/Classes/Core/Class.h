@@ -17,7 +17,7 @@ namespace PJ {
     /// We might want to have properties that are defined dynamically (during runtime),
     /// but also shared by multiple objects of the same type
     /// </summary>
-    class Class {
+    class Class : public Base {
     public:
         String id;
 
@@ -46,23 +46,23 @@ namespace PJ {
 
         virtual ~Class() {}
 
-        virtual PJ::Base* New() { return nullptr; }
+        virtual std::shared_ptr<PJ::Base> New() { return nullptr; }
     };
 
     template <class Type> class TypeClass : public Class {
     public:
         using Base = Class;
-        using NewType = Type*;
-        using Factory = Factory<NewType>;
+        using NewType = std::shared_ptr<Type>;
+        using Factory = Factory<Type>;
         using FactorySharedPtr = std::shared_ptr<Factory>;
 
         FactorySharedPtr factory;
 
-        TypeClass(String id, FactorySharedPtr factory = std::make_shared<Factory>([] () -> NewType { return new Type(); })) : Base(id), factory(factory) {
+        TypeClass(String id, FactorySharedPtr factory = std::make_shared<Factory>([] () -> NewType { return std::make_shared<Type>(); })) : Base(id), factory(factory) {
         }
 
-        PJ::Base* New() override {
-            if (!factory.get()) { return NULL; }
+        std::shared_ptr<PJ::Base> New() override {
+            if (!factory.get()) { return nullptr; }
 
             return factory->New();
         }

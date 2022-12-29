@@ -7,6 +7,7 @@
 
 #import "AppDelegate.h"
 #import <PhaseJump/Class.h>
+#include "SDLTest.h"
 
 @interface AppDelegate ()
 
@@ -16,6 +17,8 @@
 @implementation AppDelegate
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
+    // A simple test of an SDL window
+    SDLFoo();
 }
 
 

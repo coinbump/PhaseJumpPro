@@ -1,5 +1,5 @@
-#ifndef PJSOMEINPUTCONTROLLER_H
-#define PJSOMEINPUTCONTROLLER_H
+#ifndef PJSOMEDEVICE_H
+#define PJSOMEDEVICE_H
 
 /*
  * RATING: 5 stars
@@ -11,7 +11,7 @@ namespace PJ
     /// <summary>
     /// Some device that sends inputs (mouse, gamepad, etc.)
     /// </summary>
-    class SomeInputController
+    class SomeInputDevice
     {
         public virtual bool IsAvailable() = 0;
     };
