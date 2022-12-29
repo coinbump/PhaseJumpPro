@@ -42,6 +42,12 @@ namespace PJ
             get => position;
             set => position = value;
         }
+
+        public LocalPosition(Vector3 position, GameObject reference)
+        {
+            this.position = position;
+            this.reference = reference;
+        }
     }
 
     public struct ScreenPosition : SomePosition

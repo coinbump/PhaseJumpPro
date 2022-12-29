@@ -3,10 +3,10 @@ using UnityEngine;
 using System.Collections;
 
 /*
- * RATING: 5 stars
- * Has unit tests
- * CODE REVIEW: 4/3/22
- */
+RATING: 5 stars
+Tested and works
+CODE REVIEW: 12/28/22
+*/
 namespace PJ
 {
     /// <summary>

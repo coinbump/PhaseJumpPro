@@ -2,6 +2,11 @@
 using UnityEngine;
 using System.Collections;
 
+/*
+RATING: 5 stars
+Tested and works
+CODE REVIEW: 12/28/22
+*/
 namespace PJ
 {
     /// <summary>
@@ -30,7 +35,7 @@ namespace PJ
             for (int i = 0; i < mesh.vertices.Length; i += 3)
             {
                 var vertexOffset = new Vector3(PJ.RandomUtils.VaryFloat(0, randomOffset.x), PJ.RandomUtils.VaryFloat(0, randomOffset.y), PJ.RandomUtils.VaryFloat(0, randomOffset.z));
-                Debug.Log("Vertex Offset: " + vertexOffset.ToString());
+                // Debug.Log("Vertex Offset: " + vertexOffset.ToString());
 
                 // Offset each triangle individually
                 newVertices[0 + i] += vertexOffset;

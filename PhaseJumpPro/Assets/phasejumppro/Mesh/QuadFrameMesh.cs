@@ -2,10 +2,10 @@
 using UnityEngine;
 
 /*
- * RATING: 5 stars
- * Has unit tests
- * CODE REVIEW: 4/3/22
- */
+RATING: 5 stars
+Has unit tests
+CODE REVIEW: 12/28/22
+*/
 namespace PJ
 {
     public class QuadFrameMesh : SomePolyFrameMesh
@@ -13,13 +13,7 @@ namespace PJ
         public Vector2 worldSize = new Vector2(1.0f, 1.0f);
         public Vector2 strokeSize = new Vector2(0.1f, 0.1f);
 
-        public override int PolyVertexCount
-        {
-            get
-            {
-                return 4;
-            }
-        }
+        public override int PolyVertexCount => 4;
 
         public QuadFrameMesh(Vector2 worldSize, Vector2 strokeSize)
         {
@@ -27,8 +21,10 @@ namespace PJ
             this.strokeSize = strokeSize;
         }
 
-        public override Mesh BuildMesh(Mesh mesh)
+        public override Mesh BuildMesh()
         {
+            var mesh = new Mesh();
+
             int meshVertexCount = MeshVertexCount;
             var vertices = new Vector3[meshVertexCount];
             var trianglesSize = MeshVertexCount * 3;
@@ -37,10 +33,10 @@ namespace PJ
             var uv = new Vector2[uvSize];
 
             // Outer frame
-            vertices[0] = new Vector3(-worldSize.x / 2.0f, worldSize.y / 2.0f, 0);
-            vertices[1] = new Vector3(worldSize.x / 2.0f, worldSize.y / 2.0f, 0);
-            vertices[2] = new Vector3(worldSize.x / 2.0f, -worldSize.y / 2.0f, 0);
-            vertices[3] = new Vector3(-worldSize.x / 2.0f, -worldSize.y / 2.0f, 0);
+            vertices[0] = new Vector3(-worldSize.x / 2.0f, (worldSize.y / 2.0f) * Vector2.up.y, 0);
+            vertices[1] = new Vector3(worldSize.x / 2.0f, (worldSize.y / 2.0f) * Vector2.up.y, 0);
+            vertices[2] = new Vector3(worldSize.x / 2.0f, (worldSize.y / 2.0f) * Vector2.down.y, 0);
+            vertices[3] = new Vector3(-worldSize.x / 2.0f, (worldSize.y / 2.0f) * Vector2.down.y, 0);
             uv[0] = new Vector2(0, 1);
             uv[1] = new Vector2(1, 1);
             uv[2] = new Vector2(1, 0);
@@ -48,10 +44,10 @@ namespace PJ
 
             // Inner frame
             var frameSize = new Vector2(Mathf.Abs(worldSize.x - strokeSize.x * 2.0f), Mathf.Abs(worldSize.y - strokeSize.y * 2.0f));
-            vertices[4] = new Vector3(-frameSize.x / 2.0f, frameSize.y / 2.0f, 0);
-            vertices[5] = new Vector3(frameSize.x / 2.0f, frameSize.y / 2.0f, 0);
-            vertices[6] = new Vector3(frameSize.x / 2.0f, -frameSize.y / 2.0f, 0);
-            vertices[7] = new Vector3(-frameSize.x / 2.0f, -frameSize.y / 2.0f, 0);
+            vertices[4] = new Vector3(-frameSize.x / 2.0f, (frameSize.y / 2.0f) * Vector2.up.y, 0);
+            vertices[5] = new Vector3(frameSize.x / 2.0f, (frameSize.y / 2.0f) * Vector2.up.y, 0);
+            vertices[6] = new Vector3(frameSize.x / 2.0f, (frameSize.y / 2.0f) * Vector2.down.y, 0);
+            vertices[7] = new Vector3(-frameSize.x / 2.0f, (frameSize.y / 2.0f) * Vector2.down.y, 0);
 
             var frameRatioX = strokeSize.x / worldSize.x;
             var frameRatioY = strokeSize.y / worldSize.y;

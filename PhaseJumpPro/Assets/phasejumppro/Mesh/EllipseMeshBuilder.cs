@@ -3,10 +3,10 @@ using UnityEngine;
 using System.Collections;
 
 /*
- * RATING: 5 stars
- * Has unit tests
- * CODE REVIEW: 4/3/22
- */
+RATING: 5 stars
+Tested and works
+CODE REVIEW: 12/28/22
+*/
 namespace PJ
 {
     /// <summary>
@@ -14,8 +14,8 @@ namespace PJ
     /// </summary>
     public class EllipseMeshBuilder : SomeMeshBuilder
     {
-        public Angle angleStep = Angle.DegreesAngle(10.0f);
         public Vector2 worldSize = new Vector2(1.0f, 1.0f);
+        public Angle angleStep = Angle.DegreesAngle(10.0f);
 
         public override Vector2 WorldSize
         {

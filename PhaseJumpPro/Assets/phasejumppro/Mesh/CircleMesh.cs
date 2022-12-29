@@ -2,10 +2,10 @@
 using UnityEngine;
 
 /*
- * RATING: 5 stars
- * Has unit tests
- * CODE REVIEW: 4/3/22
- */
+RATING: 5 stars
+Has unit tests
+CODE REVIEW: 12/28/22
+*/
 namespace PJ
 {
     /// <summary>
@@ -16,25 +16,17 @@ namespace PJ
         public Angle angleStep = Angle.DegreesAngle(10.0f);
         public float radius = 1.0f;
 
-        protected EllipseMesh ellipseMesh;
-
-        public override int MeshVertexCount
-        {
-            get {
-                return ellipseMesh.MeshVertexCount;
-            }
-        }
+        protected EllipseMesh EllipseMesh => new EllipseMesh(angleStep, new Vector2(radius * 2.0f, radius * 2.0f));
 
         public CircleMesh(Angle angleStep, float radius)
         {
             this.angleStep = angleStep;
             this.radius = radius;
-            ellipseMesh = new EllipseMesh(angleStep, new Vector2(radius * 2.0f, radius * 2.0f));
         }
 
-        public override Mesh BuildMesh(Mesh mesh)
+        public override Mesh BuildMesh()
         {
-            return ellipseMesh.BuildMesh(mesh);
+            return EllipseMesh.BuildMesh();
         }
     }
 }

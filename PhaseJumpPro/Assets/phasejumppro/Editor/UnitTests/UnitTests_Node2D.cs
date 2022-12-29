@@ -10,11 +10,14 @@ namespace PJ
         public void UnitTests()
         {
             var gameObject = new GameObject();
-            var test = gameObject.AddComponent<GoNode2D>();
-            test.Rotation = Angle.DegreesAngle(180.0f);
-            Assert.AreEqual(test.RotationNormal, .5f);
-            test.Rotation = test.Rotation + Angle.DegreesAngle(360.0f);
-            Assert.AreEqual(test.RotationNormal, .5f);
+            var sut = gameObject.AddComponent<GoNode2D>();
+            sut.Rotation = Angle.DegreesAngle(180.0f);
+            Assert.AreEqual(0.5f, sut.RotationNormal);
+            sut.Rotation = sut.Rotation + Angle.DegreesAngle(360.0f);
+            Assert.AreEqual(0.5f, sut.RotationNormal);
+
+            sut.Rotation = Angle.DegreesAngle(45.0f);
+            Assert.AreEqual(0.125f, sut.RotationNormal, 0.001f);
         }
     }
 }

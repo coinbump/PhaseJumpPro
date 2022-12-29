@@ -2,10 +2,10 @@
 using UnityEngine;
 
 /*
- * RATING: 5 stars
- * Has unit tests
- * CODE REVIEW: 4/3/22
- */
+RATING: 5 stars
+Hase unit tests
+CODE REVIEW: 12/28/22
+*/
 namespace PJ
 {
     /// <summary>
@@ -27,7 +27,7 @@ namespace PJ
             }
         }
 
-        public override int MeshVertexCount
+        public int MeshVertexCount
         {
             get
             {
@@ -55,8 +55,10 @@ namespace PJ
             return new Vector2(xValue, yValue);
         }
 
-        public override Mesh BuildMesh(Mesh mesh)
+        public override Mesh BuildMesh()
         {
+            var mesh = new Mesh();
+
             var cellCount = meshSize.x * meshSize.y;
             var trianglesSize = cellCount * 6;
             int verticesSize = trianglesSize;

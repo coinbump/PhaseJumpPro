@@ -3,10 +3,10 @@ using UnityEngine;
 using System.Collections;
 
 /*
- * RATING: 5 stars
- * Simple mesh
- * CODE REVIEW: 4/7/22
- */
+RATING: 5 stars
+Tested and works
+CODE REVIEW: 12/28/22
+*/
 namespace PJ
 {
     /// <summary>

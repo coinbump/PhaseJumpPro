@@ -2,10 +2,10 @@
 using UnityEngine;
 
 /*
- * RATING: 5 stars
- * Has unit tests
- * CODE REVIEW: 4/3/22
- */
+RATING: 5 stars
+Tested and works
+CODE REVIEW: 12/28/22
+*/
 namespace PJ
 {
     /// <summary>
@@ -16,23 +16,17 @@ namespace PJ
         public Angle angleStep = Angle.DegreesAngle(10.0f);
         public Vector2 worldSize = new Vector2(1.0f, 1.0f);
 
-        protected ArcMesh arcMesh;
-
-        public override int MeshVertexCount
-        {
-            get => arcMesh.MeshVertexCount;
-        }
+        public ArcMesh ArcMesh => new ArcMesh(Angle.DegreesAngle(0), Angle.DegreesAngle(360.0f), angleStep, worldSize);
 
         public EllipseMesh(Angle angleStep, Vector2 worldSize)
         {
             this.angleStep = angleStep;
             this.worldSize = worldSize;
-            arcMesh = new ArcMesh(Angle.DegreesAngle(0), Angle.DegreesAngle(360.0f), angleStep, worldSize);
         }
 
-        public override Mesh BuildMesh(Mesh mesh)
+        public override Mesh BuildMesh()
         {
-            return arcMesh.BuildMesh(mesh);
+            return ArcMesh.BuildMesh();
         }
     }
 }

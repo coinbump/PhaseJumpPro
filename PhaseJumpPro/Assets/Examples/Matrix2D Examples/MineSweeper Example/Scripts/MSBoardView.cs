@@ -100,8 +100,8 @@ public class MSBoardView : MatrixBoardView2D, SomeGoStateListener<MSBoardView.St
 
     public override void OnPointerClickEvent(PointerClickUIEvent _event)
     {
-        var localPressPosition = _event.localPressPosition;
-        var cellHit = LocationAtLocalPosition(localPressPosition);
+        var localPressPosition = _event.pressPosition;
+        var cellHit = LocationAtLocalPosition(localPressPosition.Position);
 
         if (cellHit.value == null) { return; }
 

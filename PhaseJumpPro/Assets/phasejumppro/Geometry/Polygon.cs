@@ -72,5 +72,38 @@ namespace PJ
                 return new Vector3(min.x + size.x / 2.0f, min.y + size.y / 2.0f, min.z + size.z / 2.0f);
             }
         }
+
+        public void Inset2D(Vector2 inset)
+        {
+            var center = Center;
+
+            List<Vector3> result = new();
+            foreach (var iterVertex in vertices)
+            {
+                var vertex = iterVertex;
+
+                if (vertex.x < center.x)
+                {
+                    vertex.x += inset.x;
+                }
+                else
+                {
+                    vertex.x -= inset.x;
+                }
+
+                if (vertex.y < center.y)
+                {
+                    vertex.y += inset.y * Vector2.up.y;
+                }
+                else
+                {
+                    vertex.y += inset.y * Vector2.down.y;
+                }
+
+                result.Add(vertex);
+            }
+
+            vertices = result;
+        }
     }
 }

@@ -2,10 +2,10 @@
 using UnityEngine;
 
 /*
- * RATING: 5 stars
- * Has unit tests
- * CODE REVIEW: 4/4/22
- */
+RATING: 5 stars
+Has unit tests
+CODE REVIEW: 12/28/22
+*/
 namespace PJ
 {
     public class PolyFrameMesh : SomeMesh
@@ -14,19 +14,13 @@ namespace PJ
         public bool isClosed = true;
         public Polygon polygon = new Polygon();
 
-        public int PolyVertexCount
-        {
-            get
-            {
-                return polygon.vertices.Count;
-            }
-        }
-
+        public int PolyVertexCount => polygon.vertices.Count;
         public int SegmentCount
         {
             get
             {
-                if (isClosed) {
+                if (isClosed)
+                {
                     return PolyVertexCount;
                 }
 
@@ -34,7 +28,7 @@ namespace PJ
             }
         }
 
-        public override int MeshVertexCount
+        public int MeshVertexCount
         {
             get
             {
@@ -51,8 +45,10 @@ namespace PJ
             this.strokeWidth = strokeWidth;
         }
 
-        public override Mesh BuildMesh(Mesh mesh)
+        public override Mesh BuildMesh()
         {
+            var mesh = new Mesh();
+
             int meshVertexCount = MeshVertexCount;
             var vertices = new Vector3[meshVertexCount];
             var trianglesSize = SegmentCount * 6;
@@ -79,7 +75,7 @@ namespace PJ
                 //Debug.Log("Inner Offset: " + innerOffset.ToString());
 
                 // Outer frame
-                // FUTURE: support proper stroke in Z-space (only 2D space stroke width is properly supported)
+                // FUTURE: support 3D lines (requires cylinder)
                 vertices[meshVertexIndex + 0] = vertex + new Vector3(innerOffset.x, innerOffset.y, 0);
                 vertices[meshVertexIndex + 1] = nextVertex + new Vector3(innerOffset.x, innerOffset.y, 0);
                 vertices[meshVertexIndex + 2] = vertex + new Vector3(outerOffset.x, outerOffset.y, 0);
@@ -122,7 +118,7 @@ namespace PJ
                 meshVertexIndex += 4;
                 t += 6;
             }
-            
+
             UpdateMesh(mesh, vertices, triangles, uv);
 
             return mesh;

@@ -4,19 +4,19 @@ using UnityEngine.EventSystems;
 
 namespace PJ
 {
-	/// <summary>
+    /// <summary>
     /// A pointer click event (mouse, pen, finger)
-    /// Wrapper for portability
+    /// Wrapper for future portability
     /// </summary>
-	public class PointerClickUIEvent : SomePointerUIEvent
-	{
-        public Vector2 localPressPosition;
+    public class PointerClickUIEvent : SomePointerUIEvent
+    {
+        public LocalPosition pressPosition;
         public InputButton button;
-        
-        public PointerClickUIEvent(Vector2 localPressPosition, InputButton button)
+
+        public PointerClickUIEvent(LocalPosition pressPosition, InputButton button)
         {
-            this.localPressPosition = localPressPosition;
+            this.pressPosition = pressPosition;
             this.button = button;
         }
-	}
+    }
 }

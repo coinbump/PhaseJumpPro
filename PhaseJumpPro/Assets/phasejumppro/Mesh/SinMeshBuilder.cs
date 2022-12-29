@@ -3,10 +3,10 @@ using UnityEngine;
 using PJ;
 
 /*
- * RATING: 5 stars
- * Tested and works
- * CODE REVIEW: 3/13/22
- */
+RATING: 5 stars
+Tested and works
+CODE REVIEW: 12/28/22
+*/
 namespace PJ
 {
     /// <summary>
@@ -36,7 +36,7 @@ namespace PJ
             var graphBuilder = new Graph.SerialBuilder(sinMap);
             graphBuilder = graphBuilder.ToMap2D(Axis2D.X);
             var modifierNode = new Graph.PlaneMeshModifierNode(new PlaneMesh(meshSize, worldSize, faceAxis), modifierAxis, scale, true);
-            
+
             graphBuilder.OutputTo("value", modifierNode, "map");
 
             modifierNode.Go();

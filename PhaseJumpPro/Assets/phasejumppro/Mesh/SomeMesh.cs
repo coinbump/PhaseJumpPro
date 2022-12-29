@@ -1,8 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
+/*
+RATING: 5 stars
+Tested and works
+CODE REVIEW: 12/28/22
+*/
 namespace PJ
 {
+    /// <summary>
+    /// Logic to build a mesh (we can't subclass Mesh)
+    /// Usage: Unity uses clockwise winding order to determine front faces
+    /// </summary>
     public abstract class SomeMesh
     {
         public Mesh mesh;
@@ -30,12 +40,13 @@ namespace PJ
                 return mesh;
             }
 
-            mesh = new Mesh();
+            mesh = BuildMesh();
 
+#if DEBUG
             switch (mesh.indexFormat)
             {
                 case UnityEngine.Rendering.IndexFormat.UInt16:
-                    if (MeshVertexCount > 65535)
+                    if (new List<Vector3>(mesh.vertices).Count > 65535)
                     {
                         Debug.Log("Error. Vertex Overflow.");
                         return mesh;
@@ -44,18 +55,25 @@ namespace PJ
                 default:
                     break;
             }
-
-            return BuildMesh(mesh);
+#endif
+            return mesh;
         }
 
-        public abstract Mesh BuildMesh(Mesh mesh);
-        public abstract int MeshVertexCount { get; }
+        public abstract Mesh BuildMesh();
 
         public void UpdateMesh(Mesh mesh, Vector3[] vertices, int[] triangles, Vector2[] uv)
         {
             mesh.vertices = vertices;
-            mesh.triangles = triangles;
-            mesh.uv = uv;
+
+            if (null != triangles)
+            {
+                mesh.triangles = triangles;
+            }
+
+            if (null != uv)
+            {
+                mesh.uv = uv;
+            }
 
             // Debug Logs:
             //for (int i = 0; i < vertices.Length; i++)

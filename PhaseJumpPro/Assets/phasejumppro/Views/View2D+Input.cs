@@ -2,8 +2,10 @@ using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace PJ {
-    public partial class View2D : IPointerDownHandler, IPointerClickHandler, IPointerUpHandler {
+namespace PJ
+{
+    public partial class View2D : IPointerDownHandler, IPointerClickHandler, IPointerUpHandler
+    {
         public void OnPointerDown(PointerEventData eventData)
         {
             var screenPressPosition = eventData.pressPosition;
@@ -25,7 +27,8 @@ namespace PJ {
 
             // Wrap UI events for portability
             SomePointerUIEvent.InputButton button = SomePointerUIEvent.InputButton.Left;
-            switch (eventData.button) {
+            switch (eventData.button)
+            {
                 case PointerEventData.InputButton.Right:
                     button = SomePointerUIEvent.InputButton.Right;
                     break;
@@ -36,7 +39,7 @@ namespace PJ {
                     break;
             }
 
-            OnPointerClickEvent(new PointerClickUIEvent(localPressPosition, button));
+            OnPointerClickEvent(new PointerClickUIEvent(new LocalPosition(localPressPosition, gameObject), button));
         }
 
         public void OnPointerUp(PointerEventData eventData)
@@ -44,7 +47,8 @@ namespace PJ {
             Debug.Log("View2D.OnPointerUp");
         }
 
-        public virtual void OnPointerClickEvent(PointerClickUIEvent _event) {
+        public virtual void OnPointerClickEvent(PointerClickUIEvent _event)
+        {
         }
     }
 }

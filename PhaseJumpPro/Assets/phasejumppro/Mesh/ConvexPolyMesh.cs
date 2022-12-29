@@ -2,43 +2,32 @@
 using UnityEngine;
 
 /*
- * RATING: 5 stars
- * Simple mesh
- * CODE REVIEW: 4/7/22
- */
+RATING: 5 stars
+Tested and works
+CODE REVIEW: 12/28/22
+*/
 namespace PJ
 {
     /// <summary>
-    /// Renders an ConvexPoly (no concave turns or holes)
-    /// Works for clockwise-turning polygons
+    /// ConvexPoly mesh (no concave turns or holes)
+    /// Limitation: Only works for clockwise-turning polygons
     /// </summary>
     public class ConvexPolyMesh : SomeMesh
     {
         public Polygon polygon;
-        
-        public int TriangleCount
-        {
-            get
-            {
-                return polygon.vertices.Count - 2;
-            }
-        }
 
-        public override int MeshVertexCount
-        {
-            get
-            {
-                return polygon.vertices.Count;
-            }
-        }
+        public int TriangleCount => polygon.vertices.Count - 2;
+        public int MeshVertexCount => polygon.vertices.Count;
 
         public ConvexPolyMesh(Polygon polygon)
         {
             this.polygon = polygon;
         }
 
-        public override Mesh BuildMesh(Mesh mesh)
+        public override Mesh BuildMesh()
         {
+            var mesh = new Mesh();
+
             if (TriangleCount < 1)
             {
                 Debug.Log("Error. Not enough polygon vertices for Convex Poly Mesh");
@@ -67,7 +56,8 @@ namespace PJ
             // Build triangle fan with shared vertices
             var t = 0;
             var nextVertex = 1;
-            for (int i = 0; i < TriangleCount; i++) {
+            for (int i = 0; i < TriangleCount; i++)
+            {
                 triangles[t + 0] = 0;
                 triangles[t + 1] = nextVertex;
                 triangles[t + 2] = nextVertex + 1;

@@ -2,10 +2,10 @@
 using UnityEngine;
 
 /*
- * RATING: 5 stars
- * Has unit tests
- * CODE REVIEW: 4/12/22
- */
+RATING: 5 stars
+Has unit tests
+CODE REVIEW: 12/28/22
+*/
 namespace PJ
 {
     /// <summary>
@@ -16,18 +16,17 @@ namespace PJ
         public Vector2Int meshSize = new Vector2Int(1, 1);
         public Vector2 worldSize = new Vector2(1.0f, 1.0f);
 
-        protected PlaneMesh planeMesh;
-
-        public override int MeshVertexCount => planeMesh.MeshVertexCount;
+        protected PlaneMesh PlaneMesh => new PlaneMesh(meshSize, worldSize, Axis.Y);
 
         public QuadMesh(Vector2Int meshSize, Vector2 worldSize)
         {
-            planeMesh = new PlaneMesh(meshSize, worldSize, Axis.Y);
+            this.meshSize = meshSize;
+            this.worldSize = worldSize;
         }
 
-        public override Mesh BuildMesh(Mesh mesh)
+        public override Mesh BuildMesh()
         {
-            return planeMesh.BuildMesh(mesh);
+            return PlaneMesh.BuildMesh();
         }
     }
 }

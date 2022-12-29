@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /*
- * RATING: 5 stars
- * Tested and works
- * CODE REVIEW: 4/15/22
- */
+RATING: 5 stars
+Tested and works
+CODE REVIEW: 12/28/22
+*/
 namespace PJ
 {
     /// <summary>
@@ -18,7 +18,7 @@ namespace PJ
         public Vector2 worldSize = new Vector2(1.0f, 1.0f);
         public float scrollValue;
 
-        public override int MeshVertexCount => 8;
+        public int MeshVertexCount => 8;
 
         protected Vector3[] vertices = new Vector3[8];
         protected Vector2[] uv = new Vector2[8];
@@ -77,8 +77,10 @@ namespace PJ
             mesh.uv = uv;
         }
 
-        public override Mesh BuildMesh(Mesh mesh)
+        public override Mesh BuildMesh()
         {
+            var mesh = new Mesh();
+
             BuildVerticesAndUVs(mesh);
 
             var triangles = new int[12];

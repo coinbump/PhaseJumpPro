@@ -3,10 +3,10 @@ using UnityEngine;
 using System.Collections;
 
 /*
- * RATING: 5 stars
- * Has unit tests
- * CODE REVIEW: 4/21/22
- */
+RATING: 5 stars
+Tested and works
+CODE REVIEW: 12/28/22
+*/
 namespace PJ
 {
     /// <summary>
@@ -27,9 +27,8 @@ namespace PJ
 
         public override Mesh BuildMesh()
         {
-            var shapeMesh = new ArcMesh(startAngle, endAngle, angleStep, worldSize);
-            var mesh = shapeMesh.Build(true);
-            return mesh;
+            var arcMesh = new ArcMesh(startAngle, endAngle, angleStep, worldSize);
+            return arcMesh.BuildMesh();
         }
     }
 }

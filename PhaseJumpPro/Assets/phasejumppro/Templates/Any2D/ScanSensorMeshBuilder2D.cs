@@ -55,7 +55,8 @@ namespace PJ
         public override Mesh BuildMesh()
         {
             var scanSensor = GetComponent<ScanSensor2D>();
-            if (null == scanSensor) {
+            if (null == scanSensor)
+            {
                 return null;
             }
 

@@ -3,15 +3,16 @@ using UnityEngine;
 using System.Collections;
 
 /*
- * RATING: 5 stars
- * Tested and works
- * CODE REVIEW: 4/15/22
- */
+RATING: 5 stars
+Tested and works
+CODE REVIEW: 12/28/22
+*/
 namespace PJ
 {
     /// <summary>
     /// Build a UV scroller mesh with two separated quads
     /// whose UV coordinates can be altered for endless scrolling of a repeating texture
+    /// ALTERNATIVE: Use wrap mode for texture instead
     /// </summary>
     public class UVScrollerMeshBuilder : SomeMeshBuilder
     {

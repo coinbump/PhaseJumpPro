@@ -2,10 +2,10 @@
 using UnityEngine;
 
 /*
- * RATING: 5 stars
- * Has unit tests
- * CODE REVIEW: 3/12/22
- */
+RATING: 5 stars
+Has unit tests
+CODE REVIEW: 12/28/22
+*/
 namespace PJ
 {
     public class PlaneMesh : SomePlaneMesh
@@ -24,8 +24,10 @@ namespace PJ
             }
         }
 
-        public override int MeshVertexCount {
-            get {
+        public int MeshVertexCount
+        {
+            get
+            {
                 return VerticesSize.x * VerticesSize.y;
             }
         }
@@ -37,8 +39,10 @@ namespace PJ
             this.faceAxis = faceAxis;
         }
 
-        public override Mesh BuildMesh(Mesh mesh)
+        public override Mesh BuildMesh()
         {
+            var mesh = new Mesh();
+
             int vertexXCount = meshSize.x + 1;
             int vertexZCount = meshSize.y + 1;
             int verticesSize = vertexXCount * vertexZCount;
@@ -54,13 +58,19 @@ namespace PJ
                 for (int x = 0; x < vertexXCount; x++)
                 {
                     // Y, Z axes supported (for now)
-                    var faceValue = (float)z / (vertexZCount - 1) * worldSize.y - worldSize.y / 2.0f;
-                    switch (faceAxis) {
+                    switch (faceAxis)
+                    {
                         case Axis.Y:
-                            vertices[i] = new Vector3((float)x / (vertexXCount - 1) * worldSize.x - worldSize.x / 2.0f, faceValue, 0);
+                            {
+                                var faceValue = worldSize.y / 2.0f * Vector2.up.y + (float)z / (vertexZCount - 1) * worldSize.y * Vector2.down.y;
+                                vertices[i] = new Vector3((float)x / (vertexXCount - 1) * worldSize.x - worldSize.x / 2.0f, faceValue, 0);
+                            }
                             break;
                         default:
-                            vertices[i] = new Vector3((float)x / (vertexXCount - 1) * worldSize.x - worldSize.x / 2.0f, 0, faceValue);
+                            {
+                                var faceValue = worldSize.y / 2.0f * Vector3.forward.z + (float)z / (vertexZCount - 1) * worldSize.y * Vector3.back.z;
+                                vertices[i] = new Vector3((float)x / (vertexXCount - 1) * worldSize.x - worldSize.x / 2.0f, 0, faceValue);
+                            }
                             break;
                     }
 
@@ -76,11 +86,11 @@ namespace PJ
                     var c = z * vertexXCount + x;
 
                     triangles[i] = c;
-                    triangles[i + 1] = c + vertexXCount;
-                    triangles[i + 2] = c + 1;
-                    triangles[i + 3] = c + vertexXCount;
+                    triangles[i + 1] = c + 1;
+                    triangles[i + 2] = c + vertexXCount;
+                    triangles[i + 3] = c + 1;
                     triangles[i + 4] = c + vertexXCount + 1;
-                    triangles[i + 5] = c + 1;
+                    triangles[i + 5] = c + vertexXCount;
                     i += 6;
                 }
             }

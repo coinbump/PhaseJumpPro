@@ -4,17 +4,17 @@ using UnityEngine.EventSystems;
 
 namespace PJ
 {
-	/// <summary>
+    /// <summary>
     /// A pointer down event (mouse, pen, finger)
-    /// Wrapper for portability
+    /// Wrapper for future portability
     /// </summary>
-	public class PointerDownUIEvent : SomePointerUIEvent
-	{
-        public Vector2 localPressPosition;
+    public class PointerDownUIEvent : SomePointerUIEvent
+    {
+        public LocalPosition pressPosition;
 
-        public PointerDownUIEvent(Vector2 localPressPosition)
+        public PointerDownUIEvent(LocalPosition pressPosition)
         {
-            this.localPressPosition = localPressPosition;
+            this.pressPosition = pressPosition;
         }
-	}
+    }
 }

@@ -239,7 +239,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3339b7907f45b471a986829fa2f7f100, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mode: 1
+  mode: 0
   worldSize: {x: 1, y: 1}
   scrollOffset: 0
   scrollTime: 5
@@ -316,7 +316,7 @@ Transform:
   m_GameObject: {fileID: 953981297}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0.3501623, y: -0.11521884, z: 0.009159526}
-  m_LocalScale: {x: 22.69, y: 11.5, z: 13.09}
+  m_LocalScale: {x: 20.2, y: 10, z: 13.09}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}

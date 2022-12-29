@@ -2,10 +2,10 @@
 using UnityEngine;
 
 /*
- * RATING: 5 stars
- * Tested and works
- * CODE REVIEW: 4/7/22
- */
+RATING: 5 stars
+Tested and works
+CODE REVIEW: 12/28/22
+*/
 namespace PJ
 {
     public class GridMesh : SomeMesh
@@ -39,7 +39,7 @@ namespace PJ
             }
         }
 
-        public override int MeshVertexCount
+        public int MeshVertexCount
         {
             get
             {
@@ -56,8 +56,10 @@ namespace PJ
             this.strokeWidth = strokeWidth;
         }
 
-        public override Mesh BuildMesh(Mesh mesh)
+        public override Mesh BuildMesh()
         {
+            var mesh = new Mesh();
+
             int meshVertexCount = MeshVertexCount;
             var vertices = new Vector3[meshVertexCount];
             var trianglesSize = SegmentCount * 6;

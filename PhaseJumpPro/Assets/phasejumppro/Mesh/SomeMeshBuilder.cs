@@ -4,7 +4,7 @@ using UnityEditor;
 /*
  * RATING: 5 stars
  * Tested and works
- * CODE REVIEW: 3/13/22
+ * CODE REVIEW: 12/27/22
  */
 namespace PJ
 {
@@ -14,15 +14,17 @@ namespace PJ
     /// </summary>
     [RequireComponent(typeof(MeshFilter))]
     [RequireComponent(typeof(MeshRenderer))]
-    public abstract class SomeMeshBuilder : PJ.WorldComponent
-	{
+    public abstract class SomeMeshBuilder : WorldComponent
+    {
         // Use this for initialization
         protected override void Start()
-		{
-			Build();
-		}
+        {
+            base.Start();
 
-		public virtual void Build()
+            Build();
+        }
+
+        public virtual void Build()
         {
             var meshFilter = GetComponent<MeshFilter>();
             if (null == meshFilter)

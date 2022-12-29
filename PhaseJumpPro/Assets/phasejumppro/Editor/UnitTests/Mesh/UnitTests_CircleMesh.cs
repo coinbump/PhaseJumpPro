@@ -4,23 +4,23 @@ using NUnit.Framework;
 
 namespace PJ
 {
-	public class UnitTests_CircleMesh
-	{
-		[Test]
-		public void TestCircleMesh()
-		{
+    public class UnitTests_CircleMesh
+    {
+        [Test]
+        public void TestCircleMesh()
+        {
             var radius = 2.5f;
-			var shapeMesh = new CircleMesh(Angle.DegreesAngle(120.0f), radius);
-			var mesh = shapeMesh.Build();
+            var shapeMesh = new CircleMesh(Angle.DegreesAngle(120.0f), radius);
+            var mesh = shapeMesh.Build();
 
-			var vertices = mesh.vertices;
-			Assert.AreEqual(5, vertices.Length);
+            var vertices = mesh.vertices;
+            Assert.AreEqual(5, vertices.Length);
 
-			var triangles = mesh.triangles;
-			Assert.AreEqual(3 * 3, triangles.Length);
+            var triangles = mesh.triangles;
+            Assert.AreEqual(3 * 3, triangles.Length);
 
-			var uv = mesh.uv;
-			Assert.AreEqual(vertices.Length, uv.Length);
+            var uv = mesh.uv;
+            Assert.AreEqual(vertices.Length, uv.Length);
 
             Assert.AreEqual(0, triangles[0]);
             Assert.AreEqual(1, triangles[1]);
@@ -33,7 +33,8 @@ namespace PJ
             Assert.AreEqual(4, triangles[8]);
 
             Assert.AreEqual(new Vector2(0.5f, 0.5f), uv[0]);
-            Assert.AreEqual(new Vector2(0.5f, 1), uv[1]);
+            Assert.AreEqual(0.5f, uv[1].x, .001f);
+            Assert.AreEqual(1.0f, uv[1].y, .001f);
 
             Assert.AreEqual(new Vector3(0, 0, 0), vertices[0]);
             Assert.AreEqual(0, vertices[1].x, .001f);

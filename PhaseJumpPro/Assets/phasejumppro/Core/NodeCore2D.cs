@@ -34,7 +34,7 @@ namespace PJ
 
         public Angle Rotation
         {
-            get => Angle.DegreesAngle(-transform.localEulerAngles.z);
+            get => Angle.DegreesAngle(-transform.localEulerAngles.z).Clipped();
             set
             {
                 var newAngle = value;
