@@ -4,8 +4,9 @@ using UnityEngine;
 
 /*
  * RATING: 5 stars
- * Simple type
+ * Simple utility
  * CODE REVIEW: 12/29/22
+ * PORTED TO: C++
  */
 namespace PJ
 {

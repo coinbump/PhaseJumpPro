@@ -6,7 +6,7 @@ using NUnit.Framework;
 
 namespace PJ
 {
-    public class UnitTests_Goal
+    public class UnitTests_ValueTargetGoal
     {
         [Test]
         public void Test_ValueTargetGoal()

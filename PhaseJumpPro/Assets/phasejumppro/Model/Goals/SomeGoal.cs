@@ -7,6 +7,7 @@ using UnityEngine;
  * RATING: 5 stars
  * Has unit tests
  * CODE REVIEW: 12/29/22
+ * PORTED TO: C++
  */
 namespace PJ
 {
@@ -18,7 +19,7 @@ namespace PJ
     {
         public string id;
 
-        protected bool isComplete;
+        private bool isComplete;
 
         public bool IsComplete
         {
