@@ -48,13 +48,24 @@ namespace PJ
 
         public virtual void OnUpdate(TimeSlice time)
         {
+            // Copy because we might be adding or removing updatables during the update loop
             var iterUpdatables = new HashSet<Updatable>(updatables);
-            var unfinishedUpdatables = new HashSet<Updatable>();
 
             foreach (Updatable updatable in iterUpdatables)
             {
                 updatable.OnUpdate(time);
+            }
 
+            // Do a fresh pass for flush (new updatables might have been added during update loop)
+            FlushFinishedUpdatables();
+        }
+
+        protected void FlushFinishedUpdatables()
+        {
+            var unfinishedUpdatables = new HashSet<Updatable>();
+
+            foreach (Updatable updatable in updatables)
+            {
                 if (!updatable.IsFinished)
                 {
                     unfinishedUpdatables.Add(updatable);

@@ -118,6 +118,7 @@ namespace PJ
             }
 
             var nodePosition = NodePosition(node);
+            node.transform.parent = transform;
             node.transform.localPosition = nodePosition;
             return putResult;
         }

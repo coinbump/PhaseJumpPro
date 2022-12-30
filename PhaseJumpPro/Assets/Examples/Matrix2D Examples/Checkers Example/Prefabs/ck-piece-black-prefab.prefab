@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 4832798480985917952}
   - component: {fileID: 389601572663856828}
   - component: {fileID: 4902958428765745581}
-  - component: {fileID: 1209919197979799854}
   - component: {fileID: 7281317463091801514}
   - component: {fileID: -2619647281472741211}
   m_Layer: 0
@@ -107,27 +106,11 @@ MonoBehaviour:
   _typeTags: []
   _stateTags: []
   _cullTypes: 
-  rotation:
-    value: 0
   velocityType: 0
   velocity: {x: 0, y: 0}
   initialOrigin: {x: 0, y: 0}
   pieceShape: []
   isBlack: 1
---- !u!114 &1209919197979799854
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7071672065578428712}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cf94bd215717a4a8e8c303ce92bde0de, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  dragTarget: {fileID: 0}
-  dropType: 0
 --- !u!58 &7281317463091801514
 CircleCollider2D:
   m_ObjectHideFlags: 0

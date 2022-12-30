@@ -26,18 +26,18 @@ namespace PJ
         /// </summary>
         public class Perlin : SomeMap<Vector2, float>
         {
-            public Vector2 offset;
+            public Vector2 origin;
             public Vector2 scale;
 
-            public Perlin(Vector2 offset, Vector2 scale)
+            public Perlin(Vector2 origin, Vector2 scale)
             {
-                this.offset = offset;
+                this.origin = origin;
                 this.scale = scale;
             }
 
             public override float ValueFor(Vector2 key)
             {
-                return Mathf.PerlinNoise((key.x + offset.x) * scale.x, (key.y + offset.y) * scale.y);
+                return Mathf.PerlinNoise(origin.x + (key.x * scale.x), origin.y + (key.y * scale.y));
             }
         }
     }
