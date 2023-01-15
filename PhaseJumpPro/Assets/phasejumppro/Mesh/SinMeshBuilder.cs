@@ -24,7 +24,7 @@ namespace PJ
 
         protected float offset = 0;
 
-        public override Vector2 WorldSize
+        protected override Vector2 WorldSizeInternal
         {
             get => worldSize;
             set => worldSize = value;

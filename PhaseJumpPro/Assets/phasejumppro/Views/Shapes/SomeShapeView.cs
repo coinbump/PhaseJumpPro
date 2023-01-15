@@ -19,10 +19,11 @@ namespace PJ
         {
             base.OnFrameChange();
 
-            foreach (Transform childTransform in transform) {
-                if (childTransform.TryGetComponent(out SomeMeshBuilder meshBuilder)) {
+            foreach (Transform childTransform in transform)
+            {
+                if (childTransform.TryGetComponent(out SomeMeshBuilder meshBuilder))
+                {
                     meshBuilder.WorldSize = Frame.size;
-                    meshBuilder.Build();
                 }
             }
         }
@@ -31,7 +32,8 @@ namespace PJ
         {
             foreach (Transform childTransform in transform)
             {
-                if (childTransform.TryGetComponent(out SomeMeshBuilder meshBuilder)) {
+                if (childTransform.TryGetComponent(out SomeMeshBuilder meshBuilder))
+                {
                     Destroy(childTransform.gameObject);
                 }
             }
@@ -64,7 +66,6 @@ namespace PJ
             var meshBuilder = partObject.AddComponent<MeshBuilder>();
 
             meshBuilder.WorldSize = Frame.size;
-            meshBuilder.Build();
 
             // Local z must be < 0 to appear in front of parent.
             partObject.transform.localPosition = new Vector3(0, 0, Mathf.Min(-zStep, -zStep * (zIndex + 1)));

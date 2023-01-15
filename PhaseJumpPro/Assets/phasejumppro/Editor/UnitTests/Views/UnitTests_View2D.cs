@@ -14,7 +14,7 @@ namespace PJ
             var gameObject = new GameObject();
             var sut = gameObject.AddComponent<View2D>();
             sut.Frame = new Bounds2D(Vector2.zero, new Vector2(2.0f, 2.0f));
-            
+
             Assert.AreEqual(new Vector2(2.0f, 2.0f), sut.WorldSize);
         }
 
@@ -35,7 +35,7 @@ namespace PJ
             var gameObject = new GameObject();
             var sut = gameObject.AddComponent<View2D>();
             sut.Frame = new Bounds2D(Vector2.zero, new Vector2(10.0f, 10.0f));
-            
+
             Assert.AreEqual(new Vector3(-5.0f, 5.0f, 0), sut.TopLeftWorldPosition(new Vector3(0, 0, 0)));
         }
 
@@ -91,7 +91,7 @@ namespace PJ
         {
             var gameObject = new GameObject();
             var sut = gameObject.AddComponent<View2D>();
-          
+
             var child = new GameObject();
             var childView = child.AddComponent<View2D>();
             child.transform.parent = gameObject.transform;
@@ -126,7 +126,7 @@ namespace PJ
             var child = new GameObject();
             var childView = child.AddComponent<View2D>();
             child.transform.parent = gameObject.transform;
-            
+
             Assert.AreEqual(1, sut.ChildViews().Count);
             Assert.AreEqual(childView, sut.ChildViews()[0]);
         }
@@ -138,7 +138,7 @@ namespace PJ
             var sut = gameObject.AddComponent<View2D>();
 
             Assert.AreEqual(10.0f, sut.PreferredWidth(10.0f));
-            Assert.AreEqual(10.0f, sut.PreferredHeight(10.0f));
+            Assert.AreEqual(10.0f, sut.PreferredHeight(new Vector2(10.0f, 10.0f)));
         }
 
         [Test]
@@ -150,7 +150,7 @@ namespace PJ
             sut.IntrinsicHeight = new(7.0f);
 
             Assert.AreEqual(3.0f, sut.PreferredWidth(10.0f));
-            Assert.AreEqual(7.0f, sut.PreferredHeight(10.0f));
+            Assert.AreEqual(7.0f, sut.PreferredHeight(new Vector2(3.0f, 10.0f)));
         }
 
         [Test]
@@ -164,10 +164,10 @@ namespace PJ
             sut.tags["height.max"] = 7.0f;
 
             Assert.AreEqual(4.0f, sut.PreferredWidth(10.0f));
-            Assert.AreEqual(7.0f, sut.PreferredHeight(10.0f));
+            Assert.AreEqual(7.0f, sut.PreferredHeight(new Vector2(4.0f, 10.0f)));
 
             Assert.AreEqual(3.0f, sut.PreferredWidth(3.0f));
-            Assert.AreEqual(3.0f, sut.PreferredHeight(3.0f));
+            Assert.AreEqual(3.0f, sut.PreferredHeight(new Vector2(3.0f, 3.0f)));
         }
     }
 }

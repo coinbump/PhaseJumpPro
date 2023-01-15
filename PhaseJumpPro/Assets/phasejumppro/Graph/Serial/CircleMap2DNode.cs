@@ -16,7 +16,7 @@ namespace PJ
         /// </summary>
         public class CircleMap2DNode : SomeMap2DNode
         {
-            private class Map : SomeMap<Vector2, float>
+            private class Map : SomeTransform<Vector2, float>
             {
                 public Vector2 center = Vector2.zero;
                 public float radius = 1.0f;
@@ -31,7 +31,7 @@ namespace PJ
                     this.outsideValue = outsideValue;
                 }
 
-                public override float ValueFor(Vector2 key)
+                public override float Transform(Vector2 key)
                 {
                     var xDelta = key.x - center.x;
                     var yDelta = key.y - center.y;
@@ -50,7 +50,7 @@ namespace PJ
 
             public override object ValueForOutput<T>(string id, Tags parameters, T defaultValue)
             {
-                if (typeof(T).IsAssignableFrom(typeof(SomeMap<Vector2, float>)))
+                if (typeof(T).IsAssignableFrom(typeof(SomeTransform<Vector2, float>)))
                 {
                     return map;
                 }

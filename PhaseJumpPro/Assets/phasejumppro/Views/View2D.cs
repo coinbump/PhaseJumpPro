@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace PJ
 {
@@ -18,7 +19,7 @@ namespace PJ
     /// TBD: Do we need LateUpdate for ApplyLayout?
     public partial class View2D : NodeCore2D
     {
-        private Bounds2D frame = new Bounds2D();
+        private Bounds2D frame = new();
 
         [Header("View2D Properties")]
         /// <summary>
@@ -36,6 +37,25 @@ namespace PJ
         /// Local z position for child view
         /// </summary>
         public float zStep = 0.1f;
+
+        private bool needsLayout = true;
+
+        public bool NeedsLayout
+        {
+            get => needsLayout;
+            set
+            {
+                this.needsLayout = value;
+                if (needsLayout)
+                {
+                    var parentView = ParentView();
+                    if (parentView)
+                    {
+                        parentView.NeedsLayout = true;
+                    }
+                }
+            }
+        }
 
         public virtual Optional<float> IntrinsicWidth
         {
@@ -167,6 +187,21 @@ namespace PJ
             return result;
         } // TESTED
 
+        public List<View2D> GraphViews()
+        {
+            var result = new List<View2D>();
+            result.Add(this);
+
+            foreach (Transform childTransform in transform)
+            {
+                if (childTransform.gameObject.TryGetComponent(out View2D view))
+                {
+                    result.AddRange(view.GraphViews());
+                }
+            }
+            return result;
+        }
+
         public View2D FirstChildView()
         {
             foreach (Transform childTransform in transform)
@@ -215,7 +250,7 @@ namespace PJ
         {
             base.Start();
 
-            ApplyLayout();
+            ApplyLayout(true);
         }
 
         protected override void Awake()
@@ -223,6 +258,13 @@ namespace PJ
             base.Awake();
 
             UpdateFrameComponents();
+        }
+
+        public override void OnUpdate(TimeSlice time)
+        {
+            base.OnUpdate(time);
+
+            ApplyLayout(false);
         }
     }
 }

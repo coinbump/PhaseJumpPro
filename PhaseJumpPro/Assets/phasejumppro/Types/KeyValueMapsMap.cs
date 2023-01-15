@@ -11,7 +11,7 @@ namespace PJ
     /// <summary>
     /// Allows for a transformation from one map to another via a mapping func
     /// </summary>
-    public class KeyValueMapsMap<Key, Value> : SomeMap<Key, Value>
+    public class KeyValueMapsMap<Key, Value> : SomeTransform<Key, Value>
     {
         public Func<Key, Value> keyMap;
         public Func<Value, Value> valueMap;
@@ -22,7 +22,7 @@ namespace PJ
             this.valueMap = valueMap;
         }
 
-        public override Value ValueFor(Key key)
+        public override Value Transform(Key key)
         {
             var value = keyMap(key);
             var mappedValue = valueMap(value);
@@ -30,3 +30,4 @@ namespace PJ
         }
     }
 }
+

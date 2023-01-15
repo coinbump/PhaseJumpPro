@@ -19,7 +19,7 @@ namespace PJ
         public Vector2 worldSize = new Vector2(1.0f, 1.0f);
         public Axis faceAxis = Axis.Z;
 
-        public override Vector2 WorldSize
+        protected override Vector2 WorldSizeInternal
         {
             get => worldSize;
             set => worldSize = value;

@@ -32,7 +32,7 @@ namespace PJ
 
         public override void ApplyLayout()
         {
-            var path = NewPath();
+            var path = BuildPath();
 
             int childCount = transform.childCount;
             float normalOffset = childCount > 1 ? 1.0f / (float)(childCount - 1) : 0;
@@ -85,6 +85,6 @@ namespace PJ
             }
         }
 
-        protected abstract SomePath NewPath();
+        protected abstract SomePath BuildPath();
     }
 }

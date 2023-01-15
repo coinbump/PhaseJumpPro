@@ -1,6 +1,11 @@
 using System;
 using UnityEngine;
 
+/*
+RATING: 5 stars
+Simple utility
+CODE REVIEW: 12/31/22
+*/
 namespace PJ
 {
     /// <summary>
@@ -9,7 +14,7 @@ namespace PJ
     public abstract class SomeAnimatedValue<T> : SomeTransform<float, T>
     {
         public override T Transform(float key) { return ValueAt(key); }
-        
+
         public abstract T ValueAt(float progress);
     }
 }

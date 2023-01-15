@@ -19,7 +19,7 @@ namespace PJ
             public Axis modifierAxis = Axis.Z;
             public float scale = 1.0f;
             public bool flipY = false;
-           
+
             public PlaneMeshModifierNode(PlaneMesh planeMesh, Axis modifierAxis, float scale, bool flipY)
             {
                 this.planeMesh = planeMesh;
@@ -38,13 +38,13 @@ namespace PJ
 
                 base.Go();
 
-                var map = ValueForInput<SomeMap<Vector2, float>>("map", null, null) as SomeMap<Vector2, float>;
+                var map = ValueForInput<SomeTransform<Vector2, float>>("map", null, null) as SomeTransform<Vector2, float>;
                 if (null == map)
                 {
                     Debug.Log("WARNING. Missing Map2D input for map");
                     return;
                 }
-                
+
                 planeMesh.Build(true);
 
                 var vertices = planeMesh.mesh.vertices;

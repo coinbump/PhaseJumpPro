@@ -17,7 +17,7 @@ namespace PJ
     {
         public Polygon polygon = new Polygon();
 
-        public override Vector2 WorldSize
+        protected override Vector2 WorldSizeInternal
         {
             get => polygon.Size;
             set

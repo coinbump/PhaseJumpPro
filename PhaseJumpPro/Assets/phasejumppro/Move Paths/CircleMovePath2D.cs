@@ -6,7 +6,7 @@ using UnityEngine;
 /*
  * RATING: 5 stars
  * Tested and works
- * CODE REVIEW: 11/26/22
+ * CODE REVIEW: 12/31/22
  */
 namespace PJ
 {
@@ -14,7 +14,7 @@ namespace PJ
     /// Moves objects around a circle radius
     /// FUTURE: support rotated ellipses, sin paths, etc.
     /// </summary>
-    public class CircleMovePath2D : MovePath
+    public class CircleMovePath2D : SomeMovePath
     {
         public float radius = 1.0f;
 

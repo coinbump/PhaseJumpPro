@@ -14,6 +14,13 @@ namespace PJ
     public abstract class SomeTransform<Value, Result>
     {
         public abstract Result Transform(Value value);
+
+        public Result ValueFor(Value value) { return Transform(value); }
+
+        public Result this[Value key]
+        {
+            get { return Transform(key); }
+        }
     }
 
     public abstract class SomeValueTransform<Value> : SomeTransform<Value, Value>

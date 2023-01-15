@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using System.Linq;
 
 /*
  * RATING: 5 stars
@@ -39,13 +40,13 @@ namespace PJ
             return optionalResult.value;
         }
 
-        public virtual float PreferredHeight(float layoutSize)
+        public virtual float PreferredHeight(Vector2 layoutSize)
         {
             var optionalResult = IntrinsicHeight;
 
             if (null == optionalResult)
             {
-                var result = layoutSize;
+                var result = layoutSize.y;
                 var maxHeight = MaxHeight;
                 if (null != maxHeight)
                 {
@@ -62,6 +63,18 @@ namespace PJ
             }
 
             return optionalResult.value;
+        }
+
+        public Vector3 ViewToWorldPosition(Vector2 viewPosition)
+        {
+            var topLeftWorldPosition = TopLeftWorldPosition(transform.position);
+            var result = new Vector3(
+                topLeftWorldPosition.x + viewPosition.x,
+                topLeftWorldPosition.y + viewPosition.y * Vector2.down.y,
+                topLeftWorldPosition.z
+            );
+
+            return result;
         }
 
         public Vector3 WorldToViewPosition(Vector3 worldPosition)
@@ -125,6 +138,15 @@ namespace PJ
         public Optional<float> MaxWidth => tags.Value<float>("width.max");
         public Optional<float> MaxHeight => tags.Value<float>("height.max");
 
+        public float ResolvedMaxWidth
+        {
+            get
+            {
+                var maxWidth = MaxWidth;
+                return null != maxWidth ? maxWidth.value : float.MaxValue;
+            }
+        }
+
         protected virtual void _ApplyLayout(Vector2 layoutSize)
         {
             var childViews = ChildViews();
@@ -147,39 +169,52 @@ namespace PJ
             }
         }
 
+        public virtual void SetNeedsLayout()
+        {
+            NeedsLayout = true;
+        }
+
         protected virtual void _PostApplyLayout()
         {
             var childViews = ChildViews();
             foreach (var view in childViews)
             {
                 view._ApplyLayout(view.Bounds.size);
+                view.NeedsLayout = false;
                 view._PostApplyLayout();
             }
         }
 
-        public virtual void ApplyLayout()
+        public virtual void ApplyLayout(bool force)
         {
+            // Only root view can apply layout
+            var parentView = ParentView();
+            if (null != parentView)
+            {
+                return;
+            }
+
+            if (!force && !needsLayout) { return; }
+
             // Debug.Log(GetType() + ": ApplyLayout");
 
-            if (null == ParentView())
-            {
-                var parentBounds = ParentBounds();
+            var parentBounds = ParentBounds();
 
-                // Top view needs a size
-                Bounds2D frame = new Bounds2D();
+            // Top view needs a size
+            Bounds2D frame = new Bounds2D();
 
-                var preferredWidth = PreferredWidth(parentBounds.size.x);
-                var preferredHeight = PreferredHeight(parentBounds.size.y);
+            var preferredWidth = PreferredWidth(parentBounds.size.x);
+            var preferredHeight = PreferredHeight(new Vector2(preferredWidth, parentBounds.size.y));
 
-                frame.size.x = preferredWidth;
-                frame.size.y = preferredHeight;
+            frame.size.x = preferredWidth;
+            frame.size.y = preferredHeight;
 
-                Frame = frame;
-            }
+            Frame = frame;
 
             Bounds2D layoutBounds = Bounds;
 
             _ApplyLayout(layoutBounds.size);
+            NeedsLayout = false;
             _PostApplyLayout();
 
             // Subclasses can apply their own layout if needed

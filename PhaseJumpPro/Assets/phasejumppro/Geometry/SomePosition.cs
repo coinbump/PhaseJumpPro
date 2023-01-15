@@ -19,7 +19,7 @@ namespace PJ
 
     public struct WorldPosition : SomePosition
     {
-        public Vector3 position;
+        public Vector2 position;
         public Vector3 Position
         {
             get => position;
@@ -27,6 +27,21 @@ namespace PJ
         }
 
         public WorldPosition(Vector3 position)
+        {
+            this.position = position;
+        }
+    }
+
+    public struct ViewPosition : SomePosition
+    {
+        public Vector3 position;
+        public Vector3 Position
+        {
+            get => position;
+            set => position = value;
+        }
+
+        public ViewPosition(Vector3 position)
         {
             this.position = position;
         }

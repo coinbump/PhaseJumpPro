@@ -8,8 +8,10 @@ namespace PJ
 {
     public class UnitTests_ZStack
     {
-        protected class TestZStack : PJ.ZStack {
-            public void TestApplyLayout(Bounds2D parentBounds) {
+        protected class TestZStack : PJ.ZStack
+        {
+            public void TestApplyLayout(Bounds2D parentBounds)
+            {
                 _ApplyLayout(parentBounds.size);
             }
         }
@@ -29,7 +31,7 @@ namespace PJ
             child2.transform.parent = gameObject.transform;
 
             sut.TestApplyLayout(new Bounds2D(Vector2.zero, new Vector2(10.0f, 10.0f)));
-            
+
             Assert.AreEqual(10.0f, childView1.Frame.size.x);
             Assert.AreEqual(10.0f, childView2.Frame.size.x);
             Assert.AreEqual(10.0f, childView1.Frame.size.y);
@@ -55,7 +57,7 @@ namespace PJ
         }
 
         [Test]
-        public void TestIntrinsicSize_ChildrenWithIntrinsicWidth()
+        public void TestPreferredSize_ChildrenWithIntrinsicWidth()
         {
             var gameObject = new GameObject();
             var sut = gameObject.AddComponent<TestZStack>();
@@ -70,8 +72,8 @@ namespace PJ
             child2.transform.parent = gameObject.transform;
             childView2.IntrinsicHeight = new(7.0f);
 
-            Assert.AreEqual(3.0f, sut.IntrinsicWidth.value);
-            Assert.AreEqual(7.0f, sut.IntrinsicHeight.value);
+            Assert.AreEqual(3.0f, sut.PreferredWidth(0));
+            Assert.AreEqual(7.0f, sut.PreferredHeight(Vector2.zero));
         }
     }
 }

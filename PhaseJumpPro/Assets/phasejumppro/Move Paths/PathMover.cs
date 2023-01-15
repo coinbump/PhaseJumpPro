@@ -35,9 +35,11 @@ namespace PJ
         /// </summary>
         public float moveSpeed = 1.0f;
 
-        public float CycleTime {
+        public float CycleTime
+        {
             get => cycleTime;
-            set {
+            set
+            {
                 cycleTime = value;
                 if (null != cycleTimer)
                 {
@@ -81,12 +83,13 @@ namespace PJ
         }
 
 #if UNITY_EDITOR
-        protected virtual void OnValidate() 
+        protected virtual void OnValidate()
         {
             var parent = transform.parent.gameObject;
             if (null == parent) { return; }
 
-            if (parent.TryGetComponent(out SomeMovePath movePath)) {
+            if (parent.TryGetComponent(out SomeMovePath movePath))
+            {
                 movePath.SnapAllToStartPosition();
             }
         }

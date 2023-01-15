@@ -49,7 +49,7 @@ namespace PJ
 
             public override object ValueForOutput<T>(string id, Tags parameters, T defaultValue)
             {
-                if (typeof(T).IsAssignableFrom(typeof(SomeMap<float, float>)))
+                if (typeof(T).IsAssignableFrom(typeof(SomeTransform<float, float>)))
                 {
                     return map;
                 }

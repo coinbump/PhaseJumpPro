@@ -10,72 +10,90 @@ CODE REVIEW: 11/26/22
 */
 namespace PJ
 {
-	/// <summary>
+    /// <summary>
     /// A move path defines a path for its children to move across
     /// </summary>
-	public abstract class SomeMovePath : WorldComponent
-	{
-		public enum MoveSpeedType
+    public abstract class SomeMovePath : WorldComponent
+    {
+        public enum MoveSpeedType
         {
-			// Object on a path moves from 0-1.0 in cycleTime/moveSpeed seconds
-			Progress
+            // Object on a path moves from 0-1.0 in cycleTime/moveSpeed seconds
+            Progress
 
-			// Object on a path moves at moveSpeed velocity (not all paths support this)
-			// FUTURE: Velocity
+            // Object on a path moves at moveSpeed velocity (not all paths support this)
+            // FUTURE: Velocity
         }
 
-		/// <summary>
-		/// Determines who decides a move path property: the path or the PathMover attached to the child object
-		/// </summary>
-		public enum ComponentType
+        /// <summary>
+        /// Determines who decides a move path property: the path or the PathMover attached to the child object
+        /// </summary>
+        public enum ComponentType
         {
-			Path,
+            Path,
 
-			Mover
+            Mover
         }
 
-		public MoveSpeedType moveSpeedType;
+        /// <summary>
+        /// Path model for this move path
+        /// (override SnapPathMover if you don't want to use a path object)
+        /// </summary>
+        public SomePath path;
 
-		/// <summary>
+        public MoveSpeedType moveSpeedType;
+
+        /// <summary>
         /// How objects cycle on this path: loop, once, or ping-pong
         /// </summary>
-		public AnimationCycleType cycleType;
+        public AnimationCycleType cycleType;
 
-		/// <summary>
+        /// <summary>
         /// Time for a complete cycle movement across the path
         /// </summary>
-		public float cycleTime = 3.0f;
+        public float cycleTime = 3.0f;
 
-		/// <summary>
-		/// Determines whether the path, or the objects on the path choose the cycle time
-		/// </summary>
-		public ComponentType cycleTimeComponent;
+        /// <summary>
+        /// Determines whether the path, or the objects on the path choose the cycle time
+        /// </summary>
+        public ComponentType cycleTimeComponent;
 
-		/// <summary>
-		/// Move the object that owns this path mover to its position on the path
-		/// </summary>
-		protected abstract void SnapPathMover(PathMover pathMover, float progress, bool force);
+        /// <summary>
+        /// Move the object that owns this path mover to its position on the path
+        /// </summary>
+        protected virtual void SnapPathMover(PathMover pathMover, float progress, bool force)
+        {
+            if (null == path) { return; }
+            var position = path.PositionAt(progress);
+            MovePathMoverToLocalPosition(pathMover, position, force);
+        }
 
-		/// <summary>
-		/// Update the path mover over time
-		/// </summary>
-		protected virtual void UpdatePathMover(PathMover pathMover, TimeSlice time) { }
+        /// <summary>
+        /// Override and return path, or return null and override SnapPathMover for manual paths
+        /// </summary>
+        protected abstract SomePath BuildPath();
 
-		public void SnapAllToStartPosition()
-		{
-			foreach (Transform childTransform in transform)
-			{
+        /// <summary>
+        /// Update the path mover over time
+        /// </summary>
+        protected virtual void UpdatePathMover(PathMover pathMover, TimeSlice time) { }
+
+        public void SnapAllToStartPosition()
+        {
+            foreach (Transform childTransform in transform)
+            {
                 if (childTransform.TryGetComponent(out PathMover pathMover))
                 {
                     SnapPathMover(pathMover, pathMover.startPosition, true);
                 }
             }
-		}
+        }
 
-		protected override void Awake()
-		{
-			foreach (Transform childTransform in transform)
-			{
+        protected override void Awake()
+        {
+            base.Awake();
+
+            foreach (Transform childTransform in transform)
+            {
                 if (childTransform.TryGetComponent(out PathMover pathMover))
                 {
                     pathMover.cycleTimer.CycleType = cycleType;
@@ -91,21 +109,24 @@ namespace PJ
                     }
                 }
             }
-		}
 
-		protected override void Update()
-		{
-			var time = new TimeSlice(Time.deltaTime);
+            path = BuildPath();
+        }
 
-			foreach (Transform childTransform in transform)
-			{
-				var pathMover = childTransform.gameObject.GetComponent<PathMover>();
-				if (null == pathMover) {
-					Debug.Log("Warning. Move Path requires PathMover component");
-					continue;
-				}
+        protected override void Update()
+        {
+            var time = new TimeSlice(Time.deltaTime);
 
-				UpdatePathMover(pathMover, time);
+            foreach (Transform childTransform in transform)
+            {
+                var pathMover = childTransform.gameObject.GetComponent<PathMover>();
+                if (null == pathMover)
+                {
+                    Debug.Log("Warning. Move Path requires PathMover component");
+                    continue;
+                }
+
+                UpdatePathMover(pathMover, time);
 
                 if (pathMover.TryGetComponent(out SomeNode node))
                 {
@@ -116,41 +137,42 @@ namespace PJ
                         SnapPathMover(pathMover, pathMover.Progress, false);
                     }
                 }
-				else
-				{
-					SnapPathMover(pathMover, pathMover.Progress, false);
-				}
+                else
+                {
+                    SnapPathMover(pathMover, pathMover.Progress, false);
+                }
             }
-		}
+        }
 
-		protected virtual void MovePathMoverToLocalPosition(PathMover pathMover, Vector3 localPosition, bool force)
-		{
-			if (force)
+        protected virtual void MovePathMoverToLocalPosition(PathMover pathMover, Vector3 localPosition, bool force)
+        {
+            if (force)
             {
-				pathMover.transform.localPosition = localPosition;
-				return;
+                pathMover.transform.localPosition = localPosition;
+                return;
             }
-			
-			if (pathMover.gameObject.TryGetComponent(out SomeNode node))
-			{
-				var worldPosition = transform.TransformPoint(localPosition);
-				node.MoveToPosition(worldPosition, force);
-			}
-			else {
+
+            if (pathMover.gameObject.TryGetComponent(out SomeNode node))
+            {
+                var worldPosition = transform.TransformPoint(localPosition);
+                node.MoveToPosition(worldPosition, force);
+            }
+            else
+            {
                 pathMover.transform.localPosition = localPosition;
             }
-		}
+        }
 
-		/// <summary>
-		/// Move non kinematic objects in FixedUpdate
-		/// </summary>
-		protected virtual void FixedUpdate()
-		{
-			foreach (Transform childTransform in transform)
-			{
-				var childObject = childTransform.gameObject;
-				var pathMover = childObject.GetComponent<PathMover>();
-				if (null == pathMover) { continue; }
+        /// <summary>
+        /// Move non kinematic objects in FixedUpdate
+        /// </summary>
+        protected virtual void FixedUpdate()
+        {
+            foreach (Transform childTransform in transform)
+            {
+                var childObject = childTransform.gameObject;
+                var pathMover = childObject.GetComponent<PathMover>();
+                if (null == pathMover) { continue; }
 
                 if (childObject.TryGetComponent(out SomeNode node))
                 {
@@ -161,36 +183,42 @@ namespace PJ
                     }
                 }
             }
-		}
+        }
 
-		public virtual void SnapToPath(GameObject gameObject, bool force)
-		{
-			var pathMover = gameObject.GetComponent<PathMover>();
-			if (null == pathMover) { return; }
+        public virtual void SnapToPath(GameObject gameObject, bool force)
+        {
+            var pathMover = gameObject.GetComponent<PathMover>();
+            if (null == pathMover) { return; }
 
-			SnapPathMover(pathMover, pathMover.Progress, force);
-		}
+            SnapPathMover(pathMover, pathMover.Progress, force);
+        }
 
 #if UNITY_EDITOR
         protected virtual void OnValidate()
         {
+            path = BuildPath();
             SnapAllToStartPosition();
         }
 
         [CustomEditor(typeof(SomeMovePath), true)]
-		public class Editor : UnityEditor.Editor
-		{
-			public override void OnInspectorGUI()
-			{
-				DrawDefaultInspector();
+        public class Editor : UnityEditor.Editor
+        {
+            public override void OnInspectorGUI()
+            {
+                DrawDefaultInspector();
 
-				if (GUILayout.Button("Snap"))
-				{
-					SomeMovePath movePath = (SomeMovePath)target;
-					movePath.SnapAllToStartPosition();
-				}
-			}
-		}
+                if (GUILayout.Button("Snap"))
+                {
+                    SomeMovePath movePath = (SomeMovePath)target;
+                    movePath.SnapAllToStartPosition();
+                }
+            }
+        }
+
+        protected override void RenderGizmos(EditorUtils.RenderState renderState)
+        {
+            EditorUtils.DrawPath(BuildPath(), 36, transform, renderState);
+        }
 #endif
-	}
+    }
 }

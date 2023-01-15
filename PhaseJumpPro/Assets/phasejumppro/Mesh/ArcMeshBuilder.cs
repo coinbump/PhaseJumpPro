@@ -19,7 +19,7 @@ namespace PJ
         public Angle angleStep = Angle.DegreesAngle(10.0f);
         public Vector2 worldSize = new Vector2(1.0f, 1.0f);
 
-        public override Vector2 WorldSize
+        protected override Vector2 WorldSizeInternal
         {
             get => worldSize;
             set => worldSize = value;

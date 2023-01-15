@@ -40,6 +40,7 @@ namespace PJ
         [NonSerialized]
         public WorldPosition dragStartPosition = new WorldPosition(Vector3.zero);
 
+        public virtual void OnDragStart(WorldPosition inputPosition) { }
         public abstract void OnDragUpdate(WorldPosition inputPosition);
         public abstract void OnDragEnd();
 
@@ -58,6 +59,8 @@ namespace PJ
             var uiSystem = UISystem;
             var dragModel = new DragModel(this);
             uiSystem.StartDrag(dragModel);
+
+            OnDragStart(inputPosition);
         }
 
         public void OnPointerDown(PointerEventData eventData)

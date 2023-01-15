@@ -17,7 +17,7 @@ namespace PJ
         [SerializeField]
         protected bool hasFocus = false;
 
-        protected bool canBecomeFocused = true;
+        protected bool isFocusable = true;
 
         public int focusPriority = 0;
         public SomeEffect focusEffect;
@@ -26,10 +26,7 @@ namespace PJ
 
         public bool HasFocus
         {
-            get
-            {
-                return hasFocus;
-            }
+            get => hasFocus;
             set
             {
                 if (hasFocus == value)
@@ -108,7 +105,6 @@ namespace PJ
         {
             UpdateFocusEffect();
 
-            var focusEffect = GetComponent<SomeEffect>();
             if (focusEffect)
             {
                 focusEffect.UpdateEffectProperties();

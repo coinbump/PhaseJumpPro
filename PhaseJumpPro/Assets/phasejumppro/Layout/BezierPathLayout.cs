@@ -17,7 +17,7 @@ namespace PJ
     {
         public List<Vector3> controlPoints;
 
-        protected override SomePath NewPath()
+        protected override SomePath BuildPath()
         {
             return new BezierPath(controlPoints);
         }

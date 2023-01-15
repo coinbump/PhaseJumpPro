@@ -11,6 +11,7 @@ namespace PJ
     /// <summary>
     /// Adds common behavior such as basic velocity and acceleration
     /// </summary>
+    [RequireComponent(typeof(Rigidbody2D))]
     public class GoNode2D : NodeCore2D
     {
         /// <summary>

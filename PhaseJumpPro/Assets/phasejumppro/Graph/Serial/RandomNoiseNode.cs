@@ -19,7 +19,7 @@ namespace PJ
 
             public override object ValueForOutput<T>(string id, Tags parameters, T defaultValue)
             {
-                if (typeof(T).IsAssignableFrom(typeof(SomeMap<Vector2, float>)))
+                if (typeof(T).IsAssignableFrom(typeof(SomeTransform<Vector2, float>)))
                 {
                     return noise;
                 }

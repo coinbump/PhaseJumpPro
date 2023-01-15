@@ -21,7 +21,7 @@ namespace PJ
             fixedRandom.values.Add(.2f);
             fixedRandom.values.Add(.7f);
 
-            var spawnTable = gameObject1.AddComponent<SpawnTable>();
+            var spawnTable = new SpawnTable();
             spawnTable.random = fixedRandom;
             spawnTable.spawnItems.Clear();
             spawnTable.spawnItems.Add(new SpawnTable.Item(gameObject1, 0.5f));

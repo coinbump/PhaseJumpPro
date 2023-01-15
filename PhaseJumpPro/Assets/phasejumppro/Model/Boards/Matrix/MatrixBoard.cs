@@ -28,7 +28,7 @@ namespace PJ
         {
         }
 
-        public bool IsCellBlockedAt(Vector2Int origin)
+        public bool IsCellOccupied(Vector2Int origin)
         {
             if (!IsValidLocation(origin)) { return true; }
 
@@ -82,7 +82,7 @@ namespace PJ
 
                     var location = origin + pieceLocation;
 
-                    if (IsCellBlockedAt(location))
+                    if (IsCellOccupied(location))
                     {
                         // If specified, ignore some pieces for check
                         if (excludePieces.Count > 0)

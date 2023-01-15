@@ -48,7 +48,7 @@ namespace PJ
 
         public virtual void OnUpdate(TimeSlice time)
         {
-            // Copy because we might be adding or removing updatables during the update loop
+            // Copy because collection can be modified during loop
             var iterUpdatables = new HashSet<Updatable>(updatables);
 
             foreach (Updatable updatable in iterUpdatables)
@@ -56,7 +56,7 @@ namespace PJ
                 updatable.OnUpdate(time);
             }
 
-            // Do a fresh pass for flush (new updatables might have been added during update loop)
+            // Don't flush until update is finished (new updatables might have been added)
             FlushFinishedUpdatables();
         }
 

@@ -6,8 +6,10 @@ namespace PJ
 {
     public class UnitTests_HStack
     {
-        protected class TestHStack : PJ.HStack {
-            public void TestApplyLayout(Bounds2D parentBounds) {
+        protected class TestHStack : PJ.HStack
+        {
+            public void TestApplyLayout(Bounds2D parentBounds)
+            {
                 _ApplyLayout(parentBounds.size);
             }
         }
@@ -27,7 +29,7 @@ namespace PJ
             child2.transform.parent = gameObject.transform;
 
             sut.TestApplyLayout(new Bounds2D(Vector2.zero, new Vector2(10.0f, 10.0f)));
-            
+
             Assert.AreEqual(5.0f, childView1.Frame.size.x);
             Assert.AreEqual(5.0f, childView2.Frame.size.x);
             Assert.AreEqual(10.0f, childView1.Frame.size.y);
@@ -50,7 +52,7 @@ namespace PJ
             child2.transform.parent = gameObject.transform;
 
             sut.TestApplyLayout(new Bounds2D(Vector2.zero, new Vector2(10.0f, 10.0f)));
-            
+
             Assert.AreEqual(3.0f, childView1.Frame.size.x);
             Assert.AreEqual(7.0f, childView2.Frame.size.x);
             Assert.AreEqual(10.0f, childView1.Frame.size.y);
@@ -74,7 +76,7 @@ namespace PJ
             childView2.IntrinsicWidth = new(3.0f);
 
             sut.TestApplyLayout(new Bounds2D(Vector2.zero, new Vector2(10.0f, 10.0f)));
-            
+
             Assert.AreEqual(3.0f, childView1.Frame.size.x);
             Assert.AreEqual(3.0f, childView2.Frame.size.x);
             Assert.AreEqual(10.0f, childView1.Frame.size.y);
@@ -82,7 +84,7 @@ namespace PJ
         }
 
         [Test]
-        public void TestIntrinsicHeight_AllChildrenWithIntrinsicHeight()
+        public void TestPreferredHeight_AllChildrenWithIntrinsicHeight()
         {
             var gameObject = new GameObject();
             var sut = gameObject.AddComponent<TestHStack>();
@@ -98,14 +100,14 @@ namespace PJ
             childView2.IntrinsicHeight = new(7.0f);
 
             sut.TestApplyLayout(new Bounds2D(Vector2.zero, new Vector2(10.0f, 10.0f)));
-            
+
             Assert.AreEqual(3.0f, childView1.Frame.size.y);
             Assert.AreEqual(7.0f, childView2.Frame.size.y);
-            Assert.AreEqual(7.0f, sut.IntrinsicHeight.value);
+            Assert.AreEqual(7.0f, sut.PreferredHeight(Vector2.zero));
         }
 
         [Test]
-        public void TestIntrinsicHeight_MixedChildrenWithIntrinsicHeight()
+        public void TestPreferredHeight_MixedChildrenWithIntrinsicHeight()
         {
             var gameObject = new GameObject();
             var sut = gameObject.AddComponent<TestHStack>();
@@ -120,10 +122,10 @@ namespace PJ
             childView1.IntrinsicHeight = new(7.0f);
 
             sut.TestApplyLayout(new Bounds2D(Vector2.zero, new Vector2(10.0f, 10.0f)));
-            
+
             Assert.AreEqual(7.0f, childView1.Frame.size.y);
             Assert.AreEqual(7.0f, childView2.Frame.size.y);
-            Assert.AreEqual(7.0f, sut.IntrinsicHeight.value);
+            Assert.AreEqual(7.0f, sut.PreferredHeight(Vector2.zero));
         }
 
         [Test]
@@ -142,7 +144,7 @@ namespace PJ
 
             sut.spacing = 1.0f;
             sut.TestApplyLayout(new Bounds2D(Vector2.zero, new Vector2(10.0f, 10.0f)));
-            
+
             Assert.AreEqual(4.5f, childView1.Frame.size.x);
             Assert.AreEqual(4.5f, childView2.Frame.size.x);
             Assert.AreEqual(5.5f, childView2.Frame.origin.x);

@@ -42,7 +42,20 @@ namespace PJ
         }
 
         public abstract Mesh BuildMesh();
-        public abstract Vector2 WorldSize { get; set; }
+        protected abstract Vector2 WorldSizeInternal { get; set; }
+
+        public Vector2 WorldSize
+        {
+            get => WorldSizeInternal;
+            set
+            {
+                var worldSize = WorldSizeInternal;
+                if (worldSize == value) { return; }
+                WorldSizeInternal = value;
+
+                Build();
+            }
+        }
 
 #if UNITY_EDITOR
         [CustomEditor(typeof(SomeMeshBuilder), true)]

@@ -2,13 +2,15 @@ using System;
 using UnityEngine;
 using UnityEditor;
 
-namespace PJ {
-    public partial class View2D {
+namespace PJ
+{
+    public partial class View2D
+    {
 #if UNITY_EDITOR
         protected override void OnValidate()
         {
             base.OnValidate();
-            RootView().ApplyLayout();
+            RootView().ApplyLayout(true);
         }
 
         protected override void RenderGizmos(EditorUtils.RenderState renderState)
@@ -30,7 +32,7 @@ namespace PJ {
 
                 if (GUILayout.Button("Apply Layout"))
                 {
-                    _target.ApplyLayout();
+                    _target.RootView().ApplyLayout(true);
                 }
             }
         }

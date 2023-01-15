@@ -9,39 +9,43 @@ namespace PJ
     /// </summary>
     public class ZStack : View2D
     {
+        // (EDITOR ONLY)
+        public HorizontalAlignmentType _horizontalAlignment;
+        public VerticalAlignmentType _verticalAlignment;
+
         public Alignment alignment = new Alignment(HorizontalAlignment.center, VerticalAlignment.center);
         public float spacing = 0f;
 
-        public override Optional<float> IntrinsicWidth {
-            get
+        public override float PreferredWidth(float layoutSize)
+        {
+            var result = 0f;
+            var childViews = ChildViews();
+            foreach (var view in childViews)
             {
-                var intrinsicWidthChildViews = FilteredChildViews((view) => view.IntrinsicWidth != null);
-                if (intrinsicWidthChildViews.Count == 0) { return base.IntrinsicWidth; }
+                // We don't care about spacers
+                if (view is SpacerView) { continue; }
 
-                var result = 0f;
-                foreach (var view in intrinsicWidthChildViews) {
-                    result = Mathf.Max(result, view.IntrinsicWidth.value);
-                }
-
-                return new(result);
+                var childWidth = view.PreferredWidth(layoutSize);
+                result = Mathf.Max(result, childWidth);
             }
-            set => base.IntrinsicWidth = value;
+
+            return result;
         }
 
-        public override Optional<float> IntrinsicHeight {
-            get
+        public override float PreferredHeight(Vector2 layoutSize)
+        {
+            var result = 0f;
+            var childViews = ChildViews();
+            foreach (var view in childViews)
             {
-                var intrinsicHeightChildViews = FilteredChildViews((view) => view.IntrinsicHeight != null);
-                if (intrinsicHeightChildViews.Count == 0) { return base.IntrinsicHeight; }
+                // We don't care about spacers
+                if (view is SpacerView) { continue; }
 
-                var result = 0f;
-                foreach (var view in intrinsicHeightChildViews) {
-                    result = Mathf.Max(result, view.IntrinsicHeight.value);
-                }
-
-                return new(result);
+                var childHeight = view.PreferredHeight(layoutSize);
+                result = Mathf.Max(result, childHeight);
             }
-            set => base.IntrinsicHeight = value;
+
+            return result;
         }
 
         protected override void _ApplyLayout(Vector2 layoutSize)
@@ -51,11 +55,12 @@ namespace PJ
             var width = layoutSize.x;
             var height = layoutSize.y;
 
-            foreach (var view in childViews) {
+            foreach (var view in childViews)
+            {
                 var frame = new Bounds2D();
 
                 var childWidth = view.PreferredWidth(layoutSize.x);
-                var childHeight = view.PreferredHeight(layoutSize.y);
+                var childHeight = view.PreferredHeight(new Vector2(childWidth, layoutSize.y));
 
                 frame.size = new Vector2(childWidth, childHeight);
                 frame.origin.x = alignment.horizontalAlignment.aligner.AlignedOrigin(layoutSize.x, frame.size.x);
@@ -63,6 +68,15 @@ namespace PJ
 
                 view.Frame = frame;
             }
+        }
+
+        public override void UpdateFromSerializedProperties()
+        {
+            base.UpdateFromSerializedProperties();
+
+            HorizontalAlignment horizontalAlignment = new HorizontalAlignment.Builder().HorizontalAlignmentFrom(_horizontalAlignment);
+            VerticalAlignment verticalAlignment = new VerticalAlignment.Builder().VerticalAlignmentFrom(_verticalAlignment);
+            alignment = new Alignment(horizontalAlignment, verticalAlignment);
         }
     }
 }

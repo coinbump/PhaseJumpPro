@@ -3,7 +3,7 @@ using UnityEngine;
 
 /*
 RATING: 5 stars
-Simple layout view with unit tests
+Has unit tests
 CODE REVIEW: 11/24/22
 */
 namespace PJ
@@ -24,51 +24,33 @@ namespace PJ
         public float PadTop => padTop;
         public float PadBottom => padBottom;
 
-        public override Optional<float> IntrinsicWidth
+        public override float PreferredWidth(float layoutSize)
         {
-            get
-            {
-                var firstChild = FirstChildView();
-                if (null == firstChild) { return base.IntrinsicWidth; }
+            var firstChild = FirstChildView();
+            if (null == firstChild) { return base.PreferredWidth(layoutSize); }
 
-                var childIntrinsicWidth = firstChild.IntrinsicWidth;
-                if (null == childIntrinsicWidth) { return null; }
-                
-                var result = childIntrinsicWidth.value;
+            var preferredHeight = firstChild.PreferredWidth(layoutSize);
+            var result = preferredHeight;
 
-                result += PadLeading;
-                result += PadTrailing;
+            result += PadLeading;
+            result += PadTrailing;
 
-                return new(result);
-            }
-            set {
-                intrinsicWidth = value;
-            }
-        } // TESTED
+            return result;
+        }
 
-        public override Optional<float> IntrinsicHeight
+        public override float PreferredHeight(Vector2 layoutSize)
         {
-            get
-            {
-                var firstChild = FirstChildView();
-                if (null == firstChild) { return base.IntrinsicHeight; }
+            var firstChild = FirstChildView();
+            if (null == firstChild) { return base.PreferredHeight(layoutSize); }
 
-                var childIntrinsicHeight = firstChild.IntrinsicHeight;
-                if (null != childIntrinsicHeight)
-                {
-                    var result = childIntrinsicHeight.value;
+            var preferredHeight = firstChild.PreferredHeight(layoutSize);
+            var result = preferredHeight;
 
-                    result += PadTop;
-                    result += PadBottom;
+            result += PadTop;
+            result += PadBottom;
 
-                    return new(result);
-                }
-                return null;
-            }
-            set {
-                intrinsicHeight = value;
-            }
-        } // TESTED
+            return result;
+        }
 
         protected override void _ApplyLayout(Vector2 layoutSize)
         {
@@ -77,8 +59,9 @@ namespace PJ
 
             var frame = new Bounds2D();
 
-            var childPreferredWidth = firstChild.PreferredWidth(layoutSize.x - PadLeading - PadTrailing);
-            var childPreferredHeight = firstChild.PreferredHeight(layoutSize.y - PadTop - PadBottom);
+            var layoutSizeX = layoutSize.x - PadLeading - PadTrailing;
+            var childPreferredWidth = firstChild.PreferredWidth(layoutSizeX);
+            var childPreferredHeight = firstChild.PreferredHeight(new Vector2(childPreferredWidth, layoutSize.y - PadTop - PadBottom));
 
             frame.size.x = childPreferredWidth;
             frame.size.y = childPreferredHeight;

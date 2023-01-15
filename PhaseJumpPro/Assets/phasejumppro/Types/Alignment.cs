@@ -12,7 +12,6 @@ namespace PJ
     /// <summary>
     /// Combines horizontal and vertical alignment
     /// </summary>
-    [Serializable]
     public class Alignment
     {
         public HorizontalAlignment horizontalAlignment;

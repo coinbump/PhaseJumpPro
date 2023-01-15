@@ -51,7 +51,7 @@ namespace PJ
         {
             return value * value;
         }
-        
+
         protected float Cubed(float value)
         {
             return value * value * value;

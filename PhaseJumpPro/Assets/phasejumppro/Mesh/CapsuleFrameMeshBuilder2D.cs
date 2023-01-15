@@ -14,7 +14,7 @@ namespace PJ
         public Angle angleStep = Angle.DegreesAngle(10.0f);
         public float strokeWidth = 0.1f;
 
-        public override Vector2 WorldSize
+        protected override Vector2 WorldSizeInternal
         {
             get => worldSize;
             set

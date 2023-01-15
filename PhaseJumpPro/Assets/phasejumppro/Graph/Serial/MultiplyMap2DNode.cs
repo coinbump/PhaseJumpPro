@@ -24,12 +24,12 @@ namespace PJ
 
             public override object ValueForOutput<T>(string id, Tags parameters, T defaultValue)
             {
-                if (typeof(T).IsAssignableFrom(typeof(SomeMap<Vector2, float>)))
+                if (typeof(T).IsAssignableFrom(typeof(SomeTransform<Vector2, float>)))
                 {
-                    var inputValue = ValueForInput<SomeMap<Vector2, float>>("value", new Tags(), null);
+                    var inputValue = ValueForInput<SomeTransform<Vector2, float>>("value", new Tags(), null);
                     if (null != inputValue)
                     {
-                        var inputMap = inputValue as SomeMap<Vector2, float>;
+                        var inputMap = inputValue as SomeTransform<Vector2, float>;
                         return new KeyValueMapsMap<Vector2, float>(key => inputMap.ValueFor(key), value => value * factor);
                     }
                 }

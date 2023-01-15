@@ -14,7 +14,7 @@ namespace PJ
         public float cornerRadius = 0.15f;
         public Angle angleStep = Angle.DegreesAngle(10.0f);
 
-        public override Vector2 WorldSize
+        protected override Vector2 WorldSizeInternal
         {
             get => worldSize;
             set

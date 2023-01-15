@@ -8,14 +8,16 @@ namespace PJ
 {
     public class UnitTests_PadView
     {
-        protected class TestPadView : PJ.PadView {
-            public void TestApplyLayout(Bounds2D parentBounds) {
+        protected class TestPadView : PJ.PadView
+        {
+            public void TestApplyLayout(Bounds2D parentBounds)
+            {
                 _ApplyLayout(parentBounds.size);
             }
         }
 
         [Test]
-        public void TestIntrinsicWidth_ChildHasIntrinsicWidth()
+        public void TestPreferredWidth_ChildHasIntrinsicWidth()
         {
             var gameObject = new GameObject();
             var sut = gameObject.AddComponent<TestPadView>();
@@ -28,11 +30,11 @@ namespace PJ
 
             childObject.transform.parent = gameObject.transform;
 
-            Assert.AreEqual(18.0f, sut.DefaultIntrinsicWidth);
+            Assert.AreEqual(18.0f, sut.PreferredWidth(0));
         }
-        
+
         [Test]
-        public void TestIntrinsicHeight_ChildHasIntrinsicHeight()
+        public void TestPreferredHeight_ChildHasIntrinsicHeight()
         {
             var gameObject = new GameObject();
             var sut = gameObject.AddComponent<TestPadView>();
@@ -45,7 +47,7 @@ namespace PJ
 
             childObject.transform.parent = gameObject.transform;
 
-            Assert.AreEqual(18.0f, sut.DefaultIntrinsicHeight);
+            Assert.AreEqual(18.0f, sut.PreferredHeight(Vector2.zero));
         }
 
         [Test]

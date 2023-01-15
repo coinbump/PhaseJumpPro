@@ -52,6 +52,12 @@ namespace PJ
             {
                 boxCollider.size = Frame.size;
             }
+
+            // Make sure our mesh builder fits the view size
+            if (TryGetComponent(out SomeMeshBuilder meshBuilder))
+            {
+                meshBuilder.WorldSize = Frame.size;
+            }
         }
 
         public Bounds2D ParentBounds()

@@ -16,7 +16,7 @@ namespace PJ
     {
         public float radius = 1.0f;
 
-        protected override SomePath NewPath()
+        protected override SomePath BuildPath()
         {
             return new CirclePath(radius);
         }

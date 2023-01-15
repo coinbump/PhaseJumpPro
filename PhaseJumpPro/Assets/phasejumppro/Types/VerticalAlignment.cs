@@ -9,13 +9,34 @@ PORTED TO: C++
 */
 namespace PJ
 {
+    public enum VerticalAlignmentType
+    {
+        Center, Top, Bottom
+    }
+
     /// <summary>
     /// Vertical alignment in a horizontal flow
     /// </summary>
     public struct VerticalAlignment
     {
+        public struct Builder
+        {
+            public VerticalAlignment VerticalAlignmentFrom(VerticalAlignmentType type)
+            {
+                switch (type)
+                {
+                    case VerticalAlignmentType.Top:
+                        return VerticalAlignment.top;
+                    case VerticalAlignmentType.Bottom:
+                        return VerticalAlignment.bottom;
+                    default:
+                        return VerticalAlignment.center;
+                }
+            }
+        }
+
         public SomeAligner aligner;
-        
+
         public VerticalAlignment(SomeAligner aligner)
         {
             this.aligner = aligner;

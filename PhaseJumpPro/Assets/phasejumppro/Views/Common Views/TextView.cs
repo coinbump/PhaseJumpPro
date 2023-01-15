@@ -2,51 +2,150 @@ using System;
 using TMPro;
 using UnityEngine;
 
-namespace PJ {
+/*
+RATING: 5 stars
+Tested and works
+CODE REVIEW: 1/2/23
+*/
+namespace PJ
+{
     /// <summary>
     /// Allows TextMeshPro components to be placed in a view layout
     /// </summary>
     public class TextView : View2D
     {
-        protected override void OnFrameChange() {
-            base.OnFrameChange();
+        /// <summary>
+        /// If true, the width is calculated based on the text
+        /// </summary>
+        public bool calculateWidth;
 
-            UpdateTextMesh();
+        /// <summary>
+        /// If true, the height is calculated based on the intrinsic width
+        /// </summary>
+        public bool calculateHeight;
+
+        protected Optional<string> cachedText;
+        protected TextMeshPro textMesh;
+
+        protected TextMeshPro TextMesh
+        {
+            get
+            {
+                if (null == textMesh)
+                {
+                    textMesh = GetComponent<TextMeshPro>();
+                }
+                return textMesh;
+            }
         }
 
-        protected void UpdateTextMesh() {
-            if (TryGetComponent(out RectTransform rectTransform)) {
+        protected override void Awake()
+        {
+            base.Awake();
+
+            UpdateTextTransform();
+        }
+
+        protected override void OnFrameChange()
+        {
+            base.OnFrameChange();
+
+            UpdateTextTransform();
+        }
+
+        /// <summary>
+        /// Must be called when the text changes, to update its cached values
+        /// </summary>
+        public void OnTextChange()
+        {
+            UpdateText();
+        }
+
+        protected void UpdateText()
+        {
+            var textMesh = TextMesh;
+            if (null == textMesh) { return; }
+
+            cachedText = new(textMesh.text);
+            intrinsicWidth = null;
+            intrinsicHeight = null;
+
+            SetNeedsLayout();
+        }
+
+        public override float PreferredWidth(float layoutSize)
+        {
+            CalculatePreferredSizes(layoutSize);
+            return null != intrinsicWidth ? intrinsicWidth.value : base.PreferredWidth(layoutSize);
+        }
+
+        public override float PreferredHeight(Vector2 layoutSize)
+        {
+            CalculatePreferredSizes(layoutSize.x);
+            return null != intrinsicHeight ? intrinsicHeight.value : base.PreferredHeight(layoutSize);
+        }
+
+        protected void CalculatePreferredSizes(float layoutWidth)
+        {
+            CheckText();
+
+            var needsWidth = calculateWidth && null == intrinsicWidth;
+            var needsHeight = calculateHeight && null == intrinsicHeight;
+
+            // If we know the width, we can caculate the height
+            if (needsWidth || needsHeight)
+            {
+                // If asked to calculate the width, ignore the layout width and use the max width instead
+                var testWidth = calculateWidth ? ResolvedMaxWidth : layoutWidth;
+                var textMesh = TextMesh;
+                var preferredSize = textMesh.GetPreferredValues(cachedText.value, testWidth, 0);
+
+                if (calculateWidth)
+                {
+                    this.intrinsicWidth = new(preferredSize.x);
+                }
+
+                if (calculateHeight)
+                {
+                    this.intrinsicHeight = new(preferredSize.y);
+                }
+            }
+        }
+
+        protected void UpdateTextTransform()
+        {
+            if (TryGetComponent(out RectTransform rectTransform))
+            {
                 rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Frame.size.x);
                 rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, Frame.size.y);
             }
         }
 
-        protected override void Awake() {
-            base.Awake();
+        public override void OnUpdate(TimeSlice time)
+        {
+            base.OnUpdate(time);
 
-            UpdateTextMesh();
+            CheckText();
         }
 
+        protected void CheckText()
+        {
+            var textMesh = TextMesh;
+            if (null == textMesh) { return; }
+            if (null == cachedText || textMesh.text != cachedText.value)
+            {
+                OnTextChange();
+            }
+        }
 
+#if UNITY_EDITOR
+        protected override void OnValidate()
+        {
+            // Update cached values before we let base ApplyLayout (always update in editor)
+            OnTextChange();
 
-        // TODO: this hasn't been tested.
-        // TODO: support min, max, fixed height
-    //     public override float PreferredHeight(float layoutSize)
-    //     {
-    //         if (TryGetComponent(out TextMeshPro textMesh)) {
-    //             if (TryGetComponent(out RectTransform rectTransform)) {
-    //                 var oldSize = rectTransform.rect.size;
-    //                 rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, layoutSize);
-
-    //                 textMesh.ForceMeshUpdate();
-    //                 var result = textMesh.bounds.size.y;
-
-    //                 rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, oldSize.x);
-
-    //                 return result;
-    //             }
-    //         }
-    //         return base.PreferredHeight(layoutSize);
-    //     }
+            base.OnValidate();
+        }
+#endif
     }
 }

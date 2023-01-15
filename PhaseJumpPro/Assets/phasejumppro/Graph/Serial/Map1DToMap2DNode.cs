@@ -21,7 +21,7 @@ namespace PJ
                 this.axis = axis;
             }
 
-            protected class Map : SomeMap<Vector2, float>
+            protected class Map : SomeTransform<Vector2, float>
             {
                 public SomeMap1D map1D;
                 public Axis2D axis;
@@ -32,7 +32,7 @@ namespace PJ
                     this.axis = axis;
                 }
 
-                public override float ValueFor(Vector2 key)
+                public override float Transform(Vector2 key)
                 {
                     switch (axis)
                     {
@@ -50,9 +50,9 @@ namespace PJ
 
             public override object ValueForOutput<T>(string id, Tags parameters, T defaultValue)
             {
-                if (typeof(T).IsAssignableFrom(typeof(SomeMap<Vector2, float>)))
+                if (typeof(T).IsAssignableFrom(typeof(SomeTransform<Vector2, float>)))
                 {
-                    var inputValue = ValueForInput<SomeMap<float, float>>("value", null, null);
+                    var inputValue = ValueForInput<SomeTransform<float, float>>("value", null, null);
                     if (null != inputValue)
                     {
                         return new Map(inputValue as SomeMap1D, axis);

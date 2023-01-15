@@ -13,7 +13,7 @@ namespace PJ
             var localPressPosition = transform.InverseTransformPoint(worldPressPosition);
             var viewPressPosition = WorldToViewPosition(worldPressPosition);
 
-            Debug.Log("View2D.OnPointerDown: " + viewPressPosition.ToString());
+            // Debug.Log("View2D.OnPointerDown: " + viewPressPosition.ToString());
         }
 
         public void OnPointerClick(PointerEventData eventData)
@@ -23,7 +23,7 @@ namespace PJ
             var localPressPosition = transform.InverseTransformPoint(worldPressPosition);
             var viewPressPosition = WorldToViewPosition(worldPressPosition);
 
-            Debug.Log("View2D.OnPointerClick: " + viewPressPosition.ToString());
+            // Debug.Log("View2D.OnPointerClick: " + viewPressPosition.ToString());
 
             // Wrap UI events for portability
             SomePointerUIEvent.InputButton button = SomePointerUIEvent.InputButton.Left;
@@ -44,7 +44,7 @@ namespace PJ
 
         public void OnPointerUp(PointerEventData eventData)
         {
-            Debug.Log("View2D.OnPointerUp");
+            // Debug.Log("View2D.OnPointerUp");
         }
 
         public virtual void OnPointerClickEvent(PointerClickUIEvent _event)

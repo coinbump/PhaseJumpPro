@@ -19,7 +19,7 @@ namespace PJ
         public float strokeWidth = 0.1f;
         public Polygon polygon = new Polygon();
 
-        public override Vector2 WorldSize
+        protected override Vector2 WorldSizeInternal
         {
             get => polygon.Size;
             set

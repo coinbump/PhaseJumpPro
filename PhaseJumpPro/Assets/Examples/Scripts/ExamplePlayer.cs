@@ -8,52 +8,25 @@ using TMPro;
 
 public class ExamplePlayer : GoNode2D
 {
-    public class Model : PJ.GoCore<Model.StateType>
-    {
-        public const int MaxHealth = 5;
-
-        public enum StateType
-        {
-            Default,
-            Dead
-        }
-
-        public PublishedValue<int> health { get; protected set; } = new PublishedValue<int>(MaxHealth);
-
-        public Model()
-        {
-        }
-    }
-
-    public Model model = new Model();
-    protected Weapon2D burstWeapon = new Weapon2D();
-    protected WeaponEmitter2D weaponEmitter;
-
-    public bool IsDead
-    {
-        get => model.sm.State == Model.StateType.Dead;
-    }
+    protected CannonModel burstWeapon = new CannonModel();
+    protected CannonEmitter2D weaponEmitter;
 
     protected override void Awake()
     {
         base.Awake();
 
-        model.health.AddListener(this);
-
-        burstWeapon.EmitSpread(3, 2, 2);
-        burstWeapon.velocity = 20.0f;
+        burstWeapon.emitsModel.BuildSpread2D(3, Angle.DegreesAngle(2), Angle.DegreesAngle(2));
+        burstWeapon.VelocityMagnitude = 20.0f;
         burstWeapon.limitTime = 0.4f;
-        burstWeapon.burstCount = 3;
-        burstWeapon.burstInterval = 0.1f;
-        burstWeapon.fireType = PJ.Weapon.FireType.Burst;
+        burstWeapon.AddBurstFire(2, 0.1f);
 
-        weaponEmitter = GetComponent<WeaponEmitter2D>();
-        weaponEmitter.Weapon = burstWeapon;
+        weaponEmitter = GetComponent<CannonEmitter2D>();
+        weaponEmitter.Model = burstWeapon;
     }
 
-    public void OnInputMoveRight(InputAction.CallbackContext context)
+    public void OnInputMoveRight(InputValue inputValue)
     {
-        var inputVector = context.ReadValue<Vector2>();
+        var inputVector = inputValue.Get<Vector2>();
 
         var distance = AngleUtils.Hypotenuse(inputVector.x, inputVector.y);
         //Debug.Log("MoveRight Distance: " + distance.ToString());
@@ -66,18 +39,5 @@ public class ExamplePlayer : GoNode2D
 
         var angle = new Angle(inputVector);
         weaponEmitter.Fire(angle);
-    }
-
-    protected void OnHealthChange(int health)
-    {
-        Debug.Log("ExamplePlayer OnHealthChange");
-
-    }
-
-    public override void OnListen(PJ.Event theEvent)
-    {
-        base.OnListen(theEvent);
-
-        model.health.OnValueChange(theEvent, OnHealthChange);
     }
 }

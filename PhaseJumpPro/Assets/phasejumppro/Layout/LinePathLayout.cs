@@ -18,7 +18,7 @@ namespace PJ
         public Vector3 start;
         public Vector3 end;
 
-        protected override SomePath NewPath()
+        protected override SomePath BuildPath()
         {
             return new LinePath(start, end);
         }

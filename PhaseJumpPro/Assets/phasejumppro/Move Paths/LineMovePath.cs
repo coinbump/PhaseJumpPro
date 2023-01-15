@@ -6,7 +6,7 @@ using UnityEngine;
 /*
  * RATING: 5 stars
  * Tested and works
- * CODE REVIEW: 4/21/22
+ * CODE REVIEW: 12/31/22
  */
 namespace PJ
 {
@@ -18,6 +18,11 @@ namespace PJ
         public Vector3 start;
         public Vector3 end;
 
+        protected override SomePath BuildPath()
+        {
+            return new LinePath(start, end);
+        }
+
 #if UNITY_EDITOR
         protected override void RenderGizmos(EditorUtils.RenderState renderState)
         {
@@ -27,11 +32,5 @@ namespace PJ
             EditorUtils.DrawLine(worldStart, worldEnd, renderState);
         }
 #endif
-
-        protected override void SnapPathMover(PathMover pathMover, float progress, bool force)
-        {
-            Vector3 position = start + (end - start) * progress;
-            MovePathMoverToLocalPosition(pathMover, position, force);
-        }
     }
 }

@@ -9,11 +9,32 @@ PORTED TO: C++
 */
 namespace PJ
 {
+    public enum HorizontalAlignmentType
+    {
+        Center, Leading, Trailing
+    }
+
     /// <summary>
     /// Horizontal alignment in a vertical flow
     /// </summary>
     public struct HorizontalAlignment
     {
+        public struct Builder
+        {
+            public HorizontalAlignment HorizontalAlignmentFrom(HorizontalAlignmentType type)
+            {
+                switch (type)
+                {
+                    case HorizontalAlignmentType.Leading:
+                        return HorizontalAlignment.leading;
+                    case HorizontalAlignmentType.Trailing:
+                        return HorizontalAlignment.trailing;
+                    default:
+                        return HorizontalAlignment.center;
+                }
+            }
+        }
+
         public SomeAligner aligner;
 
         public HorizontalAlignment(SomeAligner aligner)

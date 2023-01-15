@@ -9,23 +9,26 @@ namespace PJ
     /// </summary>
     public class VStack : View2D
     {
+        // (EDITOR ONLY)
+        public HorizontalAlignmentType _alignment;
+
         public HorizontalAlignment alignment = HorizontalAlignment.center;
         public float spacing = 0f;
 
-        public override Optional<float> IntrinsicWidth {
-            get
+        public override float PreferredWidth(float layoutSize)
+        {
+            var result = 0f;
+            var childViews = ChildViews();
+            foreach (var view in childViews)
             {
-                var intrinsicWidthChildViews = FilteredChildViews((view) => view.IntrinsicWidth != null);
-                if (intrinsicWidthChildViews.Count == 0) { return base.IntrinsicWidth; }
+                // We don't care about spacers
+                if (view is SpacerView) { continue; }
 
-                var result = 0f;
-                foreach (var view in intrinsicWidthChildViews) {
-                    result = Mathf.Max(result, view.IntrinsicWidth.value);
-                }
-
-                return new(result);
+                var childWidth = view.PreferredWidth(layoutSize);
+                result = Mathf.Max(result, childWidth);
             }
-            set => base.IntrinsicWidth = value;
+
+            return result;
         }
 
         protected override void _ApplyLayout(Vector2 layoutSize)
@@ -62,7 +65,8 @@ namespace PJ
                 else
                 {
                     var minWidth = view.MinWidth;
-                    if (null != minWidth) {
+                    if (null != minWidth)
+                    {
                         maxIntrinsicWidth = MathF.Max(maxIntrinsicWidth, minWidth.value);
                     }
                 }
@@ -75,7 +79,8 @@ namespace PJ
             }
 
             var totalIntrinsicHeight = 0f;
-            foreach (var view in intrinsicHeightChildViews) {
+            foreach (var view in intrinsicHeightChildViews)
+            {
                 totalIntrinsicHeight += view.DefaultIntrinsicHeight;
             }
 
@@ -84,10 +89,21 @@ namespace PJ
             var nonIntrinsicHeight = nonIntrinsicTotalHeight / nonIntrinsicViewsCount;
 
             var y = 0f;
-            foreach (var view in childViews) {
+            foreach (var view in childViews)
+            {
                 var frame = view.Frame;
 
                 var intrinsicHeight = view.IntrinsicHeight;
+
+                var intrinsicWidth = view.IntrinsicWidth;
+                if (null != intrinsicWidth)
+                {
+                    frame.size.x = intrinsicWidth.value;
+                }
+                else
+                {
+                    frame.size.x = maxIntrinsicWidth;
+                }
 
                 if (null != intrinsicHeight)
                 {
@@ -95,28 +111,29 @@ namespace PJ
                 }
                 else
                 {
-                    var height = view.PreferredHeight(nonIntrinsicHeight);
+                    var height = view.PreferredHeight(new Vector2(frame.size.x, nonIntrinsicHeight));
                     frame.size.y = height;
                     nonIntrinsicTotalHeight -= height;
                     nonIntrinsicViewsCount--;
                     nonIntrinsicHeight = nonIntrinsicTotalHeight / nonIntrinsicViewsCount;
                 }
 
-                var intrinsicWidth = view.IntrinsicWidth;
-                if (null != intrinsicWidth) {
-                    frame.size.x = intrinsicWidth.value;
-                } else {
-                    frame.size.x = maxIntrinsicWidth;
-                }
-
                 frame.origin.y = y;
                 frame.origin.x = alignment.aligner.AlignedOrigin(layoutSize.x, frame.size.x);
-                
+
                 view.Frame = frame;
 
                 y += frame.size.y;
                 y += spacing;
             }
+        }
+
+        public override void UpdateFromSerializedProperties()
+        {
+            base.UpdateFromSerializedProperties();
+
+            HorizontalAlignment horizontalAlignment = new HorizontalAlignment.Builder().HorizontalAlignmentFrom(_alignment);
+            this.alignment = horizontalAlignment;
         }
     }
 }
