@@ -85,21 +85,7 @@ namespace PJ
 
         public virtual void UpdateFromSerializedProperties()
         {
-            foreach (TagValue tag in _tags)
-            {
-                try
-                {
-                    var floatValue = float.Parse(tag.value);
-                    tags[tag.name] = floatValue;
-                    continue;
-                }
-                catch
-                {
-                }
-
-                tags[tag.name] = tag.value;
-            }
-
+            tags = new(_tags);
             stateTags = new(_stateTags);
             typeTags = new(_typeTags);
             cullTypes = new(_cullTypes);

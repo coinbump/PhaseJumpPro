@@ -1,0 +1,263 @@
+{
+	"cards": [{
+		"id": "heart.ace",
+		"tags": {
+			"value": 1
+		}
+	}, {
+		"id": "heart.2",
+		"tags": {
+			"value": 2
+		}
+	}, {
+		"id": "heart.3",
+		"tags": {
+			"value": 3
+		}
+	}, {
+		"id": "heart.4",
+		"tags": {
+			"value": 4
+		}
+	}, {
+		"id": "heart.5",
+		"tags": {
+			"value": 5
+		}
+	}, {
+		"id": "heart.6",
+		"tags": {
+			"value": 6
+		}
+	}, {
+		"id": "heart.7",
+		"tags": {
+			"value": 7
+		}
+	}, {
+		"id": "heart.8",
+		"tags": {
+			"value": 8
+		}
+	}, {
+		"id": "heart.9",
+		"tags": {
+			"value": 9
+		}
+	}, {
+		"id": "heart.10",
+		"tags": {
+			"value": 10
+		}
+	}, {
+		"id": "heart.jack",
+		"tags": {
+			"value": 11
+		}
+	}, {
+		"id": "heart.queen",
+		"tags": {
+			"value": 12
+		}
+	}, {
+		"id": "heart.king",
+		"tags": {
+			"value": 13
+		}
+	},{
+		"id": "diamond.ace",
+		"tags": {
+			"value": 1
+		}
+	}, {
+		"id": "diamond.2",
+		"tags": {
+			"value": 2
+		}
+	}, {
+		"id": "diamond.3",
+		"tags": {
+			"value": 3
+		}
+	}, {
+		"id": "diamond.4",
+		"tags": {
+			"value": 4
+		}
+	}, {
+		"id": "diamond.5",
+		"tags": {
+			"value": 5
+		}
+	}, {
+		"id": "diamond.6",
+		"tags": {
+			"value": 6
+		}
+	}, {
+		"id": "diamond.7",
+		"tags": {
+			"value": 7
+		}
+	}, {
+		"id": "diamond.8",
+		"tags": {
+			"value": 8
+		}
+	}, {
+		"id": "diamond.9",
+		"tags": {
+			"value": 9
+		}
+	}, {
+		"id": "diamond.10",
+		"tags": {
+			"value": 10
+		}
+	}, {
+		"id": "diamond.jack",
+		"tags": {
+			"value": 11
+		}
+	}, {
+		"id": "diamond.queen",
+		"tags": {
+			"value": 12
+		}
+	}, {
+		"id": "diamond.king",
+		"tags": {
+			"value": 13
+		}
+	},{
+		"id": "club.ace",
+		"tags": {
+			"value": 1
+		}
+	}, {
+		"id": "club.2",
+		"tags": {
+			"value": 2
+		}
+	}, {
+		"id": "club.3",
+		"tags": {
+			"value": 3
+		}
+	}, {
+		"id": "club.4",
+		"tags": {
+			"value": 4
+		}
+	}, {
+		"id": "club.5",
+		"tags": {
+			"value": 5
+		}
+	}, {
+		"id": "club.6",
+		"tags": {
+			"value": 6
+		}
+	}, {
+		"id": "club.7",
+		"tags": {
+			"value": 7
+		}
+	}, {
+		"id": "club.8",
+		"tags": {
+			"value": 8
+		}
+	}, {
+		"id": "club.9",
+		"tags": {
+			"value": 9
+		}
+	}, {
+		"id": "club.10",
+		"tags": {
+			"value": 10
+		}
+	}, {
+		"id": "club.jack",
+		"tags": {
+			"value": 11
+		}
+	}, {
+		"id": "club.queen",
+		"tags": {
+			"value": 12
+		}
+	}, {
+		"id": "club.king",
+		"tags": {
+			"value": 13
+		}
+	},{
+		"id": "spade.ace",
+		"tags": {
+			"value": 1
+		}
+	}, {
+		"id": "spade.2",
+		"tags": {
+			"value": 2
+		}
+	}, {
+		"id": "spade.3",
+		"tags": {
+			"value": 3
+		}
+	}, {
+		"id": "spade.4",
+		"tags": {
+			"value": 4
+		}
+	}, {
+		"id": "spade.5",
+		"tags": {
+			"value": 5
+		}
+	}, {
+		"id": "spade.6",
+		"tags": {
+			"value": 6
+		}
+	}, {
+		"id": "spade.7",
+		"tags": {
+			"value": 7
+		}
+	}, {
+		"id": "spade.8",
+		"tags": {
+			"value": 8
+		}
+	}, {
+		"id": "spade.9",
+		"tags": {
+			"value": 9
+		}
+	}, {
+		"id": "spade.10",
+		"tags": {
+			"value": 10
+		}
+	}, {
+		"id": "spade.jack",
+		"tags": {
+			"value": 11
+		}
+	}, {
+		"id": "spade.queen",
+		"tags": {
+			"value": 12
+		}
+	}, {
+		"id": "spade.king",
+		"tags": {
+			"value": 13
+		}
+	}]
+}

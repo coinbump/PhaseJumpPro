@@ -7,7 +7,7 @@ using PJ;
 /*
  * RATING: 5 stars
  * Simple, has unit tests
- * Code review: 1/7/21
+ * Code review: 1/7/22
  * 
  * PORTED TO: C++
  */
@@ -18,6 +18,28 @@ namespace PJ
     /// </summary>
     public class Tags : Dictionary<string, object>
     {
+        public Tags()
+        {
+        }
+
+        public Tags(List<TagValue> tagValues)
+        {
+            foreach (TagValue tag in tagValues)
+            {
+                try
+                {
+                    var floatValue = float.Parse(tag.value);
+                    this[tag.name] = floatValue;
+                    continue;
+                }
+                catch
+                {
+                }
+
+                this[tag.name] = tag.value;
+            }
+        }
+
         /// <summary>
         /// Creates a value if it doesn't exist
         /// </summary>

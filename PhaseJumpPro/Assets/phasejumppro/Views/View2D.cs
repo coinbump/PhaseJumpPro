@@ -36,7 +36,7 @@ namespace PJ
         /// <summary>
         /// Local z position for child view
         /// </summary>
-        public float zStep = 0.1f;
+        public float zStep = 0.001f;
 
         private bool needsLayout = true;
 
