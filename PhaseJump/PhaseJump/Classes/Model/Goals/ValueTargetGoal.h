@@ -24,9 +24,15 @@ namespace PJ
         int ValueTarget() const { return valueTarget; }
         void SetValueTarget(int value) { valueTarget = value; }
         int Value() const { return value; }
+        void SetValue(int value) {
+            this->value = value;
+            SetIsComplete(value >= valueTarget);
+        }
 
-        ValueTargetGoal(int valueTarget, int value = 0) : valueTarget(valueTarget), value(value)
+        ValueTargetGoal(String id, int valueTarget, int value = 0) : valueTarget(valueTarget), value(value)
         {
+            this->id = id;
+            SetIsComplete(value >= valueTarget);
         }
 
         float Progress() const override {
@@ -37,11 +43,7 @@ namespace PJ
         {
             if (value >= valueTarget) { return; }
 
-            value++;
-            if (value >= valueTarget)
-            {
-                SetIsComplete(true);
-            }
+            SetValue(Value() + 1);
         }
     };
 }

@@ -81,10 +81,11 @@ namespace PJ
             toNode->Value()->FromNodes().Add(fromNode);
         }
 
-        void RemoveEdge(EdgePtr edge)
+        void RemoveEdge(EdgePtr _edge)
         {
-            if (NULL == edge) { return; }
+            if (NULL == _edge) { return; }
 
+            auto edge = _edge;
             edges.Remove(edge);
 
             if (NULL == edge->toNode->Value()) { return; }

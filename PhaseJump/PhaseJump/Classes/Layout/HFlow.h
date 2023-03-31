@@ -35,7 +35,7 @@ namespace PJ
             auto childNodes = ChildNodes();
             for (auto child : (*childNodes))
             {
-                child->transform->SetLocalPosition(Vector3(position, 0, 0));
+                child->transform->SetLocalPosition(Vector3(position, 0, child->transform->LocalPosition().z()));
                 position += spacing;
             }
         }

@@ -9,10 +9,8 @@
  CODE REVIEW: 12/19/22
  */
 namespace PJ {
-    /// <summary>
-    /// Any object that relies on timers to perform tasks
-    ///
-    /// Supports an internal time scale for animating an object's time
+    /// <summary>GameMo
+    /// An object that runs and then may finish or start over
     /// </summary>
     class SomeRunner : public Updatable {
     protected:

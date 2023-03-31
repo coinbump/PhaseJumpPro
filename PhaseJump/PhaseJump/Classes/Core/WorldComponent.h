@@ -32,6 +32,8 @@ namespace PJ {
             if (owner.expired()) { return nullptr; }
             return owner.lock()->ChildNodes();
         }
+
+        // TODO: pull in code from WorldComponentBeta
     };
 }
 

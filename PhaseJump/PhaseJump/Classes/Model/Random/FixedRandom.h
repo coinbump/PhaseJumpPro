@@ -13,7 +13,7 @@ namespace PJ
     /// <summary>
     /// Returns a fixed set of random values (for testing, debugging)
     /// </summary>
-    class FixedNormalRandom : public SomeNormalRandom
+    class FixedRandom : public SomeRandom
     {
     public:
         Array<float> values;

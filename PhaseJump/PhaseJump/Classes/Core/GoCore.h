@@ -83,7 +83,7 @@ namespace PJ
 
         bool IsFinished() const override { return false; }
 
-        void OnListen(EventPtr event) override
+        void OnEvent(EventPtr event) override
         {
             if (event->sentFrom.expired()) { return; }
 

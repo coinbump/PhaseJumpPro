@@ -1,7 +1,7 @@
 #ifndef PJSOMEKEYFRAME_H
 #define PJSOMEKEYFRAME_H
 
-#include "SomeInterpolatorKey.h"
+#include "SomeKeyframeInterpolatorFactory.h"
 #include <memory>
 
 /*

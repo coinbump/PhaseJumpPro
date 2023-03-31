@@ -6,6 +6,7 @@
 #include <string>
 #include <sstream>
 #include <stdio.h>
+#include <algorithm>
 
 /*
  RATING: 5 stars
@@ -27,12 +28,26 @@ namespace PJ {
             stream << value;
             (*this) = stream.str();
         }
+        String(int value)
+        {
+            std::stringstream stream;
+            stream << value;
+            (*this) = stream.str();
+        }
 
         // Standard
         bool HasPrefix(std::string findString) const { return StringUtils().HasPrefix(*this, findString); }
         bool HasSuffix(std::string findString) const { return StringUtils().HasSuffix(*this, findString); }
         bool StartsWith(std::string findString) const { return HasPrefix(findString); }
         bool EndsWith(std::string findString) const { return HasSuffix(findString); }
+
+        bool CompareNoCase(const std::string_view& rhs) {
+            return std::equal(this->begin(), this->end(),
+                              rhs.begin(), rhs.end(),
+                              [](char a, char b) {
+                                  return tolower(a) == tolower(b);
+                              });
+        }
 
         template <class T>
         T TypeValue() const {

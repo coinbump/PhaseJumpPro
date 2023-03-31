@@ -2,13 +2,14 @@
 #define PJCORE_H
 
 #include "Base.h"
-#include "Class.h"
 #include "_String.h"
 #include "Tags.h"
 #include <memory>
 
 namespace PJ
 {
+    class Class;
+    
     // Extends Base with common patterns
     class Core : public Base {
     protected:
@@ -19,14 +20,7 @@ namespace PJ
         /// <summary>
         /// If we have a class object, return its id, otherwise use the id we have
         /// </summary>
-        String ClassId() const
-        {
-            if (this->_class) {
-                return this->_class->id;
-            }
-
-            return this->classId;
-        }
+        String ClassId() const;
 
         void SetClassId(String value)
         {

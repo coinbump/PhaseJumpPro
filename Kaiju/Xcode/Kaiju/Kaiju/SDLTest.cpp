@@ -9,7 +9,7 @@
 #include <PhaseJump/SDLWorld.h>
 #include <PhaseJump/HFlow.h>
 #include <PhaseJump/VFlow.h>
-#include <PhaseJump/StandardNormalRandom.h>
+#include <PhaseJump/StandardRandom.h>
 #include <iostream>
 
 using namespace PJ;
@@ -39,7 +39,7 @@ void SDLFoo() {
         window->World()->root->AddEdge(StandardEdgeModel(), node);
         auto renderer = std::make_shared<SDLTextureRenderer>(sprite);
         node->AddComponent(renderer);
-        node->transform->position = Vector3(StandardNormalRandom().Value() * 100.0f, StandardNormalRandom().Value() * 100.0f, 0);
+        node->transform->position = Vector3(StandardRandom().Value() * 100.0f, StandardRandom().Value() * 100.0f, 0);
     }
 
     auto layout = make_shared<VFlow>(20);

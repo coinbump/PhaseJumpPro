@@ -1,8 +1,6 @@
 #ifndef PJSOME_TRANSFORM_H_
 #define PJSOME_TRANSFORM_H_
 
-#include "SomeMap.h"
-
 /*
  RATING: 5 stars
  Simple class
@@ -17,6 +15,12 @@ namespace PJ {
     {
     public:
         virtual Result Transform(Value value) const = 0;
+
+        Result ValueFor(Value value) const { return Transform(value); }
+
+        Result operator[](Value value) const {
+            return ValueFor(value);
+        }
     };
 
     template <class Value>

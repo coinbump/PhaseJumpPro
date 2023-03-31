@@ -4,7 +4,8 @@
 #include <string>
 #include <map>
 #include "Factory.h"
-#include "Collections/_Map.h"
+#include "Core.h"
+#include "_Map.h"
 
 /*
  RATING: 5 stars
@@ -21,6 +22,24 @@ namespace PJ
     {
     public:
         FactoryRegistry() {
+        }
+
+        Type New(String id)
+        {
+            if (this->contains(id)) {
+                auto factory = (*this)[id];
+                auto result = factory->New();
+
+                // Make sure the object gets the classID when created
+                auto coreResult = dynamic_pointer_cast<Core*>(result);
+                if (coreResult) {
+                    coreResult->SetClassId(id);
+                }
+
+                return result;
+            }
+
+            return Type();
         }
     };
 }

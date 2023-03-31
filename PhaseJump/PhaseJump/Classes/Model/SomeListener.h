@@ -19,7 +19,7 @@ namespace PJ {
         using EventSharedPtr = std::shared_ptr<Event>;
         using EventPtr = EventSharedPtr const&;
 
-        virtual void OnListen(EventPtr event) = 0;
+        virtual void OnEvent(EventPtr event) = 0;
     };
 }
 

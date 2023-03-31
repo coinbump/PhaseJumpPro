@@ -1,7 +1,7 @@
 #ifndef PJBROADCASTER_H
 #define PJBROADCASTER_H
 
-#include "Collections/List.h"
+#include "List.h"
 #include "SomeListener.h"
 #include "SomeBroadcaster.h"
 
@@ -59,7 +59,7 @@ namespace PJ {
                 if (listener.expired()) { continue; }
                 activeListeners.Add(listener);
 
-                listener.lock()->OnListen(event);
+                listener.lock()->OnEvent(event);
             }
 
             listeners = activeListeners;

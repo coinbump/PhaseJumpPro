@@ -1,4 +1,4 @@
-#include "StandardNormalRandom.h"
+#include "StandardRandom.h"
 #include <chrono>
 
 namespace PJ
@@ -6,7 +6,7 @@ namespace PJ
     static bool hasRandomSeed = false;
     static std::default_random_engine generator;
 
-    float StandardNormalRandom::Value()
+    float StandardRandom::Value()
     {
         if (!hasRandomSeed) {
             hasRandomSeed = true;

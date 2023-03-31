@@ -35,9 +35,11 @@
 #include "GoalEvents.h"
 #include "Signal.h"
 #include "SomeReceptor.h"
-#include "SomeNormalRandom.h"
-#include "FixedNormalRandom.h"
-#include "StandardNormalRandom.h"
+#include "SomeRandom.h"
+#include "FixedRandom.h"
+#include "StandardRandom.h"
+#include "Weight.h"
+#include "WeightedRandomChoice.h"
 
 #include <memory>
 
@@ -51,11 +53,15 @@
 #include "StateMachine.h"
 #include "PublishedValue.h"
 #include "CycleAnimator.h"
-#include "SomeInterpolatorKey.h"
+#include "SomeKeyframeInterpolatorFactory.h"
 #include "SomeKeyframe.h"
 #include "ValueKeyframe.h"
 #include "ActionKeyframe.h"
 #include "Switchable.h"
+#include "Animator.h"
+#include "TimedSequence.h"
+#include "SomeRandomChoice.h"
+#include "BroadcastTimer.h"
 #include "GoStateMachine.h"
 #include "SomeRunner.h"
 #include "Valve.h"
@@ -71,7 +77,7 @@ namespace BroadcasterTests {
         int listenCount = 0;
         String lastMessage;
 
-        void OnListen(EventPtr event) override {
+        void OnEvent(EventPtr event) override {
             listenCount++;
             lastMessage = event->id;
         }
@@ -81,6 +87,8 @@ namespace BroadcasterTests {
 using namespace BroadcasterTests;
 
 TEST(Broadcaster, Factory) {
+    Weight<float> weight(1.0f);
+
     Broadcaster sut;
     auto listener = make_shared<TestListener>();
     auto listener2 = make_shared<TestListener>();
