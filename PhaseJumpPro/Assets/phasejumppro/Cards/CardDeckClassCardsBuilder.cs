@@ -19,7 +19,7 @@ namespace PJ
     {
         public void Build(SomeCardDeckClass _class, string jsonString)
         {
-            _class.cards.Clear();
+            _class.cardInfos.Clear();
 
             JObject root = JObject.Parse(jsonString);
             JArray cardList = (JArray)root["cards"];
@@ -32,8 +32,7 @@ namespace PJ
                 var id = (string)cardMap["id"];
                 if (null == id) { continue; }
 
-                var card = new SomeCardDeckClass.Card();
-                card.id = id;
+                var card = new SomeCardDeckClass.CardInfo(id);
 
                 var tags = (JObject)cardMap["tags"];
                 foreach (var tag in tags.Properties())
@@ -57,7 +56,7 @@ namespace PJ
                     }
                 }
 
-                _class.cards.Add(card);
+                _class.cardInfos[card.id] = card;
             }
         }
     }

@@ -19,7 +19,7 @@ public class ETSEnemy : GoNode2D
         weaponEmitter = GetComponent<CannonEmitter2D>();
         weaponEmitter.Model = weapon;
 
-        var angle = Angle.DegreesAngle(RandomUtils.VaryFloat(180.0f, 45.0f));
+        var angle = Angle.DegreesAngle(new UnityRandom().VaryFloat(180.0f, 45.0f));
         var velocity = ((Vector2)angle).normalized * 30.0f;
         Velocity = velocity;
     }

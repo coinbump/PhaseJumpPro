@@ -15,7 +15,7 @@ namespace PJ
         public float radius;
         protected override Vector3 SpawnPositionFor(GameObject gameObject)
         {
-            float distance = RandomUtils.VaryFloat(0, 1.0f) * radius;
+            float distance = new UnityRandom().VaryFloat(0, 1.0f) * radius;
             float angle = spawnTable.random.Value * 360.0f;
 
             Vector2 offset = (Vector2)Angle.DegreesAngle(angle) * distance;

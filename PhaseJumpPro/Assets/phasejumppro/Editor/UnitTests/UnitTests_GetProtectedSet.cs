@@ -6,37 +6,37 @@ using NUnit.Framework;
 
 namespace PJ
 {
-	public class UnitTests_GetProtectedSet
-	{
-		private class TestCounter
+    public class UnitTests_GetProtectedSet
+    {
+        private class TestCounter
         {
-			public static int counter = 0;
+            public static int counter = 0;
 
-			public TestCounter()
+            public TestCounter()
             {
-				counter++;
+                counter++;
             }
-		}
+        }
 
-		private class Test
-		{
-			public TestCounter value { get; protected set; } = new TestCounter();
-		}
+        private class Test
+        {
+            public TestCounter value { get; protected set; } = new TestCounter();
+        }
 
-		[Test]
-		public void Test_GetProtectedSet()
-		{
-			TestCounter.counter = 0;
+        [Test]
+        public void Test_GetProtectedSet()
+        {
+            TestCounter.counter = 0;
 
-			var test = new Test();
-			var value1 = test.value;
+            var test = new Test();
+            var value1 = test.value;
 
-			Assert.AreEqual(1, TestCounter.counter);
+            Assert.AreEqual(1, TestCounter.counter);
 
-			var value2 = test.value;
+            var value2 = test.value;
 
-			Assert.AreEqual(1, TestCounter.counter);
-		}
-	}
+            Assert.AreEqual(1, TestCounter.counter);
+        }
+    }
 }
 

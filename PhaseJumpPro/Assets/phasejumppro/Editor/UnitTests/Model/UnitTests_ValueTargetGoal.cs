@@ -11,7 +11,7 @@ namespace PJ
         [Test]
         public void Test_ValueTargetGoal()
         {
-            var sut = new ValueTargetGoal(2);
+            var sut = new ValueTargetGoal("", 2);
 
             Assert.AreEqual(0, sut.Progress);
 

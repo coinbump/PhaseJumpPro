@@ -8,67 +8,71 @@ using UnityEngine;
  * CODE REVIEW: 4/14/22
  * PORTED TO: C++
  */
-namespace PJ {
-	/// <summary>
+namespace PJ
+{
+    /// <summary>
     /// Keeps track of time for N seconds duration, and then triggers OnFinish
     /// </summary>
-	public class Timer : SomeTimed
-	{
-		/// <summary>
+    public class Timer : SomeTimed
+    {
+        /// <summary>
         /// Optional id for hashing, debug logs
         /// </summary>
-		public string id;
+        public string id;
 
-		protected float timerState;  // Time state of the timer
-		
-		public float TimerState {
-			get => timerState;
-			set {
-				timerState = Mathf.Min(duration, Mathf.Max(0, value));
+        protected float timerState;  // Time state of the timer
 
-				IsFinished = timerState >= duration;
-			}
-		}
+        public float TimerState
+        {
+            get => timerState;
+            set
+            {
+                timerState = Mathf.Min(duration, Mathf.Max(0, value));
 
-		public override float Progress
-		{
-			get
-			{
-				if (duration <= 0) { return 0; }
-				return Math.Min(1.0f, TimerState / duration);
-			}
-		}
+                IsFinished = timerState >= duration;
+            }
+        }
 
-		public Timer(float duration, RunType runType)
-		: base(duration, runType)
-		{
-		}
+        public override float Progress
+        {
+            get
+            {
+                if (duration <= 0) { return 0; }
+                return Math.Min(1.0f, TimerState / duration);
+            }
+        }
 
-		public override void Reset()
-		{
-			base.Reset();
+        public Timer(float duration, RunType runType)
+        : base(duration, runType)
+        {
+        }
 
-			TimerState = 0;
-		}
+        public override void Reset()
+        {
+            base.Reset();
 
-		/// <summary>
+            TimerState = 0;
+        }
+
+        /// <summary>
         /// Method, because overriden property is get only
         /// </summary>
         /// <param name="progress"></param>
-		public void SetProgress(float progress) {
-			progress = Math.Min(1.0f, Math.Max(0, progress));
-			TimerState = progress * duration;
-		}
+        public void SetProgress(float progress)
+        {
+            progress = Math.Min(1.0f, Math.Max(0, progress));
+            TimerState = progress * duration;
+        }
 
-		public override void OnUpdate(TimeSlice time)
-		{
-			if (IsFinished || duration <= 0) { return; }
+        public override void OnUpdate(TimeSlice time)
+        {
+            if (IsFinished || duration <= 0) { return; }
 
-			var delta = TimeDeltaFor(time);
-			//Debug.Log(id + ": OnUpdate delta: " + delta.ToString());
-			if (delta <= 0) { return; }
+            var delta = TimeDeltaFor(time);
+            //Debug.Log(id + ": OnUpdate delta: " + delta.ToString());
+            if (delta <= 0) { return; }
 
-			TimerState += delta;
-		}
-	}
+            TimerState += delta;
+        }
+    }
 }

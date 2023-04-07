@@ -6,7 +6,7 @@ namespace PJ
     /// <summary>
     /// A button that, when pressed, toggles off and on
     /// </summary>
-    public class ToggleButton : Button
+    public class ToggleButton : ButtonControl
     {
         public bool isToogleOn = false;
         public SomeEffect toggleEffect;

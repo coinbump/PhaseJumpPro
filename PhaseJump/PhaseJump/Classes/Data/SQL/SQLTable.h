@@ -4,8 +4,9 @@
 #include "_String.h"
 #include "SQLTypes.h"
 #include "SQLStatement.h"
-#include "SQLTableQuery.h"
-#include "SQLTableTypeMutation.h"
+#include "SQLTableQueryArguments.h"
+#include "SQLTableMutateArguments.h"
+#include "SQLRowValues.h"
 #include "Array.h"
 #include "_Set.h"
 #include <vector>
@@ -21,6 +22,9 @@
 namespace PJ
 {
     class SQLDatabase;
+    class StringArray;
+    class Tags;
+
     using SQLDatabaseSharedPtr = std::shared_ptr<SQLDatabase>;
 
     /**
@@ -44,30 +48,33 @@ namespace PJ
 
         SQLTable(String name, SQLDatabaseSharedPtr db);
 
-        Array<int> IntValues(SQLTableQuery query);
-        int IntValue(SQLTableQuery query, int defaultValue);
-        Array<float> FloatValues(SQLTableQuery query);
-        float FloatValue(SQLTableQuery query, float defaultValue);
-        Array<String> StringValues(SQLTableQuery query);
-        String StringValue(SQLTableQuery query, String defaultValue);
+        Array<SQLRowValues> RowValuesList(SQLTableQueryArguments query);
 
-        bool CellExists(SQLTableQuery query);
+        Array<int> IntValues(SQLTableQueryArguments query);
+        int IntValue(SQLTableQueryArguments query, int defaultValue);
+        Array<float> FloatValues(SQLTableQueryArguments query);
+        float FloatValue(SQLTableQueryArguments query, float defaultValue);
+        Array<String> StringValues(SQLTableQueryArguments query);
+        String StringValue(SQLTableQueryArguments query, String defaultValue);
+
+        bool CellExists(SQLTableQueryArguments query);
 
         void InsertRow();
         void DeleteRow(String whereColumn, String whereMatch);
         void Drop();
 
-        SQLStatement BuildStatement(String columnName, std::optional<SQLWhereArgument> where);
+        SQLStatement BuildStatement(String columnName, std::optional<SQLWhereArguments> where);
+        SQLStatement BuildStatement(SQLTableQueryArguments query);
 
         void Run(SQLStatement statement);
 
         bool ColumnExists(String columnName);
         bool AddColumn(String columnName, String params);
-        Set<String> SelectUniqueStrings(String columnName);
+        Set<String> UniqueStrings(String columnName);
 
-        void SetValue(SQLTableTypeMutation<String> mutation, SetValueType type);
-        void SetIntValue(SQLTableTypeMutation<int> mutation, SetValueType type);
-        void SetFloatValue(SQLTableTypeMutation<float> mutation, SetValueType type);
+        void SetValue(SQLTableMutateArguments mutation, SetValueType type);
+        void SetIntValue(SQLTableMutateArguments mutation, SetValueType type);
+        void SetFloatValue(SQLTableMutateArguments mutation, SetValueType type);
     };
 }
 

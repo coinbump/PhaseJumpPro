@@ -8,7 +8,7 @@ namespace PJ
 {
     class UnitTests_PublishedValue
     {
-        private class TestValue<T> : PublishedValue<T> where T : IEquatable<T>
+        private class TestValue<T> : PublishedTransformValue<T> where T : IEquatable<T>
         {
             public TestValue()
             {

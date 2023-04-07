@@ -16,10 +16,10 @@ namespace PJ
     {
         public override void OnUpdate(TimeSlice time)
         {
+            var oldTime = this.time;
+
             base.OnUpdate(time);
 
-            var oldTime = this.time;
-            this.time += time.delta;
             var newTime = this.time;
             var keyframes = KeyframesIn(new Range<float>(oldTime, newTime, Range<float>.Evaluate.Inclusive, Range<float>.Evaluate.Inside));
 

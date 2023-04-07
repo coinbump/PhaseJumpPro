@@ -5,7 +5,7 @@
 using namespace std;
 using namespace PJ;
 
-TEST(SQLUtilsTests, IsReservedKeyword) {
+TEST(SQLUtils, IsReservedKeyword) {
     SQLUtils sut;
 
     EXPECT_TRUE(sut.IsReservedKeyword("where"));

@@ -28,6 +28,8 @@ namespace PJ
 
         public override void OnDragEnd()
         {
+            base.OnDragEnd();
+
             OnDragGestureUpdate(Vector2.zero);
         }
     }

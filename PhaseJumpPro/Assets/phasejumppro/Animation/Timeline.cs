@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 /*
@@ -11,20 +12,30 @@ namespace PJ
 {
     /// <summary>
     /// A timeline has a start time, duration, and keyframes
-    /// Child nodes can be used as tracks for the timeline
     /// </summary>
-    public class Timeline : AcyclicGraphNode<StandardEdgeModel>
+    public class Timeline
     {
+        /// <summary>
+        /// Where the timeline is currently at
+        /// </summary>
         protected float time;
+
+        /// <summary>
+        /// Keyframes that occur at specific times along the timeline
+        /// </summary>
         protected List<SomeKeyframe> keyframes = new();
 
+        /// <summary>
+        /// (OPTIONAL) Start time in global time
+        /// </summary>
         public float startTime;
+
+        /// <summary>
+        /// (OPTIONAL) Duration in global time
+        /// </summary>
         public float duration;
 
-        public List<SomeKeyframe> Keyframes
-        {
-            get => keyframes;
-        }
+        public List<SomeKeyframe> Keyframes => keyframes;
 
         public void Add(SomeKeyframe _keyframe)
         {
@@ -102,17 +113,12 @@ namespace PJ
 
         public List<SomeKeyframe> KeyframesIn(Range<float> range)
         {
-            var result = new List<SomeKeyframe>();
+            return keyframes.Where(keyframes => range.IsInside(keyframes.time)).ToList();
+        }
 
-            foreach (var keyframe in keyframes)
-            {
-                if (range.IsInside(keyframe.time))
-                {
-                    result.Add(keyframe);
-                }
-            }
-
-            return result;
+        public virtual void OnUpdate(TimeSlice time)
+        {
+            this.time += time.delta;
         }
     }
 }

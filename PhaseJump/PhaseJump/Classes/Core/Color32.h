@@ -9,6 +9,7 @@
  CODE REVIEW: 12/24/22
  */
 namespace PJ {
+    /// Stores RGBA as a 32-bit value, one byte for each color component
     struct Color32 {
         uint32_t value;
 

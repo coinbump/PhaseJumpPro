@@ -1,6 +1,9 @@
+#include "SQLCommand.h"
 #include "SQLTable.h"
 #include "SQLStatement.h"
 #include "SQLDatabase.h"
+#include "SQLRowValues.h"
+#include "StringArray.h"
 #include <sqlite3.h>
 
 using namespace std;
@@ -10,10 +13,32 @@ SQLTable::SQLTable(String name, SQLDatabaseSharedPtr db) : name(name), db(db)
 {
 }
 
-SQLStatement SQLTable::BuildStatement(String columnName, std::optional<SQLWhereArgument> where) {
+SQLStatement SQLTable::BuildStatement(String columnName, std::optional<SQLWhereArguments> where) {
+    StringArray columnNames;
+    columnNames.Add(columnName);
+
+    return BuildStatement(SQLTableQueryArguments(columnNames, where));
+}
+
+SQLStatement SQLTable::BuildStatement(SQLTableQueryArguments query) {
     // EXAMPLE: SELECT "lastName" FROM Persons WHERE City='Chicago'
     SQLStatement result("SELECT ");
-    result.AppendIdentifier(columnName);
+
+    auto columnNames = query.columnNames;
+    auto where = query.where;
+
+    String columnNamesString = "*";
+
+    if (columnNames.Count() > 0) {
+        StringArray identifiedColumnNames;
+        std::transform(columnNames.begin(), columnNames.end(), std::back_inserter(identifiedColumnNames), [](const String& value) {
+            return SQLIdentifierFormatter().Formatted(value);
+        });
+        
+        columnNamesString = identifiedColumnNames.Joined(",");
+    }
+
+    result.AppendString(columnNamesString);
     result.AppendString(" FROM ");
     result.AppendIdentifier(name);
 
@@ -22,8 +47,58 @@ SQLStatement SQLTable::BuildStatement(String columnName, std::optional<SQLWhereA
         result.AppendIdentifier(where.value().columnName);
 
         result.AppendString("=");
-        result.AppendValue(where.value().value);
+        result.Append(SQLValue(SQLValueType::Text, where.value().value));
         result.AppendString("");
+    }
+
+    return result;
+}
+
+Array<std::shared_ptr<Tags>> ColumnValues(Array<String> columnNames)
+{
+    Array<std::shared_ptr<Tags>> result;
+
+    return result;
+}
+
+Array<SQLRowValues> SQLTable::RowValuesList(SQLTableQueryArguments query)
+{
+    Array<SQLRowValues> result;
+
+    auto statement = BuildStatement(SQLTableQueryArguments(query.columnNames, query.where));
+    SQLCommand command(statement);
+
+    if (SQLITE_OK == db->Prepare(command)) {
+        while (SQLITE_ROW == db->Step(command)) {
+            SQLRowValues row;
+
+            int columnCount = sqlite3_column_count(command.sqliteStatement);
+            for (int i = 0; i < columnCount; i++) {
+                String columnName = sqlite3_column_name(command.sqliteStatement, i);
+                int columnType = sqlite3_column_type(command.sqliteStatement, i);
+                switch (columnType) {
+                    case SQLITE_INTEGER: {
+                        auto value = sqlite3_column_int(command.sqliteStatement, i);
+                        row.Add(columnName, value);
+                        break;
+                    }
+                    case SQLITE_FLOAT: {
+                        auto value = sqlite3_column_double(command.sqliteStatement, i);
+                        row.Add(columnName, value);
+                        break;
+                    }
+                    case SQLITE_TEXT: {
+                        String value = (const char*)sqlite3_column_text(command.sqliteStatement, i);
+                        row.Add(columnName, value);
+                        break;
+                    }
+                    default:
+                        break;
+                }
+            }
+
+            result.Add(row);
+        }
     }
 
     return result;
@@ -35,18 +110,20 @@ SQLStatement SQLTable::BuildStatement(String columnName, std::optional<SQLWhereA
 
  "SQLite uses dynamic run-time typing. So just because a column is declared to contain a particular type does not mean that the data stored in that column is of the declared type. SQLite is strongly typed, but the typing is dynamic not static. Type is associated with individual values, not with the containers used to hold those values."
  */
-Array<int> SQLTable::IntValues(SQLTableQuery query)
+Array<int> SQLTable::IntValues(SQLTableQueryArguments query)
 {
     Array<int> result;
 
-    auto statement = BuildStatement(query.columnName, query.where);
-    if (SQLITE_OK == db->Prepare(statement)) {
-        while (SQLITE_ROW == db->Step(statement)) {
-            int columnCount = sqlite3_column_count(statement.sqliteStatement);
-            if (columnCount > 0) {
-                int columnType = sqlite3_column_type(statement.sqliteStatement, 0);
+    auto statement = BuildStatement(SQLTableQueryArguments(query.columnNames, query.where));
+    SQLCommand command(statement);
+
+    if (SQLITE_OK == db->Prepare(command)) {
+        while (SQLITE_ROW == db->Step(command)) {
+            int columnCount = sqlite3_column_count(command.sqliteStatement);
+            for (int i = 0; i < columnCount; i++) {
+                int columnType = sqlite3_column_type(command.sqliteStatement, i);
                 if (columnType == SQLITE_INTEGER) {
-                    auto value = sqlite3_column_int(statement.sqliteStatement, 0);
+                    auto value = sqlite3_column_int(command.sqliteStatement, i);
                     result.Add(value);
                 }
             }
@@ -56,64 +133,68 @@ Array<int> SQLTable::IntValues(SQLTableQuery query)
     return result;
 }
 
-int SQLTable::IntValue(SQLTableQuery query, int defaultValue)
+int SQLTable::IntValue(SQLTableQueryArguments query, int defaultValue)
 {
     auto values = IntValues(query);
     return values.IsEmpty() ? defaultValue : values[0];
 }
 
-Array<float> SQLTable::FloatValues(SQLTableQuery query)
+Array<float> SQLTable::FloatValues(SQLTableQueryArguments query)
 {
-   Array<float> result;
+    Array<float> result;
 
-   auto statement = BuildStatement(query.columnName, query.where);
-   if (SQLITE_OK == db->Prepare(statement)) {
-       while (SQLITE_ROW == db->Step(statement)) {
-           int columnCount = sqlite3_column_count(statement.sqliteStatement);
-           if (columnCount > 0) {
-               int columnType = sqlite3_column_type(statement.sqliteStatement, 0);
-               if (columnType == SQLITE_FLOAT) {
-                   auto value = sqlite3_column_double(statement.sqliteStatement, 0);
-                   result.Add((float)value);
-               }
-           }
-       }
-   }
+    auto statement = BuildStatement(SQLTableQueryArguments(query.columnNames, query.where));
+    SQLCommand command(statement);
 
-   return result;
+    if (SQLITE_OK == db->Prepare(command)) {
+        while (SQLITE_ROW == db->Step(command)) {
+            int columnCount = sqlite3_column_count(command.sqliteStatement);
+            for (int i = 0; i < columnCount; i++) {
+                int columnType = sqlite3_column_type(command.sqliteStatement, i);
+                if (columnType == SQLITE_FLOAT) {
+                    auto value = sqlite3_column_double(command.sqliteStatement, i);
+                    result.Add((float)value);
+                }
+            }
+        }
+    }
+
+    return result;
 }
 
-float SQLTable::FloatValue(SQLTableQuery query, float defaultValue)
+float SQLTable::FloatValue(SQLTableQueryArguments query, float defaultValue)
 {
-   auto values = FloatValues(query);
-   return values.IsEmpty() ? defaultValue : values[0];
+    auto values = FloatValues(query);
+    return values.IsEmpty() ? defaultValue : values[0];
 }
 
-Array<String> SQLTable::StringValues(SQLTableQuery query)
+Array<String> SQLTable::StringValues(SQLTableQueryArguments query)
 {
-   Array<String> result;
+    Array<String> result;
 
-   auto statement = BuildStatement(query.columnName, query.where);
-   if (SQLITE_OK == db->Prepare(statement)) {
-       while (SQLITE_ROW == db->Step(statement)) {
-           int columnCount = sqlite3_column_count(statement.sqliteStatement);
-           if (columnCount > 0) {
-               int columnType = sqlite3_column_type(statement.sqliteStatement, 0);
-               if (columnType == SQLITE3_TEXT) {
-                   auto value = String((const char*)sqlite3_column_text(statement.sqliteStatement, 0));
-                   result.Add(value);
-               }
-           }
-       }
-   }
+    auto statement = BuildStatement(SQLTableQueryArguments(query.columnNames, query.where));
+    SQLCommand command(statement);
 
-   return result;
+    if (SQLITE_OK == db->Prepare(command)) {
+        while (SQLITE_ROW == db->Step(command)) {
+            int columnCount = sqlite3_column_count(command.sqliteStatement);
+            for (int i = 0; i < columnCount; i++) {
+                int columnType = sqlite3_column_type(command.sqliteStatement, i);
+                if (columnType == SQLITE3_TEXT) {
+                    auto value = String((const char*)sqlite3_column_text(command.sqliteStatement, i));
+                    result.Add(value);
+                }
+            }
+        }
+    }
+
+    return result;
 }
 
-String SQLTable::StringValue(SQLTableQuery query, String defaultValue)
+String SQLTable::StringValue(SQLTableQueryArguments query, String defaultValue)
 {
-   auto values = StringValues(query);
-   return values.IsEmpty() ? defaultValue : values[0];
+    auto values = StringValues(query);
+    return values.IsEmpty() ? defaultValue : values[0];
 }
 
 void SQLTable::InsertRow()
@@ -122,8 +203,10 @@ void SQLTable::InsertRow()
     statement.AppendIdentifier(name);
     statement.AppendString(" DEFAULT VALUES");
 
-    if (SQLITE_OK == db->Prepare(statement)) {
-        db->Step(statement);
+    SQLCommand command(statement);
+
+    if (SQLITE_OK == db->Prepare(command)) {
+        db->Step(command);
     }
 }
 
@@ -134,10 +217,12 @@ void SQLTable::DeleteRow(String whereColumn, String whereMatch)
     statement.AppendString(" WHERE ");
     statement.AppendIdentifier(whereColumn);
     statement.AppendString("=");
-    statement.AppendValue(whereMatch);
+    statement.Append(SQLValue(SQLValueType::Text, whereMatch));
 
-    if (SQLITE_OK == db->Prepare(statement)) {
-        db->Step(statement);
+    SQLCommand command(statement);
+
+    if (SQLITE_OK == db->Prepare(command)) {
+        db->Step(command);
     }
 }
 
@@ -147,31 +232,39 @@ void SQLTable::Drop()
     SQLStatement statement("DROP TABLE ");
     statement.AppendIdentifier(name);
 
-    if (SQLITE_OK == db->Prepare(statement)) {
-        db->Step(statement);
+    SQLCommand command(statement);
+
+    if (SQLITE_OK == db->Prepare(command)) {
+        db->Step(command);
     }
 }
 
-bool SQLTable::CellExists(SQLTableQuery query)
+bool SQLTable::CellExists(SQLTableQueryArguments query)
 {
     if (!query.where) {
         PJLog("ERROR. CellExists requires where clause.");
         return false;
     }
+    if (query.columnNames.IsEmpty()) {
+        PJLog("ERROR. CellExists requires column name");
+        return false;
+    }
 
     // EXAMPLE: SELECT * FROM Persons WHERE City='Chicago`
     SQLStatement statement("SELECT ");
-    statement.AppendIdentifier(query.columnName);
+    statement.AppendIdentifier(query.columnNames[0]);
     statement.AppendString(" FROM ");
     statement.AppendIdentifier(name);
 
     statement.AppendString(" WHERE ");
     statement.AppendIdentifier(query.where.value().columnName);
     statement.AppendString("=");
-    statement.AppendValue(query.where.value().value);
+    statement.Append(SQLValue(SQLValueType::Text, query.where.value().value));
 
-    if (SQLITE_OK == db->Prepare(statement)) {
-        if (SQLITE_ROW == db->Step(statement)) {
+    SQLCommand command(statement);
+
+    if (SQLITE_OK == db->Prepare(command)) {
+        if (SQLITE_ROW == db->Step(command)) {
             return true;
         }
     }
@@ -181,8 +274,10 @@ bool SQLTable::CellExists(SQLTableQuery query)
 
 void SQLTable::Run(SQLStatement statement)
 {
-    if (SQLITE_OK == db->Prepare(statement)) {
-        while (SQLITE_ROW == db->Step(statement)) {
+    SQLCommand command(statement);
+
+    if (SQLITE_OK == db->Prepare(command)) {
+        while (SQLITE_ROW == db->Step(command)) {
         }
     }
 }
@@ -198,8 +293,10 @@ bool SQLTable::AddColumn(String colName, String params)
     statement.AppendIdentifier(colName);
     statement.AppendString(" " + params);
 
-    if (SQLITE_OK == db->Prepare(statement)) {
-        if (SQLITE_DONE == db->Step(statement)) {
+    SQLCommand command(statement);
+
+    if (SQLITE_OK == db->Prepare(command)) {
+        if (SQLITE_DONE == db->Step(command)) {
             return true;
         }
     }
@@ -208,12 +305,12 @@ bool SQLTable::AddColumn(String colName, String params)
 }
 
 /**
-    OPTIMIZE: this is inefficient to check this every time a SQL value is altered, to optimize SQL,
-    build the table first.
+ OPTIMIZE: this is inefficient to check this every time a SQL value is altered, to optimize SQL,
+ build the table first.
 
-    http://stackoverflow.com/questions/2520945/sqlite-if-column-exists
-    http://stackoverflow.com/questions/928865/find-sqlite-column-names-in-empty-table
-    http://www.sqlite.org/pragma.html#pragma_table_info
+ http://stackoverflow.com/questions/2520945/sqlite-if-column-exists
+ http://stackoverflow.com/questions/928865/find-sqlite-column-names-in-empty-table
+ http://www.sqlite.org/pragma.html#pragma_table_info
  */
 bool SQLTable::ColumnExists(String columnName)
 {
@@ -223,19 +320,21 @@ bool SQLTable::ColumnExists(String columnName)
     statement.AppendIdentifier(tableName);
     statement.AppendString(");");
 
-    if (SQLITE_OK == db->Prepare(statement)) {
+    SQLCommand command(statement);
+
+    if (SQLITE_OK == db->Prepare(command)) {
         int columnCount = -1;
 
-        while (SQLITE_ROW == db->Step(statement)) {
+        while (SQLITE_ROW == db->Step(command)) {
             if (columnCount < 0) {
-                columnCount = sqlite3_column_count(statement.sqliteStatement);
+                columnCount = sqlite3_column_count(command.sqliteStatement);
             }
 
             for (int i = 0; i < columnCount; i++) {
-                String colName(sqlite3_column_name(statement.sqliteStatement, i));
+                String colName(sqlite3_column_name(command.sqliteStatement, i));
 
                 if (colName.CompareNoCase("name")) {
-                    String colValue((const char*)sqlite3_column_text(statement.sqliteStatement, i));
+                    String colValue((const char*)sqlite3_column_text(command.sqliteStatement, i));
                     if (colValue.CompareNoCase(columnName)) {
                         return true;
                     }
@@ -248,7 +347,7 @@ bool SQLTable::ColumnExists(String columnName)
     return false;
 }
 
-Set<String> SQLTable::SelectUniqueStrings(String columnName) {
+Set<String> SQLTable::UniqueStrings(String columnName) {
     auto tableName = name;
     Set<String> result;
 
@@ -257,9 +356,11 @@ Set<String> SQLTable::SelectUniqueStrings(String columnName) {
     statement.AppendString(" FROM ");
     statement.AppendIdentifier(tableName);
 
-    if (SQLITE_OK == db->Prepare(statement)) {
-        while (SQLITE_ROW == db->Step(statement)) {
-            String text((const char*)sqlite3_column_text(statement.sqliteStatement, 0));
+    SQLCommand command(statement);
+
+    if (SQLITE_OK == db->Prepare(command)) {
+        while (SQLITE_ROW == db->Step(command)) {
+            String text((const char*)sqlite3_column_text(command.sqliteStatement, 0));
             result.insert(text);
         }
     }
@@ -273,7 +374,7 @@ Set<String> SQLTable::SelectUniqueStrings(String columnName) {
     return result;
 }
 
-void SQLTable::SetValue(SQLTableTypeMutation<String> mutation, SetValueType type)
+void SQLTable::SetValue(SQLTableMutateArguments mutation, SetValueType type)
 {
     // Modify existing values
     // EXAMPLE: UPDATE table_name SET column1=value, column2=value2,... WHERE some_column=some_value
@@ -284,13 +385,13 @@ void SQLTable::SetValue(SQLTableTypeMutation<String> mutation, SetValueType type
         statement.AppendString(" SET ");
         statement.AppendIdentifier(mutation.columnName);
         statement.AppendString("=");
-        statement.AppendValue(mutation.value);
+        statement.Append(mutation.value);
 
         if (mutation.where) {
             statement.AppendString(" WHERE ");
             statement.AppendIdentifier(mutation.where.value().columnName);
             statement.AppendString("=");
-            statement.AppendValue(mutation.where.value().value);
+            statement.Append(SQLValue(SQLValueType::Text, mutation.where.value().value));
             statement.AppendString("");
         }
 
@@ -303,19 +404,19 @@ void SQLTable::SetValue(SQLTableTypeMutation<String> mutation, SetValueType type
         statement.AppendString(" (");
         statement.AppendIdentifier(mutation.columnName);
         statement.AppendString(") VALUES (");
-        statement.AppendValue(mutation.value);
+        statement.Append(mutation.value);
         statement.AppendString(")");
 
         Run(statement);
     }
 }
 
-void SQLTable::SetIntValue(SQLTableTypeMutation<int> mutation, SetValueType type)
+void SQLTable::SetIntValue(SQLTableMutateArguments mutation, SetValueType type)
 {
-    SetValue(SQLTableTypeMutation<String>(mutation.columnName, mutation.where, String(mutation.value)), type);
+    SetValue(SQLTableMutateArguments(mutation.columnName, mutation.where, mutation.value), type);
 }
 
-void SQLTable::SetFloatValue(SQLTableTypeMutation<float> mutation, SetValueType type)
+void SQLTable::SetFloatValue(SQLTableMutateArguments mutation, SetValueType type)
 {
-    SetValue(SQLTableTypeMutation<String>(mutation.columnName, mutation.where, String(mutation.value)), type);
+    SetValue(SQLTableMutateArguments(mutation.columnName, mutation.where, mutation.value), type);
 }

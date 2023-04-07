@@ -29,10 +29,10 @@ namespace PJ
 
         public override void OnUpdate(TimeSlice time)
         {
+            var oldTime = this.time;
+
             base.OnUpdate(time);
 
-            var oldTime = this.time;
-            this.time += time.delta;
             var newTime = this.time;
 
             // If an expression exists, use that to determine values
@@ -47,9 +47,14 @@ namespace PJ
             var keyframeAfter = KeyframeAfterOrAt(newTime) as ValueKeyframe<T>;
             if (null == keyframeBefore || null == keyframeAfter)
             {
+                // If we only have 1 keyframe, use that keyframe value until we can interpolate between start, end
                 if (null != keyframeBefore)
                 {
                     binding.Value = keyframeBefore.value;
+                }
+                else if (null != keyframeAfter)
+                {
+                    binding.Value = keyframeAfter.value;
                 }
                 return;
             }
@@ -60,9 +65,11 @@ namespace PJ
             T startValue = keyframeBefore.value;
             T endValue = keyframeAfter.value;
 
-            if (null != keyframeBefore.interpolatorKey)
+            // Each keyframe may optionally define its own interpolation curve to the next keyframe
+            // This interpolator is created via an Interpolator Key object
+            if (null != keyframeBefore.interpolatorFactory)
             {
-                var interpolator = keyframeBefore.interpolatorKey.NewInterpolator(startValue, endValue, keyframeAfter.interpolatorKey);
+                var interpolator = keyframeBefore.interpolatorFactory.NewInterpolator(startValue, endValue, keyframeAfter.interpolatorFactory);
                 var value = interpolator.ValueAt(progress);
                 binding.Value = value;
             }

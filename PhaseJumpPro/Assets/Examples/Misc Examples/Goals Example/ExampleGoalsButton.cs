@@ -4,12 +4,12 @@ using UnityEngine;
 using PJ;
 using TMPro;
 
-public class ExampleGoalsButton : PJ.Button
+public class ExampleGoalsButton : PJ.ButtonControl
 {
     public TextMeshPro countText;
     public GameObject goalMesh;
 
-    protected ValueTargetGoal goal = new(3);
+    protected ValueTargetGoal goal = new(id: "example", 3);
 
     protected override void OnPress()
     {

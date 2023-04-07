@@ -10,7 +10,7 @@ namespace PJ
         [Test]
         public void TestFixedRandom()
         {
-            var fixedRandom = new FixedNormalRandom();
+            var fixedRandom = new FixedRandom();
             fixedRandom.values.Add(0.5f);
             fixedRandom.values.Add(0.7f);
             fixedRandom.values.Add(0.2f);

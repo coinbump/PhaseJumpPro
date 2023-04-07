@@ -15,13 +15,24 @@ namespace PJ
     /// </summary>
     public class SomeCardDeckClass : Class
     {
-        public class Card
+        /// <summary>
+        /// Metadata for cards in the deck
+        /// </summary>
+        public class CardInfo
         {
             public string id;
             public Tags tags = new();
+
+            public CardInfo(string id)
+            {
+                this.id = id;
+            }
         }
 
-        public List<Card> cards = new();
+        /// <summary>
+        /// (OPTIONAL) Metadata for cards (example: load metadata from JSON, apply to new card after it is created)
+        /// </summary>
+        public Dictionary<string, CardInfo> cardInfos = new();
 
         public SomeCardDeckClass(string id) : base(id)
         {
@@ -42,6 +53,9 @@ namespace PJ
         {
         }
 
-        public virtual CardType New(string id) => cardRegistry.New(id);
+        public CardType New(string id)
+        {
+            return cardRegistry.New(id);
+        }
     }
 }

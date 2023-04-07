@@ -12,7 +12,7 @@ namespace PJ
     /// <summary>
     /// Changes color based on the button state
     /// </summary>
-    public class ButtonColorStateEffect : SomeColorStateEffect<Button.StateType>
+    public class ButtonColorStateEffect : SomeColorStateEffect<ButtonControl.StateType>
     {
         protected override void OnValueChange()
         {

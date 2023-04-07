@@ -105,7 +105,7 @@ namespace PJ
 
             Assert.AreEqual(3.0f, childView1.Frame.size.x);
             Assert.AreEqual(7.0f, childView2.Frame.size.x);
-            Assert.AreEqual(7.0f, sut.PreferredWidth(0));
+            Assert.AreEqual(10.0f, sut.PreferredWidthExpanding(10.0f));
         }
 
         [Test]
@@ -117,17 +117,17 @@ namespace PJ
             var child1 = new GameObject();
             var childView1 = child1.AddComponent<View2D>();
             child1.transform.parent = gameObject.transform;
+            childView1.IntrinsicWidth = new(7.0f);
 
             var child2 = new GameObject();
             var childView2 = child2.AddComponent<View2D>();
             child2.transform.parent = gameObject.transform;
-            childView1.IntrinsicWidth = new(7.0f);
 
             sut.TestApplyLayout(new Bounds2D(Vector2.zero, new Vector2(10.0f, 10.0f)));
 
             Assert.AreEqual(7.0f, childView1.Frame.size.x);
-            Assert.AreEqual(7.0f, childView2.Frame.size.x);
-            Assert.AreEqual(7.0f, sut.PreferredWidth(0));
+            Assert.AreEqual(10.0f, childView2.Frame.size.x);
+            Assert.AreEqual(10.0f, sut.PreferredWidthExpanding(10.0f));
         }
 
         [Test]

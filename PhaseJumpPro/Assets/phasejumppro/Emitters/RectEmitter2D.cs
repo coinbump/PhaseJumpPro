@@ -21,8 +21,8 @@ namespace PJ
             float halfWidth = worldSize.x / 2.0f;
             float halfHeight = worldSize.y / 2.0f;
 
-            float distanceX = RandomUtils.Delta(halfWidth);
-            float distanceY = RandomUtils.Delta(halfHeight);
+            float distanceX = new UnityRandom().Delta(halfWidth);
+            float distanceY = new UnityRandom().Delta(halfHeight);
 
             var result = new Vector3(distanceX, distanceY, 0);
 

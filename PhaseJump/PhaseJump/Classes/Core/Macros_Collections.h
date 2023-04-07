@@ -25,6 +25,12 @@ bool RemoveFirstIf(std::function<bool(Type const&)> check) { \
 \
 void RemoveIf(std::function<bool(T const&)> check) { \
     this->erase(std::remove_if(this->begin(), this->end(), check), this->end()); \
+} \
+\
+bool Contains(T const& value) const \
+{ \
+    auto findResult = std::find(this->begin(), this->end(), value); \
+    return findResult != this->end(); \
 }
 
 #endif

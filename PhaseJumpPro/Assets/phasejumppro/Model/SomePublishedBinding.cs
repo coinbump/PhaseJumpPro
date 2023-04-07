@@ -29,7 +29,7 @@ namespace PJ
             this.toValue = new WeakReference<SomePublished<ToType>>(toValue);
         }
 
-        public void OnListen(PJ.Event theEvent)
+        public void OnEvent(PJ.Event theEvent)
         {
             if (fromValue.TryGetTarget(out SomePublished<FromType> fromTarget) &&
                 toValue.TryGetTarget(out SomePublished<ToType> toTarget))

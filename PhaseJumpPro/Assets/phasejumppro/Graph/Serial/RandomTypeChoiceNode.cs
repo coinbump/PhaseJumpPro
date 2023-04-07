@@ -17,7 +17,7 @@ namespace PJ
             public override HashSet<string> Choices => choices;
             public override string Choose()
             {
-                return RandomUtils.ChooseFrom(new List<string>(choices));
+                return new UnityRandom().ChooseFrom(new List<string>(choices));
             }
 
             public override object ValueForOutput<T>(string id, Tags parameters, T defaultValue)

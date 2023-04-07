@@ -7,7 +7,7 @@ namespace PJ
     /// <summary>
     /// Changes the sprite based on the button state
     /// </summary>
-    public class ButtonSpriteStateEffect : SomeSpriteStateEffect<Button.StateType>
+    public class ButtonSpriteStateEffect : SomeSpriteStateEffect<ButtonControl.StateType>
     {
         protected override void OnValueChange()
         {

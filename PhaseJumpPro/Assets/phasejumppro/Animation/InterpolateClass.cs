@@ -7,11 +7,11 @@ namespace PJ
         /// <summary>
         /// Registers classes for each interpolate type
         /// </summary>
-        public class FactoryRegistry
+        public class MyRegistry
         {
             public static Dictionary<string, SomeFactory> registry = new Dictionary<string, SomeFactory>();
 
-            public FactoryRegistry()
+            public MyRegistry()
             {
                 registry.Add(InterpolateType.Linear.ToString().ToLower(), new FactoryNew<LinearInterpolate>());
                 registry.Add(InterpolateType.InSquared.ToString().ToLower(), new FactoryNew<EaseInSquared>());

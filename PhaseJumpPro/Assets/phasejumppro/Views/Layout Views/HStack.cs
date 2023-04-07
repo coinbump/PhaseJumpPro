@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace PJ
@@ -15,20 +16,23 @@ namespace PJ
         public VerticalAlignment alignment = VerticalAlignment.center;
         public float spacing = 0f;
 
-        public override float PreferredHeight(Vector2 layoutSize)
+        public override Optional<float> PreferredHeightCore(Vector2 layoutSize)
         {
             var result = 0f;
-            var childViews = ChildViews();
+            var childViews = ChildViews().Where(view => !(view is SpacerView)).ToList();
+            bool isIntrinsic = false;
+
             foreach (var view in childViews)
             {
-                // We don't care about spacers
-                if (view is SpacerView) { continue; }
-
-                var childHeight = view.PreferredHeight(layoutSize);
-                result = Mathf.Max(result, childHeight);
+                var childHeight = view.PreferredHeightWithConstraints(new Vector2(layoutSize.x, layoutSize.y));
+                if (null != childHeight)
+                {
+                    isIntrinsic = true;
+                    result = Mathf.Max(result, childHeight.value);
+                }
             }
 
-            return result;
+            return new(isIntrinsic ? result : layoutSize.y);
         }
 
         protected override void _ApplyLayout(Vector2 layoutSize)
@@ -40,10 +44,11 @@ namespace PJ
 
             // Views with intrinsic size
             var intrinsicWidthChildViews = new List<View2D>();
-            var intrinsicHeightChildViews = new List<View2D>();
 
             var widthAvailable = layoutSize.x - (childViews.Count - 1) * spacing;
-            var maxIntrinsicHeight = 0f;
+            var preferredStackHeightOptional = PreferredHeightWithConstraints(layoutSize);
+            var preferredStackHeight = preferredStackHeightOptional != null ? preferredStackHeightOptional.value : layoutSize.y;
+
             foreach (var view in childViews)
             {
                 var intrinsicWidth = view.IntrinsicWidth;
@@ -55,27 +60,6 @@ namespace PJ
                 {
                     intrinsicWidthChildViews.Add(view);
                 }
-
-                var intrinsicHeight = view.IntrinsicHeight;
-                if (null != intrinsicHeight)
-                {
-                    intrinsicHeightChildViews.Add(view);
-                    maxIntrinsicHeight = MathF.Max(maxIntrinsicHeight, intrinsicHeight.value);
-                }
-                else
-                {
-                    var minHeight = view.MinHeight;
-                    if (null != minHeight)
-                    {
-                        maxIntrinsicHeight = MathF.Max(maxIntrinsicHeight, minHeight.value);
-                    }
-                }
-            }
-
-            // If there are no intrinsic child views to determine height, use all available height
-            if (intrinsicHeightChildViews.Count == 0)
-            {
-                maxIntrinsicHeight = layoutSize.y;
             }
 
             var totalIntrinsicWidth = 0f;
@@ -101,25 +85,19 @@ namespace PJ
                 }
                 else
                 {
-                    var width = view.PreferredWidth(nonIntrinsicWidth);
+                    var preferredWidth = view.PreferredWidthWithConstraints(nonIntrinsicWidth);
+                    var width = preferredWidth != null ? preferredWidth.value : nonIntrinsicWidth;
                     frame.size.x = width;
                     nonIntrinsicTotalWidth -= width;
                     nonIntrinsicViewsCount--;
                     nonIntrinsicWidth = nonIntrinsicTotalWidth / nonIntrinsicViewsCount;
                 }
 
-                var intrinsicHeight = view.IntrinsicHeight;
-                if (null != intrinsicHeight)
-                {
-                    frame.size.y = intrinsicHeight.value;
-                }
-                else
-                {
-                    frame.size.y = maxIntrinsicHeight;
-                }
+                var preferredHeight = view.PreferredHeightWithConstraints(new Vector2(frame.size.x, preferredStackHeight));
+                frame.size.y = preferredHeight != null ? preferredHeight.value : preferredStackHeight;
 
                 frame.origin.x = x;
-                frame.origin.y = alignment.aligner.AlignedOrigin(layoutSize.y, frame.size.y);
+                frame.origin.y = alignment.aligner.AlignedOrigin(preferredStackHeight, frame.size.y);
                 view.Frame = frame;
 
                 x += frame.size.x;

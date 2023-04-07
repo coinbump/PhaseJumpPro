@@ -13,6 +13,7 @@
  CODE REVIEW: 12/24/22
  */
 namespace PJ {
+    /// Stores RGBA as normalized float components (0-1.0)
     struct Color : public SomeVector<FloatMath, 4>, public StringConvertible
     {
         Color(float red, float green, float blue, float alpha)

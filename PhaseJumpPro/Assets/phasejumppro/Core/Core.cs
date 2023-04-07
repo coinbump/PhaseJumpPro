@@ -11,6 +11,19 @@ namespace PJ
         protected Class _class;
         protected string classId;   // If class is not yet assigned
 
+        public Class Class
+        {
+            get => _class;
+            set
+            {
+                _class = value;
+                if (null != _class)
+                {
+                    classId = _class.id;
+                }
+            }
+        }
+
         /// <summary>
         /// If we have a class object, return its id, otherwise use the id we have
         /// </summary>

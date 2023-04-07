@@ -24,7 +24,7 @@ namespace PJ
         public override Vector3 Transform(Vector3 value)
         {
             var angle = new Angle(new Vector2(value.x, value.y));
-            var newAngle = Angle.DegreesAngle(RandomUtils.VaryFloat(angle.Degrees, varyAngle.Degrees));
+            var newAngle = Angle.DegreesAngle(new UnityRandom().VaryFloat(angle.Degrees, varyAngle.Degrees));
             var newAngleVector = (Vector2)newAngle;
             return newAngleVector.normalized * value.magnitude;
         }

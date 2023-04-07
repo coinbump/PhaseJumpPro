@@ -15,7 +15,7 @@ namespace PJ
     {
         public float duration = 1.0f;
 
-        protected SomeNormalRandom random = new UnityRandom();
+        protected SomeRandom random = new UnityRandom();
 
         protected override void Update()
         {

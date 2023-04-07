@@ -49,4 +49,21 @@ namespace PJ
             this.typeTags = typeTags;
         }
     }
+
+    /// <summary>
+    /// A class with a defined type that is created via a registry
+    /// </summary>
+    public class TypeClass<Type> : Class
+    {
+        public FactoryRegistry<Type> registry = new();
+
+        public TypeClass(string id) : base(id)
+        {
+        }
+
+        public Type New(string id)
+        {
+            return registry.New(id);
+        }
+    }
 }

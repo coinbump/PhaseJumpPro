@@ -5,37 +5,38 @@ using NUnit.Framework;
 
 namespace PJ
 {
-	public class UnitTests_Command
-	{
-		private class TestCommand : SomeCommand
-		{
-			public int value;
-			public bool didRedo;
+    public class UnitTests_Command
+    {
+        private class TestCommand : SomeCommand
+        {
+            public int value;
+            public bool didRedo;
 
-			protected override void OnExecute(bool redo)
-			{
-				value++;
-				didRedo = redo;
-			}
+            protected override void OnExecute(bool redo)
+            {
+                value++;
+                didRedo = redo;
+            }
 
-			protected override void OnUndo()
-			{
-				value--;
-			}
-		}
+            protected override void OnUndo()
+            {
+                value--;
+            }
+        }
 
-		[Test]
-		public void UnitTests() {
-			var command = new TestCommand();
-			command.Execute();
-			Assert.AreEqual(1, command.value);
-			Assert.IsFalse(command.didRedo);
-			command.Undo();
-			Assert.AreEqual(0, command.value);
-			command.Execute();
-			Assert.AreEqual(1, command.value);
-			Assert.IsTrue(command.didRedo);
-		}
-	}
+        [Test]
+        public void UnitTests()
+        {
+            var command = new TestCommand();
+            command.Execute();
+            Assert.AreEqual(1, command.value);
+            Assert.IsFalse(command.didRedo);
+            command.Undo();
+            Assert.AreEqual(0, command.value);
+            command.Execute();
+            Assert.AreEqual(1, command.value);
+            Assert.IsTrue(command.didRedo);
+        }
+    }
 
 }

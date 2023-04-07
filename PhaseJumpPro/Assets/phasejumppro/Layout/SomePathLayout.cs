@@ -86,5 +86,12 @@ namespace PJ
         }
 
         protected abstract SomePath BuildPath();
+
+#if UNITY_EDITOR
+        protected override void RenderGizmos(EditorUtils.RenderState renderState)
+        {
+            EditorUtils.DrawPath(BuildPath(), 36, transform, renderState);
+        }
+#endif
     }
 }

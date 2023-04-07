@@ -6,7 +6,7 @@ using PJ;
 /// Accepts drags of pieces, shows highlight UI for valid moves
 /// And lets the board know when a piece should be moved after a drag
 /// </summary>
-public class ECKSquareDropTarget : DropTarget
+public class ECKSquareDropTarget : SomeDropTarget
 {
     [NonSerialized]
     public ECKBoardView boardView;

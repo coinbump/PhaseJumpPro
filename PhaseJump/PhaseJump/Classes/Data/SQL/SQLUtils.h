@@ -11,6 +11,9 @@
  Code review: 3/29/23
  */
 namespace PJ {
+    /// <summary>
+    /// SQLite utilities
+    /// </summary>
     struct SQLUtils {
         bool IsReservedKeyword(String value);
     };

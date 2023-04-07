@@ -45,3 +45,9 @@ TEST(List, RemoveFirstIf) {
     EXPECT_EQ(5, *i);
 }
 
+TEST(List, Contains) {
+    List<int> sut{ 1, 3, 5, 10 };
+
+    EXPECT_TRUE(sut.Contains(1));
+    EXPECT_FALSE(sut.Contains(-11));
+}

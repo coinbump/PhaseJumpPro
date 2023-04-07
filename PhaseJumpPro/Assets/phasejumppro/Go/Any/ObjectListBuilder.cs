@@ -26,7 +26,7 @@ namespace PJ
         public Method method;
         public List<GameObject> objectList;
 
-        public SomeNormalRandom random = new UnityRandom();
+        public SomeRandom random = new UnityRandom();
 
         /// <summary>
         /// Add N objects on Start

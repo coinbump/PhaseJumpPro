@@ -141,7 +141,7 @@ namespace PJ
         public bool HasTypeTag(string name) => typeTags.Contains(name);
         public bool HasStateTag(string name) => stateTags.Contains(name);
 
-        public virtual void OnListen(Event theEvent) { }
+        public virtual void OnEvent(Event theEvent) { }
 
         public abstract void MoveToPosition(Vector3 position, bool force = false);
     }

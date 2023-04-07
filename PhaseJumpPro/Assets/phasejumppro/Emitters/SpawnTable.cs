@@ -45,7 +45,7 @@ namespace PJ
 		public List<Item> spawnItems = new List<Item>();
 #endif
 
-        public SomeNormalRandom random;
+        public SomeRandom random = new UnityRandom();
 
         /// <summary>
         /// Spawn the next object from the spawn table
@@ -53,25 +53,21 @@ namespace PJ
         /// </summary>
         public GameObject NextSpawn()
         {
-            if (null == random)
-            {
-                random = new UnityRandom();
-            }
-            WeightedRandom wr = new WeightedRandom(random);
+            var wr = new WeightedRandomChoice<Item>();
 
             float totalWeight = 0.0f;
 
             foreach (Item item in spawnItems)
             {
                 totalWeight += item.weight;
-                wr.Add(new Weight(item.weight, item));
+                wr.Add(new Weight<Item>(item.weight, item));
             }
 
-            var weight = wr.ChooseRandom();
+            var weight = wr.ChooseWeight(random);
             if (null == weight) { return null; }
-            if (null == weight.target) { return null; }
+            if (null == weight.value) { return null; }
 
-            return ((Item)weight.target).spawnObject;
+            return weight.value.spawnObject;
         }
     }
 }

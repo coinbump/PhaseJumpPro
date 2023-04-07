@@ -5,22 +5,37 @@ using System;
 
 namespace PJ
 {
-	public class UnitTests_Tags
-	{
-		[Test]
-		public void UnitTests()
-		{
-			Func<string> newString = delegate() { return string.Empty; };
+    public class UnitTests_Tags
+    {
+        [Test]
+        public void TestSafeValue()
+        {
+            Func<string> newString = delegate () { return string.Empty; };
 
-			var tags = new Tags();
-			Assert.AreEqual(tags.SafeValue<int>("test-int"), 0);
-			Assert.AreEqual(tags.SafeValue<string>("test-string", newString), "");
+            var sut = new Tags();
+            Assert.AreEqual(sut.SafeValue<int>("test-int", -1), -1);
+            Assert.AreEqual(sut.SafeValue<string>("test-string", newString), "");
 
-			tags.Add("test-string-add", "add");
-			Assert.AreEqual(tags.SafeValue<string>("test-string-add", newString), "add");
+            sut.Add("test-string-add", "add");
+            Assert.AreEqual(sut.SafeValue<string>("test-string-add", newString), "add");
 
-            tags["foo"] = 10;
-			Assert.AreEqual(tags.SafeValue<int>("foo"), 10);
-		}
-	}
+            sut["foo"] = 10;
+            Assert.AreEqual(sut.SafeValue<int>("foo", 0), 10);
+        }
+
+        [Test]
+        public void TestValueTypesConverted()
+        {
+            var sut = new Tags();
+            Int64 int64Value = 10;
+            sut["test"] = int64Value;
+
+            Assert.AreEqual(10, sut.SafeValue<Int64>("test", 0));
+            Assert.AreEqual(0, sut.SafeValue<int>("test", 0));
+
+            sut = sut.ValueTypesConverted<Int64, int>((left) => Convert.ToInt32(left));
+
+            Assert.AreEqual(10, sut.SafeValue<int>("test", 0));
+        }
+    }
 }

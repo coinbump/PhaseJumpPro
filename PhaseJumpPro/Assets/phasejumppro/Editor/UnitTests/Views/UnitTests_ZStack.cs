@@ -72,8 +72,8 @@ namespace PJ
             child2.transform.parent = gameObject.transform;
             childView2.IntrinsicHeight = new(7.0f);
 
-            Assert.AreEqual(3.0f, sut.PreferredWidth(0));
-            Assert.AreEqual(7.0f, sut.PreferredHeight(Vector2.zero));
+            Assert.AreEqual(3.0f, sut.PreferredWidthExpanding(0));
+            Assert.AreEqual(7.0f, sut.PreferredHeightWithConstraints(Vector2.zero).value);
         }
     }
 }

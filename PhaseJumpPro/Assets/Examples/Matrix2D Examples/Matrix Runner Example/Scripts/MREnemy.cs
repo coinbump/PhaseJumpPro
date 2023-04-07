@@ -49,7 +49,7 @@ public class MREnemy : MatrixNode2D
         directions.Add(MapDirection.West);
         directions.Add(MapDirection.Northwest);
 
-        var tryDirection = RandomUtils.ChooseFrom(directions);
+        var tryDirection = new UnityRandom().ChooseFrom(directions);
         transform.parent.GetComponent<MatrixBoardView2D>().MovePiece(piece, tryDirection, 0.2f);
     }
 }

@@ -6,7 +6,7 @@ using UnityEngine.UIElements;
 /*
  * RATING: 5 stars
  * It works
- * CODE REVIEW: 4/9/22
+ * CODE REVIEW: 1/16/23
  */
 namespace PJ
 {
@@ -20,16 +20,35 @@ namespace PJ
         }
 
         public List<Item<GameObject>> gameObjectItems;
+        public List<Item<Sprite>> spriteItems;
         public List<Item<AudioClip>> audioClipItems;
 
         /// <summary>
         /// Internal registry for id -> GameObject (or Prefab) map
         /// </summary>
         protected Dictionary<string, GameObject> gameObjectRegistry = new Dictionary<string, GameObject>();
+        protected Dictionary<string, Sprite> spriteRegistry = new Dictionary<string, Sprite>();
         protected Dictionary<string, AudioClip> audioClipRegistry = new Dictionary<string, AudioClip>();
 
         public Dictionary<string, GameObject> GameObjectRegistry => gameObjectRegistry;
         public Dictionary<string, AudioClip> AudioClipRegistry => audioClipRegistry;
+
+        public Dictionary<string, Sprite> SpriteRegistry => spriteRegistry;
+
+        /// <summary>
+        /// Instantiate a game object if a prefab exists in the registry
+        /// </summary>
+        public Sprite RegisteredSprite(string id)
+        {
+            if (spriteRegistry.TryGetValue(id, out Sprite sprite))
+            {
+                return sprite;
+            }
+            else
+            {
+                return null;
+            }
+        }
 
         /// <summary>
         /// Instantiate a game object if a prefab exists in the registry
@@ -39,6 +58,21 @@ namespace PJ
             if (TryGetRegisteredGameObject(id, out GameObject gameObject))
             {
                 return Instantiate(gameObject, position, rotation);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Instantiate a game object if a prefab exists in the registry
+        /// </summary>
+        public GameObject InstantiateGameObject(string id, Transform parentTransform)
+        {
+            if (TryGetRegisteredGameObject(id, out GameObject gameObject))
+            {
+                return Instantiate(gameObject, parentTransform);
             }
             else
             {
@@ -80,6 +114,7 @@ namespace PJ
         {
             RegisterItems(gameObjectItems, gameObjectRegistry);
             RegisterItems(audioClipItems, audioClipRegistry);
+            RegisterItems(spriteItems, spriteRegistry);
         }
 
         protected void RegisterItems<T>(List<Item<T>> items, Dictionary<string, T> registry)

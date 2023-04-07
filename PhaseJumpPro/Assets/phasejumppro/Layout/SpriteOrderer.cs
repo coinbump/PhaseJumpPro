@@ -5,8 +5,8 @@ using System;
 
 /*
  * RATING: 5 stars
- * Useful utility behavior for 2D games.
- * CODE REVIEW: 1/14/22
+ * Useful utility behavior for 2D games
+ * CODE REVIEW: 1/16/23
  */
 namespace PJ
 {
@@ -16,35 +16,38 @@ namespace PJ
     /// </summary>
     public class SpriteOrderer : WorldComponent
     {
-        public int startOrder = 0;
         public int offset = 1;
         public bool isReverse = false;
 
         protected override void Start()
         {
+            base.Start();
+
             ApplyOrder();
         }
 
         protected virtual void ApplyOrder()
-        { 
-            var order = startOrder;
+        {
+            var order = 0;
 
             if (isReverse)
             {
                 for (int i = transform.childCount - 1; i >= 0; i--)
                 {
                     var childTransform = transform.GetChild(i);
-                    order = IterateApplyOrder(childTransform.gameObject, order);
+                    order = ApplyOrderTo(childTransform.gameObject, order);
                 }
             }
             else
             {
                 foreach (Transform childTransform in transform)
-                    order = IterateApplyOrder(childTransform.gameObject, order);
+                {
+                    order = ApplyOrderTo(childTransform.gameObject, order);
+                }
             }
         }
 
-        protected int IterateApplyOrder(GameObject gameObject, int order)
+        protected int ApplyOrderTo(GameObject gameObject, int order)
         {
             if (gameObject.TryGetComponent(out SpriteRenderer spriteRenderer))
             {
@@ -60,7 +63,7 @@ namespace PJ
             ApplyOrder();
         }
 
-        [CustomEditor(typeof(SpriteOrderer))]
+        [CustomEditor(typeof(SpriteOrderer), true)]
         public class Editor : UnityEditor.Editor
         {
             public override void OnInspectorGUI()

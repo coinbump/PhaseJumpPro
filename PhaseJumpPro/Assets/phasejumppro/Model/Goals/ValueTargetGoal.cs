@@ -28,12 +28,21 @@ namespace PJ
             }
         }
 
-        public int Value => value;
-
-        public ValueTargetGoal(int valueTarget, int valueState = 0)
+        public int Value
         {
+            get => value;
+            set
+            {
+                this.value = value;
+                IsComplete = this.value >= this.valueTarget;
+            }
+        }
+
+        public ValueTargetGoal(string id, int valueTarget, int valueState = 0)
+        {
+            this.id = id;
             this.valueTarget = valueTarget;
-            this.value = valueState;
+            Value = valueState;
         }
 
         public override float Progress => Mathf.Max(0, MathF.Min(1.0f, (float)value / (float)valueTarget));
@@ -42,11 +51,7 @@ namespace PJ
         {
             if (value >= valueTarget) { return; }
 
-            value++;
-            if (value >= valueTarget)
-            {
-                IsComplete = true;
-            }
+            Value++;
         }
     }
 }

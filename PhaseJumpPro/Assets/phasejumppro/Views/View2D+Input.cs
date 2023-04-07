@@ -4,9 +4,9 @@ using UnityEngine.EventSystems;
 
 namespace PJ
 {
-    public partial class View2D : IPointerDownHandler, IPointerClickHandler, IPointerUpHandler
+    public partial class View2D : IPointerDownHandler, IPointerClickHandler, IPointerUpHandler, IPointerEnterHandler, IPointerExitHandler
     {
-        public void OnPointerDown(PointerEventData eventData)
+        public virtual void OnPointerDown(PointerEventData eventData)
         {
             var screenPressPosition = eventData.pressPosition;
             var worldPressPosition = Camera.ScreenToWorldPoint(screenPressPosition);
@@ -16,7 +16,7 @@ namespace PJ
             // Debug.Log("View2D.OnPointerDown: " + viewPressPosition.ToString());
         }
 
-        public void OnPointerClick(PointerEventData eventData)
+        public virtual void OnPointerClick(PointerEventData eventData)
         {
             var screenPressPosition = eventData.pressPosition;
             var worldPressPosition = Camera.ScreenToWorldPoint(screenPressPosition);
@@ -42,10 +42,23 @@ namespace PJ
             OnPointerClickEvent(new PointerClickUIEvent(new LocalPosition(localPressPosition, gameObject), button));
         }
 
-        public void OnPointerUp(PointerEventData eventData)
+        public virtual void OnPointerUp(PointerEventData eventData)
         {
             // Debug.Log("View2D.OnPointerUp");
         }
+
+        public virtual void OnPointerEnter(PointerEventData eventData)
+        {
+        }
+
+        public virtual void OnPointerExit(PointerEventData eventData)
+        {
+        }
+
+        /*
+        PHASE JUMP UI EVENTS:
+        Wrappers to allow for easier porting to other languages/frameworks in the future (WIP)
+        */
 
         public virtual void OnPointerClickEvent(PointerClickUIEvent _event)
         {

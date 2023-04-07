@@ -16,6 +16,12 @@ namespace PJ
     /// </summary>
     public abstract class SomeDragHandler : WorldComponent, IPointerDownHandler
     {
+        public enum StateType
+        {
+            Default,
+            Drag
+        }
+
         /// <summary>
         /// (OPTIONAL). If not null, drag the target object when this object is tapped
         /// Useful if the object with the collider has its own transform modifier which interferes with the drag
@@ -27,6 +33,8 @@ namespace PJ
         {
             get => UISystem.shared;
         }
+
+        protected StateType state;
 
         /// <summary>
         /// Position where the user clicked to initiate the drag
@@ -42,7 +50,16 @@ namespace PJ
 
         public virtual void OnDragStart(WorldPosition inputPosition) { }
         public abstract void OnDragUpdate(WorldPosition inputPosition);
-        public abstract void OnDragEnd();
+
+        public bool IsDragging
+        {
+            get => state == StateType.Drag;
+        }
+
+        public virtual void OnDragEnd()
+        {
+            state = StateType.Default;
+        }
 
         public virtual void StartDrag(WorldPosition inputPosition)
         {
@@ -52,6 +69,8 @@ namespace PJ
                 dragTarget.StartDrag(inputPosition);
                 return;
             }
+
+            state = StateType.Drag;
 
             dragStartPosition.Position = gameObject.transform.position;
             dragStartInputPosition.Position = inputPosition.Position;

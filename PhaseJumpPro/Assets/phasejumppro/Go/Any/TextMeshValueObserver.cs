@@ -57,7 +57,7 @@ namespace PJ
             UpdateText();
         }
 
-        public void OnListen(Event theEvent)
+        public void OnEvent(Event theEvent)
         {
             var stringChangeEvent = theEvent as EventPublishedChange<string>;
             if (null != stringChangeEvent && null != stringChangeEvent.value && stringChangeEvent.value.Equals(stringValue))

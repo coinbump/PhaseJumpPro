@@ -68,12 +68,54 @@ namespace PJ
                 }
 
                 if (ignoreIntrinsicWidth) { return null; }
+
+                if (TryGetComponent(out SpriteRenderer spriteRenderer))
+                {
+                    var scale = spriteRenderer.gameObject.transform.localScale;
+
+                    switch (spriteRenderer.drawMode)
+                    {
+                        case SpriteDrawMode.Sliced:
+                        case SpriteDrawMode.Tiled:
+                            break;
+                        case SpriteDrawMode.Simple:
+                            var bounds = spriteRenderer.sprite.bounds;
+                            return new(bounds.size.x * scale.x);
+                    }
+                }
+
                 return intrinsicWidth;
             }
             set
             {
                 intrinsicWidth = value;
             }
+        }
+
+        protected void UpdateSpriteRenderer()
+        {
+            if (TryGetComponent(out SpriteRenderer spriteRenderer))
+            {
+                var spriteSize = SpriteRendererSize(spriteRenderer);
+                if (null != spriteSize)
+                {
+                    spriteRenderer.size = spriteSize.value;
+                }
+            }
+        }
+
+        protected virtual Optional<Vector2> SpriteRendererSize(SpriteRenderer spriteRenderer)
+        {
+            switch (spriteRenderer.drawMode)
+            {
+                case SpriteDrawMode.Sliced:
+                case SpriteDrawMode.Tiled:
+                    return new(Frame.size);
+                case SpriteDrawMode.Simple:
+                    break;
+            }
+
+            return null;
         }
 
         public float DefaultIntrinsicWidth
@@ -97,12 +139,39 @@ namespace PJ
                 }
 
                 if (ignoreIntrinsicHeight) { return null; }
+
+                if (TryGetComponent(out SpriteRenderer spriteRenderer))
+                {
+                    var result = IntrinsicHeightFor(spriteRenderer);
+                    if (null != result)
+                    {
+                        return result;
+                    }
+                }
+
                 return intrinsicHeight;
             }
             set
             {
                 intrinsicHeight = value;
             }
+        }
+
+        public Optional<float> IntrinsicHeightFor(SpriteRenderer spriteRenderer)
+        {
+            var scale = spriteRenderer.gameObject.transform.localScale;
+
+            switch (spriteRenderer.drawMode)
+            {
+                case SpriteDrawMode.Sliced:
+                case SpriteDrawMode.Tiled:
+                    break;
+                case SpriteDrawMode.Simple:
+                    var bounds = spriteRenderer.sprite.bounds;
+                    return new(bounds.size.y * scale.y);
+            }
+
+            return null;
         }
 
         public float DefaultIntrinsicHeight
@@ -140,7 +209,7 @@ namespace PJ
 
                 var childPosition = childView.LocalPositionIn(Frame, transform.localPosition);
 
-                var z = baseZ - (Mathf.Abs(zStep)) * (zIndex + 1);
+                var z = baseZ + (Mathf.Abs(zStep) * Vector3.forward.z) * (zIndex + 1);
                 childPosition.z = z;
 
                 childObject.transform.localPosition = childPosition;

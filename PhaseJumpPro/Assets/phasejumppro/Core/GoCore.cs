@@ -73,7 +73,7 @@ namespace PJ
 
     public partial class GoCore<StateType> : SomeListener
     {
-        public virtual void OnListen(Event theEvent)
+        public virtual void OnEvent(Event theEvent)
         {
             if (!theEvent.sentFrom.TryGetTarget(out object sentFrom)) { return; }
 

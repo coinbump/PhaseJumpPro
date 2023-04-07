@@ -3,7 +3,7 @@
 /*
  * RATING: 5 stars
  * Simple class
- * CODE REVIEW: 3/12/22
+ * CODE REVIEW: 2/18/23
  * Ported to: C++
  */
 namespace PJ

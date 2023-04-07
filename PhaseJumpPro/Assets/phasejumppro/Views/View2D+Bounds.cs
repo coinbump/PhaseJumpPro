@@ -43,20 +43,31 @@ namespace PJ
         protected virtual void OnFrameChange()
         {
             UpdateFrameComponents();
+            UpdateSpriteRenderer();
         }
 
         protected virtual void UpdateFrameComponents()
         {
+            // Frame is adjusted for scale, but the components are not, so reverse the scale
+            var framesize = Frame.size;
+            var unscaledFrameSize = Frame.size / new Vector2(transform.localScale.x, transform.localScale.y);
+
             // Make sure our collider fits the view size
             if (TryGetComponent(out BoxCollider2D boxCollider))
             {
-                boxCollider.size = Frame.size;
+                boxCollider.size = unscaledFrameSize;
             }
 
-            // Make sure our mesh builder fits the view size
-            if (TryGetComponent(out SomeMeshBuilder meshBuilder))
+            // Make sure our collider fits the view size
+            if (TryGetComponent(out CapsuleCollider2D capsuleCollider))
             {
-                meshBuilder.WorldSize = Frame.size;
+                capsuleCollider.size = unscaledFrameSize;
+            }
+
+            var worldSizables = GetComponents<WorldSizeAble2D>();
+            foreach (var worldSizable in worldSizables)
+            {
+                worldSizable.WorldSize = unscaledFrameSize;
             }
         }
 

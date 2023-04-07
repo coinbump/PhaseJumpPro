@@ -19,7 +19,7 @@ namespace PJ
             var gameObject2 = new GameObject();
             gameObject2.name = "2";
 
-            var fixedRandom = new FixedNormalRandom();
+            var fixedRandom = new FixedRandom();
             fixedRandom.values.Add(.2f);
             fixedRandom.values.Add(.7f);
 

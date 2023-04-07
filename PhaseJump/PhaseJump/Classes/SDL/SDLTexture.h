@@ -4,6 +4,8 @@
 #include "SomeTexture.h"
 #include <SDL2/SDL_render.h>
 
+#include <fstream>
+
 /*
  RATING: 5 stars
  Simple wrapper

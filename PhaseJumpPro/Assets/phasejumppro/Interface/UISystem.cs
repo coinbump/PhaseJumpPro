@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace PJ
@@ -10,7 +11,7 @@ namespace PJ
     /// 1. Attach a Physics2DRaycaster to the camera
     /// 2. Create an EventSystem object and upgrade to the new Input system
     /// 3. Attach a non-trigger collider to objects that need interactive behavior
-    public partial class UISystem : WorldComponent
+    public partial class UISystem : WorldComponent, SomeListener
     {
         public enum MouseOverAction
         {
@@ -34,11 +35,25 @@ namespace PJ
         /// </summary>
         public MouseOverAction mouseOverAction;
 
+        [Header("Layer Properties")]
+
+        /// <summary>
+        /// Z position of the backmost layer
+        /// </summary>
+        public float layerZStart;
+
+        /// <summary>
+        /// Step between layers
+        /// </summary>
+        public float layerZStep = 1.0f;
+
+        public List<UILayer> layers = new();
+
         /// <summary>
         /// Item that has focus
         /// </summary>
         protected WeakReference<FocusHandler> focusedItem;
-        protected WeakReference<SomeHoverGestureHandler> hoverItem;
+        protected WeakReference<GameObject> hoverItem;
         protected MouseDevice mouseDevice = new MouseDevice();
         protected ScreenPosition mousePosition;
         protected bool hasMousePosition = false;
@@ -67,41 +82,61 @@ namespace PJ
             }
         }
 
-        public SomeHoverGestureHandler ActiveHover
+        public GameObject ActiveHover
         {
             get
             {
-                if (null != hoverItem && hoverItem.TryGetTarget(out SomeHoverGestureHandler handler))
+                if (null != hoverItem && hoverItem.TryGetTarget(out GameObject target))
                 {
-                    return handler;
+                    return target;
                 }
                 return null;
             }
             set
             {
-                if (null != hoverItem && hoverItem.TryGetTarget(out SomeHoverGestureHandler handler))
+                var activeHover = ActiveHover;
+                if (activeHover == value) { return; }
+
+                if (activeHover)
                 {
-                    if (handler == value) { return; }
-                    handler.IsHovering = false;
+                    var hoverHandlers = activeHover.GetComponents<SomeHoverGestureHandler>();
+                    foreach (var handler in hoverHandlers)
+                    {
+                        handler.IsHovering = false;
+                    }
                 }
 
-                hoverItem = null == value ? null : new WeakReference<SomeHoverGestureHandler>(value);
+                hoverItem = null;
 
                 if (value)
                 {
-                    value.IsHovering = true;
+                    hoverItem = new WeakReference<GameObject>(value);
+
+                    var hoverHandlers = value.GetComponents<SomeHoverGestureHandler>();
+                    foreach (var handler in hoverHandlers)
+                    {
+                        handler.IsHovering = true;
+                    }
                 }
             }
         }
 
-        public UISystem()
+        protected override void Awake()
         {
-            // UISystem is a MonoBehavior and must be attached to an object in the scene
-            // for Update events
+            base.Awake();
+
+            // Only the first UISystem is shared (avoids problems when loading in additive scenes)
             if (null == shared)
             {
                 shared = this;
             }
+        }
+
+        protected override void Start()
+        {
+            base.Start();
+
+            UpdateLayers();
         }
 
         public override void OnUpdate(TimeSlice time)
@@ -122,6 +157,11 @@ namespace PJ
                 }
             }
             hasMousePosition = true;
+        }
+
+        public virtual void OnEvent(Event _event)
+        {
+            // Respond to events by overriding in subclass
         }
     }
 }

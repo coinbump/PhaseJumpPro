@@ -293,7 +293,7 @@ GameObject:
   - component: {fileID: 779350420}
   - component: {fileID: 779350421}
   m_Layer: 0
-  m_Name: Background Board View
+  m_Name: Background Board Layer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -484,6 +484,15 @@ MonoBehaviour:
   lockDrag: 0
   camera: {fileID: 0}
   mouseOverAction: 0
+  layerZStart: 0
+  layerZStep: 1
+  layers:
+  - id: background
+    parent: {fileID: 779350418}
+    zStep: 0
+  - id: matrix
+    parent: {fileID: 1393097480}
+    zStep: 0
 --- !u!4 &1317529686
 Transform:
   m_ObjectHideFlags: 0
@@ -1109,6 +1118,7 @@ MonoBehaviour:
     object: {fileID: 6338146904555263562, guid: bda6ee9d20d84438b8de40d520699df0, type: 3}
   - id: matrix.background
     object: {fileID: 779350418}
+  spriteItems: []
   audioClipItems: []
 --- !u!1 &1907743596
 GameObject:

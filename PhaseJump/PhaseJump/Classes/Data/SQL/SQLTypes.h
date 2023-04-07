@@ -14,6 +14,14 @@ namespace PJ {
         XML
     };
 
+    enum class SQLValueType {
+        Int,
+        Real,
+        Text,
+        Blob,
+        Any
+    };
+
     /// Specifies how the database should be opened
     /// https://www.sqlite.org/c3ref/open.html
     enum class SQLDatabaseOpenType {

@@ -8,16 +8,20 @@ namespace PJ
 {
     public class UnitTests_CombinedStacks
     {
-        protected class TestHStack : PJ.HStack {
-            public void TestApplyLayout(Bounds2D layoutBounds) {
+        protected class TestHStack : PJ.HStack
+        {
+            public void TestApplyLayout(Bounds2D layoutBounds)
+            {
                 Frame = layoutBounds;
                 _ApplyLayout(layoutBounds.size);
                 _PostApplyLayout();
             }
         }
 
-        protected class TestVStack : PJ.VStack {
-            public void TestApplyLayout(Bounds2D layoutBounds) {
+        protected class TestVStack : PJ.VStack
+        {
+            public void TestApplyLayout(Bounds2D layoutBounds)
+            {
                 _ApplyLayout(layoutBounds.size);
             }
         }
@@ -46,7 +50,7 @@ namespace PJ
             vChild2.transform.parent = child1.transform;
 
             sut.TestApplyLayout(new Bounds2D(Vector2.zero, new Vector2(10.0f, 10.0f)));
-            
+
             Assert.AreEqual(5.0f, childView1.Frame.size.x);
             Assert.AreEqual(5.0f, childView2.Frame.size.x);
             Assert.AreEqual(10.0f, childView1.Frame.size.y);
@@ -61,7 +65,6 @@ namespace PJ
         [Test]
         public void Test_ChildrenWithIntrinsicWidth()
         {
-
             var gameObject = new GameObject();
             var sut = gameObject.AddComponent<TestHStack>();
 
@@ -84,9 +87,9 @@ namespace PJ
             vChild2.transform.parent = child1.transform;
 
             sut.TestApplyLayout(new Bounds2D(Vector2.zero, new Vector2(10.0f, 10.0f)));
-            
-            Assert.AreEqual(7.0f, childView1.Frame.size.x);
-            Assert.AreEqual(3.0f, childView2.Frame.size.x);
+
+            Assert.AreEqual(5.0f, childView1.Frame.size.x);
+            Assert.AreEqual(5.0f, childView2.Frame.size.x);
             Assert.AreEqual(10.0f, childView1.Frame.size.y);
             Assert.AreEqual(10.0f, childView2.Frame.size.y);
 

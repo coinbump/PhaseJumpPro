@@ -136,6 +136,7 @@ GameObject:
   - component: {fileID: 295643204}
   - component: {fileID: 295643203}
   - component: {fileID: 295643202}
+  - component: {fileID: 295643207}
   m_Layer: 0
   m_Name: Tap to Rotate
   m_TagString: Untagged
@@ -185,10 +186,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 
   initialState: 
-  valueTags: []
-  typeTags: []
-  cullTypes: 
-  rotation: 0
+  _tags: []
+  _typeTags: []
+  _stateTags: []
+  _cullTypes: 
   velocityType: 0
   velocity: {x: 0, y: 0}
 --- !u!212 &295643205
@@ -258,6 +259,27 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!50 &295643207
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 295643201}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!1 &508991978
 GameObject:
   m_ObjectHideFlags: 0
@@ -271,6 +293,7 @@ GameObject:
   - component: {fileID: 508991980}
   - component: {fileID: 508991979}
   - component: {fileID: 508991983}
+  - component: {fileID: 508991984}
   m_Layer: 0
   m_Name: Tap to Move
   m_TagString: Untagged
@@ -308,10 +331,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 
   initialState: 
-  valueTags: []
-  typeTags: []
-  cullTypes: 
-  rotation: 0
+  _tags: []
+  _typeTags: []
+  _stateTags: []
+  _cullTypes: 
   velocityType: 0
   velocity: {x: 0, y: 0}
 --- !u!212 &508991981
@@ -393,6 +416,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf2f33befc5814070aaa08d04fd2248a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!50 &508991984
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 508991978}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!1 &1988998538
 GameObject:
   m_ObjectHideFlags: 0

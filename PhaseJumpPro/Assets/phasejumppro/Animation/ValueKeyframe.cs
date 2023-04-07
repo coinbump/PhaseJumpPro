@@ -14,7 +14,7 @@ namespace PJ
         /// <summary>
         /// Produces the interpolator for the animation curve
         /// </summary>
-        public SomeInterpolatorKey<T> interpolatorKey;
+        public SomeKeyframeInterpolatorFactory<T> interpolatorFactory;
 
         public ValueKeyframe(float time, T value) : base(time)
         {

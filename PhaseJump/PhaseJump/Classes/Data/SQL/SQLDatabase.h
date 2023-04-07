@@ -7,7 +7,9 @@
 #include "FilePath.h"
 #include "StateMachine.h"
 #include "FilePath.h"
+#include "SQLCommand.h"
 #include "_Set.h"
+#include "SQLTableSchema.h"
 #include <sqlite3.h>
 
 /*
@@ -51,13 +53,14 @@ namespace PJ {
         void Close();
 
         bool TableExists(String tableName);
-        bool CreateTable(String tableName, String params);
+        bool CreateTable(String tableName, SQLTableSchema schema);
+        bool CreateTable(String tableName, String paramsString);
 
-        Array<String> SelectTableNames();
+        Array<String> TableNames();
 
-        int Prepare(SQLStatement& statement);
-        int Step(SQLStatement& statement);
-        void TryRun(String command);
+        int Prepare(SQLCommand& command);
+        int Step(SQLCommand& command);
+        void TryRun(SQLStatement statement);
 
         // OPTIMIZE: use these to speed up data writes to SQL
         void BeginTransaction();

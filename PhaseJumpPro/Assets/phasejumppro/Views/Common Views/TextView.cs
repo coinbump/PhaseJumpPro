@@ -73,16 +73,16 @@ namespace PJ
             SetNeedsLayout();
         }
 
-        public override float PreferredWidth(float layoutSize)
+        public override Optional<float> PreferredWidthCore(float layoutSize)
         {
             CalculatePreferredSizes(layoutSize);
-            return null != intrinsicWidth ? intrinsicWidth.value : base.PreferredWidth(layoutSize);
+            return null != intrinsicWidth ? intrinsicWidth : base.PreferredWidthCore(layoutSize);
         }
 
-        public override float PreferredHeight(Vector2 layoutSize)
+        public override Optional<float> PreferredHeightCore(Vector2 layoutSize)
         {
             CalculatePreferredSizes(layoutSize.x);
-            return null != intrinsicHeight ? intrinsicHeight.value : base.PreferredHeight(layoutSize);
+            return null != intrinsicHeight ? intrinsicHeight : base.PreferredHeightCore(layoutSize);
         }
 
         protected void CalculatePreferredSizes(float layoutWidth)

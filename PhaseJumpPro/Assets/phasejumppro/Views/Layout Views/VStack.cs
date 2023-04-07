@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace PJ
@@ -15,22 +16,6 @@ namespace PJ
         public HorizontalAlignment alignment = HorizontalAlignment.center;
         public float spacing = 0f;
 
-        public override float PreferredWidth(float layoutSize)
-        {
-            var result = 0f;
-            var childViews = ChildViews();
-            foreach (var view in childViews)
-            {
-                // We don't care about spacers
-                if (view is SpacerView) { continue; }
-
-                var childWidth = view.PreferredWidth(layoutSize);
-                result = Mathf.Max(result, childWidth);
-            }
-
-            return result;
-        }
-
         protected override void _ApplyLayout(Vector2 layoutSize)
         {
             var childViews = ChildViews();
@@ -43,7 +28,6 @@ namespace PJ
             var intrinsicWidthChildViews = new List<View2D>();
 
             var heightAvailable = layoutSize.y - (childViews.Count - 1) * spacing;
-            var maxIntrinsicWidth = 0f;
             foreach (var view in childViews)
             {
                 var intrinsicHeight = view.IntrinsicHeight;
@@ -55,27 +39,6 @@ namespace PJ
                 {
                     intrinsicHeightChildViews.Add(view);
                 }
-
-                var intrinsicWidth = view.IntrinsicWidth;
-                if (null != intrinsicWidth)
-                {
-                    intrinsicWidthChildViews.Add(view);
-                    maxIntrinsicWidth = MathF.Max(maxIntrinsicWidth, intrinsicWidth.value);
-                }
-                else
-                {
-                    var minWidth = view.MinWidth;
-                    if (null != minWidth)
-                    {
-                        maxIntrinsicWidth = MathF.Max(maxIntrinsicWidth, minWidth.value);
-                    }
-                }
-            }
-
-            // If there are no intrinsic child views to determine width, use all available width
-            if (intrinsicWidthChildViews.Count == 0)
-            {
-                maxIntrinsicWidth = layoutSize.x;
             }
 
             var totalIntrinsicHeight = 0f;
@@ -102,7 +65,7 @@ namespace PJ
                 }
                 else
                 {
-                    frame.size.x = maxIntrinsicWidth;
+                    frame.size.x = layoutSize.x;
                 }
 
                 if (null != intrinsicHeight)
@@ -111,9 +74,9 @@ namespace PJ
                 }
                 else
                 {
-                    var height = view.PreferredHeight(new Vector2(frame.size.x, nonIntrinsicHeight));
-                    frame.size.y = height;
-                    nonIntrinsicTotalHeight -= height;
+                    var height = view.PreferredHeightWithConstraints(new Vector2(frame.size.x, nonIntrinsicHeight));
+                    frame.size.y = height != null ? height.value : nonIntrinsicHeight;
+                    nonIntrinsicTotalHeight -= frame.size.y;
                     nonIntrinsicViewsCount--;
                     nonIntrinsicHeight = nonIntrinsicTotalHeight / nonIntrinsicViewsCount;
                 }

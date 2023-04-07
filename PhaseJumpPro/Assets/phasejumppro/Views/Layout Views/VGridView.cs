@@ -64,8 +64,10 @@ namespace PJ
                         columnWidth = layoutColumn.size;
                         frame.origin.x = layoutColumn.position;
 
-                        frame.size.x = view.PreferredWidth(columnWidth);
-                        frame.size.y = view.PreferredHeight(new Vector2(frame.size.x, rowHeight));
+                        var viewPreferredWidth = view.PreferredWidthWithConstraints(columnWidth);
+                        frame.size.x = viewPreferredWidth != null ? viewPreferredWidth.value : 0;
+                        var viewPreferredHeight = view.PreferredHeightWithConstraints(new Vector2(frame.size.x, rowHeight));
+                        frame.size.y = viewPreferredHeight != null ? viewPreferredHeight.value : 0;
 
                         var alignedOriginX = layoutColumn.alignment.horizontalAlignment.aligner.AlignedOrigin(columnWidth, frame.size.x);
                         frame.origin.x += alignedOriginX;
@@ -75,8 +77,10 @@ namespace PJ
                     }
                     else
                     {
-                        frame.size.x = view.PreferredWidth(layoutSize.x);
-                        frame.size.y = view.PreferredHeight(new Vector2(frame.size.x, rowHeight));
+                        var viewPreferredWidth = view.PreferredWidthWithConstraints(layoutSize.x);
+                        frame.size.x = viewPreferredWidth != null ? viewPreferredWidth.value : 0;
+                        var viewPreferredHeight = view.PreferredHeightWithConstraints(new Vector2(frame.size.x, rowHeight));
+                        frame.size.y = viewPreferredHeight != null ? viewPreferredHeight.value : 0;
                     }
 
                     if (gridSize > 0)

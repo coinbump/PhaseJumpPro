@@ -6,12 +6,13 @@
  * CODE REVIEW: 4/13/22
  * PORTED TO: C++
  */
-namespace PJ {
-	/// <summary>
-	/// Receives events from broadcasters
-	/// </summary>
-	public interface SomeListener
-	{
-		public void OnListen(Event _event);
-	}
+namespace PJ
+{
+    /// <summary>
+    /// Receives events from broadcasters
+    /// </summary>
+    public interface SomeListener
+    {
+        public void OnEvent(Event _event);
+    }
 }

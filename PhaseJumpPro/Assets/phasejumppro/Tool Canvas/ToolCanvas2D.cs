@@ -21,26 +21,25 @@ namespace PJ
         /// </summary>
         protected class DragHandler : SomeDragHandler
         {
-            public WeakReference<ToolCanvas2D> canvas;
+            public ToolCanvas2D canvas;
 
             public override void OnDragStart(WorldPosition inputPosition)
             {
                 base.OnDragStart(inputPosition);
 
-                if (!canvas.TryGetTarget(out ToolCanvas2D toolCanvas)) { return; }
-                toolCanvas.OnDragStart(inputPosition);
+                canvas.OnDragStart(inputPosition);
             }
 
             public override void OnDragEnd()
             {
-                if (!canvas.TryGetTarget(out ToolCanvas2D toolCanvas)) { return; }
-                toolCanvas.OnDragEnd();
+                base.OnDragEnd();
+
+                canvas.OnDragEnd();
             }
 
             public override void OnDragUpdate(WorldPosition inputPosition)
             {
-                if (!canvas.TryGetTarget(out ToolCanvas2D toolCanvas)) { return; }
-                toolCanvas.OnDragUpdate(inputPosition);
+                canvas.OnDragUpdate(inputPosition);
             }
         }
 
@@ -49,7 +48,7 @@ namespace PJ
             base.Awake();
 
             var dragHandler = gameObject.AddComponent<DragHandler>();
-            dragHandler.canvas = new WeakReference<ToolCanvas2D>(this);
+            dragHandler.canvas = this;
         }
 
         public virtual void OnDragStart(WorldPosition inputPosition)

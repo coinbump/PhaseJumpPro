@@ -18,25 +18,25 @@ namespace PJ
     /// </summary>
     public abstract class SomeAnimatedEffect : SomeEffect
     {
-        protected float turnOnTime = 0.3f;
-        protected float turnOffTime = 0.3f;
+        protected float turnOnDuration = 0.3f;
+        protected float turnOffDuration = 0.3f;
 
-        public float TurnOnTime
+        public float TurnOnDuration
         {
-            get => turnOnTime;
+            get => turnOnDuration;
             set
             {
-                turnOnTime = value;
+                turnOnDuration = value;
                 valve.turnOnTimer.duration = value;
             }
         }
 
-        public float TurnOffTime
+        public float TurnOffDuration
         {
-            get => turnOffTime;
+            get => turnOffDuration;
             set
             {
-                turnOffTime = value;
+                turnOffDuration = value;
                 valve.turnOffTimer.duration = value;
             }
         }
@@ -48,16 +48,16 @@ namespace PJ
 
         public SomeAnimatedEffect()
         {
-            valve.turnOffTimer = new TransformTimer(turnOffTime, SomeRunner.RunType.RunOnce, new EaseOutSquared());
-            valve.turnOnTimer = new TransformTimer(turnOnTime, SomeRunner.RunType.RunOnce, new EaseOutSquared());
+            valve.turnOffTimer = new TransformTimer(turnOffDuration, SomeRunner.RunType.RunOnce, new EaseOutSquared());
+            valve.turnOnTimer = new TransformTimer(turnOnDuration, SomeRunner.RunType.RunOnce, new EaseOutSquared());
         }
 
         protected override void Awake()
         {
             base.Awake();
 
-            valve.turnOffTimer.duration = turnOffTime;
-            valve.turnOnTimer.duration = turnOnTime;
+            valve.turnOffTimer.duration = turnOffDuration;
+            valve.turnOnTimer.duration = turnOnDuration;
         }
 
         protected override void Start()
@@ -72,8 +72,15 @@ namespace PJ
         {
             base.OnUpdate(time);
 
+            float valveState = valve.ValveState;
             valve.OnUpdate(time);
-            UpdateEffectProperties();
+            float newValveState = valve.ValveState;
+
+            // Prevent update thrashing
+            if (valveState != newValveState)
+            {
+                UpdateEffectProperties();
+            }
         }
 
         protected override void OnSwitchChange()

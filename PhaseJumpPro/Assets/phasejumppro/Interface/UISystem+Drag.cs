@@ -108,7 +108,7 @@ namespace PJ
             if (null == worldPosition) { return; }
 
             var raycastHits = Physics2D.RaycastAll(worldPosition, Vector2.zero);
-            DropTarget hitBehavior = null;
+            SomeDropTarget hitBehavior = null;
 
             //Debug.Log("Drop: RaycastHits: " + raycastHits.ToString());
 
@@ -123,7 +123,7 @@ namespace PJ
 
                 if (raycastHit.collider != null)
                 {
-                    hitBehavior = raycastHit.collider.gameObject.GetComponent<DropTarget>();
+                    hitBehavior = raycastHit.collider.gameObject.GetComponent<SomeDropTarget>();
                 }
 
                 if (null != hitBehavior && hitBehavior.CanAcceptDrag(dragItems))
@@ -135,7 +135,7 @@ namespace PJ
             bool isAlreadyIn = false;
             if (null != dropTargetOverObject && dropTargetOverObject.TryGetTarget(out GameObject dropTargetTarget))
             {
-                var activeDropTarget = dropTargetTarget.GetComponent<DropTarget>();
+                var activeDropTarget = dropTargetTarget.GetComponent<SomeDropTarget>();
                 if (activeDropTarget != hitBehavior)
                 {
                     activeDropTarget.OnDragLeave();
@@ -179,7 +179,7 @@ namespace PJ
         {
             if (null != dropTargetOverObject && dropTargetOverObject.TryGetTarget(out GameObject dropTargetTarget))
             {
-                var dropTarget = dropTargetTarget.GetComponent<DropTarget>();
+                var dropTarget = dropTargetTarget.GetComponent<SomeDropTarget>();
                 dropTarget.OnDragLeave();
 
                 if (dropTarget.CanAcceptDrag(DraggedItems))

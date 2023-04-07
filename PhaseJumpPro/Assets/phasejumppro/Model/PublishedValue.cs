@@ -45,17 +45,22 @@ namespace PJ
     {
         protected T value;
         public Broadcaster broadcaster = new Broadcaster();
-        public SomeValueTransform<T> transform = new IdentityTransform<T>();
+
+        protected Func<T, T, bool> evaluateIsEqual;
 
         public override T Value
         {
             get => value;
             set
             {
-                this.value = transform.Transform(value);
+                var oldValue = this.value;
+                this.value = value;
 
-                // Broadcast without checking if value has changed
-                // If you need an equality check for value changes, use PublishedValue
+                if (null != evaluateIsEqual)
+                {
+                    if (evaluateIsEqual(oldValue, this.value)) { return; }
+                }
+
                 OnValueChange();
             }
         }
@@ -72,6 +77,14 @@ namespace PJ
         public override void AddListener(SomeListener listener)
         {
             broadcaster.AddListener(listener);
+        }
+
+        /// <summary>
+        /// Set value without publishing change
+        /// </summary>
+        public void SetValueSilent(T value)
+        {
+            this.value = value;
         }
 
         /// <summary>
@@ -99,47 +112,66 @@ namespace PJ
     /// Broadcasts when value changes, with Equatable requirement.
     /// </summary>
     public class PublishedValue<T> : PublishedEntity<T> where T : IEquatable<T>
-	{
-		public override T Value
-		{
-			get => value;
-			set
-			{
-                var newValue = transform.Transform(value);
-				var isNullToValueChange = (this.value == null && newValue != null) || (this.value != null && newValue == null);
-
-				if (isNullToValueChange || !newValue.Equals(this.value))
-				{
-                    this.value = newValue;
-                    OnValueChange();
-				}
-			}
-		}
-
-		/// <summary>
-		/// Conversion operator
-		/// </summary>
-		public static explicit operator T(PublishedValue<T> value)
-		{
-			return value.Value;
-		}
-
-		public PublishedValue()
-		{
-		}
-
-		public PublishedValue(T value)
-		{
-			this.value = value;
-		}
-
-		public bool Equals(T value)
+    {
+        /// <summary>
+        /// Conversion operator
+        /// </summary>
+        public static explicit operator T(PublishedValue<T> value)
         {
-			var myValue = Value;
-			if (null == myValue && null == value) { return true; }
+            return value.Value;
+        }
+
+        public PublishedValue()
+        {
+            evaluateIsEqual = EvaluateIsEqual;
+        }
+
+        public PublishedValue(T value)
+        {
+            this.value = value;
+            evaluateIsEqual = EvaluateIsEqual;
+        }
+
+        protected bool EvaluateIsEqual(T oldValue, T newValue)
+        {
+            var isNullToValueChange = (oldValue == null && newValue != null) || (oldValue != null && newValue == null);
+            var isChange = isNullToValueChange || !newValue.Equals(oldValue);
+            return !isChange;
+        }
+
+        public bool Equals(T value)
+        {
+            var myValue = Value;
+            if (null == myValue && null == value) { return true; }
             if (null == myValue || null == value) { return false; }
 
             return myValue.Equals(value);
+        }
+    }
+
+    public class PublishedTransformValue<T> : PublishedValue<T> where T : IEquatable<T>
+    {
+        public SomeValueTransform<T> transform = new IdentityTransform<T>();
+
+        public override T Value
+        {
+            get => value;
+            set
+            {
+                var oldValue = this.value;
+                this.value = transform.Transform(value);
+                if (evaluateIsEqual(oldValue, this.value)) { return; }
+
+                OnValueChange();
+            }
+        }
+
+        public PublishedTransformValue()
+        {
+        }
+
+        public PublishedTransformValue(T value) : base(value)
+        {
         }
     }
 }

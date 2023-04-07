@@ -9,6 +9,8 @@ public class ECKPieceDragHandler : DragHandler2D
 {
     public override void OnDragEnd()
     {
+        base.OnDragEnd();
+
         if (GetComponent<MatrixNode2D>().IsAnimating)
         {
             return;

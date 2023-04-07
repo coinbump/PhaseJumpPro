@@ -80,6 +80,18 @@ namespace PJ
             Destroy(gameObject, afterSeconds);
         }
 
+        public List<GameObject> ChildObjects()
+        {
+            List<GameObject> result = new();
+
+            foreach (Transform childTransform in transform)
+            {
+                result.Add(childTransform.gameObject);
+            }
+
+            return result;
+        }
+
 #if UNITY_EDITOR
         protected virtual void RenderGizmos(EditorUtils.RenderState renderState)
         {

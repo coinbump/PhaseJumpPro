@@ -29,8 +29,7 @@ namespace PJ
 
             foreach (Transform childTransform in gameObject.transform)
             {
-                childTransform.localPosition = new Vector3(0, position, 0);
-
+                childTransform.localPosition = new Vector3(0, position, childTransform.localPosition.z);
                 position += spacing * Vector2.down.y;
             }
         }

@@ -23,6 +23,7 @@ namespace PJ
             var child1 = new GameObject();
             var childView1 = child1.AddComponent<View2D>();
             child1.transform.parent = gameObject.transform;
+            childView1.IntrinsicHeight = new(8.0f);
 
             var child2 = new GameObject();
             var childView2 = child2.AddComponent<View2D>();
@@ -32,8 +33,8 @@ namespace PJ
 
             Assert.AreEqual(5.0f, childView1.Frame.size.x);
             Assert.AreEqual(5.0f, childView2.Frame.size.x);
-            Assert.AreEqual(10.0f, childView1.Frame.size.y);
-            Assert.AreEqual(10.0f, childView2.Frame.size.y);
+            Assert.AreEqual(8.0f, childView1.Frame.size.y);
+            Assert.AreEqual(8.0f, childView2.Frame.size.y);
         }
 
         [Test]
@@ -46,6 +47,7 @@ namespace PJ
             var childView1 = child1.AddComponent<View2D>();
             child1.transform.parent = gameObject.transform;
             childView1.IntrinsicWidth = new(3.0f);
+            childView1.IntrinsicHeight = new(8.0f);
 
             var child2 = new GameObject();
             var childView2 = child2.AddComponent<View2D>();
@@ -55,8 +57,8 @@ namespace PJ
 
             Assert.AreEqual(3.0f, childView1.Frame.size.x);
             Assert.AreEqual(7.0f, childView2.Frame.size.x);
-            Assert.AreEqual(10.0f, childView1.Frame.size.y);
-            Assert.AreEqual(10.0f, childView2.Frame.size.y);
+            Assert.AreEqual(8.0f, childView1.Frame.size.y);
+            Assert.AreEqual(8.0f, childView2.Frame.size.y);
         }
 
         [Test]
@@ -74,13 +76,14 @@ namespace PJ
             var childView2 = child2.AddComponent<View2D>();
             child2.transform.parent = gameObject.transform;
             childView2.IntrinsicWidth = new(3.0f);
+            childView2.IntrinsicHeight = new(8.0f);
 
             sut.TestApplyLayout(new Bounds2D(Vector2.zero, new Vector2(10.0f, 10.0f)));
 
             Assert.AreEqual(3.0f, childView1.Frame.size.x);
             Assert.AreEqual(3.0f, childView2.Frame.size.x);
-            Assert.AreEqual(10.0f, childView1.Frame.size.y);
-            Assert.AreEqual(10.0f, childView2.Frame.size.y);
+            Assert.AreEqual(8.0f, childView1.Frame.size.y);
+            Assert.AreEqual(8.0f, childView2.Frame.size.y);
         }
 
         [Test]
@@ -103,7 +106,7 @@ namespace PJ
 
             Assert.AreEqual(3.0f, childView1.Frame.size.y);
             Assert.AreEqual(7.0f, childView2.Frame.size.y);
-            Assert.AreEqual(7.0f, sut.PreferredHeight(Vector2.zero));
+            Assert.AreEqual(7.0f, sut.PreferredHeightWithConstraints(Vector2.zero).value);
         }
 
         [Test]
@@ -115,17 +118,38 @@ namespace PJ
             var child1 = new GameObject();
             var childView1 = child1.AddComponent<View2D>();
             child1.transform.parent = gameObject.transform;
+            childView1.IntrinsicHeight = new(7.0f);
 
             var child2 = new GameObject();
             var childView2 = child2.AddComponent<View2D>();
             child2.transform.parent = gameObject.transform;
-            childView1.IntrinsicHeight = new(7.0f);
 
             sut.TestApplyLayout(new Bounds2D(Vector2.zero, new Vector2(10.0f, 10.0f)));
 
             Assert.AreEqual(7.0f, childView1.Frame.size.y);
             Assert.AreEqual(7.0f, childView2.Frame.size.y);
-            Assert.AreEqual(7.0f, sut.PreferredHeight(Vector2.zero));
+            Assert.AreEqual(7.0f, sut.PreferredHeightWithConstraints(Vector2.zero).value);
+        }
+
+        [Test]
+        public void TestPreferredHeight_NoChildrenWithIntrinsicHeight()
+        {
+            var gameObject = new GameObject();
+            var sut = gameObject.AddComponent<TestHStack>();
+
+            var child1 = new GameObject();
+            var childView1 = child1.AddComponent<View2D>();
+            child1.transform.parent = gameObject.transform;
+
+            var child2 = new GameObject();
+            var childView2 = child2.AddComponent<View2D>();
+            child2.transform.parent = gameObject.transform;
+
+            sut.TestApplyLayout(new Bounds2D(Vector2.zero, new Vector2(10.0f, 10.0f)));
+
+            Assert.AreEqual(10.0f, childView1.Frame.size.y);
+            Assert.AreEqual(10.0f, childView2.Frame.size.y);
+            Assert.AreEqual(0.0f, sut.PreferredHeightWithConstraints(Vector2.zero).value);
         }
 
         [Test]

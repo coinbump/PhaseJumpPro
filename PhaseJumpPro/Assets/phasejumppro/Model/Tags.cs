@@ -22,6 +22,10 @@ namespace PJ
         {
         }
 
+        public Tags(Dictionary<string, object> tags) : base(tags)
+        {
+        }
+
         public Tags(List<TagValue> tagValues)
         {
             foreach (TagValue tag in tagValues)
@@ -43,34 +47,24 @@ namespace PJ
         /// <summary>
         /// Creates a value if it doesn't exist
         /// </summary>
-        public T SafeValue<T>(string key) where T : new()
+        public T SafeValue<T>(string key, T defaultValue)
         {
-            try
-            {
-                T result = (T)this[key];
-                return result;
-            }
-            catch (System.Exception e)
-            {
-                // Debug.Log(e.Message);
-            }
-
-            return new T();
+            return SafeValue<T>(key, () => defaultValue);
         }
 
-        public T SafeValue<T>(string key, Func<T> constructor)
+        public T SafeValue<T>(string key, Func<T> allocator)
         {
             try
             {
                 T result = (T)this[key];
                 return result;
             }
-            catch (System.Exception e)
+            catch //(System.Exception e)
             {
                 // Debug.Log(e.Message);
             }
 
-            return constructor();
+            return allocator();
         }
 
         public PJ.Optional<T> Value<T>(string key)
@@ -132,6 +126,34 @@ namespace PJ
 
             return false;
         }
+
+        /// <summary>
+        /// Convert types of values.
+        /// Example: Decode as Int64, but represent as int
+        /// </summary>
+        public Tags ValueTypesConverted<Left, Right>(Func<Left, Right> converter)
+        {
+            Tags result = new();
+
+            foreach ((var key, var value) in this)
+            {
+                try
+                {
+                    if (value is Left)
+                    {
+                        result[key] = converter((Left)value);
+                        continue;
+                    }
+                }
+                catch
+                {
+                }
+
+                result[key] = value;
+            }
+
+            return result;
+        } // TESTED
     }
 
     /// <summary>
@@ -163,6 +185,18 @@ namespace PJ
 
         public TypeTagsSet(IEnumerable<string> collection) : base(collection)
         {
+        }
+
+        public void Set(string tag, bool value)
+        {
+            if (value)
+            {
+                Add(tag);
+            }
+            else
+            {
+                Remove(tag);
+            }
         }
     }
 }

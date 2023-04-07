@@ -7,9 +7,7 @@
 namespace PJ
 {
     /// <summary>
-    /// Any object that relies on timers to perform tasks
-    /// 
-    /// Supports an internal time scale for animating an object's time
+    /// An object with specific time duration
     /// </summary>
     public abstract class SomeTimed : SomeRunner
     {
@@ -35,10 +33,7 @@ namespace PJ
         public bool IsRunning
         {
             get => !isPaused;
-            set
-            {
-                isPaused = !value;
-            }
+            set => isPaused = !value;
         }
 
         public void Pause(bool pause)

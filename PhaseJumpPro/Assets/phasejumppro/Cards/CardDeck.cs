@@ -15,35 +15,78 @@ namespace PJ
 
         public CardDeck(CardDeckClass<CardType> _class)
         {
-            this._class = _class;
+            this.Class = _class;
         }
 
         /// <summary>
         /// Add 1 of each card type to the deck
         /// </summary>
-        public virtual void Build()
+        public virtual void Build(Func<CardType, bool> filter, int count = 1)
         {
-            cards.Clear();
+            cards = BuildCards(filter, count);
+        }
+
+        public virtual List<CardType> BuildCards(Func<CardType, bool> filter, int count = 1)
+        {
+            List<CardType> result = new();
 
             var cardDeckClass = CardDeckClass;
             if (null == cardDeckClass)
             {
                 Debug.Log("Error. CardDeck requires a CardDeckClass");
-                return;
+                return result;
             }
 
-            foreach (var classCard in cardDeckClass.cards)
+            foreach (var classCard in CardDeckClass.cardRegistry)
             {
-                Add(classCard.id, 1, classCard.tags);
+                var card = CardDeckClass.New(classCard.Key);
+                if (filter(card))
+                {
+                    AddTo(result, card.ClassId, count);
+                }
             }
+
+            return result;
         }
 
-        public virtual void Shuffle() => cards.Shuffle();
+        public virtual void BuildWeighted(int count, Func<CardType, bool> filter, Func<CardType, float> weightTransform, SomeRandom random)
+        {
+            cards = BuildWeightedCards(count, filter, weightTransform, random);
+        }
+
+        public virtual List<CardType> BuildWeightedCards(int count, Func<CardType, bool> filter, Func<CardType, float> weightTransform, SomeRandom random)
+        {
+            List<CardType> result = new();
+
+            var allCards = BuildCards(filter);
+            var wr = new WeightedRandomChoice<CardType>();
+            foreach (var card in allCards)
+            {
+                var weight = weightTransform(card);
+                if (weight == 0) { continue; }
+                wr.Add(new(weight, card));
+            }
+
+            for (int i = 0; i < count; i++)
+            {
+                var choice = wr.ChooseWeight(random);
+                AddTo(result, choice.value.ClassId, 1);
+            }
+
+            return result;
+        }
+
+        public virtual void Shuffle(SomeRandom random) => cards.Shuffle(random);
 
         /// <summary>
         /// Add cards based on id (requires CardDeckClass) and apply custom tag attributes
         /// </summary>
-        public List<CardType> Add(string id, int count, Tags tags)
+        public List<CardType> Add(string classId, int count)
+        {
+            return AddTo(cards, classId, count);
+        }
+
+        public List<CardType> AddTo(List<CardType> cards, string classId, int count)
         {
             List<CardType> result = new();
 
@@ -52,15 +95,8 @@ namespace PJ
 
             for (int i = 0; i < count; i++)
             {
-                var card = cardDeckClass.New(id);
+                var card = CardDeckClass.New(classId);
                 if (null == card) { return result; }
-
-                card.id = id;
-
-                if (null != tags)
-                {
-                    card.ApplyTags(tags);
-                }
 
                 cards.Add(card);
                 result.Add(card);

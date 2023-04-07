@@ -7,8 +7,7 @@
 namespace PJ
 {
     /// <summary>
-    /// Runs then decides what to do when finished running
-    /// Example: run a timer, every time it finishes, fire an event, reset timer
+    /// An object that runs and then may finish or start over
     /// </summary>
     public abstract class SomeRunner : Updatable
     {

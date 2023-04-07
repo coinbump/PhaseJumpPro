@@ -27,7 +27,7 @@ namespace PJ
             UpdateMouseOverHover();
         }
 
-        protected virtual T MouseOverHitComponent<T>() where T : WorldComponent
+        public virtual T MouseOverHitComponent<T>(Utils.RaycastType raycastType) where T : WorldComponent
         {
             if (null == mouseDevice || !mouseDevice.IsAvailable()) { return null; }
 
@@ -36,7 +36,7 @@ namespace PJ
 
             //Debug.Log("Screen position:" + mouseDevice.ScreenPosition.ToString());
 
-            var raycastHits = Utils.Raycast2DHitsAtScreenPosition(Camera, screenPosition);
+            var raycastHits = Utils.RaycastHits2D(Camera, new ScreenPosition(screenPosition), raycastType);
             T hitComponent = null;
 
             //Debug.Log("Raycast hits size:" + raycastHits.Length.ToString());
@@ -59,13 +59,13 @@ namespace PJ
 
         public virtual void UpdateMouseOverHover()
         {
-            var hitComponent = MouseOverHitComponent<SomeHoverGestureHandler>();
-            ActiveHover = hitComponent;
+            var hitComponent = MouseOverHitComponent<SomeHoverGestureHandler>(Utils.RaycastType.First);
+            ActiveHover = hitComponent != null ? hitComponent.gameObject : null;
         }
 
         public virtual void UpdateMouseOverFocus()
         {
-            var hitFocusable = MouseOverHitComponent<FocusHandler>();
+            var hitFocusable = MouseOverHitComponent<FocusHandler>(Utils.RaycastType.All);
 
             // Only react to the first focusable object
             if (hitFocusable)

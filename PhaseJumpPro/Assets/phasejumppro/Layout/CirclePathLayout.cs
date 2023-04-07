@@ -12,13 +12,26 @@ namespace PJ
     /// <summary>
     /// Distribute objects along a circle path
     /// </summary>
-    public class CirclePathLayout : SomePathLayout
+    public class CirclePathLayout : SomePathLayout, WorldSizeAble2D
     {
         public float radius = 1.0f;
+
+        public Vector2 WorldSize
+        {
+            get => new Vector2(radius * 2.0f, radius * 2.0f);
+            set => radius = Mathf.Min(value.x, value.y) / 2.0f;
+        }
 
         protected override SomePath BuildPath()
         {
             return new CirclePath(radius);
         }
+
+#if UNITY_EDITOR
+        protected override void RenderGizmos(EditorUtils.RenderState renderState)
+        {
+            EditorUtils.DrawCircle(transform.position, radius, renderState);
+        }
+#endif
     }
 }

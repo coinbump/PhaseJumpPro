@@ -7,22 +7,22 @@ using UnityEngine.InputSystem;
 /// </summary>
 public class MRHero : MatrixNode2D
 {
-    public void OnInputMoveLeft(InputValue value)
+    public void OnInputMoveLeft(InputValue inputValue)
     {
         transform.parent.GetComponent<MatrixBoardView2D>().MovePiece(piece, MapDirection.West, 0.3f);
     }
 
-    public void OnInputMoveRight(InputValue value)
+    public void OnInputMoveRight(InputValue inputValue)
     {
         transform.parent.GetComponent<MatrixBoardView2D>().MovePiece(piece, MapDirection.East, 0.3f);
     }
 
-    public void OnInputMoveUp(InputValue value)
+    public void OnInputMoveUp(InputValue inputValue)
     {
         transform.parent.GetComponent<MatrixBoardView2D>().MovePiece(piece, MapDirection.North, 0.3f);
     }
 
-    public void OnInputMoveDown(InputValue value)
+    public void OnInputMoveDown(InputValue inputValue)
     {
         transform.parent.GetComponent<MatrixBoardView2D>().MovePiece(piece, MapDirection.South, 0.3f);
     }

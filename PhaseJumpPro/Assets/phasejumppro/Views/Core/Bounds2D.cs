@@ -8,19 +8,19 @@ using UnityEngine;
  */
 namespace PJ
 {
-	/// <summary>
-	/// Bounds of an object in View space (positive Y is down)
-	/// </summary>
-	[Serializable]
-	public struct Bounds2D
-	{
-		public Vector2 origin;
-		public Vector2 size;
+    /// <summary>
+    /// Bounds of an object in View space (positive Y is down)
+    /// </summary>
+    [Serializable]
+    public struct Bounds2D
+    {
+        public Vector2 origin;
+        public Vector2 size;
 
-		public Bounds2D(Vector2 origin, Vector2 size)
-		{
-			this.origin = origin;
-			this.size = size;
-		}
-	}
+        public Bounds2D(Vector2 origin, Vector2 size)
+        {
+            this.origin = origin;
+            this.size = size;
+        }
+    }
 }

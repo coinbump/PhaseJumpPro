@@ -10,8 +10,17 @@ PORTED TO: Not ported (Unity only)
 */
 namespace PJ
 {
-    public class UnityRandom : SomeNormalRandom
+    public class UnityRandom : SomeRandom
     {
-        public float Value => UnityEngine.Random.value;
+        public override float Value => UnityEngine.Random.value;
+        public override int RangeValue(int min, int max)
+        {
+            return UnityEngine.Random.Range(min, max);
+        }
+
+        public override void SetSeed(int seed)
+        {
+            UnityEngine.Random.InitState(seed);
+        }
     }
 }

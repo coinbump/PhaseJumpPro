@@ -5,14 +5,6 @@ using UnityEngine;
 namespace PJ
 {
     /// <summary>
-    /// Handles state changes
-    /// </summary>
-    public abstract class SomeStateHandler<StateType> : WorldComponent
-    {
-        public abstract void OnStateChange(StateType state);
-    }
-
-    /// <summary>
     /// Applies an effect in response to a state change
     /// </summary>
     public abstract class SomeStateEffect<StateType, ValueType> : SomeStateHandler<StateType>
@@ -57,7 +49,7 @@ namespace PJ
 
         protected ValueType value;
 
-        public ValueType Value
+        protected ValueType Value
         {
             get => value;
             set
@@ -102,6 +94,10 @@ namespace PJ
     }
 
     public abstract class SomeColorStateEffect<StateType> : SomeStateEffect<StateType, Color32>
+    {
+    }
+
+    public abstract class SomeTransformStateEffect<StateType> : SomeStateEffect<StateType, GeoTransform>
     {
     }
 }

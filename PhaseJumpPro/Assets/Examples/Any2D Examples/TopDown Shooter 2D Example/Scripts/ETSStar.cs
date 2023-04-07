@@ -9,7 +9,7 @@ public class ETSStar : GoNode2D
     {
         base.Awake();
 
-        float scale = RandomUtils.VaryFloat(0.7f, 0.15f);
+        float scale = new UnityRandom().VaryFloat(0.7f, 0.15f);
         transform.localScale = new Vector3(scale, scale, 1.0f);
     }
 }

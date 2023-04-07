@@ -14,7 +14,7 @@ namespace PJ
     /// </summary>
     [RequireComponent(typeof(MeshFilter))]
     [RequireComponent(typeof(MeshRenderer))]
-    public abstract class SomeMeshBuilder : WorldComponent
+    public abstract class SomeMeshBuilder : WorldComponent, WorldSizeAble2D
     {
         // Use this for initialization
         protected override void Start()

@@ -15,7 +15,8 @@ namespace PJ {
     /// <summary>
     /// Extends std::list with convenience methods
     /// </summary>
-    template <class T, class Allocator = std::allocator<T>> class List : public std::list<T> {
+    template <class T, class Allocator = std::allocator<T>>
+    class List : public std::list<T> {
     public:
         using Base = std::list<T>;
 
@@ -28,10 +29,6 @@ namespace PJ {
         // Convenience
         void Append(T const& value) { this->push_back(value); }
         void Add(T const& value) { this->push_back(value); }
-
-        bool Contains(T const& value) const {
-            return this->find(value) != this->end();
-        }
 
         COLLECTION_METHODS(T)
     };

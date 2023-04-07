@@ -7,7 +7,7 @@
 using namespace std;
 using namespace PJ;
 
-TEST(SQLTableTests, TestIntValues) {
+TEST(SQLTable, TestRowValuesList_MultiColumn_AndStarSelect) {
     std::shared_ptr<SQLDatabase> db = std::make_shared<SQLDatabase>();
 
     EXPECT_NO_THROW({
@@ -16,32 +16,67 @@ TEST(SQLTableTests, TestIntValues) {
 
     EXPECT_FALSE(db->TableExists("test"));
 
-    EXPECT_TRUE(db->CreateTable("test", "(test_l INTEGER, test_r TEXT)"));
+    SQLTableSchema schema;
+    schema.columns.Add(SQLColumnSchema("test_l", SQLValueType::Int));
+    schema.columns.Add(SQLColumnSchema("test_r", SQLValueType::Text));
+    EXPECT_TRUE(db->CreateTable("test", schema));
 
     EXPECT_NO_THROW({
-        db->TryRun("INSERT INTO test (test_l, test_r) values (1, 'one')");
-        db->TryRun("INSERT INTO test (test_l, test_r) values (11, 'one')");
-        db->TryRun("INSERT INTO test (test_l, test_r) values (2, 'two')");
+        db->TryRun(SQLStatement("INSERT INTO test (test_l, test_r) values (1, 'a')"));
+        db->TryRun(SQLStatement("INSERT INTO test (test_l, test_r) values (11, 'b')"));
     });
 
     std::shared_ptr<SQLTable> table = std::make_shared<SQLTable>("test", db);
-    auto intValues = table->IntValues(SQLTableQuery("test_l", std::nullopt));
+    StringArray columnNames;
+
+    // Test SELECT * (no column names)
+    auto values = table->RowValuesList(SQLTableQueryArguments(columnNames, std::nullopt));
+
+    EXPECT_EQ(2, values.size());
+    EXPECT_EQ(1, values[0].SafeValue<int>("test_l"));
+    EXPECT_EQ("a", values[0].SafeValue<String>("test_r"));
+    EXPECT_EQ(11, values[1].SafeValue<int>("test_l"));
+    EXPECT_EQ("b", values[1].SafeValue<String>("test_r"));
+}
+
+TEST(SQLTable, TestIntValues_SingleColumn) {
+    std::shared_ptr<SQLDatabase> db = std::make_shared<SQLDatabase>();
+
+    EXPECT_NO_THROW({
+        db->TryOpen("", SQLDatabaseOpenType::InMemory, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE);
+    });
+
+    EXPECT_FALSE(db->TableExists("test"));
+
+    SQLTableSchema schema;
+    schema.columns.Add(SQLColumnSchema("test_l", SQLValueType::Int));
+    schema.columns.Add(SQLColumnSchema("test_r", SQLValueType::Text));
+    EXPECT_TRUE(db->CreateTable("test", schema));
+
+    EXPECT_NO_THROW({
+        db->TryRun(SQLStatement("INSERT INTO test (test_l, test_r) values (1, 'one')"));
+        db->TryRun(SQLStatement("INSERT INTO test (test_l, test_r) values (11, 'one')"));
+        db->TryRun(SQLStatement("INSERT INTO test (test_l, test_r) values (2, 'two')"));
+    });
+
+    std::shared_ptr<SQLTable> table = std::make_shared<SQLTable>("test", db);
+    auto intValues = table->IntValues(SQLTableQueryArguments("test_l", std::nullopt));
 
     EXPECT_EQ(3, intValues.size());
 
-    auto intValuesOne = table->IntValues(SQLTableQuery("test_l", SQLWhereArgument("test_r", "one")));
+    auto intValuesOne = table->IntValues(SQLTableQueryArguments("test_l", SQLWhereArguments("test_r", "one")));
     EXPECT_EQ(2, intValuesOne.size());
 
-    auto twoQuery = SQLTableQuery("test_l", SQLWhereArgument("test_r", "two"));
+    auto twoQuery = SQLTableQueryArguments("test_l", SQLWhereArguments("test_r", "two"));
     auto intValuesTwo = table->IntValues(twoQuery);
     EXPECT_EQ(1, intValuesTwo.size());
     EXPECT_EQ(2, intValuesTwo[0]);
 
     EXPECT_EQ(2, table->IntValue(twoQuery, 0));
-    EXPECT_EQ(0, table->IntValue(SQLTableQuery("test_l", SQLWhereArgument("test_r", "never")), 0));
+    EXPECT_EQ(0, table->IntValue(SQLTableQueryArguments("test_l", SQLWhereArguments("test_r", "never")), 0));
 }
 
-TEST(SQLTableTests, TestFloatValues) {
+TEST(SQLTable, TestIntValues_MultiColumn) {
     std::shared_ptr<SQLDatabase> db = std::make_shared<SQLDatabase>();
 
     EXPECT_NO_THROW({
@@ -50,32 +85,67 @@ TEST(SQLTableTests, TestFloatValues) {
 
     EXPECT_FALSE(db->TableExists("test"));
 
-    EXPECT_TRUE(db->CreateTable("test", "(test_l DOUBLE, test_r TEXT)"));
+    SQLTableSchema schema;
+    schema.columns.Add(SQLColumnSchema("test_l", SQLValueType::Int));
+    schema.columns.Add(SQLColumnSchema("test_r", SQLValueType::Int));
+    EXPECT_TRUE(db->CreateTable("test", schema));
 
     EXPECT_NO_THROW({
-        db->TryRun("INSERT INTO test (test_l, test_r) values (1.5, 'one')");
-        db->TryRun("INSERT INTO test (test_l, test_r) values (11.5, 'one')");
-        db->TryRun("INSERT INTO test (test_l, test_r) values (2.5, 'two')");
+        db->TryRun(SQLStatement("INSERT INTO test (test_l, test_r) values (1, 3)"));
+        db->TryRun(SQLStatement("INSERT INTO test (test_l, test_r) values (11, 33)"));
     });
 
     std::shared_ptr<SQLTable> table = std::make_shared<SQLTable>("test", db);
-    auto floatValues = table->FloatValues(SQLTableQuery("test_l", std::nullopt));
+    StringArray columnNames;
+    columnNames.Add("test_l");
+    columnNames.Add("test_r");
+    auto values = table->IntValues(SQLTableQueryArguments(columnNames, std::nullopt));
+
+    EXPECT_EQ(4, values.size());
+    EXPECT_TRUE(values.Contains(1));
+    EXPECT_TRUE(values.Contains(11));
+    EXPECT_TRUE(values.Contains(3));
+    EXPECT_TRUE(values.Contains(33));
+}
+
+TEST(SQLTableTests, TestFloatValues_SingleColumn) {
+    std::shared_ptr<SQLDatabase> db = std::make_shared<SQLDatabase>();
+
+    EXPECT_NO_THROW({
+        db->TryOpen("", SQLDatabaseOpenType::InMemory, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE);
+    });
+
+    EXPECT_FALSE(db->TableExists("test"));
+
+    SQLTableSchema schema;
+    schema.columns.Add(SQLColumnSchema("test_l", SQLValueType::Real));
+    schema.columns.Add(SQLColumnSchema("test_r", SQLValueType::Text));
+    EXPECT_TRUE(db->CreateTable("test", schema));
+
+    EXPECT_NO_THROW({
+        db->TryRun(SQLStatement("INSERT INTO test (test_l, test_r) values (1.5, 'one')"));
+        db->TryRun(SQLStatement("INSERT INTO test (test_l, test_r) values (11.5, 'one')"));
+        db->TryRun(SQLStatement("INSERT INTO test (test_l, test_r) values (2.5, 'two')"));
+    });
+
+    std::shared_ptr<SQLTable> table = std::make_shared<SQLTable>("test", db);
+    auto floatValues = table->FloatValues(SQLTableQueryArguments("test_l", std::nullopt));
 
     EXPECT_EQ(3, floatValues.size());
 
-    auto floatValuesOne = table->FloatValues(SQLTableQuery("test_l", SQLWhereArgument("test_r", "one")));
+    auto floatValuesOne = table->FloatValues(SQLTableQueryArguments("test_l", SQLWhereArguments("test_r", "one")));
     EXPECT_EQ(2, floatValuesOne.size());
 
-    auto twoQuery = SQLTableQuery("test_l", SQLWhereArgument("test_r", "two"));
+    auto twoQuery = SQLTableQueryArguments("test_l", SQLWhereArguments("test_r", "two"));
     auto floatValuesTwo = table->FloatValues(twoQuery);
     EXPECT_EQ(1, floatValuesTwo.size());
     EXPECT_EQ(2.5f, floatValuesTwo[0]);
 
     EXPECT_EQ(2.5f, table->FloatValue(twoQuery, 0));
-    EXPECT_EQ(0, table->FloatValue(SQLTableQuery("test_l", SQLWhereArgument("test_r", "never")), 0));
+    EXPECT_EQ(0, table->FloatValue(SQLTableQueryArguments("test_l", SQLWhereArguments("test_r", "never")), 0));
 }
 
-TEST(SQLTableTests, TestStringValues) {
+TEST(SQLTable, TestFloatValues_MultiColumn) {
     std::shared_ptr<SQLDatabase> db = std::make_shared<SQLDatabase>();
 
     EXPECT_NO_THROW({
@@ -84,29 +154,96 @@ TEST(SQLTableTests, TestStringValues) {
 
     EXPECT_FALSE(db->TableExists("test"));
 
-    EXPECT_TRUE(db->CreateTable("test", "(test_l TEXT, test_r TEXT)"));
+    SQLTableSchema schema;
+    schema.columns.Add(SQLColumnSchema("test_l", SQLValueType::Real));
+    schema.columns.Add(SQLColumnSchema("test_r", SQLValueType::Real));
+    EXPECT_TRUE(db->CreateTable("test", schema));
 
     EXPECT_NO_THROW({
-        db->TryRun("INSERT INTO test (test_l, test_r) values ('a', 'one')");
-        db->TryRun("INSERT INTO test (test_l, test_r) values ('b', 'one')");
-        db->TryRun("INSERT INTO test (test_l, test_r) values ('c', 'two')");
+        db->TryRun(SQLStatement("INSERT INTO test (test_l, test_r) values (1.5, 3.5)"));
+        db->TryRun(SQLStatement("INSERT INTO test (test_l, test_r) values (11.5, 33.5)"));
     });
 
     std::shared_ptr<SQLTable> table = std::make_shared<SQLTable>("test", db);
-    auto stringValues = table->StringValues(SQLTableQuery("test_l", std::nullopt));
+    StringArray columnNames;
+    columnNames.Add("test_l");
+    columnNames.Add("test_r");
+    auto values = table->FloatValues(SQLTableQueryArguments(columnNames, std::nullopt));
+
+    EXPECT_EQ(4, values.size());
+    EXPECT_TRUE(values.Contains(1.5f));
+    EXPECT_TRUE(values.Contains(11.5f));
+    EXPECT_TRUE(values.Contains(3.5f));
+    EXPECT_TRUE(values.Contains(33.5f));
+}
+
+TEST(SQLTableTests, TestStringValues_SingleColumn) {
+    std::shared_ptr<SQLDatabase> db = std::make_shared<SQLDatabase>();
+
+    EXPECT_NO_THROW({
+        db->TryOpen("", SQLDatabaseOpenType::InMemory, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE);
+    });
+
+    EXPECT_FALSE(db->TableExists("test"));
+
+    SQLTableSchema schema;
+    schema.columns.Add(SQLColumnSchema("test_l", SQLValueType::Text));
+    schema.columns.Add(SQLColumnSchema("test_r", SQLValueType::Text));
+    EXPECT_TRUE(db->CreateTable("test", schema));
+
+    EXPECT_NO_THROW({
+        db->TryRun(SQLStatement("INSERT INTO test (test_l, test_r) values ('a', 'one')"));
+        db->TryRun(SQLStatement("INSERT INTO test (test_l, test_r) values ('b', 'one')"));
+        db->TryRun(SQLStatement("INSERT INTO test (test_l, test_r) values ('c', 'two')"));
+    });
+
+    std::shared_ptr<SQLTable> table = std::make_shared<SQLTable>("test", db);
+    auto stringValues = table->StringValues(SQLTableQueryArguments("test_l", std::nullopt));
 
     EXPECT_EQ(3, stringValues.size());
 
-    auto stringValuesOne = table->StringValues(SQLTableQuery("test_l", SQLWhereArgument("test_r", "one")));
+    auto stringValuesOne = table->StringValues(SQLTableQueryArguments("test_l", SQLWhereArguments("test_r", "one")));
     EXPECT_EQ(2, stringValuesOne.size());
 
-    auto twoQuery = SQLTableQuery("test_l", SQLWhereArgument("test_r", "two"));
+    auto twoQuery = SQLTableQueryArguments("test_l", SQLWhereArguments("test_r", "two"));
     auto stringValuesTwo = table->StringValues(twoQuery);
     EXPECT_EQ(1, stringValuesTwo.size());
     EXPECT_EQ(String("c"), stringValuesTwo[0]);
 
     EXPECT_EQ(String("c"), table->StringValue(twoQuery, ""));
-    EXPECT_EQ("", table->StringValue(SQLTableQuery("test_l", SQLWhereArgument("test_r", "never")), ""));
+    EXPECT_EQ("", table->StringValue(SQLTableQueryArguments("test_l", SQLWhereArguments("test_r", "never")), ""));
+}
+
+TEST(SQLTable, TestStringValues_MultiColumn) {
+    std::shared_ptr<SQLDatabase> db = std::make_shared<SQLDatabase>();
+
+    EXPECT_NO_THROW({
+        db->TryOpen("", SQLDatabaseOpenType::InMemory, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE);
+    });
+
+    EXPECT_FALSE(db->TableExists("test"));
+
+    SQLTableSchema schema;
+    schema.columns.Add(SQLColumnSchema("test_l", SQLValueType::Text));
+    schema.columns.Add(SQLColumnSchema("test_r", SQLValueType::Text));
+    EXPECT_TRUE(db->CreateTable("test", schema));
+
+    EXPECT_NO_THROW({
+        db->TryRun(SQLStatement("INSERT INTO test (test_l, test_r) values ('a', 'c')"));
+        db->TryRun(SQLStatement("INSERT INTO test (test_l, test_r) values ('b', 'd')"));
+    });
+
+    std::shared_ptr<SQLTable> table = std::make_shared<SQLTable>("test", db);
+    StringArray columnNames;
+    columnNames.Add("test_l");
+    columnNames.Add("test_r");
+    auto values = table->StringValues(SQLTableQueryArguments(columnNames, std::nullopt));
+
+    EXPECT_EQ(4, values.size());
+    EXPECT_TRUE(values.Contains("a"));
+    EXPECT_TRUE(values.Contains("b"));
+    EXPECT_TRUE(values.Contains("c"));
+    EXPECT_TRUE(values.Contains("d"));
 }
 
 TEST(SQLTableTests, TestDeleteRow) {
@@ -116,21 +253,24 @@ TEST(SQLTableTests, TestDeleteRow) {
         db->TryOpen("", SQLDatabaseOpenType::InMemory, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE);
     });
 
-    EXPECT_TRUE(db->CreateTable("test", "(test_l TEXT, test_r TEXT)"));
+    SQLTableSchema schema;
+    schema.columns.Add(SQLColumnSchema("test_l", SQLValueType::Text));
+    schema.columns.Add(SQLColumnSchema("test_r", SQLValueType::Text));
+    EXPECT_TRUE(db->CreateTable("test", schema));
 
     EXPECT_NO_THROW({
-        db->TryRun("INSERT INTO test (test_l, test_r) values ('a', 'one')");
-        db->TryRun("INSERT INTO test (test_l, test_r) values ('b', 'one')");
+        db->TryRun(SQLStatement("INSERT INTO test (test_l, test_r) values ('a', 'one')"));
+        db->TryRun(SQLStatement("INSERT INTO test (test_l, test_r) values ('b', 'one')"));
     });
 
     std::shared_ptr<SQLTable> table = std::make_shared<SQLTable>("test", db);
 
-    auto uniqueStrings = table->SelectUniqueStrings("test_l");
+    auto uniqueStrings = table->UniqueStrings("test_l");
     EXPECT_EQ(2, uniqueStrings.size());
 
     table->DeleteRow("test_l", "a");
 
-    uniqueStrings = table->SelectUniqueStrings("test_l");
+    uniqueStrings = table->UniqueStrings("test_l");
     EXPECT_EQ(1, uniqueStrings.size());
     EXPECT_EQ(String("b"), *uniqueStrings.begin());
 }
@@ -142,7 +282,11 @@ TEST(SQLTableTests, TestDropTable) {
         db->TryOpen("", SQLDatabaseOpenType::InMemory, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE);
     });
 
-    EXPECT_TRUE(db->CreateTable("test", "(test_l TEXT, test_r TEXT)"));
+    SQLTableSchema schema;
+    schema.columns.Add(SQLColumnSchema("test_l", SQLValueType::Text));
+    schema.columns.Add(SQLColumnSchema("test_r", SQLValueType::Text));
+    EXPECT_TRUE(db->CreateTable("test", schema));
+
     std::shared_ptr<SQLTable> table = std::make_shared<SQLTable>("test", db);
 
     EXPECT_TRUE(db->TableExists("test"));
@@ -157,15 +301,18 @@ TEST(SQLTableTests, TestCellExists) {
         db->TryOpen("", SQLDatabaseOpenType::InMemory, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE);
     });
 
-    EXPECT_TRUE(db->CreateTable("test", "(test_l INTEGER, test_r TEXT)"));
+    SQLTableSchema schema;
+    schema.columns.Add(SQLColumnSchema("test_l", SQLValueType::Int));
+    schema.columns.Add(SQLColumnSchema("test_r", SQLValueType::Text));
+    EXPECT_TRUE(db->CreateTable("test", schema));
 
     EXPECT_NO_THROW({
-        db->TryRun("INSERT INTO test (test_l, test_r) values (2, 'two')");
+        db->TryRun(SQLStatement("INSERT INTO test (test_l, test_r) values (2, 'two')"));
     });
 
     std::shared_ptr<SQLTable> table = std::make_shared<SQLTable>("test", db);
-    EXPECT_TRUE(table->CellExists(SQLTableQuery("test_l", SQLWhereArgument("test_r", "two"))));
-    EXPECT_FALSE(table->CellExists(SQLTableQuery("test_l", SQLWhereArgument("test_r", "three"))));
+    EXPECT_TRUE(table->CellExists(SQLTableQueryArguments("test_l", SQLWhereArguments("test_r", "two"))));
+    EXPECT_FALSE(table->CellExists(SQLTableQueryArguments("test_l", SQLWhereArguments("test_r", "three"))));
 }
 
 TEST(SQLTableTests, TestInsertRow) {
@@ -179,12 +326,12 @@ TEST(SQLTableTests, TestInsertRow) {
 
     std::shared_ptr<SQLTable> table = std::make_shared<SQLTable>("test", db);
 
-    auto intValues = table->IntValues(SQLTableQuery("test_l", std::nullopt));
+    auto intValues = table->IntValues(SQLTableQueryArguments("test_l", std::nullopt));
     EXPECT_EQ(0, intValues.size());
 
     table->InsertRow();
 
-    intValues = table->IntValues(SQLTableQuery("test_l", std::nullopt));
+    intValues = table->IntValues(SQLTableQueryArguments("test_l", std::nullopt));
     EXPECT_EQ(1, intValues.size());
     EXPECT_EQ(0, intValues[0]);
 }
@@ -196,18 +343,21 @@ TEST(SQLTableTests, TestSetValueUpdate) {
         db->TryOpen("", SQLDatabaseOpenType::InMemory, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE);
     });
 
-    EXPECT_TRUE(db->CreateTable("test", "(test_l INTEGER DEFAULT 0, test_r TEXT DEFAULT 'a')"));
+    SQLTableSchema schema;
+    schema.columns.Add(SQLColumnSchema("test_l", SQLValueType::Int, std::make_optional("0")));
+    schema.columns.Add(SQLColumnSchema("test_r", SQLValueType::Text, std::make_optional("'a'")));
+    EXPECT_TRUE(db->CreateTable("test", schema));
 
     std::shared_ptr<SQLTable> table = std::make_shared<SQLTable>("test", db);
     table->InsertRow();
 
-    auto intValues = table->IntValues(SQLTableQuery("test_l", SQLWhereArgument("test_r", "a")));
+    auto intValues = table->IntValues(SQLTableQueryArguments("test_l", SQLWhereArguments("test_r", "a")));
     EXPECT_EQ(1, intValues.size());
     EXPECT_EQ(0, intValues[0]);
 
-    table->SetValue(SQLTableTypeMutation<String>("test_l", SQLWhereArgument("test_r", "a"), "3"), SQLTable::SetValueType::Update);
+    table->SetValue(SQLTableMutateArguments("test_l", SQLWhereArguments("test_r", "a"), SQLValue(SQLValueType::Int, "3")), SQLTable::SetValueType::Update);
 
-    intValues = table->IntValues(SQLTableQuery("test_l", SQLWhereArgument("test_r", "a")));
+    intValues = table->IntValues(SQLTableQueryArguments("test_l", SQLWhereArguments("test_r", "a")));
     EXPECT_EQ(1, intValues.size());
     EXPECT_EQ(3, intValues[0]);
 }
@@ -219,13 +369,16 @@ TEST(SQLTableTests, TestSetValueInsert) {
         db->TryOpen("", SQLDatabaseOpenType::InMemory, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE);
     });
 
-    EXPECT_TRUE(db->CreateTable("test", "(test_l INTEGER DEFAULT 0, test_r TEXT DEFAULT 'a')"));
+    SQLTableSchema schema;
+    schema.columns.Add(SQLColumnSchema("test_l", SQLValueType::Int, std::make_optional("0")));
+    schema.columns.Add(SQLColumnSchema("test_r", SQLValueType::Text, std::make_optional("'a'")));
+    EXPECT_TRUE(db->CreateTable("test", schema));
 
     std::shared_ptr<SQLTable> table = std::make_shared<SQLTable>("test", db);
 
-    table->SetValue(SQLTableTypeMutation<String>("test_l", std::nullopt, "3"), SQLTable::SetValueType::Insert);
+    table->SetValue(SQLTableMutateArguments("test_l", std::nullopt, SQLValue(SQLValueType::Int, "3")), SQLTable::SetValueType::Insert);
 
-    auto intValues = table->IntValues(SQLTableQuery("test_l", SQLWhereArgument("test_r", "a")));
+    auto intValues = table->IntValues(SQLTableQueryArguments("test_l", SQLWhereArguments("test_r", "a")));
     EXPECT_EQ(1, intValues.size());
     EXPECT_EQ(3, intValues[0]);
 }

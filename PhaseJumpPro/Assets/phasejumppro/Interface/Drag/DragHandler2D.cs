@@ -49,10 +49,14 @@ namespace PJ
         {
             var internalOffset = dragStartPosition.Position - dragStartInputPosition.Position;
             transform.position = inputPosition.Position + internalOffset;
+
+            Debug.Log("Internal Offset: " + internalOffset.ToString() + " transform.position: " + transform.position.ToString());
         }
 
         public override void OnDragEnd()
         {
+            base.OnDragEnd();
+
             Drop();
         }
     }

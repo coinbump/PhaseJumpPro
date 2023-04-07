@@ -4,52 +4,52 @@ using NUnit.Framework;
 
 namespace PJ
 {
-	public class UnitTests_SignalReceptor
-	{
-		private class TestReceptor : SomeReceptor<string>
-		{
-			public int matchCount;
+    public class UnitTests_SignalReceptor
+    {
+        private class TestReceptor : SomeReceptor<string>
+        {
+            public int matchCount;
 
-			public TestReceptor()
-			{
-				AddLockForKey("a");
-				AddLockForKey("c");
-			}
+            public TestReceptor()
+            {
+                AddLockForKey("a");
+                AddLockForKey("c");
+            }
 
-			protected override void OnSignalMatch(Signal<string> signal)
-			{
-				matchCount++;
-			}
-		}
+            protected override void OnSignalMatch(Signal<string> signal)
+            {
+                matchCount++;
+            }
+        }
 
-		private class TestSignalMatch : Signal<string>
-		{
-			public TestSignalMatch()
-			{
-				AddKey("a");
-				AddKey("b");
-			}
-		}
+        private class TestSignalMatch : Signal<string>
+        {
+            public TestSignalMatch()
+            {
+                AddKey("a");
+                AddKey("b");
+            }
+        }
 
-		private class TestSignalNoMatch : Signal<string>
-		{
-			public TestSignalNoMatch()
-			{
-				AddKey("d");
-			}
-		}
+        private class TestSignalNoMatch : Signal<string>
+        {
+            public TestSignalNoMatch()
+            {
+                AddKey("d");
+            }
+        }
 
-		[Test]
-		public void UnitTests()
-		{
-			var signal = new TestSignalMatch();
-			var receptor = new TestReceptor();
-			receptor.OnSignal(signal);
-			Assert.AreEqual(1, receptor.matchCount);
+        [Test]
+        public void UnitTests()
+        {
+            var signal = new TestSignalMatch();
+            var receptor = new TestReceptor();
+            receptor.OnSignal(signal);
+            Assert.AreEqual(1, receptor.matchCount);
 
-			var signalNoMatch = new TestSignalNoMatch();
-			receptor.OnSignal(signalNoMatch);
-			Assert.AreEqual(1, receptor.matchCount);
-		}
-	}
+            var signalNoMatch = new TestSignalNoMatch();
+            receptor.OnSignal(signalNoMatch);
+            Assert.AreEqual(1, receptor.matchCount);
+        }
+    }
 }

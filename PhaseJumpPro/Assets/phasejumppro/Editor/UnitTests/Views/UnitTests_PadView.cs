@@ -30,7 +30,7 @@ namespace PJ
 
             childObject.transform.parent = gameObject.transform;
 
-            Assert.AreEqual(18.0f, sut.PreferredWidth(0));
+            Assert.AreEqual(18.0f, sut.PreferredWidthExpanding(0));
         }
 
         [Test]
@@ -47,7 +47,7 @@ namespace PJ
 
             childObject.transform.parent = gameObject.transform;
 
-            Assert.AreEqual(18.0f, sut.PreferredHeight(Vector2.zero));
+            Assert.AreEqual(18.0f, sut.PreferredHeightWithConstraints(Vector2.zero).value);
         }
 
         [Test]
@@ -95,7 +95,7 @@ namespace PJ
 
             sut.TestApplyLayout(new Bounds2D(Vector2.zero, new Vector2(10.0f, 10.0f)));
 
-            Assert.AreEqual(new Bounds2D(new Vector2(3.0f, 2.0f), new Vector2(1.0f, 4.0f)), childSut.Frame);
+            Assert.AreEqual(new Bounds2D(new Vector2(3.0f, 2.0f), new Vector2(0.0f, 0.0f)), childSut.Frame);
         }
 
         [Test]

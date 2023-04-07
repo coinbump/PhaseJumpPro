@@ -6,7 +6,7 @@
 using namespace std;
 using namespace PJ;
 
-TEST(SQLDatabaseTests, Tests) {
+TEST(SQLDatabase, Tests) {
     auto db = std::make_shared<SQLDatabase>();
 
     EXPECT_NO_THROW({
@@ -26,7 +26,7 @@ TEST(SQLDatabaseTests, Tests) {
     EXPECT_TRUE(bankTable->ColumnExists("paid")) << "Column bank missing";
 
     EXPECT_NO_THROW({
-        db->TryRun("insert into bank (game, paid) values (30, 400)");
+        db->TryRun(SQLStatement("INSERT INTO bank (game, paid) values (30, 400)"));
     });
 
     EXPECT_FALSE(bankTable->ColumnExists("invalid_col")) << "Column invalid_col shouldn't exist";
@@ -39,20 +39,20 @@ TEST(SQLDatabaseTests, Tests) {
     db->BeginTransaction();
     EXPECT_TRUE(db->IsInTransaction());
     EXPECT_NO_THROW({
-        db->TryRun("insert into test (test_column) values (1)");
-        db->TryRun("insert into test (test_column) values (2)");
-        db->TryRun("insert into test (test_column) values (1)");
+        db->TryRun(SQLStatement("INSERT INTO test (test_column) values (1)"));
+        db->TryRun(SQLStatement("INSERT INTO test (test_column) values (2)"));
+        db->TryRun(SQLStatement("INSERT INTO test (test_column) values (1)"));
     });
     db->EndTransaction();
     EXPECT_FALSE(db->IsInTransaction());
 
-    auto uniqueStrings = testTable->SelectUniqueStrings("test_column");
-    EXPECT_TRUE(std::find(uniqueStrings.begin(), uniqueStrings.end(), "1") != uniqueStrings.end());
-    EXPECT_TRUE(std::find(uniqueStrings.begin(), uniqueStrings.end(), "2") != uniqueStrings.end());
+    auto uniqueStrings = testTable->UniqueStrings("test_column");
+    EXPECT_TRUE(uniqueStrings.Contains("1"));
+    EXPECT_TRUE(uniqueStrings.Contains("2"));
     EXPECT_EQ(2, uniqueStrings.size());
 
-    auto tableNames = db->SelectTableNames();
+    auto tableNames = db->TableNames();
     EXPECT_EQ(2, tableNames.size());
-    EXPECT_TRUE(std::find(tableNames.begin(), tableNames.end(), "bank") != tableNames.end());
-    EXPECT_TRUE(std::find(tableNames.begin(), tableNames.end(), "test") != tableNames.end());
+    EXPECT_TRUE(tableNames.Contains("bank"));
+    EXPECT_TRUE(tableNames.Contains("test"));
 }

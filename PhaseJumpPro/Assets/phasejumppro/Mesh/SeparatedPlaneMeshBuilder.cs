@@ -34,7 +34,7 @@ namespace PJ
 
             for (int i = 0; i < mesh.vertices.Length; i += 3)
             {
-                var vertexOffset = new Vector3(PJ.RandomUtils.VaryFloat(0, randomOffset.x), PJ.RandomUtils.VaryFloat(0, randomOffset.y), PJ.RandomUtils.VaryFloat(0, randomOffset.z));
+                var vertexOffset = new Vector3(new UnityRandom().VaryFloat(0, randomOffset.x), new UnityRandom().VaryFloat(0, randomOffset.y), new UnityRandom().VaryFloat(0, randomOffset.z));
                 // Debug.Log("Vertex Offset: " + vertexOffset.ToString());
 
                 // Offset each triangle individually

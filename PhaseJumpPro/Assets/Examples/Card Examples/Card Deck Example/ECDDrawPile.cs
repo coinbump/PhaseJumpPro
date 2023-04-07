@@ -45,10 +45,11 @@ public class ECDDrawPile : WorldComponent, IPointerClickHandler
         {
         }
 
-        public override ECDDrawPile.Card New(string id)
-        {
-            return new ECDDrawPile.Card(id);
-        }
+        // TODO: fix this broken example
+        // public override ECDDrawPile.Card New(string id)
+        // {
+        //     return new ECDDrawPile.Card(id);
+        // }
     }
 
     protected override void Awake()
@@ -62,8 +63,8 @@ public class ECDDrawPile : WorldComponent, IPointerClickHandler
         builder.Build(_class, jsonString);
 
         var cardDeck = new CardDeck<Card>(_class);
-        cardDeck.Build();
-        cardDeck.Shuffle();
+        cardDeck.Build(card => true);
+        cardDeck.Shuffle(new UnityRandom());
 
         this.cardDeck = cardDeck;
     }
@@ -160,17 +161,17 @@ public class ECDDrawPile : WorldComponent, IPointerClickHandler
 
             var animationDuration = 0.3f;
 
-            var positionAnimator = new CycleAnimator<Vector3>(
+            var positionAnimator = new Animator<Vector3>(
                 new Vector3Interpolator(cardObject.transform.position, new Vector3(xDest, yDest, transform.position.z + zIndex), new EaseOutSquared()),
-                new(animationDuration, AnimationCycleType.Once),
+                animationDuration,
                 new SetBinding<Vector3>(value => cardObject.transform.position = value)
             );
 
             cardComponent.updatables.Add(positionAnimator);
 
-            var rotateAnimator = new CycleAnimator<Vector3>(
-                new Vector3Interpolator(cardObject.transform.eulerAngles, new Vector3(0, 0, RandomUtils.VaryFloat(0, 20.0f)), new EaseOutSquared()),
-                new(animationDuration, AnimationCycleType.Once),
+            var rotateAnimator = new Animator<Vector3>(
+                new Vector3Interpolator(cardObject.transform.eulerAngles, new Vector3(0, 0, new UnityRandom().VaryFloat(0, 20.0f)), new EaseOutSquared()),
+                animationDuration,
                 new SetBinding<Vector3>(value => cardObject.transform.eulerAngles = value)
             );
 

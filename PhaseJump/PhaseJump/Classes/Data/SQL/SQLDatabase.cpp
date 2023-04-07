@@ -1,6 +1,7 @@
 #include "SQLDatabase.h"
 #include "SQLUtils.h"
 #include "SQLTypes.h"
+#include "StringArray.h"
 
 using namespace PJ;
 
@@ -64,17 +65,17 @@ bool SQLDatabase::TryOpen(FilePath filePath, SQLDatabaseOpenType openType, int f
 
  https://www.sqlite.org/c3ref/prepare.html
  */
-int SQLDatabase::Prepare(SQLStatement& statement)
+int SQLDatabase::Prepare(SQLCommand& command)
 {
-    if (statement.value.length() == 0) {
+    if (command.statement.value.length() == 0) {
         PJLog("ERROR. Statement is empty");
         return SQLITE_MISUSE;
     }
 
-    int	result = sqlite3_prepare_v2(db, statement.value.c_str(), -1, &statement.sqliteStatement, NULL);
+    int	result = sqlite3_prepare_v2(db, command.statement.value.c_str(), -1, &command.sqliteStatement, NULL);
 
 #ifdef __SQL_DEBUG__
-	PJLog("SQL. Prepare %s, RESULT: %d", statement.value.c_str(), result);
+	PJLog("SQL. Prepare %s, RESULT: %d", command.statement.value.c_str(), result);
 #endif
 
 	return result;
@@ -85,14 +86,14 @@ int SQLDatabase::Prepare(SQLStatement& statement)
 
  https://www.sqlite.org/c3ref/step.html
  */
-int SQLDatabase::Step(SQLStatement& statement)
+int SQLDatabase::Step(SQLCommand& command)
 {
-    if (!statement.IsPrepared()) {
+    if (!command.IsPrepared()) {
         PJLog("ERROR. Statement must be prepared before Step");
         return SQLITE_MISUSE;
     }
 
-	int	result = sqlite3_step(statement.sqliteStatement);
+	int	result = sqlite3_step(command.sqliteStatement);
 
 #ifdef __SQL_DEBUG__
 	PJLog("SQL. Step RESULT: %d", result);
@@ -101,15 +102,16 @@ int SQLDatabase::Step(SQLStatement& statement)
 	return result;
 }
 
-void SQLDatabase::TryRun(String command)
+void SQLDatabase::TryRun(SQLStatement statement)
 {
+    SQLCommand command(statement);
+    
     // EXAMPLE: "insert into bank (game, paid) values (30, 400)"
-    SQLStatement statement(command);
-    if (SQLITE_OK == Prepare(statement)) {
+    if (SQLITE_OK == Prepare(command)) {
         bool isDone = false;
 
         while (!isDone) {
-            auto result = Step(statement);
+            auto result = Step(command);
 
             switch (result) {
                 case SQLITE_DONE:
@@ -132,11 +134,13 @@ bool SQLDatabase::TableExists(String tableName)
     bool result = false;
 
     SQLStatement statement("SELECT name FROM sqlite_master WHERE type='table' AND name=");
-    statement.AppendValue(tableName);
+    statement.Append(SQLValue(SQLValueType::Text, tableName));
 
-    if (SQLITE_OK == Prepare(statement)) {
+    SQLCommand command(statement);
+    
+    if (SQLITE_OK == Prepare(command)) {
         // If table exists, a row is returned.
-        if (SQLITE_ROW == Step(statement)) {
+        if (SQLITE_ROW == Step(command)) {
             result = true;
         }
     }
@@ -144,16 +148,17 @@ bool SQLDatabase::TableExists(String tableName)
     return result;
 }
 
-Array<String> SQLDatabase::SelectTableNames()
+Array<String> SQLDatabase::TableNames()
 {
     Array<String> result;
 
     SQLStatement statement("SELECT name FROM sqlite_master WHERE type='table'");
+    SQLCommand command(statement);
 
-    if (SQLITE_OK == Prepare(statement)) {
+    if (SQLITE_OK == Prepare(command)) {
         // If table exists, a row is returned.
-        while (SQLITE_ROW == Step(statement)) {
-            String tableName((const char*)sqlite3_column_text(statement.sqliteStatement, 0));
+        while (SQLITE_ROW == Step(command)) {
+            String tableName((const char*)sqlite3_column_text(command.sqliteStatement, 0));
 
             if (tableName == "sqlite_autoindex") {
                 continue;    // Skip the index tables.
@@ -165,15 +170,60 @@ Array<String> SQLDatabase::SelectTableNames()
     return result;
 }
 
-bool SQLDatabase::CreateTable(String tableName, String params)
+bool SQLDatabase::CreateTable(String tableName, SQLTableSchema schema)
 {
+    String paramsString = " (";
+    StringArray paramList;
+    for (auto column : schema.columns) {
+        String pString;
+        String name = column.name;
+        String sqlValueType = "ANY";
+
+        switch (column.valueType) {
+            case SQLValueType::Text:
+                sqlValueType = "TEXT";
+                break;
+            case SQLValueType::Real:
+                sqlValueType = "REAL";
+                break;
+            case SQLValueType::Int:
+                sqlValueType = "INTEGER";
+                break;
+            case SQLValueType::Blob:
+                sqlValueType = "BLOB";
+                break;
+            case SQLValueType::Any:
+                sqlValueType = "ANY";
+                break;
+        }
+
+        pString.append("[");
+        pString.append(name);
+        pString.append("] ");
+        pString.append(sqlValueType);
+
+        if (column.defaultValue) {
+            pString.append(" DEFAULT " + column.defaultValue.value());
+        }
+
+        paramList.Add(pString);
+    }
+    paramsString.append(paramList.Joined(", "));
+    paramsString += ")";
+
+    return CreateTable(tableName, paramsString);
+}
+
+bool SQLDatabase::CreateTable(String tableName, String paramsString) {
     // EXAMPLE: "create table bank (game int, paid int)"
     SQLStatement statement("CREATE TABLE IF NOT EXISTS ");
     statement.AppendIdentifier(tableName);
-    statement.AppendString(" " + params);
+    statement.AppendString(" " + paramsString);
 
-    if (SQLITE_OK == Prepare(statement)) {
-        if (SQLITE_DONE == Step(statement)) {
+    SQLCommand command(statement);
+
+    if (SQLITE_OK == Prepare(command)) {
+        if (SQLITE_DONE == Step(command)) {
             return true;
         }
     }
