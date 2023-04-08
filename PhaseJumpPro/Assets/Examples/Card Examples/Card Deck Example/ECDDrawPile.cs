@@ -45,11 +45,12 @@ public class ECDDrawPile : WorldComponent, IPointerClickHandler
         {
         }
 
-        // TODO: fix this broken example
-        // public override ECDDrawPile.Card New(string id)
-        // {
-        //     return new ECDDrawPile.Card(id);
-        // }
+        public override ECDDrawPile.Card New(string id)
+        {
+            var result = cardRegistry.New(id);
+            result.id = id;
+            return result;
+        }
     }
 
     protected override void Awake()
@@ -60,7 +61,20 @@ public class ECDDrawPile : WorldComponent, IPointerClickHandler
         var jsonString = cardDeckText.ToString();
         var builder = new CardDeckClassCardsBuilder();
         var _class = new CardDeckClass();
+
+        // Convert the JSON descriptions to card info objects
         builder.Build(_class, jsonString);
+
+        // Register factories for the cards
+        foreach ((var key, var cardInfo) in _class.cardInfos)
+        {
+            _class.cardRegistry.Add(cardInfo.id, new Factory<Card>(() =>
+            {
+                var result = new Card(cardInfo.id);
+                result.tags = cardInfo.tags;
+                return result;
+            }));
+        }
 
         var cardDeck = new CardDeck<Card>(_class);
         cardDeck.Build(card => true);

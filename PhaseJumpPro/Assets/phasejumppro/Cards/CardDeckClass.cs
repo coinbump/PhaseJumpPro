@@ -53,7 +53,7 @@ namespace PJ
         {
         }
 
-        public CardType New(string id)
+        public virtual CardType New(string id)
         {
             return cardRegistry.New(id);
         }
