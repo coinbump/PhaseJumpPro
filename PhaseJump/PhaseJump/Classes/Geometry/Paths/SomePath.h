@@ -1,8 +1,8 @@
 #ifndef PJSOMEPATH_H
 #define PJSOMEPATH_H
 
-#include "Geometry/Vector3.h"
-#include "Animation/SomeAnimatedValue.h"
+#include "Vector3.h"
+#include "SomeAnimatedValue.h"
 
 /*
  RATING: 5 stars

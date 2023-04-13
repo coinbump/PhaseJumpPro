@@ -40,6 +40,10 @@
 #include "StandardRandom.h"
 #include "Weight.h"
 #include "WeightedRandomChoice.h"
+#include "LinePathLayout.h"
+#include "BezierPathLayout.h"
+#include "CirclePathLayout2D.h"
+#include "SDLImGuiRenderContext.h"
 
 #include <memory>
 

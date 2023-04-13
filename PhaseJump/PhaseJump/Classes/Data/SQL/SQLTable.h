@@ -7,7 +7,7 @@
 #include "SQLTableQueryArguments.h"
 #include "SQLTableMutateArguments.h"
 #include "SQLRowValues.h"
-#include "Array.h"
+#include "VectorList.h"
 #include "_Set.h"
 #include <vector>
 #include <set>
@@ -22,7 +22,7 @@
 namespace PJ
 {
     class SQLDatabase;
-    class StringArray;
+    class StringVectorList;
     class Tags;
 
     using SQLDatabaseSharedPtr = std::shared_ptr<SQLDatabase>;
@@ -48,13 +48,13 @@ namespace PJ
 
         SQLTable(String name, SQLDatabaseSharedPtr db);
 
-        Array<SQLRowValues> RowValuesList(SQLTableQueryArguments query);
+        VectorList<SQLRowValues> RowValuesList(SQLTableQueryArguments query);
 
-        Array<int> IntValues(SQLTableQueryArguments query);
+        VectorList<int> IntValues(SQLTableQueryArguments query);
         int IntValue(SQLTableQueryArguments query, int defaultValue);
-        Array<float> FloatValues(SQLTableQueryArguments query);
+        VectorList<float> FloatValues(SQLTableQueryArguments query);
         float FloatValue(SQLTableQueryArguments query, float defaultValue);
-        Array<String> StringValues(SQLTableQueryArguments query);
+        VectorList<String> StringValues(SQLTableQueryArguments query);
         String StringValue(SQLTableQueryArguments query, String defaultValue);
 
         bool CellExists(SQLTableQueryArguments query);

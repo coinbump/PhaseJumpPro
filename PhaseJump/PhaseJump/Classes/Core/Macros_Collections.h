@@ -1,6 +1,9 @@
 #ifndef PJMACROS_COLLECTIONS_H
 #define PJMACROS_COLLECTIONS_H
 
+#include <algorithm>
+#include <functional>
+
 #define COLLECTION_METHODS(Type) \
 size_t Count() const { return this->size(); } \
 bool IsEmpty() const { return Count() <= 0; } \

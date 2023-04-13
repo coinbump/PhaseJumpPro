@@ -4,6 +4,7 @@
 #include "SomeVector.h"
 #include "FloatMath.h"
 #include "IntMath.h"
+#include "Macros_Vectors.h"
 
 /*
  RATING: 5 stars
@@ -21,7 +22,8 @@ namespace PJ {
             (*this)[1] = y;
         }
         Vector2(Base const& base) {
-            (*this) = base;
+            (*this)[0] = base[0];
+            (*this)[1] = base[1];
         }
 
         float x() const { return (*this)[0]; }
@@ -35,7 +37,11 @@ namespace PJ {
         static Vector2 const right;
         static Vector2 const up;
         static Vector2 const zero;
+
+        VECTOR_METHODS(Vector2, 2);
     };
+
+    VECTOR_EXTERNALMETHODS(Vector2, float);
 
     class Vector2Int : public SomeVector<IntMath, 2> {
     public:
@@ -51,7 +57,11 @@ namespace PJ {
         int y() const { return (*this)[1]; }
         int& x() { return (*this)[0]; }
         int& y() { return (*this)[1]; }
+
+        VECTOR_METHODS(Vector2Int, 2);
     };
+
+    VECTOR_EXTERNALMETHODS(Vector2Int, int);
 
     // Convenience names
     using Vec2 = Vector2;

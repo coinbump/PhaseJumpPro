@@ -10,7 +10,7 @@ namespace Vector2Tests {
 
 using namespace Vector2Tests;
 
-TEST(Vector2, Init) {
+TEST(Vector2, TestInit) {
     Vector2 sut;
     EXPECT_EQ(0, sut[0]);
     EXPECT_EQ(0, sut[1]);
@@ -20,7 +20,7 @@ TEST(Vector2, Init) {
     EXPECT_EQ(5, sut[1]);
 }
 
-TEST(Vector2, Operators) {
+TEST(Vector2, TestOperators) {
     Vector2 sut(2, 2);
     EXPECT_EQ(Vector2(10, 10), sut * 5.0f);
     EXPECT_EQ(Vector2(1, 1), sut / 2.0f);
@@ -49,7 +49,7 @@ TEST(Vector2, Operators) {
     EXPECT_EQ(Vector2(2, 2), sut);
 }
 
-TEST(Vector2, Magnitude) {
+TEST(Vector2, TestMagnitude) {
     Vector2 sut(0, 100);
     EXPECT_EQ(100, sut.Magnitude());
 
@@ -60,8 +60,14 @@ TEST(Vector2, Magnitude) {
     EXPECT_NEAR(8.0f, sut.Magnitude(false), .001f);
 }
 
-TEST(Vector2, Normalize) {
+TEST(Vector2, TestNormalize) {
     Vector2 sut(0, 100);
     sut.Normalize();
     EXPECT_EQ(Vector2(0, 1), sut);
+}
+
+TEST(Vector2, TestRightHandOperators) {
+    Vector2 sut(4, 5);
+    Vector2 result = 10.0f * sut;
+    EXPECT_EQ(Vector2(40, 50), result);
 }

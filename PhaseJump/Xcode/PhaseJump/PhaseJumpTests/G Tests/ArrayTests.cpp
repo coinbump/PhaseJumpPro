@@ -1,13 +1,13 @@
 #include "gtest/gtest.h"
 
-#include "Array.h"
+#include "VectorList.h"
 #include "_String.h"
 
 using namespace std;
 using namespace PJ;
 
-TEST(Array, Remove) {
-    Array<String> sut;
+TEST(VectorList, Remove) {
+    VectorList<String> sut;
 
     sut.Add("test");
     EXPECT_EQ(1, sut.size());

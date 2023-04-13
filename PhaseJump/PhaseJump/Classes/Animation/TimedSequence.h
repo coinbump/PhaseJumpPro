@@ -2,7 +2,7 @@
 #define PJTIMEDSEQUENCE_H
 
 #include "Updatable.h"
-#include "Array.h"
+#include "VectorList.h"
 #include "SomeTimed.h"
 
 /*
@@ -18,7 +18,7 @@ namespace PJ
     class TimedSequence : public Updatable
     {
     protected:
-        Array<std::shared_ptr<SomeTimed>> sequence;
+        VectorList<std::shared_ptr<SomeTimed>> sequence;
         int index = 0;
         bool isFinished = false;
 

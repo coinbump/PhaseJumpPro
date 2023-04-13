@@ -26,7 +26,7 @@ namespace PJ
         {
             Base::Awake();
 
-            rigidbody = GetComponent<RigidBody2D>();
+            rigidbody = TypeComponent<RigidBody2D>();
         }
 
     public:

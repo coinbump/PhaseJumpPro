@@ -1,7 +1,7 @@
 #ifndef PJFIXEDNORMALRANDOM_H
 #define PJFIXEDNORMALRANDOM_H
 
-#include "Array.h"
+#include "VectorList.h"
 
 /*
  RATING: 5 stars
@@ -16,7 +16,7 @@ namespace PJ
     class FixedRandom : public SomeRandom
     {
     public:
-        Array<float> values;
+        VectorList<float> values;
 
     protected:
         int valueIndex = 0;

@@ -1,7 +1,7 @@
 #include "SQLDatabase.h"
 #include "SQLUtils.h"
 #include "SQLTypes.h"
-#include "StringArray.h"
+#include "StringVectorList.h"
 
 using namespace PJ;
 
@@ -148,9 +148,9 @@ bool SQLDatabase::TableExists(String tableName)
     return result;
 }
 
-Array<String> SQLDatabase::TableNames()
+VectorList<String> SQLDatabase::TableNames()
 {
-    Array<String> result;
+    VectorList<String> result;
 
     SQLStatement statement("SELECT name FROM sqlite_master WHERE type='table'");
     SQLCommand command(statement);
@@ -173,7 +173,7 @@ Array<String> SQLDatabase::TableNames()
 bool SQLDatabase::CreateTable(String tableName, SQLTableSchema schema)
 {
     String paramsString = " (";
-    StringArray paramList;
+    StringVectorList paramList;
     for (auto column : schema.columns) {
         String pString;
         String name = column.name;

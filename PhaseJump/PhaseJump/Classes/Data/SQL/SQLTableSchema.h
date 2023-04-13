@@ -1,7 +1,7 @@
 #ifndef SQLTABLESCHEMA_H
 #define SQLTABLESCHEMA_H
 
-#include "Array.h"
+#include "VectorList.h"
 #include <optional>
 
 /*
@@ -27,7 +27,7 @@ namespace PJ {
     /// Specifies how a table will be built
     struct SQLTableSchema
     {
-        Array<SQLColumnSchema> columns;
+        VectorList<SQLColumnSchema> columns;
     };
 }
 

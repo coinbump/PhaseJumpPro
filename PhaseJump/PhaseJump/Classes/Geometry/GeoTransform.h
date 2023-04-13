@@ -2,6 +2,7 @@
 #define PJGEOTRANSFORM_H
 
 #include "Vector3.h"
+#include "Angle.h"
 
 namespace PJ
 {
@@ -26,6 +27,8 @@ namespace PJ
         Vector3 Position() const { return position; }
         void SetLocalPosition(Vector3 position) { this->position = position; }
         void SetPosition(Vector3 position) { this->position = position; }
+
+        void SetRotation(Angle rotation) { this->rotation = Vector3(0, 0, -rotation.Degrees()); }
 
         static GeoTransform const defaultTransform;
     };

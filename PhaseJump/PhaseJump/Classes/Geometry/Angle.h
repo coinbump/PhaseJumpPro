@@ -2,8 +2,8 @@
 #define PJANGLE_H
 
 #include "Vector2.h"
-#include "Core/FloatMath.h"
-#include "Core/Macros_Operators.h"
+#include "FloatMath.h"
+#include "Macros_Operators.h"
 #include <math.h>
 
 /*

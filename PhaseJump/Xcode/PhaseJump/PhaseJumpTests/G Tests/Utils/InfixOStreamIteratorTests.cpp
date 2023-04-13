@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
 
 #include "InfixOStreamIterator.h"
-#include "Array.h"
+#include "VectorList.h"
 #include "_String.h"
 
 using namespace std;

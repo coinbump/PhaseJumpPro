@@ -6,7 +6,7 @@
 
 /*
  RATING: 5 stars
- Simple path
+ Has unit tests
  CODE REVIEW: 12/7/22
  */
 namespace PJ

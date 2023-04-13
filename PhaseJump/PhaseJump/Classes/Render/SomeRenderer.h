@@ -9,7 +9,18 @@ namespace PJ
 {
     class SomeRenderer : public WorldComponent {
     public:
-        virtual void RenderInto(std::shared_ptr<SomeRenderContext> renderContext) = 0;
+        virtual void RenderInto(RenderIntoModel model) = 0;
+    };
+
+    /// Render based on a function (used for imGui)
+    class FuncRenderer : public SomeRenderer {
+    public:
+        std::function<void(RenderIntoModel)> render;
+
+        FuncRenderer(std::function<void(RenderIntoModel)> render) : render(render) {
+        }
+
+        void RenderInto(RenderIntoModel model) override;
     };
 }
 

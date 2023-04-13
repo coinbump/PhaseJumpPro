@@ -5,11 +5,12 @@
 #include "SDLLoadTextureOperation.h"
 #include "SDLRenderContext.h"
 #include "SDLColorBuilder.h"
+#include "RenderIntoModel.h"
 #include <memory>
 #include <SDL2/SDL_render.h>
 #include <iostream>
 
-#include "Array.h"
+#include "VectorList.h"
 
 namespace PJ {
     struct Mesh
@@ -28,26 +29,26 @@ namespace PJ {
         {
         }
         
-        void RenderInto(std::shared_ptr<SomeRenderContext> renderContext) override {
+        void RenderInto(RenderIntoModel model) override {
             if (owner.expired() || nullptr == texture) { return; }
 
             auto node = owner.lock();
 
-            auto sdlRenderContext = std::dynamic_pointer_cast<SDLRenderContext>(renderContext);
+            auto sdlRenderContext = std::dynamic_pointer_cast<SDLRenderContext>(model.renderContext);
             if (!sdlRenderContext) { return; }
 
             auto renderer = sdlRenderContext->renderer;
 
             SDL_FRect position;
-            position.x = node->transform->position.x();
-            position.y = node->transform->position.y();
+            position.x = model.position.x();
+            position.y = model.position.y();
             position.w = texture->size.x();
             position.h = texture->size.y();
             SDL_RenderCopyF(renderer, texture->texture, nullptr, &position);
 
             // TODO: temp code for testing mesh renders below
-//            Array<SDL_Vertex> vertices;
-//            Array<int> triangles;
+//            VectorList<SDL_Vertex> vertices;
+//            VectorList<int> triangles;
 //
 //            Mesh mesh;
 //            mesh.colors.Add(Color::redColor);

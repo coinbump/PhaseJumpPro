@@ -10,13 +10,37 @@
 #include <memory>
 
 namespace PJ {
+    class SDLEventPoller : public SomeUIEventPoller {
+    public:
+        Status PollUIEvents() override {
+            SDL_Event event;
+            while (SDL_PollEvent(&event)) {
+                if (event.type == SDL_QUIT
+                    || (event.type == SDL_WINDOWEVENT
+                        && event.window.event == SDL_WINDOWEVENT_CLOSE)) {
+                    // && event.window.windowID == SDL_GetWindowID(*window))) {
+                    return Status::Done;
+                }
+            }
+
+            return Status::Running;
+        }
+    };
+
     class SDLWorld : public World {
     public:
         using Base = World;
 
     protected:
         bool isDone = false;
+        
+    public:
+        SDLWorld(std::shared_ptr<SomeRenderContext> renderContext) {
+            this->renderContext = renderContext;
+            this->uiEventPoller = std::make_shared<SDLEventPoller>();
+        }
 
+    protected:
         void GoInternal() override {
             Base::GoInternal();
 
@@ -26,38 +50,16 @@ namespace PJ {
             SDL_Quit();
         }
 
-    public:
-        SDLWorld(std::shared_ptr<SomeRenderContext> renderContext) {
-            this->renderContext = renderContext;
-        }
-
         void mainLoop()
         {
             if (!renderContext) { return; }
 
             // TODO: temp code
             // TODO: dispatch to event system
-            SDL_Event event;
-            while (SDL_PollEvent(&event)) {
-                if (event.type == SDL_QUIT || event.type == SDL_KEYDOWN) {
-                    isDone = true;
-                }
-            }
+            auto status = uiEventPoller->PollUIEvents();
+            isDone = status == SomeUIEventPoller::Status::Done;
 
-            renderContext->Bind();
-            renderContext->Clear();
-
-            auto graph = root->CollectGraph();
-            for (auto node : graph) {
-                auto worldNode = std::dynamic_pointer_cast<WorldNode>(node);
-                for (auto component : worldNode->Components()) {
-                    auto renderer = std::dynamic_pointer_cast<SomeRenderer>(component);
-                    if (!renderer) { continue; }
-                    renderer->RenderInto(renderContext);
-                }
-            }
-
-            renderContext->Present();
+            Render();
         }
     };
 }

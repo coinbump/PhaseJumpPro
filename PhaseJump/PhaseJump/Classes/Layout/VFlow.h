@@ -25,7 +25,7 @@ namespace PJ
 
         Vector3 Size() const override
         {
-            return Vector3(0, spacing * (ChildNodes()->Count() - 1), 0);
+            return Vector3(0, spacing * (ChildNodes().Count() - 1), 0);
         }
 
         void ApplyLayout() override
@@ -34,7 +34,7 @@ namespace PJ
             auto position = firstPos;
 
             auto childNodes = ChildNodes();
-            for (auto child : (*childNodes))
+            for (auto child : childNodes)
             {
                 child->transform->SetLocalPosition(Vector3(0, position, child->transform->LocalPosition().z()));
                 position += spacing * Vector2::down.y();

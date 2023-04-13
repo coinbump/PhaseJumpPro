@@ -23,8 +23,8 @@ using namespace PJ;
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
     // A simple test of an SDL window
-//    SDLFoo();
-
+    SDLFoo();
+    
     SQLDatabase db;
 
     NSString* libraryPath;

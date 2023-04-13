@@ -3,7 +3,7 @@
 
 #include "Core.h"
 #include "Updatable.h"
-#include "Array.h"
+#include "VectorList.h"
 #include "List.h"
 #include "_Set.h"
 #include "_String.h"
@@ -34,8 +34,8 @@ namespace PJ
         using NodeReference = SomeReference<Node>;
         using NodeReferenceSharedPtr = std::shared_ptr<SomeReference<Node>>;
         using NodeSet = Set<NodeSharedPtr>;
-        using WeakNodeArray = Array<NodeWeakPtr>;
-        using NodeArray = Array<NodeSharedPtr>;
+        using WeakNodeVectorList = VectorList<NodeWeakPtr>;
+        using NodeVectorList = VectorList<NodeSharedPtr>;
 
         struct Edge
         {
@@ -50,21 +50,22 @@ namespace PJ
 
         using EdgeSharedPtr = std::shared_ptr<Edge>;
         using EdgePtr = EdgeSharedPtr const&;
-        using EdgeArray = Array<EdgeSharedPtr>;
+        using EdgeVectorList = VectorList<EdgeSharedPtr>;
 
         String id;
 
         virtual ~SomeGraphNode() {}
 
     protected:
-        EdgeArray edges;
-        WeakNodeArray fromNodes;
+        EdgeVectorList edges;
+        WeakNodeVectorList fromNodes;
 
     public:
-        EdgeArray& Edges() { return edges; }
-        EdgeArray const& Edges() const { return edges; }
-        WeakNodeArray& FromNodes() { return fromNodes; }
-        WeakNodeArray const& FromNodes() const { return fromNodes; }
+        EdgeVectorList& Edges() { return edges; }
+        EdgeVectorList const& Edges() const { return edges; }
+        std::size_t EdgeCount() { return edges.size(); }
+        WeakNodeVectorList& FromNodes() { return fromNodes; }
+        WeakNodeVectorList const& FromNodes() const { return fromNodes; }
         String Id() const { return id; }
 
         SomeGraphNode() {}
@@ -114,7 +115,7 @@ namespace PJ
 
         void Clear()
         {
-            auto iterEdges = EdgeArray(edges);
+            auto iterEdges = EdgeVectorList(edges);
             for (auto edge : iterEdges)
             {
                 RemoveEdge(edge);
@@ -141,11 +142,11 @@ namespace PJ
         /// Collects depth-first ordered graph
         /// NOTE: may not work as expected when loops exist in the graph
         /// </summary>
-        NodeArray CollectDepthFirstGraph()
+        NodeVectorList CollectDepthFirstGraph()
         {
             auto fromNode = std::static_pointer_cast<Node>(this->shared_from_this());
 
-            NodeArray result;
+            NodeVectorList result;
             result.Add(fromNode);
 
             NodeSet searchedNodes;
@@ -159,11 +160,11 @@ namespace PJ
         /// Collects breadth-first ordered graph
         /// NOTE: may not work as expected when loops exist in the graph
         /// </summary>
-        NodeArray CollectBreadthFirstGraph()
+        NodeVectorList CollectBreadthFirstGraph()
         {
             auto fromNode = std::static_pointer_cast<Node>(this->shared_from_this());
 
-            NodeArray result;
+            NodeVectorList result;
             result.Add(fromNode);
 
             NodeSet searchedNodes;
@@ -203,7 +204,7 @@ namespace PJ
             return nodes;
         }
 
-        void CollectBreadthFirstChildren(NodeArray& nodes, NodeSharedPtr fromNode, NodeSet& searchedNodes, NodeSet& allNodes)
+        void CollectBreadthFirstChildren(NodeVectorList& nodes, NodeSharedPtr fromNode, NodeSet& searchedNodes, NodeSet& allNodes)
         {
             for (auto edge : fromNode->Edges())
             {
@@ -234,7 +235,7 @@ namespace PJ
             }
         }
 
-        void CollectDepthFirstChildren(NodeArray& nodes, NodeSharedPtr fromNode, NodeSet& searchedNodes)
+        void CollectDepthFirstChildren(NodeVectorList& nodes, NodeSharedPtr fromNode, NodeSet& searchedNodes)
         {
             if (NULL == fromNode) { return; }
 

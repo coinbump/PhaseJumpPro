@@ -33,7 +33,7 @@ namespace PJ
 
     struct StateMachineEdgeModel
     {
-        using InputList = List<String>;
+        using InputList = VectorList<String>;
 
         /// <summary>
         /// Inputs that cause a transition to the next state
@@ -54,7 +54,7 @@ namespace PJ
     public:
         using EdgeModel = StateMachineEdgeModel;
         using Base = CyclicGraph<StateMachineEdgeModel>;
-        using InputList = List<String>;
+        using InputList = VectorList<String>;
 
         class Node : public CyclicGraphNode<EdgeModel>
         {

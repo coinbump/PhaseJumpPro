@@ -19,21 +19,25 @@ namespace PJ {
         std::shared_ptr<GeoTransform> Transform() const;
 
         template <class T>
-        std::shared_ptr<T> GetComponent() const
+        std::shared_ptr<T> TypeComponent() const
         {
             if (owner.expired()) { return nullptr; }
-            return owner.lock()->GetComponent<T>();
+            return owner.lock()->TypeComponent<T>();
         }
 
         void DestroyOwner(float afterSeconds = 0);
 
-        std::shared_ptr<List<std::shared_ptr<WorldNode>>> ChildNodes() const
+        VectorList<std::shared_ptr<WorldNode>> ChildNodes() const
         {
-            if (owner.expired()) { return nullptr; }
+            if (owner.expired()) { return VectorList<std::shared_ptr<WorldNode>>(); }
             return owner.lock()->ChildNodes();
         }
 
         // TODO: pull in code from WorldComponentBeta
+
+        // Convenience names
+        template <class T>
+        std::shared_ptr<T> GetComponent() const { return TypeComponent<T>(); }
     };
 }
 

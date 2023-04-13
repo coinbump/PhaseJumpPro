@@ -69,7 +69,7 @@ namespace PJ
         /// <summary>
         /// Modifiers to modify the standard state behavior
         /// </summary>
-        List<std::shared_ptr<SomeModifier>> modifiers;
+        VectorList<std::shared_ptr<SomeModifier>> modifiers;
 
         float TimeInState() const { return timeInState; }
 

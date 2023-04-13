@@ -27,7 +27,7 @@ TEST(SQLTable, TestRowValuesList_MultiColumn_AndStarSelect) {
     });
 
     std::shared_ptr<SQLTable> table = std::make_shared<SQLTable>("test", db);
-    StringArray columnNames;
+    StringVectorList columnNames;
 
     // Test SELECT * (no column names)
     auto values = table->RowValuesList(SQLTableQueryArguments(columnNames, std::nullopt));
@@ -96,7 +96,7 @@ TEST(SQLTable, TestIntValues_MultiColumn) {
     });
 
     std::shared_ptr<SQLTable> table = std::make_shared<SQLTable>("test", db);
-    StringArray columnNames;
+    StringVectorList columnNames;
     columnNames.Add("test_l");
     columnNames.Add("test_r");
     auto values = table->IntValues(SQLTableQueryArguments(columnNames, std::nullopt));
@@ -165,7 +165,7 @@ TEST(SQLTable, TestFloatValues_MultiColumn) {
     });
 
     std::shared_ptr<SQLTable> table = std::make_shared<SQLTable>("test", db);
-    StringArray columnNames;
+    StringVectorList columnNames;
     columnNames.Add("test_l");
     columnNames.Add("test_r");
     auto values = table->FloatValues(SQLTableQueryArguments(columnNames, std::nullopt));
@@ -234,7 +234,7 @@ TEST(SQLTable, TestStringValues_MultiColumn) {
     });
 
     std::shared_ptr<SQLTable> table = std::make_shared<SQLTable>("test", db);
-    StringArray columnNames;
+    StringVectorList columnNames;
     columnNames.Add("test_l");
     columnNames.Add("test_r");
     auto values = table->StringValues(SQLTableQueryArguments(columnNames, std::nullopt));

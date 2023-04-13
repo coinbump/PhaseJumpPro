@@ -1,7 +1,7 @@
 #ifndef PJWEIGHTEDRANDOM_H
 #define PJWEIGHTEDRANDOM_H
 
-#include "List.h"
+#include "VectorList.h"
 #include "Weight.h"
 #include "SomeRandom.h"
 #include <memory>
@@ -21,7 +21,7 @@ namespace PJ
     class WeightedRandomChoice
     {
     protected:
-        List<Weight<Value>> choices;
+        VectorList<Weight<Value>> choices;
 
     public:
         using Weight = Weight<Value>;
@@ -35,22 +35,22 @@ namespace PJ
             choices.Add(weight);
         }
 
-        Value Choose(std::shared_ptr<SomeRandom> random)
+        Value Choose(SomeRandom& random)
         {
             auto weight = ChooseWeight(random);
             return weight ? weight.value().value : Value();
         }
 
-        std::optional<Weight> ChooseWeight(std::shared_ptr<SomeRandom> random)
+        std::optional<Weight> ChooseWeight(SomeRandom& random)
         {
-            float factor = random->Value();
+            float factor = random.Value();
             auto result = ChooseWeightAt(factor);
             return result;
         }
 
         std::optional<Weight> ChooseWeightAt(float factor)
         {
-            List<Weight> adjustedWeights;
+            VectorList<Weight> adjustedWeights;
 
             float totalWeight = 0;
             for (auto i = choices.begin(); i != choices.end(); i++)

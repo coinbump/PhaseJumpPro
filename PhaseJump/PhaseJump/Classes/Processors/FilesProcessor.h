@@ -3,7 +3,7 @@
 
 #include "SomeProcessor.h"
 #include "FilePath.h"
-#include "Array.h"
+#include "VectorList.h"
 #include <memory>
 #include <filesystem>
 
@@ -25,7 +25,7 @@ namespace PJ {
     };
 
     /// Process a list of file paths (Example: rename files)
-    class FilesProcessor : public SomeProcessor<Array<FilePath>> {
+    class FilesProcessor : public SomeProcessor<VectorList<FilePath>> {
     public:
         struct Settings {
             bool isRecursive;
@@ -40,7 +40,7 @@ namespace PJ {
         Settings settings;
 
     public:
-        using Base = SomeProcessor<Array<FilePath>>;
+        using Base = SomeProcessor<VectorList<FilePath>>;
 
         FilesProcessor(Int filesCount, std::shared_ptr<SomeFileProcessor> fileProcessor, Settings settings = Settings())
         : Base(filesCount),

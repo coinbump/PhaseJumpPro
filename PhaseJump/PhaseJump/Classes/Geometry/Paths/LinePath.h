@@ -13,7 +13,7 @@ namespace PJ
     /// <summary>
     /// Model that defines a line path
     /// </summary>
-    class LinePath : SomePath
+    class LinePath : public SomePath
     {
     public:
         Vector3 start;

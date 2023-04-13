@@ -1,7 +1,7 @@
 #ifndef PJBROADCASTER_H
 #define PJBROADCASTER_H
 
-#include "List.h"
+#include "VectorList.h"
 #include "SomeListener.h"
 #include "SomeBroadcaster.h"
 
@@ -18,7 +18,7 @@ namespace PJ {
     {
     public:
         using ListenerWeakPtr = std::weak_ptr<SomeListener>;
-        using ListenerList = List<ListenerWeakPtr>;
+        using ListenerList = VectorList<ListenerWeakPtr>;
         using EventSharedPtr = std::shared_ptr<Event>;
         using EventPtr = EventSharedPtr const&;
 

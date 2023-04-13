@@ -64,11 +64,11 @@ TEST(StateMachine, Test_StateMachine_Graph)
     EXPECT_EQ(invalidNode, sut->NodeForState(TestEnum::Invalid));
     EXPECT_EQ(1, sut->nodes.Count());
 
-    List<String> inputs1;
+    VectorList<String> inputs1;
     inputs1.Add("test1");
     sut->ConnectStates(TestEnum::Invalid, inputs1, TestEnum::Test1);
 
-    List<String> inputs2;
+    VectorList<String> inputs2;
     inputs2.Add("test2");
     sut->ConnectStates(TestEnum::Test1, inputs2, TestEnum::Test2);
 

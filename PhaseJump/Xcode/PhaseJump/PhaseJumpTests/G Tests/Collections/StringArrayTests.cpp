@@ -1,12 +1,12 @@
 #include "gtest/gtest.h"
 
-#include "StringArray.h"
+#include "StringVectorList.h"
 
 using namespace std;
 using namespace PJ;
 
-TEST(StringArray, TestJoinStrings3) {
-    StringArray strings;
+TEST(StringVectorList, TestJoinStrings3) {
+    StringVectorList strings;
     strings.Add("a");
     strings.Add("b");
     strings.Add("c");

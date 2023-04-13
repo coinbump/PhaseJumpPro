@@ -3,6 +3,7 @@
 
 #include "AcyclicGraphNode.h"
 #include "SomeWorldComponent.h"
+#include "VectorList.h"
 #include "List.h"
 #include "GeoTransform.h"
 #include <memory>
@@ -17,7 +18,7 @@ namespace PJ {
         using ComponentPtr = ComponentSharedPtr const&;
 
     protected:
-        List<ComponentSharedPtr> components;
+        VectorList<ComponentSharedPtr> components;
         float destroyCountdown = 0;
         bool isDestroyed = false;
 
@@ -26,10 +27,11 @@ namespace PJ {
         std::shared_ptr<GeoTransform> transform = std::make_shared<GeoTransform>();
 
         bool IsDestroyed() const { return isDestroyed; }
+        std::size_t ChildCount() { return edges.size(); }
 
-        List<ComponentSharedPtr> const& Components() const { return components; }
+        VectorList<ComponentSharedPtr> const& Components() const { return components; }
 
-        void AddComponent(ComponentPtr component)
+        void Add(ComponentPtr component)
         {
             if (!component) { return; }
             components.Add(component);
@@ -37,7 +39,13 @@ namespace PJ {
         }
 
         template <class T>
-        std::shared_ptr<T> GetComponent() const
+        void AddComponent(std::shared_ptr<T> component)
+        {
+            Add(static_pointer_cast<SomeWorldComponent>(component));
+        }
+
+        template <class T>
+        std::shared_ptr<T> TypeComponent() const
         {
             for (auto component : components) {
                 auto typeComponent = dynamic_pointer_cast<T>(component);
@@ -90,19 +98,23 @@ namespace PJ {
             }
         }
 
-        std::shared_ptr<List<std::shared_ptr<WorldNode>>> ChildNodes() const
+        VectorList<std::shared_ptr<WorldNode>> ChildNodes() const
         {
-            auto result = std::make_shared<List<std::shared_ptr<WorldNode>>>();
+            VectorList<std::shared_ptr<WorldNode>> result;
 
             for (auto edge : edges) {
-                auto worldNode = dynamic_pointer_cast<WorldNode>(edge->toNode->Value());
+                auto worldNode = static_pointer_cast<WorldNode>(edge->toNode->Value());
                 if (worldNode) {
-                    result->Add(worldNode);
+                    result.Add(worldNode);
                 }
             }
 
             return result;
         }
+
+        // Convenience names
+        template <class T>
+        std::shared_ptr<T> GetComponent() const { return TypeComponent<T>(); }
     };
 }
 

@@ -13,6 +13,7 @@
 
 namespace PJ
 {
+    /// For rendering via `SDL_Renderer`
     class SDLRenderContext : public SomeRenderContext
     {
     public:

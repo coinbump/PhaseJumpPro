@@ -2,7 +2,7 @@
 #define SQLTABLEQUERYARGUMENTS_H
 
 #include "SQLWhereArguments.h"
-#include "StringArray.h"
+#include "StringVectorList.h"
 #include <optional>
 
 /*
@@ -18,7 +18,7 @@ namespace PJ
     struct SQLTableQueryArguments
     {
         // Name of the column to fetch values from
-        StringArray columnNames;
+        StringVectorList columnNames;
 
         // Optional where clause
         std::optional<SQLWhereArguments> where;
@@ -28,7 +28,7 @@ namespace PJ
             columnNames.Append(columnName);
         }
 
-        SQLTableQueryArguments(StringArray columnNames, std::optional<SQLWhereArguments> where)
+        SQLTableQueryArguments(StringVectorList columnNames, std::optional<SQLWhereArguments> where)
         : columnNames(columnNames), where(where) {
         }
     };

@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		CD0A848B291CBF630074CA4F /* PhaseJump.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD0A848A291CBF630074CA4F /* PhaseJump.framework */; };
 		CD0A848C291CBF630074CA4F /* PhaseJump.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CD0A848A291CBF630074CA4F /* PhaseJump.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		CD376CBD29E797DA00DC7950 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD376CBC29E797D900DC7950 /* OpenGL.framework */; };
 		CD420AA82957F3CE00C5D3E1 /* resources in Resources */ = {isa = PBXBuildFile; fileRef = CD420AA72957F3CE00C5D3E1 /* resources */; };
 		CD420AE92959FE6900C5D3E1 /* SDLTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD420AE82959FE6900C5D3E1 /* SDLTest.cpp */; };
 		CD420AEE2959FFA700C5D3E1 /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD420AEC2959FFA700C5D3E1 /* SDL2.framework */; };
@@ -63,6 +64,7 @@
 
 /* Begin PBXFileReference section */
 		CD0A848A291CBF630074CA4F /* PhaseJump.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PhaseJump.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CD376CBC29E797D900DC7950 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		CD420AA72957F3CE00C5D3E1 /* resources */ = {isa = PBXFileReference; lastKnownFileType = folder; path = resources; sourceTree = "<group>"; };
 		CD420AE72959FE6900C5D3E1 /* SDLTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDLTest.h; sourceTree = "<group>"; };
 		CD420AE82959FE6900C5D3E1 /* SDLTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SDLTest.cpp; sourceTree = "<group>"; };
@@ -95,6 +97,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CD420AF02959FFA700C5D3E1 /* SDL2_image.framework in Frameworks */,
+				CD376CBD29E797DA00DC7950 /* OpenGL.framework in Frameworks */,
 				CD0A848B291CBF630074CA4F /* PhaseJump.framework in Frameworks */,
 				CD420AEE2959FFA700C5D3E1 /* SDL2.framework in Frameworks */,
 			);
@@ -120,6 +123,7 @@
 		CD0A8489291CBF630074CA4F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CD376CBC29E797D900DC7950 /* OpenGL.framework */,
 				CD420AEC2959FFA700C5D3E1 /* SDL2.framework */,
 				CD420AED2959FFA700C5D3E1 /* SDL2_image.framework */,
 				CD0A848A291CBF630074CA4F /* PhaseJump.framework */,
@@ -504,7 +508,9 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = SUX6D55KV3;
 				ENABLE_HARDENED_RUNTIME = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = GL_SILENCE_DEPRECATION;
 				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = ../../../submodules/sdl/include;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INFOPLIST_KEY_NSMainStoryboardFile = Main;
 				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
@@ -535,7 +541,9 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = SUX6D55KV3;
 				ENABLE_HARDENED_RUNTIME = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = GL_SILENCE_DEPRECATION;
 				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = ../../../submodules/sdl/include;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INFOPLIST_KEY_NSMainStoryboardFile = Main;
 				INFOPLIST_KEY_NSPrincipalClass = NSApplication;

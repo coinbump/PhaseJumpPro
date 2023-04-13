@@ -3,7 +3,7 @@
 
 #include "SQLStatement.h"
 #include "_String.h"
-#include "Array.h"
+#include "VectorList.h"
 #include "FilePath.h"
 #include "StateMachine.h"
 #include "FilePath.h"
@@ -56,7 +56,7 @@ namespace PJ {
         bool CreateTable(String tableName, SQLTableSchema schema);
         bool CreateTable(String tableName, String paramsString);
 
-        Array<String> TableNames();
+        VectorList<String> TableNames();
 
         int Prepare(SQLCommand& command);
         int Step(SQLCommand& command);

@@ -2,16 +2,40 @@
 #define PJWORLD_H
 
 #include "WorldNode.h"
+#include "WorldComponent.h"
 #include "Updatable.h"
 #include "SomeRenderContext.h"
+#include "CartesianCamera.h"
 #include <memory>
 
 namespace PJ
 {
+    // Some world systems use event polling (SDL)
+    class SomeUIEventPoller {
+    public:
+        enum class Status {
+            Running,
+
+            Done
+        };
+        virtual Status PollUIEvents() = 0;
+    };
+
     class World : public Base, public Updatable {
     public:
         std::shared_ptr<WorldNode> root = std::make_shared<WorldNode>();
         std::shared_ptr<SomeRenderContext> renderContext;
+        std::shared_ptr<SomeCamera> camera;
+        std::shared_ptr<SomeUIEventPoller> uiEventPoller;
+
+        World()
+        {
+            camera = std::static_pointer_cast<SomeCamera>(std::make_shared<CartesianCamera>());
+
+            auto cameraNode = std::make_shared<WorldNode>();
+            cameraNode->Add(camera);
+            root->AddEdge(StandardEdgeModel(), cameraNode);
+        }
 
         bool IsFinished() const override { return false; }
         void OnUpdate(TimeSlice time) override
@@ -28,6 +52,12 @@ namespace PJ
                     }
                 }
             }
+        }
+
+        virtual void Render();
+
+        void SetRenderContext(std::shared_ptr<SomeRenderContext> renderContext) {
+            this->renderContext = renderContext;
         }
     };
 }

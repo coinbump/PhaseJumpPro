@@ -2,7 +2,7 @@
 #define PJPOLYGON_H
 
 #include "Vector3.h"
-#include "Array.h"
+#include "VectorList.h"
 #include <algorithm>
 #include <memory>
 
@@ -18,7 +18,7 @@ namespace PJ
     /// </summary>
     struct Polygon
     {
-        Array<Vector3> vertices;
+        VectorList<Vector3> vertices;
 
         Vector3 Min() const
         {

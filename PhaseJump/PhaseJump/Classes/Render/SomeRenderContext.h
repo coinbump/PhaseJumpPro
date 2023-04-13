@@ -6,6 +6,9 @@
 
 namespace PJ
 {
+    class SomeRenderer;
+    class RenderIntoModel;
+    
     /// <summary>
     /// A render context is how we render graphics via a third party SDK like SDL or OpenGL
     /// </summary>
@@ -26,6 +29,8 @@ namespace PJ
 
         virtual Vector2 Size() const = 0;
         virtual Vector2Int PixelSize() const = 0;
+
+        virtual void Render(SomeRenderer& renderer, RenderIntoModel model);
     };
 }
 

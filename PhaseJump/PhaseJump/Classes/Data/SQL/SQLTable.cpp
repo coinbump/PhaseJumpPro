@@ -3,7 +3,7 @@
 #include "SQLStatement.h"
 #include "SQLDatabase.h"
 #include "SQLRowValues.h"
-#include "StringArray.h"
+#include "StringVectorList.h"
 #include <sqlite3.h>
 
 using namespace std;
@@ -14,7 +14,7 @@ SQLTable::SQLTable(String name, SQLDatabaseSharedPtr db) : name(name), db(db)
 }
 
 SQLStatement SQLTable::BuildStatement(String columnName, std::optional<SQLWhereArguments> where) {
-    StringArray columnNames;
+    StringVectorList columnNames;
     columnNames.Add(columnName);
 
     return BuildStatement(SQLTableQueryArguments(columnNames, where));
@@ -30,7 +30,7 @@ SQLStatement SQLTable::BuildStatement(SQLTableQueryArguments query) {
     String columnNamesString = "*";
 
     if (columnNames.Count() > 0) {
-        StringArray identifiedColumnNames;
+        StringVectorList identifiedColumnNames;
         std::transform(columnNames.begin(), columnNames.end(), std::back_inserter(identifiedColumnNames), [](const String& value) {
             return SQLIdentifierFormatter().Formatted(value);
         });
@@ -54,16 +54,16 @@ SQLStatement SQLTable::BuildStatement(SQLTableQueryArguments query) {
     return result;
 }
 
-Array<std::shared_ptr<Tags>> ColumnValues(Array<String> columnNames)
+VectorList<std::shared_ptr<Tags>> ColumnValues(VectorList<String> columnNames)
 {
-    Array<std::shared_ptr<Tags>> result;
+    VectorList<std::shared_ptr<Tags>> result;
 
     return result;
 }
 
-Array<SQLRowValues> SQLTable::RowValuesList(SQLTableQueryArguments query)
+VectorList<SQLRowValues> SQLTable::RowValuesList(SQLTableQueryArguments query)
 {
-    Array<SQLRowValues> result;
+    VectorList<SQLRowValues> result;
 
     auto statement = BuildStatement(SQLTableQueryArguments(query.columnNames, query.where));
     SQLCommand command(statement);
@@ -110,9 +110,9 @@ Array<SQLRowValues> SQLTable::RowValuesList(SQLTableQueryArguments query)
 
  "SQLite uses dynamic run-time typing. So just because a column is declared to contain a particular type does not mean that the data stored in that column is of the declared type. SQLite is strongly typed, but the typing is dynamic not static. Type is associated with individual values, not with the containers used to hold those values."
  */
-Array<int> SQLTable::IntValues(SQLTableQueryArguments query)
+VectorList<int> SQLTable::IntValues(SQLTableQueryArguments query)
 {
-    Array<int> result;
+    VectorList<int> result;
 
     auto statement = BuildStatement(SQLTableQueryArguments(query.columnNames, query.where));
     SQLCommand command(statement);
@@ -139,9 +139,9 @@ int SQLTable::IntValue(SQLTableQueryArguments query, int defaultValue)
     return values.IsEmpty() ? defaultValue : values[0];
 }
 
-Array<float> SQLTable::FloatValues(SQLTableQueryArguments query)
+VectorList<float> SQLTable::FloatValues(SQLTableQueryArguments query)
 {
-    Array<float> result;
+    VectorList<float> result;
 
     auto statement = BuildStatement(SQLTableQueryArguments(query.columnNames, query.where));
     SQLCommand command(statement);
@@ -168,9 +168,9 @@ float SQLTable::FloatValue(SQLTableQueryArguments query, float defaultValue)
     return values.IsEmpty() ? defaultValue : values[0];
 }
 
-Array<String> SQLTable::StringValues(SQLTableQueryArguments query)
+VectorList<String> SQLTable::StringValues(SQLTableQueryArguments query)
 {
-    Array<String> result;
+    VectorList<String> result;
 
     auto statement = BuildStatement(SQLTableQueryArguments(query.columnNames, query.where));
     SQLCommand command(statement);

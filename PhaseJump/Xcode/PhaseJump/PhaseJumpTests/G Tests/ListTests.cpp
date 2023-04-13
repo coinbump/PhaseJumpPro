@@ -1,13 +1,13 @@
 #include "gtest/gtest.h"
 
-#include "List.h"
+#include "VectorList.h"
 #include "_String.h"
 
 using namespace std;
 using namespace PJ;
 
 TEST(List, Remove) {
-    List<String> sut;
+    VectorList<String> sut;
 
     sut.Add("test");
     EXPECT_EQ(1, sut.size());
@@ -20,7 +20,7 @@ TEST(List, Remove) {
 }
 
 TEST(List, RemoveIf) {
-    List<int> sut{ 1, 3, 5, 10 };
+    VectorList<int> sut{ 1, 3, 5, 10 };
 
     sut.RemoveIf([](int value) { return value < 4; });
     EXPECT_EQ(2, sut.size());
@@ -33,7 +33,7 @@ TEST(List, RemoveIf) {
 }
 
 TEST(List, RemoveFirstIf) {
-    List<int> sut{ 1, 3, 5, 10 };
+    VectorList<int> sut{ 1, 3, 5, 10 };
 
     sut.RemoveFirstIf([](int value) { return value < 4; });
     EXPECT_EQ(3, sut.size());
@@ -46,7 +46,7 @@ TEST(List, RemoveFirstIf) {
 }
 
 TEST(List, Contains) {
-    List<int> sut{ 1, 3, 5, 10 };
+    VectorList<int> sut{ 1, 3, 5, 10 };
 
     EXPECT_TRUE(sut.Contains(1));
     EXPECT_FALSE(sut.Contains(-11));

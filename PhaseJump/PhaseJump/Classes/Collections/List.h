@@ -3,7 +3,6 @@
 
 #include "Macros_Collections.h"
 #include <list>
-#include <algorithm>
 #include <memory>
 
 /*

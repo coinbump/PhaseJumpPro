@@ -1,9 +1,9 @@
-#ifndef STRINGARRAY_H
-#define STRINGARRAY_H
+#ifndef PJSTRINGVECTORLIST_H
+#define PJSTRINGVECTORLIST_H
 
 #include "InfixOStreamIterator.h"
 #include "_String.h"
-#include "Array.h"
+#include "VectorList.h"
 #include <iostream>
 
 /*
@@ -13,7 +13,7 @@
  */
 namespace PJ {
     /// Convenience methods for string collection
-    class StringArray: public Array<String>
+    class StringVectorList: public VectorList<String>
     {
     public:
         String Joined(String delimiter)
