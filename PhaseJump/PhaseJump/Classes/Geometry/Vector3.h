@@ -31,6 +31,8 @@ namespace PJ {
 
         static Vector3 const one;
         static Vector3 const zero;
+        static Vector3 const forward;
+        static Vector3 const back;
 
         float x() const { return (*this)[0]; }
         float y() const { return (*this)[1]; }

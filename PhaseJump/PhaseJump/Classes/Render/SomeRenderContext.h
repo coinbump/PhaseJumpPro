@@ -8,13 +8,16 @@ namespace PJ
 {
     class SomeRenderer;
     class RenderIntoModel;
-    
+    class SomeRenderEngine;
+
     /// <summary>
     /// A render context is how we render graphics via a third party SDK like SDL or OpenGL
     /// </summary>
     class SomeRenderContext : public Base
     {
     public:
+        std::shared_ptr<SomeRenderEngine> renderEngine;
+
         SomeRenderContext() {}
         virtual ~SomeRenderContext() {}
 

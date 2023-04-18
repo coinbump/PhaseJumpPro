@@ -13,7 +13,7 @@ namespace PJ
     /// <summary>
     /// Adds utility code to std::map
     /// </summary>
-    template <class Key, class Value> class Map : public std::map<Key, Value>
+    template <class Key, class Type> class Map : public std::map<Key, Type>
     {
     public:
         Map() {}
@@ -23,7 +23,7 @@ namespace PJ
             return this->find(key) != this->end();
         }
 
-        bool ContainsWhere(std::function<bool(Value const&)> check) const {
+        bool ContainsWhere(std::function<bool(Type const&)> check) const {
             for (auto const& pair : *this) {
                 auto value = pair.second;
 

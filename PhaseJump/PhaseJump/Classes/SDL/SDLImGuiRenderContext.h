@@ -11,7 +11,8 @@ class ImGuiContext;
 namespace PJ
 {
     class SDLWindow;
-
+    class SomeGLRenderEngine;
+    
     /// Renders `ImGUI` widgets via `SDL`
     class SDLImGuiRenderContext : public SomeRenderContext
     {
@@ -30,6 +31,8 @@ namespace PJ
         virtual ~SDLImGuiRenderContext();
 
         void Configure(SDL_Window* window);
+
+        std::shared_ptr<SomeGLRenderEngine> _GLRenderEngine() const;
 
         // Avoid these (use Configure instead)
         void SetWindow(SDL_Window* window);

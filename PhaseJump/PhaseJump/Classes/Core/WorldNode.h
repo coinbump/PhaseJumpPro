@@ -44,6 +44,11 @@ namespace PJ {
             Add(static_pointer_cast<SomeWorldComponent>(component));
         }
 
+        void AddChild(std::shared_ptr<WorldNode> node)
+        {
+            AddEdge(StandardEdgeModel(), node);
+        }
+
         template <class T>
         std::shared_ptr<T> TypeComponent() const
         {

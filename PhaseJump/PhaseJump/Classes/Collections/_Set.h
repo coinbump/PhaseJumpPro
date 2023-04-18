@@ -13,29 +13,37 @@ namespace PJ
     /// <summary>
     /// Adds utility code to std::map
     /// </summary>
-    template <class Value> class Set : public std::set<Value>
+    template <class Type> class Set : public std::set<Type>
     {
     public:
-        using Base = std::set<Value>;
+        using Base = std::set<Type>;
 
         Set() {}
         virtual ~Set() {}
 
-        void Add(Value const& value) {
+        void Add(Type const& value) {
             this->insert(value);
         }
 
-        void Remove(Value const& value) {
+        void Remove(Type const& value) {
             this->erase(value);
         }
 
-        bool Contains(Value const& value) const {
+        bool Contains(Type const& value) const {
             return this->find(value) != this->end();
         }
 
         size_t Count() const { return this->size(); }
         
         bool IsEmpty() const { return this->empty(); }
+
+        void AddOrRemove(Type const& value, bool add) {
+            if (add) {
+                Add(value);
+            } else {
+                Remove(value);
+            }
+        }
     };
 }
 

@@ -18,7 +18,7 @@ namespace PJ
         Vector3 rotation;
         Vector3 scale;
 
-        GeoTransform(Vector3 position = Vector3::zero, Vector3 rotation = Vector3::zero, Vector3 scale = Vector3::zero) : position(position), rotation(rotation), scale(scale)
+        GeoTransform(Vector3 position = Vector3::zero, Vector3 rotation = Vector3::zero, Vector3 scale = Vector3::one) : position(position), rotation(rotation), scale(scale)
         {
         }
 

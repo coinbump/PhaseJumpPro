@@ -51,3 +51,13 @@ TEST(List, Contains) {
     EXPECT_TRUE(sut.Contains(1));
     EXPECT_FALSE(sut.Contains(-11));
 }
+
+TEST(List, AddRange) {
+    VectorList<int> sut{ 1 };
+    VectorList<int> source{ 3, 5 };
+
+    sut.AddRange(source);
+    EXPECT_EQ(3, sut.size());
+    EXPECT_EQ(3, sut[1]);
+    EXPECT_EQ(5, sut[2]);
+}

@@ -3,7 +3,7 @@
 
 using namespace PJ;
 
-SDL_Vertex SDLTextureRenderer::newVertex(Mesh mesh, Vector2 position, int index) {
+SDL_Vertex SDLTextureRenderer::newVertex(RenderMesh mesh, Vector2 position, int index) {
     SDL_Vertex result;
     result.position.x = position.x();
     result.position.y = position.y();

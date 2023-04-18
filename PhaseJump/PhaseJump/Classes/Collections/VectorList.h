@@ -6,7 +6,7 @@
 
 /*
  RATING: 5 stars
- Adds convenience funcs to std::vector
+ Has unit tests (in ListTests)
  CODE REVIEW: 11/20/22
  */
 namespace PJ {
@@ -30,7 +30,7 @@ namespace PJ {
         void Add(T const& value) { this->push_back(value); }
 
         // NOTE: Avoid Remove for large lists, it is inefficient
-        COLLECTION_METHODS(T)
+        COLLECTION_METHODS(VectorList<T>, T)
     };
 
     // Convenience names

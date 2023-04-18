@@ -29,7 +29,7 @@ namespace PJ {
         void Append(T const& value) { this->push_back(value); }
         void Add(T const& value) { this->push_back(value); }
 
-        COLLECTION_METHODS(T)
+        COLLECTION_METHODS(List<T>, T)
     };
 }
 

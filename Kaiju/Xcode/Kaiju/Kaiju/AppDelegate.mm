@@ -6,11 +6,8 @@
 //
 
 #import "AppDelegate.h"
-#import <PhaseJump/Class.h>
+#import <PhaseJump/PhaseJump.h>
 #include "SDLTest.h"
-#include <PhaseJump/SQLDatabase.h>
-#include <PhaseJump/FileManager.h>
-#include <PhaseJump/FilePath.h>
 
 using namespace PJ;
 
@@ -22,28 +19,45 @@ using namespace PJ;
 @implementation AppDelegate
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
+    // Must specify full path (resources/pj_shaders, not pj/shaders)
+    // Files must have extension
+    NSArray *shaderProgramPaths = [[NSBundle mainBundle] pathsForResourcesOfType:@".shprog" inDirectory:@"resources/pj_shaders"];
+
+    // We can't load programs yet, there is no GL context
+    for (NSString *path in shaderProgramPaths) {
+        GLShaderProgramLoader loader;
+        auto programInfo = loader.InfoFromPath([path UTF8String]);
+        if (programInfo) {
+            GLShaderProgram::Info::registry.Add(programInfo.value());
+        }
+    }
+
     // A simple test of an SDL window
     SDLFoo();
     
     SQLDatabase db;
+//
+//    NSString* libraryPath;
+//    libraryPath = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES)[0];
+//
+//    FilePath folderPath([libraryPath UTF8String]);
+//    folderPath.append("Test");
+//
+//    FileManager fm;
+//    fm.CreateDirectories(folderPath);
+//
+//    folderPath.append("Hello.sqlite");
 
-    NSString* libraryPath;
-    libraryPath = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES)[0];
 
-    FilePath folderPath([libraryPath UTF8String]);
-    folderPath.append("Test");
-
-    FileManager fm;
-    fm.CreateDirectories(folderPath);
-
-    folderPath.append("Hello.sqlite");
-
-    try {
-        db.TryOpen(folderPath, SQLDatabaseOpenType::AtPath, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE);
-    }
-    catch (int error) {
-        std::cout << "Error" << error;
-    }
+//    GLShaderProgramsLoader loader;
+//    loader.LoadAllProgramsFromPath(
+    
+//    try {
+//        db.TryOpen(folderPath, SQLDatabaseOpenType::AtPath, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE);
+//    }
+//    catch (int error) {
+//        std::cout << "Error" << error;
+//    }
 }
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification {

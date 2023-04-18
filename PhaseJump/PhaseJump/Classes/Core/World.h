@@ -56,6 +56,10 @@ namespace PJ
 
         virtual void Render();
 
+        void Add(std::shared_ptr<WorldNode> node) {
+            root->AddEdge(StandardEdgeModel(), node);
+        }
+
         void SetRenderContext(std::shared_ptr<SomeRenderContext> renderContext) {
             this->renderContext = renderContext;
         }

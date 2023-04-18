@@ -4,14 +4,16 @@
 #include <SDL2/SDL_render.h>
 #include "SDLWindow.h"
 #include "SDLImGuiRenderContext.h"
-#include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
-#include <OpenGL/glext.h>
-#include <GLUT/glut.h>
+#include "GLHeaders.h"
 #include "imgui.h"
 #include "imgui_impl_sdl2.h"
 #include "imgui_impl_opengl3.h"
+#include "GLRenderEngine.h"
+#include "GLVertexBuffer.h"
+#include "GLShaderProgram.h"
+#include "GLShaderProgramLoader.h"
 
+using namespace std;
 using namespace PJ;
 
 SDLImGuiRenderContext::~SDLImGuiRenderContext() {
@@ -35,9 +37,21 @@ void SDLImGuiRenderContext::Configure(SDL_Window* window) {
     imGuiContext = ImGui::CreateContext();
     ImGui::StyleColorsDark();
 
+    // For Mac OS:
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+
     glContext = SDL_GL_CreateContext(window);
     ImGui_ImplSDL2_InitForOpenGL(window, glContext);
-    ImGui_ImplOpenGL3_Init("#version 120");
+    ImGui_ImplOpenGL3_Init("#version 150");
+
+    shared_ptr<GLRenderEngine> glRenderEngine = make_shared<GLRenderEngine>();
+    glRenderEngine->Go();
+
+    this->renderEngine = static_pointer_cast<SomeRenderEngine>(glRenderEngine);
+}
+
+std::shared_ptr<SomeGLRenderEngine> SDLImGuiRenderContext::_GLRenderEngine() const {
+    return static_pointer_cast<SomeGLRenderEngine>(renderEngine);
 }
 
 void SDLImGuiRenderContext::SetWindow(SDL_Window* window)
@@ -65,7 +79,7 @@ void SDLImGuiRenderContext::Bind() {
 
     auto io = ImGui::GetIO();
 
-    glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
+    _GLRenderEngine()->SetViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
     glUseProgram(0); // You may want this if using this code in an OpenGL 3+ context where shaders may be bound
 }
 
@@ -74,11 +88,15 @@ void SDLImGuiRenderContext::Clear() {
     glClear(GL_COLOR_BUFFER_BIT);
 }
 
+#include "EllipseRenderMeshBuilder.h"
+#include "RenderModel.h"
+
 void SDLImGuiRenderContext::Present() {
     if (nullptr == window) { return; }
 
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
     SDL_GL_SwapWindow(window);
 }
 

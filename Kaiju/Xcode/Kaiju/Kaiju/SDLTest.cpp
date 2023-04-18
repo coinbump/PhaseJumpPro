@@ -15,6 +15,72 @@
 using namespace PJ;
 using namespace std;
 
+void foo1(std::shared_ptr<SDLWorld> world) {
+    auto pathNode = std::make_shared<WorldNode>();
+    auto pathComponent = std::make_shared<CirclePathLayout2D>(500);
+    pathNode->AddComponent(pathComponent);
+    world->Add(pathNode);
+
+    int count = 20;
+    for (int i = 0; i < count; i++) {
+        auto meshNode = std::make_shared<WorldNode>();
+        auto meshRenderer = std::make_shared<MeshRenderer>();
+        meshNode->AddComponent(meshRenderer);
+
+        float progress = (float)i/(float)count;
+
+        auto material = std::make_shared<RenderMaterial>();
+        auto program = GLShaderProgram::registry["colorUniform"];
+        if (program) {
+            material->shaderProgram = program;
+            material->uniformColors.Add(Color(progress, 1.0f - progress, 0, 1));
+
+            EllipseRenderMeshBuilder builder(Angle::DegreesAngle(5.0f), Vector2(40, 20));
+            auto renderMesh = builder.BuildRenderMesh();
+            meshRenderer->material = material;
+            meshRenderer->mesh = renderMesh;
+        }
+//        window->World()->Add(meshNode);
+        meshNode->transform->scale = Vector3(1.0f + progress, 1.0f + progress, 1);
+//        meshNode->transform->rotation.z() = -(progress * 360.0f);
+        pathNode->AddChild(meshNode);
+    }
+
+    pathComponent->ApplyLayout();
+}
+
+void foo2(std::shared_ptr<SDLWorld> world) {
+    auto pathNode = std::make_shared<WorldNode>();
+    auto pathComponent = std::make_shared<CirclePathLayout2D>(500);
+    pathNode->AddComponent(pathComponent);
+    world->Add(pathNode);
+
+    int count = 20;
+    for (int i = 0; i < count; i++) {
+        auto meshNode = std::make_shared<WorldNode>();
+        auto meshRenderer = std::make_shared<MeshRenderer>();
+        meshNode->AddComponent(meshRenderer);
+
+        float progress = (float)i/(float)count;
+
+        auto material = std::make_shared<RenderMaterial>();
+        auto program = GLShaderProgram::registry["colorUniform"];
+        if (program) {
+            material->shaderProgram = program;
+            material->uniformColors.Add(Color(1.0f, 0, 0, 1));
+
+            EllipseRenderMeshBuilder builder(Angle::DegreesAngle(5.0f), Vector2(40, 20));
+            auto renderMesh = builder.BuildRenderMesh();
+            meshRenderer->material = material;
+            meshRenderer->mesh = renderMesh;
+        }
+        pathNode->AddChild(meshNode);
+    }
+
+    pathComponent->orientToPath = false;
+    pathComponent->ApplyLayout();
+}
+
 bool my_tool_active = false;
 float my_color[4];
 bool isDone = false;
@@ -82,9 +148,13 @@ void SDLFoo() {
     auto node = std::make_shared<WorldNode>();
     auto component = std::make_shared<FuncRenderer>([] (RenderIntoModel renderIntoModel) { ImGui::ShowDemoWindow(&show_demo_window); });
     node->AddComponent(component);
-    window->World()->root->AddEdge(StandardEdgeModel(), node);
+    window->World()->Add(node);
     window->World()->SetRenderContext(renderContext);
     window->World()->uiEventPoller = std::make_shared<SDLImGuiEventPoller>(*window);
+
+    foo1(window->World());
+    foo2(window->World());
+
     window->World()->Go();
 #else
     auto windowConfig = SDLWindow::Configuration::native;
@@ -108,11 +178,11 @@ void SDLFoo() {
     auto pathNode = std::make_shared<WorldNode>();
     auto pathComponent = std::make_shared<CirclePathLayout2D>(100);
     pathNode->AddComponent(pathComponent);
-    window->World()->root->AddEdge(StandardEdgeModel(), pathNode);
+    window->World()->Add(pathNode);
 
     for (int i = 0; i < 20; i++) {
         auto node = std::make_shared<WorldNode>();
-        pathNode->AddEdge(StandardEdgeModel(), node);
+        pathNode->AddChild(node);
         auto renderer = std::make_shared<SDLTextureRenderer>(sprite);
         node->Add(renderer);
         node->transform->position = Vector3(StandardRandom().Value() * 100.0f, StandardRandom().Value() * 100.0f, 0);
@@ -123,5 +193,4 @@ void SDLFoo() {
     window->World()->Go();
 #endif
 }
-
 #endif

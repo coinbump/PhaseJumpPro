@@ -4,8 +4,21 @@
 #include <PhaseJump/Class.h>
 #include <PhaseJump/Core.h>
 
+#include <PhaseJump/EllipseRenderMeshBuilder.h>
+
+#include <PhaseJump/FileManager.h>
+#include <PhaseJump/FilePath.h>
+
+#include <PhaseJump/GLShaderProgram.h>
+#include <PhaseJump/GLShaderProgramLoader.h>
+
 #include <PhaseJump/HFlow.h>
 #include <PhaseJump/Log.h>
+#include <PhaseJump/MeshRenderer.h>
+
+#include <PhaseJump/RenderMaterial.h>
+#include <PhaseJump/RenderModel.h>
+#include <PhaseJump/SQLDatabase.h>
 #include <PhaseJump/SDLImGuiRenderContext.h>
 #include <PhaseJump/SDLRenderContext.h>
 #include <PhaseJump/SDLWindow.h>

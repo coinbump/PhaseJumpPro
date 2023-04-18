@@ -44,6 +44,9 @@
 #include "BezierPathLayout.h"
 #include "CirclePathLayout2D.h"
 #include "SDLImGuiRenderContext.h"
+#include "CenterPolyRenderMeshBuilder.h"
+#include "ArcRenderMeshBuilder.h"
+#include "EllipseRenderMeshBuilder.h"
 
 #include <memory>
 

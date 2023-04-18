@@ -27,6 +27,7 @@
 		CD6FEB6C29170AE600F674D3 /* KaijuTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD6FEB6B29170AE600F674D3 /* KaijuTests.mm */; };
 		CD6FEB7629170AE600F674D3 /* KaijuUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6FEB7529170AE600F674D3 /* KaijuUITests.m */; };
 		CD6FEB7829170AE600F674D3 /* KaijuUITestsLaunchTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6FEB7729170AE600F674D3 /* KaijuUITestsLaunchTests.m */; };
+		CDF0FB7829EE11DA00B9EF1F /* AppDelegateBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDF0FB7729EE11DA00B9EF1F /* AppDelegateBridge.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -89,6 +90,7 @@
 		CD6FEB7129170AE600F674D3 /* KaijuUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KaijuUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CD6FEB7529170AE600F674D3 /* KaijuUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KaijuUITests.m; sourceTree = "<group>"; };
 		CD6FEB7729170AE600F674D3 /* KaijuUITestsLaunchTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KaijuUITestsLaunchTests.m; sourceTree = "<group>"; };
+		CDF0FB7729EE11DA00B9EF1F /* AppDelegateBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegateBridge.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -179,6 +181,7 @@
 				CD5FB81D291E13D5004F2FB4 /* SwiftBridge.swift */,
 				CD5FB83029200602004F2FB4 /* ObjCBridge.h */,
 				CD5FB83129200602004F2FB4 /* ObjCBridge.mm */,
+				CDF0FB7729EE11DA00B9EF1F /* AppDelegateBridge.swift */,
 			);
 			path = Kaiju;
 			sourceTree = "<group>";
@@ -335,6 +338,7 @@
 				CD5FB81C291E130D004F2FB4 /* FilesProcessorView.swift in Sources */,
 				CD6FEB5A29170AE500F674D3 /* ViewController.mm in Sources */,
 				CD420AE92959FE6900C5D3E1 /* SDLTest.cpp in Sources */,
+				CDF0FB7829EE11DA00B9EF1F /* AppDelegateBridge.swift in Sources */,
 				CD6FEB6129170AE600F674D3 /* main.m in Sources */,
 				CD5FB81E291E13D5004F2FB4 /* SwiftBridge.swift in Sources */,
 				CD5FB83229200602004F2FB4 /* ObjCBridge.mm in Sources */,

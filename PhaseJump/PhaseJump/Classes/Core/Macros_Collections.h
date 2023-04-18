@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <functional>
 
-#define COLLECTION_METHODS(Type) \
+#define COLLECTION_METHODS(Collection, Type) \
 size_t Count() const { return this->size(); } \
 bool IsEmpty() const { return Count() <= 0; } \
 \
@@ -34,6 +34,9 @@ bool Contains(T const& value) const \
 { \
     auto findResult = std::find(this->begin(), this->end(), value); \
     return findResult != this->end(); \
+} \
+void AddRange(Collection const& source) { \
+    this->insert(this->end(), source.begin(), source.end()); \
 }
 
 #endif

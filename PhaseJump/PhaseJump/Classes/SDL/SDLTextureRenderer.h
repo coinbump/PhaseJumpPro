@@ -13,13 +13,8 @@
 #include "VectorList.h"
 
 namespace PJ {
-    struct Mesh
-    {
-        Vector<Vector2> vertices;
-        Vector<Color32> colors;
-        Vector<Vector2> uvs;
-    };
-
+    class RenderMesh;
+    
     class SDLTextureRenderer : public SomeRenderer
     {
     public:
@@ -75,7 +70,7 @@ namespace PJ {
         }
 
         // TODO: temp code
-        SDL_Vertex newVertex(Mesh mesh, Vector2 position, int index);
+        SDL_Vertex newVertex(RenderMesh mesh, Vector2 position, int index);
     };
 }
 
