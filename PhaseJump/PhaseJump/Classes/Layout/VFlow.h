@@ -30,14 +30,14 @@ namespace PJ
 
         void ApplyLayout() override
         {
-            auto firstPos = (Size().y() / 2) * Vector2::up.y();
+            auto firstPos = (Size().y / 2) * Vector2::up.y;
             auto position = firstPos;
 
             auto childNodes = ChildNodes();
             for (auto child : childNodes)
             {
-                child->transform->SetLocalPosition(Vector3(0, position, child->transform->LocalPosition().z()));
-                position += spacing * Vector2::down.y();
+                child->transform->SetLocalPosition(Vector3(0, position, child->transform->LocalPosition().z));
+                position += spacing * Vector2::down.y;
             }
         }
     };

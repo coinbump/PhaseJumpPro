@@ -51,10 +51,10 @@ TEST(Color, Color32ToColor)
     Color32 color32(255, 255, 255, 255);
     Color color(color32);
 
-    EXPECT_EQ(1.0f, color.r());
-    EXPECT_EQ(1.0f, color.g());
-    EXPECT_EQ(1.0f, color.b());
-    EXPECT_EQ(1.0f, color.a());
+    EXPECT_EQ(1.0f, color.r);
+    EXPECT_EQ(1.0f, color.g);
+    EXPECT_EQ(1.0f, color.b);
+    EXPECT_EQ(1.0f, color.a);
 }
 
 TEST(Color, ColorToColor32)

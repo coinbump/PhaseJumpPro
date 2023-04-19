@@ -22,6 +22,7 @@ namespace PJ {
     public:
         std::shared_ptr<SomeShaderProgram> shaderProgram;
         VectorList<Color> uniformColors;
+        VectorList<Color> colors;
         VectorList<RenderTexture> textures;
 
         // FUTURE: support custom parameter ordering for display if needed

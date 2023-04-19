@@ -23,7 +23,9 @@
 #include <PhaseJump/SDLRenderContext.h>
 #include <PhaseJump/SDLWindow.h>
 #include <PhaseJump/SDLWorld.h>
+#include <PhaseJump/Scene.h>
 #include <PhaseJump/StandardRandom.h>
+#include <PhaseJump/QuadRenderMeshBuilder.h>
 #include <PhaseJump/VFlow.h>
 
 // MARK: - imGui Headers

@@ -1,7 +1,6 @@
 #ifndef PJVECTOR3_H
 #define PJVECTOR3_H
 
-#include "SomeVector.h"
 #include "FloatMath.h"
 #include "IntMath.h"
 #include "Vector2.h"
@@ -13,20 +12,16 @@
  CODE REVIEW: 11/23/22
  */
 namespace PJ {
-    class Vector3 : public SomeVector<FloatMath, 3> {
+    class Vector3 {
     public:
-        using Base = SomeVector<FloatMath, 3>;
-
-        Vector3() : Base() {}
-        Vector3(float x, float y, float z) : Base() {
-            (*this)[0] = x;
-            (*this)[1] = y;
-            (*this)[2] = z;
+        float x = 0;
+        float y = 0;
+        float z = 0;
+        
+        Vector3() {
         }
-        Vector3(Base const& base) {
-            (*this)[0] = base[0];
-            (*this)[1] = base[1];
-            (*this)[2] = base[2];
+
+        Vector3(float x, float y, float z) : x(x), y(y), z(z) {
         }
 
         static Vector3 const one;
@@ -34,32 +29,48 @@ namespace PJ {
         static Vector3 const forward;
         static Vector3 const back;
 
-        float x() const { return (*this)[0]; }
-        float y() const { return (*this)[1]; }
-        float z() const { return (*this)[2]; }
-        float& x() { return (*this)[0]; }
-        float& y() { return (*this)[1]; }
-        float& z() { return (*this)[2]; }
-
         operator Vector2() const {
-            return Vector2(x(), y());
+            return Vector2(x, y);
         }
 
-        VECTOR_METHODS(Vector3, 3);
+        float& operator [](size_t index) {
+            return (&x)[index >= 0 && index < 3 ? index : index % 3];
+        }
+
+        float const& operator [](size_t index) const {
+            return (&x)[index >= 0 && index < 3 ? index : index % 3];
+        }
+
+        bool operator==(Vector3 const& rhs) const {
+            return x == rhs.x && y == rhs.y && z == rhs.z;
+        }
+
+        VECTOR_METHODS(Vector3, float, 3);
     };
 
-    class Vector3Int : public SomeVector<IntMath, 3> {
+    class Vector3Int {
     public:
-        using Base = SomeVector<IntMath, 3>;
+        int x = 0;
+        int y = 0;
+        int z = 0;
 
-        Vector3Int() : Base() {}
-        Vector3Int(int x, int y, int z) : Base() {
-            (*this)[0] = x;
-            (*this)[1] = y;
-            (*this)[2] = z;
+        Vector3Int() {}
+        Vector3Int(int x, int y, int z) : x(x), y(y), z(z) {
         }
 
-        VECTOR_METHODS(Vector3Int, 3);
+        int& operator [](size_t index) {
+            return (&x)[index >= 0 && index < 3 ? index : index % 3];
+        }
+
+        int const& operator [](size_t index) const {
+            return (&x)[index >= 0 && index < 3 ? index : index % 3];
+        }
+
+        bool operator==(Vector3Int const& rhs) const {
+            return x == rhs.x && y == rhs.y && z == rhs.z;
+        }
+
+        VECTOR_METHODS(Vector3Int, int, 3);
     };
 
     // Convenience names

@@ -91,6 +91,8 @@
 		CD6FEB7529170AE600F674D3 /* KaijuUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KaijuUITests.m; sourceTree = "<group>"; };
 		CD6FEB7729170AE600F674D3 /* KaijuUITestsLaunchTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KaijuUITestsLaunchTests.m; sourceTree = "<group>"; };
 		CDF0FB7729EE11DA00B9EF1F /* AppDelegateBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegateBridge.swift; sourceTree = "<group>"; };
+		CDF0FB8229EF943F00B9EF1F /* TestColorVaryScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestColorVaryScene.h; sourceTree = "<group>"; };
+		CDF0FB8329EF951200B9EF1F /* TestMeshPathScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestMeshPathScene.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -166,6 +168,7 @@
 		CD6FEB5429170AE500F674D3 /* Kaiju */ = {
 			isa = PBXGroup;
 			children = (
+				CDF0FB8029EF941700B9EF1F /* Scenes */,
 				CD420AE82959FE6900C5D3E1 /* SDLTest.cpp */,
 				CD420AE72959FE6900C5D3E1 /* SDLTest.h */,
 				CD5FB84029204DD2004F2FB4 /* Views */,
@@ -201,6 +204,23 @@
 				CD6FEB7729170AE600F674D3 /* KaijuUITestsLaunchTests.m */,
 			);
 			path = KaijuUITests;
+			sourceTree = "<group>";
+		};
+		CDF0FB8029EF941700B9EF1F /* Scenes */ = {
+			isa = PBXGroup;
+			children = (
+				CDF0FB8129EF941D00B9EF1F /* Test */,
+			);
+			path = Scenes;
+			sourceTree = "<group>";
+		};
+		CDF0FB8129EF941D00B9EF1F /* Test */ = {
+			isa = PBXGroup;
+			children = (
+				CDF0FB8229EF943F00B9EF1F /* TestColorVaryScene.h */,
+				CDF0FB8329EF951200B9EF1F /* TestMeshPathScene.h */,
+			);
+			path = Test;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

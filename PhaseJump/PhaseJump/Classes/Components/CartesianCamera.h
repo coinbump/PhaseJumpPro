@@ -18,9 +18,9 @@ namespace PJ {
             auto owner = this->owner.lock();
             auto cameraPosition = owner->transform->position;
 
-            Vector3 screenPosition(vector.x() - cameraPosition.x() + size.x() / 2.0f,
-                                   cameraPosition.y() + size.y() / 2.0f - vector.y(),
-                                   vector.z() - cameraPosition.z());
+            Vector3 screenPosition(vector.x - cameraPosition.x + size.x / 2.0f,
+                                   cameraPosition.y + size.y / 2.0f - vector.y,
+                                   vector.z - cameraPosition.z);
 
             return screenPosition;
         }

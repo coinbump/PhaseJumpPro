@@ -58,7 +58,7 @@ namespace PJ
             for (auto vertex : polygon.vertices)
             {
                 vertices[vi] = vertex;
-                uvs[vi] = Vector2((vertex.x() - polygonMin.x()) / polygonSize.x(), (vertex.y() - polygonMin.y()) / polygonSize.y());
+                uvs[vi] = Vector2((vertex.x - polygonMin.x) / polygonSize.x, (vertex.y - polygonMin.y) / polygonSize.y);
                 vi++;
             }
 

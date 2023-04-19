@@ -11,75 +11,11 @@
 #include <SDL2/SDL_video.h>
 #include <PhaseJump/PhaseJump.h>
 #include <iostream>
+#include "TestColorVaryScene.h"
+#include "TestMeshPathScene.h"
 
 using namespace PJ;
 using namespace std;
-
-void foo1(std::shared_ptr<SDLWorld> world) {
-    auto pathNode = std::make_shared<WorldNode>();
-    auto pathComponent = std::make_shared<CirclePathLayout2D>(500);
-    pathNode->AddComponent(pathComponent);
-    world->Add(pathNode);
-
-    int count = 20;
-    for (int i = 0; i < count; i++) {
-        auto meshNode = std::make_shared<WorldNode>();
-        auto meshRenderer = std::make_shared<MeshRenderer>();
-        meshNode->AddComponent(meshRenderer);
-
-        float progress = (float)i/(float)count;
-
-        auto material = std::make_shared<RenderMaterial>();
-        auto program = GLShaderProgram::registry["colorUniform"];
-        if (program) {
-            material->shaderProgram = program;
-            material->uniformColors.Add(Color(progress, 1.0f - progress, 0, 1));
-
-            EllipseRenderMeshBuilder builder(Angle::DegreesAngle(5.0f), Vector2(40, 20));
-            auto renderMesh = builder.BuildRenderMesh();
-            meshRenderer->material = material;
-            meshRenderer->mesh = renderMesh;
-        }
-//        window->World()->Add(meshNode);
-        meshNode->transform->scale = Vector3(1.0f + progress, 1.0f + progress, 1);
-//        meshNode->transform->rotation.z() = -(progress * 360.0f);
-        pathNode->AddChild(meshNode);
-    }
-
-    pathComponent->ApplyLayout();
-}
-
-void foo2(std::shared_ptr<SDLWorld> world) {
-    auto pathNode = std::make_shared<WorldNode>();
-    auto pathComponent = std::make_shared<CirclePathLayout2D>(500);
-    pathNode->AddComponent(pathComponent);
-    world->Add(pathNode);
-
-    int count = 20;
-    for (int i = 0; i < count; i++) {
-        auto meshNode = std::make_shared<WorldNode>();
-        auto meshRenderer = std::make_shared<MeshRenderer>();
-        meshNode->AddComponent(meshRenderer);
-
-        float progress = (float)i/(float)count;
-
-        auto material = std::make_shared<RenderMaterial>();
-        auto program = GLShaderProgram::registry["colorUniform"];
-        if (program) {
-            material->shaderProgram = program;
-            material->uniformColors.Add(Color(1.0f, 0, 0, 1));
-
-            EllipseRenderMeshBuilder builder(Angle::DegreesAngle(5.0f), Vector2(40, 20));
-            auto renderMesh = builder.BuildRenderMesh();
-            meshRenderer->material = material;
-            meshRenderer->mesh = renderMesh;
-        }
-        pathNode->AddChild(meshNode);
-    }
-
-    pathComponent->orientToPath = false;
-    pathComponent->ApplyLayout();
-}
 
 bool my_tool_active = false;
 float my_color[4];
@@ -152,9 +88,16 @@ void SDLFoo() {
     window->World()->SetRenderContext(renderContext);
     window->World()->uiEventPoller = std::make_shared<SDLImGuiEventPoller>(*window);
 
-    foo1(window->World());
-    foo2(window->World());
+    TestMeshPathScene testMeshPathScene;
+    testMeshPathScene.LoadInto(*window->World());
 
+    TestColorVaryScene testColorVaryScene;
+    testColorVaryScene.LoadInto(*window->World());
+
+//    SDLLoadTextureOperation loadTexture(window->SDL_Renderer(), "resources/heart-full.png");
+//    loadTexture.Go();
+//    auto texture = loadTexture.texture;
+    
     window->World()->Go();
 #else
     auto windowConfig = SDLWindow::Configuration::native;

@@ -45,7 +45,7 @@ namespace PJ
         RenderMesh BuildRenderMesh() override
         {
             CenterPolyRenderMeshBuilder centerPolyMesh;
-            centerPolyMesh.AddArcVertices(Vector2::zero, Vector2(worldSize.x() / 2.0f, worldSize.y() / 2.0f), startAngle.Degrees(), endAngle.Degrees(), angleStep.Degrees());
+            centerPolyMesh.AddArcVertices(Vector2::zero, Vector2(worldSize.x / 2.0f, worldSize.y / 2.0f), startAngle.Degrees(), endAngle.Degrees(), angleStep.Degrees());
             return centerPolyMesh.BuildRenderMesh();
         }
     };

@@ -23,13 +23,13 @@ namespace PJ
         QuadRenderMeshBuilder() {
         }
 
-        QuadRenderMeshBuilder(Vector2Int meshSize, Vector2 worldSize) : meshSize(meshSize), worldSize(worldSize)
+        QuadRenderMeshBuilder(Vector2 worldSize = Vector2::one, Vector2Int meshSize = Vector2Int::one) : worldSize(worldSize), meshSize(meshSize)
         {
         }
 
         RenderMesh BuildRenderMesh() override
         {
-            return PlaneRenderMeshBuilder(meshSize, worldSize, Axis::Y)
+            return PlaneRenderMeshBuilder(worldSize, meshSize, Axis::Y)
                 .BuildRenderMesh();
         }
     };

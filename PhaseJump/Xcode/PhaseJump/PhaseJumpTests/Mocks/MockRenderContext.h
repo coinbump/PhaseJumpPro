@@ -30,7 +30,7 @@ namespace PJTest {
 
         Vector2Int PixelSize() const override
         {
-            return Vector2Int(Size().x() / 2.0f, Size().y() / 2.0f);
+            return Vector2Int(Size().x / 2.0f, Size().y / 2.0f);
         }
 
         void Render(SomeRenderer& renderer, RenderIntoModel model) override;

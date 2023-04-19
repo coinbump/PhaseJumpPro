@@ -29,13 +29,13 @@ namespace PJ
 
         void ApplyLayout() override
         {
-            auto firstPos = -Size().x() / 2;
+            auto firstPos = -Size().x / 2;
             auto position = firstPos;
 
             auto childNodes = ChildNodes();
             for (auto child : childNodes)
             {
-                child->transform->SetLocalPosition(Vector3(position, 0, child->transform->LocalPosition().z()));
+                child->transform->SetLocalPosition(Vector3(position, 0, child->transform->LocalPosition().z));
                 position += spacing;
             }
         }

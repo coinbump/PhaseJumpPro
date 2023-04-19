@@ -15,9 +15,13 @@ namespace PJ {
     /// Builds a render mesh with vertices
     class SomeRenderMeshBuilder : public WorldComponent {
     public:
+        using Base = WorldComponent;
+
         virtual RenderMesh BuildRenderMesh() = 0;
 
         Mesh BuildMesh();
+
+        void Awake() override;
     };
 }
 

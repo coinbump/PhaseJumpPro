@@ -29,9 +29,9 @@ namespace PJ
             for (auto vertex : vertices)
             {
                 result = Vector3(
-                                 std::min(result.x(), vertex.x()),
-                                 std::min(result.y(), vertex.y()),
-                                 std::min(result.z(), vertex.z())
+                                 std::min(result.x, vertex.x),
+                                 std::min(result.y, vertex.y),
+                                 std::min(result.z, vertex.z)
                                  );
             }
 
@@ -47,9 +47,9 @@ namespace PJ
             for (auto vertex : vertices)
             {
                 result = Vector3(
-                                 std::max(result.x(), vertex.x()),
-                                 std::max(result.y(), vertex.y()),
-                                 std::max(result.z(), vertex.z())
+                                 std::max(result.x, vertex.x),
+                                 std::max(result.y, vertex.y),
+                                 std::max(result.z, vertex.z)
                                  );
             }
 
@@ -61,7 +61,7 @@ namespace PJ
             auto min = Min();
             auto max = Max();
 
-            return Vector3(std::abs(max.x() - min.x()), std::abs(max.y() - min.y()), std::abs(max.z() - min.z()));
+            return Vector3(std::abs(max.x - min.x), std::abs(max.y - min.y), std::abs(max.z - min.z));
         }
 
         Vector3 Center() const
@@ -69,7 +69,7 @@ namespace PJ
             auto min = Min();
             auto size = Size();
 
-            return Vector3(min.x() + size.x() / 2.0f, min.y() + size.y() / 2.0f, min.z() + size.z() / 2.0f);
+            return Vector3(min.x + size.x / 2.0f, min.y + size.y / 2.0f, min.z + size.z / 2.0f);
         }
     };
 }

@@ -29,7 +29,7 @@ namespace PJ
             while (angle < endAngle)
             {
                 auto vector = (Vector2)Angle::DegreesAngle(angle);
-                auto vertex = Vector3(center.x() + vector.x() * radius.x(), center.y() + vector.y() * radius.y(), 0);
+                auto vertex = Vector3(center.x + vector.x * radius.x, center.y + vector.y * radius.y, 0);
                 polygon.vertices.Add(vertex);
 
                 angle += angleStep;
@@ -39,7 +39,7 @@ namespace PJ
             if (angle >= endAngle)
             {
                 auto vector = (Vector2)Angle::DegreesAngle(endAngle);
-                auto vertex = Vector3(center.x() + vector.x() * radius.x(), center.y() + vector.y() * radius.y(), 0);
+                auto vertex = Vector3(center.x + vector.x * radius.x, center.y + vector.y * radius.y, 0);
                 polygon.vertices.Add(vertex);
             }
         }

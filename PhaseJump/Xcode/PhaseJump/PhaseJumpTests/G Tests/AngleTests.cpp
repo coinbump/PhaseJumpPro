@@ -48,23 +48,23 @@ TEST(Angle, ToVector2)
     const float near = .001f;
 
     auto adjOpp = Angle::DegreesAngle(45).ToVector2(sqrt2);
-    EXPECT_NEAR(adjOpp.x(), 1, .01);
-    EXPECT_NEAR(adjOpp.y(), 1 * Vector2::up.y(), near);
+    EXPECT_NEAR(adjOpp.x, 1, .01);
+    EXPECT_NEAR(adjOpp.y, 1 * Vector2::up.y, near);
     adjOpp = Angle::DegreesAngle(135).ToVector2(sqrt2);
-    EXPECT_NEAR(adjOpp.x(), 1, .01);
-    EXPECT_NEAR(adjOpp.y(), 1 * Vector2::down.y(), near);
+    EXPECT_NEAR(adjOpp.x, 1, .01);
+    EXPECT_NEAR(adjOpp.y, 1 * Vector2::down.y, near);
     adjOpp = Angle::DegreesAngle(225).ToVector2(sqrt2);
-    EXPECT_NEAR(adjOpp.x(), -1, .01);
-    EXPECT_NEAR(adjOpp.y(), 1 * Vector2::down.y(), near);
+    EXPECT_NEAR(adjOpp.x, -1, .01);
+    EXPECT_NEAR(adjOpp.y, 1 * Vector2::down.y, near);
     adjOpp = Angle::DegreesAngle(315).ToVector2(sqrt2);
-    EXPECT_NEAR(adjOpp.x(), -1, .01);
-    EXPECT_NEAR(adjOpp.y(), 1 * Vector2::up.y(), near);
+    EXPECT_NEAR(adjOpp.x, -1, .01);
+    EXPECT_NEAR(adjOpp.y, 1 * Vector2::up.y, near);
 
-    // IMPORTANT: the angle specified is away from the 0 degree, *not* from the.x()-coordinate line.
+    // IMPORTANT: the angle specified is away from the 0 degree, *not* from the.x-coordinate line.
     // 60 degrees rotated away from origin 0 is a 30 degree right triangle.
     adjOpp = Angle::DegreesAngle(60).ToVector2(1);
-    EXPECT_NEAR(adjOpp.x(), .866, .01);
-    EXPECT_NEAR(adjOpp.y(), .5 * Vector2::up.y(), .01);
+    EXPECT_NEAR(adjOpp.x, .866, .01);
+    EXPECT_NEAR(adjOpp.y, .5 * Vector2::up.y, .01);
 }
 
 TEST(Angle, FromVector2)
@@ -73,43 +73,43 @@ TEST(Angle, FromVector2)
 
     Vector2 distance;
     Angle angle = Angle(distance);
-    distance.x() = 0;
-    distance.y() = 0;
+    distance.x = 0;
+    distance.y = 0;
     angle = Angle(distance);
     EXPECT_EQ(0, angle.Degrees());
 
     // TODO: fix this test (it's returning 360, which is equivalent to 0, but this isn't smart enough)
-//    distance.x() = 0;
-//    distance.y() = 10 * Vector2::up.y();
+//    distance.x = 0;
+//    distance.y = 10 * Vector2::up.y;
 //    angle = Angle(distance);
 //    EXPECT_NEAR(0, angle.Degrees(), near);
-    distance.x() = 10;
-    distance.y() = 0;
+    distance.x = 10;
+    distance.y = 0;
     angle = Angle(distance);
     EXPECT_NEAR(90, angle.Degrees(), near);
-    distance.x() = 0;
-    distance.y() = 10 * Vector2::down.y();
+    distance.x = 0;
+    distance.y = 10 * Vector2::down.y;
     angle = Angle(distance);
     EXPECT_NEAR(180, angle.Degrees(), near);
-    distance.x() = -10;
-    distance.y() = 0;
+    distance.x = -10;
+    distance.y = 0;
     angle = Angle(distance);
     EXPECT_NEAR(270, angle.Degrees(), near);
 
-    distance.x() = 10;
-    distance.y() = 10 * Vector2::up.y();
+    distance.x = 10;
+    distance.y = 10 * Vector2::up.y;
     angle = Angle(distance);
     EXPECT_NEAR(45, angle.Degrees(), near);
-    distance.x() = 10;
-    distance.y() = 10 * Vector2::down.y();
+    distance.x = 10;
+    distance.y = 10 * Vector2::down.y;
     angle = Angle(distance);
     EXPECT_NEAR(135, angle.Degrees(), near);
-    distance.x() = -10;
-    distance.y() = 10 * Vector2::down.y();
+    distance.x = -10;
+    distance.y = 10 * Vector2::down.y;
     angle = Angle(distance);
     EXPECT_NEAR(225, angle.Degrees(), near);
-    distance.x() = -10;
-    distance.y() = 10 * Vector2::up.y();
+    distance.x = -10;
+    distance.y = 10 * Vector2::up.y;
     angle = Angle(distance);
     EXPECT_NEAR(315, angle.Degrees(), near);
 }

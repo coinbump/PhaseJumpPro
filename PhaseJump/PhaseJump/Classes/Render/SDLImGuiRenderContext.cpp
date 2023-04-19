@@ -84,7 +84,7 @@ void SDLImGuiRenderContext::Bind() {
 }
 
 void SDLImGuiRenderContext::Clear() {
-    glClearColor(clearColor.red(), clearColor.green(), clearColor.blue(), clearColor.alpha());
+    glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
     glClear(GL_COLOR_BUFFER_BIT);
 }
 

@@ -67,6 +67,14 @@ namespace PJ {
         // Full setup (you should use this)
         bool Configure(std::shared_ptr<VertexGLShader> vertexShader, std::shared_ptr<FragmentGLShader> fragmentShader);
 
+        bool HasVertexAttribute(String id) {
+            return attributeLocations.find(id) != attributeLocations.end();
+        }
+
+        bool HasUniform(String id) {
+            return uniformLocations.find(id) != uniformLocations.end();
+        }
+
         // Manual setup
         void AttachShaders(std::shared_ptr<VertexGLShader> vertexShader, std::shared_ptr<FragmentGLShader> fragmentShader);
         void BindAttributeLocation(GLuint index, const GLchar* name);

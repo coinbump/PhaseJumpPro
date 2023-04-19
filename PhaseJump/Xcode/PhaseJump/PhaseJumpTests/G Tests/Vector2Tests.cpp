@@ -71,3 +71,61 @@ TEST(Vector2, TestRightHandOperators) {
     Vector2 result = 10.0f * sut;
     EXPECT_EQ(Vector2(40, 50), result);
 }
+
+TEST(Vector2, TestArrayOperator) {
+    Vector2 sut(4, 5);
+    EXPECT_EQ(4, sut[0]);
+    EXPECT_EQ(5, sut[1]);
+    EXPECT_EQ(4, sut[2]);
+    EXPECT_EQ(5, sut[3]);
+    EXPECT_EQ(5, sut[-1]);
+}
+
+TEST(Vector2, TestPack) {
+    Vector2 sut(0, 0);
+    EXPECT_EQ(sizeof(float) * 2, sizeof(sut));
+}
+
+TEST(Vector2, TestEquality) {
+    Vector2 sut(0, 0);
+    Vector2 sut2(1, 4);
+    Vector2 sut3(1, 4);
+
+    EXPECT_NE(sut, sut2);
+    EXPECT_EQ(sut2, sut3);
+}
+
+// MARK: - Vector2Int
+
+TEST(Vector2Int, TestInit) {
+    Vector2 sut;
+    EXPECT_EQ(0, sut[0]);
+    EXPECT_EQ(0, sut[1]);
+
+    sut = Vector2(3, 5);
+    EXPECT_EQ(3, sut[0]);
+    EXPECT_EQ(5, sut[1]);
+}
+
+TEST(Vector2Int, TestArrayOperator) {
+    Vector2Int sut(4, 5);
+    EXPECT_EQ(4, sut[0]);
+    EXPECT_EQ(5, sut[1]);
+    EXPECT_EQ(4, sut[2]);
+    EXPECT_EQ(5, sut[3]);
+    EXPECT_EQ(5, sut[-1]);
+}
+
+TEST(Vector2Int, TestPack) {
+    Vector2Int sut(0, 0);
+    EXPECT_EQ(sizeof(int) * 2, sizeof(sut));
+}
+
+TEST(Vector2Int, TestEquality) {
+    Vector2Int sut(0, 0);
+    Vector2Int sut2(1, 4);
+    Vector2Int sut3(1, 4);
+
+    EXPECT_NE(sut, sut2);
+    EXPECT_EQ(sut2, sut3);
+}

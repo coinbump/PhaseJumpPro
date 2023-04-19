@@ -32,6 +32,36 @@ namespace PJ {
         GLuint iboOffset = 0;
     };
 
+    /// Plan for building a GL vertex buffer
+    struct GLVertexBufferPlan {
+        struct Item {
+            String attributeId;
+            uint32_t componentCount;
+            uint32_t componentSize;
+            void* data;
+
+            uint32_t Size() const { return componentSize * componentCount; }
+
+            Item(String attributeId, uint32_t componentCount, uint32_t componentSize, void* data) : attributeId(attributeId), componentCount(componentCount), componentSize(componentSize), data(data) {
+            }
+        };
+
+        VectorList<Item> items;
+
+        template <class T>
+        void Add(String attributeId, CollectionData<T> const& collection) {
+            items.Add(Item(attributeId, (uint32_t)collection.ItemCount(), collection.ItemSize(), collection.Data()));
+        }
+
+        void Add(String attributeId, VectorList<Vector3> const& components) {
+            Add(attributeId, (CollectionData<Vector3>)components);
+        }
+
+        void Add(String attributeId, VectorList<Color> const& components) {
+            Add(attributeId, (CollectionData<Color>)components);
+        }
+    };
+
     /**
      Abstracts OpenGL render commands to allow for a subclass to implement actual renders
      Example: OpenGL vs OpenGLES
@@ -54,7 +84,7 @@ namespace PJ {
         /// Load current matrix for rendering
         virtual void LoadMatrix() = 0;
         virtual void Use(GLShaderProgram& program) = 0;
-        virtual std::shared_ptr<GLVertexBuffer> BuildVertexBuffer(VectorList<Vector3> const& vertices) = 0;
+        virtual std::shared_ptr<GLVertexBuffer> BuildVertexBuffer(GLVertexBufferPlan const& plan) = 0;
         virtual std::shared_ptr<GLIndexBuffer> BuildIndexBuffer(VectorList<uint32_t> indices) = 0;
         virtual void BindVertexBuffer(GLuint vbo);
         virtual void BindIndexBuffer(GLuint ibo);

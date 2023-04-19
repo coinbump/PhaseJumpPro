@@ -21,6 +21,7 @@ namespace PJ {
     struct RenderModel {
         /// Vertices to render (sent to vertex shader `a_position` attribute)
         VectorList<Vector3> vertices;
+        VectorList<Color> colors;
 
         /// Used by IBO to determine vertex offsets
         VectorList<uint32_t> indices;

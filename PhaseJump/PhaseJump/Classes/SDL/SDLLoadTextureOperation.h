@@ -36,7 +36,7 @@ namespace PJ {
             if (result) {
                 SDL_Point size;
                 SDL_QueryTexture(result, nullptr, nullptr, &size.x, &size.y);
-                texture = make_shared<SDLTexture>(result, Vector2Int(size.x, size.y));
+                texture = std::make_shared<SDLTexture>(result, Vector2Int(size.x, size.y));
             }
         }
     };

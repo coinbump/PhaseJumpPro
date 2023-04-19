@@ -36,7 +36,7 @@ namespace PJ {
         void RunGL(std::function<void()> command, String name) override;
 
         std::optional<GLenum> FeatureIdToGLFeatureId(String featureId);
-        std::shared_ptr<GLVertexBuffer> BuildVertexBuffer(VectorList<Vector3> const& vertices) override;
+        std::shared_ptr<GLVertexBuffer> BuildVertexBuffer(GLVertexBufferPlan const& plan) override;
         std::shared_ptr<GLIndexBuffer> BuildIndexBuffer(VectorList<uint32_t> indices) override;
         void BindVertexBuffer(GLuint vbo) override;
         void BindIndexBuffer(GLuint ibo) override;

@@ -10,11 +10,42 @@
  CODE REVIEW: 11/20/22
  */
 namespace PJ {
+    /// An object with accessible raw memory data
+    class SomeDataContainer {
+    public:
+        virtual void* Data() const = 0;
+        virtual uint32_t DataSize() const = 0;
+    };
+
+    /// A collection with accessible raw memory data
+    template <class T>
+    class SomeDataCollection : public SomeDataContainer {
+    public:
+        virtual size_t ItemCount() const = 0;
+        virtual uint32_t ItemSize() const { return sizeof(T); }
+
+        uint32_t DataSize() const override { return (uint32_t)ItemCount() * ItemSize(); }
+    };
+
+    template <class T>
+    class CollectionData : public SomeDataCollection<T> {
+    public:
+        size_t itemCount;
+        void* data;
+
+        CollectionData(size_t itemCount, void* data) : itemCount(itemCount), data(data) {
+        }
+
+        size_t ItemCount() const override { return itemCount; }
+        void* Data() const override { return data; }
+    };
+
     /// <summary>
     /// Extends std::vector with convenience methods
     /// Called VectorList to avoid confusion with Vector geometry objects.
     /// </summary>
-    template <class T, class Allocator = std::allocator<T>> class VectorList : public std::vector<T> {
+    template <class T, class Allocator = std::allocator<T>>
+    class VectorList : public std::vector<T> {
     public:
         using Base = std::vector<T>;
 
@@ -22,7 +53,9 @@ namespace PJ {
         }
 
         constexpr VectorList(std::initializer_list<T> init,
-                        const Allocator& alloc = Allocator()) : Base(init, alloc) {
+                             const Allocator& alloc = Allocator()) : Base(init, alloc) {
+        }
+        explicit VectorList(typename Base::size_type count) : Base(count) {
         }
 
         // Convenience
@@ -31,6 +64,11 @@ namespace PJ {
 
         // NOTE: Avoid Remove for large lists, it is inefficient
         COLLECTION_METHODS(VectorList<T>, T)
+
+        operator CollectionData<T>() const {
+            CollectionData<T> result(this->size(), (void*)this->data());
+            return result;
+        }
     };
 
     // Convenience names

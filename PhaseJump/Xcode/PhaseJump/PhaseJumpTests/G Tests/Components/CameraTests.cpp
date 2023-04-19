@@ -21,8 +21,8 @@ TEST(Camera, TestReadingCamera) {
     auto screenOne = sut->WorldToScreen(Vector3(1, 1, 0), renderContext);
     EXPECT_EQ(Vector3(1, 1, 0), screenOne);
 
-    cameraNode->transform->position.x() = 1.0f;
-    cameraNode->transform->position.y() = 1.0f;
+    cameraNode->transform->position.x = 1.0f;
+    cameraNode->transform->position.y = 1.0f;
 
     auto screenOneOffset = sut->WorldToScreen(Vector3(1, 1, 0), renderContext);
     EXPECT_EQ(Vector3(0, 0, 0), screenOneOffset);
@@ -40,8 +40,8 @@ TEST(Camera, TestCartesianCamera) {
     auto screenOne = sut->WorldToScreen(Vector3(1, 1, 0), renderContext);
     EXPECT_EQ(Vector3(201, 99, 0), screenOne);
 
-    cameraNode->transform->position.x() = 1.0f;
-    cameraNode->transform->position.y() = 1.0f;
+    cameraNode->transform->position.x = 1.0f;
+    cameraNode->transform->position.y = 1.0f;
 
     auto screenOneOffset = sut->WorldToScreen(Vector3(1, 1, 0), renderContext);
     EXPECT_EQ(Vector3(200, 100, 0), screenOneOffset);

@@ -52,8 +52,8 @@ namespace PJ
         ScreenPosition(Vector2 position) : position(position) {
         }
 
-        Vector3 Position() const { return Vector3(position.x(), position.y(), 0); }
-        void SetPosition(Vector3 value) { position = Vector2(value.x(), value.y()); }
+        Vector3 Position() const { return Vector3(position.x, position.y, 0); }
+        void SetPosition(Vector3 value) { position = Vector2(value.x, value.y); }
     };
 }
 

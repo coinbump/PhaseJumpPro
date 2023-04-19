@@ -8,6 +8,7 @@
 #include "RenderModel.h"
 
 using namespace PJ;
+using namespace std;
 
 void GLRenderEngine::EnableVertexAttributeArray(GLuint location, bool isEnabled)
 {
@@ -146,14 +147,38 @@ void GLRenderEngine::BindVertexArray(GLuint vao) {
     RunGL([=] () { glBindVertexArray(vao); }, "glBindVertexArray");
 }
 
-std::shared_ptr<GLVertexBuffer> GLRenderEngine::BuildVertexBuffer(VectorList<Vector3> const& vertices)
+std::shared_ptr<GLVertexBuffer> GLRenderEngine::BuildVertexBuffer(GLVertexBufferPlan const& plan)
 {
+    GLsizei totalSize = 0;
+    for (auto item : plan.items) {
+        uint32_t itemSize = item.Size();
+        totalSize += itemSize;
+    }
+
+    if (0 == totalSize) {
+        return nullptr;
+    }
+
     GLuint VBO;
     RunGL([&] () { glGenBuffers(1, &VBO); }, "Gen VBO");
     RunGL([&] () { glBindBuffer(GL_ARRAY_BUFFER, VBO); }, "Bind VBO");
-    RunGL([&] () { glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vector3), vertices.data(), GL_STATIC_DRAW); }, "VBO Data");
 
-    return std::make_shared<GLVertexBuffer>(VBO);
+    int offset = 0;
+
+    RunGL([&] () { glBufferData(GL_ARRAY_BUFFER, totalSize, nullptr, GL_STATIC_DRAW); }, "VBO Data");
+
+    auto result = std::make_shared<GLVertexBuffer>(VBO);
+
+    for (auto item : plan.items) {
+        auto itemSize = item.Size();
+        RunGL([&] () { glBufferSubData(GL_ARRAY_BUFFER, offset, itemSize, item.data); }, "VBO Data");
+
+        result->attributeOffsets[item.attributeId] = offset;
+
+        offset += itemSize;
+    }
+
+    return result;
 }
 
 std::shared_ptr<GLIndexBuffer> GLRenderEngine::BuildIndexBuffer(VectorList<uint32_t> indices) {
@@ -192,6 +217,10 @@ void GLRenderEngine::Render(RenderModel const& model)  {
     viewMatrix.LoadTranslate(Vector3(renderState.viewport.width / 2.0f, renderState.viewport.height / 2.0f, 0));
     auto modelMatrix = model.matrix;
 
+    VectorList<Vector3> vertices = model.vertices;
+    auto vertexCount = model.vertices.size();
+    VectorList<Color> colors(vertexCount);
+
     if (glProgram->uniformLocations.find("u_mvpMatrix") != glProgram->uniformLocations.end()) {
         Matrix4x4 viewProjectionMatrix = projectionMatrix * viewMatrix;
         Matrix4x4 modelViewProjection = viewProjectionMatrix * modelMatrix;
@@ -202,17 +231,42 @@ void GLRenderEngine::Render(RenderModel const& model)  {
 
     // First pass of this is very inefficient. We'll create an IBO, VBO, etc. for each render pass.
     // FUTURE: optimize as needed
-    auto vbo = BuildVertexBuffer(model.vertices);
+    GLVertexBufferPlan vboPlan;
+    vboPlan.Add("a_position", model.vertices);
+
+    // For now we'll take the easy route and use float colors
+    // FUTURE: evaluate converting colors to 32 bit single values for efficiency
+    auto hasColorAttribute = glProgram->HasVertexAttribute("a_color");
+    if (hasColorAttribute) {
+        auto isColorsEmpty = model.colors.size() == 0;
+        for (int i = 0; i < model.vertices.size(); i++) {
+            auto color = Color::white;
+            if (!isColorsEmpty) {
+                auto colorIndex = i % model.colors.size();
+                color = model.colors[colorIndex];
+            }
+
+            colors[i] = color;
+        }
+        vboPlan.Add("a_color", colors);
+    }
+
+    auto vbo = BuildVertexBuffer(vboPlan);
     auto ibo = BuildIndexBuffer(model.indices);
 
-    if (model.uniformColors.size() > 0) {
+    if (model.uniformColors.size() > 0 && glProgram->HasUniform("u_color")) {
         auto color = model.uniformColors[0];
-        glUniform4f(glProgram->uniformLocations["u_color"], color.red(), color.green(), color.blue(), color.alpha());
+        glUniform4f(glProgram->uniformLocations["u_color"], color.r, color.g, color.b, color.a);
     }
 
     BindVertexBuffer(vbo->glId);
     BindIndexBuffer(ibo->glId);
 
     VertexAttributePointer(glProgram->attributeLocations["a_position"], 3, GL_FLOAT, false, 0, 0);
+
+    if (hasColorAttribute) {
+        VertexAttributePointer(glProgram->attributeLocations["a_color"], 4, GL_FLOAT, false, 0, (void*)(uintptr_t)vbo->attributeOffsets["a_color"]);
+    }
+
     DrawElements(GL_TRIANGLES, (GLsizei)model.indices.size(), GL_UNSIGNED_INT, nullptr);
 }

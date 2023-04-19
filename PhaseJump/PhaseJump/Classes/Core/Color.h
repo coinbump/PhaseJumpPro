@@ -1,9 +1,7 @@
 #ifndef PJCOLOR_H
 #define PJCOLOR_H
 
-#include "StringConvertible.h"
 #include "FloatMath.h"
-#include "SomeVector.h"
 #include "Color32.h"
 #include "_String.h"
 
@@ -14,50 +12,32 @@
  */
 namespace PJ {
     /// Stores RGBA as normalized float components (0-1.0)
-    struct Color : public std::array<float, 4>, public StringConvertible
+    struct Color
     {
-        Color(float red, float green, float blue, float alpha)
-        {
-            this->r() = red;
-            this->g() = green;
-            this->b() = blue;
-            this->a() = alpha;
+        float r = 0;
+        float g = 0;
+        float b = 0;
+        float a = 0;
+
+        Color() {
         }
 
-        Color(Color32 color)
+        Color(float red, float green, float blue, float alpha) : r(red), g(green), b(blue), a(alpha)
         {
-            this->r() = color.redFloat();
-            this->g() = color.greenFloat();
-            this->b() = color.blueFloat();
-            this->a() = color.alphaFloat();
+        }
+
+        Color(Color32 color) : r(color.redFloat()), g(color.greenFloat()), b(color.blueFloat()), a(color.alphaFloat())
+        {
         }
 
         operator Color32() const {
-            return Color32((int)(r()*255.0f), (int)(g()*255.0f), (int)(b()*255.0f), (int)(a()*255.0f));
+            return Color32((int)(r*255.0f), (int)(g*255.0f), (int)(b*255.0f), (int)(a*255.0f));
         }
-
-        float r() const { return (*this)[0]; }
-        float g() const { return (*this)[1]; }
-        float b() const { return (*this)[2]; }
-        float a() const { return (*this)[3]; }
-        float& r() { return (*this)[0]; }
-        float& g() { return (*this)[1]; }
-        float& b() { return (*this)[2]; }
-        float& a() { return (*this)[3]; }
-
-        float red() const { return r(); }
-        float green() const { return g(); }
-        float blue() const { return b(); }
-        float alpha() const { return a(); }
-        float& red() { return r(); }
-        float& green() { return g(); }
-        float& blue() { return b(); }
-        float& alpha() { return a(); }
 
         // MARK: StringConvertible
 
-        String ToString() const override {
-            return "Red: " + String(r()) + " Green: " + String(g()) + " Blue: " + String(b()) + " Alpha: " + String(a());
+        String ToString() const {
+            return "Red: " + String(r) + " Green: " + String(g) + " Blue: " + String(b) + " Alpha: " + String(a);
         }
 
         // MARK: Constants

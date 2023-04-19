@@ -13,7 +13,7 @@ namespace PJ
         void MovePosition(Vector2 position) {
             auto transform = Transform();
             if (!transform) { return; }
-            transform->position = Vector3(position.x(), position.y(), transform->position.z());
+            transform->position = Vector3(position.x, position.y, transform->position.z);
         }
     };
 }

@@ -7,6 +7,8 @@
  CODE REVIEW: 4/16/23
  */
 
+#include "_Map.h"
+
 namespace PJ {
     class GLSomeBuffer {
     public:
@@ -26,14 +28,16 @@ namespace PJ {
     };
 
     /**
-     A vertex buffer (VBO) stores vertices in a `GL_ARRAY_BUFFER` for access by the GPU.
+     A vertex buffer (VBO) stores vertices, colors, etc. in a `GL_ARRAY_BUFFER` for access by the GPU.
      Vertices can be rendered via an IBO (Index Buffer Object), which specifies the indices into the VBO.
-     A VBO can contain vertices for multiple objects, to make batching draw calls easier
+     A VBO can contain render components for multiple objects, to make batching draw calls easier
 
      Usage: use pointers or the copied object will delete the buffer
      */
     class GLVertexBuffer : public GLSomeBuffer {
     public:
+        Map<String, uint32_t> attributeOffsets;
+
         GLVertexBuffer() {
         }
 

@@ -206,7 +206,6 @@
 		CD420B00295A819300C5D3E1 /* SomeEffect.h in Headers */ = {isa = PBXBuildFile; fileRef = CD420AFF295A819300C5D3E1 /* SomeEffect.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CD420B02295A84BE00C5D3E1 /* SomeAnimatedEffect.h in Headers */ = {isa = PBXBuildFile; fileRef = CD420B01295A84BE00C5D3E1 /* SomeAnimatedEffect.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CD420B0C295BF1B500C5D3E1 /* Vector2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD1E7CE429465CAB00001DB9 /* Vector2.cpp */; };
-		CD5FB827291EB0D2004F2FB4 /* SomeVector.h in Headers */ = {isa = PBXBuildFile; fileRef = CD5FB826291EB0D2004F2FB4 /* SomeVector.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CD5FB829291EB410004F2FB4 /* Vector2.h in Headers */ = {isa = PBXBuildFile; fileRef = CD5FB828291EB410004F2FB4 /* Vector2.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CD5FB82B291EB4C8004F2FB4 /* Vector2Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD5FB82A291EB4C8004F2FB4 /* Vector2Tests.cpp */; };
 		CD5FB83529200BFB004F2FB4 /* SomeProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = CD5FB83429200BFB004F2FB4 /* SomeProcessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -285,6 +284,8 @@
 		CDF0FB7229EDFE3600B9EF1F /* MeshRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF0FB7029EDFE3600B9EF1F /* MeshRenderer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CDF0FB7529EE06C400B9EF1F /* RenderModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDF0FB7329EE06C400B9EF1F /* RenderModel.cpp */; };
 		CDF0FB7629EE06C400B9EF1F /* RenderModel.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF0FB7429EE06C400B9EF1F /* RenderModel.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CDF0FB7E29EF93BD00B9EF1F /* Scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDF0FB7C29EF93BD00B9EF1F /* Scene.cpp */; };
+		CDF0FB7F29EF93BD00B9EF1F /* Scene.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF0FB7D29EF93BD00B9EF1F /* Scene.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CDF9D9E32925A91D00C912E9 /* SomeReference.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF9D9E02925A91D00C912E9 /* SomeReference.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CDF9D9E42925A91D00C912E9 /* StrongReference.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF9D9E12925A91D00C912E9 /* StrongReference.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CDF9D9E52925A91D00C912E9 /* WeakReference.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF9D9E22925A91D00C912E9 /* WeakReference.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -535,7 +536,6 @@
 		CD420AFC295A80B000C5D3E1 /* SwitchHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SwitchHandler.h; sourceTree = "<group>"; };
 		CD420AFF295A819300C5D3E1 /* SomeEffect.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SomeEffect.h; sourceTree = "<group>"; };
 		CD420B01295A84BE00C5D3E1 /* SomeAnimatedEffect.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SomeAnimatedEffect.h; sourceTree = "<group>"; };
-		CD5FB826291EB0D2004F2FB4 /* SomeVector.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SomeVector.h; sourceTree = "<group>"; };
 		CD5FB828291EB410004F2FB4 /* Vector2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Vector2.h; sourceTree = "<group>"; };
 		CD5FB82A291EB4C8004F2FB4 /* Vector2Tests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Vector2Tests.cpp; sourceTree = "<group>"; };
 		CD5FB83429200BFB004F2FB4 /* SomeProcessor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SomeProcessor.h; sourceTree = "<group>"; };
@@ -618,6 +618,8 @@
 		CDF0FB7029EDFE3600B9EF1F /* MeshRenderer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MeshRenderer.h; sourceTree = "<group>"; };
 		CDF0FB7329EE06C400B9EF1F /* RenderModel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RenderModel.cpp; sourceTree = "<group>"; };
 		CDF0FB7429EE06C400B9EF1F /* RenderModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderModel.h; sourceTree = "<group>"; };
+		CDF0FB7C29EF93BD00B9EF1F /* Scene.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Scene.cpp; sourceTree = "<group>"; };
+		CDF0FB7D29EF93BD00B9EF1F /* Scene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Scene.h; sourceTree = "<group>"; };
 		CDF9D9CD29259FB500C912E9 /* GoAcyclicGraphNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GoAcyclicGraphNode.h; sourceTree = "<group>"; };
 		CDF9D9CE29259FB500C912E9 /* SomeGraphNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SomeGraphNode.h; sourceTree = "<group>"; };
 		CDF9D9D029259FB500C912E9 /* StandardEdgeModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StandardEdgeModel.h; sourceTree = "<group>"; };
@@ -836,6 +838,8 @@
 				CDDD401B2951439200361C67 /* WorldComponent.h */,
 				CDDD401C2951439200361C67 /* WorldNode.h */,
 				CD376CC029E7B50300DC7950 /* Log.h */,
+				CDF0FB7C29EF93BD00B9EF1F /* Scene.cpp */,
+				CDF0FB7D29EF93BD00B9EF1F /* Scene.h */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -1245,7 +1249,6 @@
 				CD1E7CF029465E6B00001DB9 /* GeoTransform.cpp */,
 				CD420ADD2958CB6C00C5D3E1 /* Polygon.h */,
 				CD420ADB2958C91E00C5D3E1 /* SomePosition.h */,
-				CD5FB826291EB0D2004F2FB4 /* SomeVector.h */,
 				CD5FB828291EB410004F2FB4 /* Vector2.h */,
 				CD1E7CE429465CAB00001DB9 /* Vector2.cpp */,
 				CDF9DA00292EEEF500C912E9 /* Vector3.h */,
@@ -1499,6 +1502,7 @@
 				CD09402C29ECDE2100B0196F /* ArcRenderMeshBuilder.h in Headers */,
 				CD184016295E4D3F003459C4 /* SomeGoal.h in Headers */,
 				CDDD403E295263DB00361C67 /* GoCore.h in Headers */,
+				CDF0FB7F29EF93BD00B9EF1F /* Scene.h in Headers */,
 				CDCEFD6429EA4D0900F42045 /* Mesh.h in Headers */,
 				CDCEFD6229EA4CA500F42045 /* SomeRenderMeshBuilder.h in Headers */,
 				CDDD3FF7294E80A500361C67 /* Binding.h in Headers */,
@@ -1612,7 +1616,6 @@
 				CD0A84562918A1F00074CA4F /* _String.h in Headers */,
 				CDDD402E2951439200361C67 /* Core.h in Headers */,
 				CDF9DA1229325F3E00C912E9 /* SomeLimiter.h in Headers */,
-				CD5FB827291EB0D2004F2FB4 /* SomeVector.h in Headers */,
 				CD376D9929E7B70C00DC7950 /* imgui.h in Headers */,
 				CD376CC129E7B50300DC7950 /* Log.h in Headers */,
 				CD420AA42957F24100C5D3E1 /* StringConvertible.h in Headers */,
@@ -1757,6 +1760,7 @@
 				CDCEFD6129EA4CA500F42045 /* SomeRenderMeshBuilder.cpp in Sources */,
 				CDCEFD5929EA077700F42045 /* Bounds.cpp in Sources */,
 				CD376C7829E368D600DC7950 /* SomeRenderContext.cpp in Sources */,
+				CDF0FB7E29EF93BD00B9EF1F /* Scene.cpp in Sources */,
 				CD420B0C295BF1B500C5D3E1 /* Vector2.cpp in Sources */,
 				CDF0FB7129EDFE3600B9EF1F /* MeshRenderer.cpp in Sources */,
 				CD2A6A4529D0FDC20076BB3F /* Core.cpp in Sources */,

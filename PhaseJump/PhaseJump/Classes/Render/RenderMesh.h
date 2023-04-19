@@ -40,8 +40,8 @@ namespace PJ {
                     continue;
                 }
 
-                minValue = Vector3(std::min(minValue.x(), v.x()), std::min(minValue.y(), v.y()), std::min(minValue.z(), v.z()));
-                maxValue = Vector3(std::max(maxValue.x(), v.x()), std::max(maxValue.y(), v.y()), std::max(maxValue.z(), v.z()));
+                minValue = Vector3(std::min(minValue.x, v.x), std::min(minValue.y, v.y), std::min(minValue.z, v.z));
+                maxValue = Vector3(std::max(maxValue.x, v.x), std::max(maxValue.y, v.y), std::max(maxValue.z, v.z));
             }
 
             Vector3 extents = (maxValue - minValue) / 2.0f;

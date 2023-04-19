@@ -48,13 +48,13 @@ namespace PJ
         Angle(Vector2 distance)
         {
             // Prevent infinite/invalid angle
-            if (distance.x() == 0 && distance.y() == 0)
+            if (distance.x == 0 && distance.y == 0)
             {
                 this->value = 0;
                 return;
             }
 
-            float radians = atan2(distance.y() * Vector2::down.y(), distance.x());
+            float radians = atan2(distance.y * Vector2::down.y, distance.x);
             auto angle = Angle::DegreesAngle((FloatMath::RadiansToDegrees * radians) + 90.0f);
             auto result = angle.Clipped();
             this->value = result.Degrees();
@@ -94,9 +94,9 @@ namespace PJ
             float cosVal = cos(Radians());
 
             float x = magnitude * sinVal;
-            float y = magnitude * cosVal * Vector2::up.y();
-            result.x() = x;
-            result.y() = y;
+            float y = magnitude * cosVal * Vector2::up.y;
+            result.x = x;
+            result.y = y;
 
             return result;
         }

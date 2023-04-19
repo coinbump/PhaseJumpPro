@@ -32,7 +32,7 @@ namespace PJ
         }
 
         void SetWorldSize(Vector2 value) override {
-            radius = std::min(value.x(), value.y()) / 2.0f;
+            radius = std::min(value.x, value.y) / 2.0f;
         }
 
         std::shared_ptr<SomePath> BuildPath() override

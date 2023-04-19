@@ -32,8 +32,7 @@ namespace PJ
         }
 
         void Clear() override {
-            Color32 clearColor = this->clearColor;
-            SDL_SetRenderDrawColor(renderer, clearColor.r(), clearColor.g(), clearColor.b(), clearColor.a());
+            SDL_SetRenderDrawColor(renderer, clearColor.r, clearColor.g, clearColor.b, clearColor.a);
             SDL_RenderClear(renderer);
         }
 
