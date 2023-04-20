@@ -1,9 +1,10 @@
 # Phase Jump Pro
 Utility classes for making games with Unity.
+C++ code for OpenGL rendering.
 
 # Documentation
 
-The documentation very limited right now. It is a work in progress here: [Link](https://coinbump.github.io/PhaseJumpPro/)
+The documentation limited right now. It is a work in progress here: [Link](https://coinbump.github.io/PhaseJumpPro/)
 
 # Modules
 
