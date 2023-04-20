@@ -95,6 +95,7 @@ bool GLShaderProgram::Link()
     glGetProgramiv(glId, GL_LINK_STATUS, &status);
     if (GL_FALSE == status) {
         PJLog("ERROR. Failed to link program %d", glId);
+        return false;
     }
     else {
         isLinked = true;

@@ -1,5 +1,0 @@
-{
-	"id": "colorVary",
-	"shader.vertex": "vertex+color",
-	"shader.fragment": "colorVary"
-}

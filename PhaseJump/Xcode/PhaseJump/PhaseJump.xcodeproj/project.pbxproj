@@ -191,7 +191,7 @@
 		CD420AD0295802BB00C5D3E1 /* SDLTextureRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = CD420ACF295802BB00C5D3E1 /* SDLTextureRenderer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CD420AD22958060500C5D3E1 /* SDLTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = CD420AD12958060500C5D3E1 /* SDLTexture.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CD420AD42958065300C5D3E1 /* SomeOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = CD420AD32958065300C5D3E1 /* SomeOperation.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		CD420AD62958069400C5D3E1 /* SDLLoadTextureOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = CD420AD52958069400C5D3E1 /* SDLLoadTextureOperation.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CD420AD62958069400C5D3E1 /* SDLLoadSDLTextureOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = CD420AD52958069400C5D3E1 /* SDLLoadSDLTextureOperation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CD420AD82958092000C5D3E1 /* SDLWorld.h in Headers */ = {isa = PBXBuildFile; fileRef = CD420AD72958092000C5D3E1 /* SDLWorld.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CD420ADA29580B9B00C5D3E1 /* SomeRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = CD420AD929580B9B00C5D3E1 /* SomeRenderer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CD420ADC2958C91E00C5D3E1 /* SomePosition.h in Headers */ = {isa = PBXBuildFile; fileRef = CD420ADB2958C91E00C5D3E1 /* SomePosition.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -218,6 +218,7 @@
 		CD6FEB362917017A00F674D3 /* PhaseJump.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD6FEB2B2917017A00F674D3 /* PhaseJump.framework */; };
 		CD6FEB3B2917017A00F674D3 /* FloatTransformTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD6FEB3A2917017A00F674D3 /* FloatTransformTests.mm */; };
 		CD6FEB3C2917017A00F674D3 /* PhaseJump.h in Headers */ = {isa = PBXBuildFile; fileRef = CD6FEB2E2917017A00F674D3 /* PhaseJump.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CD86A73829F0BEA40015BFCE /* SDLLoadGLTextureOperation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD86A73729F0BEA40015BFCE /* SDLLoadGLTextureOperation.cpp */; };
 		CD9649B029A138F800662285 /* Weight.h in Headers */ = {isa = PBXBuildFile; fileRef = CD9649AF29A138F800662285 /* Weight.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CD9649B229A13F5900662285 /* WeightedRandomChoice.h in Headers */ = {isa = PBXBuildFile; fileRef = CD9649B129A13F5900662285 /* WeightedRandomChoice.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CD9649B429A1418500662285 /* WeightedRandomTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD9649B329A1418500662285 /* WeightedRandomTests.cpp */; };
@@ -286,6 +287,10 @@
 		CDF0FB7629EE06C400B9EF1F /* RenderModel.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF0FB7429EE06C400B9EF1F /* RenderModel.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CDF0FB7E29EF93BD00B9EF1F /* Scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDF0FB7C29EF93BD00B9EF1F /* Scene.cpp */; };
 		CDF0FB7F29EF93BD00B9EF1F /* Scene.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF0FB7D29EF93BD00B9EF1F /* Scene.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CDF0FB8829F02A4E00B9EF1F /* SomeRenderEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDF0FB8729F02A4E00B9EF1F /* SomeRenderEngine.cpp */; };
+		CDF0FB8A29F0327300B9EF1F /* GLBlendMode.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF0FB8929F0327300B9EF1F /* GLBlendMode.h */; };
+		CDF0FB8C29F032A000B9EF1F /* GLBlendMode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDF0FB8B29F032A000B9EF1F /* GLBlendMode.cpp */; };
+		CDF0FB8E29F0B32A00B9EF1F /* SDLLoadGLTextureOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF0FB8D29F0B32A00B9EF1F /* SDLLoadGLTextureOperation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CDF9D9E32925A91D00C912E9 /* SomeReference.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF9D9E02925A91D00C912E9 /* SomeReference.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CDF9D9E42925A91D00C912E9 /* StrongReference.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF9D9E12925A91D00C912E9 /* StrongReference.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CDF9D9E52925A91D00C912E9 /* WeakReference.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF9D9E22925A91D00C912E9 /* WeakReference.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -523,7 +528,7 @@
 		CD420ACF295802BB00C5D3E1 /* SDLTextureRenderer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDLTextureRenderer.h; sourceTree = "<group>"; };
 		CD420AD12958060500C5D3E1 /* SDLTexture.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDLTexture.h; sourceTree = "<group>"; };
 		CD420AD32958065300C5D3E1 /* SomeOperation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SomeOperation.h; sourceTree = "<group>"; };
-		CD420AD52958069400C5D3E1 /* SDLLoadTextureOperation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDLLoadTextureOperation.h; sourceTree = "<group>"; };
+		CD420AD52958069400C5D3E1 /* SDLLoadSDLTextureOperation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDLLoadSDLTextureOperation.h; sourceTree = "<group>"; };
 		CD420AD72958092000C5D3E1 /* SDLWorld.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDLWorld.h; sourceTree = "<group>"; };
 		CD420AD929580B9B00C5D3E1 /* SomeRenderer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SomeRenderer.h; sourceTree = "<group>"; };
 		CD420ADB2958C91E00C5D3E1 /* SomePosition.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SomePosition.h; sourceTree = "<group>"; };
@@ -549,6 +554,7 @@
 		CD6FEB2F2917017A00F674D3 /* PhaseJump.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = PhaseJump.docc; sourceTree = "<group>"; };
 		CD6FEB352917017A00F674D3 /* PhaseJumpTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PhaseJumpTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CD6FEB3A2917017A00F674D3 /* FloatTransformTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = FloatTransformTests.mm; sourceTree = "<group>"; };
+		CD86A73729F0BEA40015BFCE /* SDLLoadGLTextureOperation.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SDLLoadGLTextureOperation.cpp; sourceTree = "<group>"; };
 		CD9649AF29A138F800662285 /* Weight.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Weight.h; sourceTree = "<group>"; };
 		CD9649B129A13F5900662285 /* WeightedRandomChoice.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WeightedRandomChoice.h; sourceTree = "<group>"; };
 		CD9649B329A1418500662285 /* WeightedRandomTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WeightedRandomTests.cpp; sourceTree = "<group>"; };
@@ -620,6 +626,10 @@
 		CDF0FB7429EE06C400B9EF1F /* RenderModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderModel.h; sourceTree = "<group>"; };
 		CDF0FB7C29EF93BD00B9EF1F /* Scene.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Scene.cpp; sourceTree = "<group>"; };
 		CDF0FB7D29EF93BD00B9EF1F /* Scene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Scene.h; sourceTree = "<group>"; };
+		CDF0FB8729F02A4E00B9EF1F /* SomeRenderEngine.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SomeRenderEngine.cpp; sourceTree = "<group>"; };
+		CDF0FB8929F0327300B9EF1F /* GLBlendMode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GLBlendMode.h; sourceTree = "<group>"; };
+		CDF0FB8B29F032A000B9EF1F /* GLBlendMode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GLBlendMode.cpp; sourceTree = "<group>"; };
+		CDF0FB8D29F0B32A00B9EF1F /* SDLLoadGLTextureOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDLLoadGLTextureOperation.h; sourceTree = "<group>"; };
 		CDF9D9CD29259FB500C912E9 /* GoAcyclicGraphNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GoAcyclicGraphNode.h; sourceTree = "<group>"; };
 		CDF9D9CE29259FB500C912E9 /* SomeGraphNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SomeGraphNode.h; sourceTree = "<group>"; };
 		CDF9D9D029259FB500C912E9 /* StandardEdgeModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StandardEdgeModel.h; sourceTree = "<group>"; };
@@ -1141,6 +1151,8 @@
 				CDCEFD5329EA004200F42045 /* GLShaderProgramLoader.h */,
 				CDCEFD5529EA00C300F42045 /* GLShaderProgramLoader.cpp */,
 				CD09402229ECAD8300B0196F /* GLVertexBuffer.h */,
+				CDF0FB8929F0327300B9EF1F /* GLBlendMode.h */,
+				CDF0FB8B29F032A000B9EF1F /* GLBlendMode.cpp */,
 			);
 			path = OpenGL;
 			sourceTree = "<group>";
@@ -1167,6 +1179,7 @@
 				CDCEFD6529EA525100F42045 /* RenderFeatures.h */,
 				CDF0FB7329EE06C400B9EF1F /* RenderModel.cpp */,
 				CDF0FB7429EE06C400B9EF1F /* RenderModel.h */,
+				CDF0FB8729F02A4E00B9EF1F /* SomeRenderEngine.cpp */,
 			);
 			path = Render;
 			sourceTree = "<group>";
@@ -1174,8 +1187,9 @@
 		CD420A8A29576F5200C5D3E1 /* SDL */ = {
 			isa = PBXGroup;
 			children = (
+				CDF0FB8D29F0B32A00B9EF1F /* SDLLoadGLTextureOperation.h */,
 				CD3CE273295C0D96003E24CF /* SDLColorBuilder.h */,
-				CD420AD52958069400C5D3E1 /* SDLLoadTextureOperation.h */,
+				CD420AD52958069400C5D3E1 /* SDLLoadSDLTextureOperation.h */,
 				CD420A9429577B9000C5D3E1 /* SDLMouseDevice.h */,
 				CD420AE52959FDB900C5D3E1 /* SDLRenderContext.h */,
 				CD420AD12958060500C5D3E1 /* SDLTexture.h */,
@@ -1188,6 +1202,7 @@
 				CD376CBE29E7A12900DC7950 /* SDLWindow.cpp */,
 				CDF0FB6F29EDFE3600B9EF1F /* MeshRenderer.cpp */,
 				CDF0FB7029EDFE3600B9EF1F /* MeshRenderer.h */,
+				CD86A73729F0BEA40015BFCE /* SDLLoadGLTextureOperation.cpp */,
 			);
 			path = SDL;
 			sourceTree = "<group>";
@@ -1449,7 +1464,7 @@
 				CD376C9C29E508CA00DC7950 /* Macros_Vectors.h in Headers */,
 				CD420AD82958092000C5D3E1 /* SDLWorld.h in Headers */,
 				CD376CC329E7B62500DC7950 /* SDLImGuiRenderContext.h in Headers */,
-				CD420AD62958069400C5D3E1 /* SDLLoadTextureOperation.h in Headers */,
+				CD420AD62958069400C5D3E1 /* SDLLoadSDLTextureOperation.h in Headers */,
 				CD376DB829E8994200DC7950 /* ZQuad.h in Headers */,
 				CD5FB847292084CD004F2FB4 /* SomeInputDevice.h in Headers */,
 				CDCEFD6629EA525100F42045 /* RenderFeatures.h in Headers */,
@@ -1484,6 +1499,7 @@
 				CD9649BA29A1932800662285 /* TimedSequence.h in Headers */,
 				CD0A84542918A1F00074CA4F /* FloatTransform.h in Headers */,
 				CD376DB429E893C800DC7950 /* GLRenderEngine.h in Headers */,
+				CDF0FB8E29F0B32A00B9EF1F /* SDLLoadGLTextureOperation.h in Headers */,
 				CDDD3FFE294EBB5E00361C67 /* SomeKeyframeInterpolatorFactory.h in Headers */,
 				CD420A9B2957E5BB00C5D3E1 /* Color.h in Headers */,
 				CDDD40272951439200361C67 /* StringIdentifiable.h in Headers */,
@@ -1596,6 +1612,7 @@
 				CD376C6929E32CB800DC7950 /* SomeCamera.h in Headers */,
 				CDF9D9F7292B131400C912E9 /* SomeListener.h in Headers */,
 				CDF9DA1C2932645300C912E9 /* Axis.h in Headers */,
+				CDF0FB8A29F0327300B9EF1F /* GLBlendMode.h in Headers */,
 				CD0A84602918A1F00074CA4F /* AnimationCycleTypes.h in Headers */,
 				CD09402629ECD69400B0196F /* QuadRenderMeshBuilder.h in Headers */,
 				CD1E7CCA2941A70A00001DB9 /* Valve.h in Headers */,
@@ -1728,10 +1745,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CDF0FB8C29F032A000B9EF1F /* GLBlendMode.cpp in Sources */,
 				CD376DB729E8994200DC7950 /* ZQuad.cpp in Sources */,
 				CD376DAE29E8922D00DC7950 /* SomeGLRenderEngine.cpp in Sources */,
 				CD376C7229E3623E00DC7950 /* World.cpp in Sources */,
 				CD2A6A5D29D3F56D0076BB3F /* SQLTypes.cpp in Sources */,
+				CD86A73829F0BEA40015BFCE /* SDLLoadGLTextureOperation.cpp in Sources */,
 				CD376D9429E7B70C00DC7950 /* imgui_tables.cpp in Sources */,
 				CD376D9729E7B70C00DC7950 /* imgui_demo.cpp in Sources */,
 				CD376D8629E7B6FD00DC7950 /* imgui_impl_opengl3.cpp in Sources */,
@@ -1745,6 +1764,7 @@
 				CD376CA029E65C5B00DC7950 /* SomePathLayout.cpp in Sources */,
 				CDDD402D2951439200361C67 /* WorldComponent.cpp in Sources */,
 				CD2A6A5829D3F56D0076BB3F /* SQLDatabase.cpp in Sources */,
+				CDF0FB8829F02A4E00B9EF1F /* SomeRenderEngine.cpp in Sources */,
 				CD376D8529E7B6FD00DC7950 /* imgui_impl_sdl2.cpp in Sources */,
 				CD6FEB302917017A00F674D3 /* PhaseJump.docc in Sources */,
 				CD376D9629E7B70C00DC7950 /* imgui.cpp in Sources */,

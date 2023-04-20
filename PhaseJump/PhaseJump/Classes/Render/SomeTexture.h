@@ -1,6 +1,8 @@
 #ifndef PJSOMETEXTURE_H
 #define PJSOMETEXTURE_H
 
+#include "Vector2.h"
+
 /*
  RATING: 5 stars
  Simple interface

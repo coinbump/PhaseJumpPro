@@ -1,5 +1,0 @@
-{
-	"id": "colorUniform",
-	"shader.vertex": "vertex",
-	"shader.fragment": "colorUniform"
-}

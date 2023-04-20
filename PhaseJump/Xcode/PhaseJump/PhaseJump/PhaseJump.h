@@ -16,10 +16,13 @@
 #include <PhaseJump/Log.h>
 #include <PhaseJump/MeshRenderer.h>
 
+#include <PhaseJump/RenderFeatures.h>
 #include <PhaseJump/RenderMaterial.h>
 #include <PhaseJump/RenderModel.h>
 #include <PhaseJump/SQLDatabase.h>
 #include <PhaseJump/SDLImGuiRenderContext.h>
+#include <PhaseJump/SDLLoadGLTextureOperation.h>
+#include <PhaseJump/SDLLoadSDLTextureOperation.h>
 #include <PhaseJump/SDLRenderContext.h>
 #include <PhaseJump/SDLWindow.h>
 #include <PhaseJump/SDLWorld.h>

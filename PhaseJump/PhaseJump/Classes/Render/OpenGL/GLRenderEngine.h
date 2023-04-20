@@ -42,6 +42,8 @@ namespace PJ {
         void BindIndexBuffer(GLuint ibo) override;
         void BindVertexArray(GLuint vao) override;
 
+        void SetBlendMode(GLBlendMode blendMode) override;
+
         // FUTURE: Implement as needed
         void LoadMatrix() override {}
         void Render(RenderModel const& model) override;

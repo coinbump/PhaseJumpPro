@@ -2,7 +2,7 @@
 #define SpriteRenderer_h
 
 #include "SomeRenderer.h"
-#include "SDLLoadTextureOperation.h"
+#include "SDLLoadSDLTextureOperation.h"
 #include "SDLRenderContext.h"
 #include "SDLColorBuilder.h"
 #include "RenderIntoModel.h"

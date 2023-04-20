@@ -30,7 +30,8 @@ bool GLShaderLoader::LoadFromPath(SomeGLShader& shader, FilePath path)
     #ifndef _OPENGLES_PHASE_
         // OpenGL 3+ requires version as first line. Mac OS defaults to 150
         buffer << "#version 150\n";
-
+        buffer << "#define _PREMULT_PHASE_\n";
+        
         // OpenGL ES requires highp, mediump, lowp qualifiers for fragment shaders,
         // But these are undefined in standard OpenGL, so we define them here.
         // If we don't, the shader won't compile on desktop

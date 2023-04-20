@@ -38,7 +38,7 @@ void GLRenderEngine::DrawElements(GLenum mode, GLsizei count, GLenum type, const
 }
 
 void GLRenderEngine::Use(GLShaderProgram& program) {
-    RunGL([&] () { glUseProgram(program.GLId()); }, "glUseProgram");
+    RunGL([&] () { glUseProgram(program.GLId()); }, "glUseProgram: " + program.id);
 
     // Enable attributes for vertex shader
     /*
@@ -134,11 +134,27 @@ void GLRenderEngine::GoInternal()
             continue;
         }
 
+        program->id = info.id;
         GLShaderProgram::registry[info.id] = program;
     }
 
+    SetBlendMode(GLBlendMode(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+
+    // https://learnopengl.com/Advanced-OpenGL/Face-culling
+    // Our mesh code is shared with Unity, which uses Clockwise vertex ordering
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+    glFrontFace(GL_CW);
+    glEnable(GL_TEXTURE_2D);
+    
     featureIdToGLFeatureIdMap[RenderFeatures::Blend] = GL_BLEND;
     featureIdToGLFeatureIdMap[RenderFeatures::ScissorTest] = GL_SCISSOR_TEST;
+}
+
+void GLRenderEngine::SetBlendMode(GLBlendMode blendMode) {
+    Base::SetBlendMode(blendMode);
+
+    RunGL([&] () { glBlendFunc(blendMode.sFactor, blendMode.dFactor); }, "glBlendFunc");
 }
 
 void GLRenderEngine::BindVertexArray(GLuint vao) {
@@ -220,6 +236,7 @@ void GLRenderEngine::Render(RenderModel const& model)  {
     VectorList<Vector3> vertices = model.vertices;
     auto vertexCount = model.vertices.size();
     VectorList<Color> colors(vertexCount);
+    VectorList<Vector2> texCoords(vertexCount);
 
     if (glProgram->uniformLocations.find("u_mvpMatrix") != glProgram->uniformLocations.end()) {
         Matrix4x4 viewProjectionMatrix = projectionMatrix * viewMatrix;
@@ -251,11 +268,25 @@ void GLRenderEngine::Render(RenderModel const& model)  {
         vboPlan.Add("a_color", colors);
     }
 
+    auto hasTextureCoordAttribute = glProgram->HasVertexAttribute("a_texCoord");
+    if (hasTextureCoordAttribute) {
+        if (model.uvs.size() != model.vertices.size()) {
+            PJLog("ERROR. Trying to render a texture shader with invalid uvs.");
+            return;
+        }
+
+        texCoords = model.uvs;
+        vboPlan.Add("a_texCoord", texCoords);
+    }
+
     auto vbo = BuildVertexBuffer(vboPlan);
     auto ibo = BuildIndexBuffer(model.indices);
 
-    if (model.uniformColors.size() > 0 && glProgram->HasUniform("u_color")) {
-        auto color = model.uniformColors[0];
+    if (glProgram->HasUniform("u_color")) {
+        Color color = Color::white;
+        if (model.uniformColors.size() > 0) {
+            color = model.uniformColors[0];
+        }
         glUniform4f(glProgram->uniformLocations["u_color"], color.r, color.g, color.b, color.a);
     }
 
@@ -267,6 +298,12 @@ void GLRenderEngine::Render(RenderModel const& model)  {
     if (hasColorAttribute) {
         VertexAttributePointer(glProgram->attributeLocations["a_color"], 4, GL_FLOAT, false, 0, (void*)(uintptr_t)vbo->attributeOffsets["a_color"]);
     }
+
+    if (hasTextureCoordAttribute) {
+        VertexAttributePointer(glProgram->attributeLocations["a_texCoord"], 2, GL_FLOAT, false, 0, (void*)(uintptr_t)vbo->attributeOffsets["a_texCoord"]);
+    }
+
+    EnableOnlyFeatures(model.features);
 
     DrawElements(GL_TRIANGLES, (GLsizei)model.indices.size(), GL_UNSIGNED_INT, nullptr);
 }

@@ -5,6 +5,7 @@
 #include "_Set.h"
 #include "_String.h"
 #include "_Map.h"
+#include "GLBlendMode.h"
 
 /*
  RATING: 5 stars
@@ -37,6 +38,7 @@ namespace PJ {
         GLuint boundIBO = -1;
 
         Set<String> enabledFeatures;
+        GLBlendMode blendMode = GLBlendMode::standard;
 
         /*
          A vertex shader accepts attributes as inputs

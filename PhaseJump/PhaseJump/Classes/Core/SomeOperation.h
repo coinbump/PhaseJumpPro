@@ -1,6 +1,8 @@
 #ifndef PJSOMEPERATION_H
 #define PJSOMEPERATION_H
 
+#include "Base.h"
+
 /*
  RATING: 4 stars
  Simple interface, could use more logic

@@ -1,5 +1,5 @@
-#ifndef PJSDLLOADTEXTUREOPERATION_H
-#define PJSDLLOADTEXTUREOPERATION_H
+#ifndef PJSDLLOADSDLTEXTUREOPERATION_H
+#define PJSDLLOADSDLTEXTUREOPERATION_H
 
 #include "FilePath.h"
 #include "SomeOperation.h"
@@ -13,7 +13,8 @@
  CODE REVIEW: 12/24/22
  */
 namespace PJ {
-    class SDLLoadTextureOperation : public SomeOperation {
+    /// Use SDL to load an SDLTexture (use with `SDL_Renderer` only, not OpenGL context)
+    class SDLLoadSDLTextureOperation : public SomeOperation {
     protected:
         SDL_Renderer *renderer;
         FilePath path;
@@ -23,14 +24,11 @@ namespace PJ {
 
         std::shared_ptr<SDLTexture> texture;
 
-        SDLLoadTextureOperation(SDL_Renderer *renderer, FilePath path) : renderer(renderer), path(path) {
+        SDLLoadSDLTextureOperation(SDL_Renderer *renderer, FilePath path) : renderer(renderer), path(path) {
         }
 
         void GoInternal() override {
             Base::GoInternal();
-
-            FilePath path = SDL_GetBasePath();
-            path += FilePath(this->path);
 
             auto result = IMG_LoadTexture(renderer, path.string().c_str());
             if (result) {

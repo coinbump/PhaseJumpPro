@@ -60,6 +60,10 @@ namespace PJ {
         void Add(String attributeId, VectorList<Color> const& components) {
             Add(attributeId, (CollectionData<Color>)components);
         }
+
+        void Add(String attributeId, VectorList<Vector2> const& components) {
+            Add(attributeId, (CollectionData<Vector2>)components);
+        }
     };
 
     /**
@@ -105,11 +109,14 @@ namespace PJ {
         virtual void DrawArrays(GLenum drawMode, GLint drawFirst, GLsizei drawCount) = 0;
         virtual void DrawElements(GLenum mode, GLsizei count, GLenum type, const void * indices) = 0;
         virtual void RunGL(std::function<void()> command, String name) = 0;
+        virtual void SetBlendMode(GLBlendMode blendMode);
 
         // MARK: - SomeRenderEngine
 
         void EnableFeature(String featureId, bool isEnabled) override;
         void SetLineWidth(float lineWidth) override;
+
+        void EnableOnlyFeatures(Set<String> features);
 
         // FUTURE: implement as needed
         void RenderLineLoop(VectorList<float> const& vertices) override {}

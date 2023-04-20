@@ -5,14 +5,14 @@
 //  Created by Jeremy Vineyard on 4/18/23.
 //
 
-#ifndef TestColorVaryScene_h
-#define TestColorVaryScene_h
+#ifndef TestTextureScene_h
+#define TestTextureScene_h
 
 #include <PhaseJump/PhaseJump.h>
 
 using namespace PJ;
 
-class TestColorVaryScene : public Scene {
+class TestTextureScene : public Scene {
 public:
     void LoadInto(World& world) {
         auto meshNode = std::make_shared<WorldNode>();
@@ -20,13 +20,18 @@ public:
         meshNode->AddComponent(meshRenderer);
 
         auto material = std::make_shared<RenderMaterial>();
-        auto program = GLShaderProgram::registry["colorVary"];
+        auto program = GLShaderProgram::registry["textureUniform"];
         if (program) {
             material->shaderProgram = program;
-            material->colors.Add(Color::white);
-            material->colors.Add(Color::black.WithAlpha(0.5f));
-            material->colors.Add(Color::white);
-            material->colors.Add(Color::black.WithAlpha(0.5f));
+            material->textures.Add(RenderTexture(1));
+
+//            material->colors.Add(Color::white);
+//            material->colors.Add(Color::red);
+//            material->colors.Add(Color::white);
+//            material->colors.Add(Color::red);
+
+//            material->uniformColors.Add(Color::blue);
+
             material->features.Add(RenderFeatures::Blend);
 
             QuadRenderMeshBuilder builder(Vector2(400, 400));
@@ -34,6 +39,7 @@ public:
             meshRenderer->material = material;
             meshRenderer->mesh = renderMesh;
         }
+        meshNode->transform->position.z = -0.1f;
         world.Add(meshNode);
     }
 };

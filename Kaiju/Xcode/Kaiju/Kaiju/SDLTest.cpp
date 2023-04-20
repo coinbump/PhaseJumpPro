@@ -9,10 +9,12 @@
 #include <SDL2/SDL_main.h>
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_video.h>
+#include <SDL2_image/SDL_image.h>
 #include <PhaseJump/PhaseJump.h>
 #include <iostream>
 #include "TestColorVaryScene.h"
 #include "TestMeshPathScene.h"
+#include "TestTextureScene.h"
 
 using namespace PJ;
 using namespace std;
@@ -47,13 +49,14 @@ public:
     }
 };
 
-#define IMG
+//#define IMG
+
+std::shared_ptr<GLTexture> texture;
 
 void SDLFoo() {
     /* Enable standard application logging */
     SDL_LogSetPriority(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_INFO);
 
-#ifdef IMG
 //    int value;
 //    SDL_GL_GetAttribute(SDL_GL_DOUBLEBUFFER, &value);
 //    PJLog("SDL_GL_DOUBLEBUFFER: %d", value);
@@ -79,6 +82,7 @@ void SDLFoo() {
     window->Go();
 
     auto renderContext = std::make_shared<SDLImGuiRenderContext>();
+    renderContext->clearColor = Color(0.2f, 0.8f, 0.1f, 1.0f);
     renderContext->Configure(*window);
 
     auto node = std::make_shared<WorldNode>();
@@ -94,46 +98,17 @@ void SDLFoo() {
     TestColorVaryScene testColorVaryScene;
     testColorVaryScene.LoadInto(*window->World());
 
-//    SDLLoadTextureOperation loadTexture(window->SDL_Renderer(), "resources/heart-full.png");
-//    loadTexture.Go();
-//    auto texture = loadTexture.texture;
-    
-    window->World()->Go();
-#else
-    auto windowConfig = SDLWindow::Configuration::native;
-    windowConfig.SetIsResizable(true);
-    windowConfig.SetIsFullscreenDesktop(true);
-    auto window = std::make_shared<SDLWindow>(windowConfig, Vector2Int(640, 480));
-    window->Go();
+    TestTextureScene testTextureScene;
+    testTextureScene.LoadInto(*window->World());
 
-    static std::shared_ptr<SDLTexture> sprite;
-    if (!sprite) {
-        SDLLoadTextureOperation loadTexture(window->SDL_Renderer(), "resources/heart-full.png");
-        loadTexture.Go();
-        sprite = loadTexture.texture;
-    }
+    FilePath path = SDL_GetBasePath();
+    path /= FilePath("resources/heart-full.png");
 
-    if (!sprite) {
-        std::cout << "ERROR: Missing sprite.";
-        return;
-    }
-
-    auto pathNode = std::make_shared<WorldNode>();
-    auto pathComponent = std::make_shared<CirclePathLayout2D>(100);
-    pathNode->AddComponent(pathComponent);
-    window->World()->Add(pathNode);
-
-    for (int i = 0; i < 20; i++) {
-        auto node = std::make_shared<WorldNode>();
-        pathNode->AddChild(node);
-        auto renderer = std::make_shared<SDLTextureRenderer>(sprite);
-        node->Add(renderer);
-        node->transform->position = Vector3(StandardRandom().Value() * 100.0f, StandardRandom().Value() * 100.0f, 0);
-    }
-
-    pathComponent->ApplyLayout();
+    auto loadTexture = std::make_shared<SDLLoadGLTextureOperation>(path, TextureMagnification::Nearest);
+    loadTexture->Go();
+    texture = loadTexture->texture;
 
     window->World()->Go();
-#endif
 }
+
 #endif

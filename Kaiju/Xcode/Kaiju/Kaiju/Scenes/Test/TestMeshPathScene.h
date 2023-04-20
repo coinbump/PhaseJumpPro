@@ -65,8 +65,6 @@ public:
             auto meshRenderer = std::make_shared<MeshRenderer>();
             meshNode->AddComponent(meshRenderer);
 
-            float progress = (float)i/(float)count;
-
             auto material = std::make_shared<RenderMaterial>();
             auto program = GLShaderProgram::registry["colorUniform"];
             if (program) {

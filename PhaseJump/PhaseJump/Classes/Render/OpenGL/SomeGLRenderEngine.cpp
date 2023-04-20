@@ -26,8 +26,30 @@ void SomeGLRenderEngine::BindFrameBuffer(GLuint fb) {
     renderState.boundFrameBuffer = fb;
 }
 
+void SomeGLRenderEngine::SetBlendMode(GLBlendMode blendMode) {
+    renderState.blendMode = blendMode;
+}
+
 void SomeGLRenderEngine::EnableFeature(String featureId, bool isEnabled) {
     renderState.enabledFeatures.AddOrRemove(featureId, isEnabled);
+}
+
+void SomeGLRenderEngine::EnableOnlyFeatures(Set<String> features) {
+    Set<String> iterFeatures;
+
+    std::set_difference(renderState.enabledFeatures.begin(),
+                        renderState.enabledFeatures.end(),
+                        features.begin(),
+                        features.end(),
+                        std::inserter(iterFeatures, iterFeatures.begin()));
+
+    for (auto feature : iterFeatures) {
+        EnableFeature(feature, false);
+    }
+
+    for (auto feature : features) {
+        EnableFeature(feature, true);
+    }
 }
 
 void SomeGLRenderEngine::UniformMatrix4fv(GLint location, const GLfloat* value) {

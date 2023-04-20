@@ -1,15 +1,15 @@
 in vec4 a_position;
-in vec4 a_color;
+in vec2 a_texCoord;
 
 uniform mat4 u_mvpMatrix;
 
-out vec4 v_color;
+out vec2 v_texCoord;
 
 /*
-Uniform color across vertices
+Uniform color modulated texture
 */
 void main()
 {
 	gl_Position = u_mvpMatrix * a_position;
-    v_color = a_color;
+    v_texCoord = a_texCoord;
 }

@@ -5,7 +5,7 @@
 #include "Color.h"
 #include "FilePath.h"
 #include "SDLTexture.h"
-#include "SDLLoadTextureOperation.h"
+#include "SDLLoadSDLTextureOperation.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_main.h>
 #include <SDL2/SDL_render.h>

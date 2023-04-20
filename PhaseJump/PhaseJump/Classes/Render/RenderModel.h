@@ -6,6 +6,7 @@
 #include "RenderMaterial.h"
 #include "Vector3.h"
 #include "Matrix4x4.h"
+#include "_Set.h"
 
 /*
  RATING: 4 stars
@@ -33,6 +34,7 @@ namespace PJ {
         VectorList<Color> uniformColors;
 
         SomeShaderProgram& shaderProgram;
+        Set<String> features;
 
         Matrix4x4 matrix;
 

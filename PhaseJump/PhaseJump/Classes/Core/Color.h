@@ -34,6 +34,12 @@ namespace PJ {
             return Color32((int)(r*255.0f), (int)(g*255.0f), (int)(b*255.0f), (int)(a*255.0f));
         }
 
+        Color WithAlpha(float a) const {
+            Color result = *this;
+            result.a = a;
+            return result;
+        }
+        
         // MARK: StringConvertible
 
         String ToString() const {
@@ -42,9 +48,9 @@ namespace PJ {
 
         // MARK: Constants
 
-        static const Color redColor;
-        static const Color greenColor;
-        static const Color blueColor;
+        static const Color red;
+        static const Color green;
+        static const Color blue;
         static const Color black;
         static const Color clear;
         static const Color gray;

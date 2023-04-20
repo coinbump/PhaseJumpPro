@@ -1,0 +1,5 @@
+{
+	"id": "textureInvert",
+	"shader.vertex": "vertex+texture",
+	"shader.fragment": "textureInvert"
+}

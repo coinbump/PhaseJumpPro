@@ -2,6 +2,7 @@
 #define PJSOMERENDERENGINE_H
 
 #include "Base.h"
+#include "VectorList.h"
 
 /*
  RATING: 5 stars

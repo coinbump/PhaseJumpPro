@@ -18,6 +18,8 @@ namespace PJ {
 
     class SomeShaderProgram {
     public:
+        String id;
+
         virtual ~SomeShaderProgram() {}
     };
 

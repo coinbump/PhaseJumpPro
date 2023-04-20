@@ -4,6 +4,7 @@
 #include "Tags.h"
 #include "Color.h"
 #include "VectorList.h"
+#include "_Set.h"
 
 /*
  RATING: 5 stars
@@ -15,6 +16,9 @@ namespace PJ {
 
     struct RenderTexture {
         uint32_t id = 0;
+
+        RenderTexture(uint32_t id) : id(id) {
+        }
     };
 
     /// Combies render properties for object
@@ -24,10 +28,7 @@ namespace PJ {
         VectorList<Color> uniformColors;
         VectorList<Color> colors;
         VectorList<RenderTexture> textures;
-
-        // FUTURE: support custom parameter ordering for display if needed
-        /// Shader parameters
-        std::shared_ptr<Tags> tags = std::make_shared<Tags>();
+        Set<String> features;
     };
 }
 

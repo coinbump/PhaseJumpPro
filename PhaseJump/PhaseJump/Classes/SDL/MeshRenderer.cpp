@@ -16,8 +16,11 @@ void MeshRenderer::RenderInto(RenderIntoModel model) {
     RenderModel renderModel(*material->shaderProgram);
     renderModel.vertices = mesh.vertices;
     renderModel.indices = mesh.triangles;
+    renderModel.uvs = mesh.uvs;
     renderModel.colors = material->colors;
     renderModel.uniformColors = material->uniformColors;
+    renderModel.features = material->features;
+    renderModel.textures = material->textures;
 
     auto owner = this->owner.lock();
     Matrix4x4 translateMatrix, scaleMatrix, rotationMatrix;
