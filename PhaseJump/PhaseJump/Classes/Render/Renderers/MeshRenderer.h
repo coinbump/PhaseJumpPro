@@ -12,7 +12,8 @@
 namespace PJ {
     class RenderMaterial;
     class RenderMesh;
-
+    class RenderTexture;
+    
     /// Renders a mesh
     class MeshRenderer : public SomeRenderer {
     public:

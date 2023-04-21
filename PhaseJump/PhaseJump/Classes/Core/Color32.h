@@ -21,6 +21,9 @@ namespace PJ {
             return value;
         }
 
+        Color32() : value(0xFFFFFFFF) {
+        }
+
         Color32(int red, int green, int blue, int alpha)
         {
             value = ValueFromRGBA(red, green, blue, alpha);
@@ -33,13 +36,13 @@ namespace PJ {
 
         uint32_t ValueFromRGBA(int red, int green, int blue, int alpha)
         {
-            return ((uint32_t) red << 24) | ((uint32_t) green << 16) | ((uint32_t) blue << 8) | ((uint32_t) alpha);
+            return ((uint32_t) red) | ((uint32_t) green << 8) | ((uint32_t) blue << 16) | ((uint32_t) alpha << 24);
         }
 
-        int r() const { return ((value & 0xFF000000) >> 24); }
-        int g() const { return ((value & 0x00FF0000) >> 16); }
-        int b() const { return ((value & 0x0000FF00) >> 8); }
-        int a() const { return ((value & 0x000000FF)); }
+        int r() const { return ((value & 0x000000FF)); }
+        int g() const { return ((value & 0x0000FF00) >> 8); }
+        int b() const { return ((value & 0x00FF0000) >> 16); }
+        int a() const { return ((value & 0xFF000000) >> 24); }
 
         float redFloat() const { return ((float)r())/255.0f; }
         float greenFloat() const { return ((float)g())/255.0f; }

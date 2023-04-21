@@ -20,14 +20,14 @@ public:
         meshNode->AddComponent(meshRenderer);
 
         auto material = std::make_shared<RenderMaterial>();
-        auto program = GLShaderProgram::registry["colorVary"];
+        auto program = GLShaderProgram::registry["color.vary"];
         if (program) {
             material->shaderProgram = program;
             material->colors.Add(Color::white);
-            material->colors.Add(Color::black.WithAlpha(0.5f));
+            material->colors.Add(Color::black.WithAlpha(1));
             material->colors.Add(Color::white);
-            material->colors.Add(Color::black.WithAlpha(0.5f));
-            material->features.Add(RenderFeatures::Blend);
+            material->colors.Add(Color::black.WithAlpha(1));
+            material->features[RenderFeatures::Blend] = RenderFeatureStatus::Enable;
 
             QuadRenderMeshBuilder builder(Vector2(400, 400));
             auto renderMesh = builder.BuildRenderMesh();

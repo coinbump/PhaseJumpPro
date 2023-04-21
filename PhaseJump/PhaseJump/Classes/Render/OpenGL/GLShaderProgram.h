@@ -6,6 +6,7 @@
 #include "_Map.h"
 #include "VectorList.h"
 #include "FilePath.h"
+#include "SomeShaderProgram.h"
 #include <memory>
 
 /*
@@ -15,13 +16,6 @@
  */
 namespace PJ {
     class SomeGLRenderEngine;
-
-    class SomeShaderProgram {
-    public:
-        String id;
-
-        virtual ~SomeShaderProgram() {}
-    };
 
     /// Links  a vertex and a fragment shader
     class GLShaderProgram : public SomeShaderProgram

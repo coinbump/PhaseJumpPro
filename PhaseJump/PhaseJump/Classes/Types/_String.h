@@ -14,6 +14,9 @@
  CODE REVIEW: 11/6/22
  */
 namespace PJ {
+    template <class T, class Allocator>
+    class VectorList;
+
     /// <summary>
     /// Wraps `string` to add extension functions
     /// </summary>
@@ -75,6 +78,17 @@ namespace PJ {
 
             return result;
         }
+
+        template <typename Out>
+        void Split(const String &s, char delimiter, Out result) {
+            std::istringstream stream(s);
+            std::string item;
+            while (std::getline(stream, item, delimiter)) {
+                *result++ = item;
+            }
+        }
+
+        VectorList<String, std::allocator<String>> ComponentsSeparatedBy(char delimiter);
 
         String Suffix(size_t size) const;
         String Prefix(size_t size) const;

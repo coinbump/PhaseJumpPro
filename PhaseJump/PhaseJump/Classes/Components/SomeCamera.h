@@ -12,6 +12,7 @@
 namespace PJ
 {
     class SomeRenderContext;
+    class Matrix4x4;
     
     /// Transforms the positions of an object from object space to screen space
     class SomeCoordinateConverter
@@ -24,6 +25,14 @@ namespace PJ
     class SomeCamera : public WorldComponent, public SomeCoordinateConverter
     {
     public:
+        /// # of pixels per world unit
+        Vector3 pixelsPerUnit = Vector3::one;
+
+        // Scales all nodes
+        float scale = 1.0f;
+
+        virtual void Render(VectorList<std::shared_ptr<WorldNode>> nodes, std::shared_ptr<SomeRenderContext> renderContext);
+        virtual Matrix4x4 ModelMatrixFor(WorldNode const& node);
     };
 }
 

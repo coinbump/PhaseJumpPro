@@ -1,8 +1,11 @@
 #include "World.h"
 #include "SomeRenderer.h"
 #include "RenderIntoModel.h"
+#include "SomeCamera.h"
+#include "SomeRenderEngine.h"
 #include <stdio.h>
 
+using namespace std;
 using namespace PJ;
 
 void World::Render()
@@ -12,33 +15,31 @@ void World::Render()
     renderContext->Bind();
     renderContext->Clear();
 
-    auto graph = root->CollectGraph();
-    for (auto node : graph) {
-        auto worldNode = std::dynamic_pointer_cast<WorldNode>(node);
-        for (auto component : worldNode->Components()) {
-            auto renderer = std::dynamic_pointer_cast<SomeRenderer>(component);
-            if (!renderer) { continue; }
+    auto graph = root->CollectBreadthFirstGraph();
+    VectorList<std::shared_ptr<WorldNode>> nodes;
+    VectorList<std::shared_ptr<WorldNode>> activeNodes;
 
-            RenderIntoModel model;
-            model.renderContext = renderContext;
+    std::transform(graph.begin(), graph.end(), std::back_inserter(nodes), [](std::shared_ptr<SomeGraphNode<>> node) {
+        return static_pointer_cast<WorldNode>(node);
+    });
 
-            auto localPosition = worldNode->transform->position;
-            auto worldPosition = localPosition;
-            auto parent = static_pointer_cast<WorldNode>(worldNode->Parent());
+    std::copy_if(nodes.begin(), nodes.end(), std::back_inserter(activeNodes), [](std::shared_ptr<WorldNode> node) {
+        return node->IsActive();
+    });
 
-            // Transform local position to world position
-            while (parent) {
-                auto parentPosition = parent->transform->position;
-                worldPosition += parentPosition;
+    auto renderEngine = renderContext->renderEngine;
+    renderEngine->RenderStart();
 
-                parent = static_pointer_cast<WorldNode>(parent->Parent());
-            }
-
-            model.position = camera->WorldToScreen(worldPosition, *renderContext);
-
-            renderContext->Render(*renderer, model);
+    for (auto node : activeNodes) {
+        auto camera = node->GetComponent<SomeCamera>();
+        if (nullptr == camera) {
+            continue;
         }
+
+        camera->Render(activeNodes, renderContext);
     }
+
+    renderEngine->RenderDraw();
 
     renderContext->Present();
 }

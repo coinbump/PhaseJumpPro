@@ -1,5 +1,6 @@
 #include "gtest/gtest.h"
-#include "Types/_String.h"
+#include "_String.h"
+#include "VectorList.h"
 
 using namespace PJ;
 
@@ -80,4 +81,13 @@ TEST(String, ReplacingSuffix) {
     EXPECT_EQ(String("t.h"), String("t.h").ReplacingSuffix("x", "z"));
     EXPECT_EQ(String("t.cs"), String("t.h").ReplacingSuffix(".h", ".cs"));
     EXPECT_EQ(String("t"), String("t.h").ReplacingSuffix(".h", ""));
+}
+
+TEST(String, TestComponentsSeparatedBy) {
+    auto string = String("test 1 2");
+    auto components = string.ComponentsSeparatedBy(' ');
+    EXPECT_EQ(3, components.size());
+    EXPECT_EQ("test", components[0]);
+    EXPECT_EQ("1", components[1]);
+    EXPECT_EQ("2", components[2]);
 }

@@ -45,6 +45,7 @@ void SDLImGuiRenderContext::Configure(SDL_Window* window) {
     ImGui_ImplOpenGL3_Init("#version 150");
 
     shared_ptr<GLRenderEngine> glRenderEngine = make_shared<GLRenderEngine>();
+//    glRenderEngine->colorFormat = ColorFormat::Byte;
     glRenderEngine->Go();
 
     this->renderEngine = static_pointer_cast<SomeRenderEngine>(glRenderEngine);
@@ -85,7 +86,7 @@ void SDLImGuiRenderContext::Bind() {
 
 void SDLImGuiRenderContext::Clear() {
     glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 #include "EllipseRenderMeshBuilder.h"

@@ -14,16 +14,28 @@ using namespace PJ;
 
 class TestTextureScene : public Scene {
 public:
-    void LoadInto(World& world) {
-        auto meshNode = std::make_shared<WorldNode>();
-        auto meshRenderer = std::make_shared<MeshRenderer>();
-        meshNode->AddComponent(meshRenderer);
+    std::shared_ptr<GLTexture> texture;
 
-        auto material = std::make_shared<RenderMaterial>();
-        auto program = GLShaderProgram::registry["textureUniform"];
+    TestTextureScene(std::shared_ptr<GLTexture> texture) : texture(texture) {
+    }
+
+    void LoadInto(World& world) {
+        if (nullptr == texture) { return; }
+
+        auto meshNode = std::make_shared<WorldNode>();
+//        auto renderer = std::make_shared<MeshRenderer>();
+//        meshNode->AddComponent(renderer);
+
+        auto renderer = std::make_shared<SpriteRenderer>((RenderTexture)*texture);
+        meshNode->AddComponent(renderer);
+
+//        auto material = std::make_shared<RenderMaterial>();
+        auto material = renderer->material;
+        
+        auto program = GLShaderProgram::registry["texture.uniform"];//texture.interp.uniform"]; //"texture.uniform"
         if (program) {
             material->shaderProgram = program;
-            material->textures.Add(RenderTexture(1));
+//            material->textures.Add(RenderTexture(texture->glId));
 
 //            material->colors.Add(Color::white);
 //            material->colors.Add(Color::red);
@@ -31,15 +43,23 @@ public:
 //            material->colors.Add(Color::red);
 
 //            material->uniformColors.Add(Color::blue);
+//            material->uniformFloats.Add(0);//0.5f);
 
-            material->features.Add(RenderFeatures::Blend);
+            material->features[RenderFeatures::Blend] = RenderFeatureStatus::Enable;
 
-            QuadRenderMeshBuilder builder(Vector2(400, 400));
-            auto renderMesh = builder.BuildRenderMesh();
-            meshRenderer->material = material;
-            meshRenderer->mesh = renderMesh;
+//            QuadRenderMeshBuilder builder(Vector2(400, 400));
+//            auto renderMesh = builder.BuildRenderMesh();
+//            meshRenderer->material = material;
+//            meshRenderer->mesh = renderMesh;
         }
         meshNode->transform->position.z = -0.1f;
+        meshNode->transform->scale.x = 10.0f;
+        meshNode->transform->scale.y = 10.0f;
+        renderer->flipX = true;
+//        renderer->flipY = true;
+
+//        meshNode->SetActive(false);
+
         world.Add(meshNode);
     }
 };

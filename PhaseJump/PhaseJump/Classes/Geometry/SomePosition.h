@@ -35,7 +35,7 @@ namespace PJ
     struct LocalPosition : public SomePosition
     {
         Vector3 position;
-        std::shared_ptr<WorldNode> reference;
+        std::weak_ptr<WorldNode> reference;
 
         LocalPosition(Vector3 position, std::shared_ptr<WorldNode> reference) : position(position), reference(reference)
         {

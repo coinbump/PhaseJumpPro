@@ -1,5 +1,5 @@
 {
-	"id": "textureUniform",
+	"id": "texture.uniform",
 	"shader.vertex": "vertex+texture",
 	"shader.fragment": "textureUniform"
 }

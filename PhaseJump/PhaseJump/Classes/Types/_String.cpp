@@ -1,5 +1,6 @@
 #include "_String.h"
 #include <algorithm>
+#include "VectorList.h"
 
 using namespace std;
 using namespace PJ;
@@ -30,4 +31,11 @@ String String::Suffix(size_t size) const {
     if (size > this->size()) { return String(); }
 
     return substr(this->size() - size, size);
+}
+
+VectorList<String> String::ComponentsSeparatedBy(char delimiter)
+{
+   VectorList<String> result;
+   Split(*this, delimiter, std::back_inserter(result));
+   return result;
 }

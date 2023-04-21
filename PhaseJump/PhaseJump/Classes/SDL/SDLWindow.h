@@ -74,9 +74,12 @@ namespace PJ
 
         virtual ~SDLWindow() {
             SDL_DestroyWindow(window);
+            SDL_DestroyRenderer(renderer);
         }
 
         std::shared_ptr<SDLWorld> World() const { return world; }
+        void SetWorld(std::shared_ptr<SDLWorld> world) { this->world = world; }
+        
         SDL_Window* SDL_Window() const { return window; }
         SDL_Renderer* SDL_Renderer() const { return renderer; }
 

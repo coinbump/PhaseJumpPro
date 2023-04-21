@@ -27,7 +27,10 @@ void SDLWindow::GoInternal() {
             break;
     }
 
-    world = std::make_shared<SDLWorld>(std::make_shared<SDLRenderContext>(renderer));
+    if (!world) {
+        world = std::make_shared<SDLWorld>();
+    }
+    world->Configure(window, std::make_shared<SDLRenderContext>(renderer));
 
     // IMPORTANT: Call world->Go after you've built your scene
 }

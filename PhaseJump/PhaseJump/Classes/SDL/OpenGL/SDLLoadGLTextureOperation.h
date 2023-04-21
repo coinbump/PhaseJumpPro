@@ -15,21 +15,8 @@
  CODE REVIEW: 4/19/23
  */
 namespace PJ {
-    class GLTexture {
-    public:
-        GLuint id;
-        Vector2Int size;
-
-        GLTexture(GLuint id, Vector2Int size) : id(id), size(size) {
-        }
-
-        virtual ~GLTexture() {
-            if (id > 0) {
-                glDeleteTextures(1, &id);
-            }
-        }
-    };
-
+    class GLTexture;
+    
     enum class TextureMagnification {
         Nearest,
         Linear

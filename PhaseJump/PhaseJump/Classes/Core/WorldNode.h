@@ -21,6 +21,7 @@ namespace PJ {
         VectorList<ComponentSharedPtr> components;
         float destroyCountdown = 0;
         bool isDestroyed = false;
+        bool isActive = true;
 
     public:
         using Base = AcyclicGraphNode<>;
@@ -85,6 +86,9 @@ namespace PJ {
                 component->Start();
             }
         }
+
+        bool IsActive() const { return isActive; }
+        void SetActive(bool isActive) { this->isActive = isActive; }
 
         void OnUpdate(TimeSlice time) override
         {

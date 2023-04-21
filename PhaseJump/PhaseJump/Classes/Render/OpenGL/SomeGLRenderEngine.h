@@ -9,6 +9,7 @@
 #include "Base.h"
 #include "_Set.h"
 #include "Matrix4x4.h"
+#include "RenderModel.h"
 
 /*
  RATING: 4 stars
@@ -25,11 +26,12 @@ namespace PJ {
         PreRender
     };
 
-    // Information for a render operation in OpenGL
-    struct GLRenderModel {
-        GLuint vbo = 0;
-        GLuint ibo = 0;
-        GLuint iboOffset = 0;
+    enum class ColorFormat {
+        // Send colors as a 4-component float color
+        Float,
+
+        // Send colors as a 4-byte color
+        Byte
     };
 
     /// Plan for building a GL vertex buffer
@@ -38,31 +40,61 @@ namespace PJ {
             String attributeId;
             uint32_t componentCount;
             uint32_t componentSize;
+            GLenum glType;
+            bool normalize;
             void* data;
 
             uint32_t Size() const { return componentSize * componentCount; }
 
-            Item(String attributeId, uint32_t componentCount, uint32_t componentSize, void* data) : attributeId(attributeId), componentCount(componentCount), componentSize(componentSize), data(data) {
+            Item(String attributeId,
+                 uint32_t componentCount,
+                 uint32_t componentSize,
+                 GLenum glType,
+                 void* data,
+                 bool normalize = false)
+            : attributeId(attributeId),
+            componentCount(componentCount),
+            componentSize(componentSize),
+            glType(glType),
+            data(data),
+            normalize(normalize) {
             }
         };
 
         VectorList<Item> items;
 
         template <class T>
-        void Add(String attributeId, CollectionData<T> const& collection) {
-            items.Add(Item(attributeId, (uint32_t)collection.ItemCount(), collection.ItemSize(), collection.Data()));
+        void Add(String attributeId, CollectionData<T> const& collection, GLenum glType, bool normalize = false) {
+            items.Add(Item(attributeId,
+                           (uint32_t)collection.ItemCount(),
+                           collection.ItemSize(),
+                           glType,
+                           collection.Data(),
+                           normalize));
         }
 
         void Add(String attributeId, VectorList<Vector3> const& components) {
-            Add(attributeId, (CollectionData<Vector3>)components);
+            Add(attributeId, (CollectionData<Vector3>)components, GL_FLOAT);
         }
 
         void Add(String attributeId, VectorList<Color> const& components) {
-            Add(attributeId, (CollectionData<Color>)components);
+            Add(attributeId, (CollectionData<Color>)components, GL_FLOAT);
+        }
+        
+        void Add(String attributeId, VectorList<Color32> const& components) {
+            Add(attributeId, (CollectionData<Color32>)components, GL_UNSIGNED_BYTE, true);
         }
 
         void Add(String attributeId, VectorList<Vector2> const& components) {
-            Add(attributeId, (CollectionData<Vector2>)components);
+            Add(attributeId, (CollectionData<Vector2>)components, GL_FLOAT);
+        }
+    };
+
+    struct GLRenderPlan {
+        RenderModel model;
+        GLVertexBufferPlan vboPlan;
+
+        GLRenderPlan(RenderModel model, GLVertexBufferPlan vboPlan) : model(model), vboPlan(vboPlan) {
         }
     };
 
@@ -79,7 +111,11 @@ namespace PJ {
         Matrix4x4 viewMatrix;
         Matrix4x4 projectionMatrix;
 
+        VectorList<GLRenderPlan> renderPlans;
+
     public:
+        ColorFormat colorFormat = ColorFormat::Float;
+
         SomeGLRenderEngine();
 
         virtual void SetViewport(GLint x, GLint y, GLsizei width, GLsizei height);
@@ -118,13 +154,8 @@ namespace PJ {
 
         void EnableOnlyFeatures(Set<String> features);
 
-        // FUTURE: implement as needed
-        void RenderLineLoop(VectorList<float> const& vertices) override {}
-        void RenderLine(VectorList<float> const& vertices) override {}
-
     protected:
         virtual void RunRender(std::function<void()> render);
-        virtual void PreRender() {}    // Called before any render operation
     };
 }
 

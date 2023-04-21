@@ -36,7 +36,13 @@ namespace PJ {
      */
     class GLVertexBuffer : public GLSomeBuffer {
     public:
-        Map<String, uint32_t> attributeOffsets;
+        struct Attribute {
+            uint32_t offset;
+            GLenum glType;
+            bool normalize;
+        };
+
+        Map<String, Attribute> attributes;
 
         GLVertexBuffer() {
         }

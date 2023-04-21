@@ -3,6 +3,7 @@
 
 #include "Vector3.h"
 #include <memory>
+#include "Matrix4x4.h"
 
 namespace PJ
 {
@@ -12,7 +13,7 @@ namespace PJ
     {
     public:
         std::shared_ptr<SomeRenderContext> renderContext;
-        Vector3 position;
+        Matrix4x4 modelMatrix;
     };
 }
 

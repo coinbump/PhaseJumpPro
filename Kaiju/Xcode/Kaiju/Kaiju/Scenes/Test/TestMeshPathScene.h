@@ -34,7 +34,7 @@ public:
             float progress = (float)i/(float)count;
 
             auto material = std::make_shared<RenderMaterial>();
-            auto program = GLShaderProgram::registry["colorUniform"];
+            auto program = GLShaderProgram::registry["color.uniform"];
             if (program) {
                 material->shaderProgram = program;
                 material->uniformColors.Add(Color(progress, 1.0f - progress, 0, 1));
@@ -58,6 +58,10 @@ public:
         auto pathComponent = std::make_shared<CirclePathLayout2D>(500);
         pathNode->AddComponent(pathComponent);
         world.Add(pathNode);
+//        pathNode->transform->scale.x = 0.5f;
+//        pathNode->transform->position.x = 300;
+        pathNode->transform->position.z = -0.5f;
+//        pathNode->transform->rotation.z = -45;
 
         int count = 20;
         for (int i = 0; i < count; i++) {
@@ -66,7 +70,7 @@ public:
             meshNode->AddComponent(meshRenderer);
 
             auto material = std::make_shared<RenderMaterial>();
-            auto program = GLShaderProgram::registry["colorUniform"];
+            auto program = GLShaderProgram::registry["color.uniform"];
             if (program) {
                 material->shaderProgram = program;
                 material->uniformColors.Add(Color(1.0f, 0, 0, 1));

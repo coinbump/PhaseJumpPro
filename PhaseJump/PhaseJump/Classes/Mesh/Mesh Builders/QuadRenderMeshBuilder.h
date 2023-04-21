@@ -20,9 +20,6 @@ namespace PJ
         Vector2Int meshSize{1, 1};
         Vector2 worldSize{1.0f, 1.0f};
 
-        QuadRenderMeshBuilder() {
-        }
-
         QuadRenderMeshBuilder(Vector2 worldSize = Vector2::one, Vector2Int meshSize = Vector2Int::one) : worldSize(worldSize), meshSize(meshSize)
         {
         }

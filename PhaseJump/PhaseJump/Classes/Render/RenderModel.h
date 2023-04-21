@@ -6,7 +6,9 @@
 #include "RenderMaterial.h"
 #include "Vector3.h"
 #include "Matrix4x4.h"
+#include "RenderTexture.h"
 #include "_Set.h"
+#include "_Map.h"
 
 /*
  RATING: 4 stars
@@ -14,7 +16,6 @@
  CODE REVIEW: 4/17/23
  */
 namespace PJ {
-    class RenderTexture;
     class SomeShaderProgram;
 
     /// Sent to the render engine which then interprets it, does any
@@ -32,9 +33,10 @@ namespace PJ {
 
         VectorList<RenderTexture> textures;
         VectorList<Color> uniformColors;
+        VectorList<float> uniformFloats;
 
         SomeShaderProgram& shaderProgram;
-        Set<String> features;
+        Map<String, RenderFeatureStatus> features;
 
         Matrix4x4 matrix;
 

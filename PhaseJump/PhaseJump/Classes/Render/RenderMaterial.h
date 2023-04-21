@@ -5,6 +5,10 @@
 #include "Color.h"
 #include "VectorList.h"
 #include "_Set.h"
+#include "_Map.h"
+#include "RenderTypes.h"
+#include "RenderTexture.h"
+#include "Vector2.h"
 
 /*
  RATING: 5 stars
@@ -13,22 +17,18 @@
  */
 namespace PJ {
     class SomeShaderProgram;
-
-    struct RenderTexture {
-        uint32_t id = 0;
-
-        RenderTexture(uint32_t id) : id(id) {
-        }
-    };
-
+    
     /// Combies render properties for object
     class RenderMaterial {
     public:
         std::shared_ptr<SomeShaderProgram> shaderProgram;
+
         VectorList<Color> uniformColors;
+        VectorList<float> uniformFloats;
+
         VectorList<Color> colors;
         VectorList<RenderTexture> textures;
-        Set<String> features;
+        Map<String, RenderFeatureStatus> features;
     };
 }
 

@@ -1,4 +1,5 @@
 #include "SDLLoadGLTextureOperation.h"
+#include "GLTexture.h"
 
 using namespace std;
 using namespace PJ;
@@ -19,6 +20,11 @@ void SDLLoadGLTextureOperation::GoInternal() {
     if (surface->format->BytesPerPixel == 4) {
         pixelFormat = GL_BGRA;
     }
+
+    // SDL does not load textures premultiplied, so if we want that, we need to apply it
+#ifdef _PREMULT_PHASE_
+    // TODO:
+#endif
 
     // http://www.sdltutorials.com/sdl-tip-sdl-surface-to-opengl-texture
     GLuint glTexture = 0;

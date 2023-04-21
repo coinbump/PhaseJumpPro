@@ -11,6 +11,7 @@
 
 #include <PhaseJump/GLShaderProgram.h>
 #include <PhaseJump/GLShaderProgramLoader.h>
+#include <PhaseJump/GLTexture.h>
 
 #include <PhaseJump/HFlow.h>
 #include <PhaseJump/Log.h>
@@ -19,7 +20,9 @@
 #include <PhaseJump/RenderFeatures.h>
 #include <PhaseJump/RenderMaterial.h>
 #include <PhaseJump/RenderModel.h>
+#include <PhaseJump/RenderTexture.h>
 #include <PhaseJump/SQLDatabase.h>
+#include <PhaseJump/SDLImGuiUIEventPoller.h>
 #include <PhaseJump/SDLImGuiRenderContext.h>
 #include <PhaseJump/SDLLoadGLTextureOperation.h>
 #include <PhaseJump/SDLLoadSDLTextureOperation.h>
@@ -27,6 +30,8 @@
 #include <PhaseJump/SDLWindow.h>
 #include <PhaseJump/SDLWorld.h>
 #include <PhaseJump/Scene.h>
+#include <PhaseJump/SomeUIEvent.h>
+#include <PhaseJump/SpriteRenderer.h>
 #include <PhaseJump/StandardRandom.h>
 #include <PhaseJump/QuadRenderMeshBuilder.h>
 #include <PhaseJump/VFlow.h>

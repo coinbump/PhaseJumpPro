@@ -9,8 +9,6 @@ SomeGLRenderEngine::SomeGLRenderEngine() {
 }
 
 void SomeGLRenderEngine::RunRender(std::function<void()> render) {
-    PreRender();
-
     render();
 }
 

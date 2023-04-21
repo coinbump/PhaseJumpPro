@@ -3,24 +3,14 @@
 
 #include "WorldNode.h"
 #include "WorldComponent.h"
+#include "SomeUIEventPoller.h"
 #include "Updatable.h"
 #include "SomeRenderContext.h"
-#include "CartesianCamera.h"
+#include "OrthoCamera.h"
 #include <memory>
 
 namespace PJ
 {
-    // Some world systems use event polling (SDL)
-    class SomeUIEventPoller {
-    public:
-        enum class Status {
-            Running,
-
-            Done
-        };
-        virtual Status PollUIEvents() = 0;
-    };
-
     class World : public Base, public Updatable {
     public:
         std::shared_ptr<WorldNode> root = std::make_shared<WorldNode>();
@@ -30,7 +20,7 @@ namespace PJ
 
         World()
         {
-            camera = std::static_pointer_cast<SomeCamera>(std::make_shared<CartesianCamera>());
+            camera = std::static_pointer_cast<SomeCamera>(std::make_shared<OrthoCamera>());
 
             auto cameraNode = std::make_shared<WorldNode>();
             cameraNode->Add(camera);
@@ -40,8 +30,6 @@ namespace PJ
         bool IsFinished() const override { return false; }
         void OnUpdate(TimeSlice time) override
         {
-            root->OnUpdate(time);
-
             auto graph = root->CollectGraph();
             for (auto node : graph) {
                 auto worldNode = std::dynamic_pointer_cast<WorldNode>(node);
@@ -50,6 +38,8 @@ namespace PJ
                     if (parent) {
                         parent->RemoveEdgesTo(worldNode);
                     }
+                } else if (worldNode->IsActive()) {
+                    worldNode->OnUpdate(time);
                 }
             }
         }

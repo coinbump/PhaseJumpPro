@@ -46,10 +46,13 @@ namespace PJ {
 
         // FUTURE: Implement as needed
         void LoadMatrix() override {}
-        void Render(RenderModel const& model) override;
+        void RenderStart() override;
+        void RenderProcess(RenderModel const& model) override;
+        void RenderDraw() override;
 
     protected:
         void GoInternal() override;
+        void ScanGLExtensions();
     };
 }
 

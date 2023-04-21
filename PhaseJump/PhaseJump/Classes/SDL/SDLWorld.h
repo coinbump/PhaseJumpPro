@@ -4,40 +4,31 @@
 #include "World.h"
 #include "SomeRenderer.h"
 #include "SDLTextureRenderer.h"
+#include "SDLEventPoller.h"
+#include "VectorList.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_main.h>
 #include <SDL2/SDL_render.h>
 #include <memory>
 
 namespace PJ {
-    class SDLEventPoller : public SomeUIEventPoller {
-    public:
-        Status PollUIEvents() override {
-            SDL_Event event;
-            while (SDL_PollEvent(&event)) {
-                if (event.type == SDL_QUIT
-                    || (event.type == SDL_WINDOWEVENT
-                        && event.window.event == SDL_WINDOWEVENT_CLOSE)) {
-                    // && event.window.windowID == SDL_GetWindowID(*window))) {
-                    return Status::Done;
-                }
-            }
-
-            return Status::Running;
-        }
-    };
-
     class SDLWorld : public World {
     public:
         using Base = World;
 
     protected:
         bool isDone = false;
-        
+        SDL_Window *window;
+
     public:
-        SDLWorld(std::shared_ptr<SomeRenderContext> renderContext) {
+        SDLWorld() {
+        }
+
+        SDL_Window* SDL_Window() const { return window; }
+
+        virtual void Configure(struct SDL_Window *window, std::shared_ptr<SomeRenderContext> renderContext) {
+            this->window = window;
             this->renderContext = renderContext;
-            this->uiEventPoller = std::make_shared<SDLEventPoller>();
         }
 
     protected:
@@ -50,17 +41,8 @@ namespace PJ {
             SDL_Quit();
         }
 
-        void mainLoop()
-        {
-            if (!renderContext) { return; }
-
-            // TODO: temp code
-            // TODO: dispatch to event system
-            auto status = uiEventPoller->PollUIEvents();
-            isDone = status == SomeUIEventPoller::Status::Done;
-
-            Render();
-        }
+        void mainLoop();
+        virtual void ProcessUIEvents(VectorList<std::shared_ptr<SomeUIEvent>> const& uiEvents);
     };
 }
 
