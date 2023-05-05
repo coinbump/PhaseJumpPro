@@ -29,10 +29,10 @@ namespace PJ
         using This = SomeGraphNode<EdgeModel>;
         using Node = SomeGraphNode<EdgeModel>;
         using NodeWeakPtr = std::weak_ptr<Node>;
-        using NodeSharedPtr = std::shared_ptr<Node>;
+        using NodeSharedPtr = SP<Node>;
         using NodePtr = NodeSharedPtr const&;
         using NodeReference = SomeReference<Node>;
-        using NodeReferenceSharedPtr = std::shared_ptr<SomeReference<Node>>;
+        using NodeReferenceSharedPtr = SP<SomeReference<Node>>;
         using NodeSet = Set<NodeSharedPtr>;
         using WeakNodeVectorList = VectorList<NodeWeakPtr>;
         using NodeVectorList = VectorList<NodeSharedPtr>;
@@ -48,7 +48,7 @@ namespace PJ
             }
         };
 
-        using EdgeSharedPtr = std::shared_ptr<Edge>;
+        using EdgeSharedPtr = SP<Edge>;
         using EdgePtr = EdgeSharedPtr const&;
         using EdgeVectorList = VectorList<EdgeSharedPtr>;
 
@@ -76,8 +76,8 @@ namespace PJ
         {
             if (NULL == toNode || NULL == toNode->Value()) { return; }
 
-            auto fromNode = std::static_pointer_cast<Node>(this->shared_from_this());
-            auto forwardEdge = make_shared<Edge>(fromNode, model, toNode);
+            auto fromNode = SCAST<Node>(this->shared_from_this());
+            auto forwardEdge = MAKE<Edge>(fromNode, model, toNode);
             edges.Add(forwardEdge);
             toNode->Value()->FromNodes().Add(fromNode);
         }
@@ -98,7 +98,7 @@ namespace PJ
         void RemoveEdgesFrom(NodePtr fromNode)
         {
             if (NULL == fromNode) { return; }
-            fromNode->RemoveEdgesTo(std::static_pointer_cast<Node>(this->shared_from_this()));
+            fromNode->RemoveEdgesTo(SCAST<Node>(this->shared_from_this()));
         }
 
         void RemoveEdgesTo(NodePtr toNode)
@@ -127,7 +127,7 @@ namespace PJ
         /// </summary>
         NodeSet CollectGraph()
         {
-            auto fromNode = std::static_pointer_cast<Node>(this->shared_from_this());
+            auto fromNode = SCAST<Node>(this->shared_from_this());
             
             NodeSet nodes;
             nodes.Add(fromNode);
@@ -144,7 +144,7 @@ namespace PJ
         /// </summary>
         NodeVectorList CollectDepthFirstGraph()
         {
-            auto fromNode = std::static_pointer_cast<Node>(this->shared_from_this());
+            auto fromNode = SCAST<Node>(this->shared_from_this());
 
             NodeVectorList result;
             result.Add(fromNode);
@@ -162,7 +162,7 @@ namespace PJ
         /// </summary>
         NodeVectorList CollectBreadthFirstGraph()
         {
-            auto fromNode = std::static_pointer_cast<Node>(this->shared_from_this());
+            auto fromNode = SCAST<Node>(this->shared_from_this());
 
             NodeVectorList result;
             result.Add(fromNode);

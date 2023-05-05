@@ -66,7 +66,7 @@ namespace PJ
             }
         };
 
-        using NodeSharedPtr = std::shared_ptr<Node>;
+        using NodeSharedPtr = SP<Node>;
 
     protected:
         T state = T();
@@ -78,7 +78,7 @@ namespace PJ
         /// <summary>
         /// Broadcast state change events
         /// </summary>
-        std::shared_ptr<Broadcaster> broadcaster = std::make_shared<Broadcaster>();
+        SP<Broadcaster> broadcaster = MAKE<Broadcaster>();
 
         /// <summary>
         /// If true, state transitions can't occur
@@ -127,7 +127,7 @@ namespace PJ
                 return node;
             }
 
-            node = std::make_shared<Node>(state);
+            node = MAKE<Node>(state);
             this->nodes.Add(node);
 
             stateToNodeMap[state] = node;
@@ -153,7 +153,7 @@ namespace PJ
                 {
                     if (edgeInput == input)
                     {
-                        auto toNode = std::dynamic_pointer_cast<Node>(edge->toNode->Value());
+                        auto toNode = DCAST<Node>(edge->toNode->Value());
                         if (!toNode) { continue; }
 
                         SetState(toNode->state);
@@ -224,7 +224,7 @@ namespace PJ
         /// </summary>
         virtual void OnStateChange(T newState)
         {
-            broadcaster->Broadcast(std::make_shared<EventStateChange<T>>(prevState, newState, this->shared_from_this()));
+            broadcaster->Broadcast(MAKE<EventStateChange<T>>(prevState, newState, this->shared_from_this()));
         }
     };
 }

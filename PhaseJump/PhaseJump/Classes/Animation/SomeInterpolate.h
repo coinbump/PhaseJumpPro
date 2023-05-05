@@ -1,9 +1,10 @@
 #ifndef PJSOMEINTERPOLATE_H
 #define PJSOMEINTERPOLATE_H
 
+#include "Macros.h"
+#include "FloatTransform.h"
 #include <math.h>
 #include <memory>
-#include "FloatTransform.h"
 
 /*
  RATING: 5 stars
@@ -123,15 +124,15 @@ namespace PJ
     };
 
     namespace _InterpolateType {
-        extern const std::shared_ptr<SomeInterpolate> linear;
-        extern const std::shared_ptr<SomeInterpolate> easeInSquared;
-        extern const std::shared_ptr<SomeInterpolate> easeInCubed;
-        extern const std::shared_ptr<SomeInterpolate> easeOutSquared;
-        extern const std::shared_ptr<SomeInterpolate> easeOutCubed;
-        extern const std::shared_ptr<SomeInterpolate> easeOutElastic;
-        extern const std::shared_ptr<SomeInterpolate> easeInBack;
-        extern const std::shared_ptr<SomeInterpolate> easeOutBack;
-        extern const std::shared_ptr<SomeInterpolate> easeInOutBack;
+        extern const SP<SomeInterpolate> linear;
+        extern const SP<SomeInterpolate> easeInSquared;
+        extern const SP<SomeInterpolate> easeInCubed;
+        extern const SP<SomeInterpolate> easeOutSquared;
+        extern const SP<SomeInterpolate> easeOutCubed;
+        extern const SP<SomeInterpolate> easeOutElastic;
+        extern const SP<SomeInterpolate> easeInBack;
+        extern const SP<SomeInterpolate> easeOutBack;
+        extern const SP<SomeInterpolate> easeInOutBack;
     };
 }
 

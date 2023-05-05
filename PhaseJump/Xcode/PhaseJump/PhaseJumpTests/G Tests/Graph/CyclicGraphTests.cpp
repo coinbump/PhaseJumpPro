@@ -34,22 +34,22 @@ using namespace CyclicGraphTests;
 TEST(CyclicGraph, Test_RemoveRoot_RootIsNull)
 {
     TestGraph graph;
-    auto node = make_shared<Node>();
-    auto childNode = make_shared<Node>();
+    auto node = MAKE<Node>();
+    auto childNode = MAKE<Node>();
     graph.AddEdge(node, StandardEdgeModel(), childNode);
 
-    graph.SetRootNode(node);
+    graph.SetRoot(node);
 
-    EXPECT_EQ(node, graph.RootNode());
+    EXPECT_EQ(node, graph.Root());
     graph.Remove(node);
-    EXPECT_EQ(nullptr, graph.RootNode());
+    EXPECT_EQ(nullptr, graph.Root());
 }
 
 TEST(CyclicGraph, Test_RemoveFromGraph_FromEdgesRemoved)
 {
     TestGraph graph;
-    auto node = make_shared<Node>();
-    auto childNode = make_shared<Node>();
+    auto node = MAKE<Node>();
+    auto childNode = MAKE<Node>();
     graph.AddEdge(node, StandardEdgeModel(), childNode);
 
     EXPECT_EQ(1, childNode->FromNodes().Count());
@@ -62,8 +62,8 @@ TEST(CyclicGraph, Test_RemoveFromGraph_FromEdgesRemoved)
 TEST(CyclicGraph, Test_RemoveFromGraph_ToEdgesRemoved)
 {
     TestGraph graph;
-    auto node = make_shared<Node>();
-    auto childNode = make_shared<Node>();
+    auto node = MAKE<Node>();
+    auto childNode = MAKE<Node>();
     graph.AddEdge(node, StandardEdgeModel(), childNode);
 
     EXPECT_EQ(1, node->Edges().Count());
@@ -76,8 +76,8 @@ TEST(CyclicGraph, Test_RemoveFromGraph_ToEdgesRemoved)
 TEST(CyclicGraph, Test_AddEdge_IsAdded)
 {
     TestGraph graph;
-    auto node = make_shared<Node>();
-    auto childNode = make_shared<Node>();
+    auto node = MAKE<Node>();
+    auto childNode = MAKE<Node>();
     graph.AddEdge(node, StandardEdgeModel(), childNode);
 
     auto connectedNodes = node->CollectConnectedTo(true);
@@ -91,11 +91,11 @@ TEST(CyclicGraph, Test_AddEdge_IsAdded)
 TEST(CyclicGraph, Test_AddEdges_IsAdded)
 {
     TestGraph graph;
-    auto node = make_shared<Node>();
-    auto childNode1 = make_shared<Node>();
+    auto node = MAKE<Node>();
+    auto childNode1 = MAKE<Node>();
     graph.AddEdge(node, StandardEdgeModel(), childNode1);
 
-    auto childNode2 = make_shared<Node>();
+    auto childNode2 = MAKE<Node>();
     graph.AddEdge(node, StandardEdgeModel(), childNode2);
 
     auto connectedNodes = node->CollectConnectedTo(true);
@@ -112,11 +112,11 @@ TEST(CyclicGraph, Test_AddEdges_IsAdded)
 TEST(CyclicGraph, Test_Clear_RemovesEdges)
 {
     TestGraph graph;
-    auto node = make_shared<Node>();
-    auto childNode1 = make_shared<Node>();
+    auto node = MAKE<Node>();
+    auto childNode1 = MAKE<Node>();
     graph.AddEdge(node, StandardEdgeModel(), childNode1);
 
-    auto childNode2 = make_shared<Node>();
+    auto childNode2 = MAKE<Node>();
     graph.AddEdge(node, StandardEdgeModel(), childNode2);
 
     EXPECT_EQ(childNode1->FromNodes().Count(), 1);
@@ -133,14 +133,14 @@ TEST(CyclicGraph, Test_Clear_RemovesEdges)
 TEST(CyclicGraph, UpdateGraph_UpdatesAll)
 {
     TestGraph graph;
-    auto node = make_shared<Node>();
-    auto childNode1 = make_shared<Node>();
+    auto node = MAKE<Node>();
+    auto childNode1 = MAKE<Node>();
     graph.AddEdge(node, StandardEdgeModel(), childNode1);
 
-    auto childNode2 = make_shared<Node>();
+    auto childNode2 = MAKE<Node>();
     graph.AddEdge(node, StandardEdgeModel(), childNode2);
 
-    auto deepNode = make_shared<Node>();
+    auto deepNode = MAKE<Node>();
     graph.AddEdge(childNode1, StandardEdgeModel(), deepNode);
 
     auto delta = 4.0f;
@@ -155,8 +155,8 @@ TEST(CyclicGraph, UpdateGraph_UpdatesAll)
 TEST(CyclicGraph, Test_RemoveEdgeFromParent_RemovesBoth)
 {
     TestGraph graph;
-    auto node = make_shared<Node>();
-    auto childNode1 = make_shared<Node>();
+    auto node = MAKE<Node>();
+    auto childNode1 = MAKE<Node>();
     graph.AddEdge(node, StandardEdgeModel(), childNode1);
 
     EXPECT_EQ(node->Edges().Count(), 1);
@@ -171,12 +171,12 @@ TEST(CyclicGraph, Test_RemoveEdgeFromParent_RemovesBoth)
 TEST(CyclicGraph, Test_RemoveEdgesTo)
 {
     TestGraph graph;
-    auto node = make_shared<Node>();
+    auto node = MAKE<Node>();
 
-    auto childNode1 = make_shared<Node>();
+    auto childNode1 = MAKE<Node>();
     graph.AddEdge(node, StandardEdgeModel(), childNode1);
 
-    auto childNode2 = make_shared<Node>();
+    auto childNode2 = MAKE<Node>();
     graph.AddEdge(node, StandardEdgeModel(), childNode2);
 
     EXPECT_EQ(node->Edges().Count(), 2);
@@ -194,11 +194,11 @@ TEST(CyclicGraph, Test_RemoveEdgesTo)
 TEST(CyclicGraph, Test_RemoveEdgesFrom)
 {
     TestGraph graph;
-    auto node = make_shared<Node>();
-    auto childNode1 = make_shared<Node>();
+    auto node = MAKE<Node>();
+    auto childNode1 = MAKE<Node>();
     graph.AddEdge(node, StandardEdgeModel(), childNode1);
 
-    auto deepNode = make_shared<Node>();
+    auto deepNode = MAKE<Node>();
     graph.AddEdge(deepNode, StandardEdgeModel(), childNode1);
 
     EXPECT_EQ(node->Edges().Count(), 1);
@@ -224,14 +224,14 @@ TEST(CyclicGraph, Test_RemoveEdgesFrom)
 TEST(CyclicGraph, Test_CollectGraph)
 {
     TestGraph graph;
-    auto node = make_shared<Node>();
-    auto childNode1 = make_shared<Node>();
+    auto node = MAKE<Node>();
+    auto childNode1 = MAKE<Node>();
     graph.AddEdge(node, StandardEdgeModel(), childNode1);
 
-    auto childNode2 = make_shared<Node>();
+    auto childNode2 = MAKE<Node>();
     graph.AddEdge(node, StandardEdgeModel(), childNode2);
 
-    auto deepNode = make_shared<Node>();
+    auto deepNode = MAKE<Node>();
     graph.AddEdge(childNode1, StandardEdgeModel(), deepNode);
     graph.AddEdge(deepNode, StandardEdgeModel(), node);  // Circular connection
 
@@ -246,14 +246,14 @@ TEST(CyclicGraph, Test_CollectGraph)
 TEST(CyclicGraph, Test_CollectConnectedToNotDeep)
 {
     TestGraph graph;
-    auto node = make_shared<Node>();
-    auto childNode1 = make_shared<Node>();
+    auto node = MAKE<Node>();
+    auto childNode1 = MAKE<Node>();
     graph.AddEdge(node, StandardEdgeModel(), childNode1);
 
-    auto childNode2 = make_shared<Node>();
+    auto childNode2 = MAKE<Node>();
     graph.AddEdge(node, StandardEdgeModel(), childNode2);
 
-    auto deepNode = make_shared<Node>();
+    auto deepNode = MAKE<Node>();
     childNode1->AddEdge(StandardEdgeModel(), deepNode);
 
     auto collectedGraph = node->CollectConnectedTo(false);
@@ -265,14 +265,14 @@ TEST(CyclicGraph, Test_CollectConnectedToNotDeep)
 TEST(CyclicGraph, Test_CollectConnectedToDeep)
 {
     TestGraph graph;
-    auto node = make_shared<Node>();
-    auto childNode1 = make_shared<Node>();
+    auto node = MAKE<Node>();
+    auto childNode1 = MAKE<Node>();
     graph.AddEdge(node, StandardEdgeModel(), childNode1);
 
-    auto childNode2 = make_shared<Node>();
+    auto childNode2 = MAKE<Node>();
     graph.AddEdge(node, StandardEdgeModel(), childNode2);
 
-    auto deepNode = make_shared<Node>();
+    auto deepNode = MAKE<Node>();
     graph.AddEdge(childNode1, StandardEdgeModel(), deepNode);
 
     auto collectedGraph = node->CollectConnectedTo(true);
@@ -285,14 +285,14 @@ TEST(CyclicGraph, Test_CollectConnectedToDeep)
 TEST(CyclicGraph, Test_CollectConnectedToCircular)
 {
     TestGraph graph;
-    auto node = make_shared<Node>();
-    auto childNode1 = make_shared<Node>();
+    auto node = MAKE<Node>();
+    auto childNode1 = MAKE<Node>();
     graph.AddEdge(node, StandardEdgeModel(), childNode1);
 
-    auto childNode2 = make_shared<Node>();
+    auto childNode2 = MAKE<Node>();
     graph.AddEdge(node, StandardEdgeModel(), childNode2);
 
-    auto deepNode = make_shared<Node>();
+    auto deepNode = MAKE<Node>();
     graph.AddEdge(childNode1, StandardEdgeModel(), deepNode);
     graph.AddEdge(deepNode, StandardEdgeModel(), node);  // Circular connection
 
@@ -307,14 +307,14 @@ TEST(CyclicGraph, Test_CollectConnectedToCircular)
 TEST(CyclicGraph, Test_CollectDepthFirstGraphTree)
 {
     TestGraph graph;
-    auto node = make_shared<Node>();
-    auto childNode1 = make_shared<Node>();
+    auto node = MAKE<Node>();
+    auto childNode1 = MAKE<Node>();
     graph.AddEdge(node, StandardEdgeModel(), childNode1);
 
-    auto childNode2 = make_shared<Node>();
+    auto childNode2 = MAKE<Node>();
     graph.AddEdge(node, StandardEdgeModel(), childNode2);
 
-    auto deepNode = make_shared<Node>();
+    auto deepNode = MAKE<Node>();
     graph.AddEdge(childNode1, StandardEdgeModel(), deepNode);
 
     auto collectedGraph = node->CollectDepthFirstGraph();
@@ -328,14 +328,14 @@ TEST(CyclicGraph, Test_CollectDepthFirstGraphTree)
 TEST(CyclicGraph, Test_CollectDepthFirstGraphTree2)
 {
     TestGraph graph;
-    auto node = make_shared<Node>();
-    auto childNode1 = make_shared<Node>();
+    auto node = MAKE<Node>();
+    auto childNode1 = MAKE<Node>();
     graph.AddEdge(node, StandardEdgeModel(), childNode1);
 
-    auto childNode2 = make_shared<Node>();
+    auto childNode2 = MAKE<Node>();
     graph.AddEdge(node, StandardEdgeModel(), childNode2);
 
-    auto deepNode = make_shared<Node>();
+    auto deepNode = MAKE<Node>();
     graph.AddEdge(childNode2, StandardEdgeModel(), deepNode);
 
     auto collectedGraph = node->CollectDepthFirstGraph();
@@ -349,14 +349,14 @@ TEST(CyclicGraph, Test_CollectDepthFirstGraphTree2)
 TEST(CyclicGraph, Test_CollectDepthFirstGraphCircular)
 {
     TestGraph graph;
-    auto node = make_shared<Node>();
-    auto childNode1 = make_shared<Node>();
+    auto node = MAKE<Node>();
+    auto childNode1 = MAKE<Node>();
     graph.AddEdge(node, StandardEdgeModel(), childNode1);
 
-    auto childNode2 = make_shared<Node>();
+    auto childNode2 = MAKE<Node>();
     graph.AddEdge(node, StandardEdgeModel(), childNode2);
 
-    auto deepNode = make_shared<Node>();
+    auto deepNode = MAKE<Node>();
     graph.AddEdge(childNode1, StandardEdgeModel(), deepNode);
     graph.AddEdge(deepNode, StandardEdgeModel(), node);  // Circular connection
 
@@ -371,14 +371,14 @@ TEST(CyclicGraph, Test_CollectDepthFirstGraphCircular)
 TEST(CyclicGraph, Test_CollectBreadthFirstGraphTree)
 {
     TestGraph graph;
-    auto node = make_shared<Node>();
-    auto childNode1 = make_shared<Node>();
+    auto node = MAKE<Node>();
+    auto childNode1 = MAKE<Node>();
     graph.AddEdge(node, StandardEdgeModel(), childNode1);
 
-    auto childNode2 = make_shared<Node>();
+    auto childNode2 = MAKE<Node>();
     graph.AddEdge(node, StandardEdgeModel(), childNode2);
 
-    auto deepNode = make_shared<Node>();
+    auto deepNode = MAKE<Node>();
     graph.AddEdge(childNode1, StandardEdgeModel(), deepNode);
 
     auto collectedGraph = node->CollectBreadthFirstGraph();
@@ -392,14 +392,14 @@ TEST(CyclicGraph, Test_CollectBreadthFirstGraphTree)
 TEST(CyclicGraph, Test_CollectBreadthFirstGraphTree2)
 {
     TestGraph graph;
-    auto node = make_shared<Node>();
-    auto childNode1 = make_shared<Node>();
+    auto node = MAKE<Node>();
+    auto childNode1 = MAKE<Node>();
     graph.AddEdge(node, StandardEdgeModel(), childNode1);
 
-    auto childNode2 = make_shared<Node>();
+    auto childNode2 = MAKE<Node>();
     graph.AddEdge(node, StandardEdgeModel(), childNode2);
 
-    auto deepNode = make_shared<Node>();
+    auto deepNode = MAKE<Node>();
     graph.AddEdge(childNode2, StandardEdgeModel(), deepNode);
 
     auto collectedGraph = node->CollectBreadthFirstGraph();
@@ -413,14 +413,14 @@ TEST(CyclicGraph, Test_CollectBreadthFirstGraphTree2)
 TEST(CyclicGraph, Test_CollectBreadthFirstGraphCircular)
 {
     TestGraph graph;
-    auto node = make_shared<Node>();
-    auto childNode1 = make_shared<Node>();
+    auto node = MAKE<Node>();
+    auto childNode1 = MAKE<Node>();
     graph.AddEdge(node, StandardEdgeModel(), childNode1);
 
-    auto childNode2 = make_shared<Node>();
+    auto childNode2 = MAKE<Node>();
     graph.AddEdge(node, StandardEdgeModel(), childNode2);
 
-    auto deepNode = make_shared<Node>();
+    auto deepNode = MAKE<Node>();
     graph.AddEdge(childNode1, StandardEdgeModel(), deepNode);
     graph.AddEdge(deepNode, StandardEdgeModel(), node);  // Circular connection
 

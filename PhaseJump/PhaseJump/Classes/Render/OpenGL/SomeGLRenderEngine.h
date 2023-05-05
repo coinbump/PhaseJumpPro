@@ -124,8 +124,8 @@ namespace PJ {
         /// Load current matrix for rendering
         virtual void LoadMatrix() = 0;
         virtual void Use(GLShaderProgram& program) = 0;
-        virtual std::shared_ptr<GLVertexBuffer> BuildVertexBuffer(GLVertexBufferPlan const& plan) = 0;
-        virtual std::shared_ptr<GLIndexBuffer> BuildIndexBuffer(VectorList<uint32_t> indices) = 0;
+        virtual SP<GLVertexBuffer> BuildVertexBuffer(GLVertexBufferPlan const& plan) = 0;
+        virtual SP<GLIndexBuffer> BuildIndexBuffer(VectorList<uint32_t> indices) = 0;
         virtual void BindVertexBuffer(GLuint vbo);
         virtual void BindIndexBuffer(GLuint ibo);
         virtual void BindVertexArray(GLuint vao);

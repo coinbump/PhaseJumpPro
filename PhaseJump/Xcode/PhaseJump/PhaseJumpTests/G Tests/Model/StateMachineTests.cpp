@@ -42,7 +42,7 @@ using namespace StateMachineTests;
 
 TEST(StateMachine, Test_StateMachine)
 {
-    auto sut = make_shared<TestStateMachine>();
+    auto sut = MAKE<TestStateMachine>();
     sut->SetState(TestEnum::Test2);
     EXPECT_EQ(1, sut->test2Count);
     sut->SetIsLocked(true);
@@ -59,7 +59,7 @@ TEST(StateMachine, Test_StateMachine)
 
 TEST(StateMachine, Test_StateMachine_Graph)
 {
-    auto sut = make_shared<TestStateMachine>();
+    auto sut = MAKE<TestStateMachine>();
     auto invalidNode = sut->AddState(TestEnum::Invalid);
     EXPECT_EQ(invalidNode, sut->NodeForState(TestEnum::Invalid));
     EXPECT_EQ(1, sut->nodes.Count());

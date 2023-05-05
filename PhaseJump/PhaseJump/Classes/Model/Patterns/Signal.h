@@ -41,7 +41,7 @@ namespace PJ
     class EventSignal : public Event
     {
     public:
-        std::shared_ptr<Signal<String>> signal = std::make_shared<Signal<String>>();
+        SP<Signal<String>> signal = MAKE<Signal<String>>();
     };
 }
 

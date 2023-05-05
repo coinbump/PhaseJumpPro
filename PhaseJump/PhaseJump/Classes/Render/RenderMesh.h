@@ -6,6 +6,7 @@
 #include "Vector3.h"
 #include "VectorList.h"
 #include "Color.h"
+#include "Rect.h"
 
 /*
  RATING: 5 stars
@@ -53,6 +54,26 @@ namespace PJ {
             // FUTURE: add normals support if needed
         }
 
+        void OffsetBy(Vector2 offset) {
+            for (auto & v : vertices) {
+                v.x += offset.x;
+                v.y += offset.y;
+            }
+        }
+
+        void OffsetBy(Vector3 offset) {
+            for (auto & v : vertices) {
+                v.x += offset.x;
+                v.y += offset.y;
+                v.z += offset.z;
+            }
+        }
+
+        /// Fit the uvs to the position and scale of the rect
+        void FitUVsTo(Rect r) {
+            // TODO:
+        }
+
         void Update(std::optional<VectorList<Vector3>> vertices,
                     std::optional<VectorList<uint32_t>> triangles,
                     std::optional<VectorList<Vector2>> uvs)
@@ -71,6 +92,35 @@ namespace PJ {
 
             CalculateBounds();
             CalculateNormals();
+        }
+
+        RenderMesh operator+(RenderMesh const& rhs) const
+        {
+            RenderMesh result = *this;
+            result += rhs;
+            return result;
+        }
+
+        RenderMesh& operator+=(RenderMesh const& rhs) {
+            auto & result = *this;
+            auto triangleOffset = result.vertices.size();
+
+            result.vertices.AddRange(rhs.vertices);
+
+            auto newTriangles = rhs.triangles;
+            for (auto & triangle : newTriangles) {
+                triangle += triangleOffset;
+            }
+
+            result.triangles.AddRange(newTriangles);
+
+            result.colors.AddRange(rhs.colors);
+            result.uvs.AddRange(rhs.uvs);
+
+            result.CalculateBounds();
+            result.CalculateNormals();
+
+            return result;
         }
     };
 }

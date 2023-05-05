@@ -12,7 +12,7 @@ namespace PJ
     template <class T>
     class SomeKeyframeInterpolatorFactory {
     public:
-        virtual std::shared_ptr<Interpolator<T>> NewInterpolator(T start, T end, SomeKeyframeInterpolatorFactory<T> nextKey) = 0;
+        virtual SP<Interpolator<T>> NewInterpolator(T start, T end, SomeKeyframeInterpolatorFactory<T> nextKey) = 0;
     };
 
     /// <summary>
@@ -21,11 +21,11 @@ namespace PJ
     /// </summary>
     class KeyframeInterpolatorFactory : public SomeKeyframeInterpolatorFactory<float> {
     public:
-        std::shared_ptr<SomeInterpolate> interpolate;
+        SP<SomeInterpolate> interpolate;
 
-        std::shared_ptr<Interpolator<float>> NewInterpolator(float start, float end, SomeKeyframeInterpolatorFactory<float> nextKey) override
+        SP<Interpolator<float>> NewInterpolator(float start, float end, SomeKeyframeInterpolatorFactory<float> nextKey) override
         {
-            return std::make_shared<Interpolator<float>>(start, end, std::make_shared<ValueInterpolator<float>>(), interpolate);
+            return MAKE<Interpolator<float>>(start, end, MAKE<ValueInterpolator<float>>(), interpolate);
         }
     };
 

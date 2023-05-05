@@ -15,11 +15,11 @@ using namespace PJ;
 class TestColorVaryScene : public Scene {
 public:
     void LoadInto(World& world) {
-        auto meshNode = std::make_shared<WorldNode>();
-        auto meshRenderer = std::make_shared<MeshRenderer>();
+        auto meshNode = MAKE<WorldNode>();
+        auto meshRenderer = MAKE<MeshRenderer>();
         meshNode->AddComponent(meshRenderer);
 
-        auto material = std::make_shared<RenderMaterial>();
+        auto material = MAKE<RenderMaterial>();
         auto program = GLShaderProgram::registry["color.vary"];
         if (program) {
             material->shaderProgram = program;

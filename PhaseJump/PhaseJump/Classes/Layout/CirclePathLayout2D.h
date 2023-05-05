@@ -3,6 +3,7 @@
 
 #include "SomePathLayout.h"
 #include "CirclePath.h"
+#include "Macros.h"
 #include <memory>
 
 namespace PJ
@@ -35,9 +36,9 @@ namespace PJ
             radius = std::min(value.x, value.y) / 2.0f;
         }
 
-        std::shared_ptr<SomePath> BuildPath() override
+        SP<SomePath> BuildPath() override
         {
-            return std::make_shared<CirclePath>(radius);
+            return MAKE<CirclePath>(radius);
         }
     };
 }

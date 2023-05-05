@@ -174,7 +174,7 @@ void GLRenderEngine::BindVertexArray(GLuint vao) {
     RunGL([=] () { glBindVertexArray(vao); }, "glBindVertexArray");
 }
 
-std::shared_ptr<GLVertexBuffer> GLRenderEngine::BuildVertexBuffer(GLVertexBufferPlan const& plan)
+SP<GLVertexBuffer> GLRenderEngine::BuildVertexBuffer(GLVertexBufferPlan const& plan)
 {
     GLsizei totalSize = 0;
     for (auto item : plan.items) {
@@ -194,7 +194,7 @@ std::shared_ptr<GLVertexBuffer> GLRenderEngine::BuildVertexBuffer(GLVertexBuffer
 
     RunGL([&] () { glBufferData(GL_ARRAY_BUFFER, totalSize, nullptr, GL_STATIC_DRAW); }, "VBO Data");
 
-    auto result = std::make_shared<GLVertexBuffer>(VBO);
+    auto result = MAKE<GLVertexBuffer>(VBO);
 
     for (auto item : plan.items) {
         auto itemSize = item.Size();
@@ -210,13 +210,13 @@ std::shared_ptr<GLVertexBuffer> GLRenderEngine::BuildVertexBuffer(GLVertexBuffer
     return result;
 }
 
-std::shared_ptr<GLIndexBuffer> GLRenderEngine::BuildIndexBuffer(VectorList<uint32_t> indices) {
+SP<GLIndexBuffer> GLRenderEngine::BuildIndexBuffer(VectorList<uint32_t> indices) {
     GLuint IBO;
     RunGL([&] () { glGenBuffers(1, &IBO); }, "Gen IBO");
     RunGL([&] () { glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO); }, "Bind IBO");
     RunGL([&] () { glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(uint32_t), indices.data(), GL_STATIC_DRAW); }, "IBO Data");
 
-    return std::make_shared<GLIndexBuffer>(IBO);
+    return MAKE<GLIndexBuffer>(IBO);
 }
 
 void GLRenderEngine::BindVertexBuffer(GLuint vbo)
@@ -257,6 +257,15 @@ void GLRenderEngine::RenderProcess(RenderModel const& model)  {
     VectorList<Color> colors_float(vertexCount);
     VectorList<Color32> colors_byte(vertexCount);
     VectorList<Vector2> texCoords(vertexCount);
+
+    for (int i = 0; i < model.textures.size(); i++) {
+        auto & texture = model.textures[i];
+
+        // ? glActiveTexture is causing VBO errors. Investigate
+//        glActiveTexture(GL_TEXTURE0 + i);
+        glBindTexture(GL_TEXTURE_2D, texture->renderId);
+    }
+//    glActiveTexture(0);
 
     // First pass of this is very inefficient. We'll create an IBO, VBO, etc. for each render pass.
     // FUTURE: optimize as needed

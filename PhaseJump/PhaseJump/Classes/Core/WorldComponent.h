@@ -12,32 +12,27 @@ namespace PJ {
     class WorldNode;
 
     /// <summary>
-    /// A component that can be attached to world nodes
+    /// Adds convenience methods that operate on WorldNode
+    /// We can't declare these in SomeWorldComponent because it would create a circular include between SomeWorldComponent and WorldNode
     /// </summary>
     class WorldComponent : public SomeWorldComponent {
     public:
-        std::shared_ptr<GeoTransform> Transform() const;
-
         template <class T>
-        std::shared_ptr<T> TypeComponent() const
+        SP<T> TypeComponent() const
         {
             if (owner.expired()) { return nullptr; }
             return owner.lock()->TypeComponent<T>();
         }
 
-        void DestroyOwner(float afterSeconds = 0);
-
-        VectorList<std::shared_ptr<WorldNode>> ChildNodes() const
+        VectorList<SP<WorldNode>> ChildNodes() const
         {
-            if (owner.expired()) { return VectorList<std::shared_ptr<WorldNode>>(); }
+            if (owner.expired()) { return VectorList<SP<WorldNode>>(); }
             return owner.lock()->ChildNodes();
         }
 
-        // TODO: pull in code from WorldComponentBeta
-
         // Convenience names
         template <class T>
-        std::shared_ptr<T> GetComponent() const { return TypeComponent<T>(); }
+        SP<T> GetComponent() const { return TypeComponent<T>(); }
     };
 }
 

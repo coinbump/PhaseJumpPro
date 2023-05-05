@@ -7,45 +7,27 @@
 using namespace std;
 using namespace PJ;
 
-void SomeCamera::Render(VectorList<std::shared_ptr<WorldNode>> nodes, std::shared_ptr<SomeRenderContext> renderContext)
+void SomeCamera::Render(VectorList<SP<WorldNode>> nodes, SP<SomeRenderContext> renderContext)
 {
     for (auto node : nodes) {
         for (auto component : node->Components()) {
-            auto renderer = std::dynamic_pointer_cast<SomeRenderer>(component);
+            auto renderer = DCAST<SomeRenderer>(component);
             if (!renderer) { continue; }
 
             RenderIntoModel model;
             model.renderContext = renderContext;
 
-            auto parent = static_pointer_cast<WorldNode>(node->Parent());
             auto owner = node;
 
-            auto modelMatrix = ModelMatrixFor(*node);
-
-            // Transform child to parent matrix
-            while (parent) {
-                auto parentModelMatrix = ModelMatrixFor(*parent);
-
-                modelMatrix = parentModelMatrix * modelMatrix;
-
-                parent = static_pointer_cast<WorldNode>(parent->Parent());
-            }
-
-            Matrix4x4 worldScaleMatrix;
-            worldScaleMatrix.LoadScale(Vector3((1.0f / pixelsPerUnit.x) * scale,
-                                               (1.0f / pixelsPerUnit.y) * scale,
-                                               (1.0f / pixelsPerUnit.z) * scale));
-
-            modelMatrix = worldScaleMatrix * modelMatrix;
-
-            model.modelMatrix = modelMatrix;
+            auto worldModelMatrix = WorldModelMatrix(*node);
+            model.modelMatrix = worldModelMatrix;
 
             renderContext->Render(*renderer, model);
         }
     }
 }
 
-Matrix4x4 SomeCamera::ModelMatrixFor(WorldNode const& node) {
+Matrix4x4 SomeCamera::LocalModelMatrix(WorldNode const& node) {
     Matrix4x4 translateMatrix, scaleMatrix, rotationMatrix;
     translateMatrix.LoadTranslate(node.transform->position);
     scaleMatrix.LoadScale(node.transform->scale);
@@ -56,5 +38,27 @@ Matrix4x4 SomeCamera::ModelMatrixFor(WorldNode const& node) {
 
     auto m1 = translateMatrix * rotationMatrix;
     auto modelMatrix = m1 * scaleMatrix;
+    return modelMatrix;
+}
+
+Matrix4x4 SomeCamera::WorldModelMatrix(WorldNode const& node) {
+    auto modelMatrix = LocalModelMatrix(node);
+
+    auto parent = SCAST<WorldNode>(node.Parent());
+
+    // Transform child to parent matrix
+    while (parent) {
+        auto parentModelMatrix = LocalModelMatrix(*parent);
+
+        modelMatrix = parentModelMatrix * modelMatrix;
+
+        parent = SCAST<WorldNode>(parent->Parent());
+    }
+
+    Matrix4x4 worldScaleMatrix;
+    worldScaleMatrix.LoadIdentity();
+
+    modelMatrix = worldScaleMatrix * modelMatrix;
+
     return modelMatrix;
 }

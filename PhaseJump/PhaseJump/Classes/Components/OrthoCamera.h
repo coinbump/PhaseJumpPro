@@ -10,18 +10,8 @@ namespace PJ {
     public:
         int halfHeight = 0;
 
-        // TODO: rethink this
-        Vector3 WorldToScreen(Vector3 vector, SomeRenderContext& renderContext) override {
-            auto size = renderContext.Size();
-            auto owner = this->owner.lock();
-            auto cameraPosition = owner->transform->position;
-
-            Vector3 screenPosition(vector.x - cameraPosition.x + size.x / 2.0f,
-                                   cameraPosition.y + size.y / 2.0f - vector.y,
-                                   vector.z - cameraPosition.z);
-
-            return screenPosition;
-        }
+        Vector2 WorldToScreen(Vector3 position) override;
+        Vector3 ScreenToWorld(Vector2 position) override;
     };
 }
 

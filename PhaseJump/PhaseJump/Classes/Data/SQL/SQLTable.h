@@ -25,7 +25,7 @@ namespace PJ
     class StringVectorList;
     class Tags;
 
-    using SQLDatabaseSharedPtr = std::shared_ptr<SQLDatabase>;
+    using SQLDatabaseSharedPtr = SP<SQLDatabase>;
 
     /**
         Manages a SQL table, must be connected to an SQL database to work (via Connect).

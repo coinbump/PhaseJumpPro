@@ -18,10 +18,10 @@ namespace PJ {
     {
     public:
         struct Viewport {
-            GLint x;
-            GLint y;
-            GLsizei width;
-            GLsizei height;
+            GLint x = 0;
+            GLint y = 0;
+            GLsizei width = 0;
+            GLsizei height = 0;
 
             Viewport(GLint x, GLint y, GLsizei width, GLsizei height) : x(x), y(y), width(width), height(height) {
             }

@@ -20,20 +20,20 @@ public:
     }
 
     void foo1(World& world) {
-        auto pathNode = std::make_shared<WorldNode>();
+        auto pathNode = MAKE<WorldNode>();
         auto pathComponent = std::make_shared<CirclePathLayout2D>(500);
         pathNode->AddComponent(pathComponent);
         world.Add(pathNode);
 
         int count = 20;
         for (int i = 0; i < count; i++) {
-            auto meshNode = std::make_shared<WorldNode>();
-            auto meshRenderer = std::make_shared<MeshRenderer>();
+            auto meshNode = MAKE<WorldNode>();
+            auto meshRenderer = MAKE<MeshRenderer>();
             meshNode->AddComponent(meshRenderer);
 
             float progress = (float)i/(float)count;
 
-            auto material = std::make_shared<RenderMaterial>();
+            auto material = MAKE<RenderMaterial>();
             auto program = GLShaderProgram::registry["color.uniform"];
             if (program) {
                 material->shaderProgram = program;
@@ -54,7 +54,7 @@ public:
     }
 
     void foo2(World& world) {
-        auto pathNode = std::make_shared<WorldNode>();
+        auto pathNode = MAKE<WorldNode>();
         auto pathComponent = std::make_shared<CirclePathLayout2D>(500);
         pathNode->AddComponent(pathComponent);
         world.Add(pathNode);
@@ -65,11 +65,11 @@ public:
 
         int count = 20;
         for (int i = 0; i < count; i++) {
-            auto meshNode = std::make_shared<WorldNode>();
-            auto meshRenderer = std::make_shared<MeshRenderer>();
+            auto meshNode = MAKE<WorldNode>();
+            auto meshRenderer = MAKE<MeshRenderer>();
             meshNode->AddComponent(meshRenderer);
 
-            auto material = std::make_shared<RenderMaterial>();
+            auto material = MAKE<RenderMaterial>();
             auto program = GLShaderProgram::registry["color.uniform"];
             if (program) {
                 material->shaderProgram = program;

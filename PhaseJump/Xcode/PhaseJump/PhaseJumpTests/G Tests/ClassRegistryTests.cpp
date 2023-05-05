@@ -13,7 +13,7 @@ namespace ClassRegistryTests {
     public:
         int value = 1;
 
-        TestClass() : TypeClass<TestType>("id", make_shared<Factory>([] () -> std::shared_ptr<TestType> { return make_shared<TestType>(); })) {
+        TestClass() : TypeClass<TestType>("id", MAKE<Factory>([] () -> SP<TestType> { return MAKE<TestType>(); })) {
         }
     };
 }
@@ -21,7 +21,7 @@ namespace ClassRegistryTests {
 using namespace ClassRegistryTests;
 
 TEST(ClassRegistry, New) {
-    shared_ptr<TestClass> testClass = make_shared<TestClass>();
+    SP<TestClass> testClass = MAKE<TestClass>();
 
     ClassRegistry sut;
     sut["test"] = testClass;
@@ -29,5 +29,5 @@ TEST(ClassRegistry, New) {
     auto object = sut.NewType<TestType>("test");
 
     EXPECT_NE(nullptr, object);
-    EXPECT_NE(nullptr, dynamic_pointer_cast<TestType>(object));
+    EXPECT_NE(nullptr, DCAST<TestType>(object));
 }

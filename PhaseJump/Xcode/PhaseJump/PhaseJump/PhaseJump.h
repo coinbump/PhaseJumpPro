@@ -3,6 +3,7 @@
 #include <PhaseJump/CirclePathLayout2D.h>
 #include <PhaseJump/Class.h>
 #include <PhaseJump/Core.h>
+#include <PhaseJump/ComponentTool.h>
 
 #include <PhaseJump/EllipseRenderMeshBuilder.h>
 
@@ -20,7 +21,8 @@
 #include <PhaseJump/RenderFeatures.h>
 #include <PhaseJump/RenderMaterial.h>
 #include <PhaseJump/RenderModel.h>
-#include <PhaseJump/RenderTexture.h>
+#include <PhaseJump/ResourceRepository.h>
+#include <PhaseJump/Macros.h>
 #include <PhaseJump/SQLDatabase.h>
 #include <PhaseJump/SDLImGuiUIEventPoller.h>
 #include <PhaseJump/SDLImGuiRenderContext.h>
@@ -30,8 +32,12 @@
 #include <PhaseJump/SDLWindow.h>
 #include <PhaseJump/SDLWorld.h>
 #include <PhaseJump/Scene.h>
+#include <PhaseJump/SimplePolygonCollider2D.h>
+#include <PhaseJump/SimpleRaycaster2D.h>
+#include <PhaseJump/SlicedTextureRenderer.h>
 #include <PhaseJump/SomeUIEvent.h>
 #include <PhaseJump/SpriteRenderer.h>
+#include <PhaseJump/StandardLoadResourcesModel.h>
 #include <PhaseJump/StandardRandom.h>
 #include <PhaseJump/QuadRenderMeshBuilder.h>
 #include <PhaseJump/VFlow.h>

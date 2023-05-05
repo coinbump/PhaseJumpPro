@@ -1,7 +1,12 @@
 #ifndef PJGLTEXTURE_H
 #define PJGLTEXTURE_H
 
-#include "RenderTexture.h"
+#include "Base.h"
+#include "RenderTypes.h"
+#include "_Map.h"
+#include "_String.h"
+#include "GLHeaders.h"
+#include "SomeTexture.h"
 
 /*
  RATING: 5 stars
@@ -9,23 +14,22 @@
  CODE REVIEW: 4/21/23
  */
 namespace PJ {
-    class GLTexture {
+    class GLTexture : public SomeTexture {
     public:
-        GLuint glId;
-        Vector2Int size;
+        using Base = SomeTexture;
 
-        GLTexture(GLuint glId, Vector2Int size) : glId(glId), size(size) {
+        GLTexture(String id, GLuint glId, Vector2Int size, TextureAlphaMode alphaMode)
+        : Base(id, glId, size, alphaMode) {
         }
 
         virtual ~GLTexture() {
-            if (glId > 0) {
-                glDeleteTextures(1, &glId);
+            if (renderId > 0) {
+                glDeleteTextures(1, &renderId);
             }
         }
 
-        operator RenderTexture() const {
-            return RenderTexture(glId, size);
-        }
+        void SetTextureMagnification(TextureMagnification value) override;
+        void SetTextureWrap(TextureWrap value) override;
     };
 }
 

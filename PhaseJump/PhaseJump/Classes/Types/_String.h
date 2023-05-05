@@ -97,7 +97,21 @@ namespace PJ {
         String ToUpper() const;
         String Lowercased() const { return ToLower(); }
         String Uppercased() const { return ToUpper(); }
+
+        String Filter(std::function<bool(char)> check) {
+            String result;
+            std::copy_if(this->begin(), this->end(), std::back_inserter(result), check);
+            return result;
+        }
+
+        void RemoveIf(std::function<bool(char)> check) {
+            this->erase(std::remove_if(this->begin(), this->end(), check), this->end());
+        }
+
+        bool IsEmpty() const { return size() <= 0; }
     };
+
+    using StringC = String const&;
 }
 
 #endif

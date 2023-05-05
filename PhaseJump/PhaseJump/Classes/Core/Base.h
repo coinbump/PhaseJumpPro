@@ -2,6 +2,7 @@
 #define PJBASE_H
 
 #include "StringConvertible.h"
+#include "Macros.h"
 #include <memory>
 
 /*

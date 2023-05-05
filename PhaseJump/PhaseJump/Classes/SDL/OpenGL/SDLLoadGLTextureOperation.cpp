@@ -1,14 +1,16 @@
 #include "SDLLoadGLTextureOperation.h"
 #include "GLTexture.h"
+#include "Bitmap.h"
 
 using namespace std;
 using namespace PJ;
 
-SDLLoadGLTextureOperation::SDLLoadGLTextureOperation(FilePath path, TextureMagnification textureMagnification) : path(path), textureMagnification(textureMagnification) {
+SDLLoadGLTextureOperation::SDLLoadGLTextureOperation(FilePath filePath, TextureMagnification textureMagnification) : textureMagnification(textureMagnification) {
+    this->info.filePath = filePath;
 }
 
-void SDLLoadGLTextureOperation::GoInternal() {
-    Base::GoInternal();
+void SDLLoadGLTextureOperation::Run() {
+    auto path = info.filePath;
 
     SDL_Surface *surface = IMG_Load(path.string().c_str());
     if (!surface) {
@@ -19,12 +21,26 @@ void SDLLoadGLTextureOperation::GoInternal() {
     GLenum pixelFormat = GL_BGR;
     if (surface->format->BytesPerPixel == 4) {
         pixelFormat = GL_BGRA;
+    } else {
+        PJLog("Only RGBA supported for now.");
+        return;
     }
 
+    BGRABitmap bgraBitmap(Vector2Int(surface->w, surface->h), surface->pixels);
+    RGBABitmap rgbaBitmap(Vector2Int(surface->w, surface->h));
+
+    rgbaBitmap.Pixels().clear();
+    std::copy(bgraBitmap.Pixels().begin(), bgraBitmap.Pixels().end(), std::back_inserter(rgbaBitmap.Pixels()));
+
     // SDL does not load textures premultiplied, so if we want that, we need to apply it
-#ifdef _PREMULT_PHASE_
-    // TODO:
-#endif
+    // Premultiply
+    for (auto & pixel : rgbaBitmap.Pixels()) {
+        Color color(pixel);
+        color.r *= color.a;
+        color.g *= color.a;
+        color.b *= color.a;
+        pixel = (Color32)color;
+    }
 
     // http://www.sdltutorials.com/sdl-tip-sdl-surface-to-opengl-texture
     GLuint glTexture = 0;
@@ -50,9 +66,21 @@ void SDLLoadGLTextureOperation::GoInternal() {
     int height = surface->h;
 
     // https://stackoverflow.com/questions/13666196/why-do-images-loaded-to-texture-with-img-load-in-sdl-and-opengl-look-bluish
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surface->w, surface->h, 0, GL_BGRA, GL_UNSIGNED_BYTE, surface->pixels);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, rgbaBitmap.Size().x, rgbaBitmap.Size().y, 0, GL_RGBA, GL_UNSIGNED_BYTE, rgbaBitmap.Pixels().data());
 
-    this->texture = std::make_shared<GLTexture>(glTexture, Vector2Int(width, height));
+    String id = path.filename().string();
+    auto components = id.ComponentsSeparatedBy('.');
+    if (components.size() > 0) {
+        id = components[0];
+    }
+
+    auto texture = MAKE<GLTexture>(id, glTexture, Vector2Int(width, height), TextureAlphaMode::Standard);
+
+    LoadedResource loadedResource(info.filePath, info.typeId, info.id, static_pointer_cast<PJ::Base>(texture));
+    Success result;
+    result.Add(loadedResource);
+
+    this->result = MAKE<Result>(result);
 
     SDL_FreeSurface(surface);
 }

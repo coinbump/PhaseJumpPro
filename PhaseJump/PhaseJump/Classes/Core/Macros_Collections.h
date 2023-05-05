@@ -37,6 +37,16 @@ bool Contains(T const& value) const \
 } \
 void AddRange(Collection const& source) { \
     this->insert(this->end(), source.begin(), source.end()); \
+} \
+\
+std::optional<size_t> IndexOf(T const& item) const { \
+    auto i = std::find(this->begin(), this->end(), item); \
+\
+    if (i != this->end()) { \
+        return std::make_optional(std::distance(this->begin(), i)); \
+    } \
+\
+    return std::nullopt; \
 }
 
 #endif

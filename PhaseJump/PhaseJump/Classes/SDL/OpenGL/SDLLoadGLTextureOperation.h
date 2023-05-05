@@ -4,10 +4,12 @@
 #include "FilePath.h"
 #include "SomeOperation.h"
 #include "SDLTexture.h"
+#include "SomeLoadResourcesOperation.h"
 #include <SDL2/SDL_render.h>
 #include <SDL2_image/SDL_image.h>
 #include "GLHeaders.h"
 #include "Vector2.h"
+#include "RenderTypes.h"
 
 /*
  RATING: 5 stars
@@ -16,26 +18,20 @@
  */
 namespace PJ {
     class GLTexture;
-    
-    enum class TextureMagnification {
-        Nearest,
-        Linear
-    };
 
     /// Use SDL to load an OpenGL texture
-    class SDLLoadGLTextureOperation : public SomeOperation {
-    protected:
-        FilePath path;
-
+    class SDLLoadGLTextureOperation : public SomeLoadResourcesOperation {
     public:
         using Base = SomeOperation;
 
-        std::shared_ptr<GLTexture> texture;
-        TextureMagnification textureMagnification;
+        TextureMagnification textureMagnification = TextureMagnification::Linear;
 
-        SDLLoadGLTextureOperation(FilePath path, TextureMagnification textureMagnification);
+        SDLLoadGLTextureOperation() {
+        }
 
-        void GoInternal() override;
+        SDLLoadGLTextureOperation(FilePath filePath, TextureMagnification textureMagnification);
+
+        void Run() override;
     };
 }
 

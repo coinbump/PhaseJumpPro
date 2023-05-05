@@ -44,15 +44,15 @@ void SDLImGuiRenderContext::Configure(SDL_Window* window) {
     ImGui_ImplSDL2_InitForOpenGL(window, glContext);
     ImGui_ImplOpenGL3_Init("#version 150");
 
-    shared_ptr<GLRenderEngine> glRenderEngine = make_shared<GLRenderEngine>();
+    SP<GLRenderEngine> glRenderEngine = MAKE<GLRenderEngine>();
 //    glRenderEngine->colorFormat = ColorFormat::Byte;
     glRenderEngine->Go();
 
-    this->renderEngine = static_pointer_cast<SomeRenderEngine>(glRenderEngine);
+    this->renderEngine = SCAST<SomeRenderEngine>(glRenderEngine);
 }
 
-std::shared_ptr<SomeGLRenderEngine> SDLImGuiRenderContext::_GLRenderEngine() const {
-    return static_pointer_cast<SomeGLRenderEngine>(renderEngine);
+SP<SomeGLRenderEngine> SDLImGuiRenderContext::_GLRenderEngine() const {
+    return SCAST<SomeGLRenderEngine>(renderEngine);
 }
 
 void SDLImGuiRenderContext::SetWindow(SDL_Window* window)

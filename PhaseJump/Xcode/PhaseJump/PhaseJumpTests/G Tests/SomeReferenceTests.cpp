@@ -21,7 +21,7 @@ namespace SomeReferenceTests {
 using namespace SomeReferenceTests;
 
 TEST(SomeReference, WeakReference) {
-    auto shared = make_shared<TestClass>();
+    auto shared = MAKE<TestClass>();
 
     EXPECT_EQ(shared.use_count(), 1);
 

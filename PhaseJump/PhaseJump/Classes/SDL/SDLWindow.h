@@ -62,7 +62,7 @@ namespace PJ
     protected:
         SDL_Renderer* renderer = nullptr;
         SDL_Window* window = nullptr;
-        std::shared_ptr<SDLWorld> world;
+        SP<SDLWorld> world;
         Configuration configuration;
 
     public:
@@ -77,8 +77,8 @@ namespace PJ
             SDL_DestroyRenderer(renderer);
         }
 
-        std::shared_ptr<SDLWorld> World() const { return world; }
-        void SetWorld(std::shared_ptr<SDLWorld> world) { this->world = world; }
+        SP<SDLWorld> World() const { return world; }
+        void SetWorld(SP<SDLWorld> world) { this->world = world; }
         
         SDL_Window* SDL_Window() const { return window; }
         SDL_Renderer* SDL_Renderer() const { return renderer; }

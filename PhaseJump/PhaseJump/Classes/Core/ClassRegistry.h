@@ -17,13 +17,13 @@ namespace PJ
     /// Registry for classes
     /// </summary>
     /// <typeparam name="Type"></typeparam>
-    class ClassRegistry : public Map<String, std::shared_ptr<Class>>
+    class ClassRegistry : public Map<String, SP<Class>>
     {
     public:
         ClassRegistry() {
         }
 
-        template <class T> std::shared_ptr<T> NewType(String key) {
+        template <class T> SP<T> NewType(String key) {
             auto iterator = this->find(key);
             if (iterator == this->end()) { return NULL; }
 
@@ -36,7 +36,7 @@ namespace PJ
             return typeClass->factory->New();
         }
 
-        std::shared_ptr<Base> New(String key) const {
+        SP<Base> New(String key) const {
             auto iterator = this->find(key);
             if (iterator == this->end()) { return NULL; }
 

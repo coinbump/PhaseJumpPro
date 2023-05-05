@@ -13,7 +13,7 @@ namespace PJ
     // Extends Base with common patterns
     class Core : public Base {
     protected:
-        std::shared_ptr<Class> _class;
+        SP<Class> _class;
         String classId;   // If class is not yet assigned
 
     public:
@@ -30,7 +30,7 @@ namespace PJ
         /// <summary>
         /// Custom properties
         /// </summary>
-        std::shared_ptr<Tags> tags = std::make_shared<Tags>();
+        Tags tags;
     };
 }
 

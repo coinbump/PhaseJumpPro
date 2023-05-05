@@ -32,7 +32,7 @@ namespace PJ
 
         void Configure(SDL_Window* window);
 
-        std::shared_ptr<SomeGLRenderEngine> _GLRenderEngine() const;
+        SP<SomeGLRenderEngine> _GLRenderEngine() const;
 
         // Avoid these (use Configure instead)
         void SetWindow(SDL_Window* window);

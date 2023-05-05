@@ -6,6 +6,11 @@
 #include "Vector2.h"
 #include "Macros_Vectors.h"
 
+namespace Terathon {
+    class Vector3D;
+    class Point3D;
+}
+
 /*
  RATING: 5 stars
  Utility class with unit tests
@@ -44,6 +49,9 @@ namespace PJ {
         bool operator==(Vector3 const& rhs) const {
             return x == rhs.x && y == rhs.y && z == rhs.z;
         }
+
+        operator Terathon::Vector3D() const;
+        operator Terathon::Point3D() const;
 
         VECTOR_METHODS(Vector3, float, 3);
     };

@@ -10,3 +10,6 @@
 [submodule "submodules/json"]
 	path = submodules/json
 	url = https://github.com/nlohmann/json.git
+[submodule "submodules/Terathon-Math-Library"]
+	path = submodules/Terathon-Math-Library
+	url = https://github.com/EricLengyel/Terathon-Math-Library.git

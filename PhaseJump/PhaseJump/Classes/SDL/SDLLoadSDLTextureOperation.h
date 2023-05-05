@@ -4,6 +4,7 @@
 #include "FilePath.h"
 #include "SomeOperation.h"
 #include "SDLTexture.h"
+#include "Macros.h"
 #include <SDL2/SDL_render.h>
 #include <SDL2_image/SDL_image.h>
 
@@ -22,7 +23,7 @@ namespace PJ {
     public:
         using Base = SomeOperation;
 
-        std::shared_ptr<SDLTexture> texture;
+        SP<SDLTexture> texture;
 
         SDLLoadSDLTextureOperation(SDL_Renderer *renderer, FilePath path) : renderer(renderer), path(path) {
         }
@@ -34,7 +35,7 @@ namespace PJ {
             if (result) {
                 SDL_Point size;
                 SDL_QueryTexture(result, nullptr, nullptr, &size.x, &size.y);
-                texture = std::make_shared<SDLTexture>(result, Vector2Int(size.x, size.y));
+                texture = MAKE<SDLTexture>(result, Vector2Int(size.x, size.y));
             }
         }
     };

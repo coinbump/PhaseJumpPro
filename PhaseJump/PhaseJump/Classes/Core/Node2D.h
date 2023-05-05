@@ -20,7 +20,7 @@ namespace PJ
         }
 
     protected:
-        std::shared_ptr<RigidBody2D> rigidbody;
+        SP<RigidBody2D> rigidbody;
 
         void Awake() override
         {
@@ -47,6 +47,34 @@ namespace PJ
             {
                 rigidbody->MovePosition(position);
             }
+        }
+
+        /// <summary>
+        /// If true, clip rotation values between 0-360
+        /// </summary>
+        bool clipRotation = true;
+
+        // Normalized rotation value (0-1.0)
+        float RotationNormal() const { return Rotation().Degrees() / 360.0f; }
+        void SetRotationNormal(float value) {
+            SetRotation(Angle::DegreesAngle(360.0f * value));
+        }
+
+        Angle Rotation() const
+        {
+            return Angle::DegreesAngle(-Transform()->LocalEulerAngles().z).Clipped();
+        }
+
+        void SetRotation(Angle value) {
+            auto newAngle = value;
+            if (clipRotation)
+            {
+                newAngle.Clip();
+            }
+
+            if (Rotation().Degrees() == newAngle.Degrees()) { return; }
+
+            Transform()->SetLocalEulerAngles(Vector3(0, 0, -newAngle.Degrees()));
         }
     };
 }

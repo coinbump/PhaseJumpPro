@@ -18,13 +18,13 @@ using namespace FactoryTests;
 TEST(Factory, FactoryNew) {
     FactoryNew<TestClass> factory;
     EXPECT_NE(factory.New(), nullptr);
-    EXPECT_NE(dynamic_pointer_cast<TestClass>(factory.New()), nullptr);
+    EXPECT_NE(DCAST<TestClass>(factory.New()), nullptr);
 }
 
 TEST(Factory, Factory) {
-    auto constructor = [] () -> std::shared_ptr<TestClass> { return make_shared<TestClass>(); };
+    auto constructor = [] () -> SP<TestClass> { return MAKE<TestClass>(); };
 
     Factory<TestClass> factory(constructor);
     EXPECT_NE(factory.New(), nullptr);
-    EXPECT_NE(dynamic_pointer_cast<TestClass>(factory.New()), nullptr);
+    EXPECT_NE(DCAST<TestClass>(factory.New()), nullptr);
 }

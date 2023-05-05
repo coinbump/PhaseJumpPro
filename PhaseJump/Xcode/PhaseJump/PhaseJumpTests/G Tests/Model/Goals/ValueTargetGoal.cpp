@@ -11,7 +11,7 @@ using namespace ValueTargetGoalTests;
 
 TEST(ValueTargetGoal, ValueTargetGoal)
 {
-    auto sut = make_shared<ValueTargetGoal>("", 2);
+    auto sut = MAKE<ValueTargetGoal>("", 2);
 
     EXPECT_EQ(0, sut->Progress());
 

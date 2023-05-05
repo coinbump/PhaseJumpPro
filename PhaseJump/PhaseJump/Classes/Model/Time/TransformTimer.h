@@ -21,9 +21,9 @@ namespace PJ
     public:
         using Base = Timer;
 
-        std::shared_ptr<SomeValueTransform<float>> transform;
+        SP<SomeValueTransform<float>> transform;
 
-        TransformTimer(float duration, SomeTimed::RunType type, std::shared_ptr<SomeValueTransform<float>> transform)
+        TransformTimer(float duration, SomeTimed::RunType type, SP<SomeValueTransform<float>> transform)
             : Timer(duration, type), transform(transform)
         {
         }

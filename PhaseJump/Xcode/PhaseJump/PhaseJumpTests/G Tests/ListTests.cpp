@@ -61,3 +61,11 @@ TEST(List, AddRange) {
     EXPECT_EQ(3, sut[1]);
     EXPECT_EQ(5, sut[2]);
 }
+
+TEST(List, IndexOf) {
+    VectorList<int> sut{ 1, 3, 5 };
+
+    EXPECT_EQ(0, sut.IndexOf(1).value());
+    EXPECT_EQ(2, sut.IndexOf(5).value());
+    EXPECT_FALSE(sut.IndexOf(20));
+}

@@ -22,13 +22,13 @@ namespace PJ
     public:
         T start;
         T end;
-        std::shared_ptr<SomeValueInterpolator<T>> valueInterpolator;
-        std::shared_ptr<FloatTransform> transform = std::make_shared<LinearInterpolate>();
+        SP<SomeValueInterpolator<T>> valueInterpolator;
+        SP<FloatTransform> transform = MAKE<LinearInterpolate>();
 
         Interpolator(T start,
                      T end,
-                     std::shared_ptr<SomeValueInterpolator<T>> valueInterpolator = std::make_shared<ValueInterpolator<T>>(),
-                     std::shared_ptr<FloatTransform> transform = std::make_shared<LinearInterpolate>()) :
+                     SP<SomeValueInterpolator<T>> valueInterpolator = MAKE<ValueInterpolator<T>>(),
+                     SP<FloatTransform> transform = MAKE<LinearInterpolate>()) :
         start(start),
         end(end),
         valueInterpolator(valueInterpolator),

@@ -12,6 +12,8 @@ using namespace ColorTests;
 TEST(Color32, Init_White)
 {
     Color32 color32(255, 255, 255, 255);
+    // color32.LogColorSchema();
+
     EXPECT_EQ(255, color32.r());
     EXPECT_EQ(255, color32.g());
     EXPECT_EQ(255, color32.b());

@@ -4,6 +4,7 @@
 #include "VectorList.h"
 #include "SomeListener.h"
 #include "SomeBroadcaster.h"
+#include "Macros.h"
 
 /*
  RATING: 5 stars
@@ -19,7 +20,7 @@ namespace PJ {
     public:
         using ListenerWeakPtr = std::weak_ptr<SomeListener>;
         using ListenerList = VectorList<ListenerWeakPtr>;
-        using EventSharedPtr = std::shared_ptr<Event>;
+        using EventSharedPtr = SP<Event>;
         using EventPtr = EventSharedPtr const&;
 
         ListenerList listeners;

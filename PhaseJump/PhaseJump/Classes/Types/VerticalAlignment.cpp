@@ -2,6 +2,6 @@
 
 using namespace PJ;
 
-const VerticalAlignment VerticalAlignment::top(std::make_shared<TopAligner>());
-const VerticalAlignment VerticalAlignment::center(std::make_shared<CenterAligner>());
-const VerticalAlignment VerticalAlignment::bottom(std::make_shared<BottomAligner>());
+const VerticalAlignment VerticalAlignment::top(MAKE<TopAligner>());
+const VerticalAlignment VerticalAlignment::center(MAKE<CenterAligner>());
+const VerticalAlignment VerticalAlignment::bottom(MAKE<BottomAligner>());

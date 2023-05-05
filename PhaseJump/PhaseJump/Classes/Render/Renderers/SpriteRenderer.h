@@ -2,6 +2,7 @@
 #define PJSPRITERENDERER_H
 
 #include "SomeRenderer.h"
+#include "SomeTexture.h"
 #include <memory>
 
 /*
@@ -12,7 +13,6 @@
 namespace PJ {
     class RenderMaterial;
     class RenderMesh;
-    class RenderTexture;
 
     /// Renders a single texture as a sprite
     class SpriteRenderer: public SomeRenderer {
@@ -23,9 +23,11 @@ namespace PJ {
         bool flipX = false;
         bool flipY = false;
 
-        std::shared_ptr<RenderMaterial> material;
+        // FUTURE: float pixelsPerUnit = 1.0f;
 
-        SpriteRenderer(RenderTexture texture);
+        SP<RenderMaterial> material;
+
+        SpriteRenderer(SP<SomeTexture> texture);
 
         void RenderInto(RenderIntoModel model) override;
     };

@@ -17,7 +17,7 @@ namespace PJ
     public:
         /// Load from a .shprog JSON file that specifies which shaders to use
         std::optional<GLShaderProgram::Info> InfoFromPath(FilePath path);
-        std::shared_ptr<GLShaderProgram> LoadFromShaderPaths(FilePath vertexShaderPath, FilePath fragmentShaderPath);
+        SP<GLShaderProgram> LoadFromShaderPaths(FilePath vertexShaderPath, FilePath fragmentShaderPath);
     };
 }
 

@@ -1,6 +1,7 @@
 #ifndef PJSOMEREFERENCE_H
 #define PJSOMEREFERENCE_H
 
+#include "Macros.h"
 #include <memory>
 #include <optional>
 
@@ -19,8 +20,8 @@ namespace PJ
     {
         virtual ~SomeReference() {}
         
-        virtual std::shared_ptr<T> Value() const = 0;
-        virtual void SetValue(std::shared_ptr<T> const& value) = 0;
+        virtual SP<T> Value() const = 0;
+        virtual void SetValue(SP<T> const& value) = 0;
     };
 }
 

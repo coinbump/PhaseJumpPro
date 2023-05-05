@@ -11,8 +11,8 @@ namespace ValveTests {
     public:
         TestValve(std::optional<float> onOffDuration)
         {
-            turnOnTimer = make_shared<TransformTimer>(1.0f, SomeRunner::RunType::RunOnce, make_shared<LinearInterpolate>());
-            turnOffTimer = make_shared<TransformTimer>(1.0f, SomeRunner::RunType::RunOnce, make_shared<LinearInterpolate>());
+            turnOnTimer = MAKE<TransformTimer>(1.0f, SomeRunner::RunType::RunOnce, MAKE<LinearInterpolate>());
+            turnOffTimer = MAKE<TransformTimer>(1.0f, SomeRunner::RunType::RunOnce, MAKE<LinearInterpolate>());
             this->SetOnStateDuration(onOffDuration);
             this->SetOffStateDuration(onOffDuration);
         }
@@ -23,7 +23,7 @@ using namespace ValveTests;
 
 TEST(Valve, WithoutOnOffDuration)
 {
-    auto sut = make_shared<TestValve>(std::nullopt);
+    auto sut = MAKE<TestValve>(std::nullopt);
     sut->Go();
     EXPECT_EQ(Valve::StateType::Off, sut->State());
     sut->OnUpdate(TimeSlice(1.0f));
@@ -64,7 +64,7 @@ TEST(Valve, WithoutOnOffDuration)
 
 TEST(Valve, WithOnOffDuration)
 {
-    auto sut = make_shared<TestValve>(std::optional<float>(1.0f));
+    auto sut = MAKE<TestValve>(std::optional<float>(1.0f));
     sut->Go();
     EXPECT_EQ(Valve::StateType::Off, sut->State());
     sut->OnUpdate(TimeSlice(1.0f));

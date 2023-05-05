@@ -69,7 +69,7 @@ namespace PJ
         /// <summary>
         /// Modifiers to modify the standard state behavior
         /// </summary>
-        VectorList<std::shared_ptr<SomeModifier>> modifiers;
+        VectorList<SP<SomeModifier>> modifiers;
 
         float TimeInState() const { return timeInState; }
 
@@ -129,7 +129,7 @@ namespace PJ
 
         virtual void OnStateFinish()
         {
-            this->broadcaster->Broadcast(std::make_shared<EventStateFinish<T>>(this->state, this->shared_from_this()));
+            this->broadcaster->Broadcast(MAKE<EventStateFinish<T>>(this->state, this->shared_from_this()));
         }
 
     public:

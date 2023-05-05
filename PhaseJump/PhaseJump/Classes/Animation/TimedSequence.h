@@ -4,6 +4,7 @@
 #include "Updatable.h"
 #include "VectorList.h"
 #include "SomeTimed.h"
+#include "Macros.h"
 
 /*
  RATING: 5 stars
@@ -18,14 +19,14 @@ namespace PJ
     class TimedSequence : public Updatable
     {
     protected:
-        VectorList<std::shared_ptr<SomeTimed>> sequence;
+        VectorList<SP<SomeTimed>> sequence;
         int index = 0;
         bool isFinished = false;
 
     public:
         bool IsFinished() const override { return isFinished; };
 
-        void Add(std::shared_ptr<SomeTimed> timed)
+        void Add(SP<SomeTimed> timed)
         {
             sequence.Add(timed);
         }

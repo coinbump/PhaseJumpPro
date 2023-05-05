@@ -3,6 +3,7 @@
 
 #include "_String.h"
 #include "Tags.h"
+#include "Macros.h"
 #include <memory>
 
 /*
@@ -20,12 +21,12 @@ namespace PJ
         String id; // Example: north, west, left, right
         String type; // Example: input, output
         float weight = 0;
-        std::shared_ptr<Tags> tags;
+        Tags tags;
 
         StandardEdgeModel(String id = "",
                           String type = "",
                           float weight = 1.0f,
-                          std::shared_ptr<Tags> tags = std::make_shared<Tags>()) :
+                          Tags const& tags = Tags()) :
         id(id),
         type(type),
         weight(weight),

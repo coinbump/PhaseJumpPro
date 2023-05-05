@@ -45,9 +45,10 @@ namespace PJ {
     /// Called VectorList to avoid confusion with Vector geometry objects.
     /// </summary>
     template <class T, class Allocator = std::allocator<T>>
-    class VectorList : public std::vector<T> {
+    class VectorList : public std::vector<T, Allocator> {
     public:
-        using Base = std::vector<T>;
+        using Base = std::vector<T, Allocator>;
+        using This = VectorList<T, Allocator>;
 
         VectorList() {
         }

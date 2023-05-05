@@ -90,7 +90,8 @@
 		CD6FEB7129170AE600F674D3 /* KaijuUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KaijuUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CD6FEB7529170AE600F674D3 /* KaijuUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KaijuUITests.m; sourceTree = "<group>"; };
 		CD6FEB7729170AE600F674D3 /* KaijuUITestsLaunchTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KaijuUITestsLaunchTests.m; sourceTree = "<group>"; };
-		CD86A73929F0C1540015BFCE /* TestTextureScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestTextureScene.h; sourceTree = "<group>"; };
+		CD837E4D2A00AFCF00467542 /* TestTextureScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestTextureScene.h; sourceTree = "<group>"; };
+		CD86A73929F0C1540015BFCE /* TestSlicedSpriteScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestSlicedSpriteScene.h; sourceTree = "<group>"; };
 		CDF0FB7729EE11DA00B9EF1F /* AppDelegateBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegateBridge.swift; sourceTree = "<group>"; };
 		CDF0FB8229EF943F00B9EF1F /* TestColorVaryScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestColorVaryScene.h; sourceTree = "<group>"; };
 		CDF0FB8329EF951200B9EF1F /* TestMeshPathScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestMeshPathScene.h; sourceTree = "<group>"; };
@@ -218,9 +219,10 @@
 		CDF0FB8129EF941D00B9EF1F /* Test */ = {
 			isa = PBXGroup;
 			children = (
+				CD837E4D2A00AFCF00467542 /* TestTextureScene.h */,
 				CDF0FB8229EF943F00B9EF1F /* TestColorVaryScene.h */,
 				CDF0FB8329EF951200B9EF1F /* TestMeshPathScene.h */,
-				CD86A73929F0C1540015BFCE /* TestTextureScene.h */,
+				CD86A73929F0C1540015BFCE /* TestSlicedSpriteScene.h */,
 			);
 			path = Test;
 			sourceTree = "<group>";

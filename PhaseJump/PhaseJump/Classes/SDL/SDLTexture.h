@@ -19,7 +19,7 @@ namespace PJ
 
         using Base = SomeTexture;
 
-        SDLTexture(SDL_Texture* texture, Vector2Int size) : Base(size), texture(texture) {
+        SDLTexture(SDL_Texture* texture, Vector2Int size) : Base("", 0, size, TextureAlphaMode::Standard), texture(texture) {
         }
 
         virtual ~SDLTexture() {

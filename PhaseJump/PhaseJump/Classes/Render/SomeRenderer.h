@@ -16,7 +16,7 @@ namespace PJ
     class SomeRenderer : public WorldComponent {
     public:
         // (OPTIONAL) Material for render
-        std::shared_ptr<RenderMaterial> material;
+        SP<RenderMaterial> material;
 
         virtual void RenderInto(RenderIntoModel model) = 0;
     };

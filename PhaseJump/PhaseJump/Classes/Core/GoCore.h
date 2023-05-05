@@ -14,11 +14,11 @@ namespace PJ
     class SomeGoStateListener
     {
     public:
-        using GoStateMachineSharedPtr = std::shared_ptr<GoStateMachine<StateType>>;
+        using GoStateMachineSharedPtr = SP<GoStateMachine<StateType>>;
         using GoStateMachinePtr = GoStateMachineSharedPtr const&;
         
-        virtual void OnStateChange(GoStateMachinePtr inStateMachine) = 0;
-        virtual void OnStateFinish(GoStateMachinePtr inStateMachine) = 0;
+        virtual void OnStateChange(GoStateMachine<StateType>& inStateMachine) = 0;
+        virtual void OnStateFinish(GoStateMachine<StateType>& inStateMachine) = 0;
     };
 
     /// <summary>
@@ -31,19 +31,19 @@ namespace PJ
     {
     public:
         using Base = Core;
-        using GoStateMachineSharedPtr = std::shared_ptr<GoStateMachine<StateType>>;
+        using GoStateMachineSharedPtr = SP<GoStateMachine<StateType>>;
         using GoStateMachinePtr = GoStateMachineSharedPtr const&;
         
-        GoStateMachineSharedPtr sm = std::make_shared<GoStateMachine<StateType>>();
+        GoStateMachineSharedPtr sm = MAKE<GoStateMachine<StateType>>();
         std::weak_ptr<SomeGoStateListener<StateType>> owner;
 
     protected:
-        virtual void OnStateChange(GoStateMachinePtr inStateMachine) {
+        virtual void OnStateChange(GoStateMachine<StateType>& inStateMachine) {
             if (owner.expired()) { return; }
             owner.lock()->OnStateChange(inStateMachine);
         }
 
-        virtual void OnStateFinish(GoStateMachinePtr inStateMachine) {
+        virtual void OnStateFinish(GoStateMachine<StateType>& inStateMachine) {
             if (owner.expired()) { return; }
             owner.lock()->OnStateFinish(inStateMachine);
         }
@@ -52,7 +52,7 @@ namespace PJ
         void GoInternal() override {
             Base::GoInternal();
 
-            auto listener = std::dynamic_pointer_cast<SomeListener>(this->shared_from_this());
+            auto listener = DCAST<SomeListener>(this->shared_from_this());
             sm->AddListener(listener);
         }
 
@@ -66,13 +66,13 @@ namespace PJ
             sm->SetState(value);
         }
 
-        std::shared_ptr<Broadcaster> broadcaster = std::make_shared<Broadcaster>();
+        SP<Broadcaster> broadcaster = MAKE<Broadcaster>();
 
         GoCore()
         {
         }
 
-        GoCore(std::shared_ptr<SomeGoStateListener<StateType>> owner) : owner(owner)
+        GoCore(SP<SomeGoStateListener<StateType>> owner) : owner(owner)
         {
         }
 
@@ -92,13 +92,13 @@ namespace PJ
 
             if (auto stateChangeEvent = std::dynamic_pointer_cast<EventStateChange<StateType>>(event))
             {
-                OnStateChange(asStateMachine);
+                OnStateChange(*asStateMachine);
                 return;
             }
 
             if (auto stateFinishEvent = std::dynamic_pointer_cast<EventStateFinish<StateType>>(event))
             {
-                OnStateFinish(asStateMachine);
+                OnStateFinish(*asStateMachine);
                 return;
             }
         }

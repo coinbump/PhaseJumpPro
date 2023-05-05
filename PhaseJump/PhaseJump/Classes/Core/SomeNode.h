@@ -17,9 +17,9 @@ namespace PJ {
     public:
         String id;
 
-        std::shared_ptr<Set<String>> typeTags;
-        std::shared_ptr<Set<String>> stateTags;
-        std::shared_ptr<Set<NodeCullType>> cullTypes;
+        SP<Set<String>> typeTags;
+        SP<Set<String>> stateTags;
+        SP<Set<NodeCullType>> cullTypes;
 
         bool HasTypeTag(String name) const {
             return typeTags->Contains(name);

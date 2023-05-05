@@ -45,11 +45,11 @@ namespace PJ
         /// <summary>
         /// Used to animate changes in focus over time
         /// </summary>
-        std::shared_ptr<Valve> valve = std::make_shared<Valve>();
+        SP<Valve> valve = MAKE<Valve>();
 
         SomeAnimatedEffect(float turnOnTime = 0.3f, float turnOffTime = 0.3f) : turnOnTime(turnOnTime), turnOffTime(turnOffTime) {
-            valve->turnOffTimer = std::make_shared<TransformTimer>(turnOffTime, SomeRunner::RunType::RunOnce, std::make_shared<EaseOutSquared>());
-            valve->turnOnTimer = std::make_shared<TransformTimer>(turnOnTime, SomeRunner::RunType::RunOnce, std::make_shared<EaseOutSquared>());
+            valve->turnOffTimer = MAKE<TransformTimer>(turnOffTime, SomeRunner::RunType::RunOnce, MAKE<EaseOutSquared>());
+            valve->turnOnTimer = MAKE<TransformTimer>(turnOnTime, SomeRunner::RunType::RunOnce, MAKE<EaseOutSquared>());
         }
 
         void Awake() override

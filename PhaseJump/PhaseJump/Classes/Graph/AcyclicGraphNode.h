@@ -19,16 +19,16 @@ namespace PJ
         using This = AcyclicGraphNode;
         using Base = SomeGraphNode<EdgeModel>;
         using AcyclicNode = AcyclicGraphNode<EdgeModel>;
-        using AcyclicNodeSharedPtr = std::shared_ptr<AcyclicNode>;
+        using AcyclicNodeSharedPtr = SP<AcyclicNode>;
         using NodeStrongReference = StrongReference<SomeGraphNode<EdgeModel>>;
 
         typename Base::NodeSharedPtr AddEdge(EdgeModel model, typename Base::NodeSharedPtr toNode) override {
             // Acyclic graph nodes hold a strong reference to their next node
-            this->AddEdgeInternal(model, std::make_shared<StrongReference<SomeGraphNode<EdgeModel>>>(toNode));
+            this->AddEdgeInternal(model, MAKE<StrongReference<SomeGraphNode<EdgeModel>>>(toNode));
             return toNode;
         }
 
-        AcyclicNodeSharedPtr RootNode() {
+        AcyclicNodeSharedPtr Root() {
             auto node = std::static_pointer_cast<typename Base::Node>(this->shared_from_this());
             typename Base::NodeSet searchedNodes;
 
@@ -41,7 +41,7 @@ namespace PJ
                     auto target = weakFromNode.lock();
                     if (target)
                     {
-                        node = std::dynamic_pointer_cast<This>(target);
+                        node = DCAST<This>(target);
                         break;
                     }
                 }
@@ -53,7 +53,7 @@ namespace PJ
                 }
             }
 
-            return std::dynamic_pointer_cast<This>(node);
+            return DCAST<This>(node);
         }
 
         AcyclicNodeSharedPtr Parent() const
@@ -61,20 +61,20 @@ namespace PJ
             for (auto weakFromNode : this->FromNodes())
             {
                 auto target = weakFromNode.lock();
-                return std::dynamic_pointer_cast<This>(target);
+                return DCAST<This>(target);
             }
 
             return NULL;
         }
 
-        bool IsRootNode() const
+        bool IsRoot() const
         {
             return this->FromNodes().size() <= 0;
         }
 
         void OnUpdate(TimeSlice time) override
         {
-            if (IsRootNode()) {
+            if (IsRoot()) {
                 auto nodes = this->CollectGraph();
                 for (auto node : nodes)
                 {

@@ -31,7 +31,7 @@ namespace PJ
             }
         };
 
-        std::shared_ptr<Broadcaster> broadcaster = std::make_shared<Broadcaster>();
+        SP<Broadcaster> broadcaster = MAKE<Broadcaster>();
 
         BroadcastTimer(String id, float duration, RunType runType) : Base(duration, runType)
         {
@@ -43,7 +43,7 @@ namespace PJ
         {
             Base::OnFinish();
 
-            auto event = std::make_shared<Event>(id);
+            auto event = MAKE<Event>(id);
             broadcaster->Broadcast(std::static_pointer_cast<PJ::Event>(event));
         }
     };
@@ -57,11 +57,11 @@ namespace PJ
     {
     public:
         using Base = Timer;
-        std::function<std::shared_ptr<Event>()> allocator;
+        std::function<SP<Event>()> allocator;
 
-        std::shared_ptr<Broadcaster> broadcaster = std::make_shared<Broadcaster>();
+        SP<Broadcaster> broadcaster = MAKE<Broadcaster>();
 
-        BroadcastEventTimer(float duration, RunType runType, std::function<std::shared_ptr<Event>()> allocator) : Base(duration, runType), allocator(allocator)
+        BroadcastEventTimer(float duration, RunType runType, std::function<SP<Event>()> allocator) : Base(duration, runType), allocator(allocator)
         {
         }
 

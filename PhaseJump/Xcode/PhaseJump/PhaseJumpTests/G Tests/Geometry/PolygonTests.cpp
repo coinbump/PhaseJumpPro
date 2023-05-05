@@ -10,10 +10,10 @@ namespace PolygonTests {
     public:
         TestPolygon()
         {
-            vertices.Add(Vector3(0, 1, 0));
-            vertices.Add(Vector3(1, 1, 0));
-            vertices.Add(Vector3(1, 0, 0));
-            vertices.Add(Vector3(0, 0, 0));
+            Add(Vector3(0, 1, 0));
+            Add(Vector3(1, 1, 0));
+            Add(Vector3(1, 0, 0));
+            Add(Vector3(0, 0, 0));
         }
     };
 }

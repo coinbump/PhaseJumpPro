@@ -13,6 +13,7 @@ namespace PJ
     /// <summary>
     /// Adds utility code to std::map
     /// </summary>
+    // FUTURE: evaluate unordered_map (requires hash key definition)
     template <class Key, class Type> class Map : public std::map<Key, Type>
     {
     public:

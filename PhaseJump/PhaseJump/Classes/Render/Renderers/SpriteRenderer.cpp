@@ -5,15 +5,16 @@
 #include "SomeRenderEngine.h"
 #include "RenderModelBuilder.h"
 #include "RenderModel.h"
+#include "Macros.h"
 
 using namespace std;
 using namespace PJ;
 
-SpriteRenderer::SpriteRenderer(RenderTexture texture) {
-    material = std::make_shared<RenderMaterial>();
+SpriteRenderer::SpriteRenderer(SP<SomeTexture> texture) {
+    material = MAKE<RenderMaterial>();
     material->textures.Add(texture);
 
-    QuadRenderMeshBuilder builder(Vector2(texture.size.x, texture.size.y));
+    QuadRenderMeshBuilder builder(Vector2(texture->size.x, texture->size.y));
     mesh = builder.BuildRenderMesh();
 }
 
@@ -24,8 +25,7 @@ void SpriteRenderer::RenderInto(RenderIntoModel model) {
     }
 
     RenderModelBuilder builder;
-    auto renderModel = builder.Build(*material->shaderProgram, mesh, *material);
-    renderModel.matrix = model.modelMatrix;
+    auto renderModel = builder.Build(*material->shaderProgram, mesh, *material, model.modelMatrix);
 
     std::transform(renderModel.uvs.begin(), renderModel.uvs.end(), renderModel.uvs.begin(), [this] (Vector2 uv) {
         if (flipX) {

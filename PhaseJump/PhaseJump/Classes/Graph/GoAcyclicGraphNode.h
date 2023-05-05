@@ -33,8 +33,8 @@ namespace PJ
         /// <returns>
         /// Returns the next node in the sequence
         /// </returns>
-        virtual std::shared_ptr<Base> SelectNext() {
-            return std::shared_ptr<Base>();
+        virtual SP<Base> SelectNext() {
+            return SP<Base>();
         }
     };
 }

@@ -11,10 +11,10 @@
 namespace PJ {
     /// Bounds in 3D space
     struct Bounds {
-        Vector3 center = Vector3::zero;
+        Vector3 center;
 
         // Half the size of bounds
-        Vector3 extents = Vector3::zero;
+        Vector3 extents;
 
         Bounds() {
         }

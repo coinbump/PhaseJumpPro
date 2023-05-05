@@ -12,13 +12,12 @@
 namespace PJ {
     class RenderMaterial;
     class RenderMesh;
-    class RenderTexture;
     
     /// Renders a mesh
     class MeshRenderer : public SomeRenderer {
     public:
         RenderMesh mesh;
-        std::shared_ptr<RenderMaterial> material;
+        SP<RenderMaterial> material;
 
         // MARK: SomeRenderer
 

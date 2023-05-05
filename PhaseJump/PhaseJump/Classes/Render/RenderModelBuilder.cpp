@@ -7,7 +7,7 @@
 using namespace std;
 using namespace PJ;
 
-RenderModel RenderModelBuilder::Build(SomeShaderProgram& program, RenderMesh const& mesh, RenderMaterial const& material) {
+RenderModel RenderModelBuilder::Build(SomeShaderProgram& program, RenderMesh const& mesh, RenderMaterial const& material, Matrix4x4 modelMatrix) {
     RenderModel renderModel(program);
     renderModel.vertices = mesh.vertices;
     renderModel.indices = mesh.triangles;
@@ -16,7 +16,11 @@ RenderModel RenderModelBuilder::Build(SomeShaderProgram& program, RenderMesh con
     renderModel.uniformColors = material.uniformColors;
     renderModel.uniformFloats = material.uniformFloats;
     renderModel.features = material.features;
-    renderModel.textures = material.textures;
+    renderModel.matrix = modelMatrix;
+
+    for (auto texture : material.textures) {
+        renderModel.textures.Add(texture);
+    }
 
     return renderModel;
 }

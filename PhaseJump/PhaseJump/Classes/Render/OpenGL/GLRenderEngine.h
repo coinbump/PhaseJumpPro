@@ -18,7 +18,7 @@ namespace PJ {
 
     public:
         using Base = SomeGLRenderEngine;
-        GLuint vao;
+        GLuint vao = 0;
 
         void DrawArrays(GLenum drawMode, GLint drawFirst, GLsizei drawCount) override;
         void DrawElements(GLenum mode, GLsizei count, GLenum type, const void * indices) override;
@@ -36,8 +36,8 @@ namespace PJ {
         void RunGL(std::function<void()> command, String name) override;
 
         std::optional<GLenum> FeatureIdToGLFeatureId(String featureId);
-        std::shared_ptr<GLVertexBuffer> BuildVertexBuffer(GLVertexBufferPlan const& plan) override;
-        std::shared_ptr<GLIndexBuffer> BuildIndexBuffer(VectorList<uint32_t> indices) override;
+        SP<GLVertexBuffer> BuildVertexBuffer(GLVertexBufferPlan const& plan) override;
+        SP<GLIndexBuffer> BuildIndexBuffer(VectorList<uint32_t> indices) override;
         void BindVertexBuffer(GLuint vbo) override;
         void BindIndexBuffer(GLuint ibo) override;
         void BindVertexArray(GLuint vao) override;

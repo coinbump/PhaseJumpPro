@@ -2,6 +2,7 @@
 #define PJWEIGHT_H
 
 #include "SomeTransform.h"
+#include "Macros.h"
 
 /*
  RATING: 5 stars
@@ -30,7 +31,7 @@ namespace PJ
         /// <summary>
         /// Optional object that dynamically adjusts the weight during evaluation
         /// </summary>
-        std::shared_ptr<ValueTransform> adjust;
+        SP<ValueTransform> adjust;
 
         Weight(float weight) : weight(weight)
         {

@@ -17,12 +17,12 @@ namespace GoCoreTests {
         int stateFinishCount = 0;
 
     protected:
-        void OnStateChange(GoStateMachinePtr inStateMachine) override
+        void OnStateChange(GoStateMachine<StateType>& inStateMachine) override
         {
             stateChangeCount++;
         }
 
-        void OnStateFinish(GoStateMachinePtr inStateMachine) override
+        void OnStateFinish(GoStateMachine<StateType>& inStateMachine) override
         {
             stateFinishCount++;
         }
@@ -33,7 +33,7 @@ using namespace GoCoreTests;
 
 TEST(GoCore, StateChange)
 {
-    auto sut = make_shared<TestObject>();
+    auto sut = MAKE<TestObject>();
     sut->Go();
 
     EXPECT_EQ(0, sut->stateChangeCount);
@@ -48,7 +48,7 @@ TEST(GoCore, StateChange)
 
 TEST(GoCore, StateFinish)
 {
-    auto sut = make_shared<TestObject>();
+    auto sut = MAKE<TestObject>();
     sut->Go();
 
     sut->sm->SetState(StateType::Right);

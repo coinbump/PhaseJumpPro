@@ -24,10 +24,10 @@ namespace PJ
     class CyclicGraph : public Core, public Updatable
     {
     public:
-        using EdgeModelSharedPtr = std::shared_ptr<EdgeModel>;
+        using EdgeModelSharedPtr = SP<EdgeModel>;
         using Node = CyclicGraphNode<EdgeModel>;
         using NodeWeakPtr = std::weak_ptr<Node>;
-        using NodeSharedPtr = std::shared_ptr<Node>;
+        using NodeSharedPtr = SP<Node>;
         using NodePtr = NodeSharedPtr const&;
         using NodeSet = Set<NodeSharedPtr>;
 
@@ -41,12 +41,12 @@ namespace PJ
         NodeWeakPtr rootNode;
 
     public:
-        NodeSharedPtr RootNode() const
+        NodeSharedPtr Root() const
         {
             return rootNode.lock();
         }
 
-        void SetRootNode(NodePtr node) {
+        void SetRoot(NodePtr node) {
             rootNode = node;
         }
 
@@ -66,9 +66,9 @@ namespace PJ
                 node->RemoveEdge(edge);
             }
 
-            if (node == RootNode())
+            if (node == Root())
             {
-                SetRootNode(NULL);
+                SetRoot(NULL);
             }
             nodes.Remove(node);
         }
@@ -77,7 +77,7 @@ namespace PJ
         {
             if (NULL == fromNode || NULL == toNode) { return; }
 
-            fromNode->AddEdgeInternal(model, std::make_shared<WeakReference<SomeGraphNode<EdgeModel>>>(toNode));
+            fromNode->AddEdgeInternal(model, MAKE<WeakReference<SomeGraphNode<EdgeModel>>>(toNode));
 
             nodes.Add(fromNode);
             nodes.Add(toNode);

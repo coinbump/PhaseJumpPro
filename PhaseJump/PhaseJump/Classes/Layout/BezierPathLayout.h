@@ -16,9 +16,9 @@ namespace PJ
     public:
         VectorList<Vector3> controlPoints;
 
-        std::shared_ptr<SomePath> BuildPath() override
+        SP<SomePath> BuildPath() override
         {
-            return static_pointer_cast<SomePath>(std::make_shared<BezierPath>(controlPoints));
+            return SCAST<SomePath>(MAKE<BezierPath>(controlPoints));
         }
     };
 }

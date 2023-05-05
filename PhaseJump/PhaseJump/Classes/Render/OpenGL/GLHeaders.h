@@ -1,7 +1,6 @@
 #ifndef PJGLHEADERS_H
 #define PJGLHEADERS_H
 
-#include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 #include <OpenGL/glext.h>
 #include <GLUT/glut.h>

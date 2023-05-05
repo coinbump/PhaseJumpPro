@@ -16,7 +16,7 @@ namespace FilesProcessorTests {
 using namespace FilesProcessorTests;
 
 TEST(FilesProcessor, Process) {
-    FilesProcessor sut(3, make_shared<TestFileProcessor>());
+    FilesProcessor sut(3, MAKE<TestFileProcessor>());
     sut.Provide(FilePath(""));
     sut.Provide(FilePath(""));
     sut.Provide(FilePath(""));

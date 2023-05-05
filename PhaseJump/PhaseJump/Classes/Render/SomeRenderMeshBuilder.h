@@ -2,6 +2,8 @@
 #define PJSOMERENDERMESHBUILDER_H
 
 #include "WorldComponent.h"
+#include "RenderMesh.h"
+
 
 /*
  RATING: 5 stars
@@ -9,7 +11,6 @@
  CODE REVIEW: 4/14/23
  */
 namespace PJ {
-    class RenderMesh;
     class Mesh;
 
     /// Builds a render mesh with vertices

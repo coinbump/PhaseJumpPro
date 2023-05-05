@@ -1,12 +1,12 @@
 #ifndef PJSQLSTATEMENT_H
 #define PJSQLSTATEMENT_H
 
-#include "stdafx.h"
 #include <sqlite3.h>
 #include "SQLTypes.h"
 #include "SQLUtils.h"
 #include "SQLValue.h"
 #include "_String.h"
+#include "Log.h"
 
 /*
  RATING: 5 stars

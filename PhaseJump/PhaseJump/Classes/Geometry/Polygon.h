@@ -16,23 +16,19 @@ namespace PJ
     /// <summary>
     /// Stores vertices for closed polygon
     /// </summary>
-    struct Polygon
+    struct Polygon : public VectorList<Vector3>
     {
-        VectorList<Vector3> vertices;
-
         Vector3 Min() const
         {
-            if (vertices.Count() == 0) { return Vector3::zero; }
+            if (this->Count() == 0) { return Vector3::zero; }
 
-            auto result = vertices[0];
+            auto result = (*this)[0];
 
-            for (auto vertex : vertices)
+            for (auto vertex : (*this))
             {
-                result = Vector3(
-                                 std::min(result.x, vertex.x),
+                result = Vector3(std::min(result.x, vertex.x),
                                  std::min(result.y, vertex.y),
-                                 std::min(result.z, vertex.z)
-                                 );
+                                 std::min(result.z, vertex.z));
             }
 
             return result;
@@ -40,17 +36,15 @@ namespace PJ
 
         Vector3 Max() const
         {
-            if (vertices.Count() == 0) { return Vector3::zero; }
+            if (this->Count() == 0) { return Vector3::zero; }
 
-            auto result = vertices[0];
+            auto result = (*this)[0];
 
-            for (auto vertex : vertices)
+            for (auto vertex : (*this))
             {
-                result = Vector3(
-                                 std::max(result.x, vertex.x),
+                result = Vector3(std::max(result.x, vertex.x),
                                  std::max(result.y, vertex.y),
-                                 std::max(result.z, vertex.z)
-                                 );
+                                 std::max(result.z, vertex.z));
             }
 
             return result;
@@ -71,6 +65,11 @@ namespace PJ
 
             return Vector3(min.x + size.x / 2.0f, min.y + size.y / 2.0f, min.z + size.z / 2.0f);
         }
+
+        bool TestHit(Vector2 pt) const;
+
+        Vector3 At(size_t index) const { return (*this)[index]; }
+        Vector3& At(size_t index) { return (*this)[index]; }
     };
 }
 

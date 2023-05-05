@@ -1,7 +1,8 @@
 #ifndef PJTAGS_H_
 #define PJTAGS_H_
 
-#include <map>
+#include "_Map.h"
+#include "_String.h"
 #include <set>
 #include <any>
 
@@ -15,19 +16,15 @@ namespace PJ
     /// <summary>
     /// Holds custom attributes (tags) in a dictionary
     /// </summary>
-    struct Tags
+    struct Tags : public Map<String, std::any>
     {
-    protected:
-        using Key = std::string;
-        using MapValue = std::any;
-        using TagsMap = std::map<Key, MapValue>;
-
-        TagsMap tags;
-
     public:
+        using Key = String;
+        using MapValue = std::any;
+
         // Standard
         void Insert(Key key, MapValue value) {
-            tags.insert({key, value});
+            this->insert({key, value});
         }
 
         // Convenience (C# style)
@@ -41,8 +38,8 @@ namespace PJ
         template <class T>
         T SafeValue(Key key) const
         {
-            auto value = tags.find(key);
-            if (value != tags.end()) {
+            auto value = this->find(key);
+            if (value != this->end()) {
                 try
                 {
                     auto castValue = std::any_cast<T>(value->second);
@@ -59,8 +56,8 @@ namespace PJ
         template <class T>
         std::optional<T> Value(Key key) const
         {
-            auto value = tags.find(key);
-            if (value != tags.end()) {
+            auto value = this->find(key);
+            if (value != this->end()) {
                 try
                 {
                     auto castValue = std::any_cast<T>(value->second);
@@ -80,8 +77,8 @@ namespace PJ
         template <class T>
         bool ContainsTypedValue(Key key) const
         {
-            auto value = tags.find(key);
-            if (value != tags.end()) {
+            auto value = this->find(key);
+            if (value != this->end()) {
                 try
                 {
                     std::any_cast<T>(value->second);

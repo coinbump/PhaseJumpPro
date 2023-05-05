@@ -15,6 +15,7 @@
 #include "TestColorVaryScene.h"
 #include "TestMeshPathScene.h"
 #include "TestTextureScene.h"
+#include "TestSlicedSpriteScene.h"
 
 using namespace PJ;
 using namespace std;
@@ -27,7 +28,7 @@ ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
 //#define IMG
 
-std::shared_ptr<GLTexture> texture;
+SP<GLTexture> texture;
 
 class TestWorld : public SDLWorld {
 public:
@@ -37,27 +38,43 @@ public:
     }
 
 protected:
-    void ProcessUIEvents(VectorList<std::shared_ptr<SomeUIEvent>> const& uiEvents) override {
-        SDLWorld::ProcessUIEvents(uiEvents);
+    void GoInternal() override {
+        Base::GoInternal();
+
+        auto cameraNode = Camera::main->owner.lock();
+        auto raycaster = std::make_shared<SimpleRaycaster2D>();
+        cameraNode->AddComponent(raycaster);
+    }
+
+    void ProcessUIEvents(VectorList<SP<SomeUIEvent>> const& uiEvents) override {
+        Base::ProcessUIEvents(uiEvents);
 
         for (auto event : uiEvents) {
-            auto dropFileEvent = dynamic_pointer_cast<DropFileUIEvent>(event);
+            auto dropFileEvent = DCAST<DropFileUIEvent>(event);
             if (dropFileEvent) {
                 root->Clear();
 
-                auto camera = std::static_pointer_cast<SomeCamera>(std::make_shared<OrthoCamera>());
+                auto camera = SCAST<SomeCamera>(MAKE<OrthoCamera>());
 
-                auto cameraNode = std::make_shared<WorldNode>();
+                auto cameraNode = MAKE<WorldNode>();
                 cameraNode->Add(camera);
                 root->AddEdge(StandardEdgeModel(), cameraNode);
 
-                auto loadTexture = std::make_shared<SDLLoadGLTextureOperation>(dropFileEvent->filePath, TextureMagnification::Linear);
-                loadTexture->Go();
-                texture = loadTexture->texture;
+                auto loadTexture = MAKE<SDLLoadGLTextureOperation>(dropFileEvent->filePath, TextureMagnification::Linear);
+                loadTexture->Run();
+                auto textures = loadTexture->result->SuccessValue();
+                if (textures.size() > 0) {
+                    texture = SCAST<GLTexture>(textures[0].resource);
+                }
 
                 TestTextureScene testTextureScene(texture);
                 testTextureScene.LoadInto(*this);
                 continue;
+            }
+
+            auto pointerDownEvent = dynamic_pointer_cast<PointerDownUIEvent<ScreenPosition>>(event);
+            if (pointerDownEvent) {
+                cout << "Pointer down at: " << pointerDownEvent->pressPosition.position.x << ", " << pointerDownEvent->pressPosition.position.y << "\n";
             }
         }
     }
@@ -92,20 +109,25 @@ void SDLFoo() {
     auto windowConfig = SDLWindow::Configuration::openGL;
     windowConfig.SetIsResizable(true);
     windowConfig.SetIsFullscreenDesktop(true);
-    auto window = std::make_shared<SDLWindow>(windowConfig, Vector2Int(640, 480));
-    window->SetWorld(std::make_shared<TestWorld>());
+    auto window = MAKE<SDLWindow>(windowConfig, Vector2Int(640, 480));
+    window->SetWorld(MAKE<TestWorld>());
     window->Go();
 
-    auto renderContext = std::make_shared<SDLImGuiRenderContext>();
+    auto eventSystem = MAKE<EventSystem>();
+    auto systemNode = MAKE<WorldNode>();
+    systemNode->AddComponent(eventSystem);
+    window->World()->root->AddChild(systemNode);
+
+    auto renderContext = MAKE<SDLImGuiRenderContext>();
     renderContext->clearColor = Color(0.2f, 0.8f, 0.1f, 1.0f);
     renderContext->Configure(*window);
 
-    auto node = std::make_shared<WorldNode>();
-    auto component = std::make_shared<FuncRenderer>([] (RenderIntoModel renderIntoModel) { ImGui::ShowDemoWindow(&show_demo_window); });
+    auto node = MAKE<WorldNode>();
+    auto component = MAKE<FuncRenderer>([] (RenderIntoModel renderIntoModel) { ImGui::ShowDemoWindow(&show_demo_window); });
     node->AddComponent(component);
     window->World()->Add(node);
     window->World()->SetRenderContext(renderContext);
-    window->World()->uiEventPoller = std::make_shared<SDLImGuiUIEventPoller>(*window);
+    window->World()->uiEventPoller = MAKE<SDLImGuiUIEventPoller>(*window);
 
     TestMeshPathScene testMeshPathScene;
     testMeshPathScene.LoadInto(*window->World());
@@ -113,17 +135,29 @@ void SDLFoo() {
 //    TestColorVaryScene testColorVaryScene;
 //    testColorVaryScene.LoadInto(*window->World());
 
+    SP<SomeLoadResourcesModel> loadResourcesModel = SCAST<SomeLoadResourcesModel>(MAKE<StandardLoadResourcesModel>());
+    SP<FileManager> fm = MAKE<FileManager>();
+    ResourceRepository resourceRepository(loadResourcesModel, window->World()->loadedResources, fm);
+
     FilePath path = SDL_GetBasePath();
-    path /= FilePath("resources/heart-full.png");
+    path /= FilePath("resources/art");
 
-    auto loadTexture = std::make_shared<SDLLoadGLTextureOperation>(path, TextureMagnification::Nearest);
-    loadTexture->Go();
-    texture = loadTexture->texture;
+    auto loadResourcesPlan = resourceRepository.Scan(path, true);
+    auto allInfos = loadResourcesPlan.AllInfos();
+    for (auto info : allInfos) {
+        resourceRepository.Load(info);
+    }
 
+    texture = DCAST<GLTexture>(window->World()->loadedResources->map["texture"]["heart-full"].resource);
     TestTextureScene testTextureScene(texture);
     testTextureScene.LoadInto(*window->World());
 
+    auto sliceTexture = DCAST<GLTexture>(window->World()->loadedResources->map["texture"]["example-button-normal"].resource);
+    TestSlicedSpriteScene testSlicedSpriteScene(sliceTexture);
+    testSlicedSpriteScene.LoadInto(*window->World());
+
     window->World()->Go();
+    window->World()->Run();
 }
 
 #endif

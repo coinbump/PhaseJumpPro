@@ -19,9 +19,9 @@ namespace PJ
     class EventGoalComplete : public Event
     {
     public:
-        std::shared_ptr<SomeGoal> goal;
+        SP<SomeGoal> goal;
 
-        EventGoalComplete(std::shared_ptr<SomeGoal> goal) : goal(goal)
+        EventGoalComplete(SP<SomeGoal> goal) : goal(goal)
         {
         }
     };

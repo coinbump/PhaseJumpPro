@@ -26,23 +26,24 @@ namespace PJ {
 
         SDL_Window* SDL_Window() const { return window; }
 
-        virtual void Configure(struct SDL_Window *window, std::shared_ptr<SomeRenderContext> renderContext) {
+        virtual void Configure(struct SDL_Window *window, SP<SomeRenderContext> renderContext) {
             this->window = window;
             this->renderContext = renderContext;
         }
 
-    protected:
-        void GoInternal() override {
-            Base::GoInternal();
-
+        void Run() {
             while (!isDone) {
                 mainLoop();
             }
             SDL_Quit();
         }
 
+    protected:
+        void GoInternal() override {
+            Base::GoInternal();
+        }
+
         void mainLoop();
-        virtual void ProcessUIEvents(VectorList<std::shared_ptr<SomeUIEvent>> const& uiEvents);
     };
 }
 

@@ -2,7 +2,6 @@
 #define PJSOMEPOSITION_H
 
 #include "Vector3.h"
-#include "WorldNode.h"
 
 /*
  RATING: 4 stars
@@ -11,21 +10,26 @@
  */
 namespace PJ
 {
+    class WorldNode;
+    
     /// <summary>
     /// Encapsulates both position and coordinates used (world/screen/local)
     /// </summary>
     class SomePosition
     {
+    public:
         virtual Vector3 Position() const = 0;
         virtual void SetPosition(Vector3 position) = 0;
+
+        operator Vector3() const { return Position(); }
     };
 
     struct WorldPosition : public SomePosition
     {
         Vector3 position;
 
-        Vector3 Position() const { return position; }
-        void SetPosition(Vector3 value) { position = value; }
+        Vector3 Position() const override { return position; }
+        void SetPosition(Vector3 value) override { position = value; }
 
         WorldPosition(Vector3 position) : position(position)
         {
@@ -37,12 +41,12 @@ namespace PJ
         Vector3 position;
         std::weak_ptr<WorldNode> reference;
 
-        LocalPosition(Vector3 position, std::shared_ptr<WorldNode> reference) : position(position), reference(reference)
+        LocalPosition(Vector3 position, std::weak_ptr<WorldNode> reference) : position(position), reference(reference)
         {
         }
 
-        Vector3 Position() const { return position; }
-        void SetPosition(Vector3 value) { position = value; }
+        Vector3 Position() const override { return position; }
+        void SetPosition(Vector3 value) override { position = value; }
     };
 
     struct ScreenPosition : public SomePosition
@@ -52,8 +56,10 @@ namespace PJ
         ScreenPosition(Vector2 position) : position(position) {
         }
 
-        Vector3 Position() const { return Vector3(position.x, position.y, 0); }
-        void SetPosition(Vector3 value) { position = Vector2(value.x, value.y); }
+        operator Vector2() const { return position; }
+
+        Vector3 Position() const override { return Vector3(position.x, position.y, 0); }
+        void SetPosition(Vector3 value) override { position = Vector2(value.x, value.y); }
     };
 }
 

@@ -8,19 +8,19 @@ using namespace std;
 using namespace PJ;
 using namespace nlohmann;
 
-std::shared_ptr<GLShaderProgram> GLShaderProgramLoader::LoadFromShaderPaths(FilePath vertexShaderPath, FilePath fragmentShaderPath) {
+SP<GLShaderProgram> GLShaderProgramLoader::LoadFromShaderPaths(FilePath vertexShaderPath, FilePath fragmentShaderPath) {
     GLShaderLoader loader;
-    auto vertexShader = std::make_shared<VertexGLShader>();
+    auto vertexShader = MAKE<VertexGLShader>();
     if (!loader.LoadFromPath(*vertexShader, vertexShaderPath)) {
         return nullptr;
     }
 
-    auto fragmentShader = std::make_shared<FragmentGLShader>();
+    auto fragmentShader = MAKE<FragmentGLShader>();
     if (!loader.LoadFromPath(*fragmentShader, fragmentShaderPath)) {
         return nullptr;
     }
 
-    auto result = std::make_shared<GLShaderProgram>();
+    auto result = MAKE<GLShaderProgram>();
     result->Configure(vertexShader, fragmentShader);
     return result;
 }

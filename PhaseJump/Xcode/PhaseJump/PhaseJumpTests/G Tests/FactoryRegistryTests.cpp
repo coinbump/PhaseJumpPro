@@ -1,5 +1,6 @@
 #include "gtest/gtest.h"
 #include "Core/FactoryRegistry.h"
+#include "Macros.h"
 
 #include <memory>
 
@@ -16,12 +17,15 @@ namespace FactoryRegistryTests {
 using namespace FactoryRegistryTests;
 
 TEST(FactoryRegistry, Factory) {
-    auto allocator = [] () -> shared_ptr<TestClass> { return make_shared<TestClass>(); };
+    auto allocator = [] () -> SP<TestClass> { return MAKE<TestClass>(); };
 
     FactoryRegistry<TestClass> registry;
 
-    auto factory = make_shared<Factory<TestClass>>(allocator);
+    auto factory = MAKE<Factory<TestClass>>(allocator);
     registry["test"] = factory;
 
     EXPECT_TRUE(registry.ContainsKey("test"));
+
+    auto tc = registry.New("test");
+    EXPECT_NE(nullptr, tc);
 }

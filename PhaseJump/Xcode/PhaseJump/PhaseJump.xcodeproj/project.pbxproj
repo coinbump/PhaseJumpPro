@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CD0224792A0486A8008D3F1A /* SomeEventHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = CD0224782A0486A8008D3F1A /* SomeEventHandler.h */; };
 		CD09402129ECA59B00B0196F /* RenderMeshTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD09402029ECA59B00B0196F /* RenderMeshTests.cpp */; };
 		CD09402329ECAD8300B0196F /* GLVertexBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = CD09402229ECAD8300B0196F /* GLVertexBuffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CD09402629ECD69400B0196F /* QuadRenderMeshBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = CD09402529ECD69400B0196F /* QuadRenderMeshBuilder.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -40,6 +41,14 @@
 		CD0A849F291DEDAD0074CA4F /* MapTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD0A849E291DEDAD0074CA4F /* MapTests.cpp */; };
 		CD0A84A3291DF5310074CA4F /* ClassRegistryTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD0A84A2291DF5310074CA4F /* ClassRegistryTests.cpp */; };
 		CD0A84A5291E00BC0074CA4F /* ModuleTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD0A84A4291E00BC0074CA4F /* ModuleTests.cpp */; };
+		CD181CE62A02013A00478C25 /* TiledRenderMeshBuilderTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD181CE52A02013A00478C25 /* TiledRenderMeshBuilderTests.cpp */; };
+		CD181CE72A02028100478C25 /* TiledRenderMeshBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD837E4E2A00C4B300467542 /* TiledRenderMeshBuilder.cpp */; };
+		CD181CE92A0290A100478C25 /* UVRect.h in Headers */ = {isa = PBXBuildFile; fileRef = CD181CE82A0290A100478C25 /* UVRect.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CD181CEB2A02B0A700478C25 /* SlicedTextureRendererTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD181CEA2A02B0A700478C25 /* SlicedTextureRendererTests.cpp */; };
+		CD181CEE2A03110E00478C25 /* ComponentTool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD181CEC2A03110E00478C25 /* ComponentTool.cpp */; };
+		CD181CEF2A03110E00478C25 /* ComponentTool.h in Headers */ = {isa = PBXBuildFile; fileRef = CD181CED2A03110E00478C25 /* ComponentTool.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CD181D032A03489300478C25 /* SomeHoverGestureHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD181D012A03489300478C25 /* SomeHoverGestureHandler.cpp */; };
+		CD181D042A03489300478C25 /* SomeHoverGestureHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = CD181D022A03489300478C25 /* SomeHoverGestureHandler.h */; };
 		CD184016295E4D3F003459C4 /* SomeGoal.h in Headers */ = {isa = PBXBuildFile; fileRef = CD184015295E4D3F003459C4 /* SomeGoal.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CD184018295E4D4A003459C4 /* GoalEvents.h in Headers */ = {isa = PBXBuildFile; fileRef = CD184017295E4D4A003459C4 /* GoalEvents.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CD18401A295E4D5A003459C4 /* ValueTargetGoal.h in Headers */ = {isa = PBXBuildFile; fileRef = CD184019295E4D5A003459C4 /* ValueTargetGoal.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -104,7 +113,7 @@
 		CD2A6A6A29D520490076BB3F /* AcyclicGraphNode.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF9D9D229259FB500C912E9 /* AcyclicGraphNode.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CD2A6A6B29D520490076BB3F /* GoAcyclicGraphNode.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF9D9CD29259FB500C912E9 /* GoAcyclicGraphNode.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CD2A6A6C29D520490076BB3F /* StandardEdgeModel.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF9D9D029259FB500C912E9 /* StandardEdgeModel.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		CD2A6A6E29D523680076BB3F /* stdafx.h in Headers */ = {isa = PBXBuildFile; fileRef = CD2A6A6D29D523680076BB3F /* stdafx.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CD2A6A6E29D523680076BB3F /* pch.h in Headers */ = {isa = PBXBuildFile; fileRef = CD2A6A6D29D523680076BB3F /* pch.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CD2A6A7029D529540076BB3F /* FileManager.h in Headers */ = {isa = PBXBuildFile; fileRef = CD2A6A6F29D529540076BB3F /* FileManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CD2A6A7229D5297C0076BB3F /* FileManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD2A6A7129D5297C0076BB3F /* FileManager.cpp */; };
 		CD2A6A7729D53FC20076BB3F /* SQLStatement.h in Headers */ = {isa = PBXBuildFile; fileRef = CD2A6A7629D53FC20076BB3F /* SQLStatement.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -218,6 +227,99 @@
 		CD6FEB362917017A00F674D3 /* PhaseJump.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD6FEB2B2917017A00F674D3 /* PhaseJump.framework */; };
 		CD6FEB3B2917017A00F674D3 /* FloatTransformTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD6FEB3A2917017A00F674D3 /* FloatTransformTests.mm */; };
 		CD6FEB3C2917017A00F674D3 /* PhaseJump.h in Headers */ = {isa = PBXBuildFile; fileRef = CD6FEB2E2917017A00F674D3 /* PhaseJump.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CD837D7B29F7750100467542 /* WorldNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD837D7A29F7750100467542 /* WorldNode.cpp */; };
+		CD837D7D29F77B9F00467542 /* GLTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD837D7C29F77B9F00467542 /* GLTexture.cpp */; };
+		CD837D8029FB235000467542 /* Vector4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD837D7E29FB235000467542 /* Vector4.cpp */; };
+		CD837D8129FB235000467542 /* Vector4.h in Headers */ = {isa = PBXBuildFile; fileRef = CD837D7F29FB235000467542 /* Vector4.h */; };
+		CD837D8529FB26B500467542 /* Matrix4x4Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD837D8429FB26B500467542 /* Matrix4x4Tests.cpp */; };
+		CD837DB029FB2D5C00467542 /* TSMotor3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD837D8729FB2D5C00467542 /* TSMotor3D.cpp */; };
+		CD837DB129FB2D5C00467542 /* TSVector4D.h in Headers */ = {isa = PBXBuildFile; fileRef = CD837D8829FB2D5C00467542 /* TSVector4D.h */; };
+		CD837DB229FB2D5C00467542 /* TSBivector3D.h in Headers */ = {isa = PBXBuildFile; fileRef = CD837D8929FB2D5C00467542 /* TSBivector3D.h */; };
+		CD837DB329FB2D5C00467542 /* TSQuaternion.h in Headers */ = {isa = PBXBuildFile; fileRef = CD837D8A29FB2D5C00467542 /* TSQuaternion.h */; };
+		CD837DB429FB2D5C00467542 /* TSPlane3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD837D8B29FB2D5C00467542 /* TSPlane3D.cpp */; };
+		CD837DB629FB2D5C00467542 /* TSMatrix4D.h in Headers */ = {isa = PBXBuildFile; fileRef = CD837D8D29FB2D5C00467542 /* TSMatrix4D.h */; };
+		CD837DB729FB2D5C00467542 /* TSSphere3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD837D8E29FB2D5C00467542 /* TSSphere3D.cpp */; };
+		CD837DB829FB2D5C00467542 /* TSAlgebra.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD837D8F29FB2D5C00467542 /* TSAlgebra.cpp */; };
+		CD837DB929FB2D5C00467542 /* TSFlector3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD837D9029FB2D5C00467542 /* TSFlector3D.cpp */; };
+		CD837DBA29FB2D5C00467542 /* TSFlector3D.h in Headers */ = {isa = PBXBuildFile; fileRef = CD837D9129FB2D5C00467542 /* TSFlector3D.h */; };
+		CD837DBB29FB2D5C00467542 /* TSQuaternion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD837D9229FB2D5C00467542 /* TSQuaternion.cpp */; };
+		CD837DBC29FB2D5C00467542 /* TSRound3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD837D9329FB2D5C00467542 /* TSRound3D.cpp */; };
+		CD837DBD29FB2D5C00467542 /* TSDipole3D.h in Headers */ = {isa = PBXBuildFile; fileRef = CD837D9429FB2D5C00467542 /* TSDipole3D.h */; };
+		CD837DBE29FB2D5C00467542 /* .editorconfig in Resources */ = {isa = PBXBuildFile; fileRef = CD837D9529FB2D5C00467542 /* .editorconfig */; };
+		CD837DC029FB2D5D00467542 /* TSLine3D.h in Headers */ = {isa = PBXBuildFile; fileRef = CD837D9729FB2D5C00467542 /* TSLine3D.h */; };
+		CD837DC129FB2D5D00467542 /* TSPlane3D.h in Headers */ = {isa = PBXBuildFile; fileRef = CD837D9829FB2D5C00467542 /* TSPlane3D.h */; };
+		CD837DC229FB2D5D00467542 /* TSCircle3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD837D9929FB2D5C00467542 /* TSCircle3D.cpp */; };
+		CD837DC329FB2D5D00467542 /* TSMath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD837D9A29FB2D5C00467542 /* TSMath.cpp */; };
+		CD837DC429FB2D5D00467542 /* TSMatrix4D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD837D9B29FB2D5C00467542 /* TSMatrix4D.cpp */; };
+		CD837DC529FB2D5D00467542 /* TSLine3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD837D9C29FB2D5C00467542 /* TSLine3D.cpp */; };
+		CD837DC629FB2D5D00467542 /* TSBivector3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD837D9D29FB2D5C00467542 /* TSBivector3D.cpp */; };
+		CD837DC729FB2D5D00467542 /* TSSphere3D.h in Headers */ = {isa = PBXBuildFile; fileRef = CD837D9E29FB2D5C00467542 /* TSSphere3D.h */; };
+		CD837DC829FB2D5D00467542 /* TSDipole3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD837D9F29FB2D5C00467542 /* TSDipole3D.cpp */; };
+		CD837DC929FB2D5D00467542 /* TSAlgebra.h in Headers */ = {isa = PBXBuildFile; fileRef = CD837DA029FB2D5C00467542 /* TSAlgebra.h */; };
+		CD837DCA29FB2D5D00467542 /* TSVector4D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD837DA129FB2D5C00467542 /* TSVector4D.cpp */; };
+		CD837DCB29FB2D5D00467542 /* TSMatrix2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD837DA229FB2D5C00467542 /* TSMatrix2D.cpp */; };
+		CD837DCC29FB2D5D00467542 /* TSMatrix3D.h in Headers */ = {isa = PBXBuildFile; fileRef = CD837DA329FB2D5C00467542 /* TSMatrix3D.h */; };
+		CD837DCD29FB2D5D00467542 /* TSMath.h in Headers */ = {isa = PBXBuildFile; fileRef = CD837DA429FB2D5C00467542 /* TSMath.h */; };
+		CD837DCE29FB2D5D00467542 /* TSVector3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD837DA529FB2D5C00467542 /* TSVector3D.cpp */; };
+		CD837DCF29FB2D5D00467542 /* TSMotor3D.h in Headers */ = {isa = PBXBuildFile; fileRef = CD837DA629FB2D5C00467542 /* TSMotor3D.h */; };
+		CD837DD029FB2D5D00467542 /* TSCircle3D.h in Headers */ = {isa = PBXBuildFile; fileRef = CD837DA729FB2D5C00467542 /* TSCircle3D.h */; };
+		CD837DD129FB2D5D00467542 /* TSVector2D.h in Headers */ = {isa = PBXBuildFile; fileRef = CD837DA829FB2D5C00467542 /* TSVector2D.h */; };
+		CD837DD229FB2D5D00467542 /* TSPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = CD837DA929FB2D5C00467542 /* TSPlatform.h */; };
+		CD837DD329FB2D5D00467542 /* TSSimd.h in Headers */ = {isa = PBXBuildFile; fileRef = CD837DAA29FB2D5C00467542 /* TSSimd.h */; };
+		CD837DD429FB2D5D00467542 /* TSVector3D.h in Headers */ = {isa = PBXBuildFile; fileRef = CD837DAB29FB2D5C00467542 /* TSVector3D.h */; };
+		CD837DD529FB2D5D00467542 /* TSVector2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD837DAC29FB2D5C00467542 /* TSVector2D.cpp */; };
+		CD837DD629FB2D5D00467542 /* TSRound3D.h in Headers */ = {isa = PBXBuildFile; fileRef = CD837DAD29FB2D5C00467542 /* TSRound3D.h */; };
+		CD837DD729FB2D5D00467542 /* TSMatrix2D.h in Headers */ = {isa = PBXBuildFile; fileRef = CD837DAE29FB2D5C00467542 /* TSMatrix2D.h */; };
+		CD837DD829FB2D5D00467542 /* TSMatrix3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD837DAF29FB2D5C00467542 /* TSMatrix3D.cpp */; };
+		CD837DDA29FB793000467542 /* Camera.h in Headers */ = {isa = PBXBuildFile; fileRef = CD837DD929FB793000467542 /* Camera.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CD837DDC29FB799500467542 /* Camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD837DDB29FB799500467542 /* Camera.cpp */; };
+		CD837DDF29FB7AD600467542 /* SomeRaycaster.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD837DDD29FB7AD600467542 /* SomeRaycaster.cpp */; };
+		CD837DE029FB7AD600467542 /* SomeRaycaster.h in Headers */ = {isa = PBXBuildFile; fileRef = CD837DDE29FB7AD600467542 /* SomeRaycaster.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CD837DE329FB7ADF00467542 /* SomeRaycaster2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD837DE129FB7ADF00467542 /* SomeRaycaster2D.cpp */; };
+		CD837DE429FB7ADF00467542 /* SomeRaycaster2D.h in Headers */ = {isa = PBXBuildFile; fileRef = CD837DE229FB7ADF00467542 /* SomeRaycaster2D.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CD837DE729FB7AE800467542 /* SimpleRaycaster2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD837DE529FB7AE800467542 /* SimpleRaycaster2D.cpp */; };
+		CD837DE829FB7AE800467542 /* SimpleRaycaster2D.h in Headers */ = {isa = PBXBuildFile; fileRef = CD837DE629FB7AE800467542 /* SimpleRaycaster2D.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CD837DEB29FB7AEF00467542 /* SomeCollider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD837DE929FB7AEF00467542 /* SomeCollider.cpp */; };
+		CD837DEC29FB7AEF00467542 /* SomeCollider.h in Headers */ = {isa = PBXBuildFile; fileRef = CD837DEA29FB7AEF00467542 /* SomeCollider.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CD837DEF29FB7AFE00467542 /* SomeCollider2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD837DED29FB7AFE00467542 /* SomeCollider2D.cpp */; };
+		CD837DF029FB7AFE00467542 /* SomeCollider2D.h in Headers */ = {isa = PBXBuildFile; fileRef = CD837DEE29FB7AFE00467542 /* SomeCollider2D.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CD837DF329FB7B1000467542 /* SimplePolygonCollider2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD837DF129FB7B1000467542 /* SimplePolygonCollider2D.cpp */; };
+		CD837DF429FB7B1000467542 /* SimplePolygonCollider2D.h in Headers */ = {isa = PBXBuildFile; fileRef = CD837DF229FB7B1000467542 /* SimplePolygonCollider2D.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CD837DF629FB845600467542 /* Polygon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD837DF529FB845600467542 /* Polygon.cpp */; };
+		CD837DFE29FDBEB200467542 /* SomeWorldComponent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD837DFD29FDBEB200467542 /* SomeWorldComponent.cpp */; };
+		CD837E0229FDCB1D00467542 /* EventSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD837E0029FDCB1D00467542 /* EventSystem.cpp */; };
+		CD837E0329FDCB1D00467542 /* EventSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = CD837E0129FDCB1D00467542 /* EventSystem.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CD837E0529FDD53600467542 /* OrthoCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD837E0429FDD53600467542 /* OrthoCamera.cpp */; };
+		CD837E0929FEBA8400467542 /* ResourceRepository.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD837E0729FEBA8400467542 /* ResourceRepository.cpp */; };
+		CD837E0A29FEBA8400467542 /* ResourceRepository.h in Headers */ = {isa = PBXBuildFile; fileRef = CD837E0829FEBA8400467542 /* ResourceRepository.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CD837E0D29FEBA8A00467542 /* SomeLoadResourcesModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD837E0B29FEBA8A00467542 /* SomeLoadResourcesModel.cpp */; };
+		CD837E0E29FEBA8A00467542 /* SomeLoadResourcesModel.h in Headers */ = {isa = PBXBuildFile; fileRef = CD837E0C29FEBA8A00467542 /* SomeLoadResourcesModel.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CD837E1129FEBA9500467542 /* StandardLoadResourcesModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD837E0F29FEBA9500467542 /* StandardLoadResourcesModel.cpp */; };
+		CD837E1229FEBA9500467542 /* StandardLoadResourcesModel.h in Headers */ = {isa = PBXBuildFile; fileRef = CD837E1029FEBA9500467542 /* StandardLoadResourcesModel.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CD837E1929FEBAA900467542 /* LoadResourcesPlan.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD837E1729FEBAA900467542 /* LoadResourcesPlan.cpp */; };
+		CD837E1A29FEBAA900467542 /* LoadResourcesPlan.h in Headers */ = {isa = PBXBuildFile; fileRef = CD837E1829FEBAA900467542 /* LoadResourcesPlan.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CD837E1D29FEBAB300467542 /* LoadResourceInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD837E1B29FEBAB300467542 /* LoadResourceInfo.cpp */; };
+		CD837E1E29FEBAB300467542 /* LoadResourceInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = CD837E1C29FEBAB300467542 /* LoadResourceInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CD837E2129FEBAC000467542 /* SomeLoadResourcesOperation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD837E1F29FEBAC000467542 /* SomeLoadResourcesOperation.cpp */; };
+		CD837E2229FEBAC000467542 /* SomeLoadResourcesOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = CD837E2029FEBAC000467542 /* SomeLoadResourcesOperation.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CD837E2429FEC35E00467542 /* Macros.h in Headers */ = {isa = PBXBuildFile; fileRef = CD837E2329FEC35E00467542 /* Macros.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CD837E2629FEFDCE00467542 /* UnorderedMap.h in Headers */ = {isa = PBXBuildFile; fileRef = CD837E2529FEFDCE00467542 /* UnorderedMap.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CD837E2D29FF03F900467542 /* Enum.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD837E2B29FF03F900467542 /* Enum.cpp */; };
+		CD837E2E29FF03F900467542 /* Enum.h in Headers */ = {isa = PBXBuildFile; fileRef = CD837E2C29FF03F900467542 /* Enum.h */; };
+		CD837E3129FF040000467542 /* EnumClass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD837E2F29FF040000467542 /* EnumClass.cpp */; };
+		CD837E3229FF040000467542 /* EnumClass.h in Headers */ = {isa = PBXBuildFile; fileRef = CD837E3029FF040000467542 /* EnumClass.h */; };
+		CD837E3429FF131A00467542 /* EnumTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD837E3329FF131A00467542 /* EnumTests.cpp */; };
+		CD837E3629FF17B800467542 /* ResourceTypeEnum.h in Headers */ = {isa = PBXBuildFile; fileRef = CD837E3529FF17B800467542 /* ResourceTypeEnum.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CD837E3829FF185800467542 /* ResourceTypeEnum.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD837E3729FF185800467542 /* ResourceTypeEnum.cpp */; };
+		CD837E3B29FF412E00467542 /* Result.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD837E3929FF412E00467542 /* Result.cpp */; };
+		CD837E3D29FF419D00467542 /* ResultTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD837E3C29FF419D00467542 /* ResultTests.cpp */; };
+		CD837E3E29FF4F9F00467542 /* Result.h in Headers */ = {isa = PBXBuildFile; fileRef = CD837E3A29FF412E00467542 /* Result.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CD837E402A00639F00467542 /* LoadedResources.h in Headers */ = {isa = PBXBuildFile; fileRef = CD837E3F2A00639F00467542 /* LoadedResources.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CD837E432A00657600467542 /* LoadedResourcesTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD837E422A00657600467542 /* LoadedResourcesTests.cpp */; };
+		CD837E462A006E4400467542 /* LoadResourcesPlanTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD837E442A006E4400467542 /* LoadResourcesPlanTests.cpp */; };
+		CD837E4B2A00AEBC00467542 /* SlicedTextureRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = CD837E482A00A08B00467542 /* SlicedTextureRenderer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CD837E4C2A00AF2F00467542 /* SlicedTextureRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD837E472A00A08B00467542 /* SlicedTextureRenderer.cpp */; };
+		CD837E512A00CAF200467542 /* TiledRenderMeshBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = CD837E4F2A00C4B300467542 /* TiledRenderMeshBuilder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CD86A73829F0BEA40015BFCE /* SDLLoadGLTextureOperation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD86A73729F0BEA40015BFCE /* SDLLoadGLTextureOperation.cpp */; };
 		CD86A74029F0D7500015BFCE /* SDLImGuiUIEventPoller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD86A73E29F0D7500015BFCE /* SDLImGuiUIEventPoller.cpp */; };
 		CD86A74129F0D7500015BFCE /* SDLImGuiUIEventPoller.h in Headers */ = {isa = PBXBuildFile; fileRef = CD86A73F29F0D7500015BFCE /* SDLImGuiUIEventPoller.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -226,8 +328,8 @@
 		CD86A74A29F0EEB90015BFCE /* SDLEventPoller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD86A74829F0EEB90015BFCE /* SDLEventPoller.cpp */; };
 		CD86A74B29F0EEB90015BFCE /* SDLEventPoller.h in Headers */ = {isa = PBXBuildFile; fileRef = CD86A74929F0EEB90015BFCE /* SDLEventPoller.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CD86A74D29F0EEF50015BFCE /* SDLWorld.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD86A74C29F0EEF50015BFCE /* SDLWorld.cpp */; };
-		CD86A75029F0EF7C0015BFCE /* SDLUIEventBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD86A74E29F0EF7C0015BFCE /* SDLUIEventBuilder.cpp */; };
-		CD86A75129F0EF7C0015BFCE /* SDLUIEventBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = CD86A74F29F0EF7C0015BFCE /* SDLUIEventBuilder.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CD86A75029F0EF7C0015BFCE /* SDLUIEventsBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD86A74E29F0EF7C0015BFCE /* SDLUIEventsBuilder.cpp */; };
+		CD86A75129F0EF7C0015BFCE /* SDLUIEventsBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = CD86A74F29F0EF7C0015BFCE /* SDLUIEventsBuilder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CD86A75529F0F0050015BFCE /* SomeUIEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD86A75329F0F0050015BFCE /* SomeUIEvent.cpp */; };
 		CD86A75629F0F0050015BFCE /* SomeUIEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = CD86A75429F0F0050015BFCE /* SomeUIEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CD86A76529F225000015BFCE /* SomeCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD86A76429F225000015BFCE /* SomeCamera.cpp */; };
@@ -242,7 +344,6 @@
 		CD9649C129A1F5E900662285 /* SomeRandomChoiceTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD9649C029A1F5E900662285 /* SomeRandomChoiceTests.cpp */; };
 		CD9649C329A1FAD600662285 /* BroadcastTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = CD9649C229A1FAD600662285 /* BroadcastTimer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CDCA12B929F305F4000F2694 /* GLTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = CDCA12B829F305F4000F2694 /* GLTexture.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		CDCA12BB29F30632000F2694 /* RenderTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = CDCA12BA29F30632000F2694 /* RenderTexture.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CDCA12BF29F30D13000F2694 /* MeshRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDCA12BD29F30D13000F2694 /* MeshRenderer.cpp */; };
 		CDCA12C029F30D13000F2694 /* MeshRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = CDCA12BE29F30D13000F2694 /* MeshRenderer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CDCA12C329F30D22000F2694 /* SpriteRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDCA12C129F30D22000F2694 /* SpriteRenderer.cpp */; };
@@ -250,6 +351,15 @@
 		CDCA12C729F30DBC000F2694 /* RenderModelBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDCA12C529F30DBC000F2694 /* RenderModelBuilder.cpp */; };
 		CDCA12C829F30DBC000F2694 /* RenderModelBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = CDCA12C629F30DBC000F2694 /* RenderModelBuilder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CDCA12CA29F30E79000F2694 /* SomeShaderProgram.h in Headers */ = {isa = PBXBuildFile; fileRef = CDCA12C929F30E79000F2694 /* SomeShaderProgram.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CDCA12D129F32A5C000F2694 /* Bitmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDCA12CF29F32A5C000F2694 /* Bitmap.cpp */; };
+		CDCA12D229F32A5C000F2694 /* Bitmap.h in Headers */ = {isa = PBXBuildFile; fileRef = CDCA12D029F32A5C000F2694 /* Bitmap.h */; };
+		CDCA12D929F342F3000F2694 /* Rect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDCA12D729F342F3000F2694 /* Rect.cpp */; };
+		CDCA12DA29F342F3000F2694 /* Rect.h in Headers */ = {isa = PBXBuildFile; fileRef = CDCA12D829F342F3000F2694 /* Rect.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CDCA12DD29F3487B000F2694 /* Data.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDCA12DB29F3487B000F2694 /* Data.cpp */; };
+		CDCA12DE29F3487B000F2694 /* Data.h in Headers */ = {isa = PBXBuildFile; fileRef = CDCA12DC29F3487B000F2694 /* Data.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CDCA12E329F37BE2000F2694 /* DataTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDCA12E229F37BE2000F2694 /* DataTests.cpp */; };
+		CDCA12E829F380B2000F2694 /* BitmapTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDCA12E729F380B2000F2694 /* BitmapTests.cpp */; };
+		CDCA12EA29F39FD3000F2694 /* Color32.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDCA12E929F39FD3000F2694 /* Color32.cpp */; };
 		CDCEFD4C29E9A09900F42045 /* Matrix4x4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDCEFD4A29E9A09900F42045 /* Matrix4x4.cpp */; };
 		CDCEFD4D29E9A09900F42045 /* Matrix4x4.h in Headers */ = {isa = PBXBuildFile; fileRef = CDCEFD4B29E9A09900F42045 /* Matrix4x4.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CDCEFD5029E9AB6100F42045 /* GLRenderState.h in Headers */ = {isa = PBXBuildFile; fileRef = CDCEFD4F29E9AB6100F42045 /* GLRenderState.h */; };
@@ -364,6 +474,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		CD0224782A0486A8008D3F1A /* SomeEventHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SomeEventHandler.h; sourceTree = "<group>"; };
 		CD09402029ECA59B00B0196F /* RenderMeshTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMeshTests.cpp; sourceTree = "<group>"; };
 		CD09402229ECAD8300B0196F /* GLVertexBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GLVertexBuffer.h; sourceTree = "<group>"; };
 		CD09402529ECD69400B0196F /* QuadRenderMeshBuilder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QuadRenderMeshBuilder.h; sourceTree = "<group>"; };
@@ -396,6 +507,13 @@
 		CD0A849E291DEDAD0074CA4F /* MapTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MapTests.cpp; sourceTree = "<group>"; };
 		CD0A84A2291DF5310074CA4F /* ClassRegistryTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ClassRegistryTests.cpp; sourceTree = "<group>"; };
 		CD0A84A4291E00BC0074CA4F /* ModuleTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModuleTests.cpp; sourceTree = "<group>"; };
+		CD181CE52A02013A00478C25 /* TiledRenderMeshBuilderTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TiledRenderMeshBuilderTests.cpp; sourceTree = "<group>"; };
+		CD181CE82A0290A100478C25 /* UVRect.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UVRect.h; sourceTree = "<group>"; };
+		CD181CEA2A02B0A700478C25 /* SlicedTextureRendererTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SlicedTextureRendererTests.cpp; sourceTree = "<group>"; };
+		CD181CEC2A03110E00478C25 /* ComponentTool.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ComponentTool.cpp; sourceTree = "<group>"; };
+		CD181CED2A03110E00478C25 /* ComponentTool.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ComponentTool.h; sourceTree = "<group>"; };
+		CD181D012A03489300478C25 /* SomeHoverGestureHandler.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SomeHoverGestureHandler.cpp; sourceTree = "<group>"; };
+		CD181D022A03489300478C25 /* SomeHoverGestureHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SomeHoverGestureHandler.h; sourceTree = "<group>"; };
 		CD184015295E4D3F003459C4 /* SomeGoal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SomeGoal.h; sourceTree = "<group>"; };
 		CD184017295E4D4A003459C4 /* GoalEvents.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GoalEvents.h; sourceTree = "<group>"; };
 		CD184019295E4D5A003459C4 /* ValueTargetGoal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ValueTargetGoal.h; sourceTree = "<group>"; };
@@ -458,7 +576,7 @@
 		CD2A6A5F29D3FA3E0076BB3F /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
 		CD2A6A6029D3FA470076BB3F /* libsqlite3.0.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.0.tbd; path = usr/lib/libsqlite3.0.tbd; sourceTree = SDKROOT; };
 		CD2A6A6329D4EA490076BB3F /* SQLUtilsTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SQLUtilsTests.cpp; sourceTree = "<group>"; };
-		CD2A6A6D29D523680076BB3F /* stdafx.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = stdafx.h; sourceTree = "<group>"; };
+		CD2A6A6D29D523680076BB3F /* pch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pch.h; sourceTree = "<group>"; };
 		CD2A6A6F29D529540076BB3F /* FileManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FileManager.h; sourceTree = "<group>"; };
 		CD2A6A7129D5297C0076BB3F /* FileManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FileManager.cpp; sourceTree = "<group>"; };
 		CD2A6A7629D53FC20076BB3F /* SQLStatement.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SQLStatement.h; sourceTree = "<group>"; };
@@ -573,6 +691,100 @@
 		CD6FEB2F2917017A00F674D3 /* PhaseJump.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = PhaseJump.docc; sourceTree = "<group>"; };
 		CD6FEB352917017A00F674D3 /* PhaseJumpTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PhaseJumpTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CD6FEB3A2917017A00F674D3 /* FloatTransformTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = FloatTransformTests.mm; sourceTree = "<group>"; };
+		CD837D7A29F7750100467542 /* WorldNode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WorldNode.cpp; sourceTree = "<group>"; };
+		CD837D7C29F77B9F00467542 /* GLTexture.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GLTexture.cpp; sourceTree = "<group>"; };
+		CD837D7E29FB235000467542 /* Vector4.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Vector4.cpp; sourceTree = "<group>"; };
+		CD837D7F29FB235000467542 /* Vector4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vector4.h; sourceTree = "<group>"; };
+		CD837D8429FB26B500467542 /* Matrix4x4Tests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Matrix4x4Tests.cpp; sourceTree = "<group>"; };
+		CD837D8729FB2D5C00467542 /* TSMotor3D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TSMotor3D.cpp; sourceTree = "<group>"; };
+		CD837D8829FB2D5C00467542 /* TSVector4D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSVector4D.h; sourceTree = "<group>"; };
+		CD837D8929FB2D5C00467542 /* TSBivector3D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSBivector3D.h; sourceTree = "<group>"; };
+		CD837D8A29FB2D5C00467542 /* TSQuaternion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSQuaternion.h; sourceTree = "<group>"; };
+		CD837D8B29FB2D5C00467542 /* TSPlane3D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TSPlane3D.cpp; sourceTree = "<group>"; };
+		CD837D8D29FB2D5C00467542 /* TSMatrix4D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSMatrix4D.h; sourceTree = "<group>"; };
+		CD837D8E29FB2D5C00467542 /* TSSphere3D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TSSphere3D.cpp; sourceTree = "<group>"; };
+		CD837D8F29FB2D5C00467542 /* TSAlgebra.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TSAlgebra.cpp; sourceTree = "<group>"; };
+		CD837D9029FB2D5C00467542 /* TSFlector3D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TSFlector3D.cpp; sourceTree = "<group>"; };
+		CD837D9129FB2D5C00467542 /* TSFlector3D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSFlector3D.h; sourceTree = "<group>"; };
+		CD837D9229FB2D5C00467542 /* TSQuaternion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TSQuaternion.cpp; sourceTree = "<group>"; };
+		CD837D9329FB2D5C00467542 /* TSRound3D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TSRound3D.cpp; sourceTree = "<group>"; };
+		CD837D9429FB2D5C00467542 /* TSDipole3D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSDipole3D.h; sourceTree = "<group>"; };
+		CD837D9529FB2D5C00467542 /* .editorconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .editorconfig; sourceTree = "<group>"; };
+		CD837D9729FB2D5C00467542 /* TSLine3D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSLine3D.h; sourceTree = "<group>"; };
+		CD837D9829FB2D5C00467542 /* TSPlane3D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSPlane3D.h; sourceTree = "<group>"; };
+		CD837D9929FB2D5C00467542 /* TSCircle3D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TSCircle3D.cpp; sourceTree = "<group>"; };
+		CD837D9A29FB2D5C00467542 /* TSMath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TSMath.cpp; sourceTree = "<group>"; };
+		CD837D9B29FB2D5C00467542 /* TSMatrix4D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TSMatrix4D.cpp; sourceTree = "<group>"; };
+		CD837D9C29FB2D5C00467542 /* TSLine3D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TSLine3D.cpp; sourceTree = "<group>"; };
+		CD837D9D29FB2D5C00467542 /* TSBivector3D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TSBivector3D.cpp; sourceTree = "<group>"; };
+		CD837D9E29FB2D5C00467542 /* TSSphere3D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSSphere3D.h; sourceTree = "<group>"; };
+		CD837D9F29FB2D5C00467542 /* TSDipole3D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TSDipole3D.cpp; sourceTree = "<group>"; };
+		CD837DA029FB2D5C00467542 /* TSAlgebra.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSAlgebra.h; sourceTree = "<group>"; };
+		CD837DA129FB2D5C00467542 /* TSVector4D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TSVector4D.cpp; sourceTree = "<group>"; };
+		CD837DA229FB2D5C00467542 /* TSMatrix2D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TSMatrix2D.cpp; sourceTree = "<group>"; };
+		CD837DA329FB2D5C00467542 /* TSMatrix3D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSMatrix3D.h; sourceTree = "<group>"; };
+		CD837DA429FB2D5C00467542 /* TSMath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSMath.h; sourceTree = "<group>"; };
+		CD837DA529FB2D5C00467542 /* TSVector3D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TSVector3D.cpp; sourceTree = "<group>"; };
+		CD837DA629FB2D5C00467542 /* TSMotor3D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSMotor3D.h; sourceTree = "<group>"; };
+		CD837DA729FB2D5C00467542 /* TSCircle3D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSCircle3D.h; sourceTree = "<group>"; };
+		CD837DA829FB2D5C00467542 /* TSVector2D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSVector2D.h; sourceTree = "<group>"; };
+		CD837DA929FB2D5C00467542 /* TSPlatform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSPlatform.h; sourceTree = "<group>"; };
+		CD837DAA29FB2D5C00467542 /* TSSimd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSSimd.h; sourceTree = "<group>"; };
+		CD837DAB29FB2D5C00467542 /* TSVector3D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSVector3D.h; sourceTree = "<group>"; };
+		CD837DAC29FB2D5C00467542 /* TSVector2D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TSVector2D.cpp; sourceTree = "<group>"; };
+		CD837DAD29FB2D5C00467542 /* TSRound3D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSRound3D.h; sourceTree = "<group>"; };
+		CD837DAE29FB2D5C00467542 /* TSMatrix2D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSMatrix2D.h; sourceTree = "<group>"; };
+		CD837DAF29FB2D5C00467542 /* TSMatrix3D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TSMatrix3D.cpp; sourceTree = "<group>"; };
+		CD837DD929FB793000467542 /* Camera.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Camera.h; sourceTree = "<group>"; };
+		CD837DDB29FB799500467542 /* Camera.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Camera.cpp; sourceTree = "<group>"; };
+		CD837DDD29FB7AD600467542 /* SomeRaycaster.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SomeRaycaster.cpp; sourceTree = "<group>"; };
+		CD837DDE29FB7AD600467542 /* SomeRaycaster.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SomeRaycaster.h; sourceTree = "<group>"; };
+		CD837DE129FB7ADF00467542 /* SomeRaycaster2D.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SomeRaycaster2D.cpp; sourceTree = "<group>"; };
+		CD837DE229FB7ADF00467542 /* SomeRaycaster2D.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SomeRaycaster2D.h; sourceTree = "<group>"; };
+		CD837DE529FB7AE800467542 /* SimpleRaycaster2D.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleRaycaster2D.cpp; sourceTree = "<group>"; };
+		CD837DE629FB7AE800467542 /* SimpleRaycaster2D.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SimpleRaycaster2D.h; sourceTree = "<group>"; };
+		CD837DE929FB7AEF00467542 /* SomeCollider.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SomeCollider.cpp; sourceTree = "<group>"; };
+		CD837DEA29FB7AEF00467542 /* SomeCollider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SomeCollider.h; sourceTree = "<group>"; };
+		CD837DED29FB7AFE00467542 /* SomeCollider2D.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SomeCollider2D.cpp; sourceTree = "<group>"; };
+		CD837DEE29FB7AFE00467542 /* SomeCollider2D.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SomeCollider2D.h; sourceTree = "<group>"; };
+		CD837DF129FB7B1000467542 /* SimplePolygonCollider2D.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SimplePolygonCollider2D.cpp; sourceTree = "<group>"; };
+		CD837DF229FB7B1000467542 /* SimplePolygonCollider2D.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SimplePolygonCollider2D.h; sourceTree = "<group>"; };
+		CD837DF529FB845600467542 /* Polygon.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Polygon.cpp; sourceTree = "<group>"; };
+		CD837DFD29FDBEB200467542 /* SomeWorldComponent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SomeWorldComponent.cpp; sourceTree = "<group>"; };
+		CD837E0029FDCB1D00467542 /* EventSystem.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EventSystem.cpp; sourceTree = "<group>"; };
+		CD837E0129FDCB1D00467542 /* EventSystem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EventSystem.h; sourceTree = "<group>"; };
+		CD837E0429FDD53600467542 /* OrthoCamera.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OrthoCamera.cpp; sourceTree = "<group>"; };
+		CD837E0729FEBA8400467542 /* ResourceRepository.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceRepository.cpp; sourceTree = "<group>"; };
+		CD837E0829FEBA8400467542 /* ResourceRepository.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ResourceRepository.h; sourceTree = "<group>"; };
+		CD837E0B29FEBA8A00467542 /* SomeLoadResourcesModel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SomeLoadResourcesModel.cpp; sourceTree = "<group>"; };
+		CD837E0C29FEBA8A00467542 /* SomeLoadResourcesModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SomeLoadResourcesModel.h; sourceTree = "<group>"; };
+		CD837E0F29FEBA9500467542 /* StandardLoadResourcesModel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StandardLoadResourcesModel.cpp; sourceTree = "<group>"; };
+		CD837E1029FEBA9500467542 /* StandardLoadResourcesModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StandardLoadResourcesModel.h; sourceTree = "<group>"; };
+		CD837E1729FEBAA900467542 /* LoadResourcesPlan.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LoadResourcesPlan.cpp; sourceTree = "<group>"; };
+		CD837E1829FEBAA900467542 /* LoadResourcesPlan.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LoadResourcesPlan.h; sourceTree = "<group>"; };
+		CD837E1B29FEBAB300467542 /* LoadResourceInfo.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LoadResourceInfo.cpp; sourceTree = "<group>"; };
+		CD837E1C29FEBAB300467542 /* LoadResourceInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LoadResourceInfo.h; sourceTree = "<group>"; };
+		CD837E1F29FEBAC000467542 /* SomeLoadResourcesOperation.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SomeLoadResourcesOperation.cpp; sourceTree = "<group>"; };
+		CD837E2029FEBAC000467542 /* SomeLoadResourcesOperation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SomeLoadResourcesOperation.h; sourceTree = "<group>"; };
+		CD837E2329FEC35E00467542 /* Macros.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Macros.h; sourceTree = "<group>"; };
+		CD837E2529FEFDCE00467542 /* UnorderedMap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UnorderedMap.h; sourceTree = "<group>"; };
+		CD837E2B29FF03F900467542 /* Enum.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Enum.cpp; sourceTree = "<group>"; };
+		CD837E2C29FF03F900467542 /* Enum.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Enum.h; sourceTree = "<group>"; };
+		CD837E2F29FF040000467542 /* EnumClass.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EnumClass.cpp; sourceTree = "<group>"; };
+		CD837E3029FF040000467542 /* EnumClass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EnumClass.h; sourceTree = "<group>"; };
+		CD837E3329FF131A00467542 /* EnumTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EnumTests.cpp; sourceTree = "<group>"; };
+		CD837E3529FF17B800467542 /* ResourceTypeEnum.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ResourceTypeEnum.h; sourceTree = "<group>"; };
+		CD837E3729FF185800467542 /* ResourceTypeEnum.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceTypeEnum.cpp; sourceTree = "<group>"; };
+		CD837E3929FF412E00467542 /* Result.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Result.cpp; sourceTree = "<group>"; };
+		CD837E3A29FF412E00467542 /* Result.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Result.h; sourceTree = "<group>"; };
+		CD837E3C29FF419D00467542 /* ResultTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ResultTests.cpp; sourceTree = "<group>"; };
+		CD837E3F2A00639F00467542 /* LoadedResources.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LoadedResources.h; sourceTree = "<group>"; };
+		CD837E422A00657600467542 /* LoadedResourcesTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LoadedResourcesTests.cpp; sourceTree = "<group>"; };
+		CD837E442A006E4400467542 /* LoadResourcesPlanTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LoadResourcesPlanTests.cpp; sourceTree = "<group>"; };
+		CD837E472A00A08B00467542 /* SlicedTextureRenderer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SlicedTextureRenderer.cpp; sourceTree = "<group>"; };
+		CD837E482A00A08B00467542 /* SlicedTextureRenderer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SlicedTextureRenderer.h; sourceTree = "<group>"; };
+		CD837E4E2A00C4B300467542 /* TiledRenderMeshBuilder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TiledRenderMeshBuilder.cpp; sourceTree = "<group>"; };
+		CD837E4F2A00C4B300467542 /* TiledRenderMeshBuilder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TiledRenderMeshBuilder.h; sourceTree = "<group>"; };
 		CD86A73729F0BEA40015BFCE /* SDLLoadGLTextureOperation.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SDLLoadGLTextureOperation.cpp; sourceTree = "<group>"; };
 		CD86A73E29F0D7500015BFCE /* SDLImGuiUIEventPoller.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SDLImGuiUIEventPoller.cpp; sourceTree = "<group>"; };
 		CD86A73F29F0D7500015BFCE /* SDLImGuiUIEventPoller.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDLImGuiUIEventPoller.h; sourceTree = "<group>"; };
@@ -581,8 +793,8 @@
 		CD86A74829F0EEB90015BFCE /* SDLEventPoller.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SDLEventPoller.cpp; sourceTree = "<group>"; };
 		CD86A74929F0EEB90015BFCE /* SDLEventPoller.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDLEventPoller.h; sourceTree = "<group>"; };
 		CD86A74C29F0EEF50015BFCE /* SDLWorld.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SDLWorld.cpp; sourceTree = "<group>"; };
-		CD86A74E29F0EF7C0015BFCE /* SDLUIEventBuilder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SDLUIEventBuilder.cpp; sourceTree = "<group>"; };
-		CD86A74F29F0EF7C0015BFCE /* SDLUIEventBuilder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDLUIEventBuilder.h; sourceTree = "<group>"; };
+		CD86A74E29F0EF7C0015BFCE /* SDLUIEventsBuilder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SDLUIEventsBuilder.cpp; sourceTree = "<group>"; };
+		CD86A74F29F0EF7C0015BFCE /* SDLUIEventsBuilder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDLUIEventsBuilder.h; sourceTree = "<group>"; };
 		CD86A75329F0F0050015BFCE /* SomeUIEvent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SomeUIEvent.cpp; sourceTree = "<group>"; };
 		CD86A75429F0F0050015BFCE /* SomeUIEvent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SomeUIEvent.h; sourceTree = "<group>"; };
 		CD86A76429F225000015BFCE /* SomeCamera.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SomeCamera.cpp; sourceTree = "<group>"; };
@@ -598,7 +810,6 @@
 		CD9649C229A1FAD600662285 /* BroadcastTimer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BroadcastTimer.h; sourceTree = "<group>"; };
 		CDA98A4529189A3600B9B961 /* libgtest.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libgtest.a; path = ../../../../../../../../usr/local/lib/libgtest.a; sourceTree = "<group>"; };
 		CDCA12B829F305F4000F2694 /* GLTexture.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GLTexture.h; sourceTree = "<group>"; };
-		CDCA12BA29F30632000F2694 /* RenderTexture.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderTexture.h; sourceTree = "<group>"; };
 		CDCA12BD29F30D13000F2694 /* MeshRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MeshRenderer.cpp; sourceTree = "<group>"; };
 		CDCA12BE29F30D13000F2694 /* MeshRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MeshRenderer.h; sourceTree = "<group>"; };
 		CDCA12C129F30D22000F2694 /* SpriteRenderer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SpriteRenderer.cpp; sourceTree = "<group>"; };
@@ -606,6 +817,15 @@
 		CDCA12C529F30DBC000F2694 /* RenderModelBuilder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RenderModelBuilder.cpp; sourceTree = "<group>"; };
 		CDCA12C629F30DBC000F2694 /* RenderModelBuilder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderModelBuilder.h; sourceTree = "<group>"; };
 		CDCA12C929F30E79000F2694 /* SomeShaderProgram.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SomeShaderProgram.h; sourceTree = "<group>"; };
+		CDCA12CF29F32A5C000F2694 /* Bitmap.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Bitmap.cpp; sourceTree = "<group>"; };
+		CDCA12D029F32A5C000F2694 /* Bitmap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Bitmap.h; sourceTree = "<group>"; };
+		CDCA12D729F342F3000F2694 /* Rect.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Rect.cpp; sourceTree = "<group>"; };
+		CDCA12D829F342F3000F2694 /* Rect.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Rect.h; sourceTree = "<group>"; };
+		CDCA12DB29F3487B000F2694 /* Data.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Data.cpp; sourceTree = "<group>"; };
+		CDCA12DC29F3487B000F2694 /* Data.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Data.h; sourceTree = "<group>"; };
+		CDCA12E229F37BE2000F2694 /* DataTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DataTests.cpp; sourceTree = "<group>"; };
+		CDCA12E729F380B2000F2694 /* BitmapTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BitmapTests.cpp; sourceTree = "<group>"; };
+		CDCA12E929F39FD3000F2694 /* Color32.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Color32.cpp; sourceTree = "<group>"; };
 		CDCEFD4A29E9A09900F42045 /* Matrix4x4.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Matrix4x4.cpp; sourceTree = "<group>"; };
 		CDCEFD4B29E9A09900F42045 /* Matrix4x4.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Matrix4x4.h; sourceTree = "<group>"; };
 		CDCEFD4F29E9AB6100F42045 /* GLRenderState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GLRenderState.h; sourceTree = "<group>"; };
@@ -730,6 +950,7 @@
 			isa = PBXGroup;
 			children = (
 				CD09402029ECA59B00B0196F /* RenderMeshTests.cpp */,
+				CD181CEA2A02B0A700478C25 /* SlicedTextureRendererTests.cpp */,
 			);
 			path = Render;
 			sourceTree = "<group>";
@@ -745,16 +966,20 @@
 		CD0A842329189FE70074CA4F /* G Tests */ = {
 			isa = PBXGroup;
 			children = (
+				CD181CE42A02012D00478C25 /* Mesh */,
+				CDDD3FF8294E81FD00361C67 /* Animation */,
 				CD1FF42D29DCDA3A006426E2 /* Collections */,
 				CD376C6E29E32DC700DC7950 /* Components */,
 				CD1FF42A29DCD853006426E2 /* Utils */,
 				CD2A6A6229D4EA350076BB3F /* Data */,
 				CD420ADF2958CFAE00C5D3E1 /* Geometry */,
-				CDDD3FF8294E81FD00361C67 /* Animation */,
+				CDCA12E629F380B2000F2694 /* Images */,
 				CDDD403F29526D3800361C67 /* Core */,
 				CD1E7CD529462C8600001DB9 /* Graph */,
+				CD837D8329FB26A100467542 /* Math */,
 				CD1E7CF32946857F00001DB9 /* Model */,
 				CD09401F29ECA58900B0196F /* Render */,
+				CD837E412A00656000467542 /* Resources */,
 				CDDD403A29514BE000361C67 /* Types */,
 				CDF9DA0F29325A0C00C912E9 /* ArrayTests.cpp */,
 				CDF9D9FA292B15E300C912E9 /* BroadcasterTests.cpp */,
@@ -802,6 +1027,7 @@
 				CD420AFE295A818100C5D3E1 /* Effects */,
 				CD5FB825291EB098004F2FB4 /* Geometry */,
 				CDF9D9CB29259FB500C912E9 /* Graph */,
+				CDCA12CE29F32A4A000F2694 /* Images */,
 				CD5FB84829208502004F2FB4 /* Input */,
 				CD420A912957785E00C5D3E1 /* Interface */,
 				CD420B05295BE80A00C5D3E1 /* Layout */,
@@ -809,8 +1035,10 @@
 				CD09402429ECD64000B0196F /* Mesh */,
 				CD0A844C2918A1F00074CA4F /* Model */,
 				CD420A8929576F1300C5D3E1 /* Render */,
+				CD837E0629FEBA6100467542 /* Resources */,
 				CD420A8A29576F5200C5D3E1 /* SDL */,
 				CD0A84682918ADE70074CA4F /* Storage */,
+				CD837DFF29FDCB0900467542 /* Systems */,
 				CD0A842E2918A1F00074CA4F /* Types */,
 				CD86A75229F0EFF00015BFCE /* UI */,
 				CD5FB83329200BE0004F2FB4 /* Processors */,
@@ -878,6 +1106,7 @@
 				CD420AD32958065300C5D3E1 /* SomeOperation.h */,
 				CDDD401A2951439200361C67 /* SomeRunner.h */,
 				CD420AF7295A0C0B00C5D3E1 /* SomeWorldComponent.h */,
+				CD837DFD29FDBEB200467542 /* SomeWorldComponent.cpp */,
 				CD420AFC295A80B000C5D3E1 /* SwitchHandler.h */,
 				CDDD40122951439200361C67 /* Tags.h */,
 				CD1E7CC92941A70A00001DB9 /* Valve.h */,
@@ -891,6 +1120,19 @@
 				CDF0FB7D29EF93BD00B9EF1F /* Scene.h */,
 				CD86A74229F0D7D20015BFCE /* SomeUIEventPoller.cpp */,
 				CD86A74329F0D7D20015BFCE /* SomeUIEventPoller.h */,
+				CDCA12DB29F3487B000F2694 /* Data.cpp */,
+				CDCA12DC29F3487B000F2694 /* Data.h */,
+				CDCA12E929F39FD3000F2694 /* Color32.cpp */,
+				CD837D7A29F7750100467542 /* WorldNode.cpp */,
+				CD837DD929FB793000467542 /* Camera.h */,
+				CD837DDB29FB799500467542 /* Camera.cpp */,
+				CD837E2329FEC35E00467542 /* Macros.h */,
+				CD837E2B29FF03F900467542 /* Enum.cpp */,
+				CD837E2C29FF03F900467542 /* Enum.h */,
+				CD837E2F29FF040000467542 /* EnumClass.cpp */,
+				CD837E3029FF040000467542 /* EnumClass.h */,
+				CD837E3929FF412E00467542 /* Result.cpp */,
+				CD837E3A29FF412E00467542 /* Result.h */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -963,6 +1205,14 @@
 				CD0A846D2918ADE70074CA4F /* FilePath.h */,
 			);
 			path = Local;
+			sourceTree = "<group>";
+		};
+		CD181CE42A02012D00478C25 /* Mesh */ = {
+			isa = PBXGroup;
+			children = (
+				CD181CE52A02013A00478C25 /* TiledRenderMeshBuilderTests.cpp */,
+			);
+			path = Mesh;
 			sourceTree = "<group>";
 		};
 		CD184014295E4D33003459C4 /* Goals */ = {
@@ -1122,7 +1372,24 @@
 				CD376C6829E32CB800DC7950 /* SomeCamera.h */,
 				CD376C6A29E32CC400DC7950 /* ReadingCamera.h */,
 				CD376C6C29E32CCF00DC7950 /* OrthoCamera.h */,
+				CD837E0429FDD53600467542 /* OrthoCamera.cpp */,
 				CD86A76429F225000015BFCE /* SomeCamera.cpp */,
+				CD837DDD29FB7AD600467542 /* SomeRaycaster.cpp */,
+				CD837DDE29FB7AD600467542 /* SomeRaycaster.h */,
+				CD837DE129FB7ADF00467542 /* SomeRaycaster2D.cpp */,
+				CD837DE229FB7ADF00467542 /* SomeRaycaster2D.h */,
+				CD837DE529FB7AE800467542 /* SimpleRaycaster2D.cpp */,
+				CD837DE629FB7AE800467542 /* SimpleRaycaster2D.h */,
+				CD837DE929FB7AEF00467542 /* SomeCollider.cpp */,
+				CD837DEA29FB7AEF00467542 /* SomeCollider.h */,
+				CD837DED29FB7AFE00467542 /* SomeCollider2D.cpp */,
+				CD837DEE29FB7AFE00467542 /* SomeCollider2D.h */,
+				CD181D012A03489300478C25 /* SomeHoverGestureHandler.cpp */,
+				CD181D022A03489300478C25 /* SomeHoverGestureHandler.h */,
+				CD837DF129FB7B1000467542 /* SimplePolygonCollider2D.cpp */,
+				CD837DF229FB7B1000467542 /* SimplePolygonCollider2D.h */,
+				CD181CEC2A03110E00478C25 /* ComponentTool.cpp */,
+				CD181CED2A03110E00478C25 /* ComponentTool.h */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -1148,6 +1415,7 @@
 		CD376D7D29E7B6D600DC7950 /* sdks */ = {
 			isa = PBXGroup;
 			children = (
+				CD837D8629FB2D5C00467542 /* Terathon-Math-Library */,
 				CD376D7E29E7B6E100DC7950 /* imgui */,
 			);
 			name = sdks;
@@ -1196,6 +1464,7 @@
 				CDF0FB8929F0327300B9EF1F /* GLBlendMode.h */,
 				CDF0FB8B29F032A000B9EF1F /* GLBlendMode.cpp */,
 				CDCA12B829F305F4000F2694 /* GLTexture.h */,
+				CD837D7C29F77B9F00467542 /* GLTexture.cpp */,
 			);
 			path = OpenGL;
 			sourceTree = "<group>";
@@ -1224,10 +1493,10 @@
 				CDF0FB7329EE06C400B9EF1F /* RenderModel.cpp */,
 				CDF0FB7429EE06C400B9EF1F /* RenderModel.h */,
 				CDF0FB8729F02A4E00B9EF1F /* SomeRenderEngine.cpp */,
-				CDCA12BA29F30632000F2694 /* RenderTexture.h */,
 				CDCA12C529F30DBC000F2694 /* RenderModelBuilder.cpp */,
 				CDCA12C629F30DBC000F2694 /* RenderModelBuilder.h */,
 				CDCA12C929F30E79000F2694 /* SomeShaderProgram.h */,
+				CD181CE82A0290A100478C25 /* UVRect.h */,
 			);
 			path = Render;
 			sourceTree = "<group>";
@@ -1252,8 +1521,8 @@
 				CD376CBE29E7A12900DC7950 /* SDLWindow.cpp */,
 				CD86A74829F0EEB90015BFCE /* SDLEventPoller.cpp */,
 				CD86A74929F0EEB90015BFCE /* SDLEventPoller.h */,
-				CD86A74E29F0EF7C0015BFCE /* SDLUIEventBuilder.cpp */,
-				CD86A74F29F0EF7C0015BFCE /* SDLUIEventBuilder.h */,
+				CD86A74E29F0EF7C0015BFCE /* SDLUIEventsBuilder.cpp */,
+				CD86A74F29F0EF7C0015BFCE /* SDLUIEventsBuilder.h */,
 			);
 			path = SDL;
 			sourceTree = "<group>";
@@ -1263,6 +1532,7 @@
 			children = (
 				CD420A8D2957726900C5D3E1 /* SomeWindow.h */,
 				CD420A9629577CCF00C5D3E1 /* SomeEventSystem.h */,
+				CD0224782A0486A8008D3F1A /* SomeEventHandler.h */,
 			);
 			path = Interface;
 			sourceTree = "<group>";
@@ -1319,9 +1589,14 @@
 				CD1E7CE429465CAB00001DB9 /* Vector2.cpp */,
 				CDF9DA00292EEEF500C912E9 /* Vector3.h */,
 				CD1E7CE629465D4200001DB9 /* Vector3.cpp */,
+				CD837D7E29FB235000467542 /* Vector4.cpp */,
+				CD837D7F29FB235000467542 /* Vector4.h */,
 				CDCEFD5729EA077700F42045 /* Bounds.cpp */,
 				CDCEFD5829EA077700F42045 /* Bounds.h */,
 				CDCEFD6329EA4D0900F42045 /* Mesh.h */,
+				CDCA12D729F342F3000F2694 /* Rect.cpp */,
+				CDCA12D829F342F3000F2694 /* Rect.h */,
+				CD837DF529FB845600467542 /* Polygon.cpp */,
 			);
 			path = Geometry;
 			sourceTree = "<group>";
@@ -1369,7 +1644,7 @@
 		CD6FEB2D2917017A00F674D3 /* PhaseJump */ = {
 			isa = PBXGroup;
 			children = (
-				CD2A6A6D29D523680076BB3F /* stdafx.h */,
+				CD2A6A6D29D523680076BB3F /* pch.h */,
 				CD6FEB2E2917017A00F674D3 /* PhaseJump.h */,
 				CD6FEB2F2917017A00F674D3 /* PhaseJump.docc */,
 			);
@@ -1384,6 +1659,101 @@
 				CD6FEB3A2917017A00F674D3 /* FloatTransformTests.mm */,
 			);
 			path = PhaseJumpTests;
+			sourceTree = "<group>";
+		};
+		CD837D8329FB26A100467542 /* Math */ = {
+			isa = PBXGroup;
+			children = (
+				CD837D8429FB26B500467542 /* Matrix4x4Tests.cpp */,
+			);
+			path = Math;
+			sourceTree = "<group>";
+		};
+		CD837D8629FB2D5C00467542 /* Terathon-Math-Library */ = {
+			isa = PBXGroup;
+			children = (
+				CD837D8729FB2D5C00467542 /* TSMotor3D.cpp */,
+				CD837D8829FB2D5C00467542 /* TSVector4D.h */,
+				CD837D8929FB2D5C00467542 /* TSBivector3D.h */,
+				CD837D8A29FB2D5C00467542 /* TSQuaternion.h */,
+				CD837D8B29FB2D5C00467542 /* TSPlane3D.cpp */,
+				CD837D8D29FB2D5C00467542 /* TSMatrix4D.h */,
+				CD837D8E29FB2D5C00467542 /* TSSphere3D.cpp */,
+				CD837D8F29FB2D5C00467542 /* TSAlgebra.cpp */,
+				CD837D9029FB2D5C00467542 /* TSFlector3D.cpp */,
+				CD837D9129FB2D5C00467542 /* TSFlector3D.h */,
+				CD837D9229FB2D5C00467542 /* TSQuaternion.cpp */,
+				CD837D9329FB2D5C00467542 /* TSRound3D.cpp */,
+				CD837D9429FB2D5C00467542 /* TSDipole3D.h */,
+				CD837D9529FB2D5C00467542 /* .editorconfig */,
+				CD837D9729FB2D5C00467542 /* TSLine3D.h */,
+				CD837D9829FB2D5C00467542 /* TSPlane3D.h */,
+				CD837D9929FB2D5C00467542 /* TSCircle3D.cpp */,
+				CD837D9A29FB2D5C00467542 /* TSMath.cpp */,
+				CD837D9B29FB2D5C00467542 /* TSMatrix4D.cpp */,
+				CD837D9C29FB2D5C00467542 /* TSLine3D.cpp */,
+				CD837D9D29FB2D5C00467542 /* TSBivector3D.cpp */,
+				CD837D9E29FB2D5C00467542 /* TSSphere3D.h */,
+				CD837D9F29FB2D5C00467542 /* TSDipole3D.cpp */,
+				CD837DA029FB2D5C00467542 /* TSAlgebra.h */,
+				CD837DA129FB2D5C00467542 /* TSVector4D.cpp */,
+				CD837DA229FB2D5C00467542 /* TSMatrix2D.cpp */,
+				CD837DA329FB2D5C00467542 /* TSMatrix3D.h */,
+				CD837DA429FB2D5C00467542 /* TSMath.h */,
+				CD837DA529FB2D5C00467542 /* TSVector3D.cpp */,
+				CD837DA629FB2D5C00467542 /* TSMotor3D.h */,
+				CD837DA729FB2D5C00467542 /* TSCircle3D.h */,
+				CD837DA829FB2D5C00467542 /* TSVector2D.h */,
+				CD837DA929FB2D5C00467542 /* TSPlatform.h */,
+				CD837DAA29FB2D5C00467542 /* TSSimd.h */,
+				CD837DAB29FB2D5C00467542 /* TSVector3D.h */,
+				CD837DAC29FB2D5C00467542 /* TSVector2D.cpp */,
+				CD837DAD29FB2D5C00467542 /* TSRound3D.h */,
+				CD837DAE29FB2D5C00467542 /* TSMatrix2D.h */,
+				CD837DAF29FB2D5C00467542 /* TSMatrix3D.cpp */,
+			);
+			name = "Terathon-Math-Library";
+			path = "../../../submodules/Terathon-Math-Library";
+			sourceTree = "<group>";
+		};
+		CD837DFF29FDCB0900467542 /* Systems */ = {
+			isa = PBXGroup;
+			children = (
+				CD837E0029FDCB1D00467542 /* EventSystem.cpp */,
+				CD837E0129FDCB1D00467542 /* EventSystem.h */,
+			);
+			path = Systems;
+			sourceTree = "<group>";
+		};
+		CD837E0629FEBA6100467542 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				CD837E0729FEBA8400467542 /* ResourceRepository.cpp */,
+				CD837E0829FEBA8400467542 /* ResourceRepository.h */,
+				CD837E0B29FEBA8A00467542 /* SomeLoadResourcesModel.cpp */,
+				CD837E0C29FEBA8A00467542 /* SomeLoadResourcesModel.h */,
+				CD837E0F29FEBA9500467542 /* StandardLoadResourcesModel.cpp */,
+				CD837E1029FEBA9500467542 /* StandardLoadResourcesModel.h */,
+				CD837E1729FEBAA900467542 /* LoadResourcesPlan.cpp */,
+				CD837E1829FEBAA900467542 /* LoadResourcesPlan.h */,
+				CD837E1B29FEBAB300467542 /* LoadResourceInfo.cpp */,
+				CD837E1C29FEBAB300467542 /* LoadResourceInfo.h */,
+				CD837E1F29FEBAC000467542 /* SomeLoadResourcesOperation.cpp */,
+				CD837E2029FEBAC000467542 /* SomeLoadResourcesOperation.h */,
+				CD837E3529FF17B800467542 /* ResourceTypeEnum.h */,
+				CD837E3729FF185800467542 /* ResourceTypeEnum.cpp */,
+				CD837E3F2A00639F00467542 /* LoadedResources.h */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		CD837E412A00656000467542 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				CD837E422A00657600467542 /* LoadedResourcesTests.cpp */,
+				CD837E442A006E4400467542 /* LoadResourcesPlanTests.cpp */,
+			);
+			path = Resources;
 			sourceTree = "<group>";
 		};
 		CD86A73D29F0D7320015BFCE /* ImGui */ = {
@@ -1445,8 +1815,27 @@
 				CDCA12BE29F30D13000F2694 /* MeshRenderer.h */,
 				CDCA12C129F30D22000F2694 /* SpriteRenderer.cpp */,
 				CDCA12C229F30D22000F2694 /* SpriteRenderer.h */,
+				CD837E472A00A08B00467542 /* SlicedTextureRenderer.cpp */,
+				CD837E482A00A08B00467542 /* SlicedTextureRenderer.h */,
 			);
 			path = Renderers;
+			sourceTree = "<group>";
+		};
+		CDCA12CE29F32A4A000F2694 /* Images */ = {
+			isa = PBXGroup;
+			children = (
+				CDCA12CF29F32A5C000F2694 /* Bitmap.cpp */,
+				CDCA12D029F32A5C000F2694 /* Bitmap.h */,
+			);
+			path = Images;
+			sourceTree = "<group>";
+		};
+		CDCA12E629F380B2000F2694 /* Images */ = {
+			isa = PBXGroup;
+			children = (
+				CDCA12E729F380B2000F2694 /* BitmapTests.cpp */,
+			);
+			path = Images;
 			sourceTree = "<group>";
 		};
 		CDCEFD4E29E9A79A00F42045 /* Math */ = {
@@ -1467,6 +1856,8 @@
 				CD09402929ECD9DC00B0196F /* SomeCenterPolyRenderMeshBuilder.h */,
 				CD09402B29ECDE2100B0196F /* ArcRenderMeshBuilder.h */,
 				CD09402D29ECDF5700B0196F /* EllipseRenderMeshBuilder.h */,
+				CD837E4E2A00C4B300467542 /* TiledRenderMeshBuilder.cpp */,
+				CD837E4F2A00C4B300467542 /* TiledRenderMeshBuilder.h */,
 			);
 			path = "Mesh Builders";
 			sourceTree = "<group>";
@@ -1496,6 +1887,9 @@
 				CDDD40442952B1C300361C67 /* ValveTests.cpp */,
 				CD420AA02957EA9100C5D3E1 /* ColorTests.cpp */,
 				CD376C7329E366E600DC7950 /* WorldTests.cpp */,
+				CDCA12E229F37BE2000F2694 /* DataTests.cpp */,
+				CD837E3329FF131A00467542 /* EnumTests.cpp */,
+				CD837E3C29FF419D00467542 /* ResultTests.cpp */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -1521,6 +1915,7 @@
 				CD5FB83A29201197004F2FB4 /* List.h */,
 				CDF9D9F0292ADD9900C912E9 /* _Set.h */,
 				CD1FF42429DCC9E0006426E2 /* StringVectorList.h */,
+				CD837E2529FEFDCE00467542 /* UnorderedMap.h */,
 			);
 			path = Collections;
 			sourceTree = "<group>";
@@ -1539,21 +1934,31 @@
 				CDF9D9F9292B13B000C912E9 /* SomeBroadcaster.h in Headers */,
 				CD376D8329E7B6FD00DC7950 /* imgui_impl_sdl2.h in Headers */,
 				CD5FB83B29201197004F2FB4 /* List.h in Headers */,
+				CD837DBD29FB2D5C00467542 /* TSDipole3D.h in Headers */,
 				CD420ADA29580B9B00C5D3E1 /* SomeRenderer.h in Headers */,
+				CD837DC729FB2D5D00467542 /* TSSphere3D.h in Headers */,
 				CDF9DA1E2932D9DE00C912E9 /* SomeInterpolate.h in Headers */,
 				CDF9DA0729303E3500C912E9 /* VerticalAlignment.h in Headers */,
 				CDDD40332951439200361C67 /* WorldNode.h in Headers */,
+				CD837DCC29FB2D5D00467542 /* TSMatrix3D.h in Headers */,
 				CD420ADC2958C91E00C5D3E1 /* SomePosition.h in Headers */,
 				CD0A84502918A1F00074CA4F /* Range.h in Headers */,
 				CDDD40232951439200361C67 /* Macros_Collections.h in Headers */,
+				CD837DB629FB2D5C00467542 /* TSMatrix4D.h in Headers */,
+				CD837DD629FB2D5D00467542 /* TSRound3D.h in Headers */,
 				CD376C6B29E32CC400DC7950 /* ReadingCamera.h in Headers */,
 				CD2A6A6C29D520490076BB3F /* StandardEdgeModel.h in Headers */,
 				CD1FF42129DCC142006426E2 /* SQLTableSchema.h in Headers */,
 				CD1FF42329DCC75F006426E2 /* InfixOStreamIterator.h in Headers */,
 				CD376C9C29E508CA00DC7950 /* Macros_Vectors.h in Headers */,
+				CD837E2E29FF03F900467542 /* Enum.h in Headers */,
 				CD420AD82958092000C5D3E1 /* SDLWorld.h in Headers */,
+				CD837DBA29FB2D5C00467542 /* TSFlector3D.h in Headers */,
+				CDCA12D229F32A5C000F2694 /* Bitmap.h in Headers */,
+				CDCA12DA29F342F3000F2694 /* Rect.h in Headers */,
 				CD376CC329E7B62500DC7950 /* SDLImGuiRenderContext.h in Headers */,
 				CD420AD62958069400C5D3E1 /* SDLLoadSDLTextureOperation.h in Headers */,
+				CD837DD029FB2D5D00467542 /* TSCircle3D.h in Headers */,
 				CD376DB829E8994200DC7950 /* ZQuad.h in Headers */,
 				CD5FB847292084CD004F2FB4 /* SomeInputDevice.h in Headers */,
 				CDCEFD6629EA525100F42045 /* RenderFeatures.h in Headers */,
@@ -1573,18 +1978,21 @@
 				CD2A6A6B29D520490076BB3F /* GoAcyclicGraphNode.h in Headers */,
 				CDF9D9E42925A91D00C912E9 /* StrongReference.h in Headers */,
 				CD5FB83529200BFB004F2FB4 /* SomeProcessor.h in Headers */,
+				CD837DCF29FB2D5D00467542 /* TSMotor3D.h in Headers */,
 				CD0A84712918ADE70074CA4F /* FilePath.h in Headers */,
 				CD0A84512918A1F00074CA4F /* SomeTransform.h in Headers */,
 				CD0A845E2918A1F00074CA4F /* Interpolator.h in Headers */,
 				CDF9DA0E2932597A00C912E9 /* VectorList.h in Headers */,
 				CD376D9829E7B70C00DC7950 /* imstb_truetype.h in Headers */,
 				CD420B02295A84BE00C5D3E1 /* SomeAnimatedEffect.h in Headers */,
+				CD837DB329FB2D5C00467542 /* TSQuaternion.h in Headers */,
 				CD376D9229E7B70C00DC7950 /* imstb_rectpack.h in Headers */,
 				CD1E900A29344F8C00875FD9 /* SomeAnimatedValue.h in Headers */,
 				CD420AD42958065300C5D3E1 /* SomeOperation.h in Headers */,
 				CD420AD0295802BB00C5D3E1 /* SDLTextureRenderer.h in Headers */,
 				CD376DC729E8F4CE00DC7950 /* RenderMaterial.h in Headers */,
 				CD420A8E2957726900C5D3E1 /* SomeWindow.h in Headers */,
+				CD837DD429FB2D5D00467542 /* TSVector3D.h in Headers */,
 				CD9649BA29A1932800662285 /* TimedSequence.h in Headers */,
 				CD0A84542918A1F00074CA4F /* FloatTransform.h in Headers */,
 				CD376DB429E893C800DC7950 /* GLRenderEngine.h in Headers */,
@@ -1603,29 +2011,35 @@
 				CD420ACD2958013600C5D3E1 /* SomeTexture.h in Headers */,
 				CD184029295E5648003459C4 /* StandardRandom.h in Headers */,
 				CD420A8829576C6A00C5D3E1 /* SomeRenderContext.h in Headers */,
+				CD837E2429FEC35E00467542 /* Macros.h in Headers */,
 				CD376D9C29E7B70C00DC7950 /* imstb_textedit.h in Headers */,
 				CD09402C29ECDE2100B0196F /* ArcRenderMeshBuilder.h in Headers */,
 				CD184016295E4D3F003459C4 /* SomeGoal.h in Headers */,
+				CD0224792A0486A8008D3F1A /* SomeEventHandler.h in Headers */,
 				CDDD403E295263DB00361C67 /* GoCore.h in Headers */,
+				CD181D042A03489300478C25 /* SomeHoverGestureHandler.h in Headers */,
 				CDF0FB7F29EF93BD00B9EF1F /* Scene.h in Headers */,
 				CDCEFD6429EA4D0900F42045 /* Mesh.h in Headers */,
 				CDCEFD6229EA4CA500F42045 /* SomeRenderMeshBuilder.h in Headers */,
 				CDDD3FF7294E80A500361C67 /* Binding.h in Headers */,
 				CD1E7CE3294653EE00001DB9 /* StateMachine.h in Headers */,
 				CDDD404329527D7300361C67 /* SomeNode.h in Headers */,
+				CD837DE829FB7AE800467542 /* SimpleRaycaster2D.h in Headers */,
+				CD837E0A29FEBA8400467542 /* ResourceRepository.h in Headers */,
 				CD376C9529E5042200DC7950 /* SomePathLayout.h in Headers */,
-				CDCA12BB29F30632000F2694 /* RenderTexture.h in Headers */,
 				CD420A9D2957E69A00C5D3E1 /* Color32.h in Headers */,
 				CD86A74B29F0EEB90015BFCE /* SDLEventPoller.h in Headers */,
 				CDF9D9F1292ADD9900C912E9 /* _Set.h in Headers */,
 				CD1E7CCC2941AA3700001DB9 /* PublishedValue.h in Headers */,
 				CD376D9A29E7B70C00DC7950 /* imgui_internal.h in Headers */,
+				CD837E2229FEBAC000467542 /* SomeLoadResourcesOperation.h in Headers */,
 				CD0A84612918A1F00074CA4F /* StringUtils.h in Headers */,
 				CD1FF41A29D78C59006426E2 /* SDLFileManager.h in Headers */,
 				CD9649B229A13F5900662285 /* WeightedRandomChoice.h in Headers */,
 				CD420AFA295A0D3D00C5D3E1 /* RigidBody2D.h in Headers */,
 				CD0A84632918A1F00074CA4F /* Timer.h in Headers */,
 				CD376DCB29E8F6D600DC7950 /* GLShaderProgram.h in Headers */,
+				CD181CE92A0290A100478C25 /* UVRect.h in Headers */,
 				CDDD40372951439200361C67 /* Factory.h in Headers */,
 				CDDD4000294EBE9B00361C67 /* SomeKeyframe.h in Headers */,
 				CD420A9329577B3400C5D3E1 /* SomePointerDevice.h in Headers */,
@@ -1649,6 +2063,7 @@
 				CD2A6A6829D520490076BB3F /* CyclicGraphNode.h in Headers */,
 				CD376DBC29E8B63200DC7950 /* SomeGLShader.h in Headers */,
 				CDDD40252951439200361C67 /* AnyFactory.h in Headers */,
+				CD837DB229FB2D5C00467542 /* TSBivector3D.h in Headers */,
 				CDF9DA01292EEEF500C912E9 /* Vector3.h in Headers */,
 				CD0A849C291DED040074CA4F /* _Map.h in Headers */,
 				CDDD402A2951439200361C67 /* FloatMath.h in Headers */,
@@ -1656,8 +2071,11 @@
 				CDCEFD5229E9AD6500F42045 /* SomeRenderEngine.h in Headers */,
 				CD2A6A8329D67E560076BB3F /* SQLWhereArguments.h in Headers */,
 				CD9649BE29A1EECA00662285 /* SomeRandomChoice.h in Headers */,
+				CD837E1A29FEBAA900467542 /* LoadResourcesPlan.h in Headers */,
 				CDDD402F2951439200361C67 /* CoreTypes.h in Headers */,
 				CD2A6A5B29D3F56D0076BB3F /* SQLTypes.h in Headers */,
+				CD837D8129FB235000467542 /* Vector4.h in Headers */,
+				CD837DF429FB7B1000467542 /* SimplePolygonCollider2D.h in Headers */,
 				CD376DC229E8BD1B00DC7950 /* GLShaderLoader.h in Headers */,
 				CDF9D9E82925C69000C912E9 /* Event.h in Headers */,
 				CD184018295E4D4A003459C4 /* GoalEvents.h in Headers */,
@@ -1665,40 +2083,57 @@
 				CDCA12CA29F30E79000F2694 /* SomeShaderProgram.h in Headers */,
 				CDCEFD5429EA004200F42045 /* GLShaderProgramLoader.h in Headers */,
 				CD2A6A8129D67D910076BB3F /* SQLTableMutateArguments.h in Headers */,
+				CD837E512A00CAF200467542 /* TiledRenderMeshBuilder.h in Headers */,
 				CDDD40322951439200361C67 /* WorldComponent.h in Headers */,
 				CD376C9129E5042200DC7950 /* SomeLayout2D.h in Headers */,
 				CD09402E29ECDF5700B0196F /* EllipseRenderMeshBuilder.h in Headers */,
 				CD1FF42529DCC9E0006426E2 /* StringVectorList.h in Headers */,
 				CD184025295E5495003459C4 /* SomeRandom.h in Headers */,
 				CD1E900629344DB800875FD9 /* SomePath.h in Headers */,
+				CD837DF029FB7AFE00467542 /* SomeCollider2D.h in Headers */,
 				CDDD400729511C8800361C67 /* GoStateMachine.h in Headers */,
+				CD837E3629FF17B800467542 /* ResourceTypeEnum.h in Headers */,
+				CD837DD229FB2D5D00467542 /* TSPlatform.h in Headers */,
+				CDCA12DE29F3487B000F2694 /* Data.h in Headers */,
 				CD5FB83929200D79004F2FB4 /* FilesProcessor.h in Headers */,
 				CD420A90295777D000C5D3E1 /* SDLWindow.h in Headers */,
+				CD837E3E29FF4F9F00467542 /* Result.h in Headers */,
 				CD2A6A7F29D67D260076BB3F /* SQLTableQueryArguments.h in Headers */,
 				CD376C9829E5042200DC7950 /* SomeLayout.h in Headers */,
-				CD86A75129F0EF7C0015BFCE /* SDLUIEventBuilder.h in Headers */,
+				CD86A75129F0EF7C0015BFCE /* SDLUIEventsBuilder.h in Headers */,
+				CD837DCD29FB2D5D00467542 /* TSMath.h in Headers */,
 				CDF9DA162932615700C912E9 /* RateLimiter.h in Headers */,
 				CD1E7CC62941A1A800001DB9 /* AnimationCycleTimer.h in Headers */,
+				CD837DDA29FB793000467542 /* Camera.h in Headers */,
 				CD2A6A7029D529540076BB3F /* FileManager.h in Headers */,
 				CD376C9A29E506C300DC7950 /* BezierPath.h in Headers */,
 				CD1E7CE12946531800001DB9 /* SomeStateMachine.h in Headers */,
+				CD837DD129FB2D5D00467542 /* TSVector2D.h in Headers */,
 				CD420A9729577CCF00C5D3E1 /* SomeEventSystem.h in Headers */,
 				CD420ADE2958CB6C00C5D3E1 /* Polygon.h in Headers */,
+				CD837E1E29FEBAB300467542 /* LoadResourceInfo.h in Headers */,
 				CD2A6A6A29D520490076BB3F /* AcyclicGraphNode.h in Headers */,
 				CD5FB83829200D79004F2FB4 /* FileProcessor.Utility.h in Headers */,
 				CDCA12C029F30D13000F2694 /* MeshRenderer.h in Headers */,
+				CD837E402A00639F00467542 /* LoadedResources.h in Headers */,
 				CD184020295E523C003459C4 /* Signal.h in Headers */,
+				CD837DEC29FB7AEF00467542 /* SomeCollider.h in Headers */,
 				CD2A6A7729D53FC20076BB3F /* SQLStatement.h in Headers */,
 				CDCEFD6929EA554700F42045 /* PlaneRenderMeshBuilder.h in Headers */,
+				CD837E1229FEBA9500467542 /* StandardLoadResourcesModel.h in Headers */,
 				CD09402329ECAD8300B0196F /* GLVertexBuffer.h in Headers */,
+				CD837E3229FF040000467542 /* EnumClass.h in Headers */,
 				CD1E9011293465CF00875FD9 /* TransformTimer.h in Headers */,
 				CD376DAB29E891A000DC7950 /* RenderTypes.h in Headers */,
 				CDF9D9FD292B162400C912E9 /* Broadcaster.h in Headers */,
 				CDCEFD5E29EA388100F42045 /* RenderMesh.h in Headers */,
+				CD837DE429FB7ADF00467542 /* SomeRaycaster2D.h in Headers */,
 				CD376C6D29E32CCF00DC7950 /* OrthoCamera.h in Headers */,
+				CD837E0329FDCB1D00467542 /* EventSystem.h in Headers */,
 				CD376C7C29E36A8200DC7950 /* RenderIntoModel.h in Headers */,
 				CDCA12C829F30DBC000F2694 /* RenderModelBuilder.h in Headers */,
 				CDDD3FF5294E7F8A00361C67 /* CycleAnimator.h in Headers */,
+				CD837DB129FB2D5C00467542 /* TSVector4D.h in Headers */,
 				CD09402A29ECD9DD00B0196F /* SomeCenterPolyRenderMeshBuilder.h in Headers */,
 				CD376C9629E5042200DC7950 /* BezierPathLayout.h in Headers */,
 				CDF9DA202933B55F00C912E9 /* Alignment.h in Headers */,
@@ -1713,19 +2148,25 @@
 				CD0A84602918A1F00074CA4F /* AnimationCycleTypes.h in Headers */,
 				CD09402629ECD69400B0196F /* QuadRenderMeshBuilder.h in Headers */,
 				CD1E7CCA2941A70A00001DB9 /* Valve.h in Headers */,
+				CD837E0E29FEBA8A00467542 /* SomeLoadResourcesModel.h in Headers */,
 				CDDD402C2951439200361C67 /* World.h in Headers */,
 				CD1FF43629DF1E44006426E2 /* SQLRowValues.h in Headers */,
 				CDCA12C429F30D22000F2694 /* SpriteRenderer.h in Headers */,
 				CD420AFD295A80B000C5D3E1 /* SwitchHandler.h in Headers */,
 				CD420B00295A819300C5D3E1 /* SomeEffect.h in Headers */,
 				CD420A9529577B9000C5D3E1 /* SDLMouseDevice.h in Headers */,
-				CD2A6A6E29D523680076BB3F /* stdafx.h in Headers */,
+				CD2A6A6E29D523680076BB3F /* pch.h in Headers */,
 				CDDD40312951439200361C67 /* SomeRunner.h in Headers */,
+				CD837DC129FB2D5D00467542 /* TSPlane3D.h in Headers */,
 				CD9649B629A1883000662285 /* Animator.h in Headers */,
 				CD376D8429E7B6FD00DC7950 /* imgui_impl_opengl3.h in Headers */,
+				CD837DD329FB2D5D00467542 /* TSSimd.h in Headers */,
+				CD837E2629FEFDCE00467542 /* UnorderedMap.h in Headers */,
 				CDF9DA0C2931D6C500C912E9 /* SomeValueInterpolator.h in Headers */,
 				CD1E900829344E2300875FD9 /* LinePath.h in Headers */,
 				CD184022295E5328003459C4 /* SomeReceptor.h in Headers */,
+				CD181CEF2A03110E00478C25 /* ComponentTool.h in Headers */,
+				CD837DC029FB2D5D00467542 /* TSLine3D.h in Headers */,
 				CD2A6A6929D520490076BB3F /* SomeGraphNode.h in Headers */,
 				CDF9D9FF292EEE3800C912E9 /* GeoTransform.h in Headers */,
 				CD0A84562918A1F00074CA4F /* _String.h in Headers */,
@@ -1733,9 +2174,12 @@
 				CDF9DA1229325F3E00C912E9 /* SomeLimiter.h in Headers */,
 				CD376D9929E7B70C00DC7950 /* imgui.h in Headers */,
 				CD376CC129E7B50300DC7950 /* Log.h in Headers */,
+				CD837E4B2A00AEBC00467542 /* SlicedTextureRenderer.h in Headers */,
 				CD420AA42957F24100C5D3E1 /* StringConvertible.h in Headers */,
+				CD837DC929FB2D5D00467542 /* TSAlgebra.h in Headers */,
 				CD09402829ECD88C00B0196F /* CenterPolyRenderMeshBuilder.h in Headers */,
 				CDDD40222951439200361C67 /* Updatable.h in Headers */,
+				CD837DD729FB2D5D00467542 /* TSMatrix2D.h in Headers */,
 				CD86A75629F0F0050015BFCE /* SomeUIEvent.h in Headers */,
 				CD6FEB3C2917017A00F674D3 /* PhaseJump.h in Headers */,
 				CD0A84622918A1F00074CA4F /* TimeSlice.h in Headers */,
@@ -1743,6 +2187,7 @@
 				CD420AE62959FDB900C5D3E1 /* SDLRenderContext.h in Headers */,
 				CDDD40352951439200361C67 /* ClassIds.h in Headers */,
 				CD0A84532918A1F00074CA4F /* FloatClamp.h in Headers */,
+				CD837DE029FB7AD600467542 /* SomeRaycaster.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1827,6 +2272,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CD837DBE29FB2D5C00467542 /* .editorconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1844,62 +2290,110 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CDCA12D929F342F3000F2694 /* Rect.cpp in Sources */,
+				CD837E3129FF040000467542 /* EnumClass.cpp in Sources */,
 				CDF0FB8C29F032A000B9EF1F /* GLBlendMode.cpp in Sources */,
+				CD837DF329FB7B1000467542 /* SimplePolygonCollider2D.cpp in Sources */,
 				CD376DB729E8994200DC7950 /* ZQuad.cpp in Sources */,
 				CD376DAE29E8922D00DC7950 /* SomeGLRenderEngine.cpp in Sources */,
+				CD837DE329FB7ADF00467542 /* SomeRaycaster2D.cpp in Sources */,
+				CD837DB929FB2D5C00467542 /* TSFlector3D.cpp in Sources */,
+				CD837D7B29F7750100467542 /* WorldNode.cpp in Sources */,
+				CDCA12DD29F3487B000F2694 /* Data.cpp in Sources */,
 				CD376C7229E3623E00DC7950 /* World.cpp in Sources */,
 				CD2A6A5D29D3F56D0076BB3F /* SQLTypes.cpp in Sources */,
-				CD86A75029F0EF7C0015BFCE /* SDLUIEventBuilder.cpp in Sources */,
+				CD181CEE2A03110E00478C25 /* ComponentTool.cpp in Sources */,
+				CD837DB429FB2D5C00467542 /* TSPlane3D.cpp in Sources */,
+				CD86A75029F0EF7C0015BFCE /* SDLUIEventsBuilder.cpp in Sources */,
 				CD86A73829F0BEA40015BFCE /* SDLLoadGLTextureOperation.cpp in Sources */,
+				CD837DC229FB2D5D00467542 /* TSCircle3D.cpp in Sources */,
 				CD376D9429E7B70C00DC7950 /* imgui_tables.cpp in Sources */,
+				CD837E0D29FEBA8A00467542 /* SomeLoadResourcesModel.cpp in Sources */,
+				CD837DD529FB2D5D00467542 /* TSVector2D.cpp in Sources */,
 				CD86A74429F0D7D20015BFCE /* SomeUIEventPoller.cpp in Sources */,
 				CD376D9729E7B70C00DC7950 /* imgui_demo.cpp in Sources */,
+				CD837DC529FB2D5D00467542 /* TSLine3D.cpp in Sources */,
+				CD837DF629FB845600467542 /* Polygon.cpp in Sources */,
+				CD837DEF29FB7AFE00467542 /* SomeCollider2D.cpp in Sources */,
 				CD376D8629E7B6FD00DC7950 /* imgui_impl_opengl3.cpp in Sources */,
 				CD376CBF29E7A12900DC7950 /* SDLWindow.cpp in Sources */,
+				CD181D032A03489300478C25 /* SomeHoverGestureHandler.cpp in Sources */,
+				CD837DD829FB2D5D00467542 /* TSMatrix3D.cpp in Sources */,
 				CD1FF41B29D78C59006426E2 /* SDLFileManager.cpp in Sources */,
+				CDCA12EA29F39FD3000F2694 /* Color32.cpp in Sources */,
 				CD3CE272295C0BD7003E24CF /* SDLTextureRenderer.cpp in Sources */,
 				CD18402C295E589E003459C4 /* StandardRandom.cpp in Sources */,
+				CD837E4C2A00AF2F00467542 /* SlicedTextureRenderer.cpp in Sources */,
 				CD1E7CB82936549000001DB9 /* Angle.cpp in Sources */,
+				CD837DC329FB2D5D00467542 /* TSMath.cpp in Sources */,
+				CD837DB029FB2D5C00467542 /* TSMotor3D.cpp in Sources */,
 				CD86A74029F0D7500015BFCE /* SDLImGuiUIEventPoller.cpp in Sources */,
+				CD837DEB29FB7AEF00467542 /* SomeCollider.cpp in Sources */,
 				CD1FF41F29DA676F006426E2 /* SQLCommand.cpp in Sources */,
 				CD420AFB295A0FA700C5D3E1 /* Vector3.cpp in Sources */,
+				CD837DC829FB2D5D00467542 /* TSDipole3D.cpp in Sources */,
+				CD837E2D29FF03F900467542 /* Enum.cpp in Sources */,
 				CD376CA029E65C5B00DC7950 /* SomePathLayout.cpp in Sources */,
 				CDDD402D2951439200361C67 /* WorldComponent.cpp in Sources */,
+				CD837DBB29FB2D5C00467542 /* TSQuaternion.cpp in Sources */,
+				CD181CE72A02028100478C25 /* TiledRenderMeshBuilder.cpp in Sources */,
+				CD837DE729FB7AE800467542 /* SimpleRaycaster2D.cpp in Sources */,
 				CD2A6A5829D3F56D0076BB3F /* SQLDatabase.cpp in Sources */,
+				CD837DDF29FB7AD600467542 /* SomeRaycaster.cpp in Sources */,
 				CDF0FB8829F02A4E00B9EF1F /* SomeRenderEngine.cpp in Sources */,
 				CDCA12C729F30DBC000F2694 /* RenderModelBuilder.cpp in Sources */,
 				CD376D8529E7B6FD00DC7950 /* imgui_impl_sdl2.cpp in Sources */,
 				CD6FEB302917017A00F674D3 /* PhaseJump.docc in Sources */,
 				CD376D9629E7B70C00DC7950 /* imgui.cpp in Sources */,
+				CD837DFE29FDBEB200467542 /* SomeWorldComponent.cpp in Sources */,
 				CD376D9529E7B70C00DC7950 /* imgui_draw.cpp in Sources */,
 				CD86A74A29F0EEB90015BFCE /* SDLEventPoller.cpp in Sources */,
 				CD376DCA29E8F6D600DC7950 /* GLShaderProgram.cpp in Sources */,
+				CD837DC629FB2D5D00467542 /* TSBivector3D.cpp in Sources */,
 				CD376DA629E842E000DC7950 /* SomeRenderer.cpp in Sources */,
 				CD2A6A5C29D3F56D0076BB3F /* SQLUtils.cpp in Sources */,
 				CDCEFD5629EA00C300F42045 /* GLShaderProgramLoader.cpp in Sources */,
 				CD376D9F29E7B8B200DC7950 /* SDLImGuiRenderContext.cpp in Sources */,
+				CDCA12D129F32A5C000F2694 /* Bitmap.cpp in Sources */,
 				CD376DB329E893C800DC7950 /* GLRenderEngine.cpp in Sources */,
 				CD376D9B29E7B70C00DC7950 /* imgui_widgets.cpp in Sources */,
+				CD837DBC29FB2D5C00467542 /* TSRound3D.cpp in Sources */,
 				CD376DC129E8BD1B00DC7950 /* GLShaderLoader.cpp in Sources */,
 				CDCEFD6129EA4CA500F42045 /* SomeRenderMeshBuilder.cpp in Sources */,
+				CD837DB829FB2D5C00467542 /* TSAlgebra.cpp in Sources */,
 				CD86A76529F225000015BFCE /* SomeCamera.cpp in Sources */,
+				CD837E1129FEBA9500467542 /* StandardLoadResourcesModel.cpp in Sources */,
 				CDCEFD5929EA077700F42045 /* Bounds.cpp in Sources */,
 				CD376C7829E368D600DC7950 /* SomeRenderContext.cpp in Sources */,
 				CDF0FB7E29EF93BD00B9EF1F /* Scene.cpp in Sources */,
 				CDCA12C329F30D22000F2694 /* SpriteRenderer.cpp in Sources */,
 				CD420B0C295BF1B500C5D3E1 /* Vector2.cpp in Sources */,
+				CD837E1D29FEBAB300467542 /* LoadResourceInfo.cpp in Sources */,
 				CD2A6A4529D0FDC20076BB3F /* Core.cpp in Sources */,
 				CD2A6A7229D5297C0076BB3F /* FileManager.cpp in Sources */,
 				CDCA12BF29F30D13000F2694 /* MeshRenderer.cpp in Sources */,
 				CD0A8499291DE71B0074CA4F /* _String.cpp in Sources */,
+				CD837DDC29FB799500467542 /* Camera.cpp in Sources */,
+				CD837DCE29FB2D5D00467542 /* TSVector3D.cpp in Sources */,
+				CD837DC429FB2D5D00467542 /* TSMatrix4D.cpp in Sources */,
 				CDF0FB7529EE06C400B9EF1F /* RenderModel.cpp in Sources */,
 				CD2A6A5929D3F56D0076BB3F /* SQLTable.cpp in Sources */,
+				CD837E1929FEBAA900467542 /* LoadResourcesPlan.cpp in Sources */,
 				CD86A75529F0F0050015BFCE /* SomeUIEvent.cpp in Sources */,
+				CD837D7D29F77B9F00467542 /* GLTexture.cpp in Sources */,
+				CD837E0529FDD53600467542 /* OrthoCamera.cpp in Sources */,
 				CD86A74D29F0EEF50015BFCE /* SDLWorld.cpp in Sources */,
 				CDCEFD5D29EA388100F42045 /* RenderMesh.cpp in Sources */,
+				CD837E0229FDCB1D00467542 /* EventSystem.cpp in Sources */,
+				CD837DCB29FB2D5D00467542 /* TSMatrix2D.cpp in Sources */,
 				CD420A9F2957E6DE00C5D3E1 /* Color.cpp in Sources */,
+				CD837DCA29FB2D5D00467542 /* TSVector4D.cpp in Sources */,
+				CD837E2129FEBAC000467542 /* SomeLoadResourcesOperation.cpp in Sources */,
+				CD837DB729FB2D5C00467542 /* TSSphere3D.cpp in Sources */,
 				CD376DBB29E8B63200DC7950 /* SomeGLShader.cpp in Sources */,
+				CD837E0929FEBA8400467542 /* ResourceRepository.cpp in Sources */,
 				CDCEFD4C29E9A09900F42045 /* Matrix4x4.cpp in Sources */,
+				CD837D8029FB235000467542 /* Vector4.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1909,12 +2403,14 @@
 			files = (
 				CD2A6A7A29D547090076BB3F /* SQLDatabaseTests.cpp in Sources */,
 				CD1E7CF82946B57600001DB9 /* PublishedValueTests.cpp in Sources */,
+				CD837E3B29FF412E00467542 /* Result.cpp in Sources */,
 				CDF9DA1029325A0C00C912E9 /* ArrayTests.cpp in Sources */,
 				CD0A847A2918D7BA0074CA4F /* FactoryTests.cpp in Sources */,
 				CDF9D9F3292ADE6B00C912E9 /* ListTests.cpp in Sources */,
 				CD1FF41D29DA666E006426E2 /* SQLStatementTests.cpp in Sources */,
 				CD0A842A2918A0690074CA4F /* StringTests.cpp in Sources */,
 				CD1E7CD429458CC900001DB9 /* AcyclicGraphNodeTests.cpp in Sources */,
+				CDCA12E829F380B2000F2694 /* BitmapTests.cpp in Sources */,
 				CD1E7CF129465E6B00001DB9 /* GeoTransform.cpp in Sources */,
 				CDF9D9EC292A885C00C912E9 /* TimerTests.cpp in Sources */,
 				CD18401D295E4F85003459C4 /* ValueTargetGoal.cpp in Sources */,
@@ -1923,8 +2419,10 @@
 				CD0A842B2918A0690074CA4F /* FilePathTests.cpp in Sources */,
 				CD1E7CD8294635AC00001DB9 /* CyclicGraphTests.cpp in Sources */,
 				CD9649B829A189C100662285 /* AnimatorTests.cpp in Sources */,
+				CD181CE62A02013A00478C25 /* TiledRenderMeshBuilderTests.cpp in Sources */,
 				CDF9DA03292EEF8500C912E9 /* Vector3Tests.cpp in Sources */,
 				CD2A6A6429D4EA490076BB3F /* SQLUtilsTests.cpp in Sources */,
+				CD837E3829FF185800467542 /* ResourceTypeEnum.cpp in Sources */,
 				CD0A84772918C9CE0074CA4F /* TagsTests.cpp in Sources */,
 				CDF9D9FB292B15E300C912E9 /* BroadcasterTests.cpp in Sources */,
 				CD1E7CF52946858D00001DB9 /* StateMachineTests.cpp in Sources */,
@@ -1932,6 +2430,8 @@
 				CD1E7CC82941A3E600001DB9 /* AnimationCycleTimerTests.cpp in Sources */,
 				CD376C7029E32DE600DC7950 /* CameraTests.cpp in Sources */,
 				CD1E7CBC293656B300001DB9 /* AngleTests.cpp in Sources */,
+				CDCA12E329F37BE2000F2694 /* DataTests.cpp in Sources */,
+				CD181CEB2A02B0A700478C25 /* SlicedTextureRendererTests.cpp in Sources */,
 				CD0A84802919A5D70074CA4F /* FactoryRegistryTests.cpp in Sources */,
 				CDDD403C29514BF200361C67 /* RangeTests.cpp in Sources */,
 				CD0A842629189FE70074CA4F /* FloatMultiplyTransformTests.cpp in Sources */,
@@ -1939,6 +2439,8 @@
 				CD1E7CED29465DDF00001DB9 /* HorizontalAlignment.cpp in Sources */,
 				CDDD3FFA294E821300361C67 /* CycleAnimatorTests.cpp in Sources */,
 				CD9649C129A1F5E900662285 /* SomeRandomChoiceTests.cpp in Sources */,
+				CD837E462A006E4400467542 /* LoadResourcesPlanTests.cpp in Sources */,
+				CD837E432A00657600467542 /* LoadedResourcesTests.cpp in Sources */,
 				CD0A8483291A06340074CA4F /* DefaultValueTests.cpp in Sources */,
 				CD1E7CEF29465E2500001DB9 /* Alignment.cpp in Sources */,
 				CD1FF42F29DCDA4B006426E2 /* StringArrayTests.cpp in Sources */,
@@ -1951,13 +2453,16 @@
 				CD0A84A5291E00BC0074CA4F /* ModuleTests.cpp in Sources */,
 				CD0A849F291DEDAD0074CA4F /* MapTests.cpp in Sources */,
 				CDDD40452952B1C300361C67 /* ValveTests.cpp in Sources */,
+				CD837E3D29FF419D00467542 /* ResultTests.cpp in Sources */,
 				CDF9D9EA292990C100C912E9 /* SomeReferenceTests.cpp in Sources */,
 				CDDD3FFC294E871800361C67 /* SomeInterpolate.cpp in Sources */,
+				CD837D8529FB26B500467542 /* Matrix4x4Tests.cpp in Sources */,
 				CD376C7A29E3699F00DC7950 /* MockRenderContext.cpp in Sources */,
 				CD5FB83E2920138E004F2FB4 /* FilesProcessorTests.cpp in Sources */,
 				CD376C7429E366E600DC7950 /* WorldTests.cpp in Sources */,
 				CD9649B429A1418500662285 /* WeightedRandomTests.cpp in Sources */,
 				CD09402129ECA59B00B0196F /* RenderMeshTests.cpp in Sources */,
+				CD837E3429FF131A00467542 /* EnumTests.cpp in Sources */,
 				CDDD40392951481300361C67 /* GoStateMachineTests.cpp in Sources */,
 				CD9649BC29A194B300662285 /* TimedSequenceTests.cpp in Sources */,
 				CD1E7CEB29465D9900001DB9 /* VerticalAlignment.cpp in Sources */,
@@ -2105,12 +2610,13 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_PREFIX_HEADER = PhaseJump/stdafx.h;
+				GCC_PREFIX_HEADER = PhaseJump/pch.h;
 				GCC_PREPROCESSOR_DEFINITIONS = GL_SILENCE_DEPRECATION;
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = (
 					../../../submodules/SDL/include,
 					../../../submodules/json/single_include/nlohmann,
+					"../../../submodules/Terathon-Math-Library",
 				);
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -2143,12 +2649,13 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_PREFIX_HEADER = PhaseJump/stdafx.h;
+				GCC_PREFIX_HEADER = PhaseJump/pch.h;
 				GCC_PREPROCESSOR_DEFINITIONS = GL_SILENCE_DEPRECATION;
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = (
 					../../../submodules/SDL/include,
 					../../../submodules/json/single_include/nlohmann,
+					"../../../submodules/Terathon-Math-Library",
 				);
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -2180,7 +2687,10 @@
 					"DEBUG=1",
 				);
 				GENERATE_INFOPLIST_FILE = YES;
-				HEADER_SEARCH_PATHS = ../../../submodules/SDL/include;
+				HEADER_SEARCH_PATHS = (
+					../../../submodules/SDL/include,
+					"../../../submodules/Terathon-Math-Library",
+				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					/usr/local/lib,
@@ -2206,7 +2716,10 @@
 				DEVELOPMENT_TEAM = SUX6D55KV3;
 				GCC_PREPROCESSOR_DEFINITIONS = "_TESTS_=1";
 				GENERATE_INFOPLIST_FILE = YES;
-				HEADER_SEARCH_PATHS = ../../../submodules/SDL/include;
+				HEADER_SEARCH_PATHS = (
+					../../../submodules/SDL/include,
+					"../../../submodules/Terathon-Math-Library",
+				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					/usr/local/lib,

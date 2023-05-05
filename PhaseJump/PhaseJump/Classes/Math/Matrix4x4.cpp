@@ -1,4 +1,8 @@
 #include "Matrix4x4.h"
+#include "Vector4.h"
+#include <TSMatrix3D.h>
+#include <TSMatrix4D.h>
+#include <sstream>
 
 using namespace std;
 using namespace PJ;
@@ -6,6 +10,48 @@ using namespace PJ;
 Matrix4x4::Matrix4x4()
 {
     LoadIdentity();
+}
+
+Matrix4x4::Matrix4x4(Terathon::Matrix4D const tsMatrix) {
+    a() = tsMatrix.m00;
+    b() = tsMatrix.m01;
+    c() = tsMatrix.m02;
+    d() = tsMatrix.m03;
+
+    e() = tsMatrix.m10;
+    f() = tsMatrix.m11;
+    g() = tsMatrix.m12;
+    h() = tsMatrix.m13;
+
+    i() = tsMatrix.m20;
+    j() = tsMatrix.m21;
+    k() = tsMatrix.m22;
+    l() = tsMatrix.m23;
+
+    m() = tsMatrix.m30;
+    n() = tsMatrix.m31;
+    o() = tsMatrix.m32;
+    p() = tsMatrix.m33;
+}
+
+Matrix4x4::operator Terathon::Matrix4D() const {
+    auto result = Terathon::Matrix4D(a(), b(), c(), d(), e(), f(), g(), h(), i(), j(), k(), l(), m(), n(), o(), p());
+    return result;
+}
+
+Matrix4x4::operator Terathon::Transform4D() const {
+    auto result = Terathon::Transform4D(a(), b(), c(), d(), e(), f(), g(), h(), i(), j(), k(), l());
+    return result;
+}
+
+String Matrix4x4::ToString() const {
+    stringstream s;
+    s << a() << e() << i() << m() << "\n";
+    s << b() << f() << j() << n() << "\n";
+    s << c() << g() << k() << o() << "\n";
+    s << d() << h() << l() << p() << "\n";
+
+    return s.str();
 }
 
 // Load the identity matrix
@@ -262,3 +308,12 @@ Matrix4x4 Matrix4x4::operator*(const Matrix4x4& rhs) const
 
     return result;
 }
+
+Vector3 Matrix4x4::MultiplyPoint(Vector3 point) {
+    Terathon::Transform4D tsTransform(a(), b(), c(), d(), e(), f(), g(), h(), i(), j(), k(), l());
+    Terathon::Point3D tsPoint(point.x, point.y, point.z);
+
+    auto result = tsTransform * tsPoint;
+    return Vector3(result.x, result.y, result.z);
+} // Tested
+

@@ -38,13 +38,13 @@ namespace PJ
             }
         }
 
-        std::shared_ptr<Broadcaster> broadcaster = std::make_shared<Broadcaster>();
+        SP<Broadcaster> broadcaster = MAKE<Broadcaster>();
 
         virtual float Progress() const = 0;
 
         virtual void OnComplete()
         {
-            broadcaster->Broadcast(std::make_shared<EventGoalComplete>(static_pointer_cast<SomeGoal>(shared_from_this())));
+            broadcaster->Broadcast(MAKE<EventGoalComplete>(SCAST<SomeGoal>(shared_from_this())));
         }
     };
 }

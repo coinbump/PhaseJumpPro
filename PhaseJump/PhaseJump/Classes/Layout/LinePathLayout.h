@@ -16,9 +16,9 @@ namespace PJ
         Vector3 start;
         Vector3 end;
 
-        std::shared_ptr<SomePath> BuildPath() override
+        SP<SomePath> BuildPath() override
         {
-            return std::static_pointer_cast<SomePath>(std::make_shared<LinePath>(start, end));
+            return SCAST<SomePath>(MAKE<LinePath>(start, end));
         }
     };
 }

@@ -14,22 +14,22 @@ using namespace PJ;
 
 class TestTextureScene : public Scene {
 public:
-    std::shared_ptr<GLTexture> texture;
+    SP<GLTexture> texture;
 
-    TestTextureScene(std::shared_ptr<GLTexture> texture) : texture(texture) {
+    TestTextureScene(SP<GLTexture> texture) : texture(texture) {
     }
 
     void LoadInto(World& world) {
         if (nullptr == texture) { return; }
 
-        auto meshNode = std::make_shared<WorldNode>();
-//        auto renderer = std::make_shared<MeshRenderer>();
+        auto meshNode = MAKE<WorldNode>();
+//        auto renderer = MAKE<MeshRenderer>();
 //        meshNode->AddComponent(renderer);
 
-        auto renderer = std::make_shared<SpriteRenderer>((RenderTexture)*texture);
+        auto renderer = MAKE<SpriteRenderer>(texture);
         meshNode->AddComponent(renderer);
 
-//        auto material = std::make_shared<RenderMaterial>();
+//        auto material = MAKE<RenderMaterial>();
         auto material = renderer->material;
         
         auto program = GLShaderProgram::registry["texture.uniform"];//texture.interp.uniform"]; //"texture.uniform"
@@ -53,12 +53,17 @@ public:
 //            meshRenderer->mesh = renderMesh;
         }
         meshNode->transform->position.z = -0.1f;
-        meshNode->transform->scale.x = 10.0f;
-        meshNode->transform->scale.y = 10.0f;
-        renderer->flipX = true;
+        meshNode->transform->position.x = 200;
+//        meshNode->transform->scale.x = 10.0f;
+//        meshNode->transform->scale.y = 10.0f;
+//        renderer->flipX = true;
 //        renderer->flipY = true;
 
 //        meshNode->SetActive(false);
+
+        ComponentTool ct;
+        auto collider = std::make_shared<SimplePolygonCollider2D>();
+        ct.AddComponent(*meshNode, collider);
 
         world.Add(meshNode);
     }

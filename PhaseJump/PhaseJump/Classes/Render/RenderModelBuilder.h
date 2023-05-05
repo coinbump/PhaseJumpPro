@@ -6,9 +6,10 @@ namespace PJ {
     class RenderModel;
     class RenderMesh;
     class RenderMaterial;
+    class Matrix4x4;
 
     struct RenderModelBuilder {
-        RenderModel Build(SomeShaderProgram& program, RenderMesh const& mesh, RenderMaterial const& material);
+        RenderModel Build(SomeShaderProgram& program, RenderMesh const& mesh, RenderMaterial const& material, Matrix4x4 modelMatrix);
     };
 }
 

@@ -2,6 +2,7 @@
 #define PJLISTENER_H
 
 #include "Event.h"
+#include "Macros.h"
 #include <memory>
 
 /*
@@ -16,7 +17,7 @@ namespace PJ {
     class SomeListener
     {
     public:
-        using EventSharedPtr = std::shared_ptr<Event>;
+        using EventSharedPtr = SP<Event>;
         using EventPtr = EventSharedPtr const&;
 
         virtual void OnEvent(EventPtr event) = 0;

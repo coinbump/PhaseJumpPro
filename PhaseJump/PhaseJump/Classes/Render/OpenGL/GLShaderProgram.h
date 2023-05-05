@@ -36,15 +36,15 @@ namespace PJ {
         GLShaderProgram(GLShaderProgram const&);
 
     protected:
-        std::shared_ptr<VertexGLShader> vertexShader;
-        std::shared_ptr<FragmentGLShader> fragmentShader;
+        SP<VertexGLShader> vertexShader;
+        SP<FragmentGLShader> fragmentShader;
 
         GLuint glId = 0;
         bool isLinked = false;
 
     public:
         /// Store loaded programs here for access later
-        static Map<String, std::shared_ptr<GLShaderProgram>> registry;
+        static Map<String, SP<GLShaderProgram>> registry;
 
         /// Map of attribute names to attribute location index
         Map<String, GLuint> attributeLocations;
@@ -61,7 +61,7 @@ namespace PJ {
         void FlushShaders();
 
         // Full setup (you should use this)
-        bool Configure(std::shared_ptr<VertexGLShader> vertexShader, std::shared_ptr<FragmentGLShader> fragmentShader);
+        bool Configure(SP<VertexGLShader> vertexShader, SP<FragmentGLShader> fragmentShader);
 
         bool HasVertexAttribute(String id) {
             return attributeLocations.find(id) != attributeLocations.end();
@@ -72,7 +72,7 @@ namespace PJ {
         }
 
         // Manual setup
-        void AttachShaders(std::shared_ptr<VertexGLShader> vertexShader, std::shared_ptr<FragmentGLShader> fragmentShader);
+        void AttachShaders(SP<VertexGLShader> vertexShader, SP<FragmentGLShader> fragmentShader);
         void BindAttributeLocation(GLuint index, const GLchar* name);
         bool Link();
         GLint Validate();

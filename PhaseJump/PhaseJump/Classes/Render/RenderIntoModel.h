@@ -12,7 +12,7 @@ namespace PJ
     class RenderIntoModel
     {
     public:
-        std::shared_ptr<SomeRenderContext> renderContext;
+        SP<SomeRenderContext> renderContext;
         Matrix4x4 modelMatrix;
     };
 }

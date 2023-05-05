@@ -19,7 +19,7 @@ namespace PJ
         /// <summary>
         /// Produces the interpolator for the animation curve
         /// </summary>
-        std::shared_ptr<SomeKeyframeInterpolatorFactory<T>> interpolatorFactory;
+        SP<SomeKeyframeInterpolatorFactory<T>> interpolatorFactory;
     };
 }
 

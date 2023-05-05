@@ -90,12 +90,12 @@ namespace PJ
         /// <summary>
         /// Timer for turning on transition
         /// </summary>
-        std::shared_ptr<TransformTimer> turnOnTimer = std::make_shared<TransformTimer>(2.0f, SomeTimed::RunType::RunOnce, std::make_shared<EaseOutSquared>());
+        SP<TransformTimer> turnOnTimer = MAKE<TransformTimer>(2.0f, SomeTimed::RunType::RunOnce, MAKE<EaseOutSquared>());
 
         /// <summary>
         /// Timer for turning off transition
         /// </summary>
-        std::shared_ptr<TransformTimer> turnOffTimer = std::make_shared<TransformTimer>(2.0f, SomeTimed::RunType::RunOnce, std::make_shared<EaseOutSquared>());
+        SP<TransformTimer> turnOffTimer = MAKE<TransformTimer>(2.0f, SomeTimed::RunType::RunOnce, MAKE<EaseOutSquared>());
 
         /// <summary>
         /// If true, stops turning animations
@@ -153,7 +153,7 @@ namespace PJ
             Base::OnUpdate(time);
         }
 
-        void OnStateFinish(GoStateMachinePtr inStateMachine) override {
+        void OnStateFinish(GoStateMachine<StateType>& inStateMachine) override {
             switch (State())
             {
                 case StateType::Off:
@@ -175,9 +175,9 @@ namespace PJ
             }
         }
 
-        void OnStateChange(GoStateMachinePtr inStateMachine) override
+        void OnStateChange(GoStateMachine<StateType>& inStateMachine) override
         {
-            if (inStateMachine != sm) { return; }
+            if (&inStateMachine != sm.get()) { return; }
 
             switch (State()) {
                 case StateType::Off:

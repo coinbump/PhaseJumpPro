@@ -15,8 +15,7 @@ void MeshRenderer::RenderInto(RenderIntoModel model) {
     }
 
     RenderModelBuilder builder;
-    auto renderModel = builder.Build(*material->shaderProgram, mesh, *material);
-    renderModel.matrix = model.modelMatrix;
+    auto renderModel = builder.Build(*material->shaderProgram, mesh, *material, model.modelMatrix);
 
     model.renderContext->renderEngine->RenderProcess(renderModel);
 }

@@ -40,7 +40,7 @@ namespace PJ {
             Default,
             InTransaction
         };
-        std::shared_ptr<StateMachine<TransactionState>> transactionStateMachine = std::make_shared<StateMachine<TransactionState>>();
+        SP<StateMachine<TransactionState>> transactionStateMachine = MAKE<StateMachine<TransactionState>>();
 
     public:
         FilePath filePath;
@@ -68,7 +68,7 @@ namespace PJ {
         bool IsInTransaction() const { return transactionStateMachine->State() == TransactionState::InTransaction; }
     };
 
-    using SQLDatabaseSharedPtr = std::shared_ptr<SQLDatabase>;
+    using SQLDatabaseSharedPtr = SP<SQLDatabase>;
 }
 
 #endif

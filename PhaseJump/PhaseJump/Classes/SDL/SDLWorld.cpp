@@ -15,6 +15,3 @@ void SDLWorld::mainLoop()
 
     Render();
 }
-
-void SDLWorld::ProcessUIEvents(VectorList<std::shared_ptr<SomeUIEvent>> const& uiEvents) {
-}

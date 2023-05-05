@@ -2,6 +2,7 @@
 #define PJVERTICALALIGNMENT_H
 
 #include "SomeAligner.h"
+#include "Macros.h"
 #include <memory>
 
 /*
@@ -16,9 +17,9 @@ namespace PJ
     /// </summary>
     struct VerticalAlignment
     {
-        std::shared_ptr<SomeAligner> aligner;
+        SP<SomeAligner> aligner;
 
-        VerticalAlignment(std::shared_ptr<SomeAligner> aligner) : aligner(aligner)
+        VerticalAlignment(SP<SomeAligner> aligner) : aligner(aligner)
         {
         }
 

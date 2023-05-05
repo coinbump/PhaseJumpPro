@@ -31,14 +31,14 @@ namespace PJ
         /// <summary>
         /// Interpolates from start to end
         /// </summary>
-        std::shared_ptr<Interpolator<T>> interpolator;
+        SP<Interpolator<T>> interpolator;
 
         /// <summary>
         /// Value binding to modify value
         /// </summary>
-        std::shared_ptr<SetBinding<T>> binding;
+        SP<SetBinding<T>> binding;
 
-        Animator(std::shared_ptr<Interpolator<T>> interpolator, float duration, std::shared_ptr<SetBinding<T>> binding) :
+        Animator(SP<Interpolator<T>> interpolator, float duration, SP<SetBinding<T>> binding) :
             Base(duration, SomeRunner::RunType::RunOnce),
             interpolator(interpolator),
             binding(binding)

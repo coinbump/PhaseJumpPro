@@ -18,9 +18,9 @@ namespace PJ {
 
         struct Result {
             Status status;
-            VectorList<std::shared_ptr<SomeUIEvent>> uiEvents;
+            VectorList<SP<SomeUIEvent>> uiEvents;
 
-            Result(Status status, VectorList<std::shared_ptr<SomeUIEvent>> uiEvents) : status(status), uiEvents(uiEvents) {
+            Result(Status status, VectorList<SP<SomeUIEvent>> uiEvents) : status(status), uiEvents(uiEvents) {
             }
         };
 

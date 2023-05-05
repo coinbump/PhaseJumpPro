@@ -5,6 +5,11 @@
 #include "IntMath.h"
 #include "Macros_Vectors.h"
 
+namespace Terathon {
+    class Vector2D;
+    class Point2D;
+}
+
 /*
  RATING: 5 stars
  Utility class with unit tests
@@ -38,6 +43,9 @@ namespace PJ {
         bool operator==(Vector2 const& rhs) const {
             return x == rhs.x && y == rhs.y;
         }
+
+        operator Terathon::Vector2D() const;
+        operator Terathon::Point2D() const;
 
         VECTOR_METHODS(Vector2, float, 2);
     };
@@ -75,6 +83,7 @@ namespace PJ {
 
     // Convenience names
     using Vec2 = Vector2;
+    using Vec2I = Vector2Int;
 }
 
 #endif

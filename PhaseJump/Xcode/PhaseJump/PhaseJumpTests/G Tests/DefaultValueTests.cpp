@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-
+#include "Macros.h"
 #include <memory>
 
 using namespace std;
@@ -15,8 +15,8 @@ namespace DefaultValueTests {
         int valueHasDefault = 1;
         int valueNoDefault;
 
-        shared_ptr<Foo> pointerDefault = make_shared<Foo>();
-        shared_ptr<Foo> pointerNoDefault;
+        SP<Foo> pointerDefault = MAKE<Foo>();
+        SP<Foo> pointerNoDefault;
 
         void foo() {}
     };
@@ -25,8 +25,8 @@ namespace DefaultValueTests {
     public:
         int valueHasDefault = 1;
         int valueNoDefault;
-        shared_ptr<Foo> pointerDefault = make_shared<Foo>();
-        shared_ptr<Foo> pointerNoDefault;
+        SP<Foo> pointerDefault = MAKE<Foo>();
+        SP<Foo> pointerNoDefault;
 
         // Class must have constructor, constructor must be defined outside of class
         // or tests will fail
@@ -52,7 +52,7 @@ TEST(DefaultValue, Class_OnStack) {
 }
 
 TEST(DefaultValue, Class_OnHeap) {
-    shared_ptr<TestClass> sut = make_shared<TestClass>();
+    SP<TestClass> sut = MAKE<TestClass>();
 
     // Values without a default are random memory
     EXPECT_EQ(1, sut->valueHasDefault);

@@ -91,3 +91,15 @@ TEST(String, TestComponentsSeparatedBy) {
     EXPECT_EQ("1", components[1]);
     EXPECT_EQ("2", components[2]);
 }
+
+TEST(String, TestFilter) {
+    auto sut = String("test12");
+    auto sut2 = sut.Filter([] (char c) { return c == '1'; });
+    EXPECT_EQ("1", sut2);
+}
+
+TEST(String, TestRemoveIf) {
+    auto sut = String("test12");
+    sut.RemoveIf([] (char c) { return c == '1'; });
+    EXPECT_EQ("test2", sut);
+}

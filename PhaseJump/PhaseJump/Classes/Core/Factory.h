@@ -3,6 +3,7 @@
 
 #include "Base.h"
 #include "AnyFactory.h"
+#include "Macros.h"
 #include <functional>
 
 /*
@@ -15,28 +16,29 @@ namespace PJ
     class SomeFactory : public AnyFactory
     {
     public:
-        virtual std::shared_ptr<Base> NewObject() = 0;
+        virtual SP<Base> NewObject() = 0;
     };
 
     /// <summary>
     /// Creates simple type
     /// </summary>
-    template <class Type> class Factory : public SomeFactory
+    template <class Type>
+    class Factory : public SomeFactory
     {
     protected:
-        std::function<std::shared_ptr<Type>()> allocator;
+        std::function<SP<Type>()> allocator;
 
     public:
-        Factory(std::function<std::shared_ptr<Type>()> allocator) : allocator(allocator)
+        Factory(std::function<SP<Type>()> allocator) : allocator(allocator)
         {
         }
 
-        std::shared_ptr<Type> New()
+        SP<Type> New()
         {
             return allocator();
         }
 
-        std::shared_ptr<Base> NewObject() override
+        SP<Base> NewObject() override
         {
             return New();
         }
@@ -48,12 +50,12 @@ namespace PJ
     template <class Type> class FactoryNew : public SomeFactory
     {
     public:
-        std::shared_ptr<Type> New()
+        SP<Type> New()
         {
-            return std::make_shared<Type>();
+            return MAKE<Type>();
         }
 
-        std::shared_ptr<Base> NewObject() override
+        SP<Base> NewObject() override
         {
             return New();
         }

@@ -3,7 +3,7 @@
 
 using namespace PJ;
 
-Map<String, std::shared_ptr<GLShaderProgram>> GLShaderProgram::registry;
+Map<String, SP<GLShaderProgram>> GLShaderProgram::registry;
 VectorList<GLShaderProgram::Info> GLShaderProgram::Info::registry;
 
 GLShaderProgram::~GLShaderProgram()
@@ -28,7 +28,7 @@ void GLShaderProgram::FlushShaders()
 }
 
 /// Attach shaders. Use shared-ptr because there's no guarantee when we'll be done configuring the program
-void GLShaderProgram::AttachShaders(std::shared_ptr<VertexGLShader> vertexShader, std::shared_ptr<FragmentGLShader> fragmentShader)
+void GLShaderProgram::AttachShaders(SP<VertexGLShader> vertexShader, SP<FragmentGLShader> fragmentShader)
 {
     if (nullptr == vertexShader || nullptr == fragmentShader || !vertexShader->isCompiled || !fragmentShader->isCompiled) {
         PJLog("ERROR. Invalid shaders for program.");
@@ -134,7 +134,7 @@ bool GLShaderProgram::Link()
     return isLinked;
 }
 
-bool GLShaderProgram::Configure(std::shared_ptr<VertexGLShader> vertexShader, std::shared_ptr<FragmentGLShader> fragmentShader) {
+bool GLShaderProgram::Configure(SP<VertexGLShader> vertexShader, SP<FragmentGLShader> fragmentShader) {
     AttachShaders(vertexShader, fragmentShader);
 
     if (!Link()) {

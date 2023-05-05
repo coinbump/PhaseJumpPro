@@ -12,25 +12,25 @@ using namespace PJ;
 using namespace PJTest;
 //
 //TEST(World, TestRender_ChildInsideParent) {
-//    auto camera = std::make_shared<ReadingCamera>();
-//    auto cameraNode = std::make_shared<WorldNode>();
-//    cameraNode->Add(static_pointer_cast<SomeWorldComponent>(camera));
+//    auto camera = MAKE<ReadingCamera>();
+//    auto cameraNode = MAKE<WorldNode>();
+//    cameraNode->Add(SCAST<SomeWorldComponent>(camera));
 //
-//    auto parentNode = std::make_shared<WorldNode>();
-//    auto childNode = std::make_shared<WorldNode>();
+//    auto parentNode = MAKE<WorldNode>();
+//    auto childNode = MAKE<WorldNode>();
 //    parentNode->AddEdge(StandardEdgeModel(), childNode);
 //
 //    parentNode->transform->position = Vector3(10, 10, 0);
 //    childNode->transform->position = Vector3(1, 1, 0);
-//    auto mockRenderer = std::make_shared<MockRenderer>();
-//    childNode->Add(static_pointer_cast<SomeWorldComponent>(mockRenderer));
+//    auto mockRenderer = MAKE<MockRenderer>();
+//    childNode->Add(SCAST<SomeWorldComponent>(mockRenderer));
 //
-//    auto sut = std::make_shared<World>();
+//    auto sut = MAKE<World>();
 //    sut->camera = camera;
 //
 //    sut->root->AddEdge(StandardEdgeModel(), parentNode);
 //
-//    auto renderContext = std::make_shared<MockRenderContext>();
+//    auto renderContext = MAKE<MockRenderContext>();
 //    sut->renderContext = renderContext;
 //    sut->Render();
 //

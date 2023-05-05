@@ -97,8 +97,8 @@ TEST(Broadcaster, Factory) {
     Weight<float> weight(1.0f);
 
     Broadcaster sut;
-    auto listener = make_shared<TestListener>();
-    auto listener2 = make_shared<TestListener>();
+    auto listener = MAKE<TestListener>();
+    auto listener2 = MAKE<TestListener>();
     sut.AddListener(listener);
     EXPECT_EQ(1, sut.listeners.size());
     sut.RemoveListener(listener);
@@ -106,12 +106,12 @@ TEST(Broadcaster, Factory) {
 
     sut.AddListener(listener);
     sut.AddListener(listener2);
-    sut.Broadcast(make_shared<Event>("hello"));
+    sut.Broadcast(MAKE<Event>("hello"));
     EXPECT_EQ("hello", listener->lastMessage);
     EXPECT_EQ("hello", listener2->lastMessage);
 
     sut.RemoveListener(listener);
-    sut.Broadcast(make_shared<Event>("goodbye"));
+    sut.Broadcast(MAKE<Event>("goodbye"));
     EXPECT_EQ("hello", listener->lastMessage);
     EXPECT_EQ("goodbye", listener2->lastMessage);
 

@@ -28,7 +28,7 @@ namespace PJ
 
         void ApplyLayout() override;
 
-        virtual std::shared_ptr<SomePath> BuildPath() = 0;
+        virtual SP<SomePath> BuildPath() = 0;
     };
 }
 

@@ -20,7 +20,7 @@ namespace PJ
         std::weak_ptr<T> value;
 
     public:
-        WeakReference(std::shared_ptr<T> value) : value(value)
+        WeakReference(SP<T> value) : value(value)
         {
         }
 
@@ -29,7 +29,7 @@ namespace PJ
             value = b.value;
         }
 
-        std::shared_ptr<T> Value() const override {
+        SP<T> Value() const override {
             return value.lock();
         }
 
@@ -37,7 +37,7 @@ namespace PJ
             return value.expired();
         }
 
-        void SetValue(std::shared_ptr<T> const& value) override {
+        void SetValue(SP<T> const& value) override {
             this->value = value;
         }
     };

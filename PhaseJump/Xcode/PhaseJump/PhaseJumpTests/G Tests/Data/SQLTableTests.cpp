@@ -8,7 +8,7 @@ using namespace std;
 using namespace PJ;
 
 TEST(SQLTable, TestRowValuesList_MultiColumn_AndStarSelect) {
-    std::shared_ptr<SQLDatabase> db = std::make_shared<SQLDatabase>();
+    SP<SQLDatabase> db = MAKE<SQLDatabase>();
 
     EXPECT_NO_THROW({
         db->TryOpen("", SQLDatabaseOpenType::InMemory, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE);
@@ -26,7 +26,7 @@ TEST(SQLTable, TestRowValuesList_MultiColumn_AndStarSelect) {
         db->TryRun(SQLStatement("INSERT INTO test (test_l, test_r) values (11, 'b')"));
     });
 
-    std::shared_ptr<SQLTable> table = std::make_shared<SQLTable>("test", db);
+    SP<SQLTable> table = MAKE<SQLTable>("test", db);
     StringVectorList columnNames;
 
     // Test SELECT * (no column names)
@@ -40,7 +40,7 @@ TEST(SQLTable, TestRowValuesList_MultiColumn_AndStarSelect) {
 }
 
 TEST(SQLTable, TestIntValues_SingleColumn) {
-    std::shared_ptr<SQLDatabase> db = std::make_shared<SQLDatabase>();
+    SP<SQLDatabase> db = MAKE<SQLDatabase>();
 
     EXPECT_NO_THROW({
         db->TryOpen("", SQLDatabaseOpenType::InMemory, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE);
@@ -59,7 +59,7 @@ TEST(SQLTable, TestIntValues_SingleColumn) {
         db->TryRun(SQLStatement("INSERT INTO test (test_l, test_r) values (2, 'two')"));
     });
 
-    std::shared_ptr<SQLTable> table = std::make_shared<SQLTable>("test", db);
+    SP<SQLTable> table = MAKE<SQLTable>("test", db);
     auto intValues = table->IntValues(SQLTableQueryArguments("test_l", std::nullopt));
 
     EXPECT_EQ(3, intValues.size());
@@ -77,7 +77,7 @@ TEST(SQLTable, TestIntValues_SingleColumn) {
 }
 
 TEST(SQLTable, TestIntValues_MultiColumn) {
-    std::shared_ptr<SQLDatabase> db = std::make_shared<SQLDatabase>();
+    SP<SQLDatabase> db = MAKE<SQLDatabase>();
 
     EXPECT_NO_THROW({
         db->TryOpen("", SQLDatabaseOpenType::InMemory, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE);
@@ -95,7 +95,7 @@ TEST(SQLTable, TestIntValues_MultiColumn) {
         db->TryRun(SQLStatement("INSERT INTO test (test_l, test_r) values (11, 33)"));
     });
 
-    std::shared_ptr<SQLTable> table = std::make_shared<SQLTable>("test", db);
+    SP<SQLTable> table = MAKE<SQLTable>("test", db);
     StringVectorList columnNames;
     columnNames.Add("test_l");
     columnNames.Add("test_r");
@@ -109,7 +109,7 @@ TEST(SQLTable, TestIntValues_MultiColumn) {
 }
 
 TEST(SQLTableTests, TestFloatValues_SingleColumn) {
-    std::shared_ptr<SQLDatabase> db = std::make_shared<SQLDatabase>();
+    SP<SQLDatabase> db = MAKE<SQLDatabase>();
 
     EXPECT_NO_THROW({
         db->TryOpen("", SQLDatabaseOpenType::InMemory, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE);
@@ -128,7 +128,7 @@ TEST(SQLTableTests, TestFloatValues_SingleColumn) {
         db->TryRun(SQLStatement("INSERT INTO test (test_l, test_r) values (2.5, 'two')"));
     });
 
-    std::shared_ptr<SQLTable> table = std::make_shared<SQLTable>("test", db);
+    SP<SQLTable> table = MAKE<SQLTable>("test", db);
     auto floatValues = table->FloatValues(SQLTableQueryArguments("test_l", std::nullopt));
 
     EXPECT_EQ(3, floatValues.size());
@@ -146,7 +146,7 @@ TEST(SQLTableTests, TestFloatValues_SingleColumn) {
 }
 
 TEST(SQLTable, TestFloatValues_MultiColumn) {
-    std::shared_ptr<SQLDatabase> db = std::make_shared<SQLDatabase>();
+    SP<SQLDatabase> db = MAKE<SQLDatabase>();
 
     EXPECT_NO_THROW({
         db->TryOpen("", SQLDatabaseOpenType::InMemory, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE);
@@ -164,7 +164,7 @@ TEST(SQLTable, TestFloatValues_MultiColumn) {
         db->TryRun(SQLStatement("INSERT INTO test (test_l, test_r) values (11.5, 33.5)"));
     });
 
-    std::shared_ptr<SQLTable> table = std::make_shared<SQLTable>("test", db);
+    SP<SQLTable> table = MAKE<SQLTable>("test", db);
     StringVectorList columnNames;
     columnNames.Add("test_l");
     columnNames.Add("test_r");
@@ -178,7 +178,7 @@ TEST(SQLTable, TestFloatValues_MultiColumn) {
 }
 
 TEST(SQLTableTests, TestStringValues_SingleColumn) {
-    std::shared_ptr<SQLDatabase> db = std::make_shared<SQLDatabase>();
+    SP<SQLDatabase> db = MAKE<SQLDatabase>();
 
     EXPECT_NO_THROW({
         db->TryOpen("", SQLDatabaseOpenType::InMemory, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE);
@@ -197,7 +197,7 @@ TEST(SQLTableTests, TestStringValues_SingleColumn) {
         db->TryRun(SQLStatement("INSERT INTO test (test_l, test_r) values ('c', 'two')"));
     });
 
-    std::shared_ptr<SQLTable> table = std::make_shared<SQLTable>("test", db);
+    SP<SQLTable> table = MAKE<SQLTable>("test", db);
     auto stringValues = table->StringValues(SQLTableQueryArguments("test_l", std::nullopt));
 
     EXPECT_EQ(3, stringValues.size());
@@ -215,7 +215,7 @@ TEST(SQLTableTests, TestStringValues_SingleColumn) {
 }
 
 TEST(SQLTable, TestStringValues_MultiColumn) {
-    std::shared_ptr<SQLDatabase> db = std::make_shared<SQLDatabase>();
+    SP<SQLDatabase> db = MAKE<SQLDatabase>();
 
     EXPECT_NO_THROW({
         db->TryOpen("", SQLDatabaseOpenType::InMemory, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE);
@@ -233,7 +233,7 @@ TEST(SQLTable, TestStringValues_MultiColumn) {
         db->TryRun(SQLStatement("INSERT INTO test (test_l, test_r) values ('b', 'd')"));
     });
 
-    std::shared_ptr<SQLTable> table = std::make_shared<SQLTable>("test", db);
+    SP<SQLTable> table = MAKE<SQLTable>("test", db);
     StringVectorList columnNames;
     columnNames.Add("test_l");
     columnNames.Add("test_r");
@@ -247,7 +247,7 @@ TEST(SQLTable, TestStringValues_MultiColumn) {
 }
 
 TEST(SQLTableTests, TestDeleteRow) {
-    std::shared_ptr<SQLDatabase> db = std::make_shared<SQLDatabase>();
+    SP<SQLDatabase> db = MAKE<SQLDatabase>();
 
     EXPECT_NO_THROW({
         db->TryOpen("", SQLDatabaseOpenType::InMemory, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE);
@@ -263,7 +263,7 @@ TEST(SQLTableTests, TestDeleteRow) {
         db->TryRun(SQLStatement("INSERT INTO test (test_l, test_r) values ('b', 'one')"));
     });
 
-    std::shared_ptr<SQLTable> table = std::make_shared<SQLTable>("test", db);
+    SP<SQLTable> table = MAKE<SQLTable>("test", db);
 
     auto uniqueStrings = table->UniqueStrings("test_l");
     EXPECT_EQ(2, uniqueStrings.size());
@@ -276,7 +276,7 @@ TEST(SQLTableTests, TestDeleteRow) {
 }
 
 TEST(SQLTableTests, TestDropTable) {
-    std::shared_ptr<SQLDatabase> db = std::make_shared<SQLDatabase>();
+    SP<SQLDatabase> db = MAKE<SQLDatabase>();
 
     EXPECT_NO_THROW({
         db->TryOpen("", SQLDatabaseOpenType::InMemory, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE);
@@ -287,7 +287,7 @@ TEST(SQLTableTests, TestDropTable) {
     schema.columns.Add(SQLColumnSchema("test_r", SQLValueType::Text));
     EXPECT_TRUE(db->CreateTable("test", schema));
 
-    std::shared_ptr<SQLTable> table = std::make_shared<SQLTable>("test", db);
+    SP<SQLTable> table = MAKE<SQLTable>("test", db);
 
     EXPECT_TRUE(db->TableExists("test"));
     table->Drop();
@@ -295,7 +295,7 @@ TEST(SQLTableTests, TestDropTable) {
 }
 
 TEST(SQLTableTests, TestCellExists) {
-    std::shared_ptr<SQLDatabase> db = std::make_shared<SQLDatabase>();
+    SP<SQLDatabase> db = MAKE<SQLDatabase>();
 
     EXPECT_NO_THROW({
         db->TryOpen("", SQLDatabaseOpenType::InMemory, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE);
@@ -310,13 +310,13 @@ TEST(SQLTableTests, TestCellExists) {
         db->TryRun(SQLStatement("INSERT INTO test (test_l, test_r) values (2, 'two')"));
     });
 
-    std::shared_ptr<SQLTable> table = std::make_shared<SQLTable>("test", db);
+    SP<SQLTable> table = MAKE<SQLTable>("test", db);
     EXPECT_TRUE(table->CellExists(SQLTableQueryArguments("test_l", SQLWhereArguments("test_r", "two"))));
     EXPECT_FALSE(table->CellExists(SQLTableQueryArguments("test_l", SQLWhereArguments("test_r", "three"))));
 }
 
 TEST(SQLTableTests, TestInsertRow) {
-    std::shared_ptr<SQLDatabase> db = std::make_shared<SQLDatabase>();
+    SP<SQLDatabase> db = MAKE<SQLDatabase>();
 
     EXPECT_NO_THROW({
         db->TryOpen("", SQLDatabaseOpenType::InMemory, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE);
@@ -324,7 +324,7 @@ TEST(SQLTableTests, TestInsertRow) {
 
     EXPECT_TRUE(db->CreateTable("test", "(test_l INTEGER DEFAULT 0, test_r TEXT)"));
 
-    std::shared_ptr<SQLTable> table = std::make_shared<SQLTable>("test", db);
+    SP<SQLTable> table = MAKE<SQLTable>("test", db);
 
     auto intValues = table->IntValues(SQLTableQueryArguments("test_l", std::nullopt));
     EXPECT_EQ(0, intValues.size());
@@ -337,7 +337,7 @@ TEST(SQLTableTests, TestInsertRow) {
 }
 
 TEST(SQLTableTests, TestSetValueUpdate) {
-    std::shared_ptr<SQLDatabase> db = std::make_shared<SQLDatabase>();
+    SP<SQLDatabase> db = MAKE<SQLDatabase>();
 
     EXPECT_NO_THROW({
         db->TryOpen("", SQLDatabaseOpenType::InMemory, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE);
@@ -348,7 +348,7 @@ TEST(SQLTableTests, TestSetValueUpdate) {
     schema.columns.Add(SQLColumnSchema("test_r", SQLValueType::Text, std::make_optional("'a'")));
     EXPECT_TRUE(db->CreateTable("test", schema));
 
-    std::shared_ptr<SQLTable> table = std::make_shared<SQLTable>("test", db);
+    SP<SQLTable> table = MAKE<SQLTable>("test", db);
     table->InsertRow();
 
     auto intValues = table->IntValues(SQLTableQueryArguments("test_l", SQLWhereArguments("test_r", "a")));
@@ -363,7 +363,7 @@ TEST(SQLTableTests, TestSetValueUpdate) {
 }
 
 TEST(SQLTableTests, TestSetValueInsert) {
-    std::shared_ptr<SQLDatabase> db = std::make_shared<SQLDatabase>();
+    SP<SQLDatabase> db = MAKE<SQLDatabase>();
 
     EXPECT_NO_THROW({
         db->TryOpen("", SQLDatabaseOpenType::InMemory, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE);
@@ -374,7 +374,7 @@ TEST(SQLTableTests, TestSetValueInsert) {
     schema.columns.Add(SQLColumnSchema("test_r", SQLValueType::Text, std::make_optional("'a'")));
     EXPECT_TRUE(db->CreateTable("test", schema));
 
-    std::shared_ptr<SQLTable> table = std::make_shared<SQLTable>("test", db);
+    SP<SQLTable> table = MAKE<SQLTable>("test", db);
 
     table->SetValue(SQLTableMutateArguments("test_l", std::nullopt, SQLValue(SQLValueType::Int, "3")), SQLTable::SetValueType::Insert);
 

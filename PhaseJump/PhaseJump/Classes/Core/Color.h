@@ -34,6 +34,13 @@ namespace PJ {
             return Color32((int)(r*255.0f), (int)(g*255.0f), (int)(b*255.0f), (int)(a*255.0f));
         }
 
+        bool operator==(Color const& rhs) const {
+            return r == rhs.r &&
+            g == rhs.g &&
+            b == rhs.b &&
+            a == rhs.a;
+        }
+
         Color WithAlpha(float a) const {
             Color result = *this;
             result.a = a;

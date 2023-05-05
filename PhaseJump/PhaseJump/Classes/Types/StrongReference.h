@@ -2,6 +2,7 @@
 #define PJSTRONGREFERENCE_H
 
 #include "SomeReference.h"
+#include "Macros.h"
 #include <memory>
 
 /*
@@ -17,10 +18,10 @@ namespace PJ
     template <class T> struct StrongReference : public SomeReference<T>
     {
     protected:
-        std::shared_ptr<T> value;
+        SP<T> value;
 
     public:
-        StrongReference(std::shared_ptr<T> value) : value(value)
+        StrongReference(SP<T> value) : value(value)
         {
         }
 
@@ -29,11 +30,11 @@ namespace PJ
             value = b.value;
         }
 
-        std::shared_ptr<T> Value() const override {
+        SP<T> Value() const override {
             return value;
         }
 
-        void SetValue(std::shared_ptr<T> const& value) override {
+        void SetValue(SP<T> const& value) override {
             this->value = value;
         }
     };

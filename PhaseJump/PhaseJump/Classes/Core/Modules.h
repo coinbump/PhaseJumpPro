@@ -47,7 +47,7 @@ namespace PJ {
             void _Go() override {
                 Base::_Go();
 
-                classRegistry[ClassIds::foo] = std::make_shared<_FooClass>();
+                classRegistry[ClassIds::foo] = MAKE<_FooClass>();
             }
 
         public:
@@ -65,7 +65,7 @@ namespace PJ {
             void _Go() override {
                 Base::_Go();
 
-                classRegistry[ClassIds::foo] = std::make_shared<_MacFooClass>();
+                classRegistry[ClassIds::foo] = MAKE<_MacFooClass>();
             }
 
         public:

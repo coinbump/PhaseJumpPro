@@ -4,6 +4,7 @@
 #include "Event.h"
 #include "Broadcaster.h"
 #include "SomeTransform.h"
+#include "Macros.h"
 #include <memory>
 
 /*
@@ -24,7 +25,7 @@ namespace PJ
     class EventPublishedChange : public Event
     {
     public:
-        using PublishedValueSharedPtr = std::shared_ptr<PublishedValue<T>>;
+        using PublishedValueSharedPtr = SP<PublishedValue<T>>;
         PublishedValueSharedPtr value;
 
         EventPublishedChange()
@@ -67,12 +68,12 @@ namespace PJ
         virtual void OnValueChange()
         {
             auto sharedThis = this->shared_from_this();
-            broadcaster->Broadcast(std::make_shared<EventPublishedChange<T>>(sharedThis));
+            broadcaster->Broadcast(MAKE<EventPublishedChange<T>>(sharedThis));
         }
 
     public:
-        std::shared_ptr<Broadcaster> broadcaster = std::make_shared<Broadcaster>();
-        std::shared_ptr<SomeValueTransform<T>> transform = std::make_shared<IdentityTransform<T>>();
+        SP<Broadcaster> broadcaster = MAKE<Broadcaster>();
+        SP<SomeValueTransform<T>> transform = MAKE<IdentityTransform<T>>();
 
         virtual T Value() const { return value; }
         virtual void SetValue(T value)

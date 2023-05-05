@@ -1,10 +1,28 @@
 #ifndef PJRENDERTYPES_H
 #define PJRENDERTYPES_H
 
-enum class RenderFeatureStatus {
-    Enable,
+namespace PJ {
+    enum class RenderFeatureStatus {
+        Enable,
 
-    Disable
-};
+        Disable
+    };
+
+    enum class TextureAlphaMode {
+        Standard,
+
+        PremultiplyAlpha
+    };
+
+    enum class TextureMagnification {
+        Nearest,
+        Linear
+    };
+
+    enum class TextureWrap {
+        Clamp,
+        Repeat
+    };
+}
 
 #endif

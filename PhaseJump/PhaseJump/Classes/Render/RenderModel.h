@@ -6,7 +6,7 @@
 #include "RenderMaterial.h"
 #include "Vector3.h"
 #include "Matrix4x4.h"
-#include "RenderTexture.h"
+#include "SomeTexture.h"
 #include "_Set.h"
 #include "_Map.h"
 
@@ -31,7 +31,7 @@ namespace PJ {
         /// Texture position for vertex (Range: 0-1.0)
         VectorList<Vector2> uvs;
 
-        VectorList<RenderTexture> textures;
+        VectorList<SP<SomeTexture>> textures;
         VectorList<Color> uniformColors;
         VectorList<float> uniformFloats;
 

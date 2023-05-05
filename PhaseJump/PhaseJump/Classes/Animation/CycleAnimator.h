@@ -34,23 +34,23 @@ namespace PJ
         /// <summary>
         /// Interpolation, start, and end values
         /// </summary>
-        std::shared_ptr<Interpolator<T>> interpolator;
+        SP<Interpolator<T>> interpolator;
 
         /// <summary>
         /// Cycle progress for Once, Loop, PingPong
         /// </summary>
-        std::shared_ptr<AnimationCycleTimer> timer;
+        SP<AnimationCycleTimer> timer;
 
         /// <summary>
         /// Value binding to modify value
         /// </summary>
-        std::shared_ptr<SetBinding<T>> binding;
+        SP<SetBinding<T>> binding;
 
         ReverseType reverseType = ReverseType::Match;
 
-        CycleAnimator(std::shared_ptr<Interpolator<T>> interpolator,
-                      std::shared_ptr<AnimationCycleTimer> timer,
-                      std::shared_ptr<SetBinding<T>> binding)
+        CycleAnimator(SP<Interpolator<T>> interpolator,
+                      SP<AnimationCycleTimer> timer,
+                      SP<SetBinding<T>> binding)
         : interpolator(interpolator),
         timer(timer),
         binding(binding)
@@ -83,7 +83,7 @@ namespace PJ
                         case ReverseType::Rewind:
                             break;
                         case ReverseType::Match:
-                            auto reverseCurve = make_shared<Interpolator<T>>(interpolator->end, interpolator->start, interpolator->valueInterpolator, interpolator->transform);
+                            auto reverseCurve = MAKE<Interpolator<T>>(interpolator->end, interpolator->start, interpolator->valueInterpolator, interpolator->transform);
                             curveValue = reverseCurve->ValueAt(1.0f - progress);
                             break;
                     }

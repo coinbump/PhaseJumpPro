@@ -30,6 +30,10 @@ namespace PJ
 
         void SetRotation(Angle rotation) { this->rotation = Vector3(0, 0, -rotation.Degrees()); }
 
+        // TBD: is this correct?
+        Vector3 LocalEulerAngles() const { return rotation; }
+        void SetLocalEulerAngles(Vector3 value) { rotation = value; }
+
         static GeoTransform const defaultTransform;
     };
 }

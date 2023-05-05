@@ -4,6 +4,7 @@
 #include "SomeProcessor.h"
 #include "FilePath.h"
 #include "VectorList.h"
+#include "Macros.h"
 #include <memory>
 #include <filesystem>
 
@@ -36,13 +37,13 @@ namespace PJ {
         };
 
     protected:
-        std::shared_ptr<SomeFileProcessor> fileProcessor;
+        SP<SomeFileProcessor> fileProcessor;
         Settings settings;
 
     public:
         using Base = SomeProcessor<VectorList<FilePath>>;
 
-        FilesProcessor(Int filesCount, std::shared_ptr<SomeFileProcessor> fileProcessor, Settings settings = Settings())
+        FilesProcessor(Int filesCount, SP<SomeFileProcessor> fileProcessor, Settings settings = Settings())
         : Base(filesCount),
         fileProcessor(fileProcessor),
         settings(settings) {

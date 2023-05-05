@@ -16,7 +16,7 @@ namespace PJ
     class SomeRenderContext : public Base
     {
     public:
-        std::shared_ptr<SomeRenderEngine> renderEngine;
+        SP<SomeRenderEngine> renderEngine;
 
         SomeRenderContext() {}
         virtual ~SomeRenderContext() {}

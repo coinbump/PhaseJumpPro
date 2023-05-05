@@ -18,8 +18,8 @@ namespace PJ
     class CenterPolyRenderMeshBuilder : public SomeCenterPolyRenderMeshBuilder
     {
     public:
-        int MeshVertexCount() const { return (int)polygon.vertices.size() + 1; }
-        int SliceCount() const { return (int)polygon.vertices.size() - 1; }
+        int MeshVertexCount() const { return (int)polygon.size() + 1; }
+        int SliceCount() const { return (int)polygon.size() - 1; }
 
         CenterPolyRenderMeshBuilder() { }
 
@@ -27,7 +27,7 @@ namespace PJ
         {
             RenderMesh result;
 
-            if (polygon.vertices.size() < 2) { return result; }
+            if (polygon.size() < 2) { return result; }
 
             auto vertexCount = MeshVertexCount();
 
@@ -48,14 +48,14 @@ namespace PJ
             uvs[0] = Vector2(0.5f, 0.5f);
 
             Polygon polyWithCenter;
-            polyWithCenter.vertices.Add(vertices[0]);
-            polyWithCenter.vertices.AddRange(polygon.vertices);
+            polyWithCenter.Add(vertices[0]);
+            polyWithCenter.AddRange(polygon);
             auto polygonMin = polyWithCenter.Min();
             auto polygonSize = polyWithCenter.Size();
 
             // Edge vertices
             int vi = 1;
-            for (auto vertex : polygon.vertices)
+            for (auto vertex : polygon)
             {
                 vertices[vi] = vertex;
                 uvs[vi] = Vector2((vertex.x - polygonMin.x) / polygonSize.x, (vertex.y - polygonMin.y) / polygonSize.y);

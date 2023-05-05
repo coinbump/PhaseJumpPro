@@ -1,6 +1,7 @@
 #include "gtest/gtest.h"
 #include "PublishedValue.h"
 #include "IntClamp.h"
+#include "Macros.h"
 
 using namespace PJ;
 using namespace std;
@@ -35,7 +36,7 @@ using namespace PublishedValueTests;
 
 TEST(PublishedValue, Test_PublishedValue)
 {
-    auto test = make_shared<TestValue<int>>(0);
+    auto test = MAKE<TestValue<int>>(0);
     EXPECT_EQ(0, test->Value());
     test->SetValue(10);
     EXPECT_EQ(1, test->changedCount);
@@ -48,11 +49,11 @@ TEST(PublishedValue, Test_PublishedValue)
 
 TEST(PublishedValue, Test_NullChange)
 {
-    auto test = make_shared<TestValue<shared_ptr<TestClass>>>(nullptr);
+    auto test = MAKE<TestValue<SP<TestClass>>>(nullptr);
     EXPECT_EQ(nullptr, test->Value());
-    test->SetValue(make_shared<TestClass>());
+    test->SetValue(MAKE<TestClass>());
     EXPECT_EQ(1, test->changedCount);
-    test->SetValue(make_shared<TestClass>());
+    test->SetValue(MAKE<TestClass>());
     EXPECT_EQ(2, test->changedCount);
 
     test->SetValue(nullptr);
@@ -61,8 +62,8 @@ TEST(PublishedValue, Test_NullChange)
 
 TEST(PublishedValue, Test_Transform)
 {
-    auto test = make_shared<TestValue<int>>(0);
-    auto transform = make_shared<IntClamp>(0, 10);
+    auto test = MAKE<TestValue<int>>(0);
+    auto transform = MAKE<IntClamp>(0, 10);
     test->transform = transform;
 
     EXPECT_EQ(0, test->Value());

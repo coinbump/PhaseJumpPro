@@ -7,7 +7,7 @@
 #include "_Set.h"
 #include "_Map.h"
 #include "RenderTypes.h"
-#include "RenderTexture.h"
+#include "SomeTexture.h"
 #include "Vector2.h"
 
 /*
@@ -21,13 +21,13 @@ namespace PJ {
     /// Combies render properties for object
     class RenderMaterial {
     public:
-        std::shared_ptr<SomeShaderProgram> shaderProgram;
+        SP<SomeShaderProgram> shaderProgram;
 
         VectorList<Color> uniformColors;
         VectorList<float> uniformFloats;
 
         VectorList<Color> colors;
-        VectorList<RenderTexture> textures;
+        VectorList<SP<SomeTexture>> textures;
         Map<String, RenderFeatureStatus> features;
     };
 }

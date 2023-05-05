@@ -54,9 +54,9 @@ SQLStatement SQLTable::BuildStatement(SQLTableQueryArguments query) {
     return result;
 }
 
-VectorList<std::shared_ptr<Tags>> ColumnValues(VectorList<String> columnNames)
+VectorList<SP<Tags>> ColumnValues(VectorList<String> columnNames)
 {
-    VectorList<std::shared_ptr<Tags>> result;
+    VectorList<SP<Tags>> result;
 
     return result;
 }

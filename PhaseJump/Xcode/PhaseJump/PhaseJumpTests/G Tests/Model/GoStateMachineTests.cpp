@@ -51,7 +51,7 @@ using namespace GoStateMachineTests;
 
 TEST(GoStateMachine, Test_GoStateMachine)
 {
-    auto test = make_shared<TestStateMachine>();
+    auto test = MAKE<TestStateMachine>();
     test->SetState(TestEnum::Test2);
     EXPECT_EQ(1, test->test2Count);
     test->SetIsLocked(true);

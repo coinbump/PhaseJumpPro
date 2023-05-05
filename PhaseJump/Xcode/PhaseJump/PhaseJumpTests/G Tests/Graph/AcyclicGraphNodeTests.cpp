@@ -28,8 +28,8 @@ using namespace AcyclicGraphNodeTests;
 
 TEST(AcyclicGraphNode, Test_AddEdge_IsAdded)
 {
-    auto node = make_shared<Node>();
-    auto childNode = make_shared<Node>();
+    auto node = MAKE<Node>();
+    auto childNode = MAKE<Node>();
     node->AddEdge(StandardEdgeModel(), childNode);
 
     auto connectedNodes = node->CollectConnectedTo(true);
@@ -42,11 +42,11 @@ TEST(AcyclicGraphNode, Test_AddEdge_IsAdded)
 
 TEST(AcyclicGraphNode, Test_AddEdges_IsAdded)
 {
-    auto node = make_shared<Node>();
-    auto childNode1 = make_shared<Node>();
+    auto node = MAKE<Node>();
+    auto childNode1 = MAKE<Node>();
     node->AddEdge(StandardEdgeModel(), childNode1);
 
-    auto childNode2 = make_shared<Node>();
+    auto childNode2 = MAKE<Node>();
     node->AddEdge(StandardEdgeModel(), childNode2);
 
     auto connectedNodes = node->CollectConnectedTo(true);
@@ -62,11 +62,11 @@ TEST(AcyclicGraphNode, Test_AddEdges_IsAdded)
 
 TEST(AcyclicGraphNode, Test_Clear_RemovesEdges)
 {
-    auto node = make_shared<Node>();
-    auto childNode1 = make_shared<Node>();
+    auto node = MAKE<Node>();
+    auto childNode1 = MAKE<Node>();
     node->AddEdge(StandardEdgeModel(), childNode1);
 
-    auto childNode2 = make_shared<Node>();
+    auto childNode2 = MAKE<Node>();
     node->AddEdge(StandardEdgeModel(), childNode2);
 
     EXPECT_EQ(childNode1->FromNodes().Count(), 1);
@@ -82,14 +82,14 @@ TEST(AcyclicGraphNode, Test_Clear_RemovesEdges)
 
 TEST(AcyclicGraphNode, Test_UpdateRoot_UpdatesAll)
 {
-    auto node = make_shared<Node>();
-    auto childNode1 = make_shared<Node>();
+    auto node = MAKE<Node>();
+    auto childNode1 = MAKE<Node>();
     node->AddEdge(StandardEdgeModel(), childNode1);
 
-    auto childNode2 = make_shared<Node>();
+    auto childNode2 = MAKE<Node>();
     node->AddEdge(StandardEdgeModel(), childNode2);
 
-    auto deepNode = make_shared<Node>();
+    auto deepNode = MAKE<Node>();
     childNode1->AddEdge(StandardEdgeModel(), deepNode);
 
     auto delta = 4.0f;
@@ -103,14 +103,14 @@ TEST(AcyclicGraphNode, Test_UpdateRoot_UpdatesAll)
 
 TEST(AcyclicGraphNode, Test_UpdateRootWithCircularReference_DoesNotUpdateAll)
 {
-    auto node = make_shared<Node>();
-    auto childNode1 = make_shared<Node>();
+    auto node = MAKE<Node>();
+    auto childNode1 = MAKE<Node>();
     node->AddEdge(StandardEdgeModel(), childNode1);
 
-    auto childNode2 = make_shared<Node>();
+    auto childNode2 = MAKE<Node>();
     node->AddEdge(StandardEdgeModel(), childNode2);
 
-    auto deepNode = make_shared<Node>();
+    auto deepNode = MAKE<Node>();
     childNode1->AddEdge(StandardEdgeModel(), deepNode);
     deepNode->AddEdge(StandardEdgeModel(), node);
 
@@ -125,8 +125,8 @@ TEST(AcyclicGraphNode, Test_UpdateRootWithCircularReference_DoesNotUpdateAll)
 
 TEST(AcyclicGraphNode, Test_RemoveEdgeFromParent_RemovesBoth)
 {
-    auto node = make_shared<Node>();
-    auto childNode1 = make_shared<Node>();
+    auto node = MAKE<Node>();
+    auto childNode1 = MAKE<Node>();
     node->AddEdge(StandardEdgeModel(), childNode1);
 
     EXPECT_EQ(node->Edges().Count(), 1);
@@ -140,12 +140,12 @@ TEST(AcyclicGraphNode, Test_RemoveEdgeFromParent_RemovesBoth)
 
 TEST(AcyclicGraphNode, Test_RemoveEdgesTo)
 {
-    auto node = make_shared<Node>();
+    auto node = MAKE<Node>();
 
-    auto childNode1 = make_shared<Node>();
+    auto childNode1 = MAKE<Node>();
     node->AddEdge(StandardEdgeModel(), childNode1);
 
-    auto childNode2 = make_shared<Node>();
+    auto childNode2 = MAKE<Node>();
     node->AddEdge(StandardEdgeModel(), childNode2);
 
     EXPECT_EQ(node->Edges().Count(), 2);
@@ -162,11 +162,11 @@ TEST(AcyclicGraphNode, Test_RemoveEdgesTo)
 
 TEST(AcyclicGraphNode, Test_RemoveEdgesFrom)
 {
-    auto node = make_shared<Node>();
-    auto childNode1 = make_shared<Node>();
+    auto node = MAKE<Node>();
+    auto childNode1 = MAKE<Node>();
     node->AddEdge(StandardEdgeModel(), childNode1);
 
-    auto deepNode = make_shared<Node>();
+    auto deepNode = MAKE<Node>();
     deepNode->AddEdge(StandardEdgeModel(), childNode1);
 
     EXPECT_EQ(node->Edges().Count(), 1);
@@ -191,14 +191,14 @@ TEST(AcyclicGraphNode, Test_RemoveEdgesFrom)
 
 TEST(AcyclicGraphNode, Test_CollectGraph)
 {
-    auto node = make_shared<Node>();
-    auto childNode1 = make_shared<Node>();
+    auto node = MAKE<Node>();
+    auto childNode1 = MAKE<Node>();
     node->AddEdge(StandardEdgeModel(), childNode1);
 
-    auto childNode2 = make_shared<Node>();
+    auto childNode2 = MAKE<Node>();
     node->AddEdge(StandardEdgeModel(), childNode2);
 
-    auto deepNode = make_shared<Node>();
+    auto deepNode = MAKE<Node>();
     childNode1->AddEdge(StandardEdgeModel(), deepNode);
     deepNode->AddEdge(StandardEdgeModel(), node);    // Circular connection
 
@@ -212,14 +212,14 @@ TEST(AcyclicGraphNode, Test_CollectGraph)
 
 TEST(AcyclicGraphNode, Test_CollectConnectedToNotDeep)
 {
-    auto node = make_shared<Node>();
-    auto childNode1 = make_shared<Node>();
+    auto node = MAKE<Node>();
+    auto childNode1 = MAKE<Node>();
     node->AddEdge(StandardEdgeModel(), childNode1);
 
-    auto childNode2 = make_shared<Node>();
+    auto childNode2 = MAKE<Node>();
     node->AddEdge(StandardEdgeModel(), childNode2);
 
-    auto deepNode = make_shared<Node>();
+    auto deepNode = MAKE<Node>();
     childNode1->AddEdge(StandardEdgeModel(), deepNode);
 
     auto graph = node->CollectConnectedTo(false);
@@ -230,14 +230,14 @@ TEST(AcyclicGraphNode, Test_CollectConnectedToNotDeep)
 
 TEST(AcyclicGraphNode, Test_CollectConnectedToDeep)
 {
-    auto node = make_shared<Node>();
-    auto childNode1 = make_shared<Node>();
+    auto node = MAKE<Node>();
+    auto childNode1 = MAKE<Node>();
     node->AddEdge(StandardEdgeModel(), childNode1);
 
-    auto childNode2 = make_shared<Node>();
+    auto childNode2 = MAKE<Node>();
     node->AddEdge(StandardEdgeModel(), childNode2);
 
-    auto deepNode = make_shared<Node>();
+    auto deepNode = MAKE<Node>();
     childNode1->AddEdge(StandardEdgeModel(), deepNode);
 
     auto graph = node->CollectConnectedTo(true);
@@ -249,14 +249,14 @@ TEST(AcyclicGraphNode, Test_CollectConnectedToDeep)
 
 TEST(AcyclicGraphNode, Test_CollectConnectedToCircular)
 {
-    auto node = make_shared<Node>();
-    auto childNode1 = make_shared<Node>();
+    auto node = MAKE<Node>();
+    auto childNode1 = MAKE<Node>();
     node->AddEdge(StandardEdgeModel(), childNode1);
 
-    auto childNode2 = make_shared<Node>();
+    auto childNode2 = MAKE<Node>();
     node->AddEdge(StandardEdgeModel(), childNode2);
 
-    auto deepNode = make_shared<Node>();
+    auto deepNode = MAKE<Node>();
     childNode1->AddEdge(StandardEdgeModel(), deepNode);
     deepNode->AddEdge(StandardEdgeModel(), node);    // Circular connection
 
@@ -270,14 +270,14 @@ TEST(AcyclicGraphNode, Test_CollectConnectedToCircular)
 
 TEST(AcyclicGraphNode, Test_CollectDepthFirstGraphTree)
 {
-    auto node = make_shared<Node>();
-    auto childNode1 = make_shared<Node>();
+    auto node = MAKE<Node>();
+    auto childNode1 = MAKE<Node>();
     node->AddEdge(StandardEdgeModel(), childNode1);
 
-    auto childNode2 = make_shared<Node>();
+    auto childNode2 = MAKE<Node>();
     node->AddEdge(StandardEdgeModel(), childNode2);
 
-    auto deepNode = make_shared<Node>();
+    auto deepNode = MAKE<Node>();
     childNode1->AddEdge(StandardEdgeModel(), deepNode);
 
     auto graph = node->CollectDepthFirstGraph();
@@ -290,14 +290,14 @@ TEST(AcyclicGraphNode, Test_CollectDepthFirstGraphTree)
 
 TEST(AcyclicGraphNode, Test_CollectDepthFirstGraphTree2)
 {
-    auto node = make_shared<Node>();
-    auto childNode1 = make_shared<Node>();
+    auto node = MAKE<Node>();
+    auto childNode1 = MAKE<Node>();
     node->AddEdge(StandardEdgeModel(), childNode1);
 
-    auto childNode2 = make_shared<Node>();
+    auto childNode2 = MAKE<Node>();
     node->AddEdge(StandardEdgeModel(), childNode2);
 
-    auto deepNode = make_shared<Node>();
+    auto deepNode = MAKE<Node>();
     childNode2->AddEdge(StandardEdgeModel(), deepNode);
 
     auto graph = node->CollectDepthFirstGraph();
@@ -310,14 +310,14 @@ TEST(AcyclicGraphNode, Test_CollectDepthFirstGraphTree2)
 
 TEST(AcyclicGraphNode, Test_CollectDepthFirstGraphCircular)
 {
-    auto node = make_shared<Node>();
-    auto childNode1 = make_shared<Node>();
+    auto node = MAKE<Node>();
+    auto childNode1 = MAKE<Node>();
     node->AddEdge(StandardEdgeModel(), childNode1);
 
-    auto childNode2 = make_shared<Node>();
+    auto childNode2 = MAKE<Node>();
     node->AddEdge(StandardEdgeModel(), childNode2);
 
-    auto deepNode = make_shared<Node>();
+    auto deepNode = MAKE<Node>();
     childNode1->AddEdge(StandardEdgeModel(), deepNode);
     deepNode->AddEdge(StandardEdgeModel(), node);  // Circular connection
 
@@ -331,14 +331,14 @@ TEST(AcyclicGraphNode, Test_CollectDepthFirstGraphCircular)
 
 TEST(AcyclicGraphNode, Test_CollectBreadthFirstGraphTree)
 {
-    auto node = make_shared<Node>();
-    auto childNode1 = make_shared<Node>();
+    auto node = MAKE<Node>();
+    auto childNode1 = MAKE<Node>();
     node->AddEdge(StandardEdgeModel(), childNode1);
 
-    auto childNode2 = make_shared<Node>();
+    auto childNode2 = MAKE<Node>();
     node->AddEdge(StandardEdgeModel(), childNode2);
 
-    auto deepNode = make_shared<Node>();
+    auto deepNode = MAKE<Node>();
     childNode1->AddEdge(StandardEdgeModel(), deepNode);
 
     auto graph = node->CollectBreadthFirstGraph();
@@ -351,14 +351,14 @@ TEST(AcyclicGraphNode, Test_CollectBreadthFirstGraphTree)
 
 TEST(AcyclicGraphNode, Test_CollectBreadthFirstGraphTree2)
 {
-    auto node = make_shared<Node>();
-    auto childNode1 = make_shared<Node>();
+    auto node = MAKE<Node>();
+    auto childNode1 = MAKE<Node>();
     node->AddEdge(StandardEdgeModel(), childNode1);
 
-    auto childNode2 = make_shared<Node>();
+    auto childNode2 = MAKE<Node>();
     node->AddEdge(StandardEdgeModel(), childNode2);
 
-    auto deepNode = make_shared<Node>();
+    auto deepNode = MAKE<Node>();
     childNode2->AddEdge(StandardEdgeModel(), deepNode);
 
     auto graph = node->CollectBreadthFirstGraph();
@@ -371,14 +371,14 @@ TEST(AcyclicGraphNode, Test_CollectBreadthFirstGraphTree2)
 
 TEST(AcyclicGraphNode, Test_CollectBreadthFirstGraphCircular)
 {
-    auto node = make_shared<Node>();
-    auto childNode1 = make_shared<Node>();
+    auto node = MAKE<Node>();
+    auto childNode1 = MAKE<Node>();
     node->AddEdge(StandardEdgeModel(), childNode1);
 
-    auto childNode2 = make_shared<Node>();
+    auto childNode2 = MAKE<Node>();
     node->AddEdge(StandardEdgeModel(), childNode2);
 
-    auto deepNode = make_shared<Node>();
+    auto deepNode = MAKE<Node>();
     childNode1->AddEdge(StandardEdgeModel(), deepNode);
     deepNode->AddEdge(StandardEdgeModel(), node);  // Circular connection
 
@@ -390,57 +390,57 @@ TEST(AcyclicGraphNode, Test_CollectBreadthFirstGraphCircular)
     EXPECT_EQ(deepNode, graph[3]);
 }
 
-TEST(AcyclicGraphNode, Test_RootNode)
+TEST(AcyclicGraphNode, Test_Root)
 {
-    auto node = make_shared<Node>();
-    auto childNode1 = make_shared<Node>();
+    auto node = MAKE<Node>();
+    auto childNode1 = MAKE<Node>();
     node->AddEdge(StandardEdgeModel(), childNode1);
 
-    auto childNode2 = make_shared<Node>();
+    auto childNode2 = MAKE<Node>();
     node->AddEdge(StandardEdgeModel(), childNode2);
 
-    auto deepNode = make_shared<Node>();
+    auto deepNode = MAKE<Node>();
     childNode1->AddEdge(StandardEdgeModel(), deepNode);
 
-    EXPECT_EQ(node, node->RootNode());
-    EXPECT_EQ(node, childNode1->RootNode());
-    EXPECT_EQ(node, childNode2->RootNode());
-    EXPECT_EQ(node, deepNode->RootNode());
+    EXPECT_EQ(node, node->Root());
+    EXPECT_EQ(node, childNode1->Root());
+    EXPECT_EQ(node, childNode2->Root());
+    EXPECT_EQ(node, deepNode->Root());
 }
 
-TEST(AcyclicGraphNode, Test_RootNodeCircular)
+TEST(AcyclicGraphNode, Test_RootCircular)
 {
-    auto node = make_shared<Node>();
-    auto childNode1 = make_shared<Node>();
+    auto node = MAKE<Node>();
+    auto childNode1 = MAKE<Node>();
     node->AddEdge(StandardEdgeModel(), childNode1);
 
-    auto childNode2 = make_shared<Node>();
+    auto childNode2 = MAKE<Node>();
     node->AddEdge(StandardEdgeModel(), childNode2);
 
-    auto deepNode = make_shared<Node>();
+    auto deepNode = MAKE<Node>();
     childNode1->AddEdge(StandardEdgeModel(), deepNode);
     deepNode->AddEdge(StandardEdgeModel(), node);
 
-    EXPECT_EQ(nullptr, node->RootNode());
-    EXPECT_EQ(nullptr, childNode2->RootNode());
-    EXPECT_EQ(nullptr, childNode1->RootNode());
-    EXPECT_EQ(nullptr, deepNode->RootNode());
+    EXPECT_EQ(nullptr, node->Root());
+    EXPECT_EQ(nullptr, childNode2->Root());
+    EXPECT_EQ(nullptr, childNode1->Root());
+    EXPECT_EQ(nullptr, deepNode->Root());
 }
 
-TEST(AcyclicGraphNode, Test_IsRootNode)
+TEST(AcyclicGraphNode, Test_IsRoot)
 {
-    auto node = make_shared<Node>();
-    auto childNode1 = make_shared<Node>();
+    auto node = MAKE<Node>();
+    auto childNode1 = MAKE<Node>();
     node->AddEdge(StandardEdgeModel(), childNode1);
 
-    EXPECT_TRUE(node->IsRootNode());
-    EXPECT_FALSE(childNode1->IsRootNode());
+    EXPECT_TRUE(node->IsRoot());
+    EXPECT_FALSE(childNode1->IsRoot());
 }
 
 TEST(AcyclicGraphNode, Test_Parent)
 {
-    auto node = make_shared<Node>();
-    auto childNode1 = make_shared<Node>();
+    auto node = MAKE<Node>();
+    auto childNode1 = MAKE<Node>();
     node->AddEdge(StandardEdgeModel(), childNode1);
 
     EXPECT_EQ(nullptr, node->Parent());

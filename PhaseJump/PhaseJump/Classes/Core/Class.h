@@ -6,6 +6,7 @@
 #include "Tags.h"
 #include "Factory.h"
 #include "FactoryRegistry.h"
+#include "Macros.h"
 
 /*
  RATING: 5 stars
@@ -47,7 +48,7 @@ namespace PJ {
 
         virtual ~Class() {}
 
-        virtual std::shared_ptr<PJ::Base> New() { return nullptr; }
+        virtual SP<PJ::Base> New() { return nullptr; }
     };
 
     template <class Type>
@@ -59,23 +60,23 @@ namespace PJ {
         static FactoryRegistry registry;
 
         using Base = Class;
-        using NewType = std::shared_ptr<Type>;
+        using NewType = SP<Type>;
         using Factory = Factory<Type>;
-        using FactorySharedPtr = std::shared_ptr<Factory>;
+        using FactorySharedPtr = SP<Factory>;
 
         /// Factory to produce an object of this class type
         FactorySharedPtr factory;
 
-        TypeClass(String id, FactorySharedPtr factory = std::make_shared<Factory>([] () -> NewType { return std::make_shared<Type>(); })) : Base(id), factory(factory) {
+        TypeClass(String id, FactorySharedPtr factory = MAKE<Factory>([] () -> NewType { return MAKE<Type>(); })) : Base(id), factory(factory) {
         }
 
-        std::shared_ptr<PJ::Base> New() override {
-            if (!factory.get()) { return nullptr; }
+        SP<PJ::Base> New() override {
+            if (!factory) { return nullptr; }
 
             return factory->New();
         }
 
-        std::shared_ptr<Type> New(String classId) {
+        SP<Type> New(String classId) {
             return registry.New(classId);
         }
     };

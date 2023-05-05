@@ -2,7 +2,7 @@
 #define PJSDLEVENTPOLLER_H
 
 #include "SomeUIEventPoller.h"
-#include "SDLUIEventBuilder.h"
+#include "SDLUIEventsBuilder.h"
 #include <SDL2/SDL.h>
 #include <memory>
 
@@ -15,11 +15,11 @@ namespace PJ {
         }
 
         Result PollUIEvents() override {
-            VectorList<std::shared_ptr<SomeUIEvent>> uiEvents;
+            VectorList<SP<SomeUIEvent>> uiEvents;
 
             SDL_Event event;
             while (SDL_PollEvent(&event)) {
-                VectorList<std::shared_ptr<SomeUIEvent>> thisUIEvents = SDLUIEventBuilder().BuildUIEvents(event);
+                VectorList<SP<SomeUIEvent>> thisUIEvents = SDLUIEventsBuilder().BuildUIEvents(event);
                 uiEvents.AddRange(thisUIEvents);
 
                 if (event.type == SDL_QUIT
