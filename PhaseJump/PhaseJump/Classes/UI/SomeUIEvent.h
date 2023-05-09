@@ -19,14 +19,16 @@ namespace PJ {
         }
     };
 
+    enum class PointerInputButton
+    {
+        Left,
+        Right,
+        Middle
+    };
+
     class SomePointerUIEvent : public SomeUIEvent {
     public:
-        enum class InputButton
-        {
-            Left,
-            Right,
-            Middle
-        };
+        using InputButton = PointerInputButton;
 
         InputButton button;
     };
@@ -51,12 +53,23 @@ namespace PJ {
         }
     };
 
-    template <class Position>
-    class PointerUpUIEvent : public SomePointerUIEvent {
-        Position pressPosition;
+    class PointerUpUIEvent : public SomeUIEvent {
+    public:
+        using InputButton = PointerInputButton;
 
-        PointerUpUIEvent(Position pressPosition, InputButton button) : pressPosition(pressPosition) {
-            this->button = button;
+        InputButton button;
+
+        PointerUpUIEvent(InputButton button) : button(button) {
+        }
+    };
+
+    template <class Position>
+    class MouseMotionUIEvent : public SomeUIEvent {
+    public:
+        Position position;
+        Vector2 delta;
+
+        MouseMotionUIEvent(Position position, Vector2 delta) : position(position), delta(delta) {
         }
     };
 
@@ -64,11 +77,12 @@ namespace PJ {
     class PointerExitUIEvent : public SomePointerUIEvent {};
 
     /// Responds to pointer events
-    class SomePointerEventsHandler {
+    class SomePointerEventsResponder {
+    public:
         virtual void OnPointerDownEvent(PointerDownUIEvent<LocalPosition> event) {}
         virtual void OnPointerEnterEvent(PointerEnterUIEvent event) {}
         virtual void OnPointerExitEvent(PointerExitUIEvent event) {}
-        virtual void OnPointerUpEvent(PointerUpUIEvent<LocalPosition> event) {}
+        virtual void OnPointerUpEvent(PointerUpUIEvent event) {}
     };
 }
 

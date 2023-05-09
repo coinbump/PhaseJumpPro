@@ -5,6 +5,11 @@
 #include "Class.h"
 #include "Vector2.h"
 
+/*
+ RATING: 4 stars
+ Simple interface, no functionality (yet)
+ CODE REVIEW: 5/8/23
+ */
 namespace PJ
 {
     class SomeWindow : public Base {

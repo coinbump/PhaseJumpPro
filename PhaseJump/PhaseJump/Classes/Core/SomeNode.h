@@ -30,7 +30,7 @@ namespace PJ {
         }
 
         virtual bool IsKinematic() const = 0;
-        virtual void MoveToPosition(Vector3 position, bool force = false);
+        virtual void MoveToPosition(Vector3 position, bool force = false) = 0;
     };
 }
 

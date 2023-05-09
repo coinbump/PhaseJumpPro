@@ -35,6 +35,12 @@ bool Contains(T const& value) const \
     auto findResult = std::find(this->begin(), this->end(), value); \
     return findResult != this->end(); \
 } \
+bool ContainsWhere(std::function<bool(Type const&)> check) const \
+{ \
+    auto i = std::find_if(this->begin(), this->end(), check); \
+    return i != this->end(); \
+} \
+\
 void AddRange(Collection const& source) { \
     this->insert(this->end(), source.begin(), source.end()); \
 } \

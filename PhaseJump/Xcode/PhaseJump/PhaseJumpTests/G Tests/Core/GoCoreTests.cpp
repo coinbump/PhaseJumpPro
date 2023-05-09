@@ -10,6 +10,11 @@ namespace GoCoreTests {
         Invalid, Left, Right
     };
 
+    class TestListener : public SomeGoStateListener<StateType> {
+        virtual void OnStateChange(GoStateMachine<StateType>& inStateMachine) {}
+        virtual void OnStateFinish(GoStateMachine<StateType>& inStateMachine) {}
+    };
+
     class TestObject : public GoCore<StateType>
     {
     public:
@@ -45,7 +50,6 @@ TEST(GoCore, StateChange)
     EXPECT_EQ(2, sut->stateChangeCount);
 }
 
-
 TEST(GoCore, StateFinish)
 {
     auto sut = MAKE<TestObject>();
@@ -60,4 +64,16 @@ TEST(GoCore, StateFinish)
 
     sut->OnUpdate(TimeSlice(1.0f));
     EXPECT_EQ(1, sut->stateFinishCount);
+}
+
+TEST(GoCore, Configure) {
+    auto sut = MAKE<TestObject>();
+    auto listener = MAKE<TestListener>();
+    sut->Configure(listener);
+
+    EXPECT_EQ(listener, sut->owner.lock());
+
+    EXPECT_EQ(0, sut->stateChangeCount);
+    sut->sm->SetState(StateType::Right);
+    EXPECT_EQ(1, sut->stateChangeCount);
 }

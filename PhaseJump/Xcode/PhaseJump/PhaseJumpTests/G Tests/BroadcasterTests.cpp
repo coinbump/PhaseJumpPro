@@ -18,7 +18,6 @@
 #include "SomePath.h"
 #include "LinePath.h"
 #include "TransformTimer.h"
-#include "SomeFocusCoordinator.h"
 #include "Angle.h"
 #include "Color32.h"
 #include "SomePosition.h"
@@ -74,6 +73,7 @@
 #include "Valve.h"
 #include "GoCore.h"
 #include "SomeNode.h"
+#include "SomeStateHandler.h"
 
 using namespace PJ;
 using namespace std;

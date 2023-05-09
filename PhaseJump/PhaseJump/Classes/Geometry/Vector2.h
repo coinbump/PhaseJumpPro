@@ -4,6 +4,7 @@
 #include "FloatMath.h"
 #include "IntMath.h"
 #include "Macros_Vectors.h"
+#include "_String.h"
 
 namespace Terathon {
     class Vector2D;
@@ -18,6 +19,8 @@ namespace Terathon {
 namespace PJ {
     struct Vector2 {
     public:
+        using This = Vector2;
+
         float x = 0;
         float y = 0;
 
@@ -48,12 +51,22 @@ namespace PJ {
         operator Terathon::Point2D() const;
 
         VECTOR_METHODS(Vector2, float, 2);
+
+        String ToString() const {
+            std::stringstream stream;
+            stream << "{" << x << ", " << y << "}";
+            return stream.str();
+        }
+
+        static This Uniform(float value) { return Vector2(value, value); }
     };
 
     VECTOR_EXTERNALMETHODS(Vector2, float);
 
     class Vector2Int {
     public:
+        using This = Vector2Int;
+
         int x = 0;
         int y = 0;
 
@@ -77,6 +90,14 @@ namespace PJ {
         }
 
         VECTOR_METHODS(Vector2Int, int, 2);
+
+        String ToString() const {
+            std::stringstream stream;
+            stream << "{" << x << ", " << y << "}";
+            return stream.str();
+        }
+
+        static This Uniform(int value) { return Vector2Int(value, value); }
     };
 
     VECTOR_EXTERNALMETHODS(Vector2Int, int);

@@ -24,6 +24,21 @@ namespace PJ {
             return owner.lock()->TypeComponent<T>();
         }
 
+        template <class T>
+        VectorList<SP<T>> TypeComponents() const
+        {
+            if (owner.expired()) { return nullptr; }
+            return owner.lock()->TypeComponents<T>();
+        }
+
+        template <class T>
+        VectorList<SP<T>> TypeComponentsInChildren() {
+            VectorList<SP<T>> result;
+
+            if (owner.expired()) { return result; }
+            return owner.lock()->TypeComponentsInChildren<T>();
+        }
+
         VectorList<SP<WorldNode>> ChildNodes() const
         {
             if (owner.expired()) { return VectorList<SP<WorldNode>>(); }
@@ -33,6 +48,10 @@ namespace PJ {
         // Convenience names
         template <class T>
         SP<T> GetComponent() const { return TypeComponent<T>(); }
+        template <class T>
+        VectorList<SP<T>> GetComponentsInChildren() const { return TypeComponentsInChildren<T>(); }
+        template <class T>
+        VectorList<SP<T>> GetComponents() const { return TypeComponents<T>(); }
     };
 }
 

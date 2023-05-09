@@ -41,6 +41,16 @@ void World::GoInternal() {
             }
         }
     }
+
+    for (auto node : graph) {
+        auto worldNode = SCAST<WorldNode>(node);
+        worldNode->Awake();
+    }
+
+    for (auto node : graph) {
+        auto worldNode = SCAST<WorldNode>(node);
+        worldNode->Start();
+    }
 }
 
 void World::Render()

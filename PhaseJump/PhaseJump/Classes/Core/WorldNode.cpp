@@ -14,3 +14,18 @@ std::weak_ptr<World> WorldNode::World() const {
     }
     return std::weak_ptr<PJ::World>();
 }
+
+void WorldNode::Awake() {
+    auto iterComponents = components;
+    for (auto component : iterComponents) {
+        component->Awake();
+    }
+}
+
+/// Called for every object after Awake
+void WorldNode::Start() {
+    auto iterComponents = components;
+    for (auto component : iterComponents) {
+        component->Start();
+    }
+}

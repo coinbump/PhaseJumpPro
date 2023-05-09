@@ -74,6 +74,7 @@ namespace PJ
 
         GoCore(SP<SomeGoStateListener<StateType>> owner) : owner(owner)
         {
+            sm.AddListener(owner);
         }
 
         void OnUpdate(TimeSlice time) override
@@ -82,6 +83,16 @@ namespace PJ
         }
 
         bool IsFinished() const override { return false; }
+
+        /// Call to configure the listeners and owner-core relationship
+        void Configure(SP<SomeGoStateListener<StateType>> owner) {
+            if (!this->owner.expired()) { return; }
+            
+            auto listener = DCAST<SomeListener>(this->shared_from_this());
+            sm->AddListener(listener);
+
+            this->owner = owner;
+        }
 
         void OnEvent(EventPtr event) override
         {

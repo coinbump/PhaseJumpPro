@@ -2,9 +2,9 @@
 #define PJSOMEDEVICE_H
 
 /*
- * RATING: 5 stars
- * Simple abstract class
- * CODE REVIEW: 11/12/22
+ RATING: 5 stars
+ Simple class
+ CODE REVIEW: 5/8/23
  */
 namespace PJ
 {
@@ -13,7 +13,8 @@ namespace PJ
     /// </summary>
     class SomeInputDevice
     {
-        public virtual bool IsAvailable() = 0;
+    public:
+        virtual bool IsAvailable() = 0;
     };
 }
 

@@ -31,9 +31,14 @@ namespace PJ
         Vector3 Position() const override { return position; }
         void SetPosition(Vector3 value) override { position = value; }
 
+        WorldPosition() {
+        }
+
         WorldPosition(Vector3 position) : position(position)
         {
         }
+
+        String ToString() const { return "World: " + position.ToString(); }
     };
 
     struct LocalPosition : public SomePosition
@@ -41,17 +46,25 @@ namespace PJ
         Vector3 position;
         std::weak_ptr<WorldNode> reference;
 
+        LocalPosition() {
+        }
+
         LocalPosition(Vector3 position, std::weak_ptr<WorldNode> reference) : position(position), reference(reference)
         {
         }
 
         Vector3 Position() const override { return position; }
         void SetPosition(Vector3 value) override { position = value; }
+
+        String ToString() const { return "Local: " + position.ToString(); }
     };
 
     struct ScreenPosition : public SomePosition
     {
         Vector2 position;
+
+        ScreenPosition() {
+        }
 
         ScreenPosition(Vector2 position) : position(position) {
         }
@@ -60,6 +73,8 @@ namespace PJ
 
         Vector3 Position() const override { return Vector3(position.x, position.y, 0); }
         void SetPosition(Vector3 value) override { position = Vector2(value.x, value.y); }
+
+        String ToString() const { return "Screen: " + position.ToString(); }
     };
 }
 

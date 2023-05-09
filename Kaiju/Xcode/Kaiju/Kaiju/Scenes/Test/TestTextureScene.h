@@ -12,6 +12,21 @@
 
 using namespace PJ;
 
+class TestStateHandler : public SomeStateHandler<ButtonControl::StateType> {
+    using StateType = ButtonControlStateType;
+
+    void OnStateChange(StateType state) override {
+        switch (state) {
+            case StateType::Press:
+                owner.lock()->transform->scale = Vector2::Uniform(3.0f);
+                break;
+            default:
+                owner.lock()->transform->scale = Vector2::Uniform(1.0f);
+                break;
+        }
+    }
+};
+
 class TestTextureScene : public Scene {
 public:
     SP<GLTexture> texture;
@@ -61,9 +76,14 @@ public:
 
 //        meshNode->SetActive(false);
 
+        auto button = MAKE<ButtonControl>();
+        auto ts = MAKE<TestStateHandler>();
+
         ComponentTool ct;
         auto collider = std::make_shared<SimplePolygonCollider2D>();
         ct.AddComponent(*meshNode, collider);
+        ct.AddComponent(*meshNode, button);
+        ct.AddComponent(*meshNode, ts);
 
         world.Add(meshNode);
     }

@@ -5,6 +5,7 @@
 #include "IntMath.h"
 #include "Vector2.h"
 #include "Macros_Vectors.h"
+#include "_String.h"
 
 namespace Terathon {
     class Vector3D;
@@ -27,6 +28,9 @@ namespace PJ {
         }
 
         Vector3(float x, float y, float z) : x(x), y(y), z(z) {
+        }
+
+        Vector3(Vector2 const& value) : x(value.x), y(value.y), z(0) {
         }
 
         static Vector3 const one;
@@ -54,6 +58,12 @@ namespace PJ {
         operator Terathon::Point3D() const;
 
         VECTOR_METHODS(Vector3, float, 3);
+
+        String ToString() const {
+            std::stringstream stream;
+            stream << "{" << x << ", " << y << ", " << z << "}";
+            return stream.str();
+        }
     };
 
     class Vector3Int {

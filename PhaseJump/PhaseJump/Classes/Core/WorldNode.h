@@ -99,6 +99,29 @@ namespace PJ {
             return result;
         }
 
+        // This can't be const because Graph collection requires non const results
+        template <class T>
+        VectorList<SP<T>> TypeComponentsInChildren()
+        {
+            VectorList<SP<T>> result;
+
+            auto graph = CollectBreadthFirstGraph();
+
+            for (auto node : graph) {
+                auto worldNode = SCAST<WorldNode>(node);
+                auto components = worldNode->Components();
+
+                for (auto component : components) {
+                    auto typeComponent = DCAST<T>(component);
+                    if (typeComponent) {
+                        result.Add(typeComponent);
+                    }
+                }
+            }
+
+            return result;
+        }
+
         void Destroy(float countdown = 0)
         {
             if (countdown == 0) {
@@ -110,18 +133,10 @@ namespace PJ {
         }
 
         /// Called for every object before Start
-        virtual void Awake() {
-            for (auto component : components) {
-                component->Awake();
-            }
-        }
+        virtual void Awake();
 
         /// Called for every object after Awake
-        virtual void Start() {
-            for (auto component : components) {
-                component->Start();
-            }
-        }
+        virtual void Start();
 
         bool IsActive() const { return isActive; }
         void SetActive(bool isActive) { this->isActive = isActive; }
@@ -164,9 +179,8 @@ namespace PJ {
         SP<T> GetComponent() const { return TypeComponent<T>(); }
         template <class T>
         VectorList<SP<T>> GetComponents() const { return TypeComponents<T>(); }
-
-        // TODO: send events to components
-        virtual void OnPointerDownEvent(PointerDownUIEvent<LocalPosition> event) {}
+        template <class T>
+        VectorList<SP<T>> GetComponentsInChildren() { return TypeComponentsInChildren<T>(); }
     };
 }
 

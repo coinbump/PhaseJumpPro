@@ -2,6 +2,7 @@
 #define PJSOMEPOINTERDEVICE_H
 
 #include "SomeInputDevice.h"
+#include "SomePosition.h"
 
 namespace PJ
 {
@@ -10,6 +11,14 @@ namespace PJ
     /// </summary>
     class SomePointerDevice : public SomeInputDevice
     {
+    protected:
+        ScreenPosition position;
+
+    public:
+        SomePointerDevice() {
+        }
+
+        virtual ScreenPosition Position() const { return position; }
     };
 }
 

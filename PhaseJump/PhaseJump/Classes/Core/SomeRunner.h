@@ -1,7 +1,7 @@
 #ifndef PJSOMERUNNER_H
 #define PJSOMERUNNER_H
 
-#include "Core/Updatable.h"
+#include "Updatable.h"
 
 /*
  RATING: 5 stars
@@ -9,7 +9,7 @@
  CODE REVIEW: 12/19/22
  */
 namespace PJ {
-    /// <summary>GameMo
+    /// <summary>
     /// An object that runs and then may finish or start over
     /// </summary>
     class SomeRunner : public Updatable {

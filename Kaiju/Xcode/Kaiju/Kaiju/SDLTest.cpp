@@ -148,6 +148,9 @@ void SDLFoo() {
         resourceRepository.Load(info);
     }
 
+    // Register a mouse device
+    Mouse::current = MAKE<SDLMouseDevice>();
+
     texture = DCAST<GLTexture>(window->World()->loadedResources->map["texture"]["heart-full"].resource);
     TestTextureScene testTextureScene(texture);
     testTextureScene.LoadInto(*window->World());
