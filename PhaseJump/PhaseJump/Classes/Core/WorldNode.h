@@ -8,6 +8,7 @@
 #include "GeoTransform.h"
 #include "SomeUIEvent.h"
 #include "Macros.h"
+#include "WorldNodeTransform.h"
 #include <memory>
 
 namespace PJ {
@@ -27,13 +28,23 @@ namespace PJ {
         float destroyCountdown = 0;
         bool isDestroyed = false;
         bool isActive = true;
+        
+        /// If >0, Awake/Start or both have been called for this node (1: Awake, 2: both Awake and Start)
+        int awakeCount = 0;
 
     public:
+        using NodeTransform = WorldNodeTransform;
+
+        // Don't use this directly, use World(), because this is only set in the root node
         std::weak_ptr<World> world;
 
         using Base = AcyclicGraphNode<>;
-        SP<GeoTransform> transform = MAKE<GeoTransform>();
 
+        // This is a reference type because components access it via reference
+        SP<NodeTransform> transform = MAKE<NodeTransform>();
+
+        bool IsAwake() const { return awakeCount > 0; }
+        bool IsStarted() const { return awakeCount > 1; }
         bool IsDestroyed() const { return isDestroyed; }
         std::size_t ChildCount() { return edges.size(); }
 

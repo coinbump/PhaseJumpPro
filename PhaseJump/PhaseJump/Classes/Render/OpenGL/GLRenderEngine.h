@@ -49,6 +49,7 @@ namespace PJ {
         void RenderStart() override;
         void RenderProcess(RenderModel const& model) override;
         void RenderDraw() override;
+        void RenderDrawPlans(VectorList<SP<GLRenderPlan>> const& renderPlans) ;
 
     protected:
         void GoInternal() override;

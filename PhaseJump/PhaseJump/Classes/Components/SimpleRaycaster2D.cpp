@@ -3,6 +3,8 @@
 #include "SimplePolygonCollider2D.h"
 #include "Matrix4x4.h"
 #include "Macros.h"
+#include "World.h"
+#include <iostream>
 
 using namespace std;
 using namespace PJ;
@@ -13,6 +15,8 @@ std::optional<RaycastHit2D> SimpleRaycaster2D::Raycast(Vector2 origin, Vector2 d
     auto owner = this->owner.lock();
     if (nullptr == owner) { return result; }
     auto ownerNode = SCAST<WorldNode>(owner);
+
+    auto world = World();
 
     auto camera = ownerNode->GetComponent<SomeCamera>();
     if (nullptr == camera) {
@@ -30,7 +34,7 @@ std::optional<RaycastHit2D> SimpleRaycaster2D::Raycast(Vector2 origin, Vector2 d
         auto colliders = worldNode->GetComponents<SimplePolygonCollider2D>();
         if (colliders.size() == 0) { continue; }
 
-        auto worldMatrix = camera->WorldModelMatrix(*worldNode);
+        auto worldMatrix = world->WorldModelMatrix(*worldNode);
 
         for (auto collider : colliders) {
             auto polygon = collider->polygon;
@@ -39,7 +43,11 @@ std::optional<RaycastHit2D> SimpleRaycaster2D::Raycast(Vector2 origin, Vector2 d
                 polygon[i] = worldMatrix.MultiplyPoint(polygon[i]);
             }
 
+            // cout << "Log: Test Poly: " << polygon.ToString() << "\n";
+
             if (polygon.TestHit(origin)) {
+                // cout << "Log: Test Poly HIT\n";
+
                 return std::make_optional<RaycastHit2D>(worldNode);
             }
         }

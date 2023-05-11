@@ -129,7 +129,7 @@ namespace PJ
 
         virtual void OnStateFinish()
         {
-            this->broadcaster->Broadcast(MAKE<EventStateFinish<T>>(this->state, this->shared_from_this()));
+            this->broadcaster.Broadcast(MAKE<EventStateFinish<T>>(this->state, this->shared_from_this()));
         }
 
     public:

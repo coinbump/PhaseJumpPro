@@ -78,7 +78,7 @@ namespace PJ
         /// <summary>
         /// Broadcast state change events
         /// </summary>
-        SP<Broadcaster> broadcaster = MAKE<Broadcaster>();
+        Broadcaster broadcaster;
 
         /// <summary>
         /// If true, state transitions can't occur
@@ -178,7 +178,7 @@ namespace PJ
 
         void AddListener(Broadcaster::ListenerWeakPtr listener)
         {
-            broadcaster->AddListener(listener);
+            broadcaster.AddListener(listener);
         }
 
         T State() const { return state; }
@@ -224,7 +224,7 @@ namespace PJ
         /// </summary>
         virtual void OnStateChange(T newState)
         {
-            broadcaster->Broadcast(MAKE<EventStateChange<T>>(prevState, newState, this->shared_from_this()));
+            broadcaster.Broadcast(MAKE<EventStateChange<T>>(prevState, newState, this->shared_from_this()));
         }
     };
 }

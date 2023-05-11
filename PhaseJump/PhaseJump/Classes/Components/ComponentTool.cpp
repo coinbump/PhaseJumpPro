@@ -12,8 +12,8 @@ void ComponentTool::AddComponentInternal(WorldNode& node, SP<SomeWorldComponent>
 
             simplePolygonCollider2D->polygon.Add(Vector3(-textureSize.x / 2.0f, textureSize.y / 2.0f, 0));
             simplePolygonCollider2D->polygon.Add(Vector3(textureSize.x / 2.0f, textureSize.y / 2.0f, 0));
-            simplePolygonCollider2D->polygon.Add(Vector3(-textureSize.x / 2.0f, -textureSize.y / 2.0f, 0));
             simplePolygonCollider2D->polygon.Add(Vector3(textureSize.x / 2.0f, -textureSize.y / 2.0f, 0));
+            simplePolygonCollider2D->polygon.Add(Vector3(-textureSize.x / 2.0f, -textureSize.y / 2.0f, 0));
         }
         return;
     }

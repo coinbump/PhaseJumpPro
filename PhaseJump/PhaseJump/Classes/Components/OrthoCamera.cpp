@@ -19,7 +19,7 @@ Vector2 OrthoCamera::WorldToScreen(Vector3 position) {
     }
 
     auto size = renderContext->Size();
-    auto cameraPosition = owner->transform->position;
+    auto cameraPosition = owner->transform->WorldPosition();
 
     Vector2 screenPosition(position.x - cameraPosition.x + size.x / 2.0f,
                            cameraPosition.y + size.y / 2.0f - position.y);
@@ -41,7 +41,7 @@ Vector3 OrthoCamera::ScreenToWorld(Vector2 position) {
     }
 
     auto size = renderContext->Size();
-    auto cameraPosition = owner->transform->position;
+    auto cameraPosition = owner->transform->WorldPosition();
 
     Vector3 worldPosition(position.x + cameraPosition.x - size.x / 2.0f,
                           size.y / 2.0f - position.y + cameraPosition.y,

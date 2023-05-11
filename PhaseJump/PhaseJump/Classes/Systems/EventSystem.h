@@ -5,12 +5,13 @@
 #include "VectorList.h"
 #include "WorldSystem.h"
 #include "SomeUIEvent.h"
+#include "_Map.h"
 #include <memory>
 
 namespace PJ {
     class WorldNode;
 
-    /// Handles input
+    /// Handles input events
     class EventSystem : public WorldSystem {
     protected:
         Map<PointerInputButton, VectorList<std::weak_ptr<WorldNode>>> pointerDownNodesMap;
@@ -24,6 +25,8 @@ namespace PJ {
 
         virtual bool ProcessPointerDownEvent(SP<PointerDownUIEvent<ScreenPosition>> pointerDownEvent);
         virtual bool ProcessPointerUpEvent(SP<PointerUpUIEvent> pointerUpEvent);
+
+        std::optional<LocalPosition> LocalHitPosition(ScreenPosition screenPosition);
     };
 }
 

@@ -34,6 +34,7 @@ namespace PJ
         /// Move this node to the position in 2D space
         /// (NOTE: This uses Vector3, but Rigidbody2D ignores the z component)
         /// </summary>
+        // TODO: rethink naming. Should it be MoveToWorldPosition?
         void MoveToPosition(Vector3 position, bool force = false) override
         {
             auto transform = Transform();
@@ -41,7 +42,7 @@ namespace PJ
 
             if (IsKinematic() || force)
             {
-                transform->position = position;
+                transform->SetWorldPosition(position);
             }
             else if (rigidbody)
             {

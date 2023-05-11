@@ -45,7 +45,7 @@ public:
                 meshRenderer->mesh = renderMesh;
             }
     //        window->World()->Add(meshNode);
-            meshNode->transform->scale = Vector3(1.0f + progress, 1.0f + progress, 1);
+            meshNode->transform->SetScale(Vector3(1.0f + progress, 1.0f + progress, 1));
     //        meshNode->transform->rotation.z = -(progress * 360.0f);
             pathNode->AddChild(meshNode);
         }
@@ -60,7 +60,7 @@ public:
         world.Add(pathNode);
 //        pathNode->transform->scale.x = 0.5f;
 //        pathNode->transform->position.x = 300;
-        pathNode->transform->position.z = -0.5f;
+//        pathNode->transform->position.z = -0.5f;
 //        pathNode->transform->rotation.z = -45;
 
         int count = 20;

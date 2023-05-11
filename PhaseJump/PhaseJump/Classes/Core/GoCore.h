@@ -66,7 +66,7 @@ namespace PJ
             sm->SetState(value);
         }
 
-        SP<Broadcaster> broadcaster = MAKE<Broadcaster>();
+        Broadcaster broadcaster;
 
         GoCore()
         {

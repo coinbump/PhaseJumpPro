@@ -25,7 +25,11 @@ void SpriteRenderer::RenderInto(RenderIntoModel model) {
     }
 
     RenderModelBuilder builder;
-    auto renderModel = builder.Build(*material->shaderProgram, mesh, *material, model.modelMatrix);
+    auto renderModel = builder.Build(*material->shaderProgram,
+                                     mesh,
+                                     *material,
+                                     model.modelMatrix,
+                                     owner.lock()->transform->WorldPosition().z);
 
     std::transform(renderModel.uvs.begin(), renderModel.uvs.end(), renderModel.uvs.begin(), [this] (Vector2 uv) {
         if (flipX) {

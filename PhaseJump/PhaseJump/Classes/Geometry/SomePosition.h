@@ -24,8 +24,9 @@ namespace PJ
         operator Vector3() const { return Position(); }
     };
 
-    struct WorldPosition : public SomePosition
+    class WorldPosition : public SomePosition
     {
+    public:
         Vector3 position;
 
         Vector3 Position() const override { return position; }
@@ -41,8 +42,9 @@ namespace PJ
         String ToString() const { return "World: " + position.ToString(); }
     };
 
-    struct LocalPosition : public SomePosition
+    class LocalPosition : public SomePosition
     {
+    public:
         Vector3 position;
         std::weak_ptr<WorldNode> reference;
 
@@ -59,8 +61,9 @@ namespace PJ
         String ToString() const { return "Local: " + position.ToString(); }
     };
 
-    struct ScreenPosition : public SomePosition
+    class ScreenPosition : public SomePosition
     {
+    public:
         Vector2 position;
 
         ScreenPosition() {

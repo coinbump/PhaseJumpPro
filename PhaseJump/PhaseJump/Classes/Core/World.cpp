@@ -42,6 +42,7 @@ void World::GoInternal() {
         }
     }
 
+    // All nodes get Awake first, then all get Start
     for (auto node : graph) {
         auto worldNode = SCAST<WorldNode>(node);
         worldNode->Awake();
@@ -113,4 +114,95 @@ void World::ProcessUIEvents(VectorList<SP<SomeUIEvent>> const& uiEvents) {
     for (auto system : iterSystems) {
         system->ProcessUIEvents(uiEvents);
     }
+}
+
+Matrix4x4 World::LocalModelMatrix(WorldNode const& node) {
+    Matrix4x4 translateMatrix, scaleMatrix, rotationMatrix;
+    translateMatrix.LoadTranslate(node.transform->LocalPosition());
+    scaleMatrix.LoadScale(node.transform->Scale());
+
+    // This is 2D rotation only
+    // FUTURE: support 3D rotation if needed.
+    rotationMatrix.LoadZRadRotation(Angle::DegreesAngle(node.transform->Rotation().z).Radians());
+
+    auto m1 = translateMatrix * rotationMatrix;
+    auto modelMatrix = m1 * scaleMatrix;
+    return modelMatrix;
+}
+
+Matrix4x4 World::WorldModelMatrix(WorldNode const& node) {
+    auto modelMatrix = LocalModelMatrix(node);
+
+    auto parent = SCAST<WorldNode>(node.Parent());
+
+    // Transform child to parent matrix
+    while (parent) {
+        auto parentModelMatrix = LocalModelMatrix(*parent);
+
+        modelMatrix = parentModelMatrix * modelMatrix;
+
+        parent = SCAST<WorldNode>(parent->Parent());
+    }
+
+    Matrix4x4 worldScaleMatrix;
+    worldScaleMatrix.LoadIdentity();
+
+    modelMatrix = worldScaleMatrix * modelMatrix;
+
+    return modelMatrix;
+}
+
+void World::OnUpdate(TimeSlice time)
+{
+    updateGraph = root->CollectBreadthFirstGraph();
+
+    auto iterSystems = systems;
+    for (auto system : iterSystems) {
+        system->OnUpdate(time);
+    }
+
+    VectorList<SP<WorldNode>> wakeupList;
+    for (auto node : updateGraph) {
+        auto worldNode = SCAST<WorldNode>(node);
+
+        if (!worldNode->IsAwake()) {
+            worldNode->Awake();
+            wakeupList.Add(worldNode);
+        }
+    }
+
+    for (auto worldNode : wakeupList) {
+        if (!worldNode->IsStarted()) {
+            worldNode->Start();
+        }
+    }
+
+    for (auto node : updateGraph) {
+        auto worldNode = SCAST<WorldNode>(node);
+
+        if (worldNode->IsDestroyed()) {
+            worldNode->OnDestroy();
+
+            auto subgraph = worldNode->CollectGraph();
+            for (auto node : subgraph) {
+                auto worldNode = SCAST<WorldNode>(node);
+                worldNode->Destroy();
+            }
+
+            auto parent = worldNode->Parent();
+            if (parent) {
+                parent->RemoveEdgesTo(worldNode);
+            }
+        } else if (worldNode->IsActive()) {
+            worldNode->OnUpdate(time);
+        }
+    }
+}
+
+void World::Add(SP<WorldNode> node) {
+    root->AddEdge(StandardEdgeModel(), node);
+}
+
+void World::SetRenderContext(SP<SomeRenderContext> renderContext) {
+    this->renderContext = renderContext;
 }

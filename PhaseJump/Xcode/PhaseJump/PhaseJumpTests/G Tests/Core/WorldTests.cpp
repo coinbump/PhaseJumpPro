@@ -10,7 +10,43 @@
 using namespace std;
 using namespace PJ;
 using namespace PJTest;
-//
+
+TEST(World, TestNodePositionsAtRoot) {
+    SP<World> world = MAKE<World>();
+
+    auto node = MAKE<WorldNode>();
+    world->Add(node);
+    world->Go();
+
+    EXPECT_EQ(Vector3::zero, node->transform->LocalPosition());
+    EXPECT_EQ(Vector3::zero, node->transform->WorldPosition());
+
+    node->transform->SetLocalPosition(Vector3(1, 1, 0));
+    EXPECT_EQ(Vector3(1, 1, 0), node->transform->LocalPosition());
+    EXPECT_EQ(Vector3(1, 1, 0), node->transform->WorldPosition());
+}
+
+TEST(World, TestNodePositionsAsChild) {
+    SP<World> world = MAKE<World>();
+
+    auto node = MAKE<WorldNode>();
+    auto parentNode = MAKE<WorldNode>();
+    parentNode->AddChild(node);
+    world->Add(parentNode);
+    world->Go();
+
+    EXPECT_EQ(Vector3::zero, node->transform->LocalPosition());
+    EXPECT_EQ(Vector3::zero, node->transform->WorldPosition());
+
+    node->transform->SetLocalPosition(Vector3(1, 1, 0));
+    EXPECT_EQ(Vector3(1, 1, 0), node->transform->LocalPosition());
+    EXPECT_EQ(Vector3(1, 1, 0), node->transform->WorldPosition());
+
+    parentNode->transform->SetLocalPosition(Vec3(10, 10, 0));
+    EXPECT_EQ(Vector3(1, 1, 0), node->transform->LocalPosition());
+    EXPECT_EQ(Vector3(11, 11, 0), node->transform->WorldPosition());
+}
+
 //TEST(World, TestRender_ChildInsideParent) {
 //    auto camera = MAKE<ReadingCamera>();
 //    auto cameraNode = MAKE<WorldNode>();

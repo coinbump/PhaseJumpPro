@@ -39,46 +39,23 @@ namespace PJ
 
         World();
 
+        virtual Matrix4x4 LocalModelMatrix(WorldNode const& node);
+        virtual Matrix4x4 WorldModelMatrix(WorldNode const& node);
+
         bool IsFinished() const override { return false; }
-        void OnUpdate(TimeSlice time) override
-        {
-            updateGraph = root->CollectBreadthFirstGraph();
-
-            auto iterSystems = systems;
-            for (auto system : iterSystems) {
-                system->OnUpdate(time);
-            }
-
-            for (auto node : updateGraph) {
-                auto worldNode = DCAST<WorldNode>(node);
-                if (worldNode->IsDestroyed()) {
-                    worldNode->OnDestroy();
-
-                    auto subgraph = worldNode->CollectGraph();
-                    for (auto node : subgraph) {
-                        auto worldNode = SCAST<WorldNode>(node);
-                        worldNode->Destroy();
-                    }
-
-                    auto parent = worldNode->Parent();
-                    if (parent) {
-                        parent->RemoveEdgesTo(worldNode);
-                    }
-                } else if (worldNode->IsActive()) {
-                    worldNode->OnUpdate(time);
-                }
-            }
-        }
-
+        void OnUpdate(TimeSlice time) override;
         virtual void Render();
 
-        void Add(SP<WorldNode> node) {
-            root->AddEdge(StandardEdgeModel(), node);
+        void Add(SP<WorldNode> node);
+
+        template <class T>
+        void AddComponent(SP<T> component) {
+            auto node = MAKE<WorldNode>();
+            node->AddComponent(component);
+            Add(node);
         }
 
-        void SetRenderContext(SP<SomeRenderContext> renderContext) {
-            this->renderContext = renderContext;
-        }
+        void SetRenderContext(SP<SomeRenderContext> renderContext);
 
         virtual void ProcessUIEvents(VectorList<SP<SomeUIEvent>> const& uiEvents);
     };

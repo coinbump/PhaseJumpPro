@@ -19,6 +19,7 @@ namespace PJ {
     protected:
         bool isDone = false;
         SDL_Window *window;
+        uint64_t startTime = 0;
 
     public:
         SDLWorld() {
@@ -32,8 +33,18 @@ namespace PJ {
         }
 
         void Run() {
+            startTime = SDL_GetTicks64();
+
             while (!isDone) {
-                mainLoop();
+                auto currentTime = SDL_GetTicks64();
+                double deltaTime = (currentTime - startTime) / 1000.0; // Convert to seconds.
+                startTime = currentTime;
+
+                OnUpdate(TimeSlice(deltaTime));
+
+                Render();
+
+                MainLoop();
             }
             SDL_Quit();
         }
@@ -43,7 +54,7 @@ namespace PJ {
             Base::GoInternal();
         }
 
-        void mainLoop();
+        void MainLoop();
     };
 }
 

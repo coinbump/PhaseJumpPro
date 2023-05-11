@@ -11,6 +11,7 @@ namespace PJ {
 
         ScreenPosition Position() const override;
         bool IsAvailable() override { return true; }
+        bool IsButtonDown(PointerInputButton button) override;
     };
 }
 

@@ -198,7 +198,7 @@ SP<GLVertexBuffer> GLRenderEngine::BuildVertexBuffer(GLVertexBufferPlan const& p
 
     for (auto item : plan.items) {
         auto itemSize = item.Size();
-        RunGL([&] () { glBufferSubData(GL_ARRAY_BUFFER, offset, itemSize, item.data); }, "VBO Data");
+        RunGL([&] () { glBufferSubData(GL_ARRAY_BUFFER, offset, itemSize, item.data->DataPointer()); }, "VBO Data");
 
         result->attributes[item.attributeId].offset = offset;
         result->attributes[item.attributeId].glType = item.glType;
@@ -247,25 +247,12 @@ void GLRenderEngine::RenderProcess(RenderModel const& model)  {
         return;
     }
 
-    Use(*glProgram);
-
-    auto modelMatrix = model.matrix;
-
     VectorList<Vector3> vertices = model.vertices;
     auto vertexCount = model.vertices.size();
 
     VectorList<Color> colors_float(vertexCount);
     VectorList<Color32> colors_byte(vertexCount);
     VectorList<Vector2> texCoords(vertexCount);
-
-    for (int i = 0; i < model.textures.size(); i++) {
-        auto & texture = model.textures[i];
-
-        // ? glActiveTexture is causing VBO errors. Investigate
-//        glActiveTexture(GL_TEXTURE0 + i);
-        glBindTexture(GL_TEXTURE_2D, texture->renderId);
-    }
-//    glActiveTexture(0);
 
     // First pass of this is very inefficient. We'll create an IBO, VBO, etc. for each render pass.
     // FUTURE: optimize as needed
@@ -315,74 +302,121 @@ void GLRenderEngine::RenderProcess(RenderModel const& model)  {
         vboPlan.Add("a_texCoord", texCoords);
     }
 
-    auto renderPlan = GLRenderPlan(model, vboPlan);
+    auto renderPlan = MAKE<GLRenderPlan>(model, vboPlan);
     renderPlans.Add(renderPlan);
-    
-    auto vbo = BuildVertexBuffer(vboPlan);
-    auto ibo = BuildIndexBuffer(model.indices);
-
-    // MARK: - Uniforms
-
-    if (glProgram->uniformLocations.find("u_mvpMatrix") != glProgram->uniformLocations.end()) {
-        Matrix4x4 viewProjectionMatrix = projectionMatrix * viewMatrix;
-        Matrix4x4 modelViewProjection = viewProjectionMatrix * modelMatrix;
-
-        auto location = glProgram->uniformLocations["u_mvpMatrix"];
-        UniformMatrix4fv(location, modelViewProjection.data());
-    }
-
-    if (glProgram->uniformLocations.find("u_float") != glProgram->uniformLocations.end()) {
-        float value = 1.0f;
-        if (model.uniformFloats.size() > 0) {
-            value = model.uniformFloats[0];
-        }
-
-        glUniform1f(glProgram->uniformLocations["u_float"], value);
-    }
-
-    if (glProgram->HasUniform("u_color")) {
-        Color color = Color::white;
-        if (model.uniformColors.size() > 0) {
-            color = model.uniformColors[0];
-        }
-        glUniform4f(glProgram->uniformLocations["u_color"], color.r, color.g, color.b, color.a);
-    }
-
-    BindVertexBuffer(vbo->glId);
-    BindIndexBuffer(ibo->glId);
-
-    VertexAttributePointer(glProgram->attributeLocations["a_position"], 3, GL_FLOAT, false, 0, 0);
-
-    if (hasColorAttribute) {
-        auto attribute = vbo->attributes["a_color"];
-
-        VertexAttributePointer(glProgram->attributeLocations["a_color"], 4, attribute.glType, attribute.normalize, 0, (void*)(uintptr_t)attribute.offset);
-    }
-
-    if (hasTextureCoordAttribute) {
-        VertexAttributePointer(glProgram->attributeLocations["a_texCoord"], 2, GL_FLOAT, false, 0, (void*)(uintptr_t)vbo->attributes["a_texCoord"].offset);
-    }
-
-    for (auto i : model.features) {
-        auto key = i.first;
-        auto status = i.second;
-
-        switch (status) {
-            case RenderFeatureStatus::Enable:
-                EnableFeature(key, true);
-                break;
-            case RenderFeatureStatus::Disable:
-                EnableFeature(key, false);
-                break;
-        }
-    }
-
-    DrawElements(GL_TRIANGLES, (GLsizei)model.indices.size(), GL_UNSIGNED_INT, nullptr);
 }
 
 void GLRenderEngine::RenderDraw() {
+    VectorList<SP<GLRenderPlan>> noBlendRenderPlans;
+    std::copy_if(renderPlans.begin(), renderPlans.end(), std::back_inserter(noBlendRenderPlans), [&](SP<GLRenderPlan> const& plan) {
+        return !plan->model.IsFeatureEnabled(RenderFeatures::Blend);
+    });
+
+    VectorList<SP<GLRenderPlan>> blendRenderPlans;
+    std::copy_if(renderPlans.begin(), renderPlans.end(), std::back_inserter(blendRenderPlans), [&](SP<GLRenderPlan> const& plan) {
+        return plan->model.IsFeatureEnabled(RenderFeatures::Blend);
+    });
+
+    struct ZSorter {
+        bool operator() (SP<GLRenderPlan> const& lhs, SP<GLRenderPlan> const& rhs) const {
+            return lhs->model.z > rhs->model.z;
+        }
+    };
+
+    std::sort(blendRenderPlans.begin(), blendRenderPlans.end(), ZSorter());
+
+    glEnable(GL_DEPTH_TEST);
+    RenderDrawPlans(noBlendRenderPlans);
+
+    glDisable(GL_DEPTH_TEST);
+    RenderDrawPlans(blendRenderPlans);
+
     // FUTURE: support batching, logging
     renderPlans.clear();
+}
+
+void GLRenderEngine::RenderDrawPlans(VectorList<SP<GLRenderPlan>> const& renderPlans) {
+    for (auto & rp : renderPlans) {
+        auto vboPlan = rp->vboPlan;
+        auto model = rp->model;
+        auto glProgram = dynamic_cast<GLShaderProgram*>(&model.shaderProgram);
+        auto modelMatrix = model.matrix;
+
+        auto vbo = BuildVertexBuffer(vboPlan);
+        auto ibo = BuildIndexBuffer(model.indices);
+
+        auto hasColorAttribute = glProgram->HasVertexAttribute("a_color");
+        auto hasTextureCoordAttribute = glProgram->HasVertexAttribute("a_texCoord");
+
+        // MARK: - Uniforms
+
+        Use(*glProgram);
+
+        for (int i = 0; i < model.textures.size(); i++) {
+            auto & texture = model.textures[i];
+
+            // ? glActiveTexture is causing VBO errors. Investigate
+    //        glActiveTexture(GL_TEXTURE0 + i);
+            glBindTexture(GL_TEXTURE_2D, texture->renderId);
+        }
+    //    glActiveTexture(0);
+
+        if (glProgram->uniformLocations.find("u_mvpMatrix") != glProgram->uniformLocations.end()) {
+            Matrix4x4 viewProjectionMatrix = projectionMatrix * viewMatrix;
+            Matrix4x4 modelViewProjection = viewProjectionMatrix * modelMatrix;
+
+            auto location = glProgram->uniformLocations["u_mvpMatrix"];
+            UniformMatrix4fv(location, modelViewProjection.data());
+        }
+
+        if (glProgram->uniformLocations.find("u_float") != glProgram->uniformLocations.end()) {
+            float value = 1.0f;
+            if (model.uniformFloats.size() > 0) {
+                value = model.uniformFloats[0];
+            }
+
+            glUniform1f(glProgram->uniformLocations["u_float"], value);
+        }
+
+        if (glProgram->HasUniform("u_color")) {
+            Color color = Color::white;
+            if (model.uniformColors.size() > 0) {
+                color = model.uniformColors[0];
+            }
+            glUniform4f(glProgram->uniformLocations["u_color"], color.r, color.g, color.b, color.a);
+        }
+
+        BindVertexBuffer(vbo->glId);
+        BindIndexBuffer(ibo->glId);
+
+        VertexAttributePointer(glProgram->attributeLocations["a_position"], 3, GL_FLOAT, false, 0, 0);
+
+        if (hasColorAttribute) {
+            auto attribute = vbo->attributes["a_color"];
+
+            VertexAttributePointer(glProgram->attributeLocations["a_color"], 4, attribute.glType, attribute.normalize, 0, (void*)(uintptr_t)attribute.offset);
+        }
+
+        if (hasTextureCoordAttribute) {
+            VertexAttributePointer(glProgram->attributeLocations["a_texCoord"], 2, GL_FLOAT, false, 0, (void*)(uintptr_t)vbo->attributes["a_texCoord"].offset);
+        }
+
+        for (auto i : model.features) {
+            auto key = i.first;
+            auto status = i.second;
+
+            switch (status) {
+                case RenderFeatureStatus::Enable:
+                    EnableFeature(key, true);
+                    break;
+                case RenderFeatureStatus::Disable:
+                    EnableFeature(key, false);
+                    break;
+            }
+        }
+
+        DrawElements(GL_TRIANGLES, (GLsizei)model.indices.size(), GL_UNSIGNED_INT, nullptr);
+    }
 }
 
 void GLRenderEngine::ScanGLExtensions()

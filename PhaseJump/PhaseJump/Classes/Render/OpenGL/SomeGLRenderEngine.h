@@ -10,6 +10,7 @@
 #include "_Set.h"
 #include "Matrix4x4.h"
 #include "RenderModel.h"
+#include "Data.h"
 
 /*
  RATING: 4 stars
@@ -37,12 +38,14 @@ namespace PJ {
     /// Plan for building a GL vertex buffer
     struct GLVertexBufferPlan {
         struct Item {
+            using Data = PJ::Data<>;
+
             String attributeId;
             uint32_t componentCount;
             uint32_t componentSize;
             GLenum glType;
             bool normalize;
-            void* data;
+            SP<Data> data;
 
             uint32_t Size() const { return componentSize * componentCount; }
 
@@ -56,8 +59,9 @@ namespace PJ {
             componentCount(componentCount),
             componentSize(componentSize),
             glType(glType),
-            data(data),
             normalize(normalize) {
+                this->data = MAKE<Data>();
+                this->data->CopyIn(data, componentCount * componentSize);
             }
         };
 
@@ -111,7 +115,7 @@ namespace PJ {
         Matrix4x4 viewMatrix;
         Matrix4x4 projectionMatrix;
 
-        VectorList<GLRenderPlan> renderPlans;
+        VectorList<SP<GLRenderPlan>> renderPlans;
 
     public:
         ColorFormat colorFormat = ColorFormat::Float;

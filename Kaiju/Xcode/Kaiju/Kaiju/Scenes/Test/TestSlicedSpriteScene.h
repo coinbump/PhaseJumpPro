@@ -33,9 +33,9 @@ public:
         auto program = GLShaderProgram::registry["texture.uniform"];
         if (program) {
             material->shaderProgram = program;
-//            material->features[RenderFeatures::Blend] = RenderFeatureStatus::Enable;
+            material->features[RenderFeatures::Blend] = RenderFeatureStatus::Enable;
         }
-        meshNode->transform->position.z = -0.1f;
+//        meshNode->transform->position.z = -0.1f;
 //        meshNode->transform->rotation.z = -45.0f;
 
         world.Add(meshNode);

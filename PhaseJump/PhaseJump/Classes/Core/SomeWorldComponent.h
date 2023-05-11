@@ -4,10 +4,12 @@
 #include "Base.h"
 #include "Updatable.h"
 #include "GeoTransform.h"
+#include "WorldNodeTransform.h"
 #include <memory>
 
 namespace PJ
 {
+    class World;
     class WorldNode;
 
     /// Core world component methods
@@ -18,12 +20,14 @@ namespace PJ
         bool isEnabled = true;
 
     public:
+        using NodeTransform = WorldNodeTransform;
+
         std::weak_ptr<WorldNode> owner;
 
         bool IsEnabled() const { return false; }
 
         void DestroyOwner(float afterSeconds = 0);
-        SP<GeoTransform> Transform() const;
+        SP<NodeTransform> Transform() const;
 
         // Called before Start
         virtual void Awake() {}
@@ -38,6 +42,8 @@ namespace PJ
 
         // Called after OnUpdate
         virtual void LateUpdate() {}
+
+        SP<World> World() const;
     };
 }
 

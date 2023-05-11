@@ -18,10 +18,10 @@ class TestStateHandler : public SomeStateHandler<ButtonControl::StateType> {
     void OnStateChange(StateType state) override {
         switch (state) {
             case StateType::Press:
-                owner.lock()->transform->scale = Vector2::Uniform(3.0f);
+                owner.lock()->transform->SetScale(Vector2::Uniform(3.0f));
                 break;
             default:
-                owner.lock()->transform->scale = Vector2::Uniform(1.0f);
+                owner.lock()->transform->SetScale(Vector2::Uniform(1.0f));
                 break;
         }
     }
@@ -67,8 +67,7 @@ public:
 //            meshRenderer->material = material;
 //            meshRenderer->mesh = renderMesh;
         }
-        meshNode->transform->position.z = -0.1f;
-        meshNode->transform->position.x = 200;
+        meshNode->transform->SetWorldPosition(Vector3(200, 0, -0.2f));
 //        meshNode->transform->scale.x = 10.0f;
 //        meshNode->transform->scale.y = 10.0f;
 //        renderer->flipX = true;
@@ -76,13 +75,18 @@ public:
 
 //        meshNode->SetActive(false);
 
+//        auto uiSystem = MAKE<UISystem>();
+//        world.AddComponent(uiSystem);
+
         auto button = MAKE<ButtonControl>();
         auto ts = MAKE<TestStateHandler>();
+        auto dragHandler = MAKE<DragHandler2D>();
 
         ComponentTool ct;
         auto collider = std::make_shared<SimplePolygonCollider2D>();
         ct.AddComponent(*meshNode, collider);
-        ct.AddComponent(*meshNode, button);
+//        ct.AddComponent(*meshNode, button);
+        ct.AddComponent(*meshNode, dragHandler);
         ct.AddComponent(*meshNode, ts);
 
         world.Add(meshNode);

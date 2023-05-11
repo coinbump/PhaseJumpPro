@@ -15,7 +15,11 @@ void MeshRenderer::RenderInto(RenderIntoModel model) {
     }
 
     RenderModelBuilder builder;
-    auto renderModel = builder.Build(*material->shaderProgram, mesh, *material, model.modelMatrix);
+    auto renderModel = builder.Build(*material->shaderProgram,
+                                     mesh,
+                                     *material,
+                                     model.modelMatrix,
+                                     owner.lock()->transform->WorldPosition().z);
 
     model.renderContext->renderEngine->RenderProcess(renderModel);
 }

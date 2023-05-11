@@ -70,6 +70,8 @@ namespace PJ
 
         Vector3 At(size_t index) const { return (*this)[index]; }
         Vector3& At(size_t index) { return (*this)[index]; }
+
+        String ToString() const;
     };
 }
 

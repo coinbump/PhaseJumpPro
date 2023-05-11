@@ -3,6 +3,7 @@
 
 #include "SomeInputDevice.h"
 #include "SomePosition.h"
+#include "SomeUIEvent.h"
 
 namespace PJ
 {
@@ -19,6 +20,7 @@ namespace PJ
         }
 
         virtual ScreenPosition Position() const { return position; }
+        virtual bool IsButtonDown(PointerInputButton button) { return false; }
     };
 }
 

@@ -38,6 +38,15 @@ namespace PJ {
         SomeShaderProgram& shaderProgram;
         Map<String, RenderFeatureStatus> features;
 
+        /// Use to sort blended objects back-to-front
+        float z = 0;
+
+        bool IsFeatureEnabled(String feature) const {
+            auto i = features.find(feature);
+            if (i == features.end()) { return false; }
+            return i->second == RenderFeatureStatus::Enable;
+        }
+
         Matrix4x4 matrix;
 
         RenderModel(SomeShaderProgram& shaderProgram) : shaderProgram(shaderProgram) {

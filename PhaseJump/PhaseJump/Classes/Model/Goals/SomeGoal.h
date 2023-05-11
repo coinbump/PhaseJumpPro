@@ -38,13 +38,13 @@ namespace PJ
             }
         }
 
-        SP<Broadcaster> broadcaster = MAKE<Broadcaster>();
+        Broadcaster broadcaster;
 
         virtual float Progress() const = 0;
 
         virtual void OnComplete()
         {
-            broadcaster->Broadcast(MAKE<EventGoalComplete>(SCAST<SomeGoal>(shared_from_this())));
+            broadcaster.Broadcast(MAKE<EventGoalComplete>(SCAST<SomeGoal>(shared_from_this())));
         }
     };
 }

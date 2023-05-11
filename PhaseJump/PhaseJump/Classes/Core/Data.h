@@ -57,6 +57,15 @@ namespace PJ {
             }
         }
 
+        void CopyIn(void* data, uint32_t size) {
+            Flush();
+
+            if (nullptr == data || size == 0) { return; }
+            
+            Resize(size);
+            memcpy(this->data, data, size);
+        }
+
         SP<This> Copy() const {
             auto result = MAKE<This>();
 

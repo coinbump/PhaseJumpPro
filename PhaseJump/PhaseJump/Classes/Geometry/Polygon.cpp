@@ -25,3 +25,14 @@ bool Polygon::TestHit(Vector2 pt) const {
 
     return c != 0;
 }
+
+String Polygon::ToString() const {
+    stringstream s;
+    s << "[";
+    for (auto v : *this) {
+        s << v.ToString() << ", ";
+    }
+    s << "]";
+
+    return s.str();
+}

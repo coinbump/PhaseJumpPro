@@ -11,6 +11,11 @@
 #include "WorldComponent.h"
 #include "SomeListener.h"
 
+/*
+ RATING: 5 stars
+ Simple type
+ CODE REVIEW: 5/9/23
+ */
 namespace PJ
 {
     /// <summary>

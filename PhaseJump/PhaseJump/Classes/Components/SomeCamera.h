@@ -23,8 +23,6 @@ namespace PJ
     {
     public:
         virtual void Render(VectorList<SP<WorldNode>> nodes, SP<SomeRenderContext> renderContext);
-        virtual Matrix4x4 LocalModelMatrix(WorldNode const& node);
-        virtual Matrix4x4 WorldModelMatrix(WorldNode const& node);
     };
 }
 

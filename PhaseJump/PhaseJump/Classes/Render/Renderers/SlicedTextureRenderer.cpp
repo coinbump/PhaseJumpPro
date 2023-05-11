@@ -139,6 +139,10 @@ void SlicedTextureRenderer::RenderInto(RenderIntoModel model) {
     }
 
     RenderModelBuilder builder;
-    auto renderModel = builder.Build(*material->shaderProgram, renderMesh, *material, model.modelMatrix);
+    auto renderModel = builder.Build(*material->shaderProgram,
+                                     renderMesh,
+                                     *material,
+                                     model.modelMatrix,
+                                     owner.lock()->transform->WorldPosition().z);
     model.renderContext->renderEngine->RenderProcess(renderModel);
 }

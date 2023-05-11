@@ -188,7 +188,6 @@
 		CD420A8E2957726900C5D3E1 /* SomeWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = CD420A8D2957726900C5D3E1 /* SomeWindow.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CD420A90295777D000C5D3E1 /* SDLWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = CD420A8F295777D000C5D3E1 /* SDLWindow.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CD420A9329577B3400C5D3E1 /* SomePointerDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = CD420A9229577B3400C5D3E1 /* SomePointerDevice.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		CD420A9729577CCF00C5D3E1 /* SomeEventSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = CD420A9629577CCF00C5D3E1 /* SomeEventSystem.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CD420A9B2957E5BB00C5D3E1 /* Color.h in Headers */ = {isa = PBXBuildFile; fileRef = CD420A9A2957E5BB00C5D3E1 /* Color.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CD420A9D2957E69A00C5D3E1 /* Color32.h in Headers */ = {isa = PBXBuildFile; fileRef = CD420A9C2957E69A00C5D3E1 /* Color32.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CD420A9F2957E6DE00C5D3E1 /* Color.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD420A9E2957E6DE00C5D3E1 /* Color.cpp */; };
@@ -335,6 +334,18 @@
 		CD86A75529F0F0050015BFCE /* SomeUIEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD86A75329F0F0050015BFCE /* SomeUIEvent.cpp */; };
 		CD86A75629F0F0050015BFCE /* SomeUIEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = CD86A75429F0F0050015BFCE /* SomeUIEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CD86A76529F225000015BFCE /* SomeCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD86A76429F225000015BFCE /* SomeCamera.cpp */; };
+		CD91BF912A0AF2D800FE4B58 /* SomeDragHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD91BF8F2A0AF2D800FE4B58 /* SomeDragHandler.cpp */; };
+		CD91BF922A0AF2D800FE4B58 /* SomeDragHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = CD91BF902A0AF2D800FE4B58 /* SomeDragHandler.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CD91BF962A0B1D1D00FE4B58 /* DragModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD91BF942A0B1D1D00FE4B58 /* DragModel.cpp */; };
+		CD91BF972A0B1D1D00FE4B58 /* DragModel.h in Headers */ = {isa = PBXBuildFile; fileRef = CD91BF952A0B1D1D00FE4B58 /* DragModel.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CD91BF9A2A0B215E00FE4B58 /* UISystem+Drag.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD91BF992A0B215E00FE4B58 /* UISystem+Drag.cpp */; };
+		CD91BF9E2A0B24B200FE4B58 /* DragItems.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD91BF9C2A0B24B200FE4B58 /* DragItems.cpp */; };
+		CD91BF9F2A0B24B200FE4B58 /* DragItems.h in Headers */ = {isa = PBXBuildFile; fileRef = CD91BF9D2A0B24B200FE4B58 /* DragItems.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CD91BFA22A0B375500FE4B58 /* DragHandler2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD91BFA02A0B375400FE4B58 /* DragHandler2D.cpp */; };
+		CD91BFA32A0B375500FE4B58 /* DragHandler2D.h in Headers */ = {isa = PBXBuildFile; fileRef = CD91BFA12A0B375400FE4B58 /* DragHandler2D.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CD91BFA52A0BE76800FE4B58 /* SomePointerDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD91BFA42A0BE76800FE4B58 /* SomePointerDevice.cpp */; };
+		CD91BFA82A0C099C00FE4B58 /* WorldNodeTransform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD91BFA62A0C099C00FE4B58 /* WorldNodeTransform.cpp */; };
+		CD91BFA92A0C099C00FE4B58 /* WorldNodeTransform.h in Headers */ = {isa = PBXBuildFile; fileRef = CD91BFA72A0C099C00FE4B58 /* WorldNodeTransform.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CD9649B029A138F800662285 /* Weight.h in Headers */ = {isa = PBXBuildFile; fileRef = CD9649AF29A138F800662285 /* Weight.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CD9649B229A13F5900662285 /* WeightedRandomChoice.h in Headers */ = {isa = PBXBuildFile; fileRef = CD9649B129A13F5900662285 /* WeightedRandomChoice.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CD9649B429A1418500662285 /* WeightedRandomTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD9649B329A1418500662285 /* WeightedRandomTests.cpp */; };
@@ -422,7 +433,7 @@
 		CDF0FB8C29F032A000B9EF1F /* GLBlendMode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDF0FB8B29F032A000B9EF1F /* GLBlendMode.cpp */; };
 		CDF0FB8E29F0B32A00B9EF1F /* SDLLoadGLTextureOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF0FB8D29F0B32A00B9EF1F /* SDLLoadGLTextureOperation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CDF759142A095B1900C15C73 /* UISystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDF759122A095B1900C15C73 /* UISystem.cpp */; };
-		CDF759152A095B1900C15C73 /* UISystem.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF759132A095B1900C15C73 /* UISystem.h */; };
+		CDF759152A095B1900C15C73 /* UISystem.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF759132A095B1900C15C73 /* UISystem.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CDF759182A095B4400C15C73 /* WorldSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDF759162A095B4400C15C73 /* WorldSystem.cpp */; };
 		CDF759192A095B4400C15C73 /* WorldSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF759172A095B4400C15C73 /* WorldSystem.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CDF7591B2A09A0BE00C15C73 /* SomeMouseDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF7591A2A09A0BE00C15C73 /* SomeMouseDevice.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -665,7 +676,6 @@
 		CD420A8D2957726900C5D3E1 /* SomeWindow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SomeWindow.h; sourceTree = "<group>"; };
 		CD420A8F295777D000C5D3E1 /* SDLWindow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDLWindow.h; sourceTree = "<group>"; };
 		CD420A9229577B3400C5D3E1 /* SomePointerDevice.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SomePointerDevice.h; sourceTree = "<group>"; };
-		CD420A9629577CCF00C5D3E1 /* SomeEventSystem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SomeEventSystem.h; sourceTree = "<group>"; };
 		CD420A9A2957E5BB00C5D3E1 /* Color.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Color.h; sourceTree = "<group>"; };
 		CD420A9C2957E69A00C5D3E1 /* Color32.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Color32.h; sourceTree = "<group>"; };
 		CD420A9E2957E6DE00C5D3E1 /* Color.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Color.cpp; sourceTree = "<group>"; };
@@ -812,6 +822,18 @@
 		CD86A75329F0F0050015BFCE /* SomeUIEvent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SomeUIEvent.cpp; sourceTree = "<group>"; };
 		CD86A75429F0F0050015BFCE /* SomeUIEvent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SomeUIEvent.h; sourceTree = "<group>"; };
 		CD86A76429F225000015BFCE /* SomeCamera.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SomeCamera.cpp; sourceTree = "<group>"; };
+		CD91BF8F2A0AF2D800FE4B58 /* SomeDragHandler.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SomeDragHandler.cpp; sourceTree = "<group>"; };
+		CD91BF902A0AF2D800FE4B58 /* SomeDragHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SomeDragHandler.h; sourceTree = "<group>"; };
+		CD91BF942A0B1D1D00FE4B58 /* DragModel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DragModel.cpp; sourceTree = "<group>"; };
+		CD91BF952A0B1D1D00FE4B58 /* DragModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DragModel.h; sourceTree = "<group>"; };
+		CD91BF992A0B215E00FE4B58 /* UISystem+Drag.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "UISystem+Drag.cpp"; sourceTree = "<group>"; };
+		CD91BF9C2A0B24B200FE4B58 /* DragItems.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DragItems.cpp; sourceTree = "<group>"; };
+		CD91BF9D2A0B24B200FE4B58 /* DragItems.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DragItems.h; sourceTree = "<group>"; };
+		CD91BFA02A0B375400FE4B58 /* DragHandler2D.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DragHandler2D.cpp; sourceTree = "<group>"; };
+		CD91BFA12A0B375400FE4B58 /* DragHandler2D.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DragHandler2D.h; sourceTree = "<group>"; };
+		CD91BFA42A0BE76800FE4B58 /* SomePointerDevice.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SomePointerDevice.cpp; sourceTree = "<group>"; };
+		CD91BFA62A0C099C00FE4B58 /* WorldNodeTransform.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WorldNodeTransform.cpp; sourceTree = "<group>"; };
+		CD91BFA72A0C099C00FE4B58 /* WorldNodeTransform.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WorldNodeTransform.h; sourceTree = "<group>"; };
 		CD9649AF29A138F800662285 /* Weight.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Weight.h; sourceTree = "<group>"; };
 		CD9649B129A13F5900662285 /* WeightedRandomChoice.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WeightedRandomChoice.h; sourceTree = "<group>"; };
 		CD9649B329A1418500662285 /* WeightedRandomTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WeightedRandomTests.cpp; sourceTree = "<group>"; };
@@ -1156,6 +1178,8 @@
 				CD837E3029FF040000467542 /* EnumClass.h */,
 				CD837E3929FF412E00467542 /* Result.cpp */,
 				CD837E3A29FF412E00467542 /* Result.h */,
+				CD91BFA62A0C099C00FE4B58 /* WorldNodeTransform.cpp */,
+				CD91BFA72A0C099C00FE4B58 /* WorldNodeTransform.h */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -1555,15 +1579,16 @@
 		CD420A912957785E00C5D3E1 /* Interface */ = {
 			isa = PBXGroup;
 			children = (
+				CD91BF9B2A0B24A100FE4B58 /* Drag */,
 				CD181CF12A03460500478C25 /* ButtonControl.cpp */,
 				CD181CF22A03460500478C25 /* ButtonControl.h */,
 				CD181CF52A0346C100478C25 /* UIControl2D.cpp */,
 				CD181CF62A0346C100478C25 /* UIControl2D.h */,
-				CD420A8D2957726900C5D3E1 /* SomeWindow.h */,
-				CD420A9629577CCF00C5D3E1 /* SomeEventSystem.h */,
-				CD0224782A0486A8008D3F1A /* SomeEventHandler.h */,
 				CDF759122A095B1900C15C73 /* UISystem.cpp */,
 				CDF759132A095B1900C15C73 /* UISystem.h */,
+				CD91BF992A0B215E00FE4B58 /* UISystem+Drag.cpp */,
+				CD420A8D2957726900C5D3E1 /* SomeWindow.h */,
+				CD0224782A0486A8008D3F1A /* SomeEventHandler.h */,
 			);
 			path = Interface;
 			sourceTree = "<group>";
@@ -1650,6 +1675,7 @@
 				CD420A9229577B3400C5D3E1 /* SomePointerDevice.h */,
 				CDF7591A2A09A0BE00C15C73 /* SomeMouseDevice.h */,
 				CDF759212A09A4FA00C15C73 /* SomeMouseDevice.cpp */,
+				CD91BFA42A0BE76800FE4B58 /* SomePointerDevice.cpp */,
 			);
 			path = Input;
 			sourceTree = "<group>";
@@ -1815,6 +1841,21 @@
 				CD86A75429F0F0050015BFCE /* SomeUIEvent.h */,
 			);
 			path = UI;
+			sourceTree = "<group>";
+		};
+		CD91BF9B2A0B24A100FE4B58 /* Drag */ = {
+			isa = PBXGroup;
+			children = (
+				CD91BF8F2A0AF2D800FE4B58 /* SomeDragHandler.cpp */,
+				CD91BF902A0AF2D800FE4B58 /* SomeDragHandler.h */,
+				CD91BFA02A0B375400FE4B58 /* DragHandler2D.cpp */,
+				CD91BFA12A0B375400FE4B58 /* DragHandler2D.h */,
+				CD91BF942A0B1D1D00FE4B58 /* DragModel.cpp */,
+				CD91BF952A0B1D1D00FE4B58 /* DragModel.h */,
+				CD91BF9C2A0B24B200FE4B58 /* DragItems.cpp */,
+				CD91BF9D2A0B24B200FE4B58 /* DragItems.h */,
+			);
+			path = Drag;
 			sourceTree = "<group>";
 		};
 		CD9649BF29A1F59500662285 /* Random */ = {
@@ -2055,6 +2096,7 @@
 				CDDD40272951439200361C67 /* StringIdentifiable.h in Headers */,
 				CDDD40362951439200361C67 /* Switchable.h in Headers */,
 				CDF0FB7629EE06C400B9EF1F /* RenderModel.h in Headers */,
+				CD91BFA92A0C099C00FE4B58 /* WorldNodeTransform.h in Headers */,
 				CDF9D9E52925A91D00C912E9 /* WeakReference.h in Headers */,
 				CD0A84522918A1F00074CA4F /* Types.h in Headers */,
 				CDCEFD5029E9AB6100F42045 /* GLRenderState.h in Headers */,
@@ -2125,12 +2167,14 @@
 				CD2A6A8329D67E560076BB3F /* SQLWhereArguments.h in Headers */,
 				CD9649BE29A1EECA00662285 /* SomeRandomChoice.h in Headers */,
 				CD837E1A29FEBAA900467542 /* LoadResourcesPlan.h in Headers */,
+				CD91BFA32A0B375500FE4B58 /* DragHandler2D.h in Headers */,
 				CDDD402F2951439200361C67 /* CoreTypes.h in Headers */,
 				CD2A6A5B29D3F56D0076BB3F /* SQLTypes.h in Headers */,
 				CD837D8129FB235000467542 /* Vector4.h in Headers */,
 				CD837DF429FB7B1000467542 /* SimplePolygonCollider2D.h in Headers */,
 				CD376DC229E8BD1B00DC7950 /* GLShaderLoader.h in Headers */,
 				CDF9D9E82925C69000C912E9 /* Event.h in Headers */,
+				CD91BF922A0AF2D800FE4B58 /* SomeDragHandler.h in Headers */,
 				CD184018295E4D4A003459C4 /* GoalEvents.h in Headers */,
 				CD420AD22958060500C5D3E1 /* SDLTexture.h in Headers */,
 				CDCA12CA29F30E79000F2694 /* SomeShaderProgram.h in Headers */,
@@ -2154,6 +2198,7 @@
 				CD2A6A7F29D67D260076BB3F /* SQLTableQueryArguments.h in Headers */,
 				CD376C9829E5042200DC7950 /* SomeLayout.h in Headers */,
 				CD86A75129F0EF7C0015BFCE /* SDLUIEventsBuilder.h in Headers */,
+				CD91BF972A0B1D1D00FE4B58 /* DragModel.h in Headers */,
 				CD837DCD29FB2D5D00467542 /* TSMath.h in Headers */,
 				CDF9DA162932615700C912E9 /* RateLimiter.h in Headers */,
 				CD1E7CC62941A1A800001DB9 /* AnimationCycleTimer.h in Headers */,
@@ -2163,7 +2208,6 @@
 				CD1E7CE12946531800001DB9 /* SomeStateMachine.h in Headers */,
 				CD837DD129FB2D5D00467542 /* TSVector2D.h in Headers */,
 				CDF7591B2A09A0BE00C15C73 /* SomeMouseDevice.h in Headers */,
-				CD420A9729577CCF00C5D3E1 /* SomeEventSystem.h in Headers */,
 				CD420ADE2958CB6C00C5D3E1 /* Polygon.h in Headers */,
 				CD837E1E29FEBAB300467542 /* LoadResourceInfo.h in Headers */,
 				CD2A6A6A29D520490076BB3F /* AcyclicGraphNode.h in Headers */,
@@ -2223,6 +2267,7 @@
 				CD184022295E5328003459C4 /* SomeReceptor.h in Headers */,
 				CD181CEF2A03110E00478C25 /* ComponentTool.h in Headers */,
 				CD837DC029FB2D5D00467542 /* TSLine3D.h in Headers */,
+				CD91BF9F2A0B24B200FE4B58 /* DragItems.h in Headers */,
 				CD2A6A6929D520490076BB3F /* SomeGraphNode.h in Headers */,
 				CDF9D9FF292EEE3800C912E9 /* GeoTransform.h in Headers */,
 				CD0A84562918A1F00074CA4F /* _String.h in Headers */,
@@ -2372,6 +2417,7 @@
 				CDF7591F2A09A11800C15C73 /* SDLMouseDevice.cpp in Sources */,
 				CD86A74429F0D7D20015BFCE /* SomeUIEventPoller.cpp in Sources */,
 				CD376D9729E7B70C00DC7950 /* imgui_demo.cpp in Sources */,
+				CD91BF9E2A0B24B200FE4B58 /* DragItems.cpp in Sources */,
 				CD837DC529FB2D5D00467542 /* TSLine3D.cpp in Sources */,
 				CD837DF629FB845600467542 /* Polygon.cpp in Sources */,
 				CD837DEF29FB7AFE00467542 /* SomeCollider2D.cpp in Sources */,
@@ -2393,6 +2439,7 @@
 				CD420AFB295A0FA700C5D3E1 /* Vector3.cpp in Sources */,
 				CD837DC829FB2D5D00467542 /* TSDipole3D.cpp in Sources */,
 				CD837E2D29FF03F900467542 /* Enum.cpp in Sources */,
+				CD91BFA22A0B375500FE4B58 /* DragHandler2D.cpp in Sources */,
 				CD376CA029E65C5B00DC7950 /* SomePathLayout.cpp in Sources */,
 				CDDD402D2951439200361C67 /* WorldComponent.cpp in Sources */,
 				CD837DBB29FB2D5C00467542 /* TSQuaternion.cpp in Sources */,
@@ -2408,12 +2455,14 @@
 				CD837DFE29FDBEB200467542 /* SomeWorldComponent.cpp in Sources */,
 				CD376D9529E7B70C00DC7950 /* imgui_draw.cpp in Sources */,
 				CD86A74A29F0EEB90015BFCE /* SDLEventPoller.cpp in Sources */,
+				CD91BFA82A0C099C00FE4B58 /* WorldNodeTransform.cpp in Sources */,
 				CD376DCA29E8F6D600DC7950 /* GLShaderProgram.cpp in Sources */,
 				CD837DC629FB2D5D00467542 /* TSBivector3D.cpp in Sources */,
 				CD376DA629E842E000DC7950 /* SomeRenderer.cpp in Sources */,
 				CD2A6A5C29D3F56D0076BB3F /* SQLUtils.cpp in Sources */,
 				CDCEFD5629EA00C300F42045 /* GLShaderProgramLoader.cpp in Sources */,
 				CD376D9F29E7B8B200DC7950 /* SDLImGuiRenderContext.cpp in Sources */,
+				CD91BFA52A0BE76800FE4B58 /* SomePointerDevice.cpp in Sources */,
 				CDCA12D129F32A5C000F2694 /* Bitmap.cpp in Sources */,
 				CD376DB329E893C800DC7950 /* GLRenderEngine.cpp in Sources */,
 				CD376D9B29E7B70C00DC7950 /* imgui_widgets.cpp in Sources */,
@@ -2430,9 +2479,11 @@
 				CD420B0C295BF1B500C5D3E1 /* Vector2.cpp in Sources */,
 				CD837E1D29FEBAB300467542 /* LoadResourceInfo.cpp in Sources */,
 				CD2A6A4529D0FDC20076BB3F /* Core.cpp in Sources */,
+				CD91BF9A2A0B215E00FE4B58 /* UISystem+Drag.cpp in Sources */,
 				CD2A6A7229D5297C0076BB3F /* FileManager.cpp in Sources */,
 				CDCA12BF29F30D13000F2694 /* MeshRenderer.cpp in Sources */,
 				CD0A8499291DE71B0074CA4F /* _String.cpp in Sources */,
+				CD91BF912A0AF2D800FE4B58 /* SomeDragHandler.cpp in Sources */,
 				CD837DDC29FB799500467542 /* Camera.cpp in Sources */,
 				CD837DCE29FB2D5D00467542 /* TSVector3D.cpp in Sources */,
 				CD837DC429FB2D5D00467542 /* TSMatrix4D.cpp in Sources */,
@@ -2445,6 +2496,7 @@
 				CD837D7D29F77B9F00467542 /* GLTexture.cpp in Sources */,
 				CD837E0529FDD53600467542 /* OrthoCamera.cpp in Sources */,
 				CD86A74D29F0EEF50015BFCE /* SDLWorld.cpp in Sources */,
+				CD91BF962A0B1D1D00FE4B58 /* DragModel.cpp in Sources */,
 				CDF7592B2A0A02F700C15C73 /* View2D.cpp in Sources */,
 				CDCEFD5D29EA388100F42045 /* RenderMesh.cpp in Sources */,
 				CD837E0229FDCB1D00467542 /* EventSystem.cpp in Sources */,

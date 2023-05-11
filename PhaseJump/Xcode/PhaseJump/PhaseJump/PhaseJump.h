@@ -5,7 +5,7 @@
 #include <PhaseJump/Class.h>
 #include <PhaseJump/Core.h>
 #include <PhaseJump/ComponentTool.h>
-
+#include <PhaseJump/DragHandler2D.h>
 #include <PhaseJump/EllipseRenderMeshBuilder.h>
 
 #include <PhaseJump/FileManager.h>
@@ -37,11 +37,13 @@
 #include <PhaseJump/SimplePolygonCollider2D.h>
 #include <PhaseJump/SimpleRaycaster2D.h>
 #include <PhaseJump/SlicedTextureRenderer.h>
+#include <PhaseJump/SomeDragHandler.h>
 #include <PhaseJump/SomeUIEvent.h>
 #include <PhaseJump/SomeStateHandler.h>
 #include <PhaseJump/SpriteRenderer.h>
 #include <PhaseJump/StandardLoadResourcesModel.h>
 #include <PhaseJump/StandardRandom.h>
+#include <PhaseJump/UISystem.h>
 #include <PhaseJump/QuadRenderMeshBuilder.h>
 #include <PhaseJump/VFlow.h>
 

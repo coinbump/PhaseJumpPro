@@ -31,7 +31,7 @@ namespace PJ
             }
         };
 
-        SP<Broadcaster> broadcaster = MAKE<Broadcaster>();
+        Broadcaster broadcaster;
 
         BroadcastTimer(String id, float duration, RunType runType) : Base(duration, runType)
         {
@@ -44,7 +44,7 @@ namespace PJ
             Base::OnFinish();
 
             auto event = MAKE<Event>(id);
-            broadcaster->Broadcast(std::static_pointer_cast<PJ::Event>(event));
+            broadcaster.Broadcast(std::static_pointer_cast<PJ::Event>(event));
         }
     };
 
@@ -59,7 +59,7 @@ namespace PJ
         using Base = Timer;
         std::function<SP<Event>()> allocator;
 
-        SP<Broadcaster> broadcaster = MAKE<Broadcaster>();
+        Broadcaster broadcaster;
 
         BroadcastEventTimer(float duration, RunType runType, std::function<SP<Event>()> allocator) : Base(duration, runType), allocator(allocator)
         {
@@ -70,7 +70,7 @@ namespace PJ
         {
             Base::OnFinish();
 
-            broadcaster->Broadcast(allocator());
+            broadcaster.Broadcast(allocator());
         }
     };
 }

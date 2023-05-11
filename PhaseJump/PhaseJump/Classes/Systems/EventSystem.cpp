@@ -5,13 +5,14 @@
 #include "Matrix4x4.h"
 #include "WorldNode.h"
 #include "SomePosition.h"
+#include "World.h"
 #include <TSMatrix4D.h>
 #include <iostream>
 
 using namespace std;
 using namespace PJ;
 
-std::optional<LocalPosition> LocalHitPosition(ScreenPosition screenPosition) {
+std::optional<LocalPosition> EventSystem::LocalHitPosition(ScreenPosition screenPosition) {
     // Get the camera
     auto camera = Camera::main;
     if (nullptr == camera) { return std::nullopt; }
@@ -21,11 +22,13 @@ std::optional<LocalPosition> LocalHitPosition(ScreenPosition screenPosition) {
     if (nullptr == raycaster) { return std::nullopt; }
 
     auto worldPosition = camera->ScreenToWorld(screenPosition.position);
+    // cout << "Log: Test: " << worldPosition.ToString() << "\n";
+
     auto hit = raycaster->Raycast(worldPosition, Vector2::zero);
     if (!hit) { return std::nullopt; }
 
     auto worldHitPosition = camera->ScreenToWorld(screenPosition.position);
-    auto worldModelMatrix = camera->WorldModelMatrix(*hit->node);
+    auto worldModelMatrix = World()->WorldModelMatrix(*hit->node);
     Terathon::Point3D point(worldHitPosition.x, worldHitPosition.y, worldHitPosition.z);
     auto localHitPosition = Terathon::InverseTransform(worldModelMatrix, point);
 
@@ -38,8 +41,12 @@ bool EventSystem::ProcessPointerDownEvent(SP<PointerDownUIEvent<ScreenPosition>>
 
     auto result = true;
 
+    // cout << "Log: ProcessPointerDownEvent\n";
+
     auto hitPosition = LocalHitPosition(pointerDownEvent->pressPosition);
     if (!hitPosition) { return result; }
+
+    // cout << "Log: HIT: ProcessPointerDownEvent\n";
 
     // Send mouse down event to node components
     auto localPointerDownEvent = PointerDownUIEvent<LocalPosition>(hitPosition.value(), pointerDownEvent->button);
@@ -94,7 +101,7 @@ void EventSystem::ProcessUIEvents(VectorList<SP<SomeUIEvent>> const& uiEvents) {
                 for (auto node : pointerEnterNodes) {
                     if (node.expired()) { continue; }
 
-                    cout << "Log: Pointer Exit: " << mouseMotionEvent->position.ToString() << "\n";
+                    // cout << "Log: Pointer Exit: " << mouseMotionEvent->position.ToString() << "\n";
 
                     auto _node = node.lock();
                     DispatchEvent(_node, [&](SP<SomePointerEventsResponder> pointerEventsResponder) {
@@ -109,7 +116,7 @@ void EventSystem::ProcessUIEvents(VectorList<SP<SomeUIEvent>> const& uiEvents) {
                     return;
                 }
 
-                cout << "Log: Pointer Enter: " << hitPosition.value().ToString() << "\n";
+                // cout << "Log: Pointer Enter: " << hitPosition.value().ToString() << "\n";
 
                 pointerEnterNodes.Add(node);
 

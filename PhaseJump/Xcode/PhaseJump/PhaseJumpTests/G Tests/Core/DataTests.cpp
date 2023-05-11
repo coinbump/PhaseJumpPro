@@ -68,3 +68,18 @@ TEST(Data, TestCopy)
     EXPECT_EQ(4, copy->DataSize());
     EXPECT_EQ(testValue, *((uint32_t*)copy->DataPointer()));
 }
+
+TEST(Data, TestCopyIn)
+{
+    Data<CallocDataAllocator> sut;
+
+    sut.Resize(4);
+    uint32_t testValue = 0xEF1fAABB;
+    *((uint32_t*)sut.DataPointer()) = testValue;
+
+    Data<CallocDataAllocator> sut2;
+    sut2.CopyIn(sut.DataPointer(), sut.DataSize());
+    EXPECT_NE(nullptr, sut2.DataPointer());
+    EXPECT_EQ(4, sut2.DataSize());
+    EXPECT_EQ(testValue, *((uint32_t*)sut2.DataPointer()));
+}

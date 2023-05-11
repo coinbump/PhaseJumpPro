@@ -113,7 +113,7 @@ void SDLFoo() {
     window->SetWorld(MAKE<TestWorld>());
     window->Go();
 
-    auto eventSystem = MAKE<EventSystem>();
+    auto eventSystem = MAKE<UISystem>();
     auto systemNode = MAKE<WorldNode>();
     systemNode->AddComponent(eventSystem);
     window->World()->root->AddChild(systemNode);

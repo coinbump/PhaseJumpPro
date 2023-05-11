@@ -68,11 +68,11 @@ namespace PJ
         virtual void OnValueChange()
         {
             auto sharedThis = this->shared_from_this();
-            broadcaster->Broadcast(MAKE<EventPublishedChange<T>>(sharedThis));
+            broadcaster.Broadcast(MAKE<EventPublishedChange<T>>(sharedThis));
         }
 
     public:
-        SP<Broadcaster> broadcaster = MAKE<Broadcaster>();
+        Broadcaster broadcaster;
         SP<SomeValueTransform<T>> transform = MAKE<IdentityTransform<T>>();
 
         virtual T Value() const { return value; }
@@ -95,7 +95,7 @@ namespace PJ
 
         void AddListener(Broadcaster::ListenerWeakPtr listener)
         {
-            broadcaster->AddListener(listener);
+            broadcaster.AddListener(listener);
         }
 
         /// <summary>
