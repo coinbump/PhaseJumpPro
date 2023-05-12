@@ -6,7 +6,7 @@
 /*
  RATING: 5 stars
  Simple abstract
- CODE REVIEW: 12/26/22
+ CODE REVIEW: 5/10/23
  */
 namespace PJ
 {
@@ -15,6 +15,17 @@ namespace PJ
     /// </summary>
     class SomeEffect : public SwitchHandler
     {
+    public:
+        using Base = SwitchHandler;
+
+        void OnSwitchChange() override {
+            Base::OnSwitchChange();
+
+            UpdateEffectProperties();
+        }
+
+        // Override to update the effect properties when the effect state changes
+        virtual void UpdateEffectProperties() {}
     };
 }
 

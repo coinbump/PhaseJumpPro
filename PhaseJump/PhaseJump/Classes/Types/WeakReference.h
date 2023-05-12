@@ -17,7 +17,7 @@ namespace PJ
     template <class T> struct WeakReference : public SomeReference<T>
     {
     protected:
-        std::weak_ptr<T> value;
+        WP<T> value;
 
     public:
         WeakReference(SP<T> value) : value(value)

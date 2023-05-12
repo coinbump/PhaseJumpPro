@@ -17,10 +17,7 @@ namespace PJ {
     class SomeListener
     {
     public:
-        using EventSharedPtr = SP<Event>;
-        using EventPtr = EventSharedPtr const&;
-
-        virtual void OnEvent(EventPtr event) = 0;
+        virtual void OnEvent(SPC<Event> event) = 0;
     };
 }
 

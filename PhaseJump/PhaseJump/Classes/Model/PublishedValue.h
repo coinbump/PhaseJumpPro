@@ -12,8 +12,6 @@
  Has unit tests
  CODE REVIEW: 12/11/22
  */
-
-// TODO: sync with new changes in C#
 namespace PJ
 {
     template <class T> class PublishedValue;
@@ -73,12 +71,11 @@ namespace PJ
 
     public:
         Broadcaster broadcaster;
-        SP<SomeValueTransform<T>> transform = MAKE<IdentityTransform<T>>();
 
         virtual T Value() const { return value; }
         virtual void SetValue(T value)
         {
-            auto newValue = transform->Transform(value);
+            auto newValue = value;
             if (this->value == newValue) { return; }
 
             this->value = newValue;
@@ -102,13 +99,30 @@ namespace PJ
         /// Convenience function for responding to a value change event
         /// Checks if the value change belongs to this->Published object and performs the action if it is
         /// </summary>
-        void OnValueChange(Broadcaster::EventSharedPtr theEvent, std::function<T> action)
+        void OnValueChange(SPC<Event> theEvent, std::function<void(T)> action)
         {
-            auto eventValueChange = std::dynamic_pointer_cast<EventPublishedChange<T>>(theEvent);
-            if (nullptr != eventValueChange && eventValueChange.value == this)
+            auto eventValueChange = DCAST<EventPublishedChange<T>>(theEvent);
+            if (nullptr != eventValueChange && eventValueChange->value.get() == this)
             {
                 action(value);
             }
+        }
+    };
+
+    template <class T>
+    class PublishedTransformValue : public PublishedValue<T> {
+    public:
+        using Base = PublishedValue<T>;
+
+        SP<SomeValueTransform<T>> transform = MAKE<IdentityTransform<T>>();
+
+        PublishedTransformValue(T value) : Base(value)
+        {
+        }
+
+        virtual void SetValue(T value) override
+        {
+            Base::SetValue(transform->Transform(value));
         }
     };
 }

@@ -1,4 +1,5 @@
 // In this header, you should import all the public headers of your framework using statements like #import <PhaseJump/PublicHeader.h>
+#include <PhaseJump/AnimateHueEffect.h>
 #include <PhaseJump/Base.h>
 #include <PhaseJump/ButtonControl.h>
 #include <PhaseJump/CirclePathLayout2D.h>
@@ -37,6 +38,7 @@
 #include <PhaseJump/SimplePolygonCollider2D.h>
 #include <PhaseJump/SimpleRaycaster2D.h>
 #include <PhaseJump/SlicedTextureRenderer.h>
+#include <PhaseJump/SliderControl.h>
 #include <PhaseJump/SomeDragHandler.h>
 #include <PhaseJump/SomeUIEvent.h>
 #include <PhaseJump/SomeStateHandler.h>

@@ -29,7 +29,7 @@ namespace PJ
         }
 
         AcyclicNodeSharedPtr Root() {
-            auto node = std::static_pointer_cast<typename Base::Node>(this->shared_from_this());
+            auto node = SCAST<typename Base::Node>(this->shared_from_this());
             typename Base::NodeSet searchedNodes;
 
             while (node->FromNodes().size() > 0)

@@ -10,5 +10,5 @@ void UIControl2D::Awake() {
     if (!node) { return; }
 
     hoverGestureHandler = node->AddComponent<HoverGestureHandler>();
-    hoverGestureHandler->target = static_pointer_cast<UIControl2D>(shared_from_this());
+    hoverGestureHandler->target = SCAST<UIControl2D>(shared_from_this());
 }

@@ -27,7 +27,7 @@ namespace PJ
         class HoverGestureHandler : public SomeHoverGestureHandler
         {
         public:
-            std::weak_ptr<UIControl2D> target;
+            WP<UIControl2D> target;
 
             void SetIsHovering(bool value) override
             {

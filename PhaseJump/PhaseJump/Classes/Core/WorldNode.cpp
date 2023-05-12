@@ -6,7 +6,7 @@
 using namespace std;
 using namespace PJ;
 
-std::weak_ptr<World> WorldNode::World() const {
+WP<World> WorldNode::World() const {
     if (!world.expired()) {
         return world;
     }
@@ -14,7 +14,7 @@ std::weak_ptr<World> WorldNode::World() const {
     if (parent) {
         return parent->World();
     }
-    return std::weak_ptr<PJ::World>();
+    return WP<PJ::World>();
 }
 
 void WorldNode::Awake() {

@@ -35,7 +35,7 @@ namespace PJ
         using GoStateMachinePtr = GoStateMachineSharedPtr const&;
         
         GoStateMachineSharedPtr sm = MAKE<GoStateMachine<StateType>>();
-        std::weak_ptr<SomeGoStateListener<StateType>> owner;
+        WP<SomeGoStateListener<StateType>> owner;
 
     protected:
         virtual void OnStateChange(GoStateMachine<StateType>& inStateMachine) {
@@ -94,20 +94,20 @@ namespace PJ
             this->owner = owner;
         }
 
-        void OnEvent(EventPtr event) override
+        void OnEvent(SPC<Event> event) override
         {
             if (event->sentFrom.expired()) { return; }
 
-            auto asStateMachine = std::dynamic_pointer_cast<GoStateMachine<StateType>>(event->sentFrom.lock());
+            auto asStateMachine = DCAST<GoStateMachine<StateType>>(event->sentFrom.lock());
             if (!asStateMachine) { return; }
 
-            if (auto stateChangeEvent = std::dynamic_pointer_cast<EventStateChange<StateType>>(event))
+            if (auto stateChangeEvent = DCAST<EventStateChange<StateType>>(event))
             {
                 OnStateChange(*asStateMachine);
                 return;
             }
 
-            if (auto stateFinishEvent = std::dynamic_pointer_cast<EventStateFinish<StateType>>(event))
+            if (auto stateFinishEvent = DCAST<EventStateFinish<StateType>>(event))
             {
                 OnStateFinish(*asStateMachine);
                 return;

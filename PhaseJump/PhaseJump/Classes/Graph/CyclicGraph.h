@@ -26,7 +26,7 @@ namespace PJ
     public:
         using EdgeModelSharedPtr = SP<EdgeModel>;
         using Node = CyclicGraphNode<EdgeModel>;
-        using NodeWeakPtr = std::weak_ptr<Node>;
+        using NodeWeakPtr = WP<Node>;
         using NodeSharedPtr = SP<Node>;
         using NodePtr = NodeSharedPtr const&;
         using NodeSet = Set<NodeSharedPtr>;

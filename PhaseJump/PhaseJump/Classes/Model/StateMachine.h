@@ -23,7 +23,7 @@ namespace PJ
         T prevState;
         T state;
 
-        EventStateChange(T prevState, T state, std::weak_ptr<PJ::Base> sentFrom) :
+        EventStateChange(T prevState, T state, WP<PJ::Base> sentFrom) :
         Event(String(""), sentFrom),
         prevState(prevState),
         state(state)

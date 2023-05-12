@@ -44,3 +44,24 @@ void SpriteRenderer::RenderInto(RenderIntoModel model) {
 
     model.renderContext->renderEngine->RenderProcess(renderModel);
 }
+
+Vector2 SpriteRenderer::Size() const {
+    if (material && !material->textures.IsEmpty()) {
+        auto texture = material->textures[0];
+        if (texture) {
+            return Vector2(texture->size.x, texture->size.y);
+        }
+    }
+
+    return Vector2();
+}
+
+void SpriteRenderer::SetColor(Color color) {
+    if (material) {
+        if (material->uniformColors.IsEmpty()) {
+            material->uniformColors.Add(color);
+        } else {
+            material->uniformColors[0] = color;
+        }
+    }
+}

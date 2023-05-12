@@ -84,7 +84,7 @@ namespace BroadcasterTests {
         int listenCount = 0;
         String lastMessage;
 
-        void OnEvent(EventPtr event) override {
+        void OnEvent(SPC<Event> event) override {
             listenCount++;
             lastMessage = event->id;
         }

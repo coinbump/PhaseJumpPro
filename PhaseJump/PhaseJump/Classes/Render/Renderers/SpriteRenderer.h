@@ -30,6 +30,14 @@ namespace PJ {
         SpriteRenderer(SP<SomeTexture> texture);
 
         void RenderInto(RenderIntoModel model) override;
+        Vector2 Size() const;
+
+        std::optional<Vector3> WorldSize() const override {
+            auto size = Size();
+            return Vector3(size.x, size.y, 0);
+        }
+
+        void SetColor(Color color) override;
     };
 }
 

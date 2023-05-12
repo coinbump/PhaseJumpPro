@@ -19,6 +19,12 @@ namespace PJ
         SP<RenderMaterial> material;
 
         virtual void RenderInto(RenderIntoModel model) = 0;
+
+        /// Override to return intrinsic size of renderer (if any)
+        virtual std::optional<Vector3> WorldSize() const { return std::nullopt; }
+
+        /// Override to set render color
+        virtual void SetColor(Color color) { }
     };
 
     /// Render based on a function (used for imGui)

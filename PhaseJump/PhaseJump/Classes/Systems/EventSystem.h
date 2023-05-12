@@ -14,8 +14,8 @@ namespace PJ {
     /// Handles input events
     class EventSystem : public WorldSystem {
     protected:
-        Map<PointerInputButton, VectorList<std::weak_ptr<WorldNode>>> pointerDownNodesMap;
-        VectorList<std::weak_ptr<WorldNode>> pointerEnterNodes;
+        Map<PointerInputButton, VectorList<WP<WorldNode>>> pointerDownNodesMap;
+        VectorList<WP<WorldNode>> pointerEnterNodes;
 
     public:
         void ProcessUIEvents(VectorList<SP<SomeUIEvent>> const& uiEvents) override;

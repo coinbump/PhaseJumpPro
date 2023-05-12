@@ -31,7 +31,7 @@ namespace PJ
         /// Useful if the object with the collider has its own transform modifier which interferes with the drag
         /// or wants to be used as a drag handle for something else.
         /// </summary>
-        std::weak_ptr<SomeDragHandler> dragTarget;
+        WP<SomeDragHandler> dragTarget;
 
         virtual SP<UISystem> UISystem() const
         {

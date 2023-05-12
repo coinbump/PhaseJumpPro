@@ -76,7 +76,7 @@ void SDLLoadGLTextureOperation::Run() {
 
     auto texture = MAKE<GLTexture>(id, glTexture, Vector2Int(width, height), TextureAlphaMode::Standard);
 
-    LoadedResource loadedResource(info.filePath, info.typeId, info.id, static_pointer_cast<PJ::Base>(texture));
+    LoadedResource loadedResource(info.filePath, info.typeId, info.id, SCAST<PJ::Base>(texture));
     Success result;
     result.Add(loadedResource);
 

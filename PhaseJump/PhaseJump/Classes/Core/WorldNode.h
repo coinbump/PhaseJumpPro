@@ -36,7 +36,7 @@ namespace PJ {
         using NodeTransform = WorldNodeTransform;
 
         // Don't use this directly, use World(), because this is only set in the root node
-        std::weak_ptr<World> world;
+        WP<World> world;
 
         using Base = AcyclicGraphNode<>;
 
@@ -50,7 +50,7 @@ namespace PJ {
 
         VectorList<ComponentSharedPtr> const& Components() const { return components; }
 
-        std::weak_ptr<World> World() const;
+        WP<World> World() const;
 
         void Add(ComponentPtr component)
         {

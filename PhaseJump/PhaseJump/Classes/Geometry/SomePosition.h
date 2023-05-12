@@ -46,12 +46,12 @@ namespace PJ
     {
     public:
         Vector3 position;
-        std::weak_ptr<WorldNode> reference;
+        WP<WorldNode> reference;
 
         LocalPosition() {
         }
 
-        LocalPosition(Vector3 position, std::weak_ptr<WorldNode> reference) : position(position), reference(reference)
+        LocalPosition(Vector3 position, WP<WorldNode> reference) : position(position), reference(reference)
         {
         }
 

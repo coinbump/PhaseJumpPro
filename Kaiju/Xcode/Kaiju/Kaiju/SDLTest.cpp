@@ -72,7 +72,7 @@ protected:
                 continue;
             }
 
-            auto pointerDownEvent = dynamic_pointer_cast<PointerDownUIEvent<ScreenPosition>>(event);
+            auto pointerDownEvent = DCAST<PointerDownUIEvent<ScreenPosition>>(event);
             if (pointerDownEvent) {
                 cout << "Pointer down at: " << pointerDownEvent->pressPosition.position.x << ", " << pointerDownEvent->pressPosition.position.y << "\n";
             }
@@ -157,7 +157,7 @@ void SDLFoo() {
 
     auto sliceTexture = DCAST<GLTexture>(window->World()->loadedResources->map["texture"]["example-button-normal"].resource);
     TestSlicedSpriteScene testSlicedSpriteScene(sliceTexture);
-    testSlicedSpriteScene.LoadInto(*window->World());
+//    testSlicedSpriteScene.LoadInto(*window->World());
 
     window->World()->Go();
     window->World()->Run();

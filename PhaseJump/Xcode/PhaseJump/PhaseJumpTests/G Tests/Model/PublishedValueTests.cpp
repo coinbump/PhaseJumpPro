@@ -8,10 +8,10 @@ using namespace std;
 
 namespace PublishedValueTests {
     template <class T>
-    class TestValue : public PublishedValue<T>
+    class TestValue : public PublishedTransformValue<T>
     {
     public:
-        using Base = PublishedValue<T>;
+        using Base = PublishedTransformValue<T>;
 
         TestValue(T value) : Base(value)
         {

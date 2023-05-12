@@ -24,7 +24,7 @@ namespace PJ {
 
         virtual ~Enum() {}
 
-        SP<EnumClass<EnumType>> EnumClass() const { return static_pointer_cast<PJ::EnumClass<EnumType>>(_class); }
+        SP<EnumClass<EnumType>> EnumClass() const { return SCAST<PJ::EnumClass<EnumType>>(_class); }
 
         virtual String Id() const { return EnumClass()->IdOf(value); }
         virtual String Name() const { return EnumClass()->NameOf(value); }

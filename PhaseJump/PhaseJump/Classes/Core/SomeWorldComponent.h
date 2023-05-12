@@ -22,9 +22,9 @@ namespace PJ
     public:
         using NodeTransform = WorldNodeTransform;
 
-        std::weak_ptr<WorldNode> owner;
+        WP<WorldNode> owner;
 
-        bool IsEnabled() const { return false; }
+        bool IsEnabled() const { return isEnabled; }
 
         void DestroyOwner(float afterSeconds = 0);
         SP<NodeTransform> Transform() const;

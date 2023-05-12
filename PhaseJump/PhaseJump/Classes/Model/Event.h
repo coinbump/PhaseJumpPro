@@ -2,6 +2,7 @@
 #define PJEVENT_H
 
 #include "_String.h"
+#include "Macros.h"
 #include <memory>
 
 /*
@@ -21,7 +22,7 @@ namespace PJ {
     {
     public:
         // OPTIONAL:
-        std::weak_ptr<Base> sentFrom;
+        WP<Base> sentFrom;
 
         /// <summary>
         /// Event id
@@ -34,7 +35,7 @@ namespace PJ {
         Event(String id) : id(id) {
         }
 
-        Event(String id, std::weak_ptr<Base> sentFrom) : id(id), sentFrom(sentFrom)
+        Event(String id, WP<Base> sentFrom) : id(id), sentFrom(sentFrom)
         {
         }
 

@@ -13,6 +13,11 @@ using SPC = std::shared_ptr<T> const&;
 template <class T>
 using WP = std::weak_ptr<T>;
 
+template <class T>
+SP<T> LOCK(WP<T> const& value) {
+    return value.lock();
+}
+
 template<class _Tp, class ..._Args, class = std::__enable_if_t<!std::is_array<_Tp>::value>>
 std::shared_ptr<_Tp> MAKE(_Args&& ...__args)
 {

@@ -4,7 +4,7 @@ using namespace std;
 using namespace PJ;
 
 void ComponentTool::AddComponentInternal(WorldNode& node, SP<SomeWorldComponent> component) {
-    auto simplePolygonCollider2D = dynamic_pointer_cast<SimplePolygonCollider2D>(component);
+    auto simplePolygonCollider2D = DCAST<SimplePolygonCollider2D>(component);
     if (simplePolygonCollider2D && simplePolygonCollider2D->polygon.IsEmpty()) {
         auto spriteRenderer = node.GetComponent<SpriteRenderer>();
         if (spriteRenderer && spriteRenderer->material && !spriteRenderer->material->textures.IsEmpty()) {

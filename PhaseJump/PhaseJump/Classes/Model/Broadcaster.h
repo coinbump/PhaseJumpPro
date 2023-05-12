@@ -18,7 +18,7 @@ namespace PJ {
     class Broadcaster : public SomeBroadcaster
     {
     public:
-        using ListenerWeakPtr = std::weak_ptr<SomeListener>;
+        using ListenerWeakPtr = WP<SomeListener>;
         using ListenerList = VectorList<ListenerWeakPtr>;
         using EventSharedPtr = SP<Event>;
         using EventPtr = EventSharedPtr const&;

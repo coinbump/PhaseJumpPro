@@ -21,7 +21,7 @@ namespace PJ
 
         T state;
 
-        EventStateFinish(T state, std::weak_ptr<PJ::Base> sentFrom) : Base(String(""), sentFrom), state(state)
+        EventStateFinish(T state, WP<PJ::Base> sentFrom) : Base(String(""), sentFrom), state(state)
         {
         }
     };
@@ -39,10 +39,10 @@ namespace PJ
         class SomeModifier : public SomeRunner
         {
         protected:
-            std::weak_ptr<GoStateMachine<T>> owner;
+            WP<GoStateMachine<T>> owner;
 
         public:
-            SomeModifier(std::weak_ptr<GoStateMachine<T>> owner, SomeRunner::RunType runType) : SomeRunner(runType), owner(owner)
+            SomeModifier(WP<GoStateMachine<T>> owner, SomeRunner::RunType runType) : SomeRunner(runType), owner(owner)
             {
             }
         };

@@ -25,6 +25,8 @@ namespace PJ {
 
         Vector3 Scale() const { return transform.scale; }
         void SetScale(Vector3 const& value) { transform.scale = value; }
+        Vector3 LocalScale() const { return transform.scale; }
+        void SetLocalScale(Vector3 const& value) { transform.scale = value; }
 
         Vector3 Rotation() const { return transform.rotation; }
         void SetRotation(Vector3 const& value) { transform.rotation = value; }

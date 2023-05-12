@@ -28,7 +28,7 @@ namespace PJ
     public:
         using This = SomeGraphNode<EdgeModel>;
         using Node = SomeGraphNode<EdgeModel>;
-        using NodeWeakPtr = std::weak_ptr<Node>;
+        using NodeWeakPtr = WP<Node>;
         using NodeSharedPtr = SP<Node>;
         using NodePtr = NodeSharedPtr const&;
         using NodeReference = SomeReference<Node>;

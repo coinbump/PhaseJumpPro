@@ -23,7 +23,7 @@ namespace PJ {
 
         /// First point is offset from top-left of texture. Second point is offset from bottom-right
         std::array<Vector2Int, 2> slicePoints;
-        Vector2 worldSize;
+        Vector2 size;
 
     public:
         /// Model used to build the sliced mesh. Used for unit tests
@@ -79,10 +79,12 @@ namespace PJ {
 
         SlicedTextureRenderer(SP<SomeTexture> texture, Vector2 worldSize, std::array<Vector2Int, 2> slicePoints);
 
-        void SetWorldSize(Vector2 worldSize);
+        void SetSize(Vector2 worldSize);
 
         void RenderInto(RenderIntoModel model) override;
         BuildModel MakeBuildModel() const;
+
+        std::optional<Vector3> WorldSize() const override { return std::make_optional(Vector3(size.x, size.y, 0)); }
 
     protected:
         void BuildRenderMesh();

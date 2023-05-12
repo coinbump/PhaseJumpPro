@@ -44,7 +44,7 @@ namespace PJ
             Base::OnFinish();
 
             auto event = MAKE<Event>(id);
-            broadcaster.Broadcast(std::static_pointer_cast<PJ::Event>(event));
+            broadcaster.Broadcast(SCAST<PJ::Event>(event));
         }
     };
 

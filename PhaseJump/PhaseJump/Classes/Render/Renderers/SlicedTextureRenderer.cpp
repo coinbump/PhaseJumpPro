@@ -10,7 +10,7 @@
 using namespace std;
 using namespace PJ;
 
-SlicedTextureRenderer::SlicedTextureRenderer(SP<SomeTexture> texture, Vector2 worldSize, std::array<Vector2Int, 2> slicePoints) : worldSize(worldSize), slicePoints(slicePoints) {
+SlicedTextureRenderer::SlicedTextureRenderer(SP<SomeTexture> texture, Vector2 worldSize, std::array<Vector2Int, 2> slicePoints) : size(worldSize), slicePoints(slicePoints) {
     material = MAKE<RenderMaterial>();
     material->textures.Add(texture);
 
@@ -32,14 +32,14 @@ PJ::SlicedTextureRenderer::BuildModel SlicedTextureRenderer::MakeBuildModel() co
     result.sliceRight = texture->size.x - result.sliceRightOffset;
     result.sliceBottom = texture->size.y - result.sliceBottomOffset;
 
-    result.left = -worldSize.x / 2.0f + result.sliceLeft;
-    result.top = (worldSize.y / 2.0f) * Vector2::up.y + result.sliceTop * Vector2::down.y;
-    result.right = worldSize.x / 2.0f - result.sliceRightOffset;
-    result.bottom = (worldSize.y / 2.0f) * Vector2::down.y + result.sliceBottomOffset * Vector2::up.y;
+    result.left = -size.x / 2.0f + result.sliceLeft;
+    result.top = (size.y / 2.0f) * Vector2::up.y + result.sliceTop * Vector2::down.y;
+    result.right = size.x / 2.0f - result.sliceRightOffset;
+    result.bottom = (size.y / 2.0f) * Vector2::down.y + result.sliceBottomOffset * Vector2::up.y;
 
     result.textureSize = texture->size;
-    result.topAndBottomWorldWidth = worldSize.x - result.sliceLeft - result.sliceRightOffset;
-    result.leftAndRightWorldHeight = worldSize.y - result.sliceTop - result.sliceBottomOffset;
+    result.topAndBottomWorldWidth = size.x - result.sliceLeft - result.sliceRightOffset;
+    result.leftAndRightWorldHeight = size.y - result.sliceTop - result.sliceBottomOffset;
     result.topAndBottomSliceWidth = result.textureSize.x - result.sliceLeft - result.sliceRightOffset;
     result.leftAndRightSliceHeight = result.textureSize.y - result.sliceTop - result.sliceBottomOffset;
 
@@ -125,10 +125,10 @@ void SlicedTextureRenderer::BuildRenderMesh() {
     meshList[MeshIndex::BottomRight];
 }
 
-void SlicedTextureRenderer::SetWorldSize(Vector2 worldSize) {
-    if (this->worldSize == worldSize) { return; }
+void SlicedTextureRenderer::SetSize(Vector2 worldSize) {
+    if (this->size == worldSize) { return; }
 
-    this->worldSize = worldSize;
+    this->size = worldSize;
     BuildRenderMesh();
 }
 

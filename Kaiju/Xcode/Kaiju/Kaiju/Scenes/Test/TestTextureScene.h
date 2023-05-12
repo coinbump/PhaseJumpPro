@@ -37,59 +37,101 @@ public:
     void LoadInto(World& world) {
         if (nullptr == texture) { return; }
 
-        auto meshNode = MAKE<WorldNode>();
-//        auto renderer = MAKE<MeshRenderer>();
-//        meshNode->AddComponent(renderer);
+        {
+            auto sliceTexture = DCAST<GLTexture>(world.loadedResources->map["texture"]["slider-track"].resource);
 
-        auto renderer = MAKE<SpriteRenderer>(texture);
-        meshNode->AddComponent(renderer);
+            auto trackNode = MAKE<WorldNode>();
+            std::array<Vector2Int, 2> slicePoints{Vector2Int(12, 12), Vector2Int(12, 12)};
+            auto trackRenderer = MAKE<SlicedTextureRenderer>(sliceTexture, Vector2(300, 33), slicePoints);
+            trackNode->AddComponent(trackRenderer);
 
-//        auto material = MAKE<RenderMaterial>();
-        auto material = renderer->material;
-        
-        auto program = GLShaderProgram::registry["texture.uniform"];//texture.interp.uniform"]; //"texture.uniform"
-        if (program) {
-            material->shaderProgram = program;
-//            material->textures.Add(RenderTexture(texture->glId));
+            auto trackMaterial = trackRenderer->material;
+            trackMaterial->shaderProgram = GLShaderProgram::registry["texture.uniform"];
+            trackMaterial->features[RenderFeatures::Blend] = RenderFeatureStatus::Enable;
 
-//            material->colors.Add(Color::white);
-//            material->colors.Add(Color::red);
-//            material->colors.Add(Color::white);
-//            material->colors.Add(Color::red);
+            auto animateHueEffect = MAKE<AnimateHueEffect>();
+            animateHueEffect->SetIsOn(true);
 
-//            material->uniformColors.Add(Color::blue);
-//            material->uniformFloats.Add(0);//0.5f);
+            auto thumbTexture = DCAST<GLTexture>(world.loadedResources->map["texture"]["slider-thumb"].resource);
+            auto thumbNode = MAKE<WorldNode>();
+            auto thumbRenderer = MAKE<SpriteRenderer>(thumbTexture);
+            thumbNode->AddComponent(thumbRenderer);
 
-            material->features[RenderFeatures::Blend] = RenderFeatureStatus::Enable;
+            auto thumbMaterial = thumbRenderer->material;
+            thumbMaterial->shaderProgram = GLShaderProgram::registry["texture.uniform"];
+            thumbMaterial->features[RenderFeatures::Blend] = RenderFeatureStatus::Enable;
 
-//            QuadRenderMeshBuilder builder(Vector2(400, 400));
-//            auto renderMesh = builder.BuildRenderMesh();
-//            meshRenderer->material = material;
-//            meshRenderer->mesh = renderMesh;
+            auto sliderControl = MAKE<SliderControl>();
+            sliderControl->endCapSize = 10;
+            trackNode->AddComponent(sliderControl);
+            trackNode->AddChild(thumbNode);
+
+            ComponentTool ct;
+            auto collider = MAKE<SimplePolygonCollider2D>();
+            ct.AddComponent(*thumbNode, collider);
+            ct.AddComponent(*thumbNode, animateHueEffect);
+
+            world.Add(trackNode);
         }
-        meshNode->transform->SetWorldPosition(Vector3(200, 0, -0.2f));
-//        meshNode->transform->scale.x = 10.0f;
-//        meshNode->transform->scale.y = 10.0f;
-//        renderer->flipX = true;
-//        renderer->flipY = true;
 
-//        meshNode->SetActive(false);
+        {
+            auto meshNode = MAKE<WorldNode>();
+            //        auto renderer = MAKE<MeshRenderer>();
+            //        meshNode->AddComponent(renderer);
 
-//        auto uiSystem = MAKE<UISystem>();
-//        world.AddComponent(uiSystem);
+            auto renderer = MAKE<SpriteRenderer>(texture);
+            meshNode->AddComponent(renderer);
 
-        auto button = MAKE<ButtonControl>();
-        auto ts = MAKE<TestStateHandler>();
-        auto dragHandler = MAKE<DragHandler2D>();
+            //        auto material = MAKE<RenderMaterial>();
+            auto material = renderer->material;
 
-        ComponentTool ct;
-        auto collider = std::make_shared<SimplePolygonCollider2D>();
-        ct.AddComponent(*meshNode, collider);
-//        ct.AddComponent(*meshNode, button);
-        ct.AddComponent(*meshNode, dragHandler);
-        ct.AddComponent(*meshNode, ts);
+            auto program = GLShaderProgram::registry["texture.uniform"];//texture.interp.uniform"]; //"texture.uniform"
+            if (program) {
+                material->shaderProgram = program;
+                //            material->textures.Add(RenderTexture(texture->glId));
 
-        world.Add(meshNode);
+                //            material->colors.Add(Color::white);
+                //            material->colors.Add(Color::red);
+                //            material->colors.Add(Color::white);
+                //            material->colors.Add(Color::red);
+
+                //            material->uniformColors.Add(Color::blue);
+                //            material->uniformFloats.Add(0);//0.5f);
+
+                material->features[RenderFeatures::Blend] = RenderFeatureStatus::Enable;
+
+                //            QuadRenderMeshBuilder builder(Vector2(400, 400));
+                //            auto renderMesh = builder.BuildRenderMesh();
+                //            meshRenderer->material = material;
+                //            meshRenderer->mesh = renderMesh;
+            }
+            meshNode->transform->SetWorldPosition(Vector3(200, 0, -0.2f));
+            //        meshNode->transform->scale.x = 10.0f;
+            //        meshNode->transform->scale.y = 10.0f;
+            //        renderer->flipX = true;
+            //        renderer->flipY = true;
+
+            //        meshNode->SetActive(false);
+
+            //        auto uiSystem = MAKE<UISystem>();
+            //        world.AddComponent(uiSystem);
+
+            auto button = MAKE<ButtonControl>();
+            auto ts = MAKE<TestStateHandler>();
+            auto dragHandler = MAKE<DragHandler2D>();
+            auto animateHueEffect = MAKE<AnimateHueEffect>();
+            animateHueEffect->SetIsOn(true);
+
+            ComponentTool ct;
+            auto collider = MAKE<SimplePolygonCollider2D>();
+            ct.AddComponent(*meshNode, collider);
+            //        ct.AddComponent(*meshNode, button);
+            ct.AddComponent(*meshNode, dragHandler);
+            ct.AddComponent(*meshNode, ts);
+//            ct.AddComponent(*meshNode, animateHueEffect);
+
+            world.Add(meshNode);
+        }
     }
 };
 
