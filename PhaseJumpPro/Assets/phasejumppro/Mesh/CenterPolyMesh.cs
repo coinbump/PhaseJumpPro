@@ -6,6 +6,7 @@ using UnityEngine;
 RATING: 5 stars
 Tested and works
 CODE REVIEW: 12/28/22
+PORTED TO: C++
 */
 namespace PJ
 {
@@ -15,15 +16,15 @@ namespace PJ
     /// </summary>
     public class CenterPolyMesh : SomeCenterPolyMesh
     {
-        public int MeshVertexCount => polygon.vertices.Count + 1;
-        public int SliceCount => polygon.vertices.Count - 1;
+        public int MeshVertexCount => polygon.Count + 1;
+        public int SliceCount => polygon.Count - 1;
 
         public CenterPolyMesh() { }
 
         public override Mesh BuildMesh()
         {
             var mesh = new Mesh();
-            if (polygon.vertices.Count < 2) { return mesh; }
+            if (polygon.Count < 2) { return mesh; }
 
             var vertexCount = MeshVertexCount;
             var vertices = new Vector3[vertexCount];
@@ -38,14 +39,14 @@ namespace PJ
             uv[0] = new Vector2(0.5f, 0.5f);
 
             var polyWithCenter = new Polygon();
-            polyWithCenter.vertices.Add(vertices[0]);
-            polyWithCenter.vertices.AddRange(polygon.vertices);
+            polyWithCenter.Add(vertices[0]);
+            polyWithCenter.AddRange(polygon);
             var polygonMin = polyWithCenter.Min;
             var polygonSize = polyWithCenter.Size;
 
             // Edge vertices
             int vi = 1;
-            foreach (var vertex in polygon.vertices)
+            foreach (var vertex in polygon)
             {
                 vertices[vi] = vertex;
                 uv[vi] = new Vector2((vertex.x - polygonMin.x) / polygonSize.x, (vertex.y - polygonMin.y) / polygonSize.y);

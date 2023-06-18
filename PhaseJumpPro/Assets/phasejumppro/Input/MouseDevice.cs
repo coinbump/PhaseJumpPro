@@ -11,7 +11,7 @@ namespace PJ
     /// <summary>
     /// Input device that points
     /// </summary>
-    public class PointerDevice : SomeInputDevice
+    public class SomePointerDevice : SomeInputDevice
     {
         public override bool IsAvailable()
         {
@@ -22,24 +22,11 @@ namespace PJ
     /// <summary>
     /// Wraps Unity Mouse for future portability to C++
     /// </summary>
-    public class MouseDevice : PointerDevice
+    public class MouseDevice : SomePointerDevice
     {
-        /// <summary>
-        /// Optional. Allows us to work with overlay cameras as well as the main camera
-        /// </summary>
-		public Camera camera;
-
         public Mouse mouse
         {
             get => Mouse.current;
-        }
-
-        public Camera Camera
-        {
-            get
-            {
-                return camera != null ? camera : Camera.main;
-            }
         }
 
         public Vector3 ScreenPosition
@@ -51,15 +38,6 @@ namespace PJ
 
                 var position = mouse.position.ReadValue();
                 return new Vector3(position.x, position.y, 0);
-            }
-        }
-
-        public Vector3 WorldPosition
-        {
-            get
-            {
-                var screenPosition = ScreenPosition;
-                return Camera.ScreenToWorldPoint(screenPosition);
             }
         }
 

@@ -40,7 +40,7 @@ namespace PJ
 
             var worldSize = Utils.ScreenWorldSize(screenCamera);
             worldSize -= inset * 2.0f;
-            meshBuilder.WorldSize = worldSize;
+            meshBuilder.WorldSize2D = worldSize;
             transform.position = new Vector3(offset.x, offset.y, transform.position.z);
         }
 

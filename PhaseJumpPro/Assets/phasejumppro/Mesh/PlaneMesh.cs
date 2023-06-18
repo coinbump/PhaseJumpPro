@@ -5,6 +5,7 @@ using UnityEngine;
 RATING: 5 stars
 Has unit tests
 CODE REVIEW: 12/28/22
+PORTED TO: C++
 */
 namespace PJ
 {
@@ -41,7 +42,7 @@ namespace PJ
 
         public override Mesh BuildMesh()
         {
-            var mesh = new Mesh();
+            var result = new Mesh();
 
             int vertexXCount = meshSize.x + 1;
             int vertexZCount = meshSize.y + 1;
@@ -51,7 +52,7 @@ namespace PJ
             var trianglesSize = cellCount * 6;
             var triangles = new int[trianglesSize];
             var uvSize = verticesSize;
-            var uv = new Vector2[uvSize];
+            var uvs = new Vector2[uvSize];
 
             for (int z = 0, i = 0; z < vertexZCount; z++)
             {
@@ -74,7 +75,7 @@ namespace PJ
                             break;
                     }
 
-                    uv[i] = new Vector2((float)x / (float)(vertexXCount - 1), (float)z / (float)(vertexZCount - 1));
+                    uvs[i] = new Vector2((float)x / (float)(vertexXCount - 1), (float)z / (float)(vertexZCount - 1));
                     i++;
                 }
             }
@@ -95,9 +96,9 @@ namespace PJ
                 }
             }
 
-            UpdateMesh(mesh, vertices, triangles, uv);
+            UpdateMesh(result, vertices, triangles, uvs);
 
-            return mesh;
+            return result;
         }
     }
 }

@@ -56,7 +56,7 @@ namespace PJ
             var activeDragTool = activeTool as SomeDragCanvasTool2D;
             if (null == activeDragTool) { return; }
 
-            var viewPosition = WorldToViewPosition(inputPosition.position);
+            var viewPosition = WorldToViewPosition(inputPosition);
             activeDragTool.OnDragStart(this, new ViewPosition(viewPosition));
         }
 
@@ -65,7 +65,7 @@ namespace PJ
             var activeDragTool = activeTool as SomeDragCanvasTool2D;
             if (null == activeDragTool) { return; }
 
-            var viewPosition = WorldToViewPosition(inputPosition.position);
+            var viewPosition = WorldToViewPosition(inputPosition);
             activeDragTool.OnDragUpdate(this, new ViewPosition(viewPosition));
         }
 

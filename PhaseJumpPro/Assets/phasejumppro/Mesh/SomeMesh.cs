@@ -10,8 +10,9 @@ CODE REVIEW: 12/28/22
 namespace PJ
 {
     /// <summary>
-    /// Logic to build a mesh (we can't subclass Mesh)
+    /// Model logic to build a mesh (we can't subclass Mesh)
     /// Usage: Unity uses clockwise winding order to determine front faces
+    /// Use with a SomeMeshBuilder
     /// </summary>
     public abstract class SomeMesh
     {

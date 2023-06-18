@@ -40,7 +40,7 @@ namespace PJ
             var target = gameObject;
             if (null == target) { return; }
 
-            var worldPosition = mouseDevice.WorldPosition;
+            var worldPosition = Camera.main.ScreenToWorldPoint(mouseDevice.ScreenPosition);
             if (null == worldPosition) { return; }
 
             target.transform.position = new Vector3(worldPosition.x, worldPosition.y, target.transform.position.z);

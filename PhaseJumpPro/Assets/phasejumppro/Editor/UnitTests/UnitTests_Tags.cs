@@ -37,5 +37,19 @@ namespace PJ
 
             Assert.AreEqual(10, sut.SafeValue<int>("test", 0));
         }
+
+        [Test]
+        public void TestSetOptionalValue()
+        {
+            var sut = new Tags();
+
+            Assert.AreEqual(0, sut.SafeValue<int>("test", 0));
+
+            sut.SetOptionalValue("test", new Optional<int>(5));
+            Assert.AreEqual(5, sut.SafeValue<int>("test", 0));
+
+            sut.SetOptionalValue<int>("test", null);
+            Assert.AreEqual(0, sut.SafeValue<int>("test", 0));
+        }
     }
 }

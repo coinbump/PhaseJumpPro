@@ -10,10 +10,10 @@ namespace PJ
         {
             public TestPolygon()
             {
-                vertices.Add(new Vector3(0, 1));
-                vertices.Add(new Vector3(1, 1));
-                vertices.Add(new Vector3(1, 0));
-                vertices.Add(new Vector3(0, 0));
+                Add(new Vector3(0, 1));
+                Add(new Vector3(1, 1));
+                Add(new Vector3(1, 0));
+                Add(new Vector3(0, 0));
             }
         }
 

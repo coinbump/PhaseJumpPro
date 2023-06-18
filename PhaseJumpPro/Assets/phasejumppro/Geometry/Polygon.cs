@@ -13,19 +13,17 @@ namespace PJ
     /// Stores vertices for closed polygon
     /// </summary>
     [System.Serializable]
-    public class Polygon
+    public class Polygon : List<Vector3>
     {
-        public List<Vector3> vertices = new List<Vector3>();
-
         public Vector3 Min
         {
             get
             {
-                if (vertices.Count == 0) { return Vector3.zero; }
+                if (this.Count == 0) { return Vector3.zero; }
 
-                var result = vertices[0];
+                var result = this[0];
 
-                foreach (var vertex in vertices)
+                foreach (var vertex in this)
                 {
                     result = new Vector3(Mathf.Min(result.x, vertex.x), Mathf.Min(result.y, vertex.y), Mathf.Min(result.z, vertex.z));
                 }
@@ -38,11 +36,11 @@ namespace PJ
         {
             get
             {
-                if (vertices.Count == 0) { return Vector3.zero; }
+                if (this.Count == 0) { return Vector3.zero; }
 
-                var result = vertices[0];
+                var result = this[0];
 
-                foreach (var vertex in vertices)
+                foreach (var vertex in this)
                 {
                     result = new Vector3(Mathf.Max(result.x, vertex.x), Mathf.Max(result.y, vertex.y), Mathf.Max(result.z, vertex.z));
                 }
@@ -73,37 +71,37 @@ namespace PJ
             }
         }
 
-        public void Inset2D(Vector2 inset)
-        {
-            var center = Center;
+        // public void Inset2D(Vector2 inset)
+        // {
+        //     var center = Center;
 
-            List<Vector3> result = new();
-            foreach (var iterVertex in vertices)
-            {
-                var vertex = iterVertex;
+        //     List<Vector3> result = new();
+        //     foreach (var iterVertex in this)
+        //     {
+        //         var vertex = iterVertex;
 
-                if (vertex.x < center.x)
-                {
-                    vertex.x += inset.x;
-                }
-                else
-                {
-                    vertex.x -= inset.x;
-                }
+        //         if (vertex.x < center.x)
+        //         {
+        //             vertex.x += inset.x;
+        //         }
+        //         else
+        //         {
+        //             vertex.x -= inset.x;
+        //         }
 
-                if (vertex.y < center.y)
-                {
-                    vertex.y += inset.y * Vector2.up.y;
-                }
-                else
-                {
-                    vertex.y += inset.y * Vector2.down.y;
-                }
+        //         if (vertex.y < center.y)
+        //         {
+        //             vertex.y += inset.y * Vector2.up.y;
+        //         }
+        //         else
+        //         {
+        //             vertex.y += inset.y * Vector2.down.y;
+        //         }
 
-                result.Add(vertex);
-            }
+        //         result.Add(vertex);
+        //     }
 
-            vertices = result;
-        }
+        //     this = result;
+        // }
     }
 }

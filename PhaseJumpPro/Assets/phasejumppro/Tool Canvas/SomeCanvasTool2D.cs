@@ -13,5 +13,8 @@ namespace PJ
     /// </summary>
     public class SomeCanvasTool2D : WorldComponent
     {
+        public SomeDependencyResolver<UISystem> uiSystemDependencyResolver = new UISystemSharedDependencyResolver();
+
+        public UISystem UISystem => uiSystemDependencyResolver.Dependency();
     }
 }

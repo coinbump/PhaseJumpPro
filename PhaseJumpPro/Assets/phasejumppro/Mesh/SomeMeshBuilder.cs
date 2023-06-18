@@ -44,7 +44,7 @@ namespace PJ
         public abstract Mesh BuildMesh();
         protected abstract Vector2 WorldSizeInternal { get; set; }
 
-        public Vector2 WorldSize
+        public Vector2 WorldSize2D
         {
             get => WorldSizeInternal;
             set

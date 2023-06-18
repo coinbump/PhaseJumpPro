@@ -66,13 +66,13 @@ namespace PJ
         [NonSerialized]
         public HashSet<NodeCullType> cullTypes = new();
 
-        public MultiRenderer multiRenderer;
+        public RendererTool rendererTool;
 
         protected override void Awake()
         {
             base.Awake();
 
-            UpdateFromSerializedProperties();
+            UpdateFromSerializedProperties(false);
 
             // EDITOR ONLY:
             _tags.Clear();
@@ -80,10 +80,10 @@ namespace PJ
             _stateTags.Clear();
             _cullTypes.Clear();
 
-            multiRenderer = new MultiRenderer(gameObject);
+            rendererTool = new RendererTool(gameObject);
         }
 
-        public virtual void UpdateFromSerializedProperties()
+        public virtual void UpdateFromSerializedProperties(bool forceUpdate)
         {
             tags = new(_tags);
             stateTags = new(_stateTags);
@@ -94,14 +94,15 @@ namespace PJ
         protected virtual void OnValidate()
         {
             tags.Clear();
-            UpdateFromSerializedProperties();
+
+            UpdateFromSerializedProperties(true);
         }
 
         protected override void Update()
         {
             base.Update();
 
-            if (multiRenderer.Color.a == 0 && cullTypes.Contains(NodeCullType.ZeroAlpha))
+            if (null != rendererTool && rendererTool.Color.a == 0 && cullTypes.Contains(NodeCullType.ZeroAlpha))
             {
                 Destroy(gameObject);
                 return;

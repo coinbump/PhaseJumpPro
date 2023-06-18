@@ -100,7 +100,7 @@ public class ELFMatrixView : MatrixBoardView2D
         return null;
     }
 
-    public override void OnPointerClickEvent(PointerClickUIEvent _event)
+    public override void OnPointerClickEvent(PointerClickUIEvent<LocalPosition> _event)
     {
         var localPressPosition = _event.pressPosition;
         var cellHit = LocationAtLocalPosition(localPressPosition.Position);

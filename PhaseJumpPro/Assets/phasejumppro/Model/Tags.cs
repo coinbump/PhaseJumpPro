@@ -154,6 +154,21 @@ namespace PJ
 
             return result;
         } // TESTED
+
+        /// <summary>
+        /// Add the optional's value to the dictionary if it exists, remove the value if the optional is null
+        /// </summary>
+        public void SetOptionalValue<T>(String key, Optional<T> value)
+        {
+            if (null != value)
+            {
+                this[key] = value.value;
+            }
+            else
+            {
+                this.Remove(key);
+            }
+        } // TESTED
     }
 
     /// <summary>

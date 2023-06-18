@@ -15,7 +15,7 @@ namespace PJ
         {
             if (!mouseDevice.IsAvailable()) { return; }
 
-            var worldPosition = mouseDevice.WorldPosition;
+            var worldPosition = Camera.main.ScreenToWorldPoint(mouseDevice.ScreenPosition);
             if (null == worldPosition) { return; }
 
             mouseFocusedCell = LocationAtWorldPosition(new Vector2(worldPosition.x, worldPosition.y));

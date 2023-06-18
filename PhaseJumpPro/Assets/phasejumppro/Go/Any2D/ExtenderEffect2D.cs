@@ -36,8 +36,8 @@ namespace PJ
 
                 foreach (Transform childTransform in gameObject.transform)
                 {
-                    var multiRenderer = new MultiRenderer(childTransform.gameObject);
-                    multiRenderer.Alpha = offAlpha + (onAlpha - offAlpha) * valveState;
+                    var rendererTool = new RendererTool(childTransform.gameObject);
+                    rendererTool.Alpha = offAlpha + (onAlpha - offAlpha) * valveState;
                 }
             }
         }

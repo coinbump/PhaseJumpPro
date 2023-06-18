@@ -77,7 +77,7 @@ namespace PJ
                 cellSize.y = worldSize.y / gridSize.y;
             }
 
-            var viewBounds = new Rect(new Vector2(-worldSize.x / 2.0f, (worldSize.y / 2.0f) * Vector2.up.y), worldSize);
+            var viewBounds = new UnityEngine.Rect(new Vector2(-worldSize.x / 2.0f, (worldSize.y / 2.0f) * Vector2.up.y), worldSize);
 
             // Vertical lines
             var meshVertexIndex = 0;

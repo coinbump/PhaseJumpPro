@@ -1,6 +1,12 @@
 using UnityEngine;
 using System;
 
+/*
+RATING: 4 stars
+Tested and works. Needs unit tests
+CODE REVIEW: 4/16/23
+PORTED TO: C++
+*/
 namespace PJ
 {
     public abstract class SomeCenterPolyMesh : SomeMesh
@@ -20,7 +26,7 @@ namespace PJ
             {
                 var vector = (Vector2)Angle.DegreesAngle(angle);
                 var vertex = new Vector3(center.x + vector.x * radius.x, center.y + vector.y * radius.y, 0);
-                polygon.vertices.Add(vertex);
+                polygon.Add(vertex);
 
                 angle += angleStep;
             }
@@ -30,7 +36,7 @@ namespace PJ
             {
                 var vector = (Vector2)Angle.DegreesAngle(endAngle);
                 var vertex = new Vector3(center.x + vector.x * radius.x, center.y + vector.y * radius.y, 0);
-                polygon.vertices.Add(vertex);
+                polygon.Add(vertex);
             }
         }
 

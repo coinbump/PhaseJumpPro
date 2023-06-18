@@ -16,8 +16,8 @@ namespace PJ
     {
         public Polygon polygon;
 
-        public int TriangleCount => polygon.vertices.Count - 2;
-        public int MeshVertexCount => polygon.vertices.Count;
+        public int TriangleCount => polygon.Count - 2;
+        public int MeshVertexCount => polygon.Count;
 
         public ConvexPolyMesh(Polygon polygon)
         {
@@ -49,7 +49,7 @@ namespace PJ
 
             for (int i = 0; i < vertexCount; i++)
             {
-                vertices[i] = polygon.vertices[i];
+                vertices[i] = polygon[i];
                 uv[i] = new Vector2((vertices[i].x - polygonMin.x) / polygonSize.x, (vertices[i].y - polygonMin.y) / polygonSize.y);
             }
 

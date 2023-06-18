@@ -10,18 +10,18 @@ namespace PJ
     public abstract class SomeStateEffect<StateType, ValueType> : SomeStateHandler<StateType>
     {
         protected MeshMaterialType meshMaterialType = MeshMaterialType.Copy;
-        private MultiRenderer multiRenderer;
+        private RendererTool rendererTool;
 
-        protected MultiRenderer MultiRenderer
+        protected RendererTool RendererTool
         {
             get
             {
-                if (null == multiRenderer)
+                if (null == rendererTool)
                 {
-                    multiRenderer = new(gameObject);
-                    multiRenderer.meshMaterialType = meshMaterialType;
+                    rendererTool = new(gameObject);
+                    rendererTool.meshMaterialType = meshMaterialType;
                 }
-                return multiRenderer;
+                return rendererTool;
             }
         }
 

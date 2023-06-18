@@ -35,8 +35,8 @@ namespace PJ
 
             UpdateDragMarquee(canvas, startDragPosition, inputPosition);
 
-            var worldStartPosition = canvas.ViewToWorldPosition(startDragPosition.position);
-            var worldEndPosition = canvas.ViewToWorldPosition(inputPosition.position);
+            var worldStartPosition = canvas.ViewToWorldPosition(startDragPosition);
+            var worldEndPosition = canvas.ViewToWorldPosition(inputPosition);
 
             var selectHandlers = new HashSet<SelectHandler>();
             var colliders = Physics2D.OverlapAreaAll(worldStartPosition, worldEndPosition);
@@ -47,7 +47,7 @@ namespace PJ
                     selectHandlers.Add(selectHandler);
                 }
             }
-            UISystem.shared.SetSelection(selectHandlers);
+            UISystem.Selection = selectHandlers;
         }
 
         public override void OnDragEnd()
@@ -61,10 +61,10 @@ namespace PJ
 
         protected virtual void UpdateDragMarquee(ToolCanvas2D canvas, ViewPosition startPosition, ViewPosition endPosition)
         {
-            var worldStartPosition = canvas.ViewToWorldPosition(startPosition.position);
-            var worldEndPosition = canvas.ViewToWorldPosition(endPosition.position);
-            var worldSize = new Vector2(Mathf.Abs(endPosition.position.x - startPosition.position.x), Mathf.Abs(endPosition.position.y - startPosition.position.y));
-            dragMeshBuilder.WorldSize = worldSize;
+            var worldStartPosition = canvas.ViewToWorldPosition(startPosition);
+            var worldEndPosition = canvas.ViewToWorldPosition(endPosition);
+            var worldSize = new Vector2(Mathf.Abs(endPosition.x - startPosition.x), Mathf.Abs(endPosition.y - startPosition.y));
+            dragMeshBuilder.WorldSize2D = worldSize;
 
             var isXInverted = worldEndPosition.x < worldStartPosition.x;
             var isYInverted = worldEndPosition.y > worldStartPosition.y;

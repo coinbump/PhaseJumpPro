@@ -10,7 +10,7 @@ namespace PJ
     {
         protected class TestHStack : PJ.HStack
         {
-            public void TestApplyLayout(Bounds2D layoutBounds)
+            public void TestApplyLayout(Rect layoutBounds)
             {
                 Frame = layoutBounds;
                 _ApplyLayout(layoutBounds.size);
@@ -20,7 +20,7 @@ namespace PJ
 
         protected class TestVStack : PJ.VStack
         {
-            public void TestApplyLayout(Bounds2D layoutBounds)
+            public void TestApplyLayout(Rect layoutBounds)
             {
                 _ApplyLayout(layoutBounds.size);
             }
@@ -29,7 +29,6 @@ namespace PJ
         [Test]
         public void Test_NoChildrenWithIntrinsicWidth()
         {
-
             var gameObject = new GameObject();
             var sut = gameObject.AddComponent<TestHStack>();
 
@@ -49,7 +48,7 @@ namespace PJ
             var vChildView2 = vChild2.AddComponent<View2D>();
             vChild2.transform.parent = child1.transform;
 
-            sut.TestApplyLayout(new Bounds2D(Vector2.zero, new Vector2(10.0f, 10.0f)));
+            sut.TestApplyLayout(new Rect(Vector2.zero, new Vector2(10.0f, 10.0f)));
 
             Assert.AreEqual(5.0f, childView1.Frame.size.x);
             Assert.AreEqual(5.0f, childView2.Frame.size.x);
@@ -79,17 +78,19 @@ namespace PJ
             var vChild1 = new GameObject();
             var vChildView1 = vChild1.AddComponent<View2D>();
             vChildView1.IntrinsicWidth = new(3.0f);
+            vChildView1.isFixedWidth = true;
             vChild1.transform.parent = child1.transform;
 
             var vChild2 = new GameObject();
             var vChildView2 = vChild2.AddComponent<View2D>();
             vChildView2.IntrinsicWidth = new(7.0f);
+            vChildView2.isFixedWidth = true;
             vChild2.transform.parent = child1.transform;
 
-            sut.TestApplyLayout(new Bounds2D(Vector2.zero, new Vector2(10.0f, 10.0f)));
+            sut.TestApplyLayout(new Rect(Vector2.zero, new Vector2(10.0f, 10.0f)));
 
-            Assert.AreEqual(5.0f, childView1.Frame.size.x);
-            Assert.AreEqual(5.0f, childView2.Frame.size.x);
+            Assert.AreEqual(7.0f, childView1.Frame.size.x);
+            Assert.AreEqual(3.0f, childView2.Frame.size.x);
             Assert.AreEqual(10.0f, childView1.Frame.size.y);
             Assert.AreEqual(10.0f, childView2.Frame.size.y);
 

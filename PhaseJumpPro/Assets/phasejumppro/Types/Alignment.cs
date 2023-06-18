@@ -31,4 +31,13 @@ namespace PJ
 
         public static Alignment center = new Alignment(HorizontalAlignment.center, VerticalAlignment.center);
     }
+
+    public class AlignmentIds
+    {
+        public const string Leading = "leading";
+        public const string Center = "center";
+        public const string Trailing = "trailing";
+        public const string Top = "top";
+        public const string Bottom = "bottom";
+    }
 }

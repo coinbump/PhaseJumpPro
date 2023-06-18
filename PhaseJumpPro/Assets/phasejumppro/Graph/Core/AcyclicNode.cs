@@ -20,7 +20,7 @@ namespace PJ
             AddEdgeInternal(model, new StrongReference<SomeGraphNode<EdgeModel>>(toNode));
         }
 
-        public AcyclicGraphNode<EdgeModel> RootNode
+        public AcyclicGraphNode<EdgeModel> Root
         {
             /* HAS UNIT TEST */
             get

@@ -11,7 +11,7 @@ namespace PJ
 {
     public enum VerticalAlignmentType
     {
-        Center, Top, Bottom
+        Center = 0, Top = 1, Bottom = 2
     }
 
     /// <summary>

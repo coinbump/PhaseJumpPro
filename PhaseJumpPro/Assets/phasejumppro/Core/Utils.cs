@@ -54,12 +54,12 @@ namespace PJ
 
         public static RaycastHit2D[] AllRaycastHits2D(Camera camera, ScreenPosition screenPosition)
         {
-            return Physics2D.RaycastAll(camera.ScreenToWorldPoint(screenPosition.position), Vector2.zero);
+            return Physics2D.RaycastAll(camera.ScreenToWorldPoint(screenPosition), Vector2.zero);
         }
 
         public static RaycastHit2D FirstRaycastHit2D(Camera camera, ScreenPosition screenPosition)
         {
-            RaycastHit2D hit = Physics2D.Raycast(camera.ScreenToWorldPoint(screenPosition.position), Vector2.zero);
+            RaycastHit2D hit = Physics2D.Raycast(camera.ScreenToWorldPoint(screenPosition), Vector2.zero);
             return hit;
         }
 

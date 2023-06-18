@@ -17,41 +17,41 @@ namespace PJ
     {
         public float strokeWidth;
 
-        public int MeshVertexCount => (polygon.vertices.Count) * 2;
-        public int SliceCount => polygon.vertices.Count - 1;
+        public int MeshVertexCount => (polygon.Count) * 2;
+        public int SliceCount => polygon.Count - 1;
 
         public CenterPolyFrameMesh(float strokeWidth)
         {
             this.strokeWidth = strokeWidth;
         }
 
-        public bool IsClosedShape => polygon.vertices[0] == polygon.vertices[polygon.vertices.Count - 1];
+        public bool IsClosedShape => polygon[0] == polygon[polygon.Count - 1];
 
         public override Mesh BuildMesh()
         {
-            var mesh = new Mesh();
-            if (polygon.vertices.Count < 2) { return mesh; }
+            var result = new Mesh();
+            if (polygon.Count < 2) { return result; }
 
             var vertexCount = MeshVertexCount;
             var vertices = new Vector3[vertexCount];
             var uvCount = vertexCount;
-            var uv = new Vector2[uvCount];
+            var uvs = new Vector2[uvCount];
             var sliceCount = SliceCount;
             var trianglesCount = sliceCount * 6;
             var triangles = new int[trianglesCount];
 
             var polyWithCenter = new Polygon();
-            polyWithCenter.vertices.Add(Vector3.zero);
-            polyWithCenter.vertices.AddRange(polygon.vertices);
+            polyWithCenter.Add(Vector3.zero);
+            polyWithCenter.AddRange(polygon);
             var polygonMin = polyWithCenter.Min;
             var polygonSize = polyWithCenter.Size;
 
             // Edge vertices
             int vi = 0;
-            foreach (var vertex in polygon.vertices)
+            foreach (var vertex in polygon)
             {
                 vertices[vi] = vertex;
-                uv[vi] = new Vector2((vertex.x - polygonMin.x) / polygonSize.x, (vertex.y - polygonMin.y) / polygonSize.y);
+                uvs[vi] = new Vector2((vertex.x - polygonMin.x) / polygonSize.x, (vertex.y - polygonMin.y) / polygonSize.y);
                 vi++;
             }
 
@@ -61,14 +61,14 @@ namespace PJ
             int index = 0;
 
             // This has only been tested with closed shapes
-            foreach (var vertex in polygon.vertices)
+            foreach (var vertex in polygon)
             {
                 var thisVertex = vertex;
 
                 Vector3 reference = vertex;
                 if (IsClosedShape)
                 {
-                    reference = polygon.vertices[polygon.vertices.Count - 2];
+                    reference = polygon[polygon.Count - 2];
                 }
                 if (hasPrevVertex)
                 {
@@ -81,10 +81,10 @@ namespace PJ
                 var lineVector = vertex - reference;
                 var lineAngle = new Angle(lineVector);
 
-                var nextLineVertex = polygon.vertices[polygon.vertices.Count - 1];
-                if (index + 1 < polygon.vertices.Count)
+                var nextLineVertex = polygon[polygon.Count - 1];
+                if (index + 1 < polygon.Count)
                 {
-                    nextLineVertex = polygon.vertices[index + 1];
+                    nextLineVertex = polygon[index + 1];
                 }
 
                 var nextLineVector = nextLineVertex - vertex;
@@ -94,7 +94,7 @@ namespace PJ
                 thisVertex += new Vector3(innerOffset.x, innerOffset.y, 0);
 
                 vertices[vi] = thisVertex;
-                uv[vi] = new Vector2((thisVertex.x - polygonMin.x) / polygonSize.x, (thisVertex.y - polygonMin.y) / polygonSize.y);
+                uvs[vi] = new Vector2((thisVertex.x - polygonMin.x) / polygonSize.x, (thisVertex.y - polygonMin.y) / polygonSize.y);
                 vi++;
                 index++;
             }
@@ -110,18 +110,18 @@ namespace PJ
             {
                 triangles[offset] = i;
                 triangles[offset + 1] = i + 1;
-                triangles[offset + 2] = i + polygon.vertices.Count;
+                triangles[offset + 2] = i + polygon.Count;
 
                 triangles[offset + 3] = i + 1;
-                triangles[offset + 4] = i + polygon.vertices.Count + 1;
-                triangles[offset + 5] = i + polygon.vertices.Count;
+                triangles[offset + 4] = i + polygon.Count + 1;
+                triangles[offset + 5] = i + polygon.Count;
 
                 offset += 6;
             }
 
-            UpdateMesh(mesh, vertices, triangles, uv);
+            UpdateMesh(result, vertices, triangles, uvs);
 
-            return mesh;
+            return result;
         }
     }
 }

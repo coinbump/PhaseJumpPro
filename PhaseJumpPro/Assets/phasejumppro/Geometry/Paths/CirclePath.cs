@@ -3,7 +3,7 @@ using UnityEngine;
 
 /*
  * RATING: 5 stars
- * Simple path
+ * Has unit tests
  * CODE REVIEW: 4/23/22
  * PORTED TO: C++
  */

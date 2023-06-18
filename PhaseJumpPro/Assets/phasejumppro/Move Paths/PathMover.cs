@@ -85,10 +85,10 @@ namespace PJ
 #if UNITY_EDITOR
         protected virtual void OnValidate()
         {
-            var parent = transform.parent.gameObject;
+            var parent = transform.parent;
             if (null == parent) { return; }
 
-            if (parent.TryGetComponent(out SomeMovePath movePath))
+            if (parent.gameObject.TryGetComponent(out SomeMovePath movePath))
             {
                 movePath.SnapAllToStartPosition();
             }

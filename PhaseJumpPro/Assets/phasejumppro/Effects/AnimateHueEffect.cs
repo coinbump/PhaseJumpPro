@@ -35,7 +35,7 @@ namespace PJ
             if (!IsOn) { return; }
 
             var newHue = hue;
-            newHue += Time.deltaTime / cycleTime;
+            newHue += time.delta / cycleTime;
             newHue %= 1.0f;
 
             hue = newHue;
@@ -44,6 +44,8 @@ namespace PJ
 
         public override void UpdateEffectProperties()
         {
+            base.UpdateEffectProperties();
+
             if (!IsOn) { return; }
             var hueColor = Color.HSVToRGB(hue, saturation, value);
             MultiRenderer.Color = hueColor;

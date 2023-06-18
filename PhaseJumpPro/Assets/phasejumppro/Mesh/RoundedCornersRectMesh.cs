@@ -67,33 +67,33 @@ namespace PJ
 
             // Top edge
             var topLeftVertex = new Vector3(left + corners.topLeft.x, top, 0);
-            centerPolyMesh.polygon.vertices.Add(topLeftVertex);
+            centerPolyMesh.polygon.Add(topLeftVertex);
             var topRightVertex = new Vector3(right - corners.topRight.x, top);
-            centerPolyMesh.polygon.vertices.Add(topRightVertex);
+            centerPolyMesh.polygon.Add(topRightVertex);
 
             // Top-right corner
             centerPolyMesh.AddArcVertices(new Vector2(topRightVertex.x, topRightVertex.y + corners.topRight.y * Vector2.down.y), corners.topRight, angleStep, 90.0f - angleStep, angleStep);
 
             // Right edge
-            centerPolyMesh.polygon.vertices.Add(new Vector3(right, top + corners.topRight.y * Vector2.down.y, 0));
+            centerPolyMesh.polygon.Add(new Vector3(right, top + corners.topRight.y * Vector2.down.y, 0));
             var bottomRightVertex = new Vector3(right, bottom + corners.bottomRight.y * Vector2.up.y, 0);
-            centerPolyMesh.polygon.vertices.Add(bottomRightVertex);
+            centerPolyMesh.polygon.Add(bottomRightVertex);
 
             // Bottom-right corner
             centerPolyMesh.AddArcVertices(new Vector2(right - corners.bottomRight.x, bottom + corners.bottomRight.y * Vector2.up.y), corners.bottomRight, 90.0f + angleStep, 180.0f - angleStep, angleStep);
 
             // Bottom edge
-            centerPolyMesh.polygon.vertices.Add(new Vector3(right - corners.bottomRight.x, bottom, 0));
+            centerPolyMesh.polygon.Add(new Vector3(right - corners.bottomRight.x, bottom, 0));
             var bottomLeftVertex = new Vector3(left + corners.bottomLeft.x, bottom, 0);
-            centerPolyMesh.polygon.vertices.Add(bottomLeftVertex);
+            centerPolyMesh.polygon.Add(bottomLeftVertex);
 
             // Bottom-left corner
             centerPolyMesh.AddArcVertices(new Vector2(left + corners.bottomLeft.x, bottom + corners.bottomLeft.y * Vector2.up.y), corners.bottomLeft, 180.0f + angleStep, 270.0f - angleStep, angleStep);
 
             // Left edge
-            centerPolyMesh.polygon.vertices.Add(new Vector3(left, bottom + corners.bottomLeft.y * Vector2.up.y, 0));
+            centerPolyMesh.polygon.Add(new Vector3(left, bottom + corners.bottomLeft.y * Vector2.up.y, 0));
             var tlVertex = new Vector3(left, top + corners.topLeft.y * Vector2.down.y, 0);
-            centerPolyMesh.polygon.vertices.Add(tlVertex);
+            centerPolyMesh.polygon.Add(tlVertex);
 
             // Top-left corner
             centerPolyMesh.AddArcVertices(new Vector2(left + corners.topLeft.x, top + corners.topLeft.y * Vector2.down.y), corners.topLeft, 270.0f + angleStep, 360.0f, angleStep);

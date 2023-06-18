@@ -11,7 +11,7 @@ namespace PJ
 {
     public enum HorizontalAlignmentType
     {
-        Center, Leading, Trailing
+        Center = 0, Leading = 1, Trailing = 2
     }
 
     /// <summary>

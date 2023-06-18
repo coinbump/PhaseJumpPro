@@ -163,9 +163,9 @@ namespace PJ
             var valveState = slideValve.ValveState;
             if (null != node)
             {
-                Color color = node.multiRenderer.Color;
+                Color color = node.rendererTool.Color;
                 color.a = valveState;
-                node.multiRenderer.Color = color;
+                node.rendererTool.Color = color;
             }
 
             if (null == enterExitPathLayout) { return; }

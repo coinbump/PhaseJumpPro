@@ -14,7 +14,6 @@ namespace PJ
     /// <summary>
     /// Distribute children along a path
     /// </summary>
-    /// FUTURE: support orient to path
     public abstract class SomePathLayout : SomeLayout
     {
         public Vector3 offset = Vector3.zero;

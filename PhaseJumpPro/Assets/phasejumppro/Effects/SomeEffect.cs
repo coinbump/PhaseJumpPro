@@ -17,18 +17,18 @@ namespace PJ
     public abstract class SomeEffect : SwitchHandler
     {
         protected MeshMaterialType meshMaterialType = MeshMaterialType.Copy;
-        private MultiRenderer multiRenderer;
+        private RendererTool rendererTool;
 
-        protected MultiRenderer MultiRenderer
+        protected RendererTool MultiRenderer
         {
             get
             {
-                if (null == multiRenderer)
+                if (null == rendererTool)
                 {
-                    multiRenderer = new(gameObject);
-                    multiRenderer.meshMaterialType = meshMaterialType;
+                    rendererTool = new(gameObject);
+                    rendererTool.meshMaterialType = meshMaterialType;
                 }
-                return multiRenderer;
+                return rendererTool;
             }
         }
 

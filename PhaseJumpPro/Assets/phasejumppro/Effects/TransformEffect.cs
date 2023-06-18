@@ -5,7 +5,7 @@ using UnityEngine;
 /*
  * RATING: 5 stars
  * Simple animation utility
- * CODE REVIEW: 12/26/22
+ * CODE REVIEW: 6/10/23
  */
 namespace PJ
 {
@@ -16,6 +16,12 @@ namespace PJ
     {
         public GeoTransform offTransform = GeoTransform.defaultTransform;
         public GeoTransform onTransform = GeoTransform.defaultTransform;
+
+        /// <summary>
+        /// Unparented transforms can cause problems if we try to modify the position.
+        /// If true, do not modify the position.
+        /// </summary>
+        public bool ignorePosition = false;
 
         public override void UpdateEffectProperties()
         {
@@ -29,8 +35,11 @@ namespace PJ
             var transformRotation = offTransform.rotation + (onTransform.rotation - offTransform.rotation) * valveState;
             transform.localRotation = Quaternion.Euler(transformRotation.x, transformRotation.y, transformRotation.z);
 
-            var transformPosition = offTransform.position + (onTransform.position - offTransform.position) * valveState;
-            transform.localPosition = transformPosition;
+            if (!ignorePosition)
+            {
+                var transformPosition = offTransform.position + (onTransform.position - offTransform.position) * valveState;
+                transform.localPosition = transformPosition;
+            }
         }
     }
 }

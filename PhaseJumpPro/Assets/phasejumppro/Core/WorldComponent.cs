@@ -23,6 +23,10 @@ namespace PJ
         /// </summary>
         public HashSet<Updatable> updatables = new HashSet<Updatable>();
 
+        /// <summary>
+        /// Returns only the component from the parent object
+        /// (GetComponentInParent traverses the hierarchy, starting from the object itself)
+        /// </summary>
         public T ParentComponent<T>() where T : class
         {
             var parent = transform.parent.gameObject;
@@ -45,6 +49,18 @@ namespace PJ
         }
 
         protected virtual void LateUpdate() { }
+
+        /// <summary>
+        /// In editor mode, use DestroyImmediate, otherwise use Destroy
+        /// </summary>
+        public void ContextDestroy(GameObject gameObject)
+        {
+#if UNITY_EDITOR
+            DestroyImmediate(gameObject);
+#else
+            Destroy(gameObject);
+#endif
+        }
 
         public virtual void OnUpdate(TimeSlice time)
         {

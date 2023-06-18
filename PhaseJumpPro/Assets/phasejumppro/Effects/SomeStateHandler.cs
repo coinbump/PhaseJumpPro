@@ -2,6 +2,12 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 
+/*
+RATING: 5 stars
+Simple interface
+CODE REVIEW: 5/8/23
+PORTED TO: C++
+*/
 namespace PJ
 {
     /// <summary>

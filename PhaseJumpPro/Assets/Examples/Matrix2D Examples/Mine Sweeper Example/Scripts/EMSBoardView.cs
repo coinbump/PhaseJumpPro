@@ -98,7 +98,7 @@ public class EMSBoardView : MatrixBoardView2D, SomeGoStateListener<EMSBoardView.
         ClearTilesAt(emptyCells[0]);
     }
 
-    public override void OnPointerClickEvent(PointerClickUIEvent _event)
+    public override void OnPointerClickEvent(PointerClickUIEvent<LocalPosition> _event)
     {
         var localPressPosition = _event.pressPosition;
         var cellHit = LocationAtLocalPosition(localPressPosition.Position);
@@ -108,9 +108,9 @@ public class EMSBoardView : MatrixBoardView2D, SomeGoStateListener<EMSBoardView.
         var cellGameObject = WorldNodeAt(cellHit.value);
         var hitTile = cellGameObject.GetComponent<EMSTile>();
 
-        switch (_event.button)
+        switch (_event.Button)
         {
-            case PointerClickUIEvent.InputButton.Left:
+            case PointerInputButton.Left:
                 {
                     switch (core.State)
                     {
@@ -130,7 +130,7 @@ public class EMSBoardView : MatrixBoardView2D, SomeGoStateListener<EMSBoardView.
                     }
                     break;
                 }
-            case PointerClickUIEvent.InputButton.Right:
+            case PointerInputButton.Right:
                 {
                     switch (hitTile.type)
                     {

@@ -19,6 +19,10 @@ namespace PJ
 
         public bool IsSelectable => IsSelectable;
 
+        public SomeDependencyResolver<UISystem> uiSystemDependencyResolver = new UISystemSharedDependencyResolver();
+
+        public UISystem UISystem => uiSystemDependencyResolver.Dependency();
+
         public bool IsSelected
         {
             get => isSelected;
@@ -55,7 +59,11 @@ namespace PJ
         {
             UpdateSelectEffect();
 
-            UISystem.shared.UpdateSelectFor(this, isSelected);
+            var uiSystem = UISystem;
+            if (null != uiSystem)
+            {
+                UISystem.UpdateSelectionFor(this);
+            }
 
             if (TryGetComponent(out SomeNode node))
             {

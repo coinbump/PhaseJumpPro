@@ -36,13 +36,13 @@ namespace PJ
             var bottom = worldSize.y * 0.5f * Vector2.down.y;
 
             var topLeftVertex = new Vector3(-worldSize.x * 0.5f + CapRadius, top, 0);
-            centerPolyMesh.polygon.vertices.Add(topLeftVertex);
+            centerPolyMesh.polygon.Add(topLeftVertex);
             var topRightVertex = new Vector3(worldSize.x * 0.5f - CapRadius, top);
-            centerPolyMesh.polygon.vertices.Add(topRightVertex);
+            centerPolyMesh.polygon.Add(topRightVertex);
 
             centerPolyMesh.AddArcVertices(new Vector3(topRightVertex.x, 0), CapRadius, angleStep, 180.0f - angleStep, angleStep);
-            centerPolyMesh.polygon.vertices.Add(new Vector3(worldSize.x * 0.5f - CapRadius, bottom, 0));
-            centerPolyMesh.polygon.vertices.Add(new Vector3(-worldSize.x * 0.5f + CapRadius, bottom, 0));
+            centerPolyMesh.polygon.Add(new Vector3(worldSize.x * 0.5f - CapRadius, bottom, 0));
+            centerPolyMesh.polygon.Add(new Vector3(-worldSize.x * 0.5f + CapRadius, bottom, 0));
             centerPolyMesh.AddArcVertices(new Vector3(topLeftVertex.x, 0), CapRadius, 180.0f + angleStep, 360.0f, angleStep);
 
             return centerPolyMesh.BuildMesh();

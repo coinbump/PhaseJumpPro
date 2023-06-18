@@ -168,9 +168,9 @@ namespace PJ
         /// </summary>
         protected virtual void FixedUpdate()
         {
-            foreach (Transform childTransform in transform)
+            var childObjects = ChildObjects();
+            foreach (var childObject in childObjects)
             {
-                var childObject = childTransform.gameObject;
                 var pathMover = childObject.GetComponent<PathMover>();
                 if (null == pathMover) { continue; }
 

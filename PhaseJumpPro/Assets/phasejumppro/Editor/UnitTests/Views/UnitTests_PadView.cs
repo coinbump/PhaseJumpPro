@@ -10,7 +10,7 @@ namespace PJ
     {
         protected class TestPadView : PJ.PadView
         {
-            public void TestApplyLayout(Bounds2D parentBounds)
+            public void TestApplyLayout(Rect parentBounds)
             {
                 _ApplyLayout(parentBounds.size);
             }
@@ -27,10 +27,11 @@ namespace PJ
             var childObject = new GameObject();
             var childSut = childObject.AddComponent<View2D>();
             childSut.IntrinsicWidth = new(10.0f);
+            childSut.isFixedWidth = true;
 
             childObject.transform.parent = gameObject.transform;
 
-            Assert.AreEqual(18.0f, sut.PreferredWidthExpanding(0));
+            Assert.AreEqual(18.0f, sut.PreferredWidthLayoutQuery(new(0, 0), new() { LayoutQueryOption.WithConstraints }));
         }
 
         [Test]
@@ -44,6 +45,7 @@ namespace PJ
             var childObject = new GameObject();
             var childSut = childObject.AddComponent<View2D>();
             childSut.IntrinsicHeight = new(10.0f);
+            childSut.isFixedHeight = true;
 
             childObject.transform.parent = gameObject.transform;
 
@@ -51,31 +53,35 @@ namespace PJ
         }
 
         [Test]
-        public void TestIntrinsicWidth_ChildHasNoIntrinsicWidth()
+        public void TestPreferredWidth_ChildHasNoIntrinsicWidth()
         {
             var gameObject = new GameObject();
             var sut = gameObject.AddComponent<TestPadView>();
 
             var childObject = new GameObject();
             var childSut = childObject.AddComponent<View2D>();
+            childSut.IntrinsicWidth = new(8.0f);
+            childSut.isFixedWidth = true;
 
             childObject.transform.parent = gameObject.transform;
 
-            Assert.AreEqual(null, sut.IntrinsicWidth);
+            Assert.AreEqual(8.0f, sut.PreferredWidthLayoutQuery(new Vector2(10, 10), new() { LayoutQueryOption.WithConstraints }));
         }
 
         [Test]
-        public void TestIntrinsicHeight_ChildHasNoIntrinsicHeight()
+        public void TestPreferredHeight_ChildHasNoIntrinsicHeight()
         {
             var gameObject = new GameObject();
             var sut = gameObject.AddComponent<TestPadView>();
 
             var childObject = new GameObject();
             var childSut = childObject.AddComponent<View2D>();
+            childSut.IntrinsicHeight = new(8.0f);
+            childSut.isFixedHeight = true;
 
             childObject.transform.parent = gameObject.transform;
 
-            Assert.AreEqual(null, sut.IntrinsicHeight);
+            Assert.AreEqual(8.0f, sut.PreferredHeightLayoutQuery(new Vector2(10, 10), new() { LayoutQueryOption.WithConstraints }));
         }
 
         [Test]
@@ -93,9 +99,9 @@ namespace PJ
 
             childObject.transform.parent = gameObject.transform;
 
-            sut.TestApplyLayout(new Bounds2D(Vector2.zero, new Vector2(10.0f, 10.0f)));
+            sut.TestApplyLayout(new Rect(Vector2.zero, new Vector2(10.0f, 10.0f)));
 
-            Assert.AreEqual(new Bounds2D(new Vector2(3.0f, 2.0f), new Vector2(0.0f, 0.0f)), childSut.Frame);
+            Assert.AreEqual(new Rect(new Vector2(3.0f, 2.0f), new Vector2(0.0f, 0.0f)), childSut.Frame);
         }
 
         [Test]
@@ -112,12 +118,14 @@ namespace PJ
             var childSut = childObject.AddComponent<View2D>();
             childSut.IntrinsicWidth = new(1.0f);
             childSut.IntrinsicHeight = new(3.0f);
+            childSut.isFixedWidth = true;
+            childSut.isFixedHeight = true;
 
             childObject.transform.parent = gameObject.transform;
 
-            sut.TestApplyLayout(new Bounds2D(Vector2.zero, new Vector2(10.0f, 10.0f)));
+            sut.TestApplyLayout(new Rect(Vector2.zero, new Vector2(10.0f, 10.0f)));
 
-            Assert.AreEqual(new Bounds2D(new Vector2(3.0f, 2.0f), new Vector2(1.0f, 3.0f)), childSut.Frame);
+            Assert.AreEqual(new Rect(new Vector2(3.0f, 2.0f), new Vector2(1.0f, 3.0f)), childSut.Frame);
         }
     }
 }

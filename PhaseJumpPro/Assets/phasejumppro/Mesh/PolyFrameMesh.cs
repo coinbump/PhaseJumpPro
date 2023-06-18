@@ -14,7 +14,7 @@ namespace PJ
         public bool isClosed = true;
         public Polygon polygon = new Polygon();
 
-        public int PolyVertexCount => polygon.vertices.Count;
+        public int PolyVertexCount => polygon.Count;
         public int SegmentCount
         {
             get
@@ -60,8 +60,8 @@ namespace PJ
             var meshVertexIndex = 0;
             for (int i = 0; i < SegmentCount; i++)
             {
-                var vertex = polygon.vertices[i];
-                var nextVertex = polygon.vertices[(i + 1) % polygon.vertices.Count];
+                var vertex = polygon[i];
+                var nextVertex = polygon[(i + 1) % polygon.Count];
 
                 var angleVector = new Vector2(nextVertex.x - vertex.x, nextVertex.y - vertex.y);
                 //Debug.Log("Angle Vector: " + angleVector.ToString());
