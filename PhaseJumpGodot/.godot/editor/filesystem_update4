@@ -1,2 +1,7 @@
 res://hello-scene.tscn
 res://HelloScene.cs
+res://phasejumppro/Core/Components/SomeEventHandler.cs
+res://phasejumppro/Core/Components/SwitchHandler.cs
+res://phasejumppro/Core/WorldComponent.cs
+res://phasejumppro/Steering/SomeSteering.cs
+res://phasejumppro/Steering/SomeSteering2D.cs

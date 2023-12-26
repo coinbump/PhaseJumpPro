@@ -109,7 +109,7 @@ namespace PJ
 
             if (newWidth < 1 || newHeight < 1)
             {
-                Debug.LogError(string.Format("Invalid grid storage size {0}, {1}.", size.X, size.Y));
+                GD.Print(string.Format("Invalid grid storage size {0}, {1}.", size.X, size.Y));
                 return;
             }
 
