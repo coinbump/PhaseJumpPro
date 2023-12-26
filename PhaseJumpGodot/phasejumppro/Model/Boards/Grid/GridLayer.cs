@@ -28,7 +28,7 @@ namespace PJ
             return null != cell.tile;
         }
 
-        public bool IsBlocked(Rect2Int bounds)
+        public bool IsBlocked(Rect2I bounds)
         {
             for (int x = bounds.position.X; x < (bounds.position.X + bounds.size.X); x++)
             {
@@ -49,7 +49,7 @@ namespace PJ
         {
         }
 
-        public virtual void OnCellsBlocked(Rect2Int bounds) { }
-        public virtual void OnCellsUnblocked(Rect2Int bounds) { }
+        public virtual void OnCellsBlocked(Rect2I bounds) { }
+        public virtual void OnCellsUnblocked(Rect2I bounds) { }
     }
 }

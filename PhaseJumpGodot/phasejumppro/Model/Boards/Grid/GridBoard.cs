@@ -49,7 +49,7 @@ namespace PJ
                 return false;
             }
 
-            Rect2Int tileBounds = DestTileBounds(tile, loc);
+            Rect2I tileBounds = DestTileBounds(tile, loc);
             if (IsBlocked(tileBounds, loc.Z))
             {
                 return false;
@@ -94,7 +94,7 @@ namespace PJ
             }
 
             Vector3I loc = new Vector3I(tile.position.X, tile.position.Y, layer);
-            Rect2Int tileBounds = DestTileBounds(tile, loc);
+            Rect2I tileBounds = DestTileBounds(tile, loc);
             tile.board = null;
 
             int depth = loc.Z;
@@ -136,9 +136,9 @@ namespace PJ
 
     public partial class GridBoard<Tile> : SomeGridBoard where Tile : GridTile
     {
-        public Rect2Int DestTileBounds(Tile tile, Vector3I loc)
+        public Rect2I DestTileBounds(Tile tile, Vector3I loc)
         {
-            Rect2Int result = new Rect2Int(new Vector2I(loc.X, loc.Y), new Vector2I(tile.size.X, tile.size.Y));
+            Rect2I result = new Rect2I(new Vector2I(loc.X, loc.Y), new Vector2I(tile.size.X, tile.size.Y));
             return result;
         }
 
@@ -171,7 +171,7 @@ namespace PJ
             return layers[loc.Z].IsCellBlocked(new Vector2I(loc.X, loc.Y));
         }
 
-        public bool IsBlocked(Rect2Int bounds, int depth)
+        public bool IsBlocked(Rect2I bounds, int depth)
         {
             if (!IsValidLoc(new Vector3I(0, 0, depth))) { return true; }
             return layers[depth].IsBlocked(bounds);

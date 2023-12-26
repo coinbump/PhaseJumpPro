@@ -38,12 +38,12 @@ namespace PJ
 	/// <summary>
 	/// A rectangle in 2D space
 	/// </summary>
-	public struct Rect2Int
+	public struct Rect2I
 	{
 		public Vector2I position;
 		public Vector2I size;
 
-		public Rect2Int(Vector2I position, Vector2I size)
+		public Rect2I(Vector2I position, Vector2I size)
 		{
 			this.position = position;
 			this.size = size;
