@@ -6,7 +6,7 @@ The goal of this project is to establish a library of platform-neutral, language
 
 Expect lots of file renames and folder moves as I figure out how to create patterns that work in very different engines (Unity is multi-component vs Godot which is single component).
 
-Ideally I'd like to see this library support the most popular programming languages: Swift, Kotlin, Java, etc. But that's in the far future if ever. First I need to stabilize code names, patterns, and APIs.
+Eventually I would like to see this library support the most popular programming languages: Swift, Kotlin, Java, etc. But that's in the far future if ever. Before that can happen I need to stabilize code names, patterns, and APIs.
 
 ## Timeline for Completion
 I only have spare time every now and then to work on this, so progress will be slow. I'd like to finish v3.0 by early 2025, but anything could happen.
