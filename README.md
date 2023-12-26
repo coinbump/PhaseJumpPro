@@ -1,32 +1,15 @@
 # Phase Jump Pro
-Utility classes for making games with Unity.
-C++ code for OpenGL rendering.
+Game Design Patterns common to all games.
+
+## Project Goals
+The goal of this project is to establish a library of platform-neutral, language-neutral and engine-neutral design patterns for games. The code originated in C++, was ported to Unity/C#, and rewritten and revised in C# over the years. With the rising popularity of Godot, the plan is to move more focus to that engine rather than Unity. Several of the core design patterns have also been ported to C++, but C++ is not as high a priority as the C# code.
+
+## Timeline for Completion
+I only have spare time every now and then to work on this, so progress will be slow. I'd like to finish v3.0 by early 2025, but anything could happen.
+
+## When Will it Be Complete?
+The idea is to have a complete Unity and Godot SDK by v3.0, and possibly a complete C++ SDK for PhaseJumpPro v3.0 as well, depending on time constraints.
 
 # Documentation
 
 The documentation limited right now. It is a work in progress here: [Link](https://coinbump.github.io/PhaseJumpPro/)
-
-# Modules
-
-The code contains common design patterns for games in C#:
-
-- Audio Volume Monitor for music-based animations
-- Basic objects for building node graphs/simulation graphs (for city builders, sims, etc.)
-- Weighted randoms (Spawn/Loot Tables + Spawner2D with spawn radius)
-- Common Shaders (Stencil, Desaturate, Invert, Single Color, RGB-Recolor, etc.)
-- Directional Velocity (2D)
-- Valves (for animated doors, switches, etc.)
-- Interpolation curves
-- Broadcast-Listener
-- Command (for undo-redo)
-- Timers
-- ObservedValue
-- Signal-Receptor (for tutorials)
-- State Machines
-- Bank for Currency (freemium apps)
-- TopDown2D characters and basic steering (Flip, Wander, Wander-to-Target)
-- Grid-Based Games (Bejeweled, Tetris, etc.)
-
-# Special Effects
-- FadeAnimation will fade from startAlpha to endAlpha
-
