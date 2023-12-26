@@ -2,7 +2,7 @@
 Game Design Patterns common to all games.
 
 ## Project Goals
-The goal of this project is to establish a library of platform-neutral, language-neutral and engine-neutral design patterns for games. The code originated in C++, was rewritten for Unity inC#, and revised in C# over the years. With the rising popularity of Godot, the plan is to move more focus to that engine rather than Unity. Several of the core design patterns have also been ported to C++, but C++ is not as high a priority as the C# code.
+The goal of this project is to establish a library of platform-neutral, language-neutral and engine-neutral design patterns for games. The code originated in C++, was rewritten for Unity in C#, and revised in C# over the years. With the rising popularity of Godot, the plan is to move more focus to that engine rather than Unity. Several of the core design patterns have also been ported to C++, but C++ is not as high a priority as the C# code.
 
 Expect lots of file renames and folder moves as I figure out how to create patterns that work in very different engines (Unity is multi-component vs Godot which is single component).
 
