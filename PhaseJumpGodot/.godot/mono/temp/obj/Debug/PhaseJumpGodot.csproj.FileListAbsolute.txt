@@ -1,0 +1,17 @@
+/Users/beta/Documents/Projects/PhaseJumpPro/PhaseJumpGodot/.godot/mono/temp/bin/Debug/PhaseJumpGodot.deps.json
+/Users/beta/Documents/Projects/PhaseJumpPro/PhaseJumpGodot/.godot/mono/temp/bin/Debug/PhaseJumpGodot.runtimeconfig.json
+/Users/beta/Documents/Projects/PhaseJumpPro/PhaseJumpGodot/.godot/mono/temp/bin/Debug/PhaseJumpGodot.dll
+/Users/beta/Documents/Projects/PhaseJumpPro/PhaseJumpGodot/.godot/mono/temp/bin/Debug/PhaseJumpGodot.pdb
+/Users/beta/Documents/Projects/PhaseJumpPro/PhaseJumpGodot/.godot/mono/temp/bin/Debug/GodotSharp.dll
+/Users/beta/Documents/Projects/PhaseJumpPro/PhaseJumpGodot/.godot/mono/temp/bin/Debug/GodotSharpEditor.dll
+/Users/beta/Documents/Projects/PhaseJumpPro/PhaseJumpGodot/.godot/mono/temp/obj/Debug/PhaseJumpGodot.csproj.AssemblyReference.cache
+/Users/beta/Documents/Projects/PhaseJumpPro/PhaseJumpGodot/.godot/mono/temp/obj/Debug/PhaseJumpGodot.GeneratedMSBuildEditorConfig.editorconfig
+/Users/beta/Documents/Projects/PhaseJumpPro/PhaseJumpGodot/.godot/mono/temp/obj/Debug/PhaseJumpGodot.AssemblyInfoInputs.cache
+/Users/beta/Documents/Projects/PhaseJumpPro/PhaseJumpGodot/.godot/mono/temp/obj/Debug/PhaseJumpGodot.AssemblyInfo.cs
+/Users/beta/Documents/Projects/PhaseJumpPro/PhaseJumpGodot/.godot/mono/temp/obj/Debug/PhaseJumpGodot.csproj.CoreCompileInputs.cache
+/Users/beta/Documents/Projects/PhaseJumpPro/PhaseJumpGodot/.godot/mono/temp/obj/Debug/PhaseJumpGodot.csproj.CopyComplete
+/Users/beta/Documents/Projects/PhaseJumpPro/PhaseJumpGodot/.godot/mono/temp/obj/Debug/PhaseJumpGodot.dll
+/Users/beta/Documents/Projects/PhaseJumpPro/PhaseJumpGodot/.godot/mono/temp/obj/Debug/refint/PhaseJumpGodot.dll
+/Users/beta/Documents/Projects/PhaseJumpPro/PhaseJumpGodot/.godot/mono/temp/obj/Debug/PhaseJumpGodot.pdb
+/Users/beta/Documents/Projects/PhaseJumpPro/PhaseJumpGodot/.godot/mono/temp/obj/Debug/PhaseJumpGodot.genruntimeconfig.cache
+/Users/beta/Documents/Projects/PhaseJumpPro/PhaseJumpGodot/.godot/mono/temp/obj/Debug/ref/PhaseJumpGodot.dll

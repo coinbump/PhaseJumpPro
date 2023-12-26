@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "NJ33GaZXIP6ymTfEhBhNtVXiqyjiw6finq8PNN2H7m3h05NYgVKABRL73BmpzpXD5tIRJCkkWWRtbOO0AG1AxA==",
+  "success": true,
+  "projectFilePath": "/Users/beta/Documents/Projects/PhaseJumpPro/PhaseJumpGodot/PhaseJumpGodot.csproj",
+  "expectedPackageFiles": [
+    "/Users/beta/.nuget/packages/godot.sourcegenerators/4.2.1/godot.sourcegenerators.4.2.1.nupkg.sha512",
+    "/Users/beta/.nuget/packages/godotsharp/4.2.1/godotsharp.4.2.1.nupkg.sha512",
+    "/Users/beta/.nuget/packages/godotsharpeditor/4.2.1/godotsharpeditor.4.2.1.nupkg.sha512"
+  ],
+  "logs": []
+}

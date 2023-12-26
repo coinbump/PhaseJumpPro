@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://dymnarng8aao7"]
+
+[ext_resource type="Script" path="res://HelloScene.cs" id="1_f5j4r"]
+
+[node name="Node2D" type="Node2D"]
+script = ExtResource("1_f5j4r")
