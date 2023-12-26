@@ -32,7 +32,7 @@ namespace PJ
             {
                 if (null == planeMesh)
                 {
-                    Debug.Log("WARNING. Missing Plane Mesh");
+                    GD.Print("WARNING. Missing Plane Mesh");
                     return;
                 }
 
@@ -41,7 +41,7 @@ namespace PJ
                 var map = ValueForInput<SomeTransform<Vector2, float>>("map", null, null) as SomeTransform<Vector2, float>;
                 if (null == map)
                 {
-                    Debug.Log("WARNING. Missing Map2D input for map");
+                    GD.Print("WARNING. Missing Map2D input for map");
                     return;
                 }
 

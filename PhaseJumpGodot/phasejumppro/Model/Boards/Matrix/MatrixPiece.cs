@@ -67,7 +67,7 @@ namespace PJ
 
             if (height <= 0 || width <= 0)
             {
-                Debug.Log("Error. Invalid piece shape");
+                GD.Print("Error. Invalid piece shape");
                 return false;
             }
 

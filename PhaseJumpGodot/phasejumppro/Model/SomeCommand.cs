@@ -42,7 +42,7 @@ namespace PJ
 					stateMachine.State = StateType.Complete;
 					break;
 				case StateType.Complete:
-					Debug.Log("ERROR. Execute called twice for command.");
+					GD.Print("ERROR. Execute called twice for command.");
 					break;
 				default:
 					break;

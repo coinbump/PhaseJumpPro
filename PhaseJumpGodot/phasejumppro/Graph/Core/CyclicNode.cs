@@ -17,7 +17,7 @@ namespace PJ
     {
         public override void AddEdge(EdgeModel model, SomeGraphNode<EdgeModel> toNode)
         {
-            Debug.Log("Error. Call CyclicGraph.AddEdge instead");
+            GD.Print("Error. Call CyclicGraph.AddEdge instead");
         }
     }
 }

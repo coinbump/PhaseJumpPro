@@ -116,7 +116,7 @@ namespace PJ
 
             if (null == node)
             {
-                Debug.Log("Error. State " + state.ToString() + " has no node in graph");
+                GD.Print("Error. State " + state.ToString() + " has no node in graph");
                 return;
             }
 

@@ -157,7 +157,7 @@ namespace PJ
             {
                 if (ownerBoard != this)
                 {
-                    Debug.Log("Error. Can't remove a piece from a different board");
+                    GD.Print("Error. Can't remove a piece from a different board");
                     return;
                 }
             }
@@ -169,7 +169,7 @@ namespace PJ
                 var cell = CellAt(location);
                 if (cell.piece != piece)
                 {
-                    Debug.Log("Error. Cell/piece mismatch");
+                    GD.Print("Error. Cell/piece mismatch");
                     continue;
                 }
                 cell.piece = null;

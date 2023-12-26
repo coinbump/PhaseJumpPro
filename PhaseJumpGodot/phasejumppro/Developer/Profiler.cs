@@ -31,7 +31,7 @@ namespace PJ
         {
             stopwatch.Stop();
             var log = String.Format("PROFILE: {0}\tDURATION: {1}ms", name, stopwatch.ElapsedMilliseconds);
-            UnityEngine.Debug.Log(log);
+            UnityEngine.GD.Print(log);
         }
     }
 }

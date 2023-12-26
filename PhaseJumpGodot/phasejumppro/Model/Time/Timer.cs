@@ -69,7 +69,7 @@ namespace PJ
             if (IsFinished || duration <= 0) { return; }
 
             var delta = TimeDeltaFor(time);
-            //Debug.Log(id + ": OnUpdate delta: " + delta.ToString());
+            //GD.Print(id + ": OnUpdate delta: " + delta.ToString());
             if (delta <= 0) { return; }
 
             TimerState += delta;
