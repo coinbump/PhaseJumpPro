@@ -15,10 +15,7 @@ namespace PJ
 
         public bool IsOn
         {
-            get
-            {
-                return isOn;
-            }
+            get => isOn;
             set
             {
                 if (isOn == value)

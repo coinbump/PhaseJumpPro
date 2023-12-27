@@ -15,7 +15,7 @@ namespace PJ
         protected T state;
         protected T prevState;
 
-        protected Dictionary<T, Node> stateToNodeMap = new Dictionary<T, Node>();
+        protected Dictionary<T, Node> stateToNodeMap = new();
 
         /// <summary>
         /// If true, state transitions can't occur
