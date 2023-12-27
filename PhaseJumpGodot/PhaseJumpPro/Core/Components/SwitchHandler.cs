@@ -8,7 +8,7 @@ PORTED TO: C++
 */
 namespace PJ
 {
-    public partial class SwitchHandler : WorldComponent, Switchable
+    public partial class SwitchHandler : WorldNode, Switchable
     {
         [Export]
         protected bool isOn = false;

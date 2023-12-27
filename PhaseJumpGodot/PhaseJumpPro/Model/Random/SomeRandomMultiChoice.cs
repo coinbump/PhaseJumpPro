@@ -15,6 +15,8 @@ namespace PJ
 
         public SomeRandomMultiChoice(SomeRandomIntChoice countChoice, SomeRandomChoice<Type> choice)
         {
+            this.countChoice = countChoice;
+            this.choice = choice;
         }
 
         public List<Type> Choose(SomeRandom random)

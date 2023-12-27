@@ -21,7 +21,7 @@ namespace PJ
             this.id = id;
             this.type = type;
             this.weight = weight;
-            this.tags = null != tags ? tags : new();
+            this.tags = tags ?? new();
         }
     }
 }

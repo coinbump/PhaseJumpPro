@@ -12,7 +12,7 @@ namespace PJ
     /// <summary>
     /// A component that listens to events
     /// </summary>
-    public abstract partial class SomeEventHandler : WorldComponent, SomeListener
+    public abstract partial class SomeEventHandler : WorldNode, SomeListener
     {
         public abstract void OnEvent(Event _event);
     }

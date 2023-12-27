@@ -11,7 +11,7 @@ namespace PJ
     /// <summary>
     /// A component that steers an object
     /// </summary>
-    public partial class SomeSteering : WorldComponent
+    public partial class SomeSteering : WorldNode
     {
     }
 }
