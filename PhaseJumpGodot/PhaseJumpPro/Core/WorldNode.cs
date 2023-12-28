@@ -8,7 +8,17 @@ using System.Collections.Generic;
  */
 namespace PJ
 {
-    public partial class WorldNode : Node
+    // TODO:
+    public interface SomeWorldNode
+    {
+        public void Start();
+    }
+
+    /// <summary>
+    /// Adds common patterns to the standard Godot type
+    /// Example: Start, OnUpdate, etc.
+    /// </summary>
+    public partial class WorldNode : Node, SomeWorldNode
     {
         /// <summary>
         /// Updatables are sent update events (for timers, animations, etc.)
@@ -24,7 +34,7 @@ namespace PJ
             GD.Print("Ready");
 
             // TODO: unit test
-            // Emulate Unity's Start call after Awake
+            // Call Start for all nodes from root after all nodes have received Awake
             if (IsSceneRoot)
             {
                 GD.Print("IsRoot");
@@ -34,16 +44,16 @@ namespace PJ
 
                 foreach (var child in nodes)
                 {
-                    if (child is WorldNode worldComponent)
+                    if (child is SomeWorldNode worldNode)
                     {
-                        worldComponent.Start();
+                        worldNode.Start();
                     }
                 }
             }
         }
 
         // TODO: unit test
-        protected void AddFromAndAllChildrenFrom(Node from, List<Node> result)
+        protected static void AddFromAndAllChildrenFrom(Node from, List<Node> result)
         {
             result.Add(from);
 
@@ -53,7 +63,7 @@ namespace PJ
             }
         }
 
-        protected virtual void Start()
+        public virtual void Start()
         {
             GD.Print("Start");
         }

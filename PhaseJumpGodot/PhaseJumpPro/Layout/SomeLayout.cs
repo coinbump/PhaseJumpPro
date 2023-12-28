@@ -41,7 +41,7 @@ namespace PJ
             base.Awake();
         }
 
-        protected override void Start()
+        public override void Start()
         {
             base.Start();
 
