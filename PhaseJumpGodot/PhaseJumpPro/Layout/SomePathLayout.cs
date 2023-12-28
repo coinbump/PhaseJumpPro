@@ -11,12 +11,16 @@ namespace PJ
     /// </summary>
     public abstract partial class SomePathLayout : SomeLayout
     {
+        [Export]
         public Godot.Vector3 offset = Godot.Vector3.Zero;
 
         /// <summary>
         /// LIMITATION: This only supports 2D path orientation for now
         /// </summary>
+        [Export]
         public bool orientToPath = true;
+
+        [Export]
         public float orientDegreeAngle = -90.0f;
 
         // Optional normalized positions (0-1.0), otherwise default will be used."
@@ -48,35 +52,34 @@ namespace PJ
                 transformTool.SetLocalPosition(position);
 
                 // TODO: add support for orientToPath
-                // if (orientToPath)
-                // {
-                //     var prevPosition = normalPosition;
-                //     var nextPosition = normalPosition;
-                //     var orientDelta = .001f;
-                //     if (normalPosition == 0)
-                //     {
-                //         nextPosition += orientDelta;
-                //     }
-                //     else if (normalPosition == 1.0f)
-                //     {
-                //         prevPosition -= orientDelta;
-                //     }
-                //     else
-                //     {
-                //         nextPosition = Mathf.Min(1.0f, nextPosition + orientDelta);
-                //     }
+                if (orientToPath)
+                {
+                    var prevPosition = normalPosition;
+                    var nextPosition = normalPosition;
+                    var orientDelta = .001f;
+                    if (normalPosition == 0)
+                    {
+                        nextPosition += orientDelta;
+                    }
+                    else if (normalPosition == 1.0f)
+                    {
+                        prevPosition -= orientDelta;
+                    }
+                    else
+                    {
+                        nextPosition = Mathf.Min(1.0f, nextPosition + orientDelta);
+                    }
 
-                //     var positionDelta = path.PositionAt(nextPosition) - path.PositionAt(prevPosition);
+                    var positionDelta = path.PositionAt(nextPosition) - path.PositionAt(prevPosition);
 
-                //     // LIMITATION: This only supports 2D path orientation for now
-                //     var rotationDegreeAngle = new Angle(new Godot.Vector2(positionDelta.X, positionDelta.Y)).Degrees;
-                //     rotationDegreeAngle += orientDegreeAngle;
-                //     childObject.transform.localEulerAngles = new Godot.Vector3(0, 0, -rotationDegreeAngle);
-                // }
-                // else
-                // {
-                //     childObject.transform.localEulerAngles = new Vector3(0, 0, 0);
-                // }
+                    // var rotationDegreeAngle = new Angle(new Godot.Vector2(positionDelta.X, positionDelta.Y)).Degrees;
+                    // rotationDegreeAngle += orientDegreeAngle;
+                    // childObject.transform.localEulerAngles = new Godot.Vector3(0, 0, -rotationDegreeAngle);
+                }
+                else
+                {
+                    // childObject.transform.localEulerAngles = new Vector3(0, 0, 0);
+                }
 
                 index++;
             }

@@ -36,11 +36,6 @@ namespace PJ
         /// </summary>
         public abstract void ApplyLayout();
 
-        protected override void Awake()
-        {
-            base.Awake();
-        }
-
         public override void Start()
         {
             base.Start();

@@ -14,6 +14,7 @@ namespace PJ
     /// </summary>
     public partial class BezierPathLayout : SomePathLayout
     {
+        // TODO: Not supported by export, so how can we define the points?
         public List<Vector3> controlPoints = new();
 
         protected override SomePath BuildPath()
