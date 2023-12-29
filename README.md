@@ -21,32 +21,32 @@ The documentation limited right now. It is a work in progress here: [Link](https
 ## Porting Progress
 | Name | Unity | Godot | C++ | Notes |
 | ------ | ------------- | ------------- | ----- | ---- |
-| Animation | Yes | Partial | No | |
-| Camera | Yes | n/a | No | |
-| Classes | Yes | Partial | Yes | |
-| Core | Yes | No | No | |
-| Data | Yes | No | No | |
-| Developer | Yes | Yes | No | |
-| Editor | Yes | No | Some unit tests | |
-| Effects | Yes | No | No | |
-| Examples | Yes | No | No | |
-| Emitters | Yes | No | No | |
-| Experimental | Yes | No | No | |
-| Extensions | Yes | Yes | n/a | |
-| Geometry | Yes | Yes | No | |
-| Go | Yes | No | No | |
-| Graph | Yes | Yes | No | |
-| Input | Yes | No | No | |
-| Layout | Yes | No | No | |
-| Materials | Yes | No | n/a | |
-| Mesh | Yes | No | No | |
-| Model | Yes | No | No | |
-| Move Paths | Yes | No | No | |
-| Renderers | Yes | n/a | n/a | |
-| Shaders | Yes | No | n/a | |
-| Steering | Yes | No | No | |
-| Text Effects | Yes | No | No | |
-| Tool Canvas | Yes | No | No | |
-| Types | Yes | No | No | |
-| UI | Yes | No | No | |
-| Utilities | Yes | No | No | |
+| **Animation** | Yes | Partial | No | |
+| **Camera** | Yes | n/a | No | |
+| **Classes** | Yes | Partial | Yes | |
+| **Core** | Yes | No | No | |
+| **Data** | Yes | No | No | |
+| **Developer** | Yes | Yes | No | |
+| **Editor** | Yes | No | Some unit tests | |
+| **Effects** | Yes | No | No | |
+| **Examples** | Yes | No | No | |
+| **Emitters** | Yes | No | No | |
+| **Experimental** | Yes | No | No | |
+| **Extensions** | Yes | Yes | n/a | |
+| **Geometry** | Yes | Yes | No | |
+| **Go** | Yes | No | No | |
+| **Graph** | Yes | Yes | No | |
+| **Input** | Yes | No | No | |
+| **Layout** | Yes | No | No | |
+| **Materials** | Yes | No | n/a | |
+| **Mesh** | Yes | No | No | |
+| **Model** | Yes | No | No | |
+| **Move Paths** | Yes | No | No | |
+| **Renderers** | Yes | n/a | n/a | |
+| **Shaders** | Yes | No | n/a | |
+| **Steering** | Yes | No | No | |
+| **Text Effects** | Yes | No | No | |
+| **Tool Canvas** | Yes | No | No | |
+| **Types** | Yes | No | No | |
+| **UI** | Yes | No | No | |
+| **Utilities** | Yes | No | No | |
