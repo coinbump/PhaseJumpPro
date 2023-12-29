@@ -17,3 +17,36 @@ The idea is to have a complete Unity and Godot SDK by v3.0, and possibly a compl
 # Documentation
 
 The documentation limited right now. It is a work in progress here: [Link](https://coinbump.github.io/PhaseJumpPro/)
+
+## Porting Progress
+| Name | Unity | Godot | C++ | Notes |
+| ------ | ------------- | ------------- | ----- | ---- |
+| Animation | Yes | No | No | |
+| Camera | Yes | No | No | |
+| Classes | Yes | Partial | Yes | |
+| Core | Yes | No | No | |
+| Data | Yes | No | No | |
+| Developer | Yes | No | No | |
+| Editor | Yes | No | No | |
+| Effects | Yes | No | No | |
+| Examples | Yes | No | No | |
+| Emitters | Yes | No | No | |
+| Experimental | Yes | No | No | |
+| Extensions | Yes | Yes | n/a | |
+| Geometry | Yes | No | No | |
+| Go | Yes | No | No | |
+| Graph | Yes | No | No | |
+| Input | Yes | No | No | |
+| Layout | Yes | No | No | |
+| Materials | Yes | No | No | |
+| Mesh | Yes | No | No | |
+| Model | Yes | No | No | |
+| Move Paths | Yes | No | No | |
+| Renderers | Yes | No | No | |
+| Shaders | Yes | No | No | |
+| Steering | Yes | No | No | |
+| Text Effects | Yes | No | No | |
+| Tool Canvas | Yes | No | No | |
+| Types | Yes | No | No | |
+| UI | Yes | No | No | |
+| Utilities | Yes | No | No | |
