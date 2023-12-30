@@ -43,7 +43,7 @@ The documentation limited right now. It is a work in progress here: [Link](https
 | **Model** | Yes | No | No | |
 | **Move Paths** | Yes | No | No | |
 | **Renderers** | Yes | n/a | n/a | |
-| **Shaders** | Yes | No | n/a | |
+| **Shaders** | Yes | No | No | |
 | **Steering** | Yes | No | No | |
 | **Text Effects** | Yes | No | No | |
 | **Tool Canvas** | Yes | No | No | |
