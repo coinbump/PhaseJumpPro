@@ -209,16 +209,16 @@ namespace PJ
             // var spawnPosition = SpawnPositionFor(newSpawn);
             // //GD.Print("Spawn Position: " + spawnPosition.ToString());
 
-            // newSpawn.transform.parent = transform;
+            // newSpawn.GetParent() = transform;
             // newSpawn.transform.localPosition = spawnPosition;
 
             // if (null == spawnParent)
             // {
-            //     newSpawn.transform.parent = null;
+            //     newSpawn.GetParent() = null;
             // }
             // else
             // {
-            //     newSpawn.transform.parent = spawnParent.transform;
+            //     newSpawn.GetParent() = spawnParent.transform;
             // }
 
             // if (null != newSpawn && maxAlive > 0)

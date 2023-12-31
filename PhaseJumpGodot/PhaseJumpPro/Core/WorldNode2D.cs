@@ -9,19 +9,11 @@ using System.Collections.Generic;
 namespace PJ
 {
     /// <summary>
-    /// Standard node patterns
-    /// </summary>
-    public interface SomeWorldNode
-    {
-        public void Start();
-    }
-
-    /// <summary>
     /// Adds common patterns to the standard Node type
     /// Example: Start, OnUpdate, etc.
     /// For component based versions of Phase Jump, this is called WorldComponent
     /// </summary>
-    public partial class WorldNode : Node, SomeWorldNode
+    public partial class WorldNode2D : Node2D, SomeWorldNode
     {
         /// <summary>
         /// Updatables are sent update events (for timers, animations, etc.)

@@ -30,6 +30,13 @@ namespace PJ
 
         protected virtual void OnSwitchChange() { }
 
+        protected override void Awake()
+        {
+            base.Awake();
+
+            OnSwitchChange();
+        }
+
         protected virtual void OnValidate()
         {
             OnSwitchChange();

@@ -48,6 +48,13 @@ namespace PJ
         }
     }
 
+    public class ColorInterpolator : Interpolator<Color>
+    {
+        public ColorInterpolator(Color start, Color end, SomeValueTransform<float> transform = null) : base(start, end, new ColorValueInterpolator(), transform)
+        {
+        }
+    }
+
     public class Vector3Interpolator : Interpolator<Vector3>
     {
         public Vector3Interpolator(Vector3 start, Vector3 end, SomeValueTransform<float> transform = null) : base(start, end, new Vector3ValueInterpolator(), transform)

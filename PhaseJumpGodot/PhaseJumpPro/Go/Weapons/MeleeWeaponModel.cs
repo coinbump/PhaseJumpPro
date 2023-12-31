@@ -17,6 +17,8 @@ namespace PJ
         public bool IsFinished => false;
 
         public string id;
+
+        // TODO: how do we represent spawnable objects in Godot?
         public Node weaponObject;
 
         /// <summary>
@@ -24,7 +26,7 @@ namespace PJ
         /// </summary>
         public float limitTime;
 
-        protected RateLimiter limiter = new RateLimiter(0);
+        protected RateLimiter limiter = new(0);
 
         public bool Fire() => limiter.Fire();
 

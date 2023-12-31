@@ -40,6 +40,23 @@ namespace PJ
     }
 
     /// <summary>
+    /// Interpolates a Vector2 value
+    /// </summary>
+    public class ColorValueInterpolator : SomeValueInterpolator<Color>
+    {
+        public override Color ValueAt(Color start, Color end, float progress)
+        {
+            var lerp = new FloatValueInterpolator();
+            return new(
+                lerp.ValueAt(start.R, end.R, progress),
+                lerp.ValueAt(start.G, end.G, progress),
+                lerp.ValueAt(start.B, end.B, progress),
+                lerp.ValueAt(start.A, end.A, progress)
+            );
+        }
+    }
+
+    /// <summary>
     /// Interpolates a Vector3 value
     /// </summary>
     public class Vector3ValueInterpolator : SomeValueInterpolator<Vector3>
