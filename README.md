@@ -28,7 +28,7 @@ The documentation limited right now. It is a work in progress here: [Link](https
 | **Data** | Yes | No | No | |
 | **Developer** | Yes | Yes | No | |
 | **Editor** | Yes | No | Some unit tests | |
-| **Effects** | Yes | No | No | |
+| **Effects** | Yes | Partial | No | |
 | **Examples** | Yes | No | No | |
 | **Emitters** | Yes | No | No | |
 | **Experimental** | Yes | No | No | |
