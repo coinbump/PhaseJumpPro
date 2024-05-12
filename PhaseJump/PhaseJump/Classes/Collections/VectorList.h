@@ -13,6 +13,8 @@ namespace PJ {
     /// An object with accessible raw memory data
     class SomeDataContainer {
     public:
+        virtual ~SomeDataContainer() {}
+        
         virtual void* Data() const = 0;
         virtual uint32_t DataSize() const = 0;
     };

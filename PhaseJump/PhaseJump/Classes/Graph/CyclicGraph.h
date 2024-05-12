@@ -21,7 +21,7 @@ namespace PJ
     /// The graph holds on to nodes, and the nodes have weak references to each other
     /// </summary>
     template <class EdgeModel = StandardEdgeModel>
-    class CyclicGraph : public Core, public Updatable
+    class CyclicGraph : public Base, public Updatable
     {
     public:
         using EdgeModelSharedPtr = SP<EdgeModel>;

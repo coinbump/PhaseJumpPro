@@ -3,16 +3,12 @@
 
 #include "SomePathLayout.h"
 #include "CirclePath.h"
+#include "WorldSizeAble2D.h"
 #include "Macros.h"
 #include <memory>
 
 namespace PJ
 {
-    class WorldSizeAble2D {
-        virtual Vector2 WorldSize() const = 0;
-        virtual void SetWorldSize(Vector2 value) = 0;
-    };
-
     /// <summary>
     /// Distribute objects along a circle path
     /// </summary>
@@ -27,12 +23,12 @@ namespace PJ
         CirclePathLayout2D(float radius) : radius(radius) {
         }
 
-        Vector2 WorldSize() const override
+        Vector2 WorldSize2D() const override
         {
             return Vector2(radius * 2.0f, radius * 2.0f);
         }
 
-        void SetWorldSize(Vector2 value) override {
+        void SetWorldSize2D(Vector2 value) override {
             radius = std::min(value.x, value.y) / 2.0f;
         }
 

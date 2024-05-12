@@ -2,6 +2,7 @@
 
 #include "Color.h"
 #include <array>
+#include <variant>
 
 /*
  RATING: 5 stars

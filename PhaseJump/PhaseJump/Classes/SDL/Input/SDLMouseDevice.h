@@ -8,6 +8,7 @@ namespace PJ {
     public:
         SDLMouseDevice() {
         }
+        virtual ~SDLMouseDevice() {}
 
         ScreenPosition Position() const override;
         bool IsAvailable() override { return true; }

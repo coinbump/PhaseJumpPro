@@ -3,6 +3,7 @@
 #include "FileManager.h"
 #include "SomeLoadResourcesOperation.h"
 #include "SomeLoadResourcesModel.h"
+#include "Log.h"
 #include <filesystem>
 
 using namespace std;
@@ -35,8 +36,7 @@ std::optional<LoadResourceInfo> ResourceRepository::ScanFile(FilePath path) {
 
     LoadResourceInfo result;
 
-    auto fileExtension = fm.FileExtension(path);
-    fileExtension.RemoveIf([] (char c) { return c == '.'; });
+    auto fileExtension = fm.FileExtension(path, false);
 
     result.typeId = loadResourcesModel->fileExtensionMap[fileExtension];
 

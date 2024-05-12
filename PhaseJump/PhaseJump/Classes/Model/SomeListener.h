@@ -17,6 +17,8 @@ namespace PJ {
     class SomeListener
     {
     public:
+        virtual ~SomeListener() {}
+        
         virtual void OnEvent(SPC<Event> event) = 0;
     };
 }

@@ -9,12 +9,12 @@
 /*
  RATING: 5 stars
  Simple model
- CODE REVIEW: 12/10/22
+ CODE REVIEW: 4/14/24
  */
 namespace PJ
 {
     /// <summary>
-    /// Default implementation of an edge model. Or you can create your own
+    /// Default implementation of an edge model for a graph. Or you can create your own
     /// </summary>
     struct StandardEdgeModel
     {

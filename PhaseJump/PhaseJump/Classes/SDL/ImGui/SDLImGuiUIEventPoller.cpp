@@ -3,6 +3,8 @@
 #include "imgui_impl_sdl2.h"
 #include "SDLUIEventsBuilder.h"
 #include "SomeUIEvent.h"
+#include "SDLEventPoller.h"
+#include "List.h"
 
 using namespace std;
 using namespace PJ;
@@ -14,36 +16,26 @@ SomeUIEventPoller::Result SDLImGuiUIEventPoller::PollUIEvents() {
     VectorList<SP<SomeUIEvent>> uiEvents;
 
     SDL_Event event;
+    SDLEventList events;
     while (SDL_PollEvent(&event)) {
         ImGui_ImplSDL2_ProcessEvent(&event);
 
         // Let imGui steal mouse events for its windows
-        bool canCreateUIEvent = true;
         auto imGuiWantCaptureMouse = ImGui::GetIO().WantCaptureMouse;
         if (imGuiWantCaptureMouse) {
             switch (event.type) {
                 case SDL_MOUSEBUTTONDOWN:
                 case SDL_MOUSEMOTION:
                 case SDL_MOUSEBUTTONUP:
-                    canCreateUIEvent = false;
+                    continue;
                     break;
                 default:
                     break;
             }
         }
 
-        if (canCreateUIEvent) {
-            VectorList<SP<SomeUIEvent>> thisUIEvents = SDLUIEventsBuilder().BuildUIEvents(event);
-            uiEvents.AddRange(thisUIEvents);
-        }
-
-        if (event.type == SDL_QUIT
-            || (event.type == SDL_WINDOWEVENT
-                && event.window.event == SDL_WINDOWEVENT_CLOSE
-             && event.window.windowID == SDL_GetWindowID(window))) {
-            return Result(Status::Done, uiEvents);
-        }
+        events.Add(event);
     }
 
-    return Result(Status::Running, uiEvents);
+    return SDLEventPoller(window).Process(events);
 }

@@ -28,6 +28,8 @@ namespace PJ {
     /// Some data in memory
     class SomeData {
     public:
+        virtual ~SomeData() {}
+        
         virtual void* DataPointer() const = 0;
         virtual uint32_t DataSize() const = 0;
     };

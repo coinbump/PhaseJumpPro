@@ -16,6 +16,7 @@ namespace PJ {
         SDL_Window* window;
 
         SDLImGuiUIEventPoller(SDL_Window* window);
+        virtual ~SDLImGuiUIEventPoller() {}
 
         Result PollUIEvents() override;
     };

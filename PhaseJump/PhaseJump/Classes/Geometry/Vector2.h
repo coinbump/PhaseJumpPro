@@ -50,6 +50,14 @@ namespace PJ {
         operator Terathon::Vector2D() const;
         operator Terathon::Point2D() const;
 
+        void Normalize()
+        {
+            float mag = Magnitude(true);
+            for (int i = 0; i < 2; i++) {
+                (*this)[i] = (*this)[i] / mag;
+            }
+        }
+
         VECTOR_METHODS(Vector2, float, 2);
 
         String ToString() const {
@@ -90,7 +98,7 @@ namespace PJ {
         }
 
         VECTOR_METHODS(Vector2Int, int, 2);
-
+            
         String ToString() const {
             std::stringstream stream;
             stream << "{" << x << ", " << y << "}";

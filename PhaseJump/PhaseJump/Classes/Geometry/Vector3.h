@@ -23,7 +23,7 @@ namespace PJ {
         float x = 0;
         float y = 0;
         float z = 0;
-        
+
         Vector3() {
         }
 
@@ -56,6 +56,14 @@ namespace PJ {
 
         operator Terathon::Vector3D() const;
         operator Terathon::Point3D() const;
+
+        void Normalize()
+        {
+            float mag = Magnitude(true);
+            for (int i = 0; i < 3; i++) {
+                (*this)[i] = (*this)[i] / mag;
+            }
+        }
 
         VECTOR_METHODS(Vector3, float, 3);
 

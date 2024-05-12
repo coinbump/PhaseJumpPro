@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <functional>
+#include <optional>
 
 #define COLLECTION_METHODS(Collection, Type) \
 size_t Count() const { return this->size(); } \
@@ -53,6 +54,11 @@ std::optional<size_t> IndexOf(T const& item) const { \
     } \
 \
     return std::nullopt; \
+} \
+Collection Filter(std::function<bool(T const&)> check) const { \
+    This result; \
+    std::copy_if(begin(*this), end(*this), std::back_inserter(result), check); \
+    return result; \
 }
 
 #endif

@@ -50,7 +50,7 @@ public:
             trackMaterial->features[RenderFeatures::Blend] = RenderFeatureStatus::Enable;
 
             auto animateHueEffect = MAKE<AnimateHueEffect>();
-            animateHueEffect->SetIsOn(true);
+            animateHueEffect->switchHandler->SetIsOn(true);
 
             auto thumbTexture = DCAST<GLTexture>(world.loadedResources->map["texture"]["slider-thumb"].resource);
             auto thumbNode = MAKE<WorldNode>();
@@ -100,8 +100,8 @@ public:
 
                 material->features[RenderFeatures::Blend] = RenderFeatureStatus::Enable;
 
-                //            QuadRenderMeshBuilder builder(Vector2(400, 400));
-                //            auto renderMesh = builder.BuildRenderMesh();
+                //            QuadMeshBuilder builder(Vector2(400, 400));
+                //            auto renderMesh = builder.BuildMesh();
                 //            meshRenderer->material = material;
                 //            meshRenderer->mesh = renderMesh;
             }
@@ -120,7 +120,7 @@ public:
             auto ts = MAKE<TestStateHandler>();
             auto dragHandler = MAKE<DragHandler2D>();
             auto animateHueEffect = MAKE<AnimateHueEffect>();
-            animateHueEffect->SetIsOn(true);
+            animateHueEffect->switchHandler->SetIsOn(true);
 
             ComponentTool ct;
             auto collider = MAKE<SimplePolygonCollider2D>();

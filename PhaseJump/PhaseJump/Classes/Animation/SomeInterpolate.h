@@ -1,22 +1,23 @@
 #ifndef PJSOMEINTERPOLATE_H
 #define PJSOMEINTERPOLATE_H
 
+#define _USE_MATH_DEFINES
+#include <math.h>
 #include "Macros.h"
 #include "FloatTransform.h"
-#include <math.h>
 #include <memory>
 
 /*
  RATING: 5 stars
  Simple utility
- CODE REVIEW: 11/26/22
+ CODE REVIEW: 1/12/24
  */
 namespace PJ
 {
     /// <summary>
     /// For editors to pick from list of types
     /// </summary>
-    enum class InterpolateType
+    enum struct InterpolateType
     {
         Linear,
 
@@ -38,7 +39,7 @@ namespace PJ
     {
     };
 
-    class LinearInterpolate : public SomeInterpolate
+    struct InterpolateLinear : public SomeInterpolate
     {
         float Transform(float time) const override
         {
@@ -46,49 +47,49 @@ namespace PJ
         }
     };
 
-    class EaseInSquared : public SomeInterpolate
+    struct InterpolateEaseInSquared : public SomeInterpolate
     {
         float Transform(float time) const override
         {
-            return pow(time, 2);
+            return powf(time, 2);
         }
     };
 
-    class EaseInCubed : public SomeInterpolate
+    struct InterpolateEaseInCubed : public SomeInterpolate
     {
         float Transform(float time) const override
         {
-            return pow(time, 3);
+            return powf(time, 3);
         }
     };
 
-    class EaseOutSquared : public SomeInterpolate
+    struct InterpolateEaseOutSquared : public SomeInterpolate
     {
         float Transform(float time) const override
         {
-            return 1.0f - pow(1.0f - time, 2);
+            return 1.0f - powf(1.0f - time, 2);
         }
     };
 
-    class EaseOutCubed : public SomeInterpolate
+    struct InterpolateEaseOutCubed : public SomeInterpolate
     {
         float Transform(float time) const override
         {
-            return  1.0f - pow(1.0f - time, 3);
+            return  1.0f - powf(1.0f - time, 3);
         }
     };
 
-    class EaseOutElastic : public SomeInterpolate
+    struct InterpolateEaseOutElastic : public SomeInterpolate
     {
         float Transform(float time) const override
         {
             float x = time;
-            float c4 = (2.0f * M_PI) / 3.0f;
-            return x == 0 ? 0 : x == 1 ? 1 : pow(2, -15 * x) * sin((x * 10.0f - 0.75f) * c4) + 1.0f;
+            float c4 = (2.0f * (float)M_PI) / 3.0f;
+            return x == 0 ? 0 : x == 1 ? 1 : powf(2, -15 * x) * sin((x * 10.0f - 0.75f) * c4) + 1.0f;
         }
     };
 
-    class EaseInBack : public SomeInterpolate
+    struct InterpolateEaseInBack : public SomeInterpolate
     {
         float Transform(float time) const override
         {
@@ -99,18 +100,18 @@ namespace PJ
         }
     };
 
-    class EaseOutBack : public SomeInterpolate
+    struct InterpolateEaseOutBack : public SomeInterpolate
     {
         float Transform(float time) const override
         {
             float x = time;
             float c1 = 1.70158f;
             float c3 = c1 + 1.0f;
-            return 1.0f + c3 * pow(x - 1, 3) + c1 * pow(x - 1, 2);
+            return 1.0f + c3 * powf(x - 1, 3) + c1 * powf(x - 1, 2);
         }
     };
 
-    class EaseInOutBack : public SomeInterpolate
+    struct InterpolateEaseInOutBack : public SomeInterpolate
     {
         float Transform(float time) const override
         {
@@ -118,12 +119,12 @@ namespace PJ
             float c1 = 1.70158f;
             float c2 = c1 * 1.525f;
             return x < 0.5f
-            ? (pow(2 * x, 2) * ((c2 + 1) * 2 * x - c2)) / 2.0f
-            : (pow(2 * x - 2, 2) * ((c2 + 1) * (x * 2 - 2) + c2) + 2) / 2.0f;
+            ? (powf(2 * x, 2) * ((c2 + 1) * 2 * x - c2)) / 2.0f
+            : (powf(2 * x - 2, 2) * ((c2 + 1) * (x * 2 - 2) + c2) + 2) / 2.0f;
         }
     };
 
-    namespace _InterpolateType {
+    namespace InterpolateTypes {
         extern const SP<SomeInterpolate> linear;
         extern const SP<SomeInterpolate> easeInSquared;
         extern const SP<SomeInterpolate> easeInCubed;

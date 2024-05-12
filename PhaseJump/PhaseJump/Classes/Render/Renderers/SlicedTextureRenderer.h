@@ -14,12 +14,12 @@
  */
 namespace PJ {
     class RenderMaterial;
-    class RenderMesh;
+    struct Mesh;
 
     /// Renders a single texture as a 9-slice
     class SlicedTextureRenderer: public SomeRenderer {
     protected:
-        RenderMesh renderMesh;
+        Mesh renderMesh;
 
         /// First point is offset from top-left of texture. Second point is offset from bottom-right
         std::array<Vector2Int, 2> slicePoints;
@@ -28,13 +28,13 @@ namespace PJ {
     public:
         /// Model used to build the sliced mesh. Used for unit tests
         struct BuildModel {
-            int sliceLeft = 0;
-            int sliceTop =  0;
-            int sliceRightOffset = 0;
-            int sliceBottomOffset = 0;
+            float sliceLeft = 0;
+            float sliceTop =  0;
+            float sliceRightOffset = 0;
+            float sliceBottomOffset = 0;
 
-            int sliceRight = 0;
-            int sliceBottom = 0;
+            float sliceRight = 0;
+            float sliceBottom = 0;
 
             float left = 0;
             float top = 0;
@@ -87,7 +87,7 @@ namespace PJ {
         std::optional<Vector3> WorldSize() const override { return std::make_optional(Vector3(size.x, size.y, 0)); }
 
     protected:
-        void BuildRenderMesh();
+        void BuildMesh();
     };
 }
 

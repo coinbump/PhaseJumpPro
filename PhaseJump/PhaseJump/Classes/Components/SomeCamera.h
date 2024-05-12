@@ -14,6 +14,8 @@ namespace PJ
     class SomeCoordinateConverter
     {
     public:
+        virtual ~SomeCoordinateConverter() {}
+        
         virtual Vector2 WorldToScreen(Vector3 position) = 0;
         virtual Vector3 ScreenToWorld(Vector2 position) = 0;
     };

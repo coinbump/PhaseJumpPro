@@ -26,7 +26,7 @@ namespace PJ
 
         SP<Type> New(String id)
         {
-            if (this->contains(id)) {
+            if (this->ContainsKey(id)) {
                 auto & factory = (*this)[id];
                 auto result = factory->New();
 

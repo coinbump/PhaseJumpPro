@@ -3,6 +3,7 @@
 #include "WorldNode.h"
 #include "RenderMaterial.h"
 #include "SomeTexture.h"
+#include <optional>
 
 using namespace std;
 using namespace PJ;

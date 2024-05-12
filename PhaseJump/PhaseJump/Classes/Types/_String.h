@@ -7,6 +7,7 @@
 #include <sstream>
 #include <stdio.h>
 #include <algorithm>
+#include <functional>
 
 /*
  RATING: 5 stars

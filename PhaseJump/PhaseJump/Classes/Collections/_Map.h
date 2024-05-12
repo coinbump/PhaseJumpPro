@@ -2,6 +2,7 @@
 #define PJMAP_H
 
 #include <map>
+#include <functional>
 
 /*
  RATING: 5 stars

@@ -5,6 +5,7 @@
 #include "_String.h"
 #include <set>
 #include <any>
+#include <optional>
 
 /*
  RATING: 5 stars
@@ -22,6 +23,8 @@ namespace PJ
         using Key = String;
         using MapValue = std::any;
 
+        virtual ~Tags() {}
+        
         // Standard
         void Insert(Key key, MapValue value) {
             this->insert({key, value});

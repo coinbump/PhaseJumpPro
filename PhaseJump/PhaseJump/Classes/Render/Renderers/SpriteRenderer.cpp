@@ -1,5 +1,5 @@
 #include "SpriteRenderer.h"
-#include "QuadRenderMeshBuilder.h"
+#include "QuadMeshBuilder.h"
 #include "RenderMaterial.h"
 #include "RenderIntoModel.h"
 #include "SomeRenderEngine.h"
@@ -14,8 +14,8 @@ SpriteRenderer::SpriteRenderer(SP<SomeTexture> texture) {
     material = MAKE<RenderMaterial>();
     material->textures.Add(texture);
 
-    QuadRenderMeshBuilder builder(Vector2(texture->size.x, texture->size.y));
-    mesh = builder.BuildRenderMesh();
+    QuadMeshBuilder builder(Vector2((float)texture->size.x, (float)texture->size.y));
+    mesh = builder.BuildMesh();
 }
 
 void SpriteRenderer::RenderInto(RenderIntoModel model) {
@@ -49,7 +49,7 @@ Vector2 SpriteRenderer::Size() const {
     if (material && !material->textures.IsEmpty()) {
         auto texture = material->textures[0];
         if (texture) {
-            return Vector2(texture->size.x, texture->size.y);
+            return Vector2((float)texture->size.x, (float)texture->size.y);
         }
     }
 

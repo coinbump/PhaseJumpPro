@@ -10,13 +10,16 @@
 
 namespace PJ {
     class SomeLoadResourcesModel;
-    class LoadedResource;
-    class LoadResourceInfo;
+    struct LoadedResource;
+    struct LoadResourceInfo;
     class SomeFileManager;
-    class LoadedResources;
+    struct LoadedResources;
 
     /// Interface to an object that loads resources
     class SomeResourceRepository {
+    public:
+        virtual ~SomeResourceRepository() {}
+
         virtual LoadResourcesPlan Scan(FilePath path, bool isRecursive) = 0;
     };
 

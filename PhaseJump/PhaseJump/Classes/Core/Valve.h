@@ -90,12 +90,12 @@ namespace PJ
         /// <summary>
         /// Timer for turning on transition
         /// </summary>
-        SP<TransformTimer> turnOnTimer = MAKE<TransformTimer>(2.0f, SomeTimed::RunType::RunOnce, MAKE<EaseOutSquared>());
+        SP<TransformTimer> turnOnTimer = MAKE<TransformTimer>(2.0f, SomeTimed::RunType::RunOnce, MAKE<InterpolateEaseOutSquared>());
 
         /// <summary>
         /// Timer for turning off transition
         /// </summary>
-        SP<TransformTimer> turnOffTimer = MAKE<TransformTimer>(2.0f, SomeTimed::RunType::RunOnce, MAKE<EaseOutSquared>());
+        SP<TransformTimer> turnOffTimer = MAKE<TransformTimer>(2.0f, SomeTimed::RunType::RunOnce, MAKE<InterpolateEaseOutSquared>());
 
         /// <summary>
         /// If true, stops turning animations

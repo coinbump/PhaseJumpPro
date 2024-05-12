@@ -116,7 +116,7 @@ float Magnitude(bool root = true) const \
 { \
     float result = 0; \
     for (int i = 0; i < dim; i++) { \
-        auto component = (*this)[i]; \
+        auto component = (float)(*this)[i]; \
         result += component*component; \
     } \
 \
@@ -125,21 +125,12 @@ float Magnitude(bool root = true) const \
     } \
     return result; \
 } \
-\
-void Normalize() \
-{ \
-    float mag = Magnitude(true); \
-    for (int i = 0; i < dim; i++) { \
-        (*this)[i] = (*this)[i]/mag; \
-    } \
-} \
-\
 /* Reference: http://rosettacode.org/wiki/Dot_product#C */ \
-MathType DotProduct(Vector const& b) const \
+float DotProduct(Vector const& b) const \
 { \
     float result = 0; \
     for (int i = 0; i < dim; i++) { \
-        result += (*this)[i]*b[i]; \
+        result += (float)(*this)[i]*(float)b[i]; \
     } \
     return result; \
 } \

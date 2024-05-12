@@ -6,7 +6,7 @@
 #include "Vector3.h"
 #include "RenderFeatures.h"
 #include "RenderModel.h"
-#include "Color32.h"
+#include "RGBAColor.h"
 
 using namespace PJ;
 using namespace std;
@@ -251,7 +251,7 @@ void GLRenderEngine::RenderProcess(RenderModel const& model)  {
     auto vertexCount = model.vertices.size();
 
     VectorList<Color> colors_float(vertexCount);
-    VectorList<Color32> colors_byte(vertexCount);
+    VectorList<RGBAColor> colors_byte(vertexCount);
     VectorList<Vector2> texCoords(vertexCount);
 
     // First pass of this is very inefficient. We'll create an IBO, VBO, etc. for each render pass.
@@ -276,7 +276,7 @@ void GLRenderEngine::RenderProcess(RenderModel const& model)  {
                     colors_float[i] = color;
                     break;
                 case ColorFormat::Byte:
-                    colors_byte[i] = (Color32)color;
+                    colors_byte[i] = (RGBAColor)color;
                     break;
             }
         }

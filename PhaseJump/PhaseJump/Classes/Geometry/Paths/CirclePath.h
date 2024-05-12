@@ -23,6 +23,17 @@ namespace PJ
         {
         }
 
+        struct PositionAtArgs {
+            float progress = 0.0;
+        };
+
+        void Foo(PositionAtArgs) {
+        }
+
+        void Food2() {
+            Foo({.progress = 1.0f});
+        }
+
         Vector3 PositionAt(float progress) const override
         {
             auto result = Angle::DegreesAngle(progress * 360.0f).ToVector2(radius);

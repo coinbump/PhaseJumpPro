@@ -2,12 +2,14 @@
 #define PJRENDERERTOOL_H
 
 #include "Vector3.h"
+#include "Macros.h"
+#include <optional>
 
 namespace PJ
 {
     class WorldNode;
     class SomeRenderer;
-    class Color;
+    struct Color;
 
     /// Handles dispatching to multiple different render types, so a single effect works with multiple renderers
     struct RendererTool {

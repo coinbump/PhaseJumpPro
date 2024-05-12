@@ -1,7 +1,7 @@
 #ifndef PJSOMETIMED_H_
 #define PJSOMETIMED_H_
 
-#include "Core/SomeRunner.h"
+#include "SomeRunner.h"
 
 /*
  RATING: 5 stars

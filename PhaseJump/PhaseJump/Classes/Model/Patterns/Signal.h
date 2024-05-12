@@ -38,7 +38,7 @@ namespace PJ
     /// Event that carries a signal
     /// Useful for responding to categories of behavior
     /// </summary>
-    class EventSignal : public Event
+    class SignalEvent : public Event
     {
     public:
         SP<Signal<String>> signal = MAKE<Signal<String>>();

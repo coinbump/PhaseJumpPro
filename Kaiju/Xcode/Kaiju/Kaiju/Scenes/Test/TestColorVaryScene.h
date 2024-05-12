@@ -29,8 +29,8 @@ public:
             material->colors.Add(Color::black.WithAlpha(1));
             material->features[RenderFeatures::Blend] = RenderFeatureStatus::Enable;
 
-            QuadRenderMeshBuilder builder(Vector2(400, 400));
-            auto renderMesh = builder.BuildRenderMesh();
+            QuadMeshBuilder builder(Vector2(400, 400));
+            auto renderMesh = builder.BuildMesh();
             meshRenderer->material = material;
             meshRenderer->mesh = renderMesh;
         }

@@ -7,18 +7,24 @@
 /*
  RATING: 5 stars
  Simple utilities with unit tests
- CODE REVIEW: 11/6/22
+ CODE REVIEW: 5/11/24
  */
 namespace PJ {
     struct StringUtils {
         bool HasPrefix(std::string _string, std::string searchString)
         {
-            return _string.rfind(searchString, 0) == 0;
+            if (searchString.size() > _string.size()) {
+                return false;
+            }
+            return _string.substr(0, searchString.size()) == searchString;
         }
 
         bool HasSuffix(std::string _string, std::string searchString)
         {
-            return _string.rfind(searchString) == _string.size() - searchString.size();
+            if (searchString.size() > _string.size()) {
+                return false;
+            }
+            return _string.substr(_string.size() - searchString.size()) == searchString;
         }
     };
 }

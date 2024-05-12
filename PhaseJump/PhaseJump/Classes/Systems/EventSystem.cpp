@@ -21,13 +21,13 @@ std::optional<LocalPosition> EventSystem::LocalHitPosition(ScreenPosition screen
     auto raycaster = camera->GetComponent<SomeRaycaster2D>();
     if (nullptr == raycaster) { return std::nullopt; }
 
-    auto worldPosition = camera->ScreenToWorld(screenPosition.position);
+    auto worldPosition = camera->ScreenToWorld(screenPosition);
     // cout << "Log: Test: " << worldPosition.ToString() << "\n";
 
     auto hit = raycaster->Raycast(worldPosition, Vector2::zero);
     if (!hit) { return std::nullopt; }
 
-    auto worldHitPosition = camera->ScreenToWorld(screenPosition.position);
+    auto worldHitPosition = camera->ScreenToWorld(screenPosition);
     auto worldModelMatrix = World()->WorldModelMatrix(*hit->node);
     Terathon::Point3D point(worldHitPosition.x, worldHitPosition.y, worldHitPosition.z);
     auto localHitPosition = Terathon::InverseTransform(worldModelMatrix, point);

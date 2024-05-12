@@ -10,7 +10,7 @@
  CODE REVIEW: 4/14/23
  */
 namespace PJ {
-    class RenderModel;
+    struct RenderModel;
 
     /// A render engine should be able to perform standard render operations
     class SomeRenderEngine : public Base {

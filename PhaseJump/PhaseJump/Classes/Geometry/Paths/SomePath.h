@@ -14,10 +14,9 @@ namespace PJ
     /// <summary>
     /// A path defines positions along the path from 0-1
     /// </summary>
-    class SomePath : public SomeAnimatedValue<Vector3>
+    class SomePath
     {
     public:
-        Vector3 ValueAt(float progress) const override { return PositionAt(progress); }
         virtual Vector3 PositionAt(float progress) const = 0;
 
         virtual ~SomePath() {}

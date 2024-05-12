@@ -1,4 +1,5 @@
 #include "SDLMouseDevice.h"
+#include "SomePointerUIEvent.h"
 #include <SDL2/SDL.h>
 
 using namespace std;
@@ -23,6 +24,8 @@ bool SDLMouseDevice::IsButtonDown(PointerInputButton button) {
             break;
         case PointerInputButton::Right:
             buttonMask = SDL_BUTTON_RMASK;
+            break;
+        default:
             break;
     }
 

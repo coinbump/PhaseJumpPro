@@ -14,24 +14,8 @@ namespace PJ {
         SDLEventPoller(SDL_Window* window) : window(window) {
         }
 
-        Result PollUIEvents() override {
-            VectorList<SP<SomeUIEvent>> uiEvents;
-
-            SDL_Event event;
-            while (SDL_PollEvent(&event)) {
-                VectorList<SP<SomeUIEvent>> thisUIEvents = SDLUIEventsBuilder().BuildUIEvents(event);
-                uiEvents.AddRange(thisUIEvents);
-
-                if (event.type == SDL_QUIT
-                    || (event.type == SDL_WINDOWEVENT
-                        && event.window.event == SDL_WINDOWEVENT_CLOSE
-                        && event.window.windowID == SDL_GetWindowID(window))) {
-                    return Result(Status::Done, uiEvents);
-                }
-            }
-
-            return Result(Status::Running, uiEvents);
-        }
+        Result PollUIEvents() override;
+        Result Process(SDLEventList const& events);
     };
 }
 

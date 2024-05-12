@@ -7,7 +7,7 @@
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 12/7/22
+ CODE REVIEW: 1/12/24
  */
 namespace PJ
 {
@@ -106,7 +106,7 @@ namespace PJ
                         timer.Reset();
                         break;
                     case AnimationCycleType::PingPong:
-                        cycleState = _AnimationCycleState::Flip(cycleState);
+                        cycleState = Flip(cycleState);
                         timer.Reset();
                         break;
                 }

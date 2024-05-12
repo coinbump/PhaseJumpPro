@@ -18,6 +18,7 @@ namespace PJ {
     class List : public std::list<T> {
     public:
         using Base = std::list<T>;
+        using This = List<T>;
 
         List() {}
 

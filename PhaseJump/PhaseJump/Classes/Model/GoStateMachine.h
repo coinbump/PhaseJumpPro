@@ -14,14 +14,14 @@
 namespace PJ
 {
     template <class T>
-    class EventStateFinish : public Event
+    class StateFinishEvent : public Event
     {
     public:
         using Base = Event;
 
         T state;
 
-        EventStateFinish(T state, WP<PJ::Base> sentFrom) : Base(String(""), sentFrom), state(state)
+        StateFinishEvent(T state, WP<PJ::Base> sentFrom) : Base(String(""), sentFrom), state(state)
         {
         }
     };
@@ -129,7 +129,7 @@ namespace PJ
 
         virtual void OnStateFinish()
         {
-            this->broadcaster.Broadcast(MAKE<EventStateFinish<T>>(this->state, this->shared_from_this()));
+            this->broadcaster.Broadcast(MAKE<StateFinishEvent<T>>(this->state, this->shared_from_this()));
         }
 
     public:

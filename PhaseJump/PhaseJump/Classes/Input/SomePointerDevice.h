@@ -3,7 +3,7 @@
 
 #include "SomeInputDevice.h"
 #include "SomePosition.h"
-#include "SomeUIEvent.h"
+#include "SomePointerUIEvent.h"
 
 namespace PJ
 {

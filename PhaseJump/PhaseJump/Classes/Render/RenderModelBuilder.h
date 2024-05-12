@@ -3,13 +3,13 @@
 
 namespace PJ {
     class SomeShaderProgram;
-    class RenderModel;
-    class RenderMesh;
+    struct RenderModel;
+    struct Mesh;
     class RenderMaterial;
     class Matrix4x4;
 
     struct RenderModelBuilder {
-        RenderModel Build(SomeShaderProgram& program, RenderMesh const& mesh, RenderMaterial const& material, Matrix4x4 modelMatrix, float z);
+        RenderModel Build(SomeShaderProgram& program, Mesh const& mesh, RenderMaterial const& material, Matrix4x4 modelMatrix, float z);
     };
 }
 

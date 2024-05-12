@@ -5,20 +5,27 @@
 
 /*
  RATING: 5 stars
- Simple utility
- CODE REVIEW: 11/20/22
+ Has unit tests
+ CODE REVIEW: 6/18/23
  */
 namespace PJ
 {
     /// <summary>
-    /// Adds utility code to std::map
+    /// Adds utility code to std::set
     /// </summary>
-    template <class Type> class Set : public std::set<Type>
+    template <class Type, class _Compare = std::less<Type>, class _Allocator = std::allocator<Type>>
+    class Set : public std::set<Type, _Compare, _Allocator>
     {
     public:
-        using Base = std::set<Type>;
+        using Base = std::set<Type, _Compare, _Allocator>;
 
         Set() {}
+        Set(std::initializer_list<Type> init,
+            const _Compare& comp = _Compare(),
+            const _Allocator& alloc = _Allocator()) : Base(init, comp, alloc) {
+        }
+        Set(std::initializer_list<Type> init, const _Allocator& alloc) : Base(init, alloc) {
+        }
         virtual ~Set() {}
 
         void Add(Type const& value) {
@@ -43,6 +50,16 @@ namespace PJ
             } else {
                 Remove(value);
             }
+        }
+
+        Set<Type> operator -(Set<Type> const& rhs) const {
+            Set<Type> result;
+
+            std::set_difference(this->begin(), this->end(),
+                                rhs.begin(), rhs.end(),
+                                std::inserter(result, result.end()));
+
+            return result;
         }
     };
 }

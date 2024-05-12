@@ -17,6 +17,7 @@ namespace PJ
     /// </summary>
     class BezierPath : public SomePath
     {
+        // TODO: Unit tests
     public:
         VectorList<Vector3> controlPoints;
 

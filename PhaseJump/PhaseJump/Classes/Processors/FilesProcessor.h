@@ -16,7 +16,7 @@ namespace fs = std::filesystem;
  CODE REVIEW: 11/12/22
  */
 namespace PJ {
-    /// Proces a single file
+    /// Process a single file
     class SomeFileProcessor : public SomeProcessor<FilePath> {
     public:
         SomeFileProcessor() : SomeProcessor<FilePath>(1) {}
@@ -25,14 +25,18 @@ namespace PJ {
         virtual void Process(FilePath path) = 0;
     };
 
+    enum class FileSearchType {
+        Directory, Recursive
+    };
+
     /// Process a list of file paths (Example: rename files)
     class FilesProcessor : public SomeProcessor<VectorList<FilePath>> {
     public:
         struct Settings {
-            bool isRecursive;
+            FileSearchType fileSearchType;
 
-            Settings(bool isRecursive = false)
-            : isRecursive(isRecursive) {
+            Settings(FileSearchType fileSearchType)
+            : fileSearchType(fileSearchType) {
             }
         };
 
@@ -43,16 +47,18 @@ namespace PJ {
     public:
         using Base = SomeProcessor<VectorList<FilePath>>;
 
-        FilesProcessor(Int filesCount, SP<SomeFileProcessor> fileProcessor, Settings settings = Settings())
+        FilesProcessor(Int filesCount, SP<SomeFileProcessor> fileProcessor, Settings settings)
         : Base(filesCount),
         fileProcessor(fileProcessor),
         settings(settings) {
         }
         virtual ~FilesProcessor() {}
 
+        bool IsRecursive() const { return settings.fileSearchType == FileSearchType::Recursive; }
+
         virtual void Provide(FilePath path) {
             if (fs::is_directory(path)) {
-                if (settings.isRecursive) {
+                if (IsRecursive()) {
                     for (auto const& path : fs::recursive_directory_iterator { path })
                     {
                         ProvideFile(path);

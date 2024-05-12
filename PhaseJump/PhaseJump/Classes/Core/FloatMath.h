@@ -8,8 +8,8 @@ namespace PJ {
     struct FloatMath {
         using Type = float;
 
-        static constexpr float DegreesToRadians = M_PI / 180.0f;
-        static constexpr float RadiansToDegrees = 180.0 / M_PI;
+        static constexpr float DegreesToRadians = (float)M_PI / 180.0f;
+        static constexpr float RadiansToDegrees = 180.0f / (float)M_PI;
 
         static float Sqrt(float value) {
             return sqrtf(value);

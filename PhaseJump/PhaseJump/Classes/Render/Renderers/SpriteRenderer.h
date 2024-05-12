@@ -12,12 +12,12 @@
  */
 namespace PJ {
     class RenderMaterial;
-    class RenderMesh;
+    struct Mesh;
 
     /// Renders a single texture as a sprite
     class SpriteRenderer: public SomeRenderer {
     protected:
-        RenderMesh mesh;
+        Mesh mesh;
 
     public:
         bool flipX = false;

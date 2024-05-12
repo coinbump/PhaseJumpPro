@@ -1,0 +1,1 @@
+#include "../Classes/Core/FactoryRegistry.h"

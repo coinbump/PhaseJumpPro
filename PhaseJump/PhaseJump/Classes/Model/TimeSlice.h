@@ -1,3 +1,5 @@
+#pragma once
+
 /*
  * RATING: 5 stars.
  * Simple class

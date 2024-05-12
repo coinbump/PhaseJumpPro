@@ -18,7 +18,7 @@ namespace PJ
     /// Goals are common in games to achieve progress.
     /// EXAMPLE: complete a task N times, achieve N experience, get to the destination, etc.
     /// </summary>
-    class SomeGoal : public Core
+    class SomeGoal : public Base
     {
     public:
         String id;
@@ -44,7 +44,7 @@ namespace PJ
 
         virtual void OnComplete()
         {
-            broadcaster.Broadcast(MAKE<EventGoalComplete>(SCAST<SomeGoal>(shared_from_this())));
+            broadcaster.Broadcast(MAKE<GoalCompleteEvent>(SCAST<SomeGoal>(shared_from_this())));
         }
     };
 }

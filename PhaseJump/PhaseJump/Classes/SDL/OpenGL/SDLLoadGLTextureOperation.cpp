@@ -39,7 +39,7 @@ void SDLLoadGLTextureOperation::Run() {
         color.r *= color.a;
         color.g *= color.a;
         color.b *= color.a;
-        pixel = (Color32)color;
+        pixel = (RGBAColor)color;
     }
 
     // http://www.sdltutorials.com/sdl-tip-sdl-surface-to-opengl-texture

@@ -2,6 +2,7 @@
 #define PJWORLDNODETRANSFORM_H
 
 #include "GeoTransform.h"
+#include "Macros.h"
 
 namespace PJ {
     class WorldNode;

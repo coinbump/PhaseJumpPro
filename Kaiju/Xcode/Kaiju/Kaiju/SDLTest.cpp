@@ -16,6 +16,7 @@
 #include "TestMeshPathScene.h"
 #include "TestTextureScene.h"
 #include "TestSlicedSpriteScene.h"
+#include "TestAnimatedTexturesScene.h"
 
 using namespace PJ;
 using namespace std;
@@ -50,8 +51,9 @@ protected:
         Base::ProcessUIEvents(uiEvents);
 
         for (auto event : uiEvents) {
-            auto dropFileEvent = DCAST<DropFileUIEvent>(event);
+            auto dropFileEvent = DCAST<DropFilesUIEvent>(event);
             if (dropFileEvent) {
+                PJLog("Drop File");
                 root->Clear();
 
                 auto camera = SCAST<SomeCamera>(MAKE<OrthoCamera>());
@@ -60,21 +62,26 @@ protected:
                 cameraNode->Add(camera);
                 root->AddEdge(StandardEdgeModel(), cameraNode);
 
-                auto loadTexture = MAKE<SDLLoadGLTextureOperation>(dropFileEvent->filePath, TextureMagnification::Linear);
-                loadTexture->Run();
-                auto textures = loadTexture->result->SuccessValue();
-                if (textures.size() > 0) {
-                    texture = SCAST<GLTexture>(textures[0].resource);
+                VectorList<SP<SomeTexture>> glTextures;
+                for (auto filePath : dropFileEvent->filePaths) {
+                    auto loadTexture = MAKE<SDLLoadGLTextureOperation>(filePath, TextureMagnification::Linear);
+                    loadTexture->Run();
+                    auto textures = loadTexture->result->SuccessValue();
+                    if (textures.size() > 0) {
+                        texture = SCAST<GLTexture>(textures[0].resource);
+                        glTextures.Add(texture);
+                    }
                 }
 
-                TestTextureScene testTextureScene(texture);
-                testTextureScene.LoadInto(*this);
+                TestAnimatedTexturesScene::TextureList textures2{glTextures};
+                TestAnimatedTexturesScene scene(textures2);
+                scene.LoadInto(*this);
                 continue;
             }
 
             auto pointerDownEvent = DCAST<PointerDownUIEvent<ScreenPosition>>(event);
             if (pointerDownEvent) {
-                cout << "Pointer down at: " << pointerDownEvent->pressPosition.position.x << ", " << pointerDownEvent->pressPosition.position.y << "\n";
+                cout << "Pointer down at: " << pointerDownEvent->pressPosition.x << ", " << pointerDownEvent->pressPosition.y << "\n";
             }
         }
     }

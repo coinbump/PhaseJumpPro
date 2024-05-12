@@ -12,11 +12,21 @@
  */
 namespace PJ
 {
+    enum class VerticalAlignmentType
+    {
+        Center = 0, Top = 1, Bottom = 2
+    };
+
     /// <summary>
     /// Vertical alignment in a horizontal flow
     /// </summary>
     struct VerticalAlignment
     {
+        struct Builder
+        {
+            VerticalAlignment VerticalAlignmentFrom(VerticalAlignmentType type);
+        };
+
         SP<SomeAligner> aligner;
 
         VerticalAlignment(SP<SomeAligner> aligner) : aligner(aligner)
@@ -30,6 +40,9 @@ namespace PJ
 
     struct TopAligner : public SomeAligner
     {
+    public:
+        virtual ~TopAligner() {}
+
         float AlignedOrigin(float layoutSize, float frameSize) override
         {
             return 0;
@@ -38,6 +51,9 @@ namespace PJ
 
     struct BottomAligner : public SomeAligner
     {
+    public:
+        virtual ~BottomAligner() {}
+
         float AlignedOrigin(float layoutSize, float frameSize) override
         {
             return layoutSize - frameSize;

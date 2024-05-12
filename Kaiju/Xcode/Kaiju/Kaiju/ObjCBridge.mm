@@ -8,6 +8,7 @@
 #import "ObjCBridge.h"
 #import <PhaseJump/FileProcessor.Utility.h>
 #import <PhaseJump/PhaseJump.h>
+#import <PhaseJump/PhaseJumpDev.h>
 
 using namespace PJ;
 using namespace std;
@@ -20,7 +21,7 @@ SP<FilesProcessor> filesProcessor;
 // Future: support generic operations with parameters: Swift -> ObjC -> C++ bridge
 - (void)startFilesProcessorWithFilePathsCount:(NSInteger)filePathsCount
 {
-    filesProcessor = MAKE<FilesProcessor>(filePathsCount, make_shared<FileProcessor::Utility::RenameCSToHFileProcessor>());
+    filesProcessor = MAKE<FilesProcessor>(filePathsCount, make_shared<PJ_Dev::IncludeAliasFileProcessor>(), FilesProcessor::Settings(FileSearchType::Recursive));
 }
 
 - (void)provideFilePath:(NSString*)filePath

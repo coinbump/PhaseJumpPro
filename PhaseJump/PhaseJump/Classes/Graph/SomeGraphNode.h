@@ -23,7 +23,7 @@ namespace PJ
     /// Use to build trees, graphs, state machines, etc.
     /// </summary>
     template <class EdgeModel = StandardEdgeModel>
-    class SomeGraphNode : public Core, public Updatable
+    class SomeGraphNode : public Base, public Updatable
     {
     public:
         using This = SomeGraphNode<EdgeModel>;

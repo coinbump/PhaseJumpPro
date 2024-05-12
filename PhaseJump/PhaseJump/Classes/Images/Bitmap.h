@@ -92,9 +92,9 @@ namespace PJ {
             return *pixelData;
         }
 
-        Color32 PixelColor32At(Vector2Int loc) const
+        RGBAColor PixelColor32At(Vector2Int loc) const
         {
-            Color32 result(0, 0, 0, 0);
+            RGBAColor result(0, 0, 0, 0);
 
             auto pixelData = PixelDataAt(loc);
             if (nullptr == pixelData) { return result; }
@@ -107,7 +107,7 @@ namespace PJ {
             auto pixelData = PixelDataAt(loc);
             if (nullptr == pixelData) { return; }
 
-            Color32 color32 = color;
+            RGBAColor color32 = color;
             *pixelData = color32;
         }
 
@@ -141,7 +141,7 @@ namespace PJ {
         }
     };
 
-    using RGBABitmap = Bitmap<Color32>;
+    using RGBABitmap = Bitmap<RGBAColor>;
     using BGRABitmap = Bitmap<BGRAColor>;
 }
 

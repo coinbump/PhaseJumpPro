@@ -2,10 +2,11 @@
 #define PJSOMEPOSITION_H
 
 #include "Vector3.h"
+#include "Macros.h"
 
 /*
- RATING: 4 stars
- Needs conversion logic
+ RATING: 5 stars
+ Needs conversion logic. Has unit tests
  CODE REVIEW: 12/25/22
  */
 namespace PJ
@@ -18,66 +19,67 @@ namespace PJ
     class SomePosition
     {
     public:
+        virtual ~SomePosition() {}
+        
         virtual Vector3 Position() const = 0;
         virtual void SetPosition(Vector3 position) = 0;
 
         operator Vector3() const { return Position(); }
     };
 
-    class WorldPosition : public SomePosition
+    class WorldPosition : public Vector3, public SomePosition
     {
     public:
-        Vector3 position;
+        using Base = Vector3;
 
-        Vector3 Position() const override { return position; }
-        void SetPosition(Vector3 value) override { position = value; }
+        Vector3 Position() const override { return *this; }
+        void SetPosition(Vector3 value) override { *this = value; }
 
         WorldPosition() {
         }
 
-        WorldPosition(Vector3 position) : position(position)
+        WorldPosition(Vector3 position) : Base(position)
         {
         }
 
-        String ToString() const { return "World: " + position.ToString(); }
+        String ToString() const { return "World: " + Base::ToString(); }
     };
 
-    class LocalPosition : public SomePosition
+    class LocalPosition : public Vector3, public SomePosition
     {
     public:
-        Vector3 position;
+        using Base = Vector3;
+
         WP<WorldNode> reference;
 
         LocalPosition() {
         }
 
-        LocalPosition(Vector3 position, WP<WorldNode> reference) : position(position), reference(reference)
+        LocalPosition(Vector3 position, WP<WorldNode> reference) : Base(position), reference(reference)
         {
         }
 
-        Vector3 Position() const override { return position; }
-        void SetPosition(Vector3 value) override { position = value; }
+        Vector3 Position() const override { return *this; }
+        void SetPosition(Vector3 value) override { *((Base *)this) = value; }
 
-        String ToString() const { return "Local: " + position.ToString(); }
+        String ToString() const { return "Local: " + Base::ToString(); }
     };
 
-    class ScreenPosition : public SomePosition
+    class ScreenPosition : public Vector2, public SomePosition
     {
     public:
-        Vector2 position;
+        using Base = Vector2;
 
         ScreenPosition() {
         }
 
-        ScreenPosition(Vector2 position) : position(position) {
+        ScreenPosition(Vector2 position) : Vector2(position) {
         }
 
-        operator Vector2() const { return position; }
+        Vector3 Position() const override { return Vector3(this->x, this->y, 0); }
+        void SetPosition(Vector3 value) override { *this = Vector2(value.x, value.y); }
 
-        Vector3 Position() const override { return Vector3(position.x, position.y, 0); }
-        void SetPosition(Vector3 value) override { position = Vector2(value.x, value.y); }
-
-        String ToString() const { return "Screen: " + position.ToString(); }
+        String ToString() const { return "Screen: " + Base::ToString(); }
     };
 }
 

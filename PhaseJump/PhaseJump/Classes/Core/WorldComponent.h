@@ -27,7 +27,8 @@ namespace PJ {
         template <class T>
         VectorList<SP<T>> TypeComponents() const
         {
-            if (owner.expired()) { return nullptr; }
+            VectorList<SP<T>> result;
+            if (owner.expired()) { return result; }
             return owner.lock()->TypeComponents<T>();
         }
 
@@ -44,6 +45,8 @@ namespace PJ {
             if (owner.expired()) { return VectorList<SP<WorldNode>>(); }
             return owner.lock()->ChildNodes();
         }
+
+        virtual void UpdateFromSerializedProperties(bool forceUpdate) {}
 
         // Convenience names
         template <class T>

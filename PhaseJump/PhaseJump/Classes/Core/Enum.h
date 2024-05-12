@@ -14,17 +14,21 @@
 namespace PJ {
     /// Uses EnumClass to map enum <-> String/name for serialization and display
     template <typename EnumType>
-    class Enum : public Core {
+    class Enum : public Base {
     public:
+        using EnumClassType = EnumClass<EnumType>;
+
+        SP<Core> core = MAKE<Core>();
+
         EnumType value = EnumType();
 
-        Enum(SP<EnumClass<EnumType>> _class) {
-            this->_class = _class;
+        Enum(SP<EnumClassType> _class) {
+            this->core->SetClass(_class);
         }
 
         virtual ~Enum() {}
 
-        SP<EnumClass<EnumType>> EnumClass() const { return SCAST<PJ::EnumClass<EnumType>>(_class); }
+        SP<EnumClassType> EnumClass() const { return SCAST<EnumClassType>(core->Class()); }
 
         virtual String Id() const { return EnumClass()->IdOf(value); }
         virtual String Name() const { return EnumClass()->NameOf(value); }

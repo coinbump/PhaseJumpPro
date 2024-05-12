@@ -8,7 +8,7 @@
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 12/17/22
+ CODE REVIEW: 1/12/24
  */
 namespace PJ
 {
@@ -67,6 +67,8 @@ namespace PJ
 
         void OnUpdate(TimeSlice time) override
         {
+            if (nullptr == timer) { return; }
+            if (nullptr == interpolator) { return; }
             if (IsFinished()) { return; }
 
             timer->OnUpdate(time);
@@ -83,13 +85,19 @@ namespace PJ
                         case ReverseType::Rewind:
                             break;
                         case ReverseType::Match:
-                            auto reverseCurve = MAKE<Interpolator<T>>(interpolator->end, interpolator->start, interpolator->valueInterpolator, interpolator->transform);
-                            curveValue = reverseCurve->ValueAt(1.0f - progress);
+                            Interpolator<T> reverseCurve(
+                                                         interpolator->end,
+                                                         interpolator->start,
+                                                         interpolator->valueInterpolator,
+                                                         interpolator->transform
+                                                         );
+                            curveValue = reverseCurve.ValueAt(1.0f - progress);
                             break;
                     }
                     break;
             }
 
+            if (nullptr == binding) { return; }
             binding->SetValue(curveValue);
         }
     };

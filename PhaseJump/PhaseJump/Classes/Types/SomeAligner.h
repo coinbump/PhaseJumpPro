@@ -15,6 +15,8 @@ namespace PJ
     class SomeAligner
     {
     public:
+        virtual ~SomeAligner() {}
+        
         virtual float AlignedOrigin(float layoutSize, float frameSize) = 0;
     };
 

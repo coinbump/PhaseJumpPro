@@ -8,14 +8,16 @@
 #include <filesystem>
 
 namespace PJ {
-    class SomeFileManager : public Core {
+    class SomeFileManager : public Base {
     public:
         virtual bool IsDirectory(FilePath path) const = 0;
 
-        virtual String FileExtension(FilePath path) const = 0;
+        virtual String FileExtension(FilePath path, bool withDot) const = 0;
         virtual String FileName(FilePath path, bool includeExtension) const = 0;
 
         virtual VectorList<FilePath> PathList(FilePath path, bool isRecursive) = 0;
+
+        virtual char PreferredSeparator() const = 0;
     };
 
     /// Mock file manager for unit tests
@@ -34,13 +36,14 @@ namespace PJ {
         String PathSeparatorString() const;
         char PathSeparatorChar() const { return std::filesystem::path::preferred_separator; }
 
-        String FileExtension(FilePath path) const override;
+        String FileExtension(FilePath path, bool withDot) const override;
         String FileName(FilePath path, bool includeExtension) const override;
 
         /// Create directories at path (folder is created at the final path segment)
         void CreateDirectories(FilePath path) const;
 
         VectorList<FilePath> PathList(FilePath path, bool isRecursive) override;
+        char PreferredSeparator() const override { return std::filesystem::path::preferred_separator; }
     };
 }
 

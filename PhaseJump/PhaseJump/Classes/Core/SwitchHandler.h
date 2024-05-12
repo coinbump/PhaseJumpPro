@@ -36,6 +36,24 @@ namespace PJ
             OnSwitchChange();
         }
     };
+
+    /// A composable switch handler that notifies its owner
+    template <class Owner>
+    class ComposeSwitchHandler : public PJ::SwitchHandler {
+    public:
+        Owner* owner;
+
+        using Base = PJ::SwitchHandler;
+
+        ComposeSwitchHandler(Owner* owner) : owner(owner) {
+        }
+
+        void OnSwitchChange() override {
+            Base::OnSwitchChange();
+
+            owner->OnSwitchChange();
+        }
+    };
 }
 
 #endif

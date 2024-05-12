@@ -6,7 +6,7 @@
 /*
  RATING: 5 stars
  Simple utility
- CODE REVIEW: 12/31/22
+ CODE REVIEW: 1/12/24
  */
 namespace PJ
 {
@@ -16,9 +16,11 @@ namespace PJ
     template <class T> class SomeAnimatedValue : public SomeTransform<float, T>
     {
     public:
-        T Transform(float key) const override { return ValueAt(key); }
+        virtual ~SomeAnimatedValue() {}
 
-        virtual T ValueAt(float progress) const = 0;
+        T ValueAt(float progress) const {
+            return this->Transform(progress);
+        }
     };
 }
 

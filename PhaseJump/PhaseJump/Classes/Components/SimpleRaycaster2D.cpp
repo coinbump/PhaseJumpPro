@@ -4,7 +4,9 @@
 #include "Matrix4x4.h"
 #include "Macros.h"
 #include "World.h"
+#include "Log.h"
 #include <iostream>
+#include <optional>
 
 using namespace std;
 using namespace PJ;

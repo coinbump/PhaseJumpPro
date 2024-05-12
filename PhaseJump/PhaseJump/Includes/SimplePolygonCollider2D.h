@@ -1,0 +1,1 @@
+#include "../Classes/Components/SimplePolygonCollider2D.h"

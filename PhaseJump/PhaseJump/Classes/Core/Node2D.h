@@ -50,33 +50,32 @@ namespace PJ
             }
         }
 
-        /// <summary>
-        /// If true, clip rotation values between 0-360
-        /// </summary>
-        bool clipRotation = true;
-
         // Normalized rotation value (0-1.0)
-        float RotationNormal() const { return Rotation().Degrees() / 360.0f; }
+        float RotationNormal() const { return RotationAngle().Degrees() / 360.0f; }
         void SetRotationNormal(float value) {
-            SetRotation(Angle::DegreesAngle(360.0f * value));
+            SetRotationAngle(Angle::DegreesAngle(360.0f * value));
         }
 
-        Angle Rotation() const
+        Angle RotationAngle(bool clipRotation = false) const
         {
-            return Angle::DegreesAngle(-Transform()->LocalEulerAngles().z).Clipped();
+            return clipRotation ? Angle::DegreesAngle(-Transform()->LocalEulerAngles().z).Clipped() : Angle::DegreesAngle(-Transform()->LocalEulerAngles().z);
         }
 
-        void SetRotation(Angle value) {
+        Angle ClippedRotationAngle() const { return RotationAngle(true); }
+
+        void SetRotationAngle(Angle value, bool clipRotation = false) {
             auto newAngle = value;
             if (clipRotation)
             {
                 newAngle.Clip();
             }
 
-            if (Rotation().Degrees() == newAngle.Degrees()) { return; }
+            if (RotationAngle(clipRotation).Degrees() == newAngle.Degrees()) { return; }
 
             Transform()->SetLocalEulerAngles(Vector3(0, 0, -newAngle.Degrees()));
         }
+
+        void SetClippedRotationAngle(Angle value) { SetRotationAngle(value, true); }
     };
 }
 

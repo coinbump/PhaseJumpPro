@@ -14,6 +14,8 @@ namespace PJ {
     class SomeTransform
     {
     public:
+        virtual ~SomeTransform() {}
+        
         virtual Result Transform(Value value) const = 0;
 
         Result ValueFor(Value value) const { return Transform(value); }

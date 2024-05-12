@@ -2,7 +2,7 @@
 #define PJCOLOR_H
 
 #include "FloatMath.h"
-#include "Color32.h"
+#include "RGBAColor.h"
 #include "_String.h"
 
 /*
@@ -26,12 +26,12 @@ namespace PJ {
         {
         }
 
-        Color(Color32 color) : r(color.redFloat()), g(color.greenFloat()), b(color.blueFloat()), a(color.alphaFloat())
+        Color(RGBAColor color) : r(color.redFloat()), g(color.greenFloat()), b(color.blueFloat()), a(color.alphaFloat())
         {
         }
 
-        operator Color32() const {
-            return Color32((int)(r*255.0f), (int)(g*255.0f), (int)(b*255.0f), (int)(a*255.0f));
+        operator RGBAColor() const {
+            return RGBAColor((int)(r*255.0f), (int)(g*255.0f), (int)(b*255.0f), (int)(a*255.0f));
         }
 
         bool operator==(Color const& rhs) const {

@@ -11,6 +11,9 @@ namespace PJ
     template <class StateType>
     class SomeStateMachine
     {
+    public:
+        virtual ~SomeStateMachine() {}
+        
         virtual StateType State() const = 0;
     };
 }

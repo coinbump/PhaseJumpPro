@@ -39,8 +39,8 @@ public:
                 material->shaderProgram = program;
                 material->uniformColors.Add(Color(progress, 1.0f - progress, 0, 1));
 
-                EllipseRenderMeshBuilder builder(Angle::DegreesAngle(5.0f), Vector2(40, 20));
-                auto renderMesh = builder.BuildRenderMesh();
+                EllipseMeshBuilder builder(Angle::DegreesAngle(5.0f), Vector2(40, 20));
+                auto renderMesh = builder.BuildMesh();
                 meshRenderer->material = material;
                 meshRenderer->mesh = renderMesh;
             }
@@ -75,8 +75,8 @@ public:
                 material->shaderProgram = program;
                 material->uniformColors.Add(Color(1.0f, 0, 0, 1));
 
-                EllipseRenderMeshBuilder builder(Angle::DegreesAngle(5.0f), Vector2(40, 20));
-                auto renderMesh = builder.BuildRenderMesh();
+                EllipseMeshBuilder builder(Angle::DegreesAngle(5.0f), Vector2(40, 20));
+                auto renderMesh = builder.BuildMesh();
                 meshRenderer->material = material;
                 meshRenderer->mesh = renderMesh;
             }

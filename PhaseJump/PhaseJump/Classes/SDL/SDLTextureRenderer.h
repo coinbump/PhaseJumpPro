@@ -14,7 +14,7 @@
 #include "VectorList.h"
 
 namespace PJ {
-    class RenderMesh;
+    class Mesh;
     
 //    class SDLTextureRenderer : public SomeRenderer
 //    {

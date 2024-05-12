@@ -6,12 +6,12 @@
 using namespace std;
 using namespace PJ;
 
-const SP<SomeInterpolate> _InterpolateType::linear = MAKE<LinearInterpolate>();
-const SP<SomeInterpolate> _InterpolateType::easeInSquared = MAKE<EaseInSquared>();
-const SP<SomeInterpolate> _InterpolateType::easeInCubed = MAKE<EaseInCubed>();
-const SP<SomeInterpolate> _InterpolateType::easeOutSquared = MAKE<EaseOutSquared>();
-const SP<SomeInterpolate> _InterpolateType::easeOutCubed = MAKE<EaseOutCubed>();
-const SP<SomeInterpolate> _InterpolateType::easeOutElastic = MAKE<EaseOutElastic>();
-const SP<SomeInterpolate> _InterpolateType::easeInBack = MAKE<EaseInBack>();
-const SP<SomeInterpolate> _InterpolateType::easeOutBack = MAKE<EaseOutBack>();
-const SP<SomeInterpolate> _InterpolateType::easeInOutBack = MAKE<EaseInOutBack>();
+const SP<SomeInterpolate> InterpolateTypes::linear = MAKE<InterpolateLinear>();
+const SP<SomeInterpolate> InterpolateTypes::easeInSquared = MAKE<InterpolateEaseInSquared>();
+const SP<SomeInterpolate> InterpolateTypes::easeInCubed = MAKE<InterpolateEaseInCubed>();
+const SP<SomeInterpolate> InterpolateTypes::easeOutSquared = MAKE<InterpolateEaseOutSquared>();
+const SP<SomeInterpolate> InterpolateTypes::easeOutCubed = MAKE<InterpolateEaseOutCubed>();
+const SP<SomeInterpolate> InterpolateTypes::easeOutElastic = MAKE<InterpolateEaseOutElastic>();
+const SP<SomeInterpolate> InterpolateTypes::easeInBack = MAKE<InterpolateEaseInBack>();
+const SP<SomeInterpolate> InterpolateTypes::easeOutBack = MAKE<InterpolateEaseOutBack>();
+const SP<SomeInterpolate> InterpolateTypes::easeInOutBack = MAKE<InterpolateEaseInOutBack>();

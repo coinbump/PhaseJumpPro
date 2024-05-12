@@ -11,7 +11,7 @@
 namespace PJ {
     struct SDLColorBuilder
     {
-        SDL_Color Transform(Color32 color32) const
+        SDL_Color Transform(RGBAColor color32) const
         {
             SDL_Color result;
             result.r = color32.r();

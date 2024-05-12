@@ -20,6 +20,11 @@ namespace PJ {
         }
 
         static Rect const one;
+
+        bool operator ==(Rect const& rhs) {
+            return origin == rhs.origin &&
+                size == rhs.size;
+        }
     };
 
     struct RectInt {

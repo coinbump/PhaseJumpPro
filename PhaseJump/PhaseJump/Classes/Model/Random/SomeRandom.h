@@ -15,6 +15,8 @@ namespace PJ
     class SomeRandom
     {
     public:
+        virtual ~SomeRandom() {}
+        
         /// <summary>
         /// Value between 0-1.0
         /// </summary>

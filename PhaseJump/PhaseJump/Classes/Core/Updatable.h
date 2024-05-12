@@ -16,6 +16,8 @@ namespace PJ
     class Updatable
     {
     public:
+        virtual ~Updatable() {}
+        
         virtual void OnUpdate(TimeSlice time) = 0;
         virtual bool IsFinished() const = 0;
     };

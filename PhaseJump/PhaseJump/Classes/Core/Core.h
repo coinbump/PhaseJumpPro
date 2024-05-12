@@ -6,17 +6,32 @@
 #include "Tags.h"
 #include <memory>
 
+/*
+ RATING: 5 stars
+ Utility object
+ CODE REVIEW: 5/11/24
+ */
 namespace PJ
 {
     class Class;
     
-    // Extends Base with common patterns
-    class Core : public Base {
+    class Core {
+    public:
+        using ClassPtr = SP<Class>;
+
     protected:
-        SP<Class> _class;
+        ClassPtr _class;
         String classId;   // If class is not yet assigned
 
     public:
+        /// <summary>
+        /// Custom properties
+        /// </summary>
+        Tags tags;
+
+        Core(ClassPtr _class = nullptr, String classId = "") : _class(_class), classId(classId) {
+        }
+
         /// <summary>
         /// If we have a class object, return its id, otherwise use the id we have
         /// </summary>
@@ -27,10 +42,13 @@ namespace PJ
             this->classId = value;
         }
 
-        /// <summary>
-        /// Custom properties
-        /// </summary>
-        Tags tags;
+        ClassPtr Class() const {
+            return _class;
+        }
+
+        void SetClass(ClassPtr _class) {
+            this->_class = _class;
+        }
     };
 }
 

@@ -1,11 +1,11 @@
 #include "SlicedTextureRenderer.h"
-#include "QuadRenderMeshBuilder.h"
+#include "QuadMeshBuilder.h"
 #include "RenderMaterial.h"
 #include "RenderIntoModel.h"
 #include "SomeRenderEngine.h"
 #include "RenderModelBuilder.h"
 #include "RenderModel.h"
-#include "TiledRenderMeshBuilder.h"
+#include "TiledMeshBuilder.h"
 
 using namespace std;
 using namespace PJ;
@@ -14,7 +14,7 @@ SlicedTextureRenderer::SlicedTextureRenderer(SP<SomeTexture> texture, Vector2 wo
     material = MAKE<RenderMaterial>();
     material->textures.Add(texture);
 
-    BuildRenderMesh();
+    BuildMesh();
 }
 
 PJ::SlicedTextureRenderer::BuildModel SlicedTextureRenderer::MakeBuildModel() const {
@@ -24,10 +24,10 @@ PJ::SlicedTextureRenderer::BuildModel SlicedTextureRenderer::MakeBuildModel() co
 
     auto texture = material->textures[0];
 
-    result.sliceLeft = min(texture->size.x - 1, max(0, slicePoints[0].x));
-    result.sliceTop = min(texture->size.y - 1, max(0, slicePoints[0].y));
-    result.sliceRightOffset = min(texture->size.x - 1, max(0, slicePoints[1].x));
-    result.sliceBottomOffset = min(texture->size.y - 1, max(0, slicePoints[1].y));
+    result.sliceLeft = (float)min(texture->size.x - 1, max(0, slicePoints[0].x));
+    result.sliceTop = (float)min(texture->size.y - 1, max(0, slicePoints[0].y));
+    result.sliceRightOffset = (float)min(texture->size.x - 1, max(0, slicePoints[1].x));
+    result.sliceBottomOffset = (float)min(texture->size.y - 1, max(0, slicePoints[1].y));
 
     result.sliceRight = texture->size.x - result.sliceRightOffset;
     result.sliceBottom = texture->size.y - result.sliceBottomOffset;
@@ -68,42 +68,42 @@ PJ::SlicedTextureRenderer::BuildModel SlicedTextureRenderer::MakeBuildModel() co
     return result;
 }
 
-void SlicedTextureRenderer::BuildRenderMesh() {
+void SlicedTextureRenderer::BuildMesh() {
     if (nullptr == material || material->textures.IsEmpty()) { return; }
 
-    std::array<RenderMesh, 9> meshList;
+    std::array<Mesh, 9> meshList;
 
     auto bm = MakeBuildModel();
 
-    meshList[MeshIndex::TopLeft] = TiledRenderMeshBuilder(Vector2(bm.sliceLeft, bm.sliceTop),
+    meshList[MeshIndex::TopLeft] = TiledMeshBuilder(Vector2(bm.sliceLeft, bm.sliceTop),
                                                           Vector2(bm.sliceLeft, bm.sliceTop),
-                                                          bm.topLeftUVRect).BuildRenderMesh();
-    meshList[MeshIndex::Top] = TiledRenderMeshBuilder(Vector2(bm.topAndBottomWorldWidth, bm.sliceTop),
+                                                          bm.topLeftUVRect).BuildMesh();
+    meshList[MeshIndex::Top] = TiledMeshBuilder(Vector2(bm.topAndBottomWorldWidth, bm.sliceTop),
                                                       Vector2(bm.topAndBottomSliceWidth, bm.sliceTop),
-                                                      bm.topUVRect).BuildRenderMesh();
-    meshList[MeshIndex::TopRight] = TiledRenderMeshBuilder(Vector2(bm.sliceRightOffset, bm.sliceTop),
+                                                      bm.topUVRect).BuildMesh();
+    meshList[MeshIndex::TopRight] = TiledMeshBuilder(Vector2(bm.sliceRightOffset, bm.sliceTop),
                                                            Vector2(bm.sliceRightOffset, bm.sliceTop),
-                                                           bm.topRightUVRect).BuildRenderMesh();
+                                                           bm.topRightUVRect).BuildMesh();
 
-    meshList[MeshIndex::Left] = TiledRenderMeshBuilder(Vector2(bm.sliceLeft, bm.leftAndRightWorldHeight),
+    meshList[MeshIndex::Left] = TiledMeshBuilder(Vector2(bm.sliceLeft, bm.leftAndRightWorldHeight),
                                                        Vector2(bm.sliceLeft, bm.leftAndRightSliceHeight),
-                                                       bm.leftUVRect).BuildRenderMesh();
-    meshList[MeshIndex::Center] = TiledRenderMeshBuilder(Vector2(bm.topAndBottomWorldWidth, bm.leftAndRightWorldHeight),
+                                                       bm.leftUVRect).BuildMesh();
+    meshList[MeshIndex::Center] = TiledMeshBuilder(Vector2(bm.topAndBottomWorldWidth, bm.leftAndRightWorldHeight),
                                                          Vector2(bm.textureSize.x - bm.sliceLeft - bm.sliceRightOffset, bm.textureSize.y - bm.sliceTop - bm.sliceBottomOffset),
-                                                         bm.centerUVRect).BuildRenderMesh();
-    meshList[MeshIndex::Right] = TiledRenderMeshBuilder(Vector2(bm.sliceRightOffset, bm.leftAndRightWorldHeight),
+                                                         bm.centerUVRect).BuildMesh();
+    meshList[MeshIndex::Right] = TiledMeshBuilder(Vector2(bm.sliceRightOffset, bm.leftAndRightWorldHeight),
                                                         Vector2(bm.sliceRightOffset, bm.leftAndRightSliceHeight),
-                                                        bm.rightUVRect).BuildRenderMesh();
+                                                        bm.rightUVRect).BuildMesh();
 
-    meshList[MeshIndex::BottomLeft] = TiledRenderMeshBuilder(Vector2(bm.sliceLeft, bm.sliceBottomOffset),
+    meshList[MeshIndex::BottomLeft] = TiledMeshBuilder(Vector2(bm.sliceLeft, bm.sliceBottomOffset),
                                                              Vector2(bm.sliceLeft, bm.sliceBottomOffset),
-                                                             bm.bottomLeftUVRect).BuildRenderMesh();
-    meshList[MeshIndex::Bottom] = TiledRenderMeshBuilder(Vector2(bm.topAndBottomWorldWidth, bm.sliceBottomOffset),
+                                                             bm.bottomLeftUVRect).BuildMesh();
+    meshList[MeshIndex::Bottom] = TiledMeshBuilder(Vector2(bm.topAndBottomWorldWidth, bm.sliceBottomOffset),
                                                          Vector2(bm.topAndBottomSliceWidth, bm.sliceBottomOffset),
-                                                         bm.bottomUVRect).BuildRenderMesh();
-    meshList[MeshIndex::BottomRight] = TiledRenderMeshBuilder(Vector2(bm.sliceRightOffset, bm.sliceBottomOffset),
+                                                         bm.bottomUVRect).BuildMesh();
+    meshList[MeshIndex::BottomRight] = TiledMeshBuilder(Vector2(bm.sliceRightOffset, bm.sliceBottomOffset),
                                                               Vector2(bm.sliceRightOffset, bm.sliceBottomOffset),
-                                                              bm.bottomRightUVRect).BuildRenderMesh();
+                                                              bm.bottomRightUVRect).BuildMesh();
 
     meshList[MeshIndex::TopLeft].OffsetBy(Vector2((bm.left - bm.right) / 2.0f - bm.sliceLeft / 2.0f, (bm.top - bm.bottom) / 2.0f + bm.sliceTop / 2.0f));
     meshList[MeshIndex::Top].OffsetBy(Vector2(0, bm.leftAndRightWorldHeight / 2.0f + bm.sliceTop / 2.0f));
@@ -129,7 +129,7 @@ void SlicedTextureRenderer::SetSize(Vector2 worldSize) {
     if (this->size == worldSize) { return; }
 
     this->size = worldSize;
-    BuildRenderMesh();
+    BuildMesh();
 }
 
 void SlicedTextureRenderer::RenderInto(RenderIntoModel model) {

@@ -85,8 +85,8 @@ namespace PJ {
             Add(attributeId, (CollectionData<Color>)components, GL_FLOAT);
         }
         
-        void Add(String attributeId, VectorList<Color32> const& components) {
-            Add(attributeId, (CollectionData<Color32>)components, GL_UNSIGNED_BYTE, true);
+        void Add(String attributeId, VectorList<RGBAColor> const& components) {
+            Add(attributeId, (CollectionData<RGBAColor>)components, GL_UNSIGNED_BYTE, true);
         }
 
         void Add(String attributeId, VectorList<Vector2> const& components) {

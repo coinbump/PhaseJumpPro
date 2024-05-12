@@ -1,13 +1,13 @@
 #include "RenderModelBuilder.h"
 #include "RenderModel.h"
-#include "RenderMesh.h"
+#include "Mesh.h"
 #include "RenderMaterial.h"
 #include "SomeShaderProgram.h"
 
 using namespace std;
 using namespace PJ;
 
-RenderModel RenderModelBuilder::Build(SomeShaderProgram& program, RenderMesh const& mesh, RenderMaterial const& material, Matrix4x4 modelMatrix, float z) {
+RenderModel RenderModelBuilder::Build(SomeShaderProgram& program, Mesh const& mesh, RenderMaterial const& material, Matrix4x4 modelMatrix, float z) {
     RenderModel renderModel(program);
     renderModel.vertices = mesh.vertices;
     renderModel.indices = mesh.triangles;

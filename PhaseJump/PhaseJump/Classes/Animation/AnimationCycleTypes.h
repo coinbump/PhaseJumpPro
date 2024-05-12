@@ -4,7 +4,7 @@
 /*
  RATING: 5 stars
  Simple types
- CODE REVIEW: 11/7/22
+ CODE REVIEW: 1/12/24
  */
 namespace PJ
 {
@@ -13,14 +13,15 @@ namespace PJ
     /// </summary>
     enum class AnimationCycleType
     {
+        // Use fixed enum values for serialization
         // Cycle once
-        Once,
+        Once = 0,
 
         // Cycle once, then in reverse
-        PingPong,
+        PingPong = 1,
 
         // Cycle once, then start over
-        Loop
+        Loop = 2
     };
 
     /// <summary>
@@ -29,24 +30,23 @@ namespace PJ
     /// </summary>
     enum class AnimationCycleState
     {
-        Forward,
+        // Use fixed enum values for serialization
+        Forward = 0,
 
-        Reverse
+        Reverse = 1
     };
 
-    namespace _AnimationCycleState {
-        static AnimationCycleState Flip(AnimationCycleState state)
+    static AnimationCycleState Flip(AnimationCycleState state)
+    {
+        switch (state)
         {
-            switch (state)
-            {
-                case AnimationCycleState::Forward:
-                    return AnimationCycleState::Reverse;
-                case AnimationCycleState::Reverse:
-                    return AnimationCycleState::Forward;
-            }
-
-            return AnimationCycleState::Forward;
+            case AnimationCycleState::Forward:
+                return AnimationCycleState::Reverse;
+            case AnimationCycleState::Reverse:
+                return AnimationCycleState::Forward;
         }
+
+        return AnimationCycleState::Forward;
     }
 }
 

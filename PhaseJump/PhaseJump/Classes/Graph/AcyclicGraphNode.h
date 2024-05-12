@@ -49,7 +49,7 @@ namespace PJ
                 // Graph shouldn't be cyclic, but prevent the edge case of an infinite loop
                 if (searchedNodes.Contains(node))
                 {
-                    return NULL;
+                    return nullptr;
                 }
             }
 
@@ -64,7 +64,7 @@ namespace PJ
                 return DCAST<This>(target);
             }
 
-            return NULL;
+            return nullptr;
         }
 
         bool IsRoot() const

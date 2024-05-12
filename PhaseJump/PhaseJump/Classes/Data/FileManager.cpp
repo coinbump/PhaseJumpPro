@@ -9,20 +9,26 @@ using namespace PJ;
 namespace fs = std::filesystem;
 
 bool FileManager::IsDirectory(FilePath filePath) const {
-    std::error_code ec;
-    return filesystem::is_directory(filePath, ec);
+    std::error_code errorCode;
+    return filesystem::is_directory(filePath, errorCode);
 }
 
 String FileManager::PathSeparatorString() const {
     return String(filesystem::path::preferred_separator);
 }
 
-String FileManager::FileExtension(FilePath filePath) const {
-    return String(filePath.extension());
+String FileManager::FileExtension(FilePath filePath, bool withDot) const {
+    auto result = String(filePath.extension().string());
+
+    if (!withDot) {
+        result.RemoveIf([] (char c) { return c == '.'; });
+    }
+
+    return result;
 }
 
 String FileManager::FileName(FilePath filePath, bool includeExtension) const {
-    return includeExtension ? String(filePath.filename()) : String(filePath.stem());
+    return includeExtension ? String(filePath.filename().string()) : String(filePath.stem().string());
 }
 
 void FileManager::CreateDirectories(FilePath filePath) const

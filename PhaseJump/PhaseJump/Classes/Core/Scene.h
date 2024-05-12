@@ -12,6 +12,8 @@ namespace PJ {
     public:
         /// First key: resource type, second key: id
         LoadedResourceMap resources;
+
+        virtual ~Scene() {}
     };
 }
 

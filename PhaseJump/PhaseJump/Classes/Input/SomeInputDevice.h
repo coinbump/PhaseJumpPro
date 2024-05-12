@@ -14,6 +14,8 @@ namespace PJ
     class SomeInputDevice
     {
     public:
+        virtual ~SomeInputDevice() {}
+        
         virtual bool IsAvailable() = 0;
     };
 }

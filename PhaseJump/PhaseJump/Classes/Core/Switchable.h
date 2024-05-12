@@ -14,8 +14,11 @@ namespace PJ
     class Switchable
     {
     public:
+        virtual ~Switchable() {}
+        
         virtual bool IsOn() const = 0;
         virtual void SetIsOn(bool value) = 0;
+        virtual void OnSwitchChange() = 0;
     };
 }
 

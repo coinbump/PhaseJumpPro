@@ -14,6 +14,8 @@ namespace PJ
     class SomeGoStateListener
     {
     public:
+        virtual ~SomeGoStateListener() {}
+        
         using GoStateMachineSharedPtr = SP<GoStateMachine<StateType>>;
         using GoStateMachinePtr = GoStateMachineSharedPtr const&;
         
@@ -27,10 +29,10 @@ namespace PJ
     /// - State machine, for state changes
     /// </summary>
     template <class StateType>
-    class GoCore : public Core, public Updatable, public SomeListener
+    class GoCore : public Base, public Updatable, public SomeListener
     {
     public:
-        using Base = Core;
+        using Base = Base;
         using GoStateMachineSharedPtr = SP<GoStateMachine<StateType>>;
         using GoStateMachinePtr = GoStateMachineSharedPtr const&;
         
@@ -101,13 +103,13 @@ namespace PJ
             auto asStateMachine = DCAST<GoStateMachine<StateType>>(event->sentFrom.lock());
             if (!asStateMachine) { return; }
 
-            if (auto stateChangeEvent = DCAST<EventStateChange<StateType>>(event))
+            if (auto stateChangeEvent = DCAST<StateChangeEvent<StateType>>(event))
             {
                 OnStateChange(*asStateMachine);
                 return;
             }
 
-            if (auto stateFinishEvent = DCAST<EventStateFinish<StateType>>(event))
+            if (auto stateFinishEvent = DCAST<StateFinishEvent<StateType>>(event))
             {
                 OnStateFinish(*asStateMachine);
                 return;

@@ -4,7 +4,7 @@
 #include "WorldComponent.h"
 #include "SomeRenderContext.h"
 #include "Bounds.h"
-#include "RenderMesh.h"
+#include "Mesh.h"
 #include <memory>
 
 #include "Axis.h"

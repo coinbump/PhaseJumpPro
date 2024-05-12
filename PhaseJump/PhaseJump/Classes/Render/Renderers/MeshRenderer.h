@@ -11,12 +11,12 @@
  */
 namespace PJ {
     class RenderMaterial;
-    class RenderMesh;
+    struct Mesh;
     
     /// Renders a mesh
     class MeshRenderer : public SomeRenderer {
     public:
-        RenderMesh mesh;
+        Mesh mesh;
         SP<RenderMaterial> material;
 
         // MARK: SomeRenderer

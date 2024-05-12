@@ -7,7 +7,7 @@
 /*
  RATING: 5 stars
  Simple utility
- CODE REVIEW: 12/29/22
+ CODE REVIEW: 5/11/24
  */
 namespace PJ
 {
@@ -16,12 +16,12 @@ namespace PJ
     /// <summary>
     /// Event: goal has been completed
     /// </summary>
-    class EventGoalComplete : public Event
+    class GoalCompleteEvent : public Event
     {
     public:
         SP<SomeGoal> goal;
 
-        EventGoalComplete(SP<SomeGoal> goal) : goal(goal)
+        GoalCompleteEvent(SP<SomeGoal> goal) : goal(goal)
         {
         }
     };

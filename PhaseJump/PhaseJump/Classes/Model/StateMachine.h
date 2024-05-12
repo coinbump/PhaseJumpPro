@@ -17,13 +17,13 @@
 namespace PJ
 {
     template <class T>
-    class EventStateChange : public Event
+    class StateChangeEvent : public Event
     {
     public:
         T prevState;
         T state;
 
-        EventStateChange(T prevState, T state, WP<PJ::Base> sentFrom) :
+        StateChangeEvent(T prevState, T state, WP<PJ::Base> sentFrom) :
         Event(String(""), sentFrom),
         prevState(prevState),
         state(state)
@@ -224,7 +224,7 @@ namespace PJ
         /// </summary>
         virtual void OnStateChange(T newState)
         {
-            broadcaster.Broadcast(MAKE<EventStateChange<T>>(prevState, newState, this->shared_from_this()));
+            broadcaster.Broadcast(MAKE<StateChangeEvent<T>>(prevState, newState, this->shared_from_this()));
         }
     };
 }
