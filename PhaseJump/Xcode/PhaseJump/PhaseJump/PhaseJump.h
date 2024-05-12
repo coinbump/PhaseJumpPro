@@ -1,5 +1,6 @@
 // In this header, you should import all the public headers of your framework using statements like #import <PhaseJump/PublicHeader.h>
 #include <PhaseJump/AnimateHueEffect.h>
+#include <PhaseJump/AnimatedSpriteRenderer.h>
 #include <PhaseJump/Base.h>
 #include <PhaseJump/ButtonControl.h>
 #include <PhaseJump/CirclePathLayout2D.h>
@@ -7,7 +8,7 @@
 #include <PhaseJump/Core.h>
 #include <PhaseJump/ComponentTool.h>
 #include <PhaseJump/DragHandler2D.h>
-#include <PhaseJump/EllipseRenderMeshBuilder.h>
+#include <PhaseJump/EllipseMeshBuilder.h>
 
 #include <PhaseJump/FileManager.h>
 #include <PhaseJump/FilePath.h>
@@ -25,6 +26,7 @@
 #include <PhaseJump/RenderModel.h>
 #include <PhaseJump/ResourceRepository.h>
 #include <PhaseJump/Macros.h>
+#include <PhaseJump/PointerClickUIEvent.h>
 #include <PhaseJump/SQLDatabase.h>
 #include <PhaseJump/SDLImGuiUIEventPoller.h>
 #include <PhaseJump/SDLImGuiRenderContext.h>
@@ -40,13 +42,14 @@
 #include <PhaseJump/SlicedTextureRenderer.h>
 #include <PhaseJump/SliderControl.h>
 #include <PhaseJump/SomeDragHandler.h>
-#include <PhaseJump/SomeUIEvent.h>
+#include <PhaseJump/SomePointerUIEvent.h>
 #include <PhaseJump/SomeStateHandler.h>
+#include <PhaseJump/SomeUIEvent.h>
 #include <PhaseJump/SpriteRenderer.h>
 #include <PhaseJump/StandardLoadResourcesModel.h>
 #include <PhaseJump/StandardRandom.h>
 #include <PhaseJump/UISystem.h>
-#include <PhaseJump/QuadRenderMeshBuilder.h>
+#include <PhaseJump/QuadMeshBuilder.h>
 #include <PhaseJump/VFlow.h>
 
 // MARK: - imGui Headers

@@ -11,8 +11,8 @@ namespace ValveTests {
     public:
         TestValve(std::optional<float> onOffDuration)
         {
-            turnOnTimer = MAKE<TransformTimer>(1.0f, SomeRunner::RunType::RunOnce, MAKE<LinearInterpolate>());
-            turnOffTimer = MAKE<TransformTimer>(1.0f, SomeRunner::RunType::RunOnce, MAKE<LinearInterpolate>());
+            turnOnTimer = MAKE<TransformTimer>(1.0f, SomeRunner::RunType::RunOnce, MAKE<InterpolateLinear>());
+            turnOffTimer = MAKE<TransformTimer>(1.0f, SomeRunner::RunType::RunOnce, MAKE<InterpolateLinear>());
             this->SetOnStateDuration(onOffDuration);
             this->SetOffStateDuration(onOffDuration);
         }

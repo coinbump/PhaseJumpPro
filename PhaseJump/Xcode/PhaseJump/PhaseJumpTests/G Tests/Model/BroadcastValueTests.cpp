@@ -1,17 +1,17 @@
 #include "gtest/gtest.h"
-#include "PublishedValue.h"
+#include "BroadcastValue.h"
 #include "IntClamp.h"
 #include "Macros.h"
 
 using namespace PJ;
 using namespace std;
 
-namespace PublishedValueTests {
+namespace BroadcastValueTests {
     template <class T>
-    class TestValue : public PublishedTransformValue<T>
+    class TestValue : public BroadcastTransformValue<T>
     {
     public:
-        using Base = PublishedTransformValue<T>;
+        using Base = BroadcastTransformValue<T>;
 
         TestValue(T value) : Base(value)
         {
@@ -32,9 +32,9 @@ namespace PublishedValueTests {
     };
 }
 
-using namespace PublishedValueTests;
+using namespace BroadcastValueTests;
 
-TEST(PublishedValue, Test_PublishedValue)
+TEST(BroadcastValue, Test_BroadcastValue)
 {
     auto test = MAKE<TestValue<int>>(0);
     EXPECT_EQ(0, test->Value());
@@ -47,7 +47,7 @@ TEST(PublishedValue, Test_PublishedValue)
     EXPECT_EQ(2, test->changedCount);
 }
 
-TEST(PublishedValue, Test_NullChange)
+TEST(BroadcastValue, Test_NullChange)
 {
     auto test = MAKE<TestValue<SP<TestClass>>>(nullptr);
     EXPECT_EQ(nullptr, test->Value());
@@ -60,7 +60,7 @@ TEST(PublishedValue, Test_NullChange)
     EXPECT_EQ(3, test->changedCount);
 }
 
-TEST(PublishedValue, Test_Transform)
+TEST(BroadcastValue, Test_Transform)
 {
     auto test = MAKE<TestValue<int>>(0);
     auto transform = MAKE<IntClamp>(0, 10);

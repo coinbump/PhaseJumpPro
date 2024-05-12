@@ -9,9 +9,9 @@ namespace ColorTests {
 
 using namespace ColorTests;
 
-TEST(Color32, Init_White)
+TEST(RGBAColor, Init_White)
 {
-    Color32 color32(255, 255, 255, 255);
+    RGBAColor color32(255, 255, 255, 255);
     // color32.LogColorSchema();
 
     EXPECT_EQ(255, color32.r());
@@ -25,9 +25,9 @@ TEST(Color32, Init_White)
     EXPECT_EQ(1.0f, color32.alphaFloat());
 }
 
-TEST(Color32, Init_Clear)
+TEST(RGBAColor, Init_Clear)
 {
-    Color32 color32(0, 0, 0, 0);
+    RGBAColor color32(0, 0, 0, 0);
     EXPECT_EQ(0, color32.r());
     EXPECT_EQ(0, color32.g());
     EXPECT_EQ(0, color32.b());
@@ -39,18 +39,18 @@ TEST(Color32, Init_Clear)
     EXPECT_EQ(0, color32.alphaFloat());
 }
 
-TEST(Color32, Bytes)
+TEST(RGBAColor, Bytes)
 {
-    Color32 color32(1, 2, 3, 4);
+    RGBAColor color32(1, 2, 3, 4);
     EXPECT_EQ(1, color32.r());
     EXPECT_EQ(2, color32.g());
     EXPECT_EQ(3, color32.b());
     EXPECT_EQ(4, color32.a());
 }
 
-TEST(Color, Color32ToColor)
+TEST(Color, RGBAColorToColor)
 {
-    Color32 color32(255, 255, 255, 255);
+    RGBAColor color32(255, 255, 255, 255);
     Color color(color32);
 
     EXPECT_EQ(1.0f, color.r);
@@ -62,7 +62,7 @@ TEST(Color, Color32ToColor)
 TEST(Color, ColorToColor32)
 {
     Color color(0.5f, 0.5f, 0.5f, 1.0f);
-    Color32 color32 = color;
+    RGBAColor color32 = color;
 
     EXPECT_EQ(127, color32.r());
     EXPECT_EQ(127, color32.g());

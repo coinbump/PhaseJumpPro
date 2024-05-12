@@ -7,7 +7,6 @@
 #include "Alignment.h"
 #include "AnimationCycleTimer.h"
 #include "CirclePath.h"
-#include "PublishedValue.h"
 
 #include "SomeGraphNode.h"
 
@@ -19,7 +18,7 @@
 #include "LinePath.h"
 #include "TransformTimer.h"
 #include "Angle.h"
-#include "Color32.h"
+#include "RGBAColor.h"
 #include "SomePosition.h"
 #include "Polygon.h"
 #include "Node2D.h"
@@ -43,10 +42,9 @@
 #include "BezierPathLayout.h"
 #include "CirclePathLayout2D.h"
 #include "SDLImGuiRenderContext.h"
-#include "CenterPolyRenderMeshBuilder.h"
-#include "ArcRenderMeshBuilder.h"
+#include "CenterPolyMeshBuilder.h"
+#include "ArcMeshBuilder.h"
 #include "PhaseJump.h"
-
 #include <memory>
 
 // TODO: temp code
@@ -57,7 +55,6 @@
 #include "World.h"
 #include "SomeStateMachine.h"
 #include "StateMachine.h"
-#include "PublishedValue.h"
 #include "CycleAnimator.h"
 #include "SomeKeyframeInterpolatorFactory.h"
 #include "SomeKeyframe.h"
@@ -74,6 +71,16 @@
 #include "GoCore.h"
 #include "SomeNode.h"
 #include "SomeStateHandler.h"
+#include "SomeEventHandler.h"
+#include "ToggleButtonControl.h"
+#include "SomeDropTarget.h"
+#include "GridViewItem.h"
+#include "HStack.h"
+#include "PadView.h"
+#include "ZStack.h"
+#include "VStack.h"
+#include "SomeDragGestureHandler2D.h"
+#include "HoverHandler.h"
 
 using namespace PJ;
 using namespace std;

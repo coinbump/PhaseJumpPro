@@ -41,7 +41,7 @@ TEST(CycleAnimator, MatchInReverse)
                              );
 
     sut.reverseType = CycleAnimator<float>::ReverseType::Match;
-    sut.interpolator->transform = _InterpolateType::easeInSquared;
+    sut.interpolator->transform = InterpolateTypes::easeInSquared;
 
     sut.OnUpdate(TimeSlice(1.0f));
     EXPECT_EQ(1.0f, sut.Progress());
@@ -62,7 +62,7 @@ TEST(CycleAnimator, RewindInReverse)
                              );
 
     sut.reverseType = CycleAnimator<float>::ReverseType::Rewind;
-    sut.interpolator->transform = _InterpolateType::easeInSquared;
+    sut.interpolator->transform = InterpolateTypes::easeInSquared;
 
     sut.OnUpdate(TimeSlice(1.0f));
     EXPECT_EQ(1.0f, sut.Progress());

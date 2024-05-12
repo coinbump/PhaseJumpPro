@@ -1,12 +1,12 @@
 #include "gtest/gtest.h"
 
-#include "RenderMesh.h"
+#include "Mesh.h"
 
 using namespace std;
 using namespace PJ;
 
 TEST(RenderMesh, TestCalculateBounds) {
-    RenderMesh sut;
+    Mesh sut;
 
     VectorList<Vector3> vertices;
     vertices.Add(Vector3(-1, -2, -3));
@@ -24,7 +24,7 @@ TEST(RenderMesh, TestCalculateBounds) {
 }
 
 TEST(RenderMesh, TestOffsetBy) {
-    RenderMesh sut;
+    Mesh sut;
 
     VectorList<Vector3> vertices;
     vertices.Add(Vector3(-1, -2, -3));
@@ -42,8 +42,8 @@ TEST(RenderMesh, TestOffsetBy) {
 }
 
 TEST(RenderMesh, TestPlusOperator) {
-    RenderMesh sut1;
-    RenderMesh sut2;
+    Mesh sut1;
+    Mesh sut2;
 
     VectorList<Vector3> vertices1;
     vertices1.Add(Vector3(1, 2, 3));

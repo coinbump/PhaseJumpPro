@@ -69,3 +69,16 @@ TEST(List, IndexOf) {
     EXPECT_EQ(2, sut.IndexOf(5).value());
     EXPECT_FALSE(sut.IndexOf(20));
 }
+
+TEST(List, Filter) {
+    VectorList<int> sut{ 1, 2, 3, 4 };
+
+    auto values = sut.Filter([](int value) { return value < 3; });
+    EXPECT_EQ(2, values.size());
+
+    auto i = values.begin();
+    EXPECT_EQ(1, *i);
+
+    i++;
+    EXPECT_EQ(2, *i);
+}

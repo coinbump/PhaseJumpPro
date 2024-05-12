@@ -19,6 +19,27 @@ TEST(String, Suffix_Prefix) {
     EXPECT_FALSE(sut.HasSuffix("_"));
 }
 
+TEST(String, Suffix_Repeated) {
+    String sut("TestTest");
+    EXPECT_TRUE(sut.HasSuffix("t"));
+    EXPECT_TRUE(sut.HasSuffix("Test"));
+}
+
+TEST(String, Suffix_WithSamePrefix) {
+    String sut("TestToo");
+    EXPECT_FALSE(sut.HasSuffix("Test"));
+}
+
+TEST(String, Prefix_BiggerThanString) {
+    String sut("t");
+    EXPECT_FALSE(sut.HasPrefix("Test"));
+}
+
+TEST(String, Suffix_BiggerThanString) {
+    String sut("t");
+    EXPECT_FALSE(sut.HasSuffix("Test"));
+}
+
 TEST(String, TypeValue_Positive) {
     String sut("14");
     EXPECT_EQ(14, sut.UIntValue());

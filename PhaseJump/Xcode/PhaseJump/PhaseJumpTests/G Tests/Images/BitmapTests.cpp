@@ -46,6 +46,6 @@ TEST(Bitmap, TestResizeCopy)
     EXPECT_EQ(Vector2Int(3, 3), sut.Size());
     EXPECT_EQ(36, sut.DataSize());
 
-    EXPECT_EQ((Color32)color1, sut.PixelColor32At(Vector2Int(0, 0)));
-    EXPECT_EQ((Color32)color2, sut.PixelColor32At(Vector2Int(1, 1)));
+    EXPECT_EQ((RGBAColor)color1, sut.PixelColor32At(Vector2Int(0, 0)));
+    EXPECT_EQ((RGBAColor)color2, sut.PixelColor32At(Vector2Int(1, 1)));
 }

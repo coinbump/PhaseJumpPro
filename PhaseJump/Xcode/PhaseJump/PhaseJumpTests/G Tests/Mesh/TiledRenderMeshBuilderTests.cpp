@@ -1,28 +1,28 @@
 #include "gtest/gtest.h"
 
-#include "TiledRenderMeshBuilder.h"
+#include "TiledMeshBuilder.h"
 #include "_String.h"
 
 using namespace std;
 using namespace PJ;
 
-TEST(TiledRenderMeshBuilder, TestMeshSizeEven) {
-    TiledRenderMeshBuilder sut(Vector2(100, 100), Vector2(20, 10));
+TEST(TiledMeshBuilder, TestMeshSizeEven) {
+    TiledMeshBuilder sut(Vector2(100, 100), Vector2(20, 10));
     auto meshSize = sut.MeshSize();
 
     EXPECT_EQ(Vec2I(5, 10), meshSize);
 }
 
-TEST(TiledRenderMeshBuilder, TestMeshSizeUneven) {
-    TiledRenderMeshBuilder sut(Vector2(100, 100), Vector2(22, 12));
+TEST(TiledMeshBuilder, TestMeshSizeUneven) {
+    TiledMeshBuilder sut(Vector2(100, 100), Vector2(22, 12));
     auto meshSize = sut.MeshSize();
 
     EXPECT_EQ(Vec2I(5, 9), meshSize);
 }
 
-TEST(TiledRenderMeshBuilder, TestBuildMeshEven) {
-    TiledRenderMeshBuilder builder(Vector2(10, 10), Vector2(5, 5));
-    auto sut = builder.BuildRenderMesh();
+TEST(TiledMeshBuilder, TestBuildMeshEven) {
+    TiledMeshBuilder builder(Vector2(10, 10), Vector2(5, 5));
+    auto sut = builder.BuildMesh();
 
     EXPECT_EQ(16, sut.vertices.size());
 
@@ -98,9 +98,9 @@ TEST(TiledRenderMeshBuilder, TestBuildMeshEven) {
     EXPECT_EQ(14, sut.triangles[23]);
 }
 
-TEST(TiledRenderMeshBuilder, TestUVBoundsInternal) {
-    TiledRenderMeshBuilder builder(Vector2(10, 10), Vector2(5, 5), UVRect(Vector2(.1, .1), Vector2(.5, .5)));
-    auto sut = builder.BuildRenderMesh();
+TEST(TiledMeshBuilder, TestUVBoundsInternal) {
+    TiledMeshBuilder builder(Vector2(10, 10), Vector2(5, 5), UVRect(Vector2(.1, .1), Vector2(.5, .5)));
+    auto sut = builder.BuildMesh();
 
     EXPECT_EQ(16, sut.uvs.size());
 
@@ -125,9 +125,9 @@ TEST(TiledRenderMeshBuilder, TestUVBoundsInternal) {
     EXPECT_EQ(Vector2(.6, .1), sut.uvs[15]);
 }
 
-TEST(TiledRenderMeshBuilder, TestBuildMeshUneven) {
-    TiledRenderMeshBuilder builder(Vector2(10, 10), Vector2(8, 8));
-    auto sut = builder.BuildRenderMesh();
+TEST(TiledMeshBuilder, TestBuildMeshUneven) {
+    TiledMeshBuilder builder(Vector2(10, 10), Vector2(8, 8));
+    auto sut = builder.BuildMesh();
 
     EXPECT_EQ(16, sut.vertices.size());
 
