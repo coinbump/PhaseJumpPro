@@ -6,10 +6,6 @@
         },
         {
             "type": "texture",
-            "path": "little-demon.png"
-        },
-        {
-            "type": "texture",
             "path": "heart-full.png"
         },
         {
