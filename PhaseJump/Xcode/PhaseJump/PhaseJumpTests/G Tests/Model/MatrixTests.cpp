@@ -22,8 +22,8 @@ namespace MatrixTests {
         {
         }
         
-        size_t RowsCount() const { return tuples.Count(); }
-        size_t ColumnsCount() const { return tuples.Count() > 0 ? tuples[0].Count() : 0; }
+        size_t RowsCount() const { return tuples.size(); }
+        size_t ColumnsCount() const { return tuples.size() > 0 ? tuples[0].size() : 0; }
     };
 }
 

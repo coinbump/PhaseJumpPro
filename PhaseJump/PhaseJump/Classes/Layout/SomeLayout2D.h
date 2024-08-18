@@ -5,20 +5,14 @@
 
 /*
  RATING: 5 stars
- Simple base class
- CODE REVIEW: 12/27/22
+ Simple type
+ CODE REVIEW: 7/5/24
  */
-namespace PJ
-{
-    /// <summary>
+namespace PJ {
     /// Specialization for 2D layouts
-    /// </summary>
-    class SomeLayout2D : public SomeLayout
-    {
-        void ApplyLayout() override
-        {
-        }
+    class SomeLayout2D : public SomeLayout {
+        void ApplyLayout() override {}
     };
-}
+} // namespace PJ
 
 #endif

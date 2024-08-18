@@ -1,68 +1,55 @@
 #ifndef PJSOMEDRAGHANDLER_H
 #define PJSOMEDRAGHANDLER_H
 
-#include "WorldComponent.h"
-#include "SomeUIEvent.h"
-#include "SomePosition.h"
-#include "UISystem.h"
-#include "UISystemSharedDependencyResolver.h"
 #include "DragModel.h"
+#include "SomePosition.h"
+#include "SomeUIEvent.h"
+#include "UISystem.h"
+#include "WorldComponent.h"
 
 /*
  RATING: 4 stars
  Tested and works. Needs unit tests
  CODE REVIEW: 5/10/23
  */
-namespace PJ
-{
-    /// <summary>
+namespace PJ {
     /// Abstract component for gestures/logic to handle dragging
-    /// </summary>
-    class SomeDragHandler : public WorldComponent, public SomePointerEventsResponder
-    {
+    class SomeDragHandler : public WorldComponent<>, public SomePointerUIEventsResponder {
     public:
-        enum class StateType
-        {
-            Default,
-            Drag
-        };
+        enum class StateType { Default, Drag };
 
-        /// <summary>
-        /// (OPTIONAL). If not null, drag the target object when this object is tapped
-        /// Useful if the object with the collider has its own transform modifier which interferes with the drag
-        /// or wants to be used as a drag handle for something else.
-        /// </summary>
+        /// (OPTIONAL). If not null, drag the target object when this object is
+        /// tapped Useful if the object with the collider has its own transform
+        /// modifier which interferes with the drag or wants to be used as a
+        /// drag handle for something else.
         WP<SomeDragHandler> dragTarget;
 
-        SP<SomeDependencyResolver<SP<UISystem>>> uiSystemDependencyResolver = MAKE<UISystemSharedDependencyResolver>();
+        std::function<UISystem*()> uiSystemResolver = []() { return UISystem::shared; };
 
-        virtual SP<UISystem> UISystem() const
-        {
-            return uiSystemDependencyResolver->Dependency();
+        virtual UISystem* UISystem() const {
+            GUARDR(uiSystemResolver, nullptr)
+            return uiSystemResolver();
         }
 
     protected:
         StateType state;
 
-        /// <summary>
         /// Position where the user clicked to initiate the drag
-        /// </summary>
         WorldPosition dragStartInputPosition;
 
-        /// <summary>
         /// Position where this object's transform was when the drag started
-        /// </summary>
         WorldPosition dragStartPosition;
 
     public:
-        virtual void OnDragStart(WorldPosition inputPosition) { }
+        virtual void OnDragStart(WorldPosition inputPosition) {}
+
         virtual void OnDragUpdate(WorldPosition inputPosition) = 0;
 
         bool IsDragging() const;
         virtual void OnDragEnd();
         virtual void StartDrag(WorldPosition inputPosition);
-        void OnPointerDownEvent(PointerDownUIEvent<LocalPosition> event) override;
+        void OnPointerDown(PointerDownUIEvent event) override;
     };
-}
+} // namespace PJ
 
 #endif

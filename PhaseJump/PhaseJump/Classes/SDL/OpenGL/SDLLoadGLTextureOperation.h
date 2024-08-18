@@ -2,14 +2,14 @@
 #define PJSDLLOADGLTEXTUREOPERATION_H
 
 #include "FilePath.h"
-#include "SomeOperation.h"
+#include "GLHeaders.h"
+#include "RenderTypes.h"
 #include "SDLTexture.h"
 #include "SomeLoadResourcesOperation.h"
-#include <SDL2/SDL_render.h>
-#include <SDL2_image/SDL_image.h>
-#include "GLHeaders.h"
+#include "SomeOperation.h"
 #include "Vector2.h"
-#include "RenderTypes.h"
+#include <SDL3/SDL_render.h>
+#include <SDL3_image/SDL_image.h>
 
 /*
  RATING: 5 stars
@@ -22,17 +22,17 @@ namespace PJ {
     /// Use SDL to load an OpenGL texture
     class SDLLoadGLTextureOperation : public SomeLoadResourcesOperation {
     public:
-        using Base = SomeOperation;
+        using Base = SomeLoadResourcesOperation;
 
-        TextureMagnification textureMagnification = TextureMagnification::Linear;
+        String textureMagnification = TextureMagnification::Linear;
 
-        SDLLoadGLTextureOperation() {
-        }
+        SDLLoadGLTextureOperation(LoadResourceInfo info, LoadResourcesModel& loadResourcesModel) :
+            Base(info, loadResourcesModel) {}
 
-        SDLLoadGLTextureOperation(FilePath filePath, TextureMagnification textureMagnification);
+        // MARK: SomeLoadResourcesOperation
 
-        void Run() override;
+        Result LoadResources() override;
     };
-}
+} // namespace PJ
 
 #endif

@@ -3,19 +3,18 @@
 
 #include "Color.h"
 #include "SomeRenderContext.h"
-#include <SDL2/SDL.h>
+#include <SDL3/SDL.h>
 
 class ImGuiIO;
 class ImGuiContext;
 
-namespace PJ
-{
-    class SDLWindow;
+// CODE REVIEW: ?/23
+namespace PJ {
+    class SDLPlatformWindow;
     class SomeGLRenderEngine;
-    
+
     /// Renders `ImGUI` widgets via `SDL`
-    class SDLImGuiRenderContext : public SomeRenderContext
-    {
+    class SDLImGuiRenderContext : public SomeRenderContext {
     protected:
         SDL_Window* window = nullptr;
         SDL_GLContext glContext = NULL;
@@ -24,9 +23,7 @@ namespace PJ
     public:
         Color clearColor = Color::gray;
 
-        SDLImGuiRenderContext()
-        {
-        }
+        SDLImGuiRenderContext() {}
 
         virtual ~SDLImGuiRenderContext();
 
@@ -47,6 +44,6 @@ namespace PJ
         Vector2 Size() const override;
         Vector2Int PixelSize() const override;
     };
-}
+} // namespace PJ
 
 #endif

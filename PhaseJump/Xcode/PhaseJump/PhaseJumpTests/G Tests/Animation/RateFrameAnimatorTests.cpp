@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "SomeFrameAnimator.h"
+#include "RateFramePlayable.h"
 #include "Timer.h"
 
 using namespace PJ;
@@ -10,13 +10,13 @@ namespace RateFrameAnimatorTests {
 
 using namespace RateFrameAnimatorTests;
 
-TEST(RateFrameAnimator, Tests)
+TEST(RateFramePlayable, Tests)
 {
-    RateFrameAnimator sut(10.0f);
+    RateFramePlayable sut(10, 10.0f);
 
-    EXPECT_EQ(0, sut.FrameForUpdate(TimeSlice(0), 10));
-    EXPECT_EQ(0, sut.FrameForUpdate(TimeSlice(1.0f), 10));
-    EXPECT_EQ(1, sut.FrameForUpdate(TimeSlice(1.0f/10.0f), 10));
-    EXPECT_EQ(1, sut.FrameForUpdate(TimeSlice(1.0f), 10));
-    EXPECT_EQ(2, sut.FrameForUpdate(TimeSlice(1.0f/10.0f), 10));
+    EXPECT_EQ(0, sut.FrameForUpdate(TimeSlice(0)));
+    EXPECT_EQ(0, sut.FrameForUpdate(TimeSlice(1.0f)));
+    EXPECT_EQ(1, sut.FrameForUpdate(TimeSlice(1.0f/10.0f)));
+    EXPECT_EQ(1, sut.FrameForUpdate(TimeSlice(1.0f)));
+    EXPECT_EQ(2, sut.FrameForUpdate(TimeSlice(1.0f/10.0f)));
 }

@@ -15,9 +15,13 @@ namespace PJ {
     struct Mesh;
 
     /// Renders a single texture as a sprite
-    class SpriteRenderer: public SomeRenderer {
+    class SpriteRenderer : public SomeRenderer {
     protected:
         Mesh mesh;
+
+        /// Material holds the render texture, this is the actual texture object (child texture for
+        /// texture atlas)
+        SP<SomeTexture> texture;
 
     public:
         bool flipX = false;
@@ -25,11 +29,9 @@ namespace PJ {
 
         // FUTURE: float pixelsPerUnit = 1.0f;
 
-        SP<RenderMaterial> material;
-
         SpriteRenderer(SP<SomeTexture> texture);
+        SpriteRenderer(SP<RenderMaterial> material);
 
-        void RenderInto(RenderIntoModel model) override;
         Vector2 Size() const;
 
         std::optional<Vector3> WorldSize() const override {
@@ -38,7 +40,13 @@ namespace PJ {
         }
 
         void SetColor(Color color) override;
+
+        // MARK: SomeRenderer
+
+        VectorList<RenderModel> MakeRenderModels(RenderIntoModel const& model) override;
     };
-}
+
+    using TextureRenderer = SpriteRenderer;
+} // namespace PJ
 
 #endif

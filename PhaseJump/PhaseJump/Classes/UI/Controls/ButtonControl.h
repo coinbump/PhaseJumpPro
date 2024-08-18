@@ -1,22 +1,19 @@
 #ifndef PJBUTTONCONTROL_H
 #define PJBUTTONCONTROL_H
 
+#include "ComposeTimedStateMachine.h"
+#include "StandardEventCore.h"
 #include "UIControl2D.h"
-#include "Event.h"
-#include "GoCore.h"
 
 /*
  RATING: 4 stars
- Tested and works. Needs unit testse
+ Tested and works. Needs unit tests
  CODE REVIEW: 5/8/23
  */
-namespace PJ
-{
-    /// <summary>
+namespace PJ {
     /// Button state
-    /// </summary>
-    enum class ButtonControlStateType
-    {
+    // TODO: Use struct-composition for these, not enum
+    enum class ButtonControlStateType {
         // Default
         Normal,
 
@@ -31,24 +28,22 @@ namespace PJ
     };
 
     // FUTURE: ButtonView wraps this
-    class ButtonControl : public UIControl2D, public SomeGoStateListener<ButtonControlStateType>
-    {
+    class ButtonControl : public UIControl2D,
+                          public SomeTimedStateMachineOwner<ButtonControlStateType> {
     public:
         using Base = UIControl2D;
         using StateType = ButtonControlStateType;
 
-        class PressEvent : public Event
-        {
+        class PressEvent : public Event<StandardEventCore> {
         public:
-            using Base = Event;
+            using Base = Event<StandardEventCore>;
 
-            PressEvent(String id) : Base(id)
-            {
-            }
+            PressEvent(String id) :
+                Base(StandardEventCore(id)) {}
         };
 
-        enum class TrackingType
-        {
+        // TODO: Use struct-composition for these, not enum
+        enum class TrackingType {
             // Track the button
             Track,
 
@@ -57,20 +52,20 @@ namespace PJ
         };
 
         void SetIsHovering(bool value) override;
-        
+
         TrackingType trackingType = TrackingType::Track;
 
     protected:
-        SP<GoCore<StateType>> core = MAKE<GoCore<StateType>>();
+        UP<ComposeTimedStateMachine<StateType>> composeTimedStateMachine;
         bool isTracking = false;
 
     public:
         ButtonControl();
 
-        void OnPointerDownEvent(PointerDownUIEvent<LocalPosition> _event) override;
-        void OnPointerEnterEvent(PointerEnterUIEvent _event) override;
-        void OnPointerExitEvent(PointerExitUIEvent _event) override;
-        void OnPointerUpEvent(PointerUpUIEvent _event) override;
+        void OnPointerDown(PointerDownUIEvent _event) override;
+        void OnPointerEnter(PointerEnterUIEvent _event) override;
+        void OnPointerExit(PointerExitUIEvent _event) override;
+        void OnPointerUp(PointerUpUIEvent _event) override;
 
     protected:
         void Awake() override;
@@ -78,9 +73,9 @@ namespace PJ
         /// Called when the button is pressed
         virtual void OnPress();
 
-        void OnStateChange(GoStateMachine<StateType>& inStateMachine) override;
-        void OnStateFinish(GoStateMachine<StateType>& inStateMachine) override;
+        void OnStateChange(TimedStateMachine<StateType>& inStateMachine) override;
+        void OnStateFinish(TimedStateMachine<StateType>& inStateMachine) override;
     };
-}
+} // namespace PJ
 
 #endif

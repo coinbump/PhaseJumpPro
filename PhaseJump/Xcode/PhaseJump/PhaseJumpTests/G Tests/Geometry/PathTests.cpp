@@ -16,7 +16,7 @@ namespace PathTests {
 
 using namespace PathTests;
 
-TEST(Polygon, TestCirclePath)
+TEST(CirclePath, TestCirclePath)
 {
     TestCirclePath sut;
     EXPECT_NEAR(0, sut.PositionAt(0).x, 0.001f);

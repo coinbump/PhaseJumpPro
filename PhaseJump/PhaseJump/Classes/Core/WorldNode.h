@@ -2,22 +2,25 @@
 #define PJWORLDNODE_H
 
 #include "AcyclicGraphNode.h"
-#include "SomeWorldComponent.h"
-#include "VectorList.h"
-#include "List.h"
 #include "GeoTransform.h"
+#include "GraphNodeTool.h"
+#include "List.h"
+#include "Log.h"
 #include "SomeUIEvent.h"
-#include "Macros.h"
+#include "SomeWorldComponent.h"
+#include "Utils.h"
+#include "VectorList.h"
 #include "WorldNodeTransform.h"
+#include "WorldPartLife.h"
 #include <memory>
 
+// TODO: Unit tests
+// CODE REVIEW: /23
 namespace PJ {
     class LocalPosition;
     class World;
 
-    /// <summary>
     /// A node in the world graph
-    /// </summary>
     class WorldNode : public AcyclicGraphNode<> {
     public:
         using ComponentSharedPtr = SP<SomeWorldComponent>;
@@ -28,64 +31,117 @@ namespace PJ {
         float destroyCountdown = 0;
         bool isDestroyed = false;
         bool isActive = true;
-        
-        /// If >0, Awake/Start or both have been called for this node (1: Awake, 2: both Awake and Start)
-        int awakeCount = 0;
+
+        WorldPartLife life;
 
     public:
         using NodeTransform = WorldNodeTransform;
 
-        // Don't use this directly, use World(), because this is only set in the root node
-        WP<World> world;
+        // Don't use this directly, use World(), because this is only set in the
+        // root node
+        World* world = nullptr;
+
+        String name;
 
         using Base = AcyclicGraphNode<>;
 
-        // This is a reference type because components access it via reference
-        SP<NodeTransform> transform = MAKE<NodeTransform>();
+        // TODO: does this have to be a pointer?
+        UP<NodeTransform> transform = std::make_unique<NodeTransform>(*this);
 
-        bool IsAwake() const { return awakeCount > 0; }
-        bool IsStarted() const { return awakeCount > 1; }
-        bool IsDestroyed() const { return isDestroyed; }
-        std::size_t ChildCount() { return edges.size(); }
+        WorldNode(String name = "") :
+            name(name) {}
 
-        VectorList<ComponentSharedPtr> const& Components() const { return components; }
+        bool IsDestroyed() const {
+            return isDestroyed;
+        }
 
-        WP<World> World() const;
+        std::size_t ChildCount() {
+            return edges.size();
+        }
 
-        void Add(ComponentPtr component)
-        {
-            if (!component) { return; }
+        VectorList<ComponentSharedPtr> const& Components() const {
+            return components;
+        }
+
+        World* World() const;
+
+        void Add(ComponentPtr component) {
+            if (nullptr != component->owner) {
+                PJLog("ERROR. Can't add parented component");
+                return;
+            }
+
+            GUARD(component)
+
             components.Add(component);
-            component->owner = SCAST<WorldNode>(shared_from_this());
+            component->owner = this;
+
+            // If this node is started, forward life cycle events to the component
+            if (life.IsAwake()) {
+                component->CheckedAwake();
+            }
+            if (life.IsStarted()) {
+                component->CheckedStart();
+            }
         }
 
         template <class T>
-        bool AddComponent(SP<T> component)
-        {
-            auto castComponent = DCAST<SomeWorldComponent>(component);
-            if (nullptr == castComponent) { return false; }
-            Add(castComponent);
-
-            return true;
-        }
-
-        template <class T>
-        SP<T> AddComponent()
-        {
+        SP<T> AddComponent() {
             auto component = MAKE<T>();
-            AddComponent(component);
+            Add(component);
             return component;
         }
 
-        void AddChild(SP<WorldNode> node)
-        {
-            AddEdge(StandardEdgeModel(), node);
+        // TODO: return something here? Edge? iterator?
+        void Add(SP<WorldNode> node) {
+            GUARD(node)
+
+            if (nullptr != node->Parent()) {
+                PJLog("ERROR. Can't add a previously parented node");
+                return;
+            }
+
+            AddEdge(node);
+
+            // Assign world to children and descendants
+            GraphNodeTool<> nodeTool;
+            auto nodeList = nodeTool.CollectDepthFirstGraph(node);
+            for (auto& node : nodeList) {
+                SCAST<WorldNode>(node)->world = world;
+            }
+        }
+
+        void Remove(SP<WorldNode> node) {
+            GUARD(node)
+
+            if (this != node->Parent().get()) {
+                PJLog("ERROR. Can't remove un-parented node");
+                return;
+            }
+
+            node->world = nullptr;
+            RemoveEdgesTo(*node);
+        }
+
+        void Remove(SP<SomeWorldComponent> component) {
+            GUARD(component)
+
+            component->owner = nullptr;
+
+            PJ::Remove(components, component);
+        }
+
+        void RemoveAllComponents() {
+            auto iterComponents = components;
+            std::for_each(
+                iterComponents.begin(), iterComponents.end(),
+                [&](SP<SomeWorldComponent>& component) { Remove(component); }
+            );
         }
 
         template <class T>
-        SP<T> TypeComponent() const
-        {
-            for (auto component : components) {
+        SP<T> TypeComponent() const {
+            for (auto& component : components) {
                 auto typeComponent = DCAST<T>(component);
                 if (typeComponent) {
                     return typeComponent;
@@ -96,11 +152,10 @@ namespace PJ {
         }
 
         template <class T>
-        VectorList<SP<T>> TypeComponents() const
-        {
+        VectorList<SP<T>> TypeComponents() const {
             VectorList<SP<T>> result;
 
-            for (auto component : components) {
+            for (auto& component : components) {
                 auto typeComponent = DCAST<T>(component);
                 if (typeComponent) {
                     result.Add(typeComponent);
@@ -110,19 +165,22 @@ namespace PJ {
             return result;
         }
 
-        // This can't be const because Graph collection requires non const results
+        // This can't be const because Graph collection requires non const
+        // results
         template <class T>
-        VectorList<SP<T>> TypeComponentsInChildren()
-        {
+        VectorList<SP<T>> TypeComponentsInChildren() {
             VectorList<SP<T>> result;
 
-            auto graph = CollectBreadthFirstGraph();
+            GraphNodeTool graphNodeTool;
+            auto graph =
+                graphNodeTool.CollectBreadthFirstGraph(SCAST<SomeGraphNode>(this->shared_from_this()
+                ));
 
-            for (auto node : graph) {
+            for (auto& node : graph) {
                 auto worldNode = SCAST<WorldNode>(node);
                 auto components = worldNode->Components();
 
-                for (auto component : components) {
+                for (auto& component : components) {
                     auto typeComponent = DCAST<T>(component);
                     if (typeComponent) {
                         result.Add(typeComponent);
@@ -133,9 +191,9 @@ namespace PJ {
             return result;
         }
 
-        void Destroy(float countdown = 0)
-        {
+        void Destroy(float countdown = 0) {
             if (countdown == 0) {
+                destroyCountdown = 0;
                 isDestroyed = true;
                 return;
             }
@@ -143,43 +201,41 @@ namespace PJ {
             destroyCountdown = countdown;
         }
 
-        /// Called for every object before Start
-        virtual void Awake();
+        bool IsAwake() const {
+            return life.IsAwake();
+        }
 
-        /// Called for every object after Awake
-        virtual void Start();
+        bool IsStarted() const {
+            return life.IsStarted();
+        }
 
-        bool IsActive() const { return isActive; }
-        void SetActive(bool isActive) { this->isActive = isActive; }
+        /// Called before Start
+        void CheckedAwake();
 
-        virtual void OnDestroy() {}
+        /// Called after Awake
+        void CheckedStart();
 
-        void OnUpdate(TimeSlice time) override
-        {
-            Base::OnUpdate(time);
+        bool IsActive() const {
+            return isActive && !isDestroyed;
+        }
 
-            if (destroyCountdown > 0) {
-                destroyCountdown -= time.delta;
-                if (destroyCountdown <= 0) {
-                    isDestroyed = true;
-                }
-            }
+        void SetActive(bool isActive) {
+            this->isActive = isActive;
+        }
 
-            for (auto component : components) {
-                if (!component->IsEnabled()) { continue; }
-                component->OnUpdate(time);
+        virtual void OnDestroy() {
+            for (auto& component : components) {
+                component->OnDestroy();
             }
         }
 
-        VectorList<SP<WorldNode>> ChildNodes() const
-        {
+        void OnUpdate(TimeSlice time) override;
+
+        VectorList<SP<WorldNode>> ChildNodes() const {
             VectorList<SP<WorldNode>> result;
 
-            for (auto edge : edges) {
-                auto worldNode = SCAST<WorldNode>(edge->toNode->Value());
-                if (worldNode) {
-                    result.Add(worldNode);
-                }
+            for (auto& edge : edges) {
+                result.Add(SCAST<WorldNode>(edge->toNode->Value()));
             }
 
             return result;
@@ -187,12 +243,53 @@ namespace PJ {
 
         // Convenience names
         template <class T>
-        SP<T> GetComponent() const { return TypeComponent<T>(); }
+        SP<T> GetComponent() const {
+            return TypeComponent<T>();
+        }
+
+        // TODO: what about disabled components??
         template <class T>
-        VectorList<SP<T>> GetComponents() const { return TypeComponents<T>(); }
+        VectorList<SP<T>> GetComponents() const {
+            return TypeComponents<T>();
+        }
+
         template <class T>
-        VectorList<SP<T>> GetComponentsInChildren() { return TypeComponentsInChildren<T>(); }
+        VectorList<SP<T>> GetComponentsInChildren() {
+            return TypeComponentsInChildren<T>();
+        }
+
+        // MARK: Convenience Scale
+
+        Vector3 Scale() const {
+            GUARDR(transform, Vector3::one);
+            return transform->Scale();
+        }
+
+        void SetScale(Vector3 value) {
+            GUARD(transform);
+            transform->SetScale(value);
+        }
+
+        void SetScale(float value) {
+            SetScale(Vector3::Uniform(value));
+        }
+
+        void SetScale2D(Vector2 value) {
+            SetScale(Vector3(value.x, value.y, 1.0f));
+        }
+
+        void SetScale2D(float value) {
+            SetScale(Vector3(value, value, 1.0f));
+        }
+
+        Vector3 LocalScale() const {
+            return Scale();
+        }
+
+        void SetLocalScale(Vector3 value) {
+            SetScale(value);
+        }
     };
-}
+} // namespace PJ
 
 #endif

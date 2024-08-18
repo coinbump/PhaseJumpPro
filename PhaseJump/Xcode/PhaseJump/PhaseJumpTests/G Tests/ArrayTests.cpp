@@ -12,9 +12,9 @@ TEST(VectorList, Remove) {
     sut.Add("test");
     EXPECT_EQ(1, sut.size());
 
-    sut.Remove("test");
+    Remove(sut, "test");
     EXPECT_EQ(0, sut.size());
 
-    sut.Remove("test");
+    Remove(sut, "test");
     EXPECT_EQ(0, sut.size());
 }

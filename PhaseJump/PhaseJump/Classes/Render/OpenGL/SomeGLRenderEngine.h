@@ -1,16 +1,16 @@
 #ifndef PJSOMEGLRENDERENGINE_H
 #define PJSOMEGLRENDERENGINE_H
 
+#include "Base.h"
 #include "Color.h"
-#include "VectorList.h"
+#include "Data.h"
 #include "GLHeaders.h"
 #include "GLRenderState.h"
-#include "SomeRenderEngine.h"
-#include "Base.h"
-#include "_Set.h"
 #include "Matrix4x4.h"
+#include "OrderedSet.h"
 #include "RenderModel.h"
-#include "Data.h"
+#include "SomeRenderEngine.h"
+#include "VectorList.h"
 
 /*
  RATING: 4 stars
@@ -23,9 +23,7 @@ namespace PJ {
     class GLShaderProgram;
     class Vector3;
 
-    enum class RenderStep {
-        PreRender
-    };
+    enum class RenderStep { PreRender };
 
     enum class ColorFormat {
         // Send colors as a 4-component float color
@@ -38,8 +36,6 @@ namespace PJ {
     /// Plan for building a GL vertex buffer
     struct GLVertexBufferPlan {
         struct Item {
-            using Data = PJ::Data<>;
-
             String attributeId;
             uint32_t componentCount;
             uint32_t componentSize;
@@ -47,19 +43,19 @@ namespace PJ {
             bool normalize;
             SP<Data> data;
 
-            uint32_t Size() const { return componentSize * componentCount; }
+            uint32_t Size() const {
+                return componentSize * componentCount;
+            }
 
-            Item(String attributeId,
-                 uint32_t componentCount,
-                 uint32_t componentSize,
-                 GLenum glType,
-                 void* data,
-                 bool normalize = false)
-            : attributeId(attributeId),
-            componentCount(componentCount),
-            componentSize(componentSize),
-            glType(glType),
-            normalize(normalize) {
+            Item(
+                String attributeId, uint32_t componentCount, uint32_t componentSize, GLenum glType,
+                void* data, bool normalize = false
+            ) :
+                attributeId(attributeId),
+                componentCount(componentCount),
+                componentSize(componentSize),
+                glType(glType),
+                normalize(normalize) {
                 this->data = MAKE<Data>();
                 this->data->CopyIn(data, componentCount * componentSize);
             }
@@ -68,13 +64,13 @@ namespace PJ {
         VectorList<Item> items;
 
         template <class T>
-        void Add(String attributeId, CollectionData<T> const& collection, GLenum glType, bool normalize = false) {
-            items.Add(Item(attributeId,
-                           (uint32_t)collection.ItemCount(),
-                           collection.ItemSize(),
-                           glType,
-                           collection.Data(),
-                           normalize));
+        void
+        Add(String attributeId, CollectionData<T> const& collection, GLenum glType,
+            bool normalize = false) {
+            items.Add(Item(
+                attributeId, (uint32_t)collection.ItemCount(), collection.ItemSize(), glType,
+                collection.Data(), normalize
+            ));
         }
 
         void Add(String attributeId, VectorList<Vector3> const& components) {
@@ -84,7 +80,7 @@ namespace PJ {
         void Add(String attributeId, VectorList<Color> const& components) {
             Add(attributeId, (CollectionData<Color>)components, GL_FLOAT);
         }
-        
+
         void Add(String attributeId, VectorList<RGBAColor> const& components) {
             Add(attributeId, (CollectionData<RGBAColor>)components, GL_UNSIGNED_BYTE, true);
         }
@@ -98,26 +94,26 @@ namespace PJ {
         RenderModel model;
         GLVertexBufferPlan vboPlan;
 
-        GLRenderPlan(RenderModel model, GLVertexBufferPlan vboPlan) : model(model), vboPlan(vboPlan) {
-        }
+        GLRenderPlan(RenderModel model, GLVertexBufferPlan vboPlan) :
+            model(model),
+            vboPlan(vboPlan) {}
     };
 
     /**
-     Abstracts OpenGL render commands to allow for a subclass to implement actual renders
-     Example: OpenGL vs OpenGLES
+     Abstracts OpenGL render commands to allow for a subclass to implement
+     actual renders Example: OpenGL vs OpenGLES
      */
     // FUTURE: DeferredGLRenderEngine that supports batching
-    class SomeGLRenderEngine : public SomeRenderEngine
-    {
+    class SomeGLRenderEngine : public SomeRenderEngine {
     protected:
         GLRenderState renderState;
 
+    public:
         Matrix4x4 viewMatrix;
         Matrix4x4 projectionMatrix;
 
         VectorList<SP<GLRenderPlan>> renderPlans;
 
-    public:
         ColorFormat colorFormat = ColorFormat::Float;
 
         SomeGLRenderEngine();
@@ -139,15 +135,18 @@ namespace PJ {
 
         virtual void EnableVertexAttributeArray(GLuint index, bool isEnabled);
         virtual void DisableAllVertexAttributeArrays();
-        virtual void EnableOnlyVertexAttributeArrays(Set<GLuint> attributeLocations);
+        virtual void EnableOnlyVertexAttributeArrays(OrderedSet<GLuint> attributeLocations);
 
         virtual void UniformMatrix4fv(GLint location, const GLfloat* value);
 
-        // IMPORTANT: the pointer parameter does not represent a pointer in modern OpenGL
-        // Instead it is an offset into the Vertex Buffer
-        virtual void VertexAttributePointer(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const GLvoid *pointer) = 0;
+        // IMPORTANT: the pointer parameter does not represent a pointer in
+        // modern OpenGL Instead it is an offset into the Vertex Buffer
+        virtual void VertexAttributePointer(
+            GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride,
+            const GLvoid* pointer
+        ) = 0;
         virtual void DrawArrays(GLenum drawMode, GLint drawFirst, GLsizei drawCount) = 0;
-        virtual void DrawElements(GLenum mode, GLsizei count, GLenum type, const void * indices) = 0;
+        virtual void DrawElements(GLenum mode, GLsizei count, GLenum type, const void* indices) = 0;
         virtual void RunGL(std::function<void()> command, String name) = 0;
         virtual void SetBlendMode(GLBlendMode blendMode);
 
@@ -156,11 +155,11 @@ namespace PJ {
         void EnableFeature(String featureId, bool isEnabled) override;
         void SetLineWidth(float lineWidth) override;
 
-        void EnableOnlyFeatures(Set<String> features);
+        void EnableOnlyFeatures(OrderedSet<String> features);
 
     protected:
         virtual void RunRender(std::function<void()> render);
     };
-}
+} // namespace PJ
 
 #endif

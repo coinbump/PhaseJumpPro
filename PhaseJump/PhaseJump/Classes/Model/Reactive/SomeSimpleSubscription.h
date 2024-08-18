@@ -2,15 +2,17 @@
 
 #include "SomeCancellable.h"
 
+// CODE REVIEW: ?/23
 namespace PJ {
+    // TODO: why do we need a class at all? Can it just be a func?
     template <class Input>
     struct SomeSimpleSubscription : public Cancellable {
         virtual ~SomeSimpleSubscription() {}
 
         virtual void Receive(Input const& value) = 0;
 
-        // FUTURE: Support advanced reactive subscriptions with demand-based request if needed
-        // virtual void Request(int demand);
+        // FUTURE: Support advanced reactive subscriptions with demand-based
+        // request if needed virtual void Request(int demand);
     };
 
     template <class Input>
@@ -20,11 +22,11 @@ namespace PJ {
 
         ReceiveFunc receiveFunc;
 
-        InSimpleSubscription(ReceiveFunc receiveFunc) : receiveFunc(receiveFunc) {
-        }
+        InSimpleSubscription(ReceiveFunc receiveFunc) :
+            receiveFunc(receiveFunc) {}
 
         void Receive(ReceiveValue value) override {
             receiveFunc(value);
         }
     };
-}
+} // namespace PJ

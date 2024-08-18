@@ -1,17 +1,15 @@
-#ifndef PJRESULT_H
-#define PJRESULT_H
+#pragma once
 
+#include <optional>
 #include <variant>
 
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 4/30/23
+ CODE REVIEW: 7/18/24
  */
 namespace PJ {
-    enum class ResultType {
-        Success, Failure
-    };
+    enum class ResultType { Success, Failure };
 
     template <class Success, class Failure>
     class Result {
@@ -34,14 +32,28 @@ namespace PJ {
             return ResultType::Failure;
         }
 
-        Success SuccessValue() const {
-            return std::get<Success>(value);
+        bool IsSuccess() const {
+            return Type() == ResultType::Success;
         }
 
-        Failure FailureValue() const {
-            return std::get<Failure>(value);
+        bool IsFailure() const {
+            return Type() == ResultType::Failure;
+        }
+
+        std::optional<Success> SuccessValue() const {
+            try {
+                return std::get<Success>(value);
+            } catch (const std::bad_variant_access& exception) {
+                return std::optional<Success>();
+            }
+        }
+
+        std::optional<Failure> FailureValue() const {
+            try {
+                return std::get<Failure>(value);
+            } catch (const std::bad_variant_access& exception) {
+                return std::optional<Failure>();
+            }
         }
     };
-}
-
-#endif
+} // namespace PJ

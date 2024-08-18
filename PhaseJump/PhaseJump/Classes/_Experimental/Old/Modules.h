@@ -1,19 +1,22 @@
-#ifndef PJMODULES_H
-#define PJMODULES_H
+#pragma once
 
+#include "ClassId.h"
 #include "Module.h"
-#include "ClassIds.h"
+#include "TypeClass.h"
 
 /*
  RATING: 4 stars
  Useful, with unit tests. Could use more features
- CODE REVIEW: 11/10/22
+ CODE REVIEW: 7/6/24
  */
 namespace PJ {
     // Demonstration class for modules (not a real class)
     class _Foo : public Base {
     public:
+        using RootBaseType = Base;
+
         _Foo() {}
+
         virtual ~_Foo() {}
     };
 
@@ -26,54 +29,46 @@ namespace PJ {
     // Demonstration class for modules (not a real class)
     class _FooClass : public TypeClass<_Foo> {
     public:
-        _FooClass() : TypeClass<_Foo>(ClassIds::foo) {}
+        _FooClass() :
+            TypeClass<_Foo>(ClassId::Foo, []() { return MAKE<_Foo>(); }) {}
+
         virtual ~_FooClass() {}
     };
 
     // Demonstration class for modules (not a real class)
     class _MacFooClass : public TypeClass<_MacFoo> {
     public:
-        _MacFooClass() : TypeClass<_MacFoo>(ClassIds::foo) {}
+        _MacFooClass() :
+            TypeClass<_MacFoo>(ClassId::Foo, []() { return MAKE<_MacFoo>(); }) {}
     };
 
-    namespace Modules {
-        /// <summary>
-        /// Core classes, platform-neutral
-        /// </summary>
-        class Core : public Module {
-        protected:
-            using Base = Module;
+    /// Registers class objects for core types (platform neutral)
+    class CoreModule : public Module {
+    protected:
+        using Base = Module;
 
-            void _Go() override {
-                Base::_Go();
+        void Configure() override {
+            classRegistry.map[ClassId::Foo] = MAKE<_FooClass>();
+        }
 
-                classRegistry[ClassIds::foo] = MAKE<_FooClass>();
-            }
+    public:
+        CoreModule(ClassRegistry<>& classRegistry = PJ::classRegistry) :
+            Module(classRegistry) {}
+    };
 
-        public:
-            Core(ClassRegistry& classRegistry = PJ::classRegistry) : Module(classRegistry) {
-            }
-        };
+    /// Registers class objects for Mac platform
+    class MacPlatformModule : public Module {
+    protected:
+        using Base = Module;
 
-        /// <summary>
-        /// Mac classes
-        /// </summary>
-        class MacPlatform : public Module {
-        protected:
-            using Base = Module;
+        void Configure() override {
+            classRegistry.map[ClassId::Foo] = MAKE<_MacFooClass>();
+        }
 
-            void _Go() override {
-                Base::_Go();
-
-                classRegistry[ClassIds::foo] = MAKE<_MacFooClass>();
-            }
-
-        public:
-            MacPlatform(ClassRegistry& classRegistry = PJ::classRegistry) : Module(classRegistry) {
-                dependencies.push_back(ModuleSharedPtr(new Core(classRegistry)));
-            }
-        };
-    }
-}
-
-#endif
+    public:
+        MacPlatformModule(ClassRegistry<>& classRegistry = PJ::classRegistry) :
+            Module(classRegistry) {
+            dependencies.push_back(ModuleSharedPtr(new CoreModule(classRegistry)));
+        }
+    };
+} // namespace PJ

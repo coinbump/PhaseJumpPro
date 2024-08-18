@@ -3,17 +3,15 @@
 
 /*
  RATING: 5 stars
- Simple abstract
- CODE REVIEW: 12/26/22
+ Simple type
+ CODE REVIEW: 6/8/24
  */
 namespace PJ {
-    /// <summary>
     /// For type erasure
-    /// </summary>
     class AnyFactory {
     public:
         virtual ~AnyFactory() {}
     };
-}
+} // namespace PJ
 
 #endif

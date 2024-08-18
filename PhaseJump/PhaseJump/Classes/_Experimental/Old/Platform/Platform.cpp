@@ -1,27 +1,24 @@
 #ifndef PJPLATFORM_H
 #define PJPLATFORM_H
 
+#include "Base.h"
+#include "Class.h"
+#include "FactoryRegistry.h"
+#include <memory>
 #include <stdio.h>
 #include <vector>
-#include <memory>
 
-#include "Class.h"
-#include "Base.h"
-#include "FactoryRegistry.h"
-
+// CODE REVIEW: ?/23
 namespace PJ {
-//    static FactoryRegistry<Class> classRegistry;
+    //    static FactoryRegistry<Class> classRegistry;
 
-    /// <summary>
     /// An example of a class with a default platform-neutral implementation
-    /// </summary>
-    class CoreExample {
-    };
+    class CoreExample {};
 
-    /// <summary>
-    /// Registers class factories to create a class object that instantiates the object for a specific behavior
-    /// Example: a class that creates an object that plays an audio clip might have a Windows platform implementation and a NextStep implementation
-    /// </summary>
+    /// Registers class factories to create a class object that instantiates the
+    /// object for a specific behavior Example: a class that creates an object
+    /// that plays an audio clip might have a Windows platform implementation
+    /// and a NextStep implementation
     class SomePlatform : public Base {
     protected:
         std::unique_ptr<SomePlatform> parent;
@@ -42,7 +39,7 @@ namespace PJ {
             return result;
         }
 
-        void Go() override {
+        void GoInternal() override {
             auto root = Root();
             while (nullptr != root) {
                 root->Register();
@@ -121,6 +118,6 @@ namespace PJ {
     void WindowsPlatform::Register() {
         // Register Windows platform classes here
     }
-}
+} // namespace PJ
 
 #endif

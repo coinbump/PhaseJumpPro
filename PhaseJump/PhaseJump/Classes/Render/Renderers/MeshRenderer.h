@@ -12,17 +12,16 @@
 namespace PJ {
     class RenderMaterial;
     struct Mesh;
-    
+
     /// Renders a mesh
     class MeshRenderer : public SomeRenderer {
     public:
         Mesh mesh;
-        SP<RenderMaterial> material;
 
         // MARK: SomeRenderer
 
-        void RenderInto(RenderIntoModel model) override;
+        VectorList<RenderModel> MakeRenderModels(RenderIntoModel const& model) override;
     };
-}
+} // namespace PJ
 
 #endif

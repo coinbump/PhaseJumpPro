@@ -2,17 +2,21 @@
 #include "Broadcaster.h"
 #include "SomeListener.h"
 
-// TODO: Temp for build tests
+#include "Function.h"
+#include "Environment.h"
 #include "RateLimiter.h"
 #include "Alignment.h"
 #include "AnimationCycleTimer.h"
 #include "CirclePath.h"
+#include "InputTriggerMap.h"
+#include "Utils.h"
+#include "ExpEmitter.h"
 
 #include "SomeGraphNode.h"
 
 #include "Axis.h"
 #include "Interpolator.h"
-#include "SomeInterpolate.h"
+#include "EaseFunc.h"
 #include "Alignment.h"
 #include "SomePath.h"
 #include "LinePath.h"
@@ -24,7 +28,6 @@
 #include "Node2D.h"
 #include "SwitchHandler.h"
 #include "SomeEffect.h"
-#include "SomeAnimatedEffect.h"
 #include "SomeLayout.h"
 #include "SomeLayout2D.h"
 #include "HFlow.h"
@@ -47,9 +50,12 @@
 #include "PhaseJump.h"
 #include <memory>
 
-// TODO: temp code
+#include "SomeProducer.h"
+#include "CirclePositioner2D.h"
+#include "RectPositioner2D.h"
+#include "PortNode.h"
 #include "SomeAligner.h"
-#include "IntClamp.h"
+#include "TransformFunc.h"
 #include "SomeGraphNode.h"
 #include "AcyclicGraphNode.h"
 #include "World.h"
@@ -64,14 +70,16 @@
 #include "Animator.h"
 #include "TimedSequence.h"
 #include "SomeRandomChoice.h"
-#include "BroadcastTimer.h"
-#include "GoStateMachine.h"
-#include "SomeRunner.h"
+#include "SomeAttribute.h"
+#include "TimedStateMachine.h"
+#include "Runner.h"
+#include "MatrixPiece.h"
 #include "Valve.h"
-#include "GoCore.h"
+#include "ComposeTimedStateMachine.h"
 #include "SomeNode.h"
 #include "SomeStateHandler.h"
 #include "SomeEventHandler.h"
+#include "Timeline.h"
 #include "ToggleButtonControl.h"
 #include "SomeDropTarget.h"
 #include "GridViewItem.h"
@@ -91,9 +99,12 @@ namespace BroadcasterTests {
         int listenCount = 0;
         String lastMessage;
 
-        void OnEvent(SPC<Event> event) override {
+        void OnEvent(SPC<SomeEvent> event) override {
             listenCount++;
-            lastMessage = event->id;
+
+            auto standardEvent = As<Event<StandardEventCore>>(event.get());
+            GUARD(standardEvent);
+            lastMessage = standardEvent->core.id;
         }
     };
 }
@@ -113,12 +124,12 @@ TEST(Broadcaster, Factory) {
 
     sut.AddListener(listener);
     sut.AddListener(listener2);
-    sut.Broadcast(MAKE<Event>("hello"));
+    sut.Broadcast(MAKE<Event<StandardEventCore>>(StandardEventCore("hello")));
     EXPECT_EQ("hello", listener->lastMessage);
     EXPECT_EQ("hello", listener2->lastMessage);
 
     sut.RemoveListener(listener);
-    sut.Broadcast(MAKE<Event>("goodbye"));
+    sut.Broadcast(MAKE<Event<StandardEventCore>>(StandardEventCore("goodbye")));
     EXPECT_EQ("hello", listener->lastMessage);
     EXPECT_EQ("goodbye", listener2->lastMessage);
 

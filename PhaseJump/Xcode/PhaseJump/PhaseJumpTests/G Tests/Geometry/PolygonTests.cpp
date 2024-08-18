@@ -33,3 +33,19 @@ TEST(Polygon, SizeCenter)
     EXPECT_EQ(Vector3(1, 1, 0), sut.Size());
     EXPECT_EQ(Vector3(0.5f, 0.5f, 0), sut.Center());
 }
+
+TEST(Polygon, At)
+{
+    TestPolygon sut;
+    EXPECT_EQ(Vector3(0, 1, 0), sut.At(0));
+    EXPECT_EQ(Vector3(0, 1, 0), sut.At(4));
+    EXPECT_EQ(Vector3(0, 0, 0), sut.At(-1));
+}
+
+TEST(Polygon, AtWithEmptyPolygon)
+{
+    Polygon sut;
+    EXPECT_EQ(Vector3::zero, sut.At(0));
+    EXPECT_EQ(Vector3::zero, sut.At(4));
+    EXPECT_EQ(Vector3::zero, sut.At(-1));
+}

@@ -1,10 +1,3 @@
-//
-//  ObjCBridge.m
-//  Kaiju
-//
-//  Created by Jeremy Vineyard on 11/12/22.
-//
-
 #import "ObjCBridge.h"
 #import <PhaseJump/FileProcessor.Utility.h>
 #import <PhaseJump/PhaseJump.h>
@@ -21,7 +14,8 @@ SP<FilesProcessor> filesProcessor;
 // Future: support generic operations with parameters: Swift -> ObjC -> C++ bridge
 - (void)startFilesProcessorWithFilePathsCount:(NSInteger)filePathsCount
 {
-    filesProcessor = MAKE<FilesProcessor>(filePathsCount, make_shared<PJ_Dev::IncludeAliasFileProcessor>(), FilesProcessor::Settings(FileSearchType::Recursive));
+    UP<SomeFileProcessor> fileProcessor = std::make_unique<PJ_Dev::IncludeAliasFileProcessor>();
+    filesProcessor = MAKE<FilesProcessor>(filePathsCount, fileProcessor, FilesProcessor::Settings(FileSearchType::Recursive));
 }
 
 - (void)provideFilePath:(NSString*)filePath

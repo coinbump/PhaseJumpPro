@@ -6,24 +6,23 @@
 /*
  RATING: 5 stars
  Simple type
- CODE REVIEW: 4/21/23
+ CODE REVIEW: 7/18/24
  */
 namespace PJ {
     struct Rect {
         Vector2 origin;
         Vector2 size;
 
-        Rect() {
-        }
+        Rect() {}
 
-        Rect(Vector2 origin, Vector2 size) : origin(origin), size(size) {
-        }
+        Rect(Vector2 origin, Vector2 size) :
+            origin(origin),
+            size(size) {}
 
         static Rect const one;
 
-        bool operator ==(Rect const& rhs) {
-            return origin == rhs.origin &&
-                size == rhs.size;
+        bool operator==(Rect const& rhs) const {
+            return origin == rhs.origin && size == rhs.size;
         }
     };
 
@@ -31,14 +30,26 @@ namespace PJ {
         Vector2Int origin;
         Vector2Int size;
 
-        RectInt(Vector2Int origin, Vector2Int size) : origin(origin), size(size) {
+        RectInt(Vector2Int origin, Vector2Int size) :
+            origin(origin),
+            size(size) {}
+
+        int Top() const {
+            return origin.y;
         }
 
-        int Top() const { return origin.y; }
-        int Bottom() const { return origin.y + size.x; }
-        int Left() const { return origin.x; }
-        int Right() const { return origin.x + size.y; }
+        int Bottom() const {
+            return origin.y + size.x;
+        }
+
+        int Left() const {
+            return origin.x;
+        }
+
+        int Right() const {
+            return origin.x + size.y;
+        }
     };
-}
+} // namespace PJ
 
 #endif

@@ -2,6 +2,7 @@
 
 #include "SQLDatabase.h"
 #include "SQLTable.h"
+#include "CollectionUtils.h"
 #include <memory>
 
 using namespace std;
@@ -27,7 +28,7 @@ TEST(SQLTable, TestRowValuesList_MultiColumn_AndStarSelect) {
     });
 
     SP<SQLTable> table = MAKE<SQLTable>("test", db);
-    StringVectorList columnNames;
+    VectorList<String> columnNames;
 
     // Test SELECT * (no column names)
     auto values = table->RowValuesList(SQLTableQueryArguments(columnNames, std::nullopt));
@@ -96,16 +97,16 @@ TEST(SQLTable, TestIntValues_MultiColumn) {
     });
 
     SP<SQLTable> table = MAKE<SQLTable>("test", db);
-    StringVectorList columnNames;
+    VectorList<String> columnNames;
     columnNames.Add("test_l");
     columnNames.Add("test_r");
     auto values = table->IntValues(SQLTableQueryArguments(columnNames, std::nullopt));
 
     EXPECT_EQ(4, values.size());
-    EXPECT_TRUE(values.Contains(1));
-    EXPECT_TRUE(values.Contains(11));
-    EXPECT_TRUE(values.Contains(3));
-    EXPECT_TRUE(values.Contains(33));
+    EXPECT_TRUE(Contains(values, 1));
+    EXPECT_TRUE(Contains(values, 11));
+    EXPECT_TRUE(Contains(values, 3));
+    EXPECT_TRUE(Contains(values, 33));
 }
 
 TEST(SQLTableTests, TestFloatValues_SingleColumn) {
@@ -165,16 +166,16 @@ TEST(SQLTable, TestFloatValues_MultiColumn) {
     });
 
     SP<SQLTable> table = MAKE<SQLTable>("test", db);
-    StringVectorList columnNames;
+    VectorList<String> columnNames;
     columnNames.Add("test_l");
     columnNames.Add("test_r");
     auto values = table->FloatValues(SQLTableQueryArguments(columnNames, std::nullopt));
 
     EXPECT_EQ(4, values.size());
-    EXPECT_TRUE(values.Contains(1.5f));
-    EXPECT_TRUE(values.Contains(11.5f));
-    EXPECT_TRUE(values.Contains(3.5f));
-    EXPECT_TRUE(values.Contains(33.5f));
+    EXPECT_TRUE(Contains(values, 1.5f));
+    EXPECT_TRUE(Contains(values, 11.5f));
+    EXPECT_TRUE(Contains(values, 3.5f));
+    EXPECT_TRUE(Contains(values, 33.5f));
 }
 
 TEST(SQLTableTests, TestStringValues_SingleColumn) {
@@ -234,16 +235,16 @@ TEST(SQLTable, TestStringValues_MultiColumn) {
     });
 
     SP<SQLTable> table = MAKE<SQLTable>("test", db);
-    StringVectorList columnNames;
+    VectorList<String> columnNames;
     columnNames.Add("test_l");
     columnNames.Add("test_r");
     auto values = table->StringValues(SQLTableQueryArguments(columnNames, std::nullopt));
 
     EXPECT_EQ(4, values.size());
-    EXPECT_TRUE(values.Contains("a"));
-    EXPECT_TRUE(values.Contains("b"));
-    EXPECT_TRUE(values.Contains("c"));
-    EXPECT_TRUE(values.Contains("d"));
+    EXPECT_TRUE(Contains(values, "a"));
+    EXPECT_TRUE(Contains(values, "b"));
+    EXPECT_TRUE(Contains(values, "c"));
+    EXPECT_TRUE(Contains(values, "d"));
 }
 
 TEST(SQLTableTests, TestDeleteRow) {

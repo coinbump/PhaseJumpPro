@@ -1,12 +1,12 @@
 #ifndef PJSQLSTATEMENT_H
 #define PJSQLSTATEMENT_H
 
-#include <sqlite3.h>
-#include "SQLTypes.h"
-#include "SQLUtils.h"
-#include "SQLValue.h"
 #include "_String.h"
 #include "Log.h"
+#include "SQLTool.h"
+#include "SQLTypes.h"
+#include "SQLValue.h"
+#include <sqlite3.h>
 
 /*
  RATING: 5 stars
@@ -14,10 +14,8 @@
  CODE REVIEW: 3/29/23
  */
 namespace PJ {
-    struct SQLIdentifierFormatter
-    {
-        String Formatted(String value)
-        {
+    struct SQLIdentifierFormatter {
+        String Formatted(String value) {
             String result;
 
             result.append("[");
@@ -28,23 +26,20 @@ namespace PJ {
         }
     };
 
-    struct SQLStatement
-    {
+    struct SQLStatement {
         String value;
 
-        SQLStatement()
-        {
-        }
+        SQLStatement() {}
 
-        SQLStatement(String value) : value(value) {
-        }
+        SQLStatement(String value) :
+            value(value) {}
 
         void AppendString(String string) {
             value.append(string);
         }
 
         void AppendIdentifier(String identifier, bool isEscaped = false) {
-            if (SQLUtils().IsReservedKeyword(identifier)) {
+            if (SQLTool().IsReservedKeyword(identifier)) {
                 PJLog("WARNING. %s is reserved by SQL.", identifier.c_str());
             }
 
@@ -75,6 +70,6 @@ namespace PJ {
             }
         }
     };
-}
+} // namespace PJ
 
 #endif

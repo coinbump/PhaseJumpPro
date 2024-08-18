@@ -7,8 +7,10 @@ using namespace PJ;
  NOTE: I'm not sure if this is a good algorithm. But it seems to work
  FUTURE: Evaluate better hit test algorithms if needed
 
- Reference: http://stackoverflow.com/questions/217578/point-in-polygon-aka-hit-test
+ Reference:
+ http://stackoverflow.com/questions/217578/point-in-polygon-aka-hit-test
  */
+// TODO: needs unit tests
 bool Polygon::TestHit(Vector2 pt) const {
     float testx = pt.x;
     float testy = pt.y;
@@ -29,7 +31,7 @@ bool Polygon::TestHit(Vector2 pt) const {
 String Polygon::ToString() const {
     stringstream s;
     s << "[";
-    for (auto v : *this) {
+    for (auto& v : *this) {
         s << v.ToString() << ", ";
     }
     s << "]";

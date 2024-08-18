@@ -9,16 +9,16 @@
  Tested and works
  CODE REVIEW: 4/14/23
  */
-namespace PJ
-{
+namespace PJ {
     class GLShaderProgram;
-    
+
     class GLShaderProgramLoader {
     public:
         /// Load from a .shprog JSON file that specifies which shaders to use
         std::optional<GLShaderProgram::Info> InfoFromPath(FilePath path);
-        SP<GLShaderProgram> LoadFromShaderPaths(FilePath vertexShaderPath, FilePath fragmentShaderPath);
+        SP<GLShaderProgram>
+        LoadFromShaderPaths(FilePath vertexShaderPath, FilePath fragmentShaderPath);
     };
-}
+} // namespace PJ
 
 #endif

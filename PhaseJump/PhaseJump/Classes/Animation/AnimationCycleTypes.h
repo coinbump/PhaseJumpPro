@@ -4,15 +4,13 @@
 /*
  RATING: 5 stars
  Simple types
- CODE REVIEW: 1/12/24
+ CODE REVIEW: TODO
  */
-namespace PJ
-{
-    /// <summary>
-    /// Specifies how an animation should cycle when it reaches the end of its timer duration
-    /// </summary>
-    enum class AnimationCycleType
-    {
+namespace PJ {
+    /// Specifies how an animation should cycle when it reaches the end of its
+    /// timer duration
+    // TODO: use composition for behavior, not enums
+    enum class AnimationCycleType {
         // Use fixed enum values for serialization
         // Cycle once
         Once = 0,
@@ -24,30 +22,25 @@ namespace PJ
         Loop = 2
     };
 
-    /// <summary>
     /// Specifies which way an animation is cycling
     /// (Ping pong:
-    /// </summary>
-    enum class AnimationCycleState
-    {
+    enum class AnimationCycleState {
         // Use fixed enum values for serialization
         Forward = 0,
 
         Reverse = 1
     };
 
-    static AnimationCycleState Flip(AnimationCycleState state)
-    {
-        switch (state)
-        {
-            case AnimationCycleState::Forward:
-                return AnimationCycleState::Reverse;
-            case AnimationCycleState::Reverse:
-                return AnimationCycleState::Forward;
+    static AnimationCycleState Flip(AnimationCycleState state) {
+        switch (state) {
+        case AnimationCycleState::Forward:
+            return AnimationCycleState::Reverse;
+        case AnimationCycleState::Reverse:
+            return AnimationCycleState::Forward;
         }
 
         return AnimationCycleState::Forward;
     }
-}
+} // namespace PJ
 
 #endif

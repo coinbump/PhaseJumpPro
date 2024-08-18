@@ -1,26 +1,27 @@
-#ifndef PJDATA_H
-#define PJDATA_H
+#pragma once
 
 #include "Color.h"
-#include "Vector2.h"
 #include "Rect.h"
-#include "Macros.h"
+#include "Utils.h"
+#include "Vector2.h"
 #include <memory>
 
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 4/21/23
+ CODE REVIEW: 8/9/24
  */
 namespace PJ {
     struct MallocDataAllocator {
-        void* Allocate(uint32_t size) const {
+        void* operator()(size_t size) const {
+            // May return null if it fails
             return malloc(size);
         }
     };
 
     struct CallocDataAllocator {
-        void* Allocate(uint32_t size) const {
+        void* operator()(size_t size) const {
+            // May return null if it fails
             return calloc(1, size);
         }
     };
@@ -29,13 +30,12 @@ namespace PJ {
     class SomeData {
     public:
         virtual ~SomeData() {}
-        
-        virtual void* DataPointer() const = 0;
-        virtual uint32_t DataSize() const = 0;
+
+        virtual void* Pointer() const = 0;
+        virtual size_t Size() const = 0;
     };
 
     /// Data in memory
-    template<class Allocator = MallocDataAllocator>
     class Data : public SomeData {
     private:
         /// Disable copy
@@ -43,43 +43,49 @@ namespace PJ {
 
     protected:
         void* data = nullptr;
+        size_t size = 0;
+        std::function<void*(size_t size)> allocator;
 
     public:
-        using This = Data<Allocator>;
+        using This = Data;
 
-        uint32_t size = 0;
+        Data(
+            std::function<void*(size_t size)> allocator = [](size_t size) { return malloc(size); }
+        ) :
+            allocator(allocator) {}
 
-        Data() {
-        }
-
-        virtual ~Data()
-        {
+        virtual ~Data() {
             if (data) {
                 free(data);
             }
         }
 
-        void CopyIn(void* data, uint32_t size) {
-            Flush();
+        bool CopyIn(void* data, size_t size) {
+            GUARDR(data != this->data, false)
+            GUARDR(data && size > 0, false)
 
-            if (nullptr == data || size == 0) { return; }
-            
-            Resize(size);
-            memcpy(this->data, data, size);
+            if (Resize(size) == size) {
+                memcpy(this->data, data, size);
+                return true;
+            }
+
+            return false;
         }
 
         SP<This> Copy() const {
             auto result = MAKE<This>();
 
             if (size > 0 && nullptr != data) {
-                result->Resize(size);
-                memcpy(result->data, data, size);
+                result->CopyIn(data, size);
             }
 
             return result;
         }
 
-        void Resize(uint32_t size) {
+        size_t Resize(size_t size) {
+            GUARDR(allocator, this->size)
+            GUARDR(size != this->size, this->size)
+
             if (data) {
                 auto reallocResult = realloc(data, size);
                 if (reallocResult) {
@@ -87,24 +93,31 @@ namespace PJ {
                     this->size = size;
                 }
             } else {
-                data = Allocator().Allocate(size);
-                this->size = size;
+                data = allocator(size);
+                this->size = data ? size : 0;
             }
+
+            return this->size;
         }
 
         void Flush() {
-            if (nullptr == data) { return; }
+            GUARD(data)
 
             free(data);
             data = nullptr;
             size = 0;
         }
 
-        void* DataPointer() const override { return data; }
-        uint32_t DataSize() const override { return size; }
+        void* Pointer() const override {
+            return data;
+        }
 
-        operator void*() const { return data; }
+        size_t Size() const override {
+            return size;
+        }
+
+        operator void*() const {
+            return data;
+        }
     };
-}
-
-#endif
+} // namespace PJ

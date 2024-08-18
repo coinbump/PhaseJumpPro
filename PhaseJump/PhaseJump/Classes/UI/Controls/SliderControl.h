@@ -1,28 +1,23 @@
 #ifndef PJSLIDERCONTROL_H
 #define PJSLIDERCONTROL_H
 
-#include "UIControl2D.h"
-#include "SomeListener.h"
 #include "Broadcaster.h"
 #include "PublishedValue.h"
-#include "SomeDragHandler.h"
 #include "RendererTool.h"
+#include "SomeDragHandler.h"
+#include "SomeListener.h"
+#include "UIControl2D.h"
 
 /*
  RATING: 4 stars
  Tested and works. Needs unit tests
  CODE REVIEW: 5/11/23
  */
-namespace PJ
-{
-    class SliderControl : public UIControl2D
-    {
+namespace PJ {
+    class SliderControl : public UIControl2D {
     protected:
-        /// <summary>
         /// Sends thumb drag events to track
-        /// </summary>
-        class ThumbDragHandler : public SomeDragHandler
-        {
+        class ThumbDragHandler : public SomeDragHandler {
         public:
             using Base = SomeDragHandler;
 
@@ -34,16 +29,13 @@ namespace PJ
         };
 
     public:
-        class EndDragThumbEvent : public Event {};
+        class EndDragThumbEvent : public SomeEvent {};
 
-        /// <summary>
-        /// The object for the thumb (if nullptr, the first child object is used)
-        /// </summary>
+        /// The object for the thumb (if nullptr, the first child object is
+        /// used)
         WP<WorldNode> thumb;
 
-        /// <summary>
         /// Size of the end caps where the thumb can't reach
-        /// </summary>
         float endCapSize = 0;
 
         float minValue = 0;
@@ -52,7 +44,9 @@ namespace PJ
         Broadcaster broadcaster;
 
     protected:
-        PublishedValue<float> value{0.0};
+        PublishedValue<float> value{ 0.0 };
+
+        // TODO: SP audit
         SP<PublishedValue<float>::Subscription> valueSubscription;
 
         WorldPosition dragStartInputPosition;
@@ -81,11 +75,16 @@ namespace PJ
     protected:
         float HalfTrackWidth(WorldNode& thumb);
 
-        float MinThumbX(WorldNode& thumb) { return -HalfTrackWidth(thumb); }
-        float MaxThumbX(WorldNode& thumb) { return HalfTrackWidth(thumb); }
+        float MinThumbX(WorldNode& thumb) {
+            return -HalfTrackWidth(thumb);
+        }
+
+        float MaxThumbX(WorldNode& thumb) {
+            return HalfTrackWidth(thumb);
+        }
 
         void OnDragThumbUpdate(WorldNode& thumb, WorldPosition inputPosition);
     };
-}
+} // namespace PJ
 
 #endif

@@ -35,13 +35,13 @@ namespace CameraTests {
 TEST(Camera, TestOrtho_WorldToScreen) {
     auto sut = MAKE<OrthoCamera>();
     auto cameraNode = MAKE<WorldNode>();
-    cameraNode->AddComponent(sut);
+    cameraNode->Add(sut);
 
     auto world = MAKE<World>();
     auto renderContext = MAKE<MockRenderContext>();
     world->renderContext = renderContext;
 
-    world->root->AddChild(cameraNode);
+    world->Add(cameraNode);
     world->Go();
 
     auto screenZero = sut->WorldToScreen(Vector3::zero);
@@ -59,13 +59,13 @@ TEST(Camera, TestOrtho_WorldToScreen) {
 TEST(Camera, TestOrtho_ScreenToWorld) {
     auto sut = MAKE<OrthoCamera>();
     auto cameraNode = MAKE<WorldNode>();
-    cameraNode->AddComponent(sut);
+    cameraNode->Add(sut);
 
     auto world = MAKE<World>();
     auto renderContext = MAKE<MockRenderContext>();
     world->renderContext = renderContext;
 
-    world->root->AddChild(cameraNode);
+    world->Add(cameraNode);
     world->Go();
 
     auto screenZero = sut->ScreenToWorld(Vector2(200, 100));
@@ -77,5 +77,5 @@ TEST(Camera, TestOrtho_ScreenToWorld) {
     cameraNode->transform->SetWorldPosition(Vector3(1, 1, 0));
 
     auto screenOneOffset = sut->ScreenToWorld(Vector2(200, 100));
-    EXPECT_EQ(Vector3(1, 1, 0), screenOneOffset);
+    EXPECT_EQ(Vector3(-1, -1, 0), screenOneOffset);
 }

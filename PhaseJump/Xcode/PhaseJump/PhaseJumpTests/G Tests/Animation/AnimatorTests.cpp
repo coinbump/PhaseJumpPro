@@ -13,9 +13,11 @@ TEST(Animator, Animate)
 {
     auto testValue = -1.0f;
 
-    Animator<float> sut(MAKE<Interpolator<float>>(0, 360),
+    auto interpolator = Interpolator::MakeEaseFunc(Interpolator::MakeFunc<float>(0.0f, 360.0f));
+    SetBindingFunc<float> binding = [&testValue](float value) { testValue = value; };
+    Animator<float> sut(interpolator,
                         1.0f,
-                        MAKE<SetBinding<float>>([&testValue] (float value) { testValue = value; }));
+                        binding);
 
     sut.OnUpdate(TimeSlice(0.5f));
     EXPECT_EQ(0.5f, sut.Progress());

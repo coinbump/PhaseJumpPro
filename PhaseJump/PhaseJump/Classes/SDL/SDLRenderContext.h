@@ -1,38 +1,37 @@
 #ifndef PJSDLRENDERCONTEXT_H
 #define PJSDLRENDERCONTEXT_H
 
-#include "SomeRenderContext.h"
 #include "Color.h"
 #include "FilePath.h"
-#include "SDLTexture.h"
 #include "SDLLoadSDLTextureOperation.h"
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_main.h>
-#include <SDL2/SDL_render.h>
+#include "SDLTexture.h"
+#include "SomeRenderContext.h"
 #include <iostream>
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_main.h>
+#include <SDL3/SDL_render.h>
 
-namespace PJ
-{
+// CODE REVIEW: ?/23
+namespace PJ {
     /// For rendering via `SDL_Renderer`
-    class SDLRenderContext : public SomeRenderContext
-    {
+    class SDLRenderContext : public SomeRenderContext {
     public:
         SDL_Renderer* renderer = nullptr;
         Color clearColor = Color::gray;
 
-        SDLRenderContext(SDL_Renderer *renderer) : renderer(renderer)
-        {
-        }
+        SDLRenderContext(SDL_Renderer* renderer) :
+            renderer(renderer) {}
 
         virtual ~SDLRenderContext() {
             // Renderer is owned by window
         }
 
-        void Bind() override {
-        }
+        void Bind() override {}
 
         void Clear() override {
-            SDL_SetRenderDrawColor(renderer, clearColor.r, clearColor.g, clearColor.b, clearColor.a);
+            SDL_SetRenderDrawColor(
+                renderer, clearColor.r, clearColor.g, clearColor.b, clearColor.a
+            );
             SDL_RenderClear(renderer);
         }
 
@@ -40,20 +39,18 @@ namespace PJ
             SDL_RenderPresent(renderer);
         }
 
-        Vector2 Size() const override
-        {
+        Vector2 Size() const override {
             int width, height;
-            SDL_GetRendererOutputSize(renderer, &width, &height);
+            SDL_GetCurrentRenderOutputSize(renderer, &width, &height);
             return Vector2(width, height);
         }
 
-        Vector2Int PixelSize() const override
-        {
+        Vector2Int PixelSize() const override {
             int width, height;
-            SDL_GetRendererOutputSize(renderer, &width, &height);
+            SDL_GetCurrentRenderOutputSize(renderer, &width, &height);
             return Vector2Int(width, height);
         }
     };
-}
+} // namespace PJ
 
 #endif

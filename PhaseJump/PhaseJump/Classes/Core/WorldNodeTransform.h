@@ -1,40 +1,88 @@
-#ifndef PJWORLDNODETRANSFORM_H
-#define PJWORLDNODETRANSFORM_H
+#pragma once
 
 #include "GeoTransform.h"
-#include "Macros.h"
+#include "Utils.h"
 
+// CODE REVIEW: ?/23
 namespace PJ {
     class WorldNode;
 
     /// Keeps track of the object's world position as it is modified
     struct WorldNodeTransform {
-        WP<WorldNode> owner;
-        GeoTransform transform;
+        WorldNode& owner;
+        GeoTransform value;
 
         // We can't set the owner here because it requires shared_from_this
-        WorldNodeTransform() {
+        WorldNodeTransform(WorldNode& owner) :
+            owner(owner) {}
+
+        WorldNodeTransform(WorldNode& owner, GeoTransform transform) :
+            owner(owner),
+            value(transform) {}
+
+        operator GeoTransform() const {
+            return value;
         }
 
-        WorldNodeTransform(GeoTransform transform) : transform(transform) {
+        Vector3 LocalPosition() const {
+            return value.position;
         }
 
-        operator GeoTransform() const { return transform; }
+        void SetLocalPosition(Vector3 position) {
+            value.SetPosition(position);
+        }
 
-        Vector3 LocalPosition() const { return transform.position; }
-        void SetLocalPosition(Vector3 position) { transform.SetPosition(position); }
+        // MARK: Scale
 
-        Vector3 Scale() const { return transform.scale; }
-        void SetScale(Vector3 const& value) { transform.scale = value; }
-        Vector3 LocalScale() const { return transform.scale; }
-        void SetLocalScale(Vector3 const& value) { transform.scale = value; }
+        Vector3 Scale() const {
+            return value.scale;
+        }
 
-        Vector3 Rotation() const { return transform.rotation; }
-        void SetRotation(Vector3 const& value) { transform.rotation = value; }
-        void SetRotation(Angle rotation) { transform.SetRotation(rotation); }
+        void SetScale(Vector3 value) {
+            this->value.scale = value;
+        }
 
-        Vector3 LocalEulerAngles() const { return transform.LocalEulerAngles(); }
-        void SetLocalEulerAngles(Vector3 value) { transform.SetLocalEulerAngles(value); }
+        void SetScale(float value) {
+            SetScale(Vector3::Uniform(value));
+        }
+
+        void SetScale2D(Vector2 value) {
+            SetScale(Vector3(value.x, value.y, 1.0f));
+        }
+
+        void SetScale2D(float value) {
+            SetScale(Vector3(value, value, 1.0f));
+        }
+
+        Vector3 LocalScale() const {
+            return Scale();
+        }
+
+        void SetLocalScale(Vector3 value) {
+            SetScale(value);
+        }
+
+        // MARK: Rotation
+
+        Vector3 Rotation() const {
+            return value.rotation;
+        }
+
+        void SetRotation(Vector3 value) {
+            this->value.rotation = value;
+        }
+
+        void SetRotation(Angle rotation) {
+            value.SetRotation(rotation);
+        }
+
+        Vector3 LocalEulerAngles() const {
+            return value.LocalEulerAngles();
+        }
+
+        void SetLocalEulerAngles(Vector3 value) {
+            this->value.SetLocalEulerAngles(value);
+        }
 
         Vector3 WorldPosition() const;
         void SetWorldPosition(Vector3 position);
@@ -42,6 +90,4 @@ namespace PJ {
         /// Set only x,y world positon. Leave z intact
         void SetWorldPositionXY(Vector3 position);
     };
-}
-
-#endif
+} // namespace PJ

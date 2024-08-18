@@ -1,10 +1,3 @@
-//
-//  KaijuUITestsLaunchTests.m
-//  KaijuUITests
-//
-//  Created by Jeremy Vineyard on 11/5/22.
-//
-
 #import <XCTest/XCTest.h>
 
 @interface KaijuUITestsLaunchTests : XCTestCase

@@ -9,7 +9,7 @@ using namespace PJ;
 
 namespace EnumTests {
     enum class TestType {
-        One, Two, Three
+        One, Two, Three, NotIn
     };
 
     class TestEnumClass : public EnumClass<TestType> {
@@ -37,10 +37,10 @@ TEST(Enum, TestEnumClass)
 {
     auto sut = MAKE<TestEnumClass>();
 
-    EXPECT_EQ("1", sut->IdOf(TestType::One));
-    EXPECT_EQ("2", sut->IdOf(TestType::Two));
-    EXPECT_EQ("two", sut->NameOf(TestType::Two));
-    EXPECT_EQ("three", sut->NameOf(TestType::Three));
+    EXPECT_EQ("1", sut->Id(TestType::One));
+    EXPECT_EQ("2", sut->Id(TestType::Two));
+    EXPECT_EQ("two", sut->Name(TestType::Two));
+    EXPECT_EQ("three", sut->Name(TestType::Three));
     EXPECT_EQ(3, sut->AllCases().size());
 
     EXPECT_EQ(TestType::Two, sut->AllCases()[1]);
@@ -55,4 +55,12 @@ TEST(Enum, TestEnum)
     EXPECT_EQ("2", sut->Id());
     EXPECT_EQ("two", sut->Name());
     EXPECT_EQ(1, sut->Index());
+}
+
+TEST(Enum, IndexOf)
+{
+    auto sut = MAKE<TestEnum>();
+
+    EXPECT_FALSE(sut->EnumClass()->IndexOf(TestType::NotIn));
+    EXPECT_EQ(2, sut->EnumClass()->IndexOf(TestType::Three));
 }

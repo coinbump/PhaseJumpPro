@@ -8,13 +8,9 @@
  Direct port. Needs unit tests
  CODE REVIEW: 6/18/23
  */
-namespace PJ
-{
-    /// <summary>
+namespace PJ {
     /// View that adds intrinsic padding to child
-    /// </summary>
-    class PadView : public View2D
-    {
+    class PadView : public View2D {
     public:
         using Base = View2D;
 
@@ -23,15 +19,27 @@ namespace PJ
         float padTop = 0;
         float padBottom = 0;
 
-        float PadLeading() const { return padLeading; }
-        float PadTrailing() const { return padTrailing; }
-        float PadTop() const { return padTop; }
-        float PadBottom() const { return padBottom; }
+        float PadLeading() const {
+            return padLeading;
+        }
 
-        std::optional<float> ProposedWidthWithoutConstraints(Vector2 layoutSize) override
-        {
+        float PadTrailing() const {
+            return padTrailing;
+        }
+
+        float PadTop() const {
+            return padTop;
+        }
+
+        float PadBottom() const {
+            return padBottom;
+        }
+
+        std::optional<float> ProposedWidthWithoutConstraints(Vector2 layoutSize) override {
             auto firstChild = FirstChildView();
-            if (!firstChild) { return Base::ProposedWidthWithoutConstraints(layoutSize); }
+            if (!firstChild) {
+                return Base::ProposedWidthWithoutConstraints(layoutSize);
+            }
 
             auto preferredWidth = firstChild->ProposedWidthWithConstraints(layoutSize);
             auto result = preferredWidth ? preferredWidth.value() : 0;
@@ -42,10 +50,11 @@ namespace PJ
             return std::make_optional(result);
         }
 
-        std::optional<float> ProposedHeightWithoutConstraints(Vector2 layoutSize) override
-        {
+        std::optional<float> ProposedHeightWithoutConstraints(Vector2 layoutSize) override {
             auto firstChild = FirstChildView();
-            if (!firstChild) { return Base::ProposedHeightWithoutConstraints(layoutSize); }
+            if (!firstChild) {
+                return Base::ProposedHeightWithoutConstraints(layoutSize);
+            }
 
             auto preferredHeight = firstChild->ProposedHeightWithConstraints(layoutSize);
             auto result = preferredHeight ? preferredHeight.value() : 0;
@@ -57,18 +66,22 @@ namespace PJ
         }
 
     protected:
-        void _ApplyLayout(Vector2 layoutSize) override
-        {
+        void _ApplyLayout(Vector2 layoutSize) override {
             auto firstChild = FirstChildView();
-            if (!firstChild) { return; }
+            if (!firstChild) {
+                return;
+            }
 
             Rect frame;
 
             float layoutSizeX = layoutSize.x - PadLeading() - PadTrailing();
-            auto childPreferredWidth = firstChild->ProposedWidthWithConstraints(Vector2(layoutSizeX, layoutSize.y));
+            auto childPreferredWidth =
+                firstChild->ProposedWidthWithConstraints(Vector2(layoutSizeX, layoutSize.y));
             frame.size.x = childPreferredWidth ? childPreferredWidth.value() : 0;
 
-            auto childPreferredHeight = firstChild->ProposedHeightWithConstraints(Vector2(frame.size.x, layoutSize.y - PadTop() - PadBottom()));
+            auto childPreferredHeight = firstChild->ProposedHeightWithConstraints(
+                Vector2(frame.size.x, layoutSize.y - PadTop() - PadBottom())
+            );
 
             frame.size.y = childPreferredHeight ? childPreferredHeight.value() : 0;
             frame.origin.x = PadLeading();
@@ -77,6 +90,6 @@ namespace PJ
             firstChild->SetFrame(frame);
         } // TESTED
     };
-}
+} // namespace PJ
 
 #endif

@@ -1,59 +1,44 @@
-#ifndef PJSWITCHHANDLER_H
-#define PJSWITCHHANDLER_H
+#pragma once
 
-#include "WorldComponent.h"
 #include "Switchable.h"
+#include "WorldComponent.h"
 
 /*
  RATING: 5 stars
- Simple component
- CODE REVIEW: 12/26/22
+ Simple type
+ CODE REVIEW: 8/16/24
  */
-namespace PJ
-{
-    class SwitchHandler : public WorldComponent, public Switchable
-    {
+namespace PJ {
+    /// Component with a switch
+    class SwitchHandler : public WorldComponent<>, public Switchable {
     protected:
         bool isOn = false;
 
     public:
-        bool IsOn() const { return isOn; }
+        using OnSwitchChangeFunc = std::function<void(SwitchHandler&)>;
+
+        OnSwitchChangeFunc onSwitchChangeFunc;
+
+        SwitchHandler() {}
+
+        SwitchHandler(OnSwitchChangeFunc onSwitchChangeFunc) :
+            onSwitchChangeFunc(onSwitchChangeFunc) {}
+
+        bool IsOn() const {
+            return isOn;
+        }
+
         void SetIsOn(bool value) {
-            if (isOn == value)
-            {
-                return;
-            }
+            GUARD(isOn != value)
 
             isOn = value;
             OnSwitchChange();
         }
 
     protected:
-        virtual void OnSwitchChange() { }
-
-        virtual void OnValidate()
-        {
-            OnSwitchChange();
+        virtual void OnSwitchChange() {
+            GUARD(onSwitchChangeFunc)
+            onSwitchChangeFunc(*this);
         }
     };
-
-    /// A composable switch handler that notifies its owner
-    template <class Owner>
-    class ComposeSwitchHandler : public PJ::SwitchHandler {
-    public:
-        Owner* owner;
-
-        using Base = PJ::SwitchHandler;
-
-        ComposeSwitchHandler(Owner* owner) : owner(owner) {
-        }
-
-        void OnSwitchChange() override {
-            Base::OnSwitchChange();
-
-            owner->OnSwitchChange();
-        }
-    };
-}
-
-#endif
+} // namespace PJ

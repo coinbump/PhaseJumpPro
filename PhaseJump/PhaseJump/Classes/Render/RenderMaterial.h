@@ -1,35 +1,136 @@
-#ifndef PJMATERIAL_H
-#define PJMATERIAL_H
+#pragma once
 
-#include "Tags.h"
 #include "Color.h"
-#include "VectorList.h"
-#include "_Set.h"
-#include "_Map.h"
+#include "Macros.h"
 #include "RenderTypes.h"
 #include "SomeTexture.h"
+#include "Tags.h"
+#include "UnorderedMap.h"
 #include "Vector2.h"
+#include "VectorList.h"
 
 /*
  RATING: 5 stars
  Simple type
- CODE REVIEW: 4/13/23
+ CODE REVIEW: 7/21/23
  */
+// TODO: needs unit tests
 namespace PJ {
     class SomeShaderProgram;
-    
-    /// Combies render properties for object
+
+    /// Render properties for object
     class RenderMaterial {
-    public:
+    protected:
         SP<SomeShaderProgram> shaderProgram;
 
+        /// Texture inputs to shader
+        VectorList<SP<SomeTexture>> textures;
+
+        /// Uniform (non-interpolated) color inputs to shader
         VectorList<Color> uniformColors;
+
+        /// Uniform (non-interpolated) float inputs to shader
         VectorList<float> uniformFloats;
 
-        VectorList<Color> colors;
-        VectorList<SP<SomeTexture>> textures;
-        Map<String, RenderFeatureStatus> features;
-    };
-}
+        /// Render features enabled or disabled for this material
+        UnorderedMap<String, RenderFeatureStatus> features;
 
-#endif
+        /// Cached propertyId that identifies the properties of this material, to determine if it
+        /// can be combined with another render material. This also allows us to group propertyIds
+        /// as keys in a map
+        String propertyId;
+
+        void OnChange() {
+            propertyId = BuildPropertyId();
+        }
+
+    public:
+        String PropertyId() const {
+            return propertyId;
+        }
+
+        void SetShaderProgram(SP<SomeShaderProgram> program) {
+            GUARD(program && shaderProgram != program);
+            shaderProgram = program;
+
+            OnChange();
+        }
+
+        SP<SomeShaderProgram> ShaderProgram() const {
+            return shaderProgram;
+        }
+
+        VectorList<Color> const& UniformColors() const {
+            return uniformColors;
+        }
+
+        void AddUniformColor(Color color) {
+            uniformColors.Add(color);
+
+            OnChange();
+        }
+
+        void SetUniformColor(size_t index, Color color) {
+            GUARD(index < uniformColors.size());
+            uniformColors[index] = color;
+
+            OnChange();
+        }
+
+        VectorList<float> const& UniformFloats() const {
+            return uniformFloats;
+        }
+
+        UnorderedMap<String, RenderFeatureStatus> const& Features() const {
+            return features;
+        }
+
+        VectorList<SP<SomeTexture>> const& Textures() const {
+            return textures;
+        }
+
+        /// Add the texture's render texture to the material
+        void Add(SP<SomeTexture> texture) {
+            GUARD(texture)
+
+            auto renderTexture = texture->RenderTexture();
+            GUARD(renderTexture)
+
+            // Material tracks the actual texture being used for renders,
+            // not the child texture object (used in texture atlas)
+            // Renderers should store the child texture separately from the material
+            textures.Add(renderTexture);
+
+            OnChange();
+        }
+
+        /// Set the texture if one exists, or add it if missing (only used for single-texture
+        /// materials)
+        void Set(SP<SomeTexture> texture) {
+            GUARD(texture)
+
+            if (IsEmpty(textures)) {
+                Add(texture);
+            } else {
+                auto renderTexture = texture->RenderTexture();
+                GUARD(renderTexture)
+
+                textures[0] = renderTexture;
+                OnChange();
+            }
+        }
+
+        void EnableFeature(String feature, bool isEnabled) {
+            features[feature] =
+                isEnabled ? RenderFeatureStatus::Enable : RenderFeatureStatus::Disable;
+
+            OnChange();
+        }
+
+        /// A unique string that determines if this material can be rendered with the same draw call
+        /// as others
+        String BuildPropertyId() const;
+
+        bool operator==(RenderMaterial const& rhs) const;
+    };
+} // namespace PJ

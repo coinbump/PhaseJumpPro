@@ -1,10 +1,3 @@
-//
-//  ViewController.m
-//  Kaiju
-//
-//  Created by Jeremy Vineyard on 11/5/22.
-//
-
 #import "ViewController.h"
 #import "Kaiju-Swift.h"
 

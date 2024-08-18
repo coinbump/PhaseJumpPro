@@ -3,21 +3,17 @@
 
 /*
  RATING: 5 stars
- Simple class
- CODE REVIEW: 5/8/23
+ Simple type
+ CODE REVIEW: 7/13/24
  */
-namespace PJ
-{
-    /// <summary>
+namespace PJ {
     /// Some device that sends inputs (mouse, gamepad, etc.)
-    /// </summary>
-    class SomeInputDevice
-    {
+    class SomeInputDevice {
     public:
         virtual ~SomeInputDevice() {}
-        
+
         virtual bool IsAvailable() = 0;
     };
-}
+} // namespace PJ
 
 #endif

@@ -1,56 +1,75 @@
 #include "SpriteRenderer.h"
 #include "QuadMeshBuilder.h"
-#include "RenderMaterial.h"
 #include "RenderIntoModel.h"
-#include "SomeRenderEngine.h"
-#include "RenderModelBuilder.h"
+#include "RenderMaterial.h"
 #include "RenderModel.h"
-#include "Macros.h"
+#include "RenderModelBuilder.h"
+#include "SomeRenderEngine.h"
+#include "Utils.h"
 
 using namespace std;
 using namespace PJ;
 
-SpriteRenderer::SpriteRenderer(SP<SomeTexture> texture) {
+SpriteRenderer::SpriteRenderer(SP<SomeTexture> texture) :
+    texture(texture) {
     material = MAKE<RenderMaterial>();
-    material->textures.Add(texture);
+    GUARD(texture);
+
+    material->Add(texture);
 
     QuadMeshBuilder builder(Vector2((float)texture->size.x, (float)texture->size.y));
     mesh = builder.BuildMesh();
 }
 
-void SpriteRenderer::RenderInto(RenderIntoModel model) {
-    if (nullptr == material || nullptr == material->shaderProgram) {
+SpriteRenderer::SpriteRenderer(SP<RenderMaterial> material) {
+    this->material = material;
+
+    GUARD(!IsEmpty(material->Textures()))
+
+    texture = *material->Textures().begin();
+    QuadMeshBuilder builder(Vector2((float)texture->size.x, (float)texture->size.y));
+    mesh = builder.BuildMesh();
+}
+
+VectorList<RenderModel> SpriteRenderer::MakeRenderModels(RenderIntoModel const& model) {
+    VectorList<RenderModel> result;
+
+    GUARDR(owner, result)
+
+    if (nullptr == material) {
         PJLog("ERROR. Missing material.");
-        return;
+        return result;
     }
 
     RenderModelBuilder builder;
-    auto renderModel = builder.Build(*material->shaderProgram,
-                                     mesh,
-                                     *material,
-                                     model.modelMatrix,
-                                     owner.lock()->transform->WorldPosition().z);
+    VectorList<SomeTexture*> textures{ texture.get() };
+    auto renderModel = builder.Build(
+        mesh, *material, textures, ModelMatrix(), owner->transform->WorldPosition().z
+    );
 
-    std::transform(renderModel.uvs.begin(), renderModel.uvs.end(), renderModel.uvs.begin(), [this] (Vector2 uv) {
-        if (flipX) {
-            uv.x = 1.0f - uv.x;
-        }
+    if (flipX || flipY) {
+        std::transform(
+            renderModel.UVs().cbegin(), renderModel.UVs().cend(), renderModel.UVs().begin(),
+            [this](Vector2 uv) {
+                if (flipX) {
+                    uv.x = 1.0f - uv.x;
+                }
 
-        if (flipY) {
-            uv.y = 1.0f - uv.y;
-        }
-        return uv;
-    });
+                if (flipY) {
+                    uv.y = 1.0f - uv.y;
+                }
+                return uv;
+            }
+        );
+    }
 
-    model.renderContext->renderEngine->RenderProcess(renderModel);
+    result.push_back(renderModel);
+    return result;
 }
 
 Vector2 SpriteRenderer::Size() const {
-    if (material && !material->textures.IsEmpty()) {
-        auto texture = material->textures[0];
-        if (texture) {
-            return Vector2((float)texture->size.x, (float)texture->size.y);
-        }
+    if (material && texture) {
+        return Vector2((float)texture->size.x, (float)texture->size.y);
     }
 
     return Vector2();
@@ -58,10 +77,10 @@ Vector2 SpriteRenderer::Size() const {
 
 void SpriteRenderer::SetColor(Color color) {
     if (material) {
-        if (material->uniformColors.IsEmpty()) {
-            material->uniformColors.Add(color);
+        if (IsEmpty(material->UniformColors())) {
+            material->AddUniformColor(color);
         } else {
-            material->uniformColors[0] = color;
+            material->SetUniformColor(0, color);
         }
     }
 }

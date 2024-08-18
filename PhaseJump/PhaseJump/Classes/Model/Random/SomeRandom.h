@@ -1,43 +1,31 @@
-#ifndef PJSOMENORMALRANDOM_H
-#define PJSOMENORMALRANDOM_H
+#pragma once
 
 /*
  RATING: 5 stars
  Simple utility
- CODE REVIEW: 12/29/22
+ CODE REVIEW: 7/5/24
  */
-namespace PJ
-{
-    /// <summary>
+namespace PJ {
     /// Returns a normalized random value between 0-1.0
     /// This exists so we can inject specific random numbers for unit tests
-    /// </summary>
-    class SomeRandom
-    {
+    class SomeRandom {
     public:
         virtual ~SomeRandom() {}
-        
-        /// <summary>
-        /// Value between 0-1.0
-        /// </summary>
+
+        /// Returns value between 0-1.0
         virtual float Value() = 0;
 
-        float VaryFloat(float value, float vary)
-        {
-            if (0 == vary) { return value; }
+        /// Vary value between +/- vary random max
+        float VaryFloat(float value, float vary) {
+            if (0 == vary) {
+                return value;
+            }
             return value + Delta(vary);
         }
 
-        /// <summary>
         /// Returns a random value between -delta...delta.
-        /// </summary>
-        float Delta(float delta)
-        {
-            bool isVaryForward = Value() < 0.5f;
-            float factor = isVaryForward ? 1.0f : -1.0f;
-            return Value() * factor * delta;
+        float Delta(float delta) {
+            return Value() * delta * 2.0f - delta;
         }
     };
-}
-
-#endif
+} // namespace PJ

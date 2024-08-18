@@ -1,41 +1,35 @@
 #ifndef PJUICONTROL2D_H
 #define PJUICONTROL2D_H
 
-#include "View2D.h"
 #include "SomeEventHandler.h"
 #include "SomeHoverGestureHandler.h"
+#include "View2D.h"
 
 /*
  RATING: 4 stars
  Tested and works. Needs unit tests
  CODE REVIEW: 5/8/23
  */
-namespace PJ
-{
-    /// <summary>
-    /// An interactive UI object that accepts inputs from the user and produces events.
-    /// Example: button, switch, checkbox, etc.
-    /// </summary>
-    class UIControl2D : public View2D
-    {
+namespace PJ {
+    /// An interactive UI object that accepts inputs from the user and produces
+    /// events. Example: button, switch, checkbox, etc.
+    class UIControl2D : public View2D {
     protected:
-        /// <summary>
         /// Component that handles events (Example: Button.PressEvent)
-        /// </summary>
         SP<SomeEventHandler> eventHandler;
 
-        class HoverGestureHandler : public SomeHoverGestureHandler
-        {
+        class HoverGestureHandler : public SomeHoverGestureHandler {
         public:
             WP<UIControl2D> target;
 
-            void SetIsHovering(bool value) override
-            {
-                if (target.expired()) { return; }
+            void SetIsHovering(bool value) override {
+                if (target.expired()) {
+                    return;
+                }
                 target.lock()->isHovering = value;
             }
         };
-    
+
     protected:
         SP<HoverGestureHandler> hoverGestureHandler;
 
@@ -48,6 +42,7 @@ namespace PJ
             isHovering = value;
         }
 
+        // TODO: SP audit
         SP<SomeListener> Listener() const {
             auto result = eventHandler;
             if (nullptr == result) {
@@ -61,6 +56,6 @@ namespace PJ
     protected:
         void Awake() override;
     };
-}
+} // namespace PJ
 
 #endif

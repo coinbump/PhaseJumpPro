@@ -31,7 +31,7 @@ TEST(World, TestNodePositionsAsChild) {
 
     auto node = MAKE<WorldNode>();
     auto parentNode = MAKE<WorldNode>();
-    parentNode->AddChild(node);
+    parentNode->Add(node);
     world->Add(parentNode);
     world->Go();
 
@@ -54,7 +54,7 @@ TEST(World, TestNodePositionsAsChild) {
 //
 //    auto parentNode = MAKE<WorldNode>();
 //    auto childNode = MAKE<WorldNode>();
-//    parentNode->AddEdge(StandardEdgeModel(), childNode);
+//    parentNode->AddEdge(childNode);
 //
 //    parentNode->transform->position = Vector3(10, 10, 0);
 //    childNode->transform->position = Vector3(1, 1, 0);
@@ -64,7 +64,7 @@ TEST(World, TestNodePositionsAsChild) {
 //    auto sut = MAKE<World>();
 //    sut->camera = camera;
 //
-//    sut->root->AddEdge(StandardEdgeModel(), parentNode);
+//    sut->root->AddEdge(parentNode);
 //
 //    auto renderContext = MAKE<MockRenderContext>();
 //    sut->renderContext = renderContext;

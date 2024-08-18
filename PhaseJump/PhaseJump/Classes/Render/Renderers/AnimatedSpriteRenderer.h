@@ -1,18 +1,29 @@
 #pragma once
 
+#include "SomeFramePlayable.h"
 #include "SomeRenderer.h"
 #include "SomeTexture.h"
-#include "SomeFrameAnimator.h"
-#include "Macros.h"
+#include "Utils.h"
 #include <memory>
 
+// CODE REVIEW: ?/23
 namespace PJ {
     class RenderMaterial;
     struct Mesh;
+    class TextureAtlas;
 
     /// Renders multiple textures as a sprite
-    class AnimatedSpriteRenderer: public SomeRenderer {
+    class AnimatedSpriteRenderer : public SomeRenderer {
     public:
+        struct Frame {
+            SP<SomeTexture> texture;
+            Vector2 offset;
+
+            Frame(SP<SomeTexture> texture, Vector2 offset) :
+                texture(texture),
+                offset(offset) {}
+        };
+
         using Base = SomeRenderer;
         using TextureList = VectorList<SP<SomeTexture>>;
 
@@ -22,19 +33,25 @@ namespace PJ {
         int frame = 0;
         float position = 0;
 
-        TextureList textures;
+        VectorList<Frame> frames;
 
     public:
         bool flipX = false;
         bool flipY = false;
-        SP<SomeFrameAnimator> frameAnimator;
-
-        SP<RenderMaterial> material;
+        SP<SomeFramePlayable> framePlayable;
 
         AnimatedSpriteRenderer(TextureList const& textures);
+        AnimatedSpriteRenderer(TextureAtlas const& atlas);
 
-        void RenderInto(RenderIntoModel model) override;
+        // MARK: SomeRenderer
+
+        VectorList<RenderModel> MakeRenderModels(RenderIntoModel const& model) override;
         void SetColor(Color color) override;
+
+        // MARK: WorldComponent
+
         void OnUpdate(TimeSlice time) override;
     };
-}
+
+    using AnimatedTextureRenderer = AnimatedSpriteRenderer;
+} // namespace PJ

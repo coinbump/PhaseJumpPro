@@ -1,51 +1,47 @@
-#ifndef PJCLASSREGISTRY_H
-#define PJCLASSREGISTRY_H
+#pragma once
 
 #include "_String.h"
-#include <map>
+#include "Collections/UnorderedMap.h"
 #include "Factory.h"
-#include "Collections/_Map.h"
+#include "Utils.h"
 
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 11/10/22
+ CODE REVIEW: 8/11/24
  */
-namespace PJ
-{
-    /// <summary>
+namespace PJ {
     /// Registry for classes
-    /// </summary>
-    /// <typeparam name="Type"></typeparam>
-    class ClassRegistry : public Map<String, SP<Class>>
-    {
+    template <class BaseType = Base>
+    class ClassRegistry {
     public:
-        ClassRegistry() {
+        using Map = UnorderedMap<String, SP<SomeClass<Base>>>;
+
+        Map map;
+
+        ClassRegistry() {}
+
+        template <class T>
+        SP<T> NewType(String key) {
+            return DCAST<T>(NewBase(key));
         }
 
-        template <class T> SP<T> NewType(String key) {
-            auto iterator = this->find(key);
-            if (iterator == this->end()) { return NULL; }
+        SP<Base> NewBase(String key) const {
+            auto iterator = map.find(key);
+            GUARDR(iterator != map.end(), nullptr);
 
             auto ptr = iterator->second;
-            auto value = ptr.get();
-            auto typeClass = dynamic_cast<TypeClass<T>*>(value);
-            if (nullptr == typeClass) { return nullptr; }
-            if (nullptr == typeClass->factory.get()) { return nullptr; }
+            auto value = dynamic_cast<SomeSomeFactoryProvider<Base>*>(ptr.get());
+            GUARDR(value, nullptr)
 
-            return typeClass->factory->New();
-        }
+            SomeFactory<Base>* factory;
+            value->Provide(factory);
+            GUARDR(factory, nullptr)
 
-        SP<Base> New(String key) const {
-            auto iterator = this->find(key);
-            if (iterator == this->end()) { return NULL; }
+            auto concreteFactory = As<SomeFactory<Base>>(factory);
+            GUARDR(concreteFactory, nullptr)
 
-            auto ptr = iterator->second;
-            auto value = ptr.get();
-
-            return value->New();
+            return concreteFactory->NewBase();
         }
     };
-}
-
-#endif
+} // namespace PJ

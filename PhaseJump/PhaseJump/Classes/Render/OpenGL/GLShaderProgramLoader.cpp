@@ -8,7 +8,8 @@ using namespace std;
 using namespace PJ;
 using namespace nlohmann;
 
-SP<GLShaderProgram> GLShaderProgramLoader::LoadFromShaderPaths(FilePath vertexShaderPath, FilePath fragmentShaderPath) {
+SP<GLShaderProgram>
+GLShaderProgramLoader::LoadFromShaderPaths(FilePath vertexShaderPath, FilePath fragmentShaderPath) {
     GLShaderLoader loader;
     auto vertexShader = MAKE<VertexGLShader>();
     if (!loader.LoadFromPath(*vertexShader, vertexShaderPath)) {
@@ -35,31 +36,37 @@ std::optional<GLShaderProgram::Info> GLShaderProgramLoader::InfoFromPath(FilePat
         PJLog("ERROR. Can't open .shprog file at: %s", path.c_str());
         return std::nullopt;
     }
-    json j;
-    file >> j;
 
-    String vertexShaderName = j["shader.vertex"];
-    String fragmentShaderName = j["shader.fragment"];
+    try {
+        json j;
+        file >> j;
 
-    String vertexShaderExtension = ".vsh";
-    String fragmentShaderExtension = ".fsh";
+        String vertexShaderName = j["shader.vertex"];
+        String fragmentShaderName = j["shader.fragment"];
 
-    String vertexShaderFileName = vertexShaderName + vertexShaderExtension;
-    String fragmentShaderFileName = fragmentShaderName + fragmentShaderExtension;
+        String vertexShaderExtension = ".vsh";
+        String fragmentShaderExtension = ".fsh";
 
-    FilePath basePath = path;
-    basePath.remove_filename();
+        String vertexShaderFileName = vertexShaderName + vertexShaderExtension;
+        String fragmentShaderFileName = fragmentShaderName + fragmentShaderExtension;
 
-    FilePath vertexShaderPath = basePath;
-    vertexShaderPath /= "vertex";
-    vertexShaderPath /= FilePath(vertexShaderFileName.c_str());
-    FilePath fragmentShaderPath = basePath;
-    fragmentShaderPath /= "fragment";
-    fragmentShaderPath /= FilePath(fragmentShaderFileName.c_str());
+        FilePath basePath = path;
+        basePath.remove_filename();
 
-    result.id = j["id"];
-    result.vertexShaderPath = vertexShaderPath;
-    result.fragmentShaderPath = fragmentShaderPath;
+        FilePath vertexShaderPath = basePath;
+        vertexShaderPath /= "vertex";
+        vertexShaderPath /= FilePath(vertexShaderFileName.c_str());
+        FilePath fragmentShaderPath = basePath;
+        fragmentShaderPath /= "fragment";
+        fragmentShaderPath /= FilePath(fragmentShaderFileName.c_str());
+
+        result.id = j["id"];
+        result.vertexShaderPath = vertexShaderPath;
+        result.fragmentShaderPath = fragmentShaderPath;
+    } catch (...) {
+        PJLog("ERROR: Couldn't parse GLShaderProgram JSON");
+        return std::nullopt;
+    }
 
     return std::make_optional(result);
 }

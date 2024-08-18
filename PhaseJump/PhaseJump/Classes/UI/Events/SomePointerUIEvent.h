@@ -1,32 +1,40 @@
-#ifndef PJSONEPOINTERUIEVENT_H
-#define PJSONEPOINTERUIEVENT_H
+#pragma once
 
-#include "SomeUIEvent.h"
 #include "_String.h"
+#include "SomeUIEvent.h"
 
+/*
+ RATING: 5 stars
+ Simple type
+ CODE REVIEW: 8/4/24
+ */
 namespace PJ {
-   enum class PointerInputButton
-    {
-        Left,
-        Right,
-        Middle,
+    using PointerInputButtonType = String;
 
-        // A custom button
-        Extended
-    };
+    /// Standard pointer input button ids
+    /// Create your own ids for custom behavior
+    namespace PointerInputButton {
+        static auto const Left = "left";
+        static auto const Right = "right";
+        static auto const Middle = "middle";
+    } // namespace PointerInputButton
 
-    // TODO: add InputButtonModel
+    /// Pointer device UI event
     class SomePointerUIEvent : public SomeUIEvent {
     public:
-        using InputButton = PointerInputButton;
+        ScreenPosition screenPos;
+
+        SomePointerUIEvent() {}
+    };
+
+    /// Pointer button UI event
+    class SomePointerButtonUIEvent : public SomePointerUIEvent {
+    public:
+        using InputButton = PointerInputButtonType;
 
         InputButton button;
 
-        /// <summary>
-        /// (OPTIONAL) id for non-standard button
-        /// </summary>
-        String buttonId;
+        SomePointerButtonUIEvent(InputButton button) :
+            button(button) {}
     };
-}
-
-#endif
+} // namespace PJ

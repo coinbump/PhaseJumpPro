@@ -7,25 +7,28 @@
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 12/11/22
+ CODE REVIEW: 5/12/24
  */
-namespace PJ
-{
-    /// <summary>
+namespace PJ {
     /// Cyclic nodes are managed by CyclicGraph
-    /// </summary>
-    template <class EdgeModel = StandardEdgeModel>
-    class CyclicGraphNode : public SomeGraphNode<EdgeModel>
-    {
+    template <class EdgeCore = StandardEdgeCore, class Core = Void>
+    class CyclicGraphNode : public SomeGraphNode<EdgeCore, Core> {
     public:
-        using Base = SomeGraphNode<EdgeModel>;
+        using Base = SomeGraphNode<EdgeCore, Core>;
+        using EdgeModelType = EdgeCore;
+        using CoreType = Core;
 
-        typename Base::NodeSharedPtr AddEdge(EdgeModel model, typename Base::NodeSharedPtr toNode) override
-        {
+        CyclicGraphNode() {}
+
+        CyclicGraphNode(Core core) :
+            Base(core) {}
+
+        typename Base::NodeSharedPtr
+        AddEdge(typename Base::NodeSharedPtr toNode, EdgeCore model = EdgeCore()) override {
             std::cout << "Error. Call CyclicGraph.AddEdge instead";
             return nullptr;
         }
     };
-}
+} // namespace PJ
 
 #endif

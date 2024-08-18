@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
 #include "Tags.h"
 #include "_String.h"
-#include "Macros.h"
+#include "Utils.h"
 
 using namespace PJ;
 using namespace std;
@@ -18,25 +18,17 @@ TEST(Tags, Any_Cast) {
     EXPECT_EQ(10, std::any_cast<int>(value10));
 
     EXPECT_ANY_THROW(std::any_cast<float>(value10));
-
-    // Template for casting
-//    try
-//    {
-//    }
-//    catch (const std::bad_any_cast& e) <- or catch(...)
-//    {
-//    }
 }
 
 TEST(Tags, Values) {
     Tags sut;
-    sut["1"] = 1;
-    sut["2"] = 2.5f;
-    sut["3"] = String("test");
+    sut.Insert({"1", 1});
+    sut.Insert({"2", 2.5f});
+    sut.Insert({"3", String("test")});
 
-    EXPECT_TRUE(sut.ContainsTypedValue<int>("1"));
-    EXPECT_TRUE(sut.ContainsTypedValue<float>("2"));
-    EXPECT_TRUE(sut.ContainsTypedValue<String>("3"));
+    EXPECT_TRUE(sut.ContainsTypeValue<int>("1"));
+    EXPECT_TRUE(sut.ContainsTypeValue<float>("2"));
+    EXPECT_TRUE(sut.ContainsTypeValue<String>("3"));
 
     EXPECT_EQ(1, sut.SafeValue<int>("1"));
     EXPECT_EQ(2.5f, sut.SafeValue<float>("2"));
@@ -49,9 +41,9 @@ TEST(Tags, Values) {
 
 TEST(Tags, Value) {
     Tags sut;
-    sut["1"] = 1;
-    sut["2"] = 2.5f;
-    sut["3"] = String("test");
+    sut.Insert({"1", 1});
+    sut.Insert({"2", 2.5f});
+    sut.Insert({"3", String("test")});
 
     EXPECT_EQ(1, sut.Value<int>("1"));
     EXPECT_EQ(2.5f, sut.Value<float>("2"));
@@ -64,6 +56,6 @@ TEST(Tags, Value) {
 
 TEST(Tags, SharedPtr) {
     Tags sut;
-    sut.Add("1", MAKE<TestClass>());
+    sut.Add({"1", MAKE<TestClass>()});
     EXPECT_NE(nullptr, sut.Value<SP<TestClass>>("1"));
 }

@@ -1,36 +1,45 @@
 #ifndef PJVECTOR3_H
 #define PJVECTOR3_H
 
+#include "_String.h"
 #include "FloatMath.h"
 #include "IntMath.h"
-#include "Vector2.h"
 #include "Macros_Vectors.h"
-#include "_String.h"
+#include "StringConvertible.h"
+#include "Vector2.h"
 
 namespace Terathon {
     class Vector3D;
     class Point3D;
-}
+} // namespace Terathon
 
 /*
  RATING: 5 stars
- Utility class with unit tests
- CODE REVIEW: 11/23/22
+ Has unit tests
+ CODE REVIEW: 7/6/24
  */
 namespace PJ {
-    class Vector3 {
+    // TODO: do we need a renderVector3 that has no inheritance?
+    class Vector3 { //} : public StringConvertible {
     public:
         float x = 0;
         float y = 0;
         float z = 0;
 
-        Vector3() {
-        }
+        Vector3() {}
 
-        Vector3(float x, float y, float z) : x(x), y(y), z(z) {
-        }
+        Vector3(float x, float y, float z) :
+            x(x),
+            y(y),
+            z(z) {}
 
-        Vector3(Vector2 const& value) : x(value.x), y(value.y), z(0) {
+        Vector3(Vector2 const& value) :
+            x(value.x),
+            y(value.y),
+            z(0) {}
+
+        static Vector3 Uniform(float value) {
+            return Vector3(value, value, value);
         }
 
         static Vector3 const one;
@@ -42,11 +51,11 @@ namespace PJ {
             return Vector2(x, y);
         }
 
-        float& operator [](size_t index) {
+        float& operator[](size_t index) {
             return (&x)[index >= 0 && index < 3 ? index : index % 3];
         }
 
-        float const& operator [](size_t index) const {
+        float operator[](size_t index) const {
             return (&x)[index >= 0 && index < 3 ? index : index % 3];
         }
 
@@ -57,8 +66,7 @@ namespace PJ {
         operator Terathon::Vector3D() const;
         operator Terathon::Point3D() const;
 
-        void Normalize()
-        {
+        void Normalize() {
             float mag = Magnitude(true);
             for (int i = 0; i < 3; i++) {
                 (*this)[i] = (*this)[i] / mag;
@@ -66,6 +74,8 @@ namespace PJ {
         }
 
         VECTOR_METHODS(Vector3, float, 3);
+
+        // MARK: StringConvertible
 
         String ToString() const {
             std::stringstream stream;
@@ -81,14 +91,17 @@ namespace PJ {
         int z = 0;
 
         Vector3Int() {}
-        Vector3Int(int x, int y, int z) : x(x), y(y), z(z) {
-        }
 
-        int& operator [](size_t index) {
+        Vector3Int(int x, int y, int z) :
+            x(x),
+            y(y),
+            z(z) {}
+
+        int& operator[](size_t index) {
             return (&x)[index >= 0 && index < 3 ? index : index % 3];
         }
 
-        int const& operator [](size_t index) const {
+        int operator[](size_t index) const {
             return (&x)[index >= 0 && index < 3 ? index : index % 3];
         }
 
@@ -96,11 +109,15 @@ namespace PJ {
             return x == rhs.x && y == rhs.y && z == rhs.z;
         }
 
+        operator Vector2() const {
+            return Vector2(x, y);
+        }
+
         VECTOR_METHODS(Vector3Int, int, 3);
     };
 
     // Convenience names
     using Vec3 = Vector3;
-}
+} // namespace PJ
 
 #endif

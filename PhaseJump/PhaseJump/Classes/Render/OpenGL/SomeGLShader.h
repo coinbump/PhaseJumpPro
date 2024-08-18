@@ -8,16 +8,14 @@
 /*
  RATING: 5 stars
  Simple types
- CODE REVIEW: 4/13/23
+ CODE REVIEW: 7/14/24
  */
 namespace PJ {
     /// Interfaces with the GPU to process vertices/fragments
-    class SomeShader {
-    };
+    class SomeShader {};
 
     /// Manages an OpenGLShader
-    class SomeGLShader : public SomeShader
-    {
+    class SomeGLShader : public SomeShader {
     public:
         GLuint glId = 0;
         GLenum glType = 0;
@@ -32,8 +30,7 @@ namespace PJ {
     // MARK: - FragmentGLShader
 
     /// Fragment shaders render pixels (fragments)
-    class FragmentGLShader : public SomeGLShader
-    {
+    class FragmentGLShader : public SomeGLShader {
     public:
         FragmentGLShader();
     };
@@ -41,11 +38,10 @@ namespace PJ {
     // MARK: - VertexGLShader
 
     /// Vertex shaders process vertexes
-    class VertexGLShader : public SomeGLShader
-    {
+    class VertexGLShader : public SomeGLShader {
     public:
         VertexGLShader();
     };
-}
+} // namespace PJ
 
 #endif

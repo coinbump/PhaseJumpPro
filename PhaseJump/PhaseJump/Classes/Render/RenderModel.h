@@ -1,57 +1,132 @@
-#ifndef PJRENDERMODEL_H
-#define PJRENDERMODEL_H
+#pragma once
 
-#include "VectorList.h"
 #include "Color.h"
-#include "RenderMaterial.h"
-#include "Vector3.h"
+#include "List.h"
 #include "Matrix4x4.h"
+#include "Mesh.h"
+#include "RenderMaterial.h"
 #include "SomeTexture.h"
-#include "_Set.h"
-#include "_Map.h"
+#include "UnorderedMap.h"
+#include "Vector3.h"
+#include "VectorList.h"
 
 /*
- RATING: 4 stars
- Simple type. Needs more features
- CODE REVIEW: 4/17/23
+ RATING: 5 stars
+ Simple type
+ CODE REVIEW: 8/17/23
  */
 namespace PJ {
     class SomeShaderProgram;
+    class SomeRenderCommandModel;
 
-    /// Sent to the render engine which then interprets it, does any
-    /// necessary batching or caching, and then performs the render
+    /**
+     Model for a render operation
+
+     Sent to the render engine which interprets the model, does any necessary batching or caching,
+     and performs the render
+
+     VectorList is used for easy n-element access and so we can directly upload to the render
+     buffers. All render model types must be non-polymorphic to allow this
+     */
     struct RenderModel {
-        /// Vertices to render (sent to vertex shader `a_position` attribute)
-        VectorList<Vector3> vertices;
-        VectorList<Color> colors;
+        using This = RenderModel;
 
-        /// Used by IBO to determine vertex offsets
-        VectorList<uint32_t> indices;
+        /// Mesh to be rendered
+        Mesh mesh;
 
-        /// Texture position for vertex (Range: 0-1.0)
-        VectorList<Vector2> uvs;
+        /// Material used to render mesh. Sharing materials between objects allows batching
+        RenderMaterial material;
 
-        VectorList<SP<SomeTexture>> textures;
-        VectorList<Color> uniformColors;
-        VectorList<float> uniformFloats;
+        /// Render model for textures (used to specify texture coordinates for texture atlas)
+        VectorList<TextureRenderModel> textureModels;
 
-        SomeShaderProgram& shaderProgram;
-        Map<String, RenderFeatureStatus> features;
-
-        /// Use to sort blended objects back-to-front
+        // TODO: this is weird <- use comparator in render engine somewhere?
+        /// Use to sort renders back-to-front (higher value is rendered after lower value)
         float z = 0;
 
+        /// Matrix for transform from model-local to world space
+        Matrix4x4 matrix;
+
+        /// Varying values that are interpolated per-vertex
+        VectorList<Color> colors;
+
+        RenderModel(RenderMaterial const& material) :
+            material(material) {}
+
+        VectorList<Vector3>& Vertices() {
+            return mesh.vertices;
+        }
+
+        VectorList<Vector3> const& Vertices() const {
+            return mesh.vertices;
+        }
+
+        /// Used by IBO to determine vertex offsets
+        VectorList<uint32_t>& Indices() {
+            return mesh.triangles;
+        }
+
+        /// Used by IBO to determine vertex offsets
+        VectorList<uint32_t> const& Indices() const {
+            return mesh.triangles;
+        }
+
+        /// Texture position for vertex (Range: 0-1.0)
+        VectorList<Vector2>& UVs() {
+            return mesh.uvs;
+        };
+
+        VectorList<Vector2> const& UVs() const {
+            return mesh.uvs;
+        };
+
+        VectorList<float> const& UniformFloats() const {
+            return material.UniformFloats();
+        }
+
+        VectorList<Color> const& UniformColors() const {
+            return material.UniformColors();
+        }
+
+        VectorList<Color>& Colors() {
+            return colors;
+        }
+
+        VectorList<Color> const& Colors() const {
+            return colors;
+        }
+
+        UnorderedMap<String, RenderFeatureStatus> const& Features() const {
+            return material.Features();
+        }
+
+        SomeShaderProgram* ShaderProgram() const {
+            return material.ShaderProgram().get();
+        }
+
+        /// Returns true if a render feature is enabled for this operation
         bool IsFeatureEnabled(String feature) const {
-            auto i = features.find(feature);
-            if (i == features.end()) { return false; }
+            // FUTURE: support feature defaults if needed
+            auto i = material.Features().find(feature);
+            if (i == material.Features().end()) {
+                return false;
+            }
             return i->second == RenderFeatureStatus::Enable;
         }
 
-        Matrix4x4 matrix;
+        This operator+(This const& rhs) const {
+            This result = *this;
+            result += rhs;
+            return result;
+        }
 
-        RenderModel(SomeShaderProgram& shaderProgram) : shaderProgram(shaderProgram) {
+        This& operator+=(This const& rhs) {
+            auto& result = *this;
+
+            result.mesh += rhs.mesh;
+            AddRange(result.colors, rhs.colors);
+
+            return result;
         }
     };
-}
-
-#endif
+} // namespace PJ

@@ -1,39 +1,68 @@
-#ifndef PJSOMETEXTURE_H
-#define PJSOMETEXTURE_H
+#pragma once
 
 #include "Base.h"
-#include "Vector2.h"
 #include "RenderTypes.h"
+#include "Vector2.h"
 
 /*
  RATING: 5 stars
- Simple class
- CODE REVIEW: 5/1/23
+ Simple type
+ CODE REVIEW: 8/8/24
  */
 namespace PJ {
-    /// <summary>
-    /// A GPU texture that can be rendered in a Render Context
-    /// </summary>
+    struct TextureRenderModel {
+        uint32_t renderId = 0;
+
+        /// Normalized texture origin (0-1.0) in reading coordinates (top-left is 0, 0)
+        Vector2 origin;
+
+        /// Normalized texture size (0-1.0)
+        Vector2 size;
+
+        TextureRenderModel(uint32_t renderId, Vector2 origin, Vector2 size) :
+            renderId(renderId),
+            origin(origin),
+            size(size) {}
+    };
+
+    /// GPU texture that can be rendered in a Render Context
     class SomeTexture : public Base {
+    protected:
+        uint32_t renderId = 0;
+
     public:
         String id;
-        uint32_t renderId = 0;
         Vector2Int size;
 
-        TextureAlphaMode alphaMode = TextureAlphaMode::Standard;
+        String alphaMode = TextureAlphaMode::Standard;
 
-        SomeTexture(String id, uint32_t renderId, Vector2Int size, TextureAlphaMode alphaMode) :
-        id(id),
-        renderId(renderId),
-        size(size),
-        alphaMode(alphaMode) {
+        SomeTexture(String id, uint32_t renderId, Vector2Int size, String alphaMode) :
+            id(id),
+            renderId(renderId),
+            size(size),
+            alphaMode(alphaMode) {}
+
+        virtual ~SomeTexture() {}
+
+        /// Returns the actual texture object used by the render engine
+        /// In the case of a texture atlas, each child texture will have a link to its original
+        /// render texture
+        virtual SP<SomeTexture> RenderTexture() {
+            return SCAST<SomeTexture>(shared_from_this());
         }
 
-        virtual ~SomeTexture() { }
+        virtual uint32_t RenderId() const {
+            return renderId;
+        }
 
-        virtual void SetTextureMagnification(TextureMagnification value) {}
-        virtual void SetTextureWrap(TextureWrap value) {}
+        virtual void SetTextureMagnification(TextureMagnificationType value) {}
+
+        virtual void SetTextureWrap(TextureWrapType value) {}
+
+        /// Resolve texture to a render model we use for the render
+        virtual std::optional<TextureRenderModel> MakeRenderModel() const {
+            GUARDR(renderId, std::nullopt)
+            return TextureRenderModel(renderId, Vector2::zero, Vector2::one);
+        }
     };
-}
-
-#endif
+} // namespace PJ

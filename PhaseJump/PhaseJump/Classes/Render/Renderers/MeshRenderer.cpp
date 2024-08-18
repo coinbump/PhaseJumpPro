@@ -1,25 +1,28 @@
 #include "MeshRenderer.h"
+#include "Angle.h"
 #include "RenderIntoModel.h"
 #include "RenderModel.h"
-#include "SomeRenderEngine.h"
-#include "Angle.h"
 #include "RenderModelBuilder.h"
+#include "SomeRenderEngine.h"
 
 using namespace std;
 using namespace PJ;
 
-void MeshRenderer::RenderInto(RenderIntoModel model) {
-    if (nullptr == material || nullptr == material->shaderProgram) {
+VectorList<RenderModel> MeshRenderer::MakeRenderModels(RenderIntoModel const& model) {
+    VectorList<RenderModel> result;
+    GUARDR(owner, result)
+
+    if (nullptr == material) {
         PJLog("ERROR. Missing material.");
-        return;
+        return result;
     }
 
     RenderModelBuilder builder;
-    auto renderModel = builder.Build(*material->shaderProgram,
-                                     mesh,
-                                     *material,
-                                     model.modelMatrix,
-                                     owner.lock()->transform->WorldPosition().z);
+    VectorList<SomeTexture*> textures;
+    auto renderModel = builder.Build(
+        mesh, *material, textures, ModelMatrix(), owner->transform->WorldPosition().z
+    );
 
-    model.renderContext->renderEngine->RenderProcess(renderModel);
+    result.Add(renderModel);
+    return result;
 }

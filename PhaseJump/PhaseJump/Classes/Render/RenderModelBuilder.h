@@ -1,16 +1,21 @@
-#ifndef PJRENDERMODELBUILDER_H
-#define PJRENDERMODELBUILDER_H
+#pragma once
 
+#include "VectorList.h"
+#include <memory>
+
+// CODE REVIEW: ?/23
 namespace PJ {
     class SomeShaderProgram;
     struct RenderModel;
     struct Mesh;
     class RenderMaterial;
     class Matrix4x4;
+    class SomeTexture;
 
     struct RenderModelBuilder {
-        RenderModel Build(SomeShaderProgram& program, Mesh const& mesh, RenderMaterial const& material, Matrix4x4 modelMatrix, float z);
+        RenderModel Build(
+            Mesh const& mesh, RenderMaterial& material, VectorList<SomeTexture*> const& textures,
+            Matrix4x4 modelMatrix, float z
+        );
     };
-}
-
-#endif
+} // namespace PJ

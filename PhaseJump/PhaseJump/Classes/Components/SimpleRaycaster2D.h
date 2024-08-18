@@ -4,6 +4,7 @@
 #include "SomeRaycaster2D.h"
 #include <memory>
 
+// CODE REVIEW: ?/23
 namespace PJ {
     class SomeCollider2D;
     class WorldNode;
@@ -12,6 +13,6 @@ namespace PJ {
     class SimpleRaycaster2D : public SomeRaycaster2D {
         std::optional<RaycastHit2D> Raycast(Vector2 origin, Vector2 direction) override;
     };
-}
+} // namespace PJ
 
 #endif

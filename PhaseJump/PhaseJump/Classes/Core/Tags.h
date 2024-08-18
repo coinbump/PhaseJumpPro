@@ -1,95 +1,91 @@
-#ifndef PJTAGS_H_
-#define PJTAGS_H_
+#pragma once
 
-#include "_Map.h"
 #include "_String.h"
-#include <set>
+#include "OrderedMap.h"
+#include "UnorderedMap.h"
+#include "UnorderedSet.h"
 #include <any>
 #include <optional>
+#include <set>
 
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 11/6/22
+ CODE REVIEW: 8/15/24
  */
-namespace PJ
-{
-    /// <summary>
-    /// Holds custom attributes (tags) in a dictionary
-    /// </summary>
-    struct Tags : public Map<String, std::any>
-    {
-    public:
-        using Key = String;
-        using MapValue = std::any;
+namespace PJ {
+    using Tag = std::any;
 
-        virtual ~Tags() {}
-        
-        // Standard
-        void Insert(Key key, MapValue value) {
-            this->insert({key, value});
-        }
-
-        // Convenience (C# style)
-        void Add(Key key, MapValue value) {
-            Insert(key, value);
-        }
-
-        /// <summary>
-        /// Creates a value if it doesn't exist
-        /// </summary>
-        template <class T>
-        T SafeValue(Key key) const
-        {
-            auto value = this->find(key);
-            if (value != this->end()) {
-                try
-                {
-                    auto castValue = std::any_cast<T>(value->second);
-                    return castValue;
-                }
-                catch (...)
-                {
-                }
-            }
-
+    template <class T>
+    struct DefaultAllocator {
+        T operator()() {
             return T();
         }
+    };
+
+    /// Holds custom attributes (tags) in a dictionary
+    struct Tags {
+        using Key = String;
+        using MapValue = Tag;
+        using Map = UnorderedMap<Key, MapValue>;
+
+        Map map;
+
+        virtual ~Tags() {}
+
+        std::pair<Map::iterator, bool> Insert(Map::value_type&& __x) {
+            return map.insert_or_assign(__x.first, __x.second);
+        }
+
+        std::pair<Map::iterator, bool> Add(Map::value_type&& __x) {
+            return map.insert_or_assign(__x.first, __x.second);
+        }
+
+        std::pair<Map::iterator, bool> Insert(Key const key, MapValue value) {
+            return map.insert_or_assign(key, value);
+        }
+
+        std::pair<Map::iterator, bool> Add(Key const key, MapValue value) {
+            return Insert({ key, value });
+        }
+
+        /// Creates a value if it doesn't exist
+        template <class T, class Allocator = DefaultAllocator<T>>
+        T SafeValue(Key key, Allocator allocator = Allocator()) const {
+            auto value = map.find(key);
+
+            if (value != map.end()) {
+                try {
+                    auto castValue = std::any_cast<T>(value->second);
+                    return castValue;
+                } catch (...) {}
+            }
+
+            return allocator();
+        }
 
         template <class T>
-        std::optional<T> Value(Key key) const
-        {
-            auto value = this->find(key);
-            if (value != this->end()) {
-                try
-                {
+        std::optional<T> Value(Key key) const {
+            auto value = map.find(key);
+            if (value != map.end()) {
+                try {
                     auto castValue = std::any_cast<T>(value->second);
-                    return std::optional<T>(castValue);
-                }
-                catch (...)
-                {
-                }
+                    return std::make_optional<T>(castValue);
+                } catch (...) {}
             }
 
             return std::nullopt;
         }
 
-        /// <summary>
         /// Returns true if the value exists, and is of the correct type
-        /// </summary>
         template <class T>
-        bool ContainsTypedValue(Key key) const
-        {
-            auto value = this->find(key);
-            if (value != this->end()) {
-                try
-                {
+        bool ContainsTypeValue(Key key) const {
+            auto value = map.find(key);
+            if (value != map.end()) {
+                try {
                     std::any_cast<T>(value->second);
                     return true;
-                }
-                catch (...)
-                {
-                }
+                } catch (...) {}
 
                 return false;
             }
@@ -98,22 +94,14 @@ namespace PJ
         }
     };
 
-    /// <summary>
     /// Holds a set of type tag strings
-    ///
     /// Example: "enemy", "ghost" tags for an arcade game
-    /// </summary>
-    class TypeTagsSet : std::set<std::string>
-    {
+    class TypeTagsSet : UnorderedSet<String> {
     public:
-        TypeTagsSet() : std::set<std::string>()
-        {
-        }
+        TypeTagsSet() :
+            UnorderedSet<String>() {}
 
-        TypeTagsSet(std::set<std::string> collection) : std::set<std::string>(collection)
-        {
-        }
+        TypeTagsSet(UnorderedSet<String> collection) :
+            UnorderedSet<String>(collection) {}
     };
-}
-
-#endif
+} // namespace PJ

@@ -47,12 +47,12 @@ TEST(SQLDatabase, Tests) {
     EXPECT_FALSE(db->IsInTransaction());
 
     auto uniqueStrings = testTable->UniqueStrings("test_column");
-    EXPECT_TRUE(uniqueStrings.Contains("1"));
-    EXPECT_TRUE(uniqueStrings.Contains("2"));
+    EXPECT_TRUE(Contains(uniqueStrings, "1"));
+    EXPECT_TRUE(Contains(uniqueStrings, "2"));
     EXPECT_EQ(2, uniqueStrings.size());
 
     auto tableNames = db->TableNames();
     EXPECT_EQ(2, tableNames.size());
-    EXPECT_TRUE(tableNames.Contains("bank"));
-    EXPECT_TRUE(tableNames.Contains("test"));
+    EXPECT_TRUE(Contains(tableNames, "bank"));
+    EXPECT_TRUE(Contains(tableNames, "test"));
 }

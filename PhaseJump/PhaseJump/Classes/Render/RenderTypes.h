@@ -1,6 +1,10 @@
-#ifndef PJRENDERTYPES_H
-#define PJRENDERTYPES_H
+#pragma once
 
+/*
+ RATING: 5 stars
+ Simple types
+ CODE REVIEW: 8/8/24
+ */
 namespace PJ {
     enum class RenderFeatureStatus {
         Enable,
@@ -8,21 +12,26 @@ namespace PJ {
         Disable
     };
 
-    enum class TextureAlphaMode {
-        Standard,
+    std::ostream& operator<<(std::ostream& os, RenderFeatureStatus const& value);
 
-        PremultiplyAlpha
-    };
+    using TextureAlphaModeType = String;
 
-    enum class TextureMagnification {
-        Nearest,
-        Linear
-    };
+    namespace TextureAlphaMode {
+        static auto const Standard = "standard";
+        static auto const PremultiplyAlpha = "premultiply.alpha";
+    }; // namespace TextureAlphaMode
 
-    enum class TextureWrap {
-        Clamp,
-        Repeat
-    };
-}
+    using TextureMagnificationType = String;
 
-#endif
+    namespace TextureMagnification {
+        static auto const Nearest = "nearest";
+        static auto const Linear = "linear";
+    }; // namespace TextureMagnification
+
+    using TextureWrapType = String;
+
+    namespace TextureWrap {
+        static auto const Clamp = "clamp";
+        static auto const Repeat = "repeat";
+    }; // namespace TextureWrap
+} // namespace PJ

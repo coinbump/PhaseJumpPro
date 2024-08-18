@@ -6,41 +6,36 @@
 
 /*
  RATING: 5 stars
- Tested and works
- CODE REVIEW: 12/27/22
+ Has unit tests
+ CODE REVIEW: 7/6/24
  */
-namespace PJ
-{
-    /// <summary>
-    /// Flow the objects with non-contextual spacing (object size doesn't matter)
-    /// </summary>
-    class VFlow : public SomeLayout2D
-    {
+namespace PJ {
+    /// Flow the objects with non-contextual spacing (object size doesn't
+    /// matter)
+    class VFlow : public SomeLayout2D {
     public:
         float spacing = 1.0f;
 
-        VFlow(float spacing = 1.0f) : spacing(spacing)
-        {
+        VFlow(float spacing = 1.0f) :
+            spacing(spacing) {}
+
+        Vector3 Size() const override {
+            return Vector3(0, spacing * (ChildNodes().size() - 1), 0);
         }
 
-        Vector3 Size() const override
-        {
-            return Vector3(0, spacing * (ChildNodes().Count() - 1), 0);
-        }
-
-        void ApplyLayout() override
-        {
+        void ApplyLayout() override {
             auto firstPos = (Size().y / 2) * Vector2::up.y;
             auto position = firstPos;
 
             auto childNodes = ChildNodes();
-            for (auto child : childNodes)
-            {
-                child->transform->SetLocalPosition(Vector3(0, position, child->transform->LocalPosition().z));
+            for (auto& child : childNodes) {
+                child->transform->SetLocalPosition(
+                    Vector3(0, position, child->transform->LocalPosition().z)
+                );
                 position += spacing * Vector2::down.y;
             }
         }
     };
-}
+} // namespace PJ
 
 #endif

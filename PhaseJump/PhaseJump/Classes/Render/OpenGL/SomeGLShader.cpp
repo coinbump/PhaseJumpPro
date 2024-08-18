@@ -4,24 +4,23 @@
 using namespace std;
 using namespace PJ;
 
-FragmentGLShader::FragmentGLShader() { glType = GL_FRAGMENT_SHADER; }
-VertexGLShader::VertexGLShader() { glType = GL_VERTEX_SHADER; }
-
-SomeGLShader::SomeGLShader()
-{
+FragmentGLShader::FragmentGLShader() {
+    glType = GL_FRAGMENT_SHADER;
 }
 
-SomeGLShader::~SomeGLShader()
-{
-    if (glId) {
-        glDeleteShader(glId);
-    }
+VertexGLShader::VertexGLShader() {
+    glType = GL_VERTEX_SHADER;
 }
 
-void SomeGLShader::Destroy()
-{
-    if (glId) {
-        glDeleteShader(glId);
-        glId = 0;
-    }
+SomeGLShader::SomeGLShader() {}
+
+SomeGLShader::~SomeGLShader() {
+    GUARD(glId)
+    glDeleteShader(glId);
+}
+
+void SomeGLShader::Destroy() {
+    GUARD(glId)
+    glDeleteShader(glId);
+    glId = 0;
 }

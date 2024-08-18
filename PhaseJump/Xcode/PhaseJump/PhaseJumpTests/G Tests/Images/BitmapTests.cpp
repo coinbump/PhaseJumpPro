@@ -5,6 +5,21 @@
 using namespace std;
 using namespace PJ;
 
+TEST(Bitmap, TestDataInit)
+{
+    Data data;
+    data.Resize(4);
+
+    uint32_t testValue = 0xEF1fAABB;
+    *((uint32_t*)data.Pointer()) = testValue;
+
+    RGBABitmap sut(Vector2Int(1, 1), data.Pointer(), data.Size());
+
+    EXPECT_EQ(Vector2Int(1, 1), sut.Size());
+    EXPECT_EQ(testValue, *((uint32_t*)sut[0]));
+    EXPECT_EQ(testValue, *((uint32_t*)sut[Vector2Int(0, 0)]));
+}
+
 TEST(Bitmap, TestResize)
 {
     RGBABitmap sut;
@@ -24,7 +39,7 @@ TEST(Bitmap, TestResizeZero)
     EXPECT_EQ(0, sut.DataSize());
 }
 
-TEST(Bitmap, TestResizeCopy)
+TEST(Bitmap, TestResizeBiggerCopy)
 {
     RGBABitmap sut;
     sut.Resize(Vector2Int(2, 2));
@@ -45,6 +60,30 @@ TEST(Bitmap, TestResizeCopy)
 
     EXPECT_EQ(Vector2Int(3, 3), sut.Size());
     EXPECT_EQ(36, sut.DataSize());
+
+    EXPECT_EQ((RGBAColor)color1, sut.PixelColor32At(Vector2Int(0, 0)));
+    EXPECT_EQ((RGBAColor)color2, sut.PixelColor32At(Vector2Int(1, 1)));
+}
+
+TEST(Bitmap, TestResizeSmallerCopy)
+{
+    RGBABitmap sut;
+    sut.Resize(Vector2Int(4, 4));
+
+    EXPECT_EQ(Vector2Int(4, 4), sut.Size());
+
+    Color color1 = Color::red;
+    Color color2 = Color::green;
+
+    sut.SetPixelColor(Vector2Int(0, 0), color1);
+    sut.SetPixelColor(Vector2Int(1, 1), color2);
+
+    EXPECT_EQ(color1, sut.PixelColorAt(Vector2Int(0, 0)));
+    EXPECT_EQ(color2, sut.PixelColorAt(Vector2Int(1, 1)));
+
+    sut.Resize(Vector2Int(2, 2));
+
+    EXPECT_EQ(Vector2Int(2, 2), sut.Size());
 
     EXPECT_EQ((RGBAColor)color1, sut.PixelColor32At(Vector2Int(0, 0)));
     EXPECT_EQ((RGBAColor)color2, sut.PixelColor32At(Vector2Int(1, 1)));

@@ -2,31 +2,32 @@
 #define PJSOMEPROCESSOR_H
 
 #include "Types.h"
-#include <math.h>
+#include <algorithm>
 
 /*
  RATING: 5 stars
- Simple interface
- CODE REVIEW: 11/12/22
+ Simple protocol
+ CODE REVIEW: 7/6/24
  */
 namespace PJ {
-    /// <summary>
     /// Takes an input and processes it to create an output over time
-    /// </summary>
-    template <class Input> class SomeProcessor {
+    template <class Input>
+    class SomeProcessor {
     protected:
         Input input;
         Int inputCount = 0;
         Int processedInputCount = 0;
 
     public:
-        SomeProcessor(Int inputCount = 0) : inputCount(inputCount) {}
+        SomeProcessor(Int inputCount = 0) :
+            inputCount(inputCount) {}
+
         virtual ~SomeProcessor() {}
 
         virtual float Progress() const {
-            return fmin(1.0f, fmax(0.0f, (float)processedInputCount/(float)inputCount));
+            return std::clamp((float)processedInputCount / (float)inputCount, 0.0f, 1.0f);
         }
     };
-}
+} // namespace PJ
 
 #endif

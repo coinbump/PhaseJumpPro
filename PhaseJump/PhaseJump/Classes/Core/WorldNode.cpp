@@ -1,56 +1,67 @@
 #include "WorldNode.h"
-#include "World.h"
 #include "Matrix4x4.h"
+#include "World.h"
 #include <TSMatrix4D.h>
 
 using namespace std;
 using namespace PJ;
 
-WP<World> WorldNode::World() const {
-    if (!world.expired()) {
+World* WorldNode::World() const {
+    if (world) {
         return world;
     }
     auto parent = SCAST<WorldNode>(Parent());
     if (parent) {
         return parent->World();
     }
-    return WP<PJ::World>();
+    return nullptr;
 }
 
-void WorldNode::Awake() {
-    if (IsAwake()) { return; }
-
-    transform->owner = SCAST<WorldNode>(shared_from_this());
-
-    auto iterComponents = components;
-    for (auto component : iterComponents) {
-        component->Awake();
-    }
-
-    awakeCount++;
+void WorldNode::CheckedAwake() {
+    life.CheckedAwake([this]() {
+        auto iterComponents = components;
+        for (auto& component : iterComponents) {
+            component->CheckedAwake();
+        }
+    });
 }
 
-/// Called for every object after Awake
-void WorldNode::Start() {
-    if (IsStarted()) { return; }
+void WorldNode::CheckedStart() {
+    life.CheckedStart([this]() {
+        auto iterComponents = components;
+        for (auto& component : iterComponents) {
+            component->CheckedStart();
+        }
+    });
+}
 
-    auto iterComponents = components;
-    for (auto component : iterComponents) {
-        component->Start();
+void WorldNode::OnUpdate(TimeSlice time) {
+    Base::OnUpdate(time);
+
+    if (destroyCountdown > 0) {
+        destroyCountdown -= time.delta;
+        if (destroyCountdown <= 0) {
+            isDestroyed = true;
+        }
     }
 
-    awakeCount++;
+    for (auto const& component : components) {
+        if (!component->IsEnabled()) {
+            continue;
+        }
+        component->OnUpdate(time);
+    }
 }
 
 // MARK: - WorldNode::Transform
 
 // TODO: need unit tests
 Vector3 WorldNode::NodeTransform::WorldPosition() const {
-    auto result = transform.position;
+    auto result = value.position;
 
-    auto owner = this->owner.lock();
+    auto owner = &this->owner;
     if (owner) {
-        auto world = owner->World().lock();
+        auto world = owner->World();
         if (world) {
             auto parent = owner->Parent();
             if (parent) {
@@ -67,9 +78,9 @@ Vector3 WorldNode::NodeTransform::WorldPosition() const {
 
 // TODO: need unit tests
 void WorldNode::NodeTransform::SetWorldPosition(Vector3 position) {
-    auto owner = this->owner.lock();
+    auto owner = &this->owner;
     if (owner) {
-        auto world = owner->World().lock();
+        auto world = owner->World();
         if (world) {
             auto parent = owner->Parent();
             if (parent) {
@@ -78,19 +89,19 @@ void WorldNode::NodeTransform::SetWorldPosition(Vector3 position) {
                 Terathon::Point3D point(position.x, position.y, position.z);
                 auto localPosition = Terathon::InverseTransform(worldModelMatrix, point);
 
-                transform.position = Vector3(localPosition.x, localPosition.y, localPosition.z);
+                value.position = Vector3(localPosition.x, localPosition.y, localPosition.z);
             }
             return;
         }
     }
 
-    transform.position = position;
+    value.position = position;
 }
 
 void WorldNode::NodeTransform::SetWorldPositionXY(Vector3 position) {
-    auto owner = this->owner.lock();
+    auto owner = &this->owner;
     if (owner) {
-        auto world = owner->World().lock();
+        auto world = owner->World();
         if (world) {
             auto parent = owner->Parent();
             if (parent) {
@@ -99,11 +110,12 @@ void WorldNode::NodeTransform::SetWorldPositionXY(Vector3 position) {
                 Terathon::Point3D point(position.x, position.y, position.z);
                 auto localPosition = Terathon::InverseTransform(worldModelMatrix, point);
 
-                transform.position = Vector3(localPosition.x, localPosition.y, owner->transform->LocalPosition().z);
+                value.position =
+                    Vector3(localPosition.x, localPosition.y, owner->transform->LocalPosition().z);
             }
             return;
         }
     }
 
-    transform.position = position;
+    value.position = position;
 }

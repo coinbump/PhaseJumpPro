@@ -1,10 +1,9 @@
-#include <stdio.h>
 #include "SQLCommand.h"
+#include <stdio.h>
 
 using namespace PJ;
 
 SQLCommand::~SQLCommand() {
-    if (NULL != sqliteStatement) {
-        sqlite3_finalize(sqliteStatement);
-    }
+    GUARD(sqliteStatement)
+    sqlite3_finalize(sqliteStatement);
 }

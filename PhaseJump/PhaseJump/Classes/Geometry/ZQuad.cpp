@@ -2,53 +2,45 @@
 
 using namespace PJ;
 
-void ZQuad::FlipV()
-{
+void ZQuad::FlipV() {
     ZQuad quad = *this;
-    (*this)[0] = quad[2];
-    (*this)[1] = quad[3];
-    (*this)[2] = quad[0];
-    (*this)[3] = quad[1];
+    std::swap(value[0], value[2]);
+    std::swap(value[1], value[3]);
 }
 
-void ZQuad::FlipH()
-{
-    ZQuad quad = *this;
-    (*this)[0] = quad[1];
-    (*this)[1] = quad[0];
-    (*this)[2] = quad[3];
-    (*this)[3] = quad[2];
+void ZQuad::FlipH() {
+    std::swap(value[0], value[1]);
+    std::swap(value[2], value[3]);
 }
 
-void ZQuad::TurnRight(int numRotations)
-{
+void ZQuad::TurnRight(int numRotations) {
+    // TODO: I think this is wrong?
     numRotations = numRotations % 4;
     for (int i = 0; i < numRotations; i++) {
         ZQuad quad = *this;
-        (*this)[0] = quad[1];
-        (*this)[1] = quad[3];
-        (*this)[2] = quad[0];
-        (*this)[3] = quad[2];
+        value[0] = quad[1];
+        value[1] = quad[3];
+        value[2] = quad[0];
+        value[3] = quad[2];
     }
 }
 
-void ZQuad::TurnLeft(int numRotations)
-{
+void ZQuad::TurnLeft(int numRotations) {
     numRotations = numRotations % 4;
+    // TODO: I think this is wrong?
     for (int i = 0; i < numRotations; i++) {
         ZQuad quad = *this;
 
-        (*this)[0] = quad[2];
-        (*this)[1] = quad[0];
-        (*this)[2] = quad[3];
-        (*this)[3] = quad[1];
+        value[0] = quad[2];
+        value[1] = quad[0];
+        value[2] = quad[3];
+        value[3] = quad[1];
     }
 }
 
-void ZQuad::Offset(Vector3 offset)
-{
+void ZQuad::Offset(Vector3 offset) {
     for (int i = 0; i < 4; i++) {
-        (*this)[i] += offset;
+        value[i] += offset;
     }
 }
 

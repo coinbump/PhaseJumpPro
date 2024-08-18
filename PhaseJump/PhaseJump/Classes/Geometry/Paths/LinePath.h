@@ -5,29 +5,24 @@
 
 /*
  RATING: 5 stars
- Simple utility
- CODE REVIEW: 11/27/22
+ Simple type
+ CODE REVIEW: 6/8/24
  */
-namespace PJ
-{
-    /// <summary>
+namespace PJ {
     /// Model that defines a line path
-    /// </summary>
-    class LinePath : public SomePath
-    {
+    class LinePath : public SomePath {
     public:
         Vector3 start;
         Vector3 end;
 
-        LinePath(Vector3 start, Vector3 end) : start(start), end(end)
-        {
-        }
+        LinePath(Vector3 start, Vector3 end) :
+            start(start),
+            end(end) {}
 
-        Vector3 PositionAt(float position) const override
-        {
+        Vector3 PositionAt(float position) override {
             return start + (end - start) * position;
         }
     };
-}
+} // namespace PJ
 
 #endif

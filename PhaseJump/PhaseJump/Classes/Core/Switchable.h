@@ -3,23 +3,19 @@
 
 /*
  RATING: 5 stars
- Simple type
- CODE REVIEW: 12/18/22
+ Simple protocol
+ CODE REVIEW: 6/7/24
  */
-namespace PJ
-{
-    /// <summary>
+namespace PJ {
     /// Can be turned on or off
-    /// </summary>
-    class Switchable
-    {
+    class Switchable {
     public:
         virtual ~Switchable() {}
-        
+
         virtual bool IsOn() const = 0;
         virtual void SetIsOn(bool value) = 0;
         virtual void OnSwitchChange() = 0;
     };
-}
+} // namespace PJ
 
 #endif

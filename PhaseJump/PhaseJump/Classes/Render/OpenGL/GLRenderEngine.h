@@ -2,7 +2,7 @@
 #define PJGLRENDERENGINE_H
 
 #include "SomeGLRenderEngine.h"
-#include "_Map.h"
+#include "UnorderedMap.h"
 #include <optional>
 
 /*
@@ -11,17 +11,29 @@
  Missing some features
  */
 namespace PJ {
-    // FUTURE: add state-change optimizations by checking render state (will imGui interfere?)
+    class SomeGLRenderCommand;
+    class SomeRenderCommandModel;
+
+    // These types are tightly packed in VRAM for renders and cannot be polymorphic
+    static_assert(!std::is_polymorphic_v<Vector2>);
+    static_assert(!std::is_polymorphic_v<Vector3>);
+    static_assert(!std::is_polymorphic_v<Color>);
+    static_assert(!std::is_polymorphic_v<RGBAColor>);
+
+    // FUTURE: add state-change optimizations by checking render state (will
+    // imGui interfere?)
     class GLRenderEngine : public SomeGLRenderEngine {
     protected:
-        Map<String, GLenum> featureIdToGLFeatureIdMap;
+        UnorderedMap<String, GLenum> featureIdToGLFeatureIdMap;
+
+        SP<SomeGLRenderCommand> BuildRenderCommand(SomeRenderCommandModel& proxyCommand);
 
     public:
         using Base = SomeGLRenderEngine;
         GLuint vao = 0;
 
         void DrawArrays(GLenum drawMode, GLint drawFirst, GLsizei drawCount) override;
-        void DrawElements(GLenum mode, GLsizei count, GLenum type, const void * indices) override;
+        void DrawElements(GLenum mode, GLsizei count, GLenum type, const void* indices) override;
 
         void SetLineWidth(float lineWidth) override;
         void EnableFeature(String featureId, bool isEnabled) override;
@@ -31,7 +43,10 @@ namespace PJ {
 
         void EnableVertexAttributeArray(GLuint location, bool isEnabled) override;
 
-        void VertexAttributePointer(GLuint location, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const GLvoid *pointer) override;
+        void VertexAttributePointer(
+            GLuint location, GLint size, GLenum type, GLboolean normalized, GLsizei stride,
+            const GLvoid* pointer
+        ) override;
         void Use(GLShaderProgram& program) override;
         void RunGL(std::function<void()> command, String name) override;
 
@@ -46,15 +61,16 @@ namespace PJ {
 
         // FUTURE: Implement as needed
         void LoadMatrix() override {}
-        void RenderStart() override;
+
+        void RenderStart(RenderContextModel const& model) override;
         void RenderProcess(RenderModel const& model) override;
         void RenderDraw() override;
-        void RenderDrawPlans(VectorList<SP<GLRenderPlan>> const& renderPlans) ;
+        void RenderDrawPlans(VectorList<SP<GLRenderPlan>> const& renderPlans);
 
     protected:
         void GoInternal() override;
         void ScanGLExtensions();
     };
-}
+} // namespace PJ
 
 #endif

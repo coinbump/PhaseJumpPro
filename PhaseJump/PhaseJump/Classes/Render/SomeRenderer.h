@@ -1,42 +1,53 @@
-#ifndef PJSOMERENDERER_H
-#define PJSOMERENDERER_H
-
-#include "WorldComponent.h"
-#include "SomeRenderContext.h"
-#include "Bounds.h"
-#include "Mesh.h"
-#include <memory>
+#pragma once
 
 #include "Axis.h"
+#include "Bounds.h"
+#include "Mesh.h"
+#include "RenderModel.h"
+#include "SomeRenderContext.h"
+#include "WorldComponent.h"
+#include <memory>
 
-namespace PJ
-{
+// CODE REVIEW: ?/23
+namespace PJ {
     class RenderMaterial;
 
-    class SomeRenderer : public WorldComponent {
+    class SomeRenderer : public WorldComponent<> {
     public:
         // (OPTIONAL) Material for render
         SP<RenderMaterial> material;
 
-        virtual void RenderInto(RenderIntoModel model) = 0;
+        virtual VectorList<RenderModel> MakeRenderModels(RenderIntoModel const& model) = 0;
+
+        /// Allows custom rendering outside of the render engine
+        /// Example: rendering ImGui UI
+        virtual void RenderInto(RenderIntoModel const& model) {}
 
         /// Override to return intrinsic size of renderer (if any)
-        virtual std::optional<Vector3> WorldSize() const { return std::nullopt; }
+        virtual std::optional<Vector3> WorldSize() const {
+            return std::nullopt;
+        }
 
         /// Override to set render color
-        virtual void SetColor(Color color) { }
+        virtual void SetColor(Color color) {}
+
+        // MARK: Convenience
+
+        VectorList<RenderModel> MakeRenderModels(
+            RenderIntoModel const& model, Mesh const& mesh, VectorList<SomeTexture*> textures
+        );
     };
 
     /// Render based on a function (used for imGui)
-    class FuncRenderer : public SomeRenderer {
+    class ActionRenderer : public SomeRenderer {
     public:
         std::function<void(RenderIntoModel)> render;
 
-        FuncRenderer(std::function<void(RenderIntoModel)> render) : render(render) {
-        }
+        ActionRenderer(std::function<void(RenderIntoModel)> render) :
+            render(render) {}
 
-        void RenderInto(RenderIntoModel model) override;
+        // MARK: SomeRenderer
+
+        void RenderInto(RenderIntoModel const& model) override;
     };
-}
-
-#endif
+} // namespace PJ

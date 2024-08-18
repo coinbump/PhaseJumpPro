@@ -1,97 +1,103 @@
 #include "ButtonControl.h"
 #include "SomeStateHandler.h"
+#include "Utils.h"
 
 using namespace std;
 using namespace PJ;
 
-void ButtonControl::SetIsHovering(bool value)
-{
+void ButtonControl::SetIsHovering(bool value) {
     isHovering = value;
-    
-    if (isTracking) { return; }
-    core->SetState(isHovering ? StateType::Hover : StateType::Normal);
+
+    if (isTracking) {
+        return;
+    }
+
+    GUARD(composeTimedStateMachine)
+    composeTimedStateMachine->SetState(isHovering ? StateType::Hover : StateType::Normal);
 }
 
-ButtonControl::ButtonControl()
-{
-}
+ButtonControl::ButtonControl() {}
 
 void ButtonControl::Awake() {
     Base::Awake();
 
-    auto sharedThis = SCAST<ButtonControl>(shared_from_this());
-    core->Configure(SCAST<SomeGoStateListener<ButtonControlStateType>>(sharedThis));
+    composeTimedStateMachine = std::make_unique<ComposeTimedStateMachine<StateType>>(*this);
 }
 
-void ButtonControl::OnPointerDownEvent(PointerDownUIEvent<LocalPosition> _event)
-{
-    switch (trackingType)
-    {
-        case TrackingType::Immediate:
-            OnPress();
-            break;
-        case TrackingType::Track:
-            isTracking = true;
-            core->SetState(StateType::Press);
-            break;
+void ButtonControl::OnPointerDown(PointerDownUIEvent _event) {
+    GUARD(composeTimedStateMachine)
+
+    switch (trackingType) {
+    case TrackingType::Immediate:
+        OnPress();
+        break;
+    case TrackingType::Track:
+        isTracking = true;
+        composeTimedStateMachine->SetState(StateType::Press);
+        break;
     }
 }
 
-void ButtonControl::OnPointerEnterEvent(PointerEnterUIEvent _event)
-{
-    if (!isTracking) { return; }
-    core->SetState(StateType::Press);
+void ButtonControl::OnPointerEnter(PointerEnterUIEvent _event) {
+    GUARD(composeTimedStateMachine)
+
+    if (!isTracking) {
+        return;
+    }
+    composeTimedStateMachine->SetState(StateType::Press);
 }
 
-void ButtonControl::OnPointerExitEvent(PointerExitUIEvent _event)
-{
-    if (!isTracking) { return; }
-    core->SetState(StateType::Normal);
+void ButtonControl::OnPointerExit(PointerExitUIEvent _event) {
+    GUARD(composeTimedStateMachine)
+
+    if (!isTracking) {
+        return;
+    }
+    composeTimedStateMachine->SetState(StateType::Normal);
 }
 
-void ButtonControl::OnPointerUpEvent(PointerUpUIEvent _event)
-{
-    if (!isTracking) { return; }
+void ButtonControl::OnPointerUp(PointerUpUIEvent _event) {
+    GUARD(composeTimedStateMachine)
+
+    if (!isTracking) {
+        return;
+    }
     isTracking = false;
 
     bool wasPressed = false;
-    switch (core->State())
-    {
-        case StateType::Press:
-            core->SetState(isHovering ? StateType::Hover : StateType::Normal);
-            wasPressed = true;
-            break;
-        default:
-            core->SetState(StateType::Normal);
-            break;
+    switch (composeTimedStateMachine->State()) {
+    case StateType::Press:
+        composeTimedStateMachine->SetState(isHovering ? StateType::Hover : StateType::Normal);
+        wasPressed = true;
+        break;
+    default:
+        composeTimedStateMachine->SetState(StateType::Normal);
+        break;
     }
 
-    if (wasPressed)
-    {
+    if (wasPressed) {
         OnPress();
     }
 }
 
-void ButtonControl::OnPress()
-{
+void ButtonControl::OnPress() {
     // Debug.Log("Button Pressed");
     auto listener = Listener();
-    if (nullptr == listener) { return; }
+    if (nullptr == listener) {
+        return;
+    }
     listener->OnEvent(MAKE<PressEvent>(id));
 }
 
-void ButtonControl::OnStateChange(GoStateMachine<StateType>& inStateMachine)
-{
-    auto owner = this->owner.lock();
+void ButtonControl::OnStateChange(TimedStateMachine<StateType>& inStateMachine) {
+    GUARD(owner)
+    auto owner = this->owner;
 
     // Forward button state change to state handler components
     auto stateHandlers = owner->TypeComponentsInChildren<SomeStateHandler<StateType>>();
-    for (auto stateHandler : stateHandlers)
-    {
+    for (auto& stateHandler : stateHandlers) {
         stateHandler->OnStateChange(inStateMachine.State());
     }
 }
 
-void ButtonControl::OnStateFinish(GoStateMachine<StateType>& inStateMachine)
-{
-}
+void ButtonControl::OnStateFinish(TimedStateMachine<StateType>& inStateMachine) {}

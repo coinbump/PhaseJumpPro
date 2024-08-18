@@ -1,12 +1,12 @@
 #ifndef PJGLSHADERPROGRAM_H
 #define PJGLSHADERPROGRAM_H
 
+#include "FilePath.h"
 #include "GLHeaders.h"
 #include "SomeGLShader.h"
-#include "_Map.h"
-#include "VectorList.h"
-#include "FilePath.h"
 #include "SomeShaderProgram.h"
+#include "UnorderedMap.h"
+#include "VectorList.h"
 #include <memory>
 
 /*
@@ -18,8 +18,7 @@ namespace PJ {
     class SomeGLRenderEngine;
 
     /// Links  a vertex and a fragment shader
-    class GLShaderProgram : public SomeShaderProgram
-    {
+    class GLShaderProgram : public SomeShaderProgram {
     public:
         /// Used to register shader program info before the GL context is ready
         /// so the render engine can load the programs later
@@ -36,6 +35,7 @@ namespace PJ {
         GLShaderProgram(GLShaderProgram const&);
 
     protected:
+        // TODO: SP-audit
         SP<VertexGLShader> vertexShader;
         SP<FragmentGLShader> fragmentShader;
 
@@ -44,19 +44,22 @@ namespace PJ {
 
     public:
         /// Store loaded programs here for access later
-        static Map<String, SP<GLShaderProgram>> registry;
+        static UnorderedMap<String, SP<GLShaderProgram>> registry;
 
         /// Map of attribute names to attribute location index
-        Map<String, GLuint> attributeLocations;
+        UnorderedMap<String, GLuint> attributeLocations;
 
         /// Map of uniform names to uniform location index
-        Map<String, GLuint> uniformLocations;
+        UnorderedMap<String, GLuint> uniformLocations;
 
         GLShaderProgram() {}
+
         virtual ~GLShaderProgram();
 
-        GLuint GLId() const { return glId; }
-        
+        GLuint GLId() const {
+            return glId;
+        }
+
         void Destroy();
         void FlushShaders();
 
@@ -77,8 +80,10 @@ namespace PJ {
         bool Link();
         GLint Validate();
 
-        bool IsLinked() const { return isLinked; }
+        bool IsLinked() const {
+            return isLinked;
+        }
     };
-}
+} // namespace PJ
 
 #endif

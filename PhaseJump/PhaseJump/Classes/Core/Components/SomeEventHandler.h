@@ -1,20 +1,19 @@
 #ifndef PJSOMEEVENTHANDLER_H
 #define PJSOMEEVENTHANDLER_H
 
-#include "WorldComponent.h"
 #include "SomeListener.h"
-#include "Macros.h"
+#include "Utils.h"
+#include "WorldComponent.h"
 
+// CODE REVIEW: ?/23
 namespace PJ {
-    class Event;
+    class SomeEvent;
 
-    /// <summary>
     /// A component that listens to events
-    /// </summary>
-    class SomeEventHandler : public WorldComponent, public SomeListener
-    {
+    // TODO: is this being used via inheritance anymore? Do we need it?
+    class SomeEventHandler : public WorldComponent<>, public SomeListener {
     public:
     };
-}
+} // namespace PJ
 
 #endif

@@ -1,37 +1,39 @@
 #ifndef PJSOMENODE_H
 #define PJSOMENODE_H
 
-#include "WorldComponent.h"
 #include "_String.h"
-#include "_Set.h"
+#include "OrderedSet.h"
 #include "Vector3.h"
+#include "WorldComponent.h"
 #include <memory>
 
+// CODE REVIEW: ?/23
 namespace PJ {
-    enum class NodeCullType
-    {
-        Invisible, ZeroAlpha
-    };
+    // TODO: Use struct-composition or string for these, not enum
+    enum class NodeCullType { Invisible, ZeroAlpha };
 
-    class SomeNode : public WorldComponent {
+    // TODO: rethink naming (everything is a "node")
+    class SomeNode : public WorldComponent<> {
     public:
         String id;
 
-        SP<Set<String>> typeTags;
-        SP<Set<String>> stateTags;
-        SP<Set<NodeCullType>> cullTypes;
+        SP<OrderedSet<String>> typeTags;
+        SP<OrderedSet<String>> stateTags;
+        SP<OrderedSet<NodeCullType>> cullTypes;
 
         bool HasTypeTag(String name) const {
-            return typeTags->Contains(name);
+            GUARDR(typeTags, false)
+            return Contains(*typeTags, name);
         }
-        
+
         bool HasStateTag(String name) const {
-            return stateTags->Contains(name);
+            GUARDR(stateTags, false)
+            return Contains(*stateTags, name);
         }
 
         virtual bool IsKinematic() const = 0;
         virtual void MoveToPosition(Vector3 position, bool force = false) = 0;
     };
-}
+} // namespace PJ
 
 #endif

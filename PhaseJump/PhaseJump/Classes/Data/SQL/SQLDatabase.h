@@ -1,15 +1,14 @@
 #ifndef PJSQLDATABASE_H
 #define PJSQLDATABASE_H
 
-#include "SQLStatement.h"
 #include "_String.h"
-#include "VectorList.h"
 #include "FilePath.h"
-#include "StateMachine.h"
-#include "FilePath.h"
+#include "OrderedSet.h"
 #include "SQLCommand.h"
-#include "_Set.h"
+#include "SQLStatement.h"
 #include "SQLTableSchema.h"
+#include "StateMachine.h"
+#include "VectorList.h"
 #include <sqlite3.h>
 
 /*
@@ -25,7 +24,8 @@ namespace PJ {
 
      USAGE: in general, use PJ::SQLTable for operations on a specific table.
 
-     OPTIMIZE: On older devices, SQL selects can cause render slowdowns. Cache values that will be accessed often.
+     OPTIMIZE: On older devices, SQL selects can cause render slowdowns. Cache
+     values that will be accessed often.
 
      OPTIMIZE: Always use Begin/EndTransaction when writing values.
      This can speed up SQL writes by 10 times.
@@ -33,18 +33,16 @@ namespace PJ {
      OPTIMIZATION REFERENCE:
      http://stackoverflow.com/questions/1711631/how-do-i-improve-the-performance-of-sqlite
      */
-    class SQLDatabase
-    {
+    class SQLDatabase {
     protected:
-        enum class TransactionState {
-            Default,
-            InTransaction
-        };
-        SP<StateMachine<TransactionState>> transactionStateMachine = MAKE<StateMachine<TransactionState>>();
+        enum class TransactionState { Default, InTransaction };
+        // TODO: SP audit
+        SP<StateMachine<TransactionState>> transactionStateMachine =
+            MAKE<StateMachine<TransactionState>>();
 
     public:
         FilePath filePath;
-        sqlite3 *db = NULL;
+        sqlite3* db = NULL;
 
         SQLDatabase();
         virtual ~SQLDatabase();
@@ -65,10 +63,13 @@ namespace PJ {
         // OPTIMIZE: use these to speed up data writes to SQL
         void BeginTransaction();
         void EndTransaction();
-        bool IsInTransaction() const { return transactionStateMachine->State() == TransactionState::InTransaction; }
+
+        bool IsInTransaction() const {
+            return transactionStateMachine->State() == TransactionState::InTransaction;
+        }
     };
 
     using SQLDatabaseSharedPtr = SP<SQLDatabase>;
-}
+} // namespace PJ
 
 #endif

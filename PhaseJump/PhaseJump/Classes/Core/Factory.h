@@ -1,65 +1,77 @@
-#ifndef PJFACTORY_H_
-#define PJFACTORY_H_
+#pragma once
 
-#include "Base.h"
 #include "AnyFactory.h"
-#include "Macros.h"
+#include "Base.h"
+#include "Utils.h"
 #include <functional>
 
 /*
  RATING: 5 stars
- Utility with unit tests
- CODE REVIEW: 11/7/22
+ Has unit tests
+ CODE REVIEW: 7/10/24
  */
-namespace PJ
-{
-    class SomeFactory : public AnyFactory
-    {
+namespace PJ {
+    /**
+     Associates factory by its root base type
+
+     Allows factories of different types to be stored together
+     */
+    template <class BaseType = Base, typename... Arguments>
+    class SomeFactory : public AnyFactory {
     public:
-        virtual SP<Base> NewObject() = 0;
+        virtual ~SomeFactory() {}
+
+        /// Create an object that subclasses BaseType
+        virtual SP<BaseType> NewBase(Arguments... args) = 0;
     };
 
-    /// <summary>
-    /// Creates simple type
-    /// </summary>
-    template <class Type>
-    class Factory : public SomeFactory
-    {
+    /// Uses allocator function for factory instantation
+    template <class Type, typename... Arguments>
+    class Factory : public SomeFactory<typename Type::RootBaseType, Arguments...> {
     protected:
-        std::function<SP<Type>()> allocator;
+        using BaseType = Type::RootBaseType;
+
+        std::function<SP<Type>(Arguments... args)> allocator;
 
     public:
-        Factory(std::function<SP<Type>()> allocator) : allocator(allocator)
-        {
+        Factory(std::function<SP<Type>(Arguments... args)> allocator) :
+            allocator(allocator) {}
+
+        SP<Type> New(Arguments... args) {
+            GUARDR(allocator, SP<Type>())
+            return allocator(args...);
         }
 
-        SP<Type> New()
-        {
-            return allocator();
-        }
+        // MARK: SomeFactory
 
-        SP<Base> NewObject() override
-        {
-            return New();
+        SP<BaseType> NewBase(Arguments... args) override {
+            return New(args...);
         }
     };
 
-    /// <summary>
-    /// Convenience class
-    /// </summary>
-    template <class Type> class FactoryNew : public SomeFactory
-    {
+    /// An object that provides a type, with arguments
+    template <typename Result, typename... Arguments>
+    class SomeProvider {
     public:
-        SP<Type> New()
-        {
-            return MAKE<Type>();
-        }
+        virtual ~SomeProvider() {}
 
-        SP<Base> NewObject() override
-        {
-            return New();
-        }
+        virtual void Provide(Result& result, Arguments... args) = 0;
     };
-}
 
-#endif
+    /// An object that provides a type, with no arguments
+    template <class Result>
+    class SomeProvider<void, Result> {
+    public:
+        virtual ~SomeProvider() {}
+
+        virtual void Provide(Result& result) = 0;
+    };
+
+    /// Interface for an object that provides a factory
+    template <class BaseType>
+    class SomeSomeFactoryProvider : public SomeProvider<void, SomeFactory<BaseType>*> {
+    public:
+        virtual ~SomeSomeFactoryProvider() {}
+    };
+
+} // namespace PJ

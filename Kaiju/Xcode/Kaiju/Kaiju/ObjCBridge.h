@@ -1,10 +1,3 @@
-//
-//  OjObjCBridgebCBridge.h
-//  Kaiju
-//
-//  Created by Jeremy Vineyard on 11/12/22.
-//
-
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN

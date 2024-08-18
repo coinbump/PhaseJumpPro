@@ -1,76 +1,75 @@
-//
-//  ExpGLRenderEngine.cpp
-//  PhaseJump
-//
-//  Created by Jeremy Vineyard on 4/13/23.
-//
-
-#include <stdio.h>
-#include "GLRenderEngine.h"
 #include "GLHeaders.h"
+#include "GLRenderEngine.h"
+#include <stdio.h>
 
 using namespace PJ;
 
-//GLRenderEngine::GLRenderEngine()
+// GLRenderEngine::GLRenderEngine()
 //{
-//    PJ::renderEngine = this;
-//    pjGL2RenderEngine = this;
+//     PJ::renderEngine = this;
+//     pjGL2RenderEngine = this;
 //
-//    mMatrixLocation = -1;    // MUST define this for shader.
-//    mCurProgram = NULL;
+//     mMatrixLocation = -1;    // MUST define this for shader.
+//     mCurProgram = NULL;
 //
-//    mUsingGL2 = true;
-//    mNumMatrixStacks = 2;    // Default: use projection and model view stacks.
-//}
+//     mUsingGL2 = true;
+//     mNumMatrixStacks = 2;    // Default: use projection and model view
+//     stacks.
+// }
 //
-//void GLRenderEngine::LoadMatrix()
+// void GLRenderEngine::LoadMatrix()
 //{
-//    // FUTURE: make this more efficient. Try to reduce matrix state changes.
-//#ifdef __DEBUG__
-//    if (mMatrixLocation < 0) {
+//     // FUTURE: make this more efficient. Try to reduce matrix state changes.
+// #ifdef __DEBUG__
+//     if (mMatrixLocation < 0) {
 ////        PJLog("ERROR. Matrix location in shader must be defined.");
 //    }
 //
-//    if (static_cast<int>(PJ::renderState.mActiveMatrixStack) < 0 || static_cast<int>(PJ::renderState.mActiveMatrixStack) > 1) {
+//    if (static_cast<int>(PJ::renderState.mActiveMatrixStack) < 0 ||
+//    static_cast<int>(PJ::renderState.mActiveMatrixStack) > 1) {
 //        assert(false);    // Make sure we don't get garbage access.
 //    }
-//#endif
+// #endif
 //
 //    if (1 == mNumMatrixStacks) {
 //        UniformMatrix4fv(mMatrixLocation, PJ::renderMatrixStack[0].mMatrix.m);
 //    }
 //    else {
-//        PJ_Matrix4 renderMatrix = PJ::renderMatrixStack[0].mMatrix * PJ::renderMatrixStack[1].mMatrix;
-//        UniformMatrix4fv(mMatrixLocation, renderMatrix.m);
+//        PJ_Matrix4 renderMatrix = PJ::renderMatrixStack[0].mMatrix *
+//        PJ::renderMatrixStack[1].mMatrix; UniformMatrix4fv(mMatrixLocation,
+//        renderMatrix.m);
 //    }
 //}
 
-//void GLRenderEngine::ColorPointer(GLint size, GLenum type, GLsizei stride, const GLvoid *pointer)
+// void GLRenderEngine::ColorPointer(GLint size, GLenum type, GLsizei stride,
+// const GLvoid *pointer)
 //{
-//    // If the colors are floats, they should be normalized (from 0.0 to 1.0).
-//    if (GL_FLOAT == type) {
-//        glVertexAttribPointer((GLuint)VSAttributeLoc::VSAColorLoc, size, type, false, stride, pointer);
-//    }
-//    // If the colors are non-floats, they need to be normalized.
-//    else {
-//        glVertexAttribPointer((GLuint)VSAttributeLoc::VSAColorLoc, size, type, true, stride, pointer);
-//    }
-//}
+//     // If the colors are floats, they should be normalized (from 0.0 to 1.0).
+//     if (GL_FLOAT == type) {
+//         glVertexAttribPointer((GLuint)VSAttributeLoc::VSAColorLoc, size,
+//         type, false, stride, pointer);
+//     }
+//     // If the colors are non-floats, they need to be normalized.
+//     else {
+//         glVertexAttribPointer((GLuint)VSAttributeLoc::VSAColorLoc, size,
+//         type, true, stride, pointer);
+//     }
+// }
 
-
-//void GLRenderEngine::LoadShaders()
+// void GLRenderEngine::LoadShaders()
 //{
-//    // Load default shaders.
-//    // IMPORTANT: each program should flush its shaders after compiling and linking.
-//    PJ_GLShaderProgramClass::ShaderRegistry*    registry = PJ_GLShaderProgramClass::GetRegistry();
-//    for (auto& _i : *registry) {
-//        PJ_GLShaderProgramClass*    _class = static_cast<PJ_GLShaderProgramClass*>(_i.second.get());
-//        PJ_GLShaderProgram*    program = _class->GetProgram();
-//        if (NULL != program) {
-//            program->LoadAndLink();
-//        }
-//    }
-//}
+//     // Load default shaders.
+//     // IMPORTANT: each program should flush its shaders after compiling and
+//     linking. PJ_GLShaderProgramClass::ShaderRegistry*    registry =
+//     PJ_GLShaderProgramClass::GetRegistry(); for (auto& _i : *registry) {
+//         PJ_GLShaderProgramClass*    _class =
+//         static_cast<PJ_GLShaderProgramClass*>(_i.second.get());
+//         PJ_GLShaderProgram*    program = _class->GetProgram();
+//         if (NULL != program) {
+//             program->LoadAndLink();
+//         }
+//     }
+// }
 
 //
 ///*
@@ -81,9 +80,10 @@ using namespace PJ;
 //    FUTURE: only load shaders that are used per-app.
 //
 // */
-//void GLRenderEngine::SetRenderMode(PJ_RenderMode const& _mode)
+// void GLRenderEngine::SetRenderMode(PJ_RenderMode const& _mode)
 //{
-//    // Make any dynamic state changes before we change the render mode, otherwise
+//    // Make any dynamic state changes before we change the render mode,
+//    otherwise
 //    // optimizing render engine doesn't switch states properly.
 //    RenderBlend    blend = _mode.mBlend;
 //    if (RenderBlend::BlendShader == blend)
@@ -101,8 +101,8 @@ using namespace PJ;
 //    PJ_String renderMode = mode.mRenderMode;
 //
 //    // OPTIMIZE: Use to auto switch to fastest shader.
-//    // TODO: problem: this doesn't work if the alpha is changed *after* the render mode.
-//    if (kRenderModeTextureCopyOrMod == renderMode) {
+//    // TODO: problem: this doesn't work if the alpha is changed *after* the
+//    render mode. if (kRenderModeTextureCopyOrMod == renderMode) {
 //        if (1.0f == GetRenderColor().alpha) {
 //            renderMode = kRenderModeTextureCopy;
 //        }
@@ -134,8 +134,9 @@ using namespace PJ;
 //            break;
 //        case RenderBlend::BlendFunc: {
 //            EnableBlend(true);
-//            GLenum sourceBlendFunc = PJ::renderState.mRenderMode.mSourceBlendFunc;
-//            GLenum destBlendFunc = PJ::renderState.mRenderMode.mDestBlendFunc;
+//            GLenum sourceBlendFunc =
+//            PJ::renderState.mRenderMode.mSourceBlendFunc; GLenum destBlendFunc
+//            = PJ::renderState.mRenderMode.mDestBlendFunc;
 //            glBlendFunc(sourceBlendFunc, destBlendFunc);
 //            break;
 //        }
@@ -156,10 +157,11 @@ using namespace PJ;
 //            break;
 //    }
 //
-//    PJ_GLShaderProgramClass::ShaderRegistry* registry = PJ_GLShaderProgramClass::GetRegistry();
-//    PJ_ClassPtr _class;
-//    if (registry->FindClass(mode.mRenderMode, _class)) {
-//        PJ_GLShaderProgramClass*    shaderClass = static_cast<PJ_GLShaderProgramClass*>(_class.get());
+//    PJ_GLShaderProgramClass::ShaderRegistry* registry =
+//    PJ_GLShaderProgramClass::GetRegistry(); PJ_ClassPtr _class; if
+//    (registry->FindClass(mode.mRenderMode, _class)) {
+//        PJ_GLShaderProgramClass*    shaderClass =
+//        static_cast<PJ_GLShaderProgramClass*>(_class.get());
 //        PJ_GLShaderProgram* program = shaderClass->GetProgram();
 //        if (NULL != program) {
 //            UseShaderProgram(program);
@@ -167,19 +169,20 @@ using namespace PJ;
 //    }
 //}
 
-
 //
-//void GLRenderEngine::UseShaderProgram(PJ_GLShaderProgram *program)
+// void GLRenderEngine::UseShaderProgram(PJ_GLShaderProgram *program)
 //{
-//    // Because some clients support multiple windows, each with their own state changes,
-//    // attempting to reduce unnecessary states changes causes unpredictable flicker.
-//#ifdef __MULTIPLE_CONTEXTS_PHASE__
+//    // Because some clients support multiple windows, each with their own
+//    state changes,
+//    // attempting to reduce unnecessary states changes causes unpredictable
+//    flicker.
+// #ifdef __MULTIPLE_CONTEXTS_PHASE__
 //    if (true)
 //    {
-//#else
+// #else
 //    if (program != mCurProgram)
 //    {
-//#endif
+// #endif
 //
 //        if (mCurProgram) {
 //            mCurProgram->Finished();
@@ -189,8 +192,8 @@ using namespace PJ;
 //        if (mCurProgram) {
 //            mCurProgram->Use();
 //
-//            mMatrixLocation = glGetUniformLocation(mCurProgram->ID(), "u_modelViewProjMatrix");
-//            if (mMatrixLocation < 0) {
+//            mMatrixLocation = glGetUniformLocation(mCurProgram->ID(),
+//            "u_modelViewProjMatrix"); if (mMatrixLocation < 0) {
 //                PJLog("ERROR. Matrix location undefined.");
 //            }
 //            LoadMatrix();
@@ -202,49 +205,53 @@ using namespace PJ;
 ///*
 //    PreRender
 //
-//    IMPORTANT: this must be called before any render operation. This is because state information (color, alpha) needs to be passed
-//    to the shader. This state information is not passed to the shader until PreRender is called.
+//    IMPORTANT: this must be called before any render operation. This is
+//    because state information (color, alpha) needs to be passed to the shader.
+//    This state information is not passed to the shader until PreRender is
+//    called.
 //
 // */
-//void GLRenderEngine::PreRender()
+// void GLRenderEngine::PreRender()
 //{
 //    if (NULL != mCurProgram) {
 //        mCurProgram->PreRender();
 //    }
 //}
 
-//void GLRenderEngine::Go() {
-//    LoadShaders();
+// void GLRenderEngine::Go() {
+//     LoadShaders();
 //
-//    // Set up default blending (or it won't get set in OpenGL because this is default in PJ_RenderMode).
-//    glBlendFunc(PJ::renderState.mRenderMode.mSourceBlendFunc, PJ::renderState.mRenderMode.mDestBlendFunc);
-//}
+//     // Set up default blending (or it won't get set in OpenGL because this is
+//     default in PJ_RenderMode).
+//     glBlendFunc(PJ::renderState.mRenderMode.mSourceBlendFunc,
+//     PJ::renderState.mRenderMode.mDestBlendFunc);
+// }
 //
 //
-//void GLRenderEngine::BindTexture2D(GLuint texture, GLenum glTexture)
+// void GLRenderEngine::BindTexture2D(GLuint texture, GLenum glTexture)
 //{
-//    if (PJ::renderState.BindTexture(texture, glTexture)) {
-//        glActiveTexture(glTexture);
-//        glBindTexture(GL_TEXTURE_2D, texture);
-//    }
-//}
+//     if (PJ::renderState.BindTexture(texture, glTexture)) {
+//         glActiveTexture(glTexture);
+//         glBindTexture(GL_TEXTURE_2D, texture);
+//     }
+// }
 //
-//#pragma mark -
-//#pragma mark pjGL2
+// #pragma mark -
+// #pragma mark pjGL2
 //
-//void pjGL2::UniformMatrix4fv(GLint location, const GLfloat* value)
+// void pjGL2::UniformMatrix4fv(GLint location, const GLfloat* value)
 //{
-//    ((GLRenderEngine*)(PJ::renderEngine))->UniformMatrix4fv(location, value);
-//}
+//     ((GLRenderEngine*)(PJ::renderEngine))->UniformMatrix4fv(location, value);
+// }
 //
-//void pjGL2::SetNumMatrixStacks(int val)
+// void pjGL2::SetNumMatrixStacks(int val)
 //{
-//    GLRenderEngine::mNumMatrixStacks = val;
+//     GLRenderEngine::mNumMatrixStacks = val;
 //
-//}
+// }
 //
 
-//texture_varyColor.vsh
-//texture.vsh
-//uniformColor.vsh
-//varyColor.vsh
+// texture_varyColor.vsh
+// texture.vsh
+// uniformColor.vsh
+// varyColor.vsh

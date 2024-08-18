@@ -1,46 +1,46 @@
 #ifndef PJTIMEDSEQUENCE_H
 #define PJTIMEDSEQUENCE_H
 
+#include "TimedPlayable.h"
 #include "Updatable.h"
+#include "Utils.h"
 #include "VectorList.h"
-#include "SomeTimed.h"
-#include "Macros.h"
 
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 1/12/24
+ CODE REVIEW: 1/12/23
  */
-namespace PJ
-{
-    /// <summary>
+namespace PJ {
     /// Run a series of Timed objects in sequence
-    /// </summary>
-    class TimedSequence : public Updatable
-    {
+    class TimedSequence : public Updatable {
     protected:
-        VectorList<SP<SomeTimed>> sequence;
+        // TODO: SP audit
+        VectorList<SP<TimedPlayable>> sequence;
         int index = 0;
         bool isFinished = false;
 
     public:
-        bool IsFinished() const override { return isFinished; };
+        bool IsFinished() const override {
+            return isFinished;
+        };
 
-        void Add(SP<SomeTimed> timed)
-        {
+        void Add(SP<TimedPlayable> timed) {
             sequence.Add(timed);
         }
 
-        void OnUpdate(TimeSlice time) override
-        {
-            if (isFinished) { return; }
+        void OnUpdate(TimeSlice time) override {
+            if (isFinished) {
+                return;
+            }
 
             auto timeDelta = time.delta;
 
-            while (timeDelta > 0)
-            {
+            while (timeDelta > 0) {
                 bool isValidIndex = (index >= 0 && index < sequence.size());
-                if (!isValidIndex) { break; }
+                if (!isValidIndex) {
+                    break;
+                }
 
                 auto timed = sequence[index];
                 float timeSpent = timed->Progress() * timed->duration;
@@ -49,13 +49,15 @@ namespace PJ
                 timed->OnUpdate(TimeSlice(spendTime));
                 timeDelta -= spendTime;
 
-                if (!timed->IsFinished()) { break; }
+                if (!timed->IsFinished()) {
+                    break;
+                }
                 index++;
             }
 
             isFinished = index >= sequence.size();
         }
     };
-}
+} // namespace PJ
 
 #endif

@@ -6,7 +6,7 @@
 /*
  RATING: 5 stars
  Simple type
- CODE REVIEW: 4/21/23
+ CODE REVIEW: 8/8/24
  */
 namespace PJ {
     class SomeShaderProgram {
@@ -15,6 +15,6 @@ namespace PJ {
 
         virtual ~SomeShaderProgram() {}
     };
-}
+} // namespace PJ
 
 #endif

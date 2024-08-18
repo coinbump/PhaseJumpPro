@@ -4,8 +4,8 @@
 #include "SomeRenderer.h"
 #include "SomeTexture.h"
 #include "UVRect.h"
-#include <memory>
 #include <array>
+#include <memory>
 
 /*
  RATING: 5 stars
@@ -17,19 +17,24 @@ namespace PJ {
     struct Mesh;
 
     /// Renders a single texture as a 9-slice
-    class SlicedTextureRenderer: public SomeRenderer {
+    class SlicedTextureRenderer : public SomeRenderer {
     protected:
-        Mesh renderMesh;
+        Mesh mesh;
 
-        /// First point is offset from top-left of texture. Second point is offset from bottom-right
+        /// First point is offset from top-left of texture. Second point is
+        /// offset from bottom-right
         std::array<Vector2Int, 2> slicePoints;
         Vector2 size;
+
+        /// Material holds the render texture, this is the actual texture object (child texture for
+        /// texture atlas)
+        SP<SomeTexture> texture;
 
     public:
         /// Model used to build the sliced mesh. Used for unit tests
         struct BuildModel {
             float sliceLeft = 0;
-            float sliceTop =  0;
+            float sliceTop = 0;
             float sliceRightOffset = 0;
             float sliceBottomOffset = 0;
 
@@ -72,23 +77,38 @@ namespace PJ {
         };
 
         enum MeshIndex {
-            TopLeft, Top, TopRight, Left, Center, Right, BottomLeft, Bottom, BottomRight
+            TopLeft,
+            Top,
+            TopRight,
+            Left,
+            Center,
+            Right,
+            BottomLeft,
+            Bottom,
+            BottomRight
         };
 
         SP<RenderMaterial> material;
 
-        SlicedTextureRenderer(SP<SomeTexture> texture, Vector2 worldSize, std::array<Vector2Int, 2> slicePoints);
+        SlicedTextureRenderer(
+            SP<SomeTexture> texture, Vector2 worldSize, std::array<Vector2Int, 2> slicePoints
+        );
 
         void SetSize(Vector2 worldSize);
 
-        void RenderInto(RenderIntoModel model) override;
         BuildModel MakeBuildModel() const;
 
-        std::optional<Vector3> WorldSize() const override { return std::make_optional(Vector3(size.x, size.y, 0)); }
+        std::optional<Vector3> WorldSize() const override {
+            return std::make_optional(Vector3(size.x, size.y, 0));
+        }
+
+        // MARK: - SomeRenderer
+
+        VectorList<RenderModel> MakeRenderModels(RenderIntoModel const& model) override;
 
     protected:
         void BuildMesh();
     };
-}
+} // namespace PJ
 
 #endif

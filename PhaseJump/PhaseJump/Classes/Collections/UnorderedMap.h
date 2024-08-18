@@ -1,31 +1,33 @@
-#ifndef PJUNORDEREDMAP_H
-#define PJUNORDEREDMAP_H
+#pragma once
 
+#include "MapUtils.h"
+#include "Utils.h"
 #include <unordered_map>
 
+/*
+ RATING: 5 stars
+ Has unit tests
+ CODE REVIEW: 8/3/24
+ */
 namespace PJ {
-    template <class Key, class Type> class UnorderedMap : public std::unordered_map<Key, Type>
-    {
-    public:
-        Map() {}
-        virtual ~Map() {}
+    template <class Key, class Type>
+    using UnorderedMap = std::unordered_map<Key, Type>;
 
-        bool ContainsKey(Key const& key) const {
-            return this->find(key) != this->end();
-        }
+    template <
+        class Map, class Type,
+        std::enable_if_t<
+            std::is_same<std::unordered_map<typename Map::key_type, Type>, Map>::value>* = nullptr>
+    bool MapContainsWhere(Map const& map, std::function<bool(Type const&)> check) {
+        GUARDR(check, false)
 
-        bool ContainsWhere(std::function<bool(Type const&)> check) const {
-            for (auto const& pair : *this) {
-                auto value = pair.second;
+        for (auto& pair : map) {
+            auto& value = pair.second;
 
-                if (check(value)) {
-                    return true;
-                }
+            if (check(value)) {
+                return true;
             }
-
-            return false;
         }
-    };
-}
 
-#endif
+        return false;
+    }
+} // namespace PJ

@@ -7,24 +7,24 @@
 /*
  RATING: 5 stars
  Simple type
- CODE REVIEW: 4/4/23
+ CODE REVIEW: 7/13/24
  */
-namespace PJ
-{
+namespace PJ {
     // Used to run a SQLite command from a statement
-    struct SQLCommand
-    {
-        sqlite3_stmt *sqliteStatement = NULL;
+    struct SQLCommand {
+        sqlite3_stmt* sqliteStatement = NULL;
 
         SQLStatement statement;
 
-        SQLCommand(SQLStatement statement) : statement(statement)
-        {
-        }
+        SQLCommand(SQLStatement statement) :
+            statement(statement) {}
+
         ~SQLCommand();
 
-        bool IsPrepared() const { return NULL != sqliteStatement; }
+        bool IsPrepared() const {
+            return NULL != sqliteStatement;
+        }
     };
-}
+} // namespace PJ
 
 #endif

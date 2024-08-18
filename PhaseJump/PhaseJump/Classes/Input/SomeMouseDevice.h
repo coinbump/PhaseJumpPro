@@ -1,19 +1,20 @@
-#ifndef PJSOMEMOUSEDEVICE_H
-#define PJSOMEMOUSEDEVICE_H
+#pragma once
 
 #include "SomePointerDevice.h"
 
+/*
+ RATING: 5 stars
+ Simple type
+ CODE REVIEW: 8/11/24
+ */
 namespace PJ {
     class SomeMouseDevice : public SomePointerDevice {
     public:
-        static SP<SomeMouseDevice> current;
-
-        SomeMouseDevice() {
-        }
+        SomeMouseDevice() {}
     };
 
-    // Convenience names
-    using Mouse = SomeMouseDevice;
-}
+    // MARL: Convenience
 
-#endif
+    using Mouse = SomeMouseDevice;
+
+} // namespace PJ

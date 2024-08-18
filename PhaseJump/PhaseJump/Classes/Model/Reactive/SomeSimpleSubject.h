@@ -10,8 +10,7 @@
 namespace PJ {
     /// Backing for a publisher
     template <typename Input>
-    struct SomeSimpleSubject : public SomeSimplePublisher<Input> {
-    };
+    struct SomeSimpleSubject : public SomeSimplePublisher<Input> {};
 
     /// Stored value backing for a publisher
     template <typename Input>
@@ -22,8 +21,8 @@ namespace PJ {
         Input value = Input();
 
     public:
-        ValueSimpleSubject(Input const& value) : value(value) {
-        }
+        ValueSimpleSubject(Input const& value) :
+            value(value) {}
 
         void Send(Input const& value) {
             if (this->isComplete) {
@@ -32,7 +31,7 @@ namespace PJ {
             this->value = value;
 
             auto iterSubscriptions = this->subscriptions;
-            for (auto subscription : iterSubscriptions) {
+            for (auto& subscription : iterSubscriptions) {
                 if (auto subLock = subscription.lock()) {
                     if (subLock->IsCancelled()) {
                         continue;
@@ -49,6 +48,8 @@ namespace PJ {
             subscription.Receive(value);
         }
 
-        Input const& Value() const { return value; }
+        Input const& Value() const {
+            return value;
+        }
     };
-}
+} // namespace PJ

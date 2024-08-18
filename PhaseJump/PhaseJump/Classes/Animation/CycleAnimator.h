@@ -1,61 +1,38 @@
-#ifndef PJCYCLEANIMATOR_H
-#define PJCYCLEANIMATOR_H
+#pragma once
 
-#include "Interpolator.h"
 #include "AnimationCycleTimer.h"
 #include "Binding.h"
+#include "Interpolator.h"
 
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 1/12/24
+ CODE REVIEW: 8/16/24
  */
-namespace PJ
-{
-    /// <summary>
+namespace PJ {
     /// Animates values in a loop/once/ping-ping animation cycle
-    /// </summary>
     template <class T>
-    class CycleAnimator : public Updatable
-    {
+    class CycleAnimator : public Updatable {
     public:
-        enum class ReverseType {
-            /// <summary>
-            /// On reverse direction, apply the interpolation of the animation curve in reverse
-            /// </summary>
-            Rewind,
+        /// Interpolates between start and end values
+        InterpolateFunc<T> interpolator;
 
-            /// <summary>
-            /// On reverse direction, match the interpolation of the animation curve used in the forward direction
-            /// </summary>
-            Match
-        };
+        /// (Optional) Interpolates values when cycle is in reverse
+        InterpolateFunc<T> reverseInterpolator;
 
-        /// <summary>
-        /// Interpolation, start, and end values
-        /// </summary>
-        SP<Interpolator<T>> interpolator;
-
-        /// <summary>
         /// Cycle progress for Once, Loop, PingPong
-        /// </summary>
         SP<AnimationCycleTimer> timer;
 
-        /// <summary>
         /// Value binding to modify value
-        /// </summary>
-        SP<SetBinding<T>> binding;
+        SetBindingFunc<T> binding;
 
-        ReverseType reverseType = ReverseType::Match;
-
-        CycleAnimator(SP<Interpolator<T>> interpolator,
-                      SP<AnimationCycleTimer> timer,
-                      SP<SetBinding<T>> binding)
-        : interpolator(interpolator),
-        timer(timer),
-        binding(binding)
-        {
-        }
+        CycleAnimator(
+            InterpolateFunc<T> interpolator, SP<AnimationCycleTimer> timer,
+            SetBindingFunc<T> binding
+        ) :
+            interpolator(interpolator),
+            timer(timer),
+            binding(binding) {}
 
         float Progress() const {
             return timer->Progress();
@@ -65,42 +42,29 @@ namespace PJ
             return timer->IsFinished();
         }
 
-        void OnUpdate(TimeSlice time) override
-        {
-            if (nullptr == timer) { return; }
-            if (nullptr == interpolator) { return; }
-            if (IsFinished()) { return; }
+        void OnUpdate(TimeSlice time) override {
+            GUARD(timer)
+            GUARD(interpolator)
+            GUARD(!IsFinished())
 
             timer->OnUpdate(time);
 
+            GUARD(binding)
+
             float progress = Progress();
-            auto curveValue = interpolator->ValueAt(progress);
+            auto curveValue = interpolator(progress);
 
             switch (timer->CycleState()) {
-                case AnimationCycleState::Forward:
-                    break;
-                case AnimationCycleState::Reverse:
-                    switch (reverseType)
-                    {
-                        case ReverseType::Rewind:
-                            break;
-                        case ReverseType::Match:
-                            Interpolator<T> reverseCurve(
-                                                         interpolator->end,
-                                                         interpolator->start,
-                                                         interpolator->valueInterpolator,
-                                                         interpolator->transform
-                                                         );
-                            curveValue = reverseCurve.ValueAt(1.0f - progress);
-                            break;
-                    }
-                    break;
+            case AnimationCycleState::Forward:
+                break;
+            case AnimationCycleState::Reverse:
+                if (reverseInterpolator) {
+                    curveValue = reverseInterpolator(1.0f - progress);
+                }
+                break;
             }
 
-            if (nullptr == binding) { return; }
-            binding->SetValue(curveValue);
+            binding(curveValue);
         }
     };
-}
-
-#endif
+} // namespace PJ

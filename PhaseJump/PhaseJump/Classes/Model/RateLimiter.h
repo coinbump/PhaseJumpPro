@@ -1,45 +1,35 @@
-#ifndef PJRATELIMITER_H
-#define PJRATELIMITER_H
+#pragma once
 
 #include "SomeLimiter.h"
 
 /*
  RATING: 5 stars
- Simple utility
- CODE REVIEW: 11/26/22
+ Has unit tests
+ CODE REVIEW: 7/13/24
  */
-namespace PJ
-{
-    /// <summary>
-    /// Limits an action until N seconds have passed after the last time it happened
-    /// Example: bulllets only fire at a certain rate, rapid fire power up changes that
-    /// </summary>
-    class RateLimiter : public SomeLimiter
-    {
-    protected:
-        void OnFire() override
-        {
-            timer = 0;
-        }
+namespace PJ {
+    /// Limits an action until N seconds have passed after the last time it
+    /// happened Example: bullets only fire at a certain rate, rapid fire power
+    /// up changes that
+    namespace RateLimiter {
+        struct Core {
+            /// First fire isn't rate-limited
+            bool didFire = false;
 
-    public:
-        float minDelta = 1.0f;
-        float timer = 0;
+            /// Subsequent fires must have min delta between them
+            float minDelta = 1.0f;
 
-        RateLimiter(float minDelta) : minDelta(minDelta)
-        {
-        }
+            /// Internal timer to track logic
+            float timer = 0;
 
-        bool CanFire() override
-        {
-            return timer >= minDelta;
-        }
+            Core() {}
 
-        void OnUpdate(TimeSlice time) override
-        {
-            timer += time.delta;
-        }
-    };
-}
+            Core(float minDelta) :
+                minDelta(minDelta) {}
+        };
 
-#endif
+        using Type = SomeLimiter<Core>;
+
+        SP<Type> Make();
+    } // namespace RateLimiter
+} // namespace PJ

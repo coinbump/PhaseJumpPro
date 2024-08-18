@@ -5,8 +5,7 @@
 using namespace std;
 using namespace PJ;
 
-ModelColor::ModelColor(Color const& color)
-{
+ModelColor::ModelColor(Color const& color) {
     value = color;
 }
 
@@ -24,21 +23,22 @@ PJ::ColorModel ModelColor::ColorModel() const {
 
 void ModelColor::ToColorModel(PJ::ColorModel colorModel) {
     switch (colorModel) {
-        case ColorModel::RGB:
-            ToRGB();
-            break;
-        case ColorModel::HSL:
-            ToHSL();
-            break;
-        case ColorModel::HSV:
-            ToHSV();
-            break;
+    case ColorModel::RGB:
+        ToRGB();
+        break;
+    case ColorModel::HSL:
+        ToHSL();
+        break;
+    case ColorModel::HSV:
+        ToHSV();
+        break;
     }
 }
 
 ModelColor ModelColor::ToHSV() const {
     switch (ColorModel()) {
-        case ColorModel::RGB: {
+    case ColorModel::RGB:
+        {
             auto rgb = std::get<RGBColor>(value);
             auto r = rgb.r;
             auto g = rgb.g;
@@ -69,14 +69,15 @@ ModelColor ModelColor::ToHSV() const {
             return result;
             break;
         }
-        case ColorModel::HSL: {
+    case ColorModel::HSL:
+        {
             auto rgb = ToRGB();
             auto result = rgb.ToHSL();
             return result;
             break;
         }
-        case ColorModel::HSV:
-            break;
+    case ColorModel::HSV:
+        break;
     }
 
     return *this;
@@ -84,20 +85,20 @@ ModelColor ModelColor::ToHSV() const {
 
 ModelColor ModelColor::ToRGB() const {
     switch (ColorModel()) {
-        case ColorModel::HSL: {
+    case ColorModel::HSL:
+        {
             auto hsl = std::get<HSLColor>(value);
 
             float r, g, b;
 
             if (0 == hsl.s) {
                 r = g = b = hsl.l; // Achromatic
-            }
-            else {
+            } else {
                 float q = hsl.l < 0.5f ? hsl.l * (1 + hsl.s) : hsl.l + hsl.s - hsl.l * hsl.s;
                 float p = 2 * hsl.l - q;
-                r = HueToRGB(p, q, hsl.h + 1.0f/3.0f);
+                r = HueToRGB(p, q, hsl.h + 1.0f / 3.0f);
                 g = HueToRGB(p, q, hsl.h);
-                b = HueToRGB(p, q, hsl.h - 1.0f/3.0f);
+                b = HueToRGB(p, q, hsl.h - 1.0f / 3.0f);
             }
 
             ModelColor result;
@@ -105,7 +106,8 @@ ModelColor ModelColor::ToRGB() const {
             return result;
             break;
         }
-        case ColorModel::HSV: {
+    case ColorModel::HSV:
+        {
             auto hsv = std::get<HSVColor>(value);
             auto h = hsv.h;
             auto s = hsv.s;
@@ -120,12 +122,36 @@ ModelColor ModelColor::ToRGB() const {
             float t = v * (1.0f - (1.0f - f) * s);
 
             switch (i % 6) {
-                case 0: r = v; g = t; b = p; break;
-                case 1: r = q; g = v; b = p; break;
-                case 2: r = p; g = v; b = t; break;
-                case 3: r = p; g = q; b = v; break;
-                case 4: r = t; g = p; b = v; break;
-                case 5: r = v; g = p; b = q; break;
+            case 0:
+                r = v;
+                g = t;
+                b = p;
+                break;
+            case 1:
+                r = q;
+                g = v;
+                b = p;
+                break;
+            case 2:
+                r = p;
+                g = v;
+                b = t;
+                break;
+            case 3:
+                r = p;
+                g = q;
+                b = v;
+                break;
+            case 4:
+                r = t;
+                g = p;
+                b = v;
+                break;
+            case 5:
+                r = v;
+                g = p;
+                b = q;
+                break;
             }
 
             ModelColor result;
@@ -133,25 +159,31 @@ ModelColor ModelColor::ToRGB() const {
             return result;
             break;
         }
-        case ColorModel::RGB:
-            break;
+    case ColorModel::RGB:
+        break;
     }
 
     return *this;
 }
 
 float ModelColor::HueToRGB(float p, float q, float t) const {
-    if (t < 0) t += 1;
-    if (t > 1) t -= 1;
-    if (t < 1.0f/6.0f) return p + (q - p) * 6.0f * t;
-    if (t < 1.0f/2.0f) return q;
-    if (t < 2.0f/3.0f) return p + (q - p) * (2.0f/3.0f - t) * 6.0f;
+    if (t < 0)
+        t += 1;
+    if (t > 1)
+        t -= 1;
+    if (t < 1.0f / 6.0f)
+        return p + (q - p) * 6.0f * t;
+    if (t < 1.0f / 2.0f)
+        return q;
+    if (t < 2.0f / 3.0f)
+        return p + (q - p) * (2.0f / 3.0f - t) * 6.0f;
     return p;
 }
 
 ModelColor ModelColor::ToHSL() const {
     switch (ColorModel()) {
-        case ColorModel::RGB: {
+    case ColorModel::RGB:
+        {
             auto rgb = std::get<RGBColor>(value);
 
             float _max = fmaxf(fmaxf(rgb.r, rgb.g), rgb.b);
@@ -162,19 +194,16 @@ ModelColor ModelColor::ToHSL() const {
 
             if (_max == _min) {
                 h = 0;
-                s = 0;    // Achromatic
-            }
-            else {
+                s = 0; // Achromatic
+            } else {
                 float d = _max - _min;
                 s = l > 0.5f ? d / (2 - _max - _min) : d / (_max + _min);
 
                 if (_max == rgb.r) {
                     h = (rgb.g - rgb.b) / d + (rgb.g < rgb.b ? 6 : 0);
-                }
-                else if (_max == rgb.g) {
+                } else if (_max == rgb.g) {
                     h = (rgb.b - rgb.r) / d + 2;
-                }
-                else if (_max == rgb.b) {
+                } else if (_max == rgb.b) {
                     h = (rgb.r - rgb.g) / d + 4;
                 }
                 h /= 6.0f;
@@ -185,13 +214,14 @@ ModelColor ModelColor::ToHSL() const {
             return result;
             break;
         }
-        case ColorModel::HSV: {
+    case ColorModel::HSV:
+        {
             auto rgb = ToRGB();
             auto result = rgb.ToHSL();
             return result;
         }
-        case ColorModel::HSL:
-            break;
+    case ColorModel::HSL:
+        break;
     }
 
     return *this;

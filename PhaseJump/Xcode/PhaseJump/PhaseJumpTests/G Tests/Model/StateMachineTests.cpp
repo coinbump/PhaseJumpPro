@@ -62,7 +62,7 @@ TEST(StateMachine, Test_StateMachine_Graph)
     auto sut = MAKE<TestStateMachine>();
     auto invalidNode = sut->AddState(TestEnum::Invalid);
     EXPECT_EQ(invalidNode, sut->NodeForState(TestEnum::Invalid));
-    EXPECT_EQ(1, sut->nodes.Count());
+    EXPECT_EQ(1, sut->nodes.size());
 
     VectorList<String> inputs1;
     inputs1.Add("test1");
@@ -72,7 +72,7 @@ TEST(StateMachine, Test_StateMachine_Graph)
     inputs2.Add("test2");
     sut->ConnectStates(TestEnum::Test1, inputs2, TestEnum::Test2);
 
-    EXPECT_EQ(3, sut->nodes.Count());
+    EXPECT_EQ(3, sut->nodes.size());
     sut->SetState(TestEnum::Invalid);
     sut->OnInput("test2");
     EXPECT_EQ(TestEnum::Invalid, sut->State());

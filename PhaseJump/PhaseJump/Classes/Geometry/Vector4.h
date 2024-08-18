@@ -3,14 +3,15 @@
 
 #include "FloatMath.h"
 #include "IntMath.h"
-#include "Vector3.h"
 #include "Macros_Vectors.h"
+#include "Vector3.h"
 
 /*
  RATING: 5 stars
- Utility class
- CODE REVIEW: 4/27/23
+ Simple type
+ CODE REVIEW: 7/13/24
  */
+// TODO: needs unit tests
 namespace PJ {
     class Vector4 {
     public:
@@ -18,22 +19,24 @@ namespace PJ {
         float y = 0;
         float z = 0;
         float w = 0;
-        
-        Vector4() {
-        }
 
-        Vector4(float x, float y, float z, float w) : x(x), y(y), z(z), w(w) {
-        }
+        Vector4() {}
+
+        Vector4(float x, float y, float z, float w) :
+            x(x),
+            y(y),
+            z(z),
+            w(w) {}
 
         operator Vector3() const {
             return Vector3(x, y, z);
         }
 
-        float& operator [](size_t index) {
+        float& operator[](size_t index) {
             return (&x)[index >= 0 && index < 4 ? index : index % 4];
         }
 
-        float const& operator [](size_t index) const {
+        float const& operator[](size_t index) const {
             return (&x)[index >= 0 && index < 4 ? index : index % 4];
         }
 
@@ -46,6 +49,6 @@ namespace PJ {
 
     // Convenience names
     using Vec4 = Vector4;
-}
+} // namespace PJ
 
 #endif

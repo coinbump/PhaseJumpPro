@@ -1,102 +1,76 @@
 #include "ResourceRepository.h"
-#include "LoadResourcesPlan.h"
 #include "FileManager.h"
-#include "SomeLoadResourcesOperation.h"
-#include "SomeLoadResourcesModel.h"
+#include "LoadResourcesModel.h"
+#include "LoadResourcesPlan.h"
 #include "Log.h"
+#include "SomeLoadResourcesOperation.h"
 #include <filesystem>
 
 using namespace std;
 using namespace PJ;
 namespace fs = std::filesystem;
 
-LoadResourcesPlan ResourceRepository::Scan(FilePath path, bool isRecursive) {
-    LoadResourcesPlan result;
-
-    if (nullptr == fm || nullptr == loadResourcesModel) { return result; }
-    auto & fm = (*this->fm);
-
-    auto paths = fm.PathList(path, isRecursive);
-    for (auto path : paths) {
-        auto info = ScanFile(path);
-        if (info) {
-            auto resourceInfo = info.value();
-            result.infoMap[resourceInfo.typeId][resourceInfo.id] = resourceInfo;
-        }
-    }
-
-    return result;
-}
-
-std::optional<LoadResourceInfo> ResourceRepository::ScanFile(FilePath path) {
-    if (nullptr == fm || nullptr == loadResourcesModel) { return std::nullopt; }
-    auto & fm = (*this->fm);
-
-    if (fm.IsDirectory(path)) { return std::nullopt; }
-
-    LoadResourceInfo result;
-
-    auto fileExtension = fm.FileExtension(path, false);
-
-    result.typeId = loadResourcesModel->fileExtensionMap[fileExtension];
-
-    if (result.typeId.IsEmpty()) {
-        PJLog("WARNING. Unrecognized resource extension, %s", fileExtension.c_str());
-    }
-
-    result.id = fm.FileName(path, false);
-    result.filePath = path;
-
-    return result;
-}
-
 void ResourceRepository::Load(LoadResourceInfo info) {
-    if (nullptr == loadResourcesModel) { return; }
+    if (nullptr == loadResourcesModel) {
+        return;
+    }
 
-    auto operation = LoadOperation(info);
-    if (nullptr == operation) { return; }
+    auto operations = LoadOperations(info);
+    Run(operations);
+}
 
-    operation->Run();
-    if (nullptr == operation->result) { return; }
+void ResourceRepository::Run(List<SP<SomeLoadResourcesOperation>> const& operations) {
+    // FUTURE: support loading on background thread
+    // FUTURE: support both main + background operations (load image on
+    // background thread -> create OpenGL texture on main thread)
+    for (auto& operation : operations) {
+        operation->Run();
+        GUARD_CONTINUE(operation->result)
 
-    switch (operation->result->Type()) {
-        case ResultType::Success: {
-            auto successValue = operation->result->SuccessValue();
+        switch (operation->result->Type()) {
+        case ResultType::Success:
+            {
+                auto successValue = operation->result->SuccessValue();
+                if (successValue) {
+                    for (auto& loadedResource : successValue->loadedResources) {
+                        loadedResources->map[loadedResource.type][loadedResource.id] =
+                            loadedResource;
 
-            for (auto loadedResource : successValue) {
-                loadedResources->map[loadedResource.typeId][loadedResource.id] = loadedResource;
+                        PJLog(
+                            "Loaded Resource: %s\t Type: %s", loadedResource.id.c_str(),
+                            loadedResource.type.c_str()
+                        );
+                    }
+
+                    auto& loadOperations = (*successValue).loadOperations;
+                    Run(loadOperations);
+                }
+                break;
             }
-
-            PJLog("Loaded Resource: %s", info.filePath.filename().string().c_str());
+        case ResultType::Failure:
+            PJLog("ERROR. Failed to load resource");
             break;
         }
-        case ResultType::Failure:
-            PJLog("ERROR. Failed to load resource: %s", info.filePath.filename().string().c_str());
-            break;
     }
 }
 
-SP<SomeLoadResourcesOperation> ResourceRepository::LoadOperation(LoadResourceInfo info) {
-    auto operation = loadResourcesModel->operationRegistry.New(info.typeId);
-    if (nullptr == operation) {
-        PJLog("ERROR. No load operation for type: %s", info.typeId.c_str());
-        return operation;
+List<SP<SomeLoadResourcesOperation>> ResourceRepository::LoadOperations(LoadResourceInfo info) {
+    auto operations = loadResourcesModel->MakeLoadOperations(info);
+    if (IsEmpty(operations)) {
+        PJLog("ERROR. No load operations for type: %s", info.type.c_str());
+        return operations;
     }
 
-    operation->info = info;
-
-    return operation;
+    return operations;
 }
 
-VectorList<SP<SomeLoadResourcesOperation>> ResourceRepository::LoadOperations(LoadResourcesPlan plan) {
-    VectorList<SP<SomeLoadResourcesOperation>> result;
+List<SP<SomeLoadResourcesOperation>> ResourceRepository::LoadOperations(LoadResourcesPlan plan) {
+    List<SP<SomeLoadResourcesOperation>> result;
 
     auto allInfos = plan.AllInfos();
-    for (auto info : allInfos) {
-        auto operation = LoadOperation(info);
-        if (operation) {
-            result.Add(operation);
-        }
+    for (auto& info : allInfos) {
+        auto operations = LoadOperations(info);
+        AddRange(result, operations);
     }
 
     return result;

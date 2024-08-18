@@ -7,45 +7,50 @@
 /*
  RATING: 5 stars
  Hase unit tests
- CODE REVIEW: 12/29/22
+ CODE REVIEW: 7/6/24
  */
-namespace PJ
-{
-    /// <summary>
+namespace PJ {
     /// A goal that must reach a value target to be complete
-    /// </summary>
-    class ValueTargetGoal : public SomeGoal
-    {
+    class ValueTargetGoal : public SomeGoal {
     protected:
         int valueTarget = 0;
         int value = 0;
 
     public:
-        int ValueTarget() const { return valueTarget; }
-        void SetValueTarget(int value) { valueTarget = value; }
-        int Value() const { return value; }
+        int ValueTarget() const {
+            return valueTarget;
+        }
+
+        void SetValueTarget(int value) {
+            valueTarget = value;
+        }
+
+        int Value() const {
+            return value;
+        }
+
         void SetValue(int value) {
             this->value = value;
             SetIsComplete(value >= valueTarget);
         }
 
-        ValueTargetGoal(String id, int valueTarget, int value = 0) : valueTarget(valueTarget), value(value)
-        {
+        ValueTargetGoal(String id, int valueTarget) :
+            valueTarget(valueTarget) {
             this->id = id;
-            SetIsComplete(value >= valueTarget);
         }
 
         float Progress() const override {
-            return std::max(0.0f, std::min(1.0f, (float)value / (float)valueTarget));
+            return std::clamp((float)value / (float)valueTarget, 0.0f, 1.0f);
         }
 
-        void Increment()
-        {
-            if (value >= valueTarget) { return; }
+        void Increment() {
+            if (value >= valueTarget) {
+                return;
+            }
 
             SetValue(Value() + 1);
         }
     };
-}
+} // namespace PJ
 
 #endif

@@ -1,18 +1,17 @@
 #ifndef PJSDLCOLORBUILDER_H
 #define PJSDLCOLORBUILDER_H
 
-#include <SDL2/SDL_render.h>
+#include "RGBAColor.h"
+#include <SDL3/SDL_render.h>
 
 /*
  RATING: 5 stars
- Simple builder
- CODE REVIEW: 12/27/22
+ Simple type
+ CODE REVIEW: 6/13/24
  */
 namespace PJ {
-    struct SDLColorBuilder
-    {
-        SDL_Color Transform(RGBAColor color32) const
-        {
+    struct SDLColorBuilder {
+        SDL_Color Transform(RGBAColor color32) const {
             SDL_Color result;
             result.r = color32.r();
             result.g = color32.g();
@@ -21,6 +20,6 @@ namespace PJ {
             return result;
         }
     };
-}
+} // namespace PJ
 
 #endif

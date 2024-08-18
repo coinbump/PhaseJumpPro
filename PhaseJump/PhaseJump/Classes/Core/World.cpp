@@ -1,117 +1,195 @@
 #include "World.h"
-#include "SomeRenderer.h"
-#include "RenderIntoModel.h"
 #include "Camera.h"
+#include "DevProfiler.h"
+#include "GraphNodeTool.h"
+#include "RenderIntoModel.h"
 #include "SomeCamera.h"
 #include "SomeRenderEngine.h"
+#include "SomeRenderer.h"
 #include <stdio.h>
+
+// #define PROFILE
 
 using namespace std;
 using namespace PJ;
 
-World::World()
-{
-    camera = SCAST<SomeCamera>(MAKE<OrthoCamera>());
+World::World() {
+    root->world = this;
+}
 
-    auto cameraNode = MAKE<WorldNode>();
-    cameraNode->Add(camera);
-    root->AddEdge(StandardEdgeModel(), cameraNode);
+void World::Add(SP<SomeWorldSystem> system) {
+    system->SetWorld(this);
+    this->systems.Add(system);
+}
+
+void World::RemoveAllNodes() {
+    GUARD(root)
+
+    // This leaves dangling pointers to world, but we assume
+    // that RemoveAll causes all child objects to be de-allocated
+    root->RemoveAllEdges();
+
+    // Clear cached values
+    mainCamera.reset();
+}
+
+void World::RemoveAllSystems() {
+    Remove(systems);
+}
+
+void World::Remove(SP<SomeWorldSystem> system) {
+    GUARD(system->World() == this)
+
+    system->SetWorld(nullptr);
+    PJ::Remove(systems, system);
+}
+
+void World::Remove(VectorList<SP<SomeWorldSystem>> systems) {
+    for (auto& system : systems) {
+        Remove(system);
+    }
+}
+
+SP<SomeCamera> World::MainCamera() {
+#ifdef PROFILE
+    DevProfiler devProfiler("MainCamera", [](String value) { cout << value; });
+#endif
+
+    GUARDR(!mainCamera, mainCamera)
+
+    GraphNodeTool<> graphNodeTool;
+    auto graph = graphNodeTool.CollectBreadthFirstGraph(root);
+    for (auto& node : graph) {
+        auto worldNode = SCAST<WorldNode>(node);
+
+        auto camera = worldNode->GetComponent<SomeCamera>();
+        if (camera) {
+            mainCamera = camera;
+            return mainCamera;
+        }
+    }
+
+    return nullptr;
 }
 
 void World::GoInternal() {
     Base::GoInternal();
 
-    // Can't use shared_from_this in constructor
-    root->world = SCAST<World>(this->shared_from_this());
-
-    auto graph = root->CollectBreadthFirstGraph();
-    for (auto node : graph) {
-        auto worldNode = SCAST<WorldNode>(node);
-
-        // Systems are assumed to be permanent for now
-        auto systems = worldNode->GetComponents<WorldSystem>();
-        for (auto system : systems) {
-            this->systems.Add(system);
-        }
-
-        if (nullptr == Camera::main) {
-            auto camera = worldNode->GetComponent<SomeCamera>();
-            if (camera) {
-                Camera::main = camera;
-            }
-        }
-    }
+    GraphNodeTool<> graphNodeTool;
+    auto graph = graphNodeTool.CollectBreadthFirstGraph(root);
 
     // All nodes get Awake first, then all get Start
-    for (auto node : graph) {
+    for (auto& node : graph) {
         auto worldNode = SCAST<WorldNode>(node);
-        worldNode->Awake();
+        worldNode->CheckedAwake();
     }
 
-    for (auto node : graph) {
+    for (auto& node : graph) {
         auto worldNode = SCAST<WorldNode>(node);
-        worldNode->Start();
+        worldNode->CheckedStart();
     }
 }
 
-void World::Render()
-{
-    if (!renderContext) { return; }
+void World::Render() {
+#ifdef PROFILE
+    DevProfiler devProfiler("Render", [](String value) { cout << value; });
+#endif
+
+    // TODO: should this be a system?
+    GUARD(renderContext)
 
     renderContext->Bind();
     renderContext->Clear();
 
-#ifdef _FPS_CHECK_
+    int drawCount = 0;
+
     auto now = std::chrono::steady_clock::now();
     if (fpsCheckTimePoint) {
-        auto duration = std::chrono::duration_cast<std::chrono::seconds>(now - fpsCheckTimePoint.value());
+        auto duration =
+            std::chrono::duration_cast<std::chrono::seconds>(now - fpsCheckTimePoint.value());
         float durationCheck = 1.0f;
         float durationCount = duration.count();
 
         if (durationCount >= durationCheck) {
-            PJLog("World FPS: %d", (int)((float)renderFrameCount / durationCount));
+            renderStats.Insert({ "fps", (int)((float)renderFrameCount / durationCount) });
             renderFrameCount = 0;
             fpsCheckTimePoint = now;
         }
     } else {
         fpsCheckTimePoint = now;
     }
-#endif
 
-    auto graph = root->CollectBreadthFirstGraph();
-    VectorList<SP<WorldNode>> nodes;
-    VectorList<SP<WorldNode>> activeNodes;
+    VectorList<WorldNode*> activeNodes;
+    std::transform(
+        updateList.begin(), updateList.end(), std::back_inserter(activeNodes),
+        [](SP<WorldNode::Node> node) { return static_cast<WorldNode*>(node.get()); }
+    );
 
-    std::transform(graph.begin(), graph.end(), std::back_inserter(nodes), [](SP<SomeGraphNode<>> node) {
-        return SCAST<WorldNode>(node);
-    });
+    // TODO: should GetComponent return a non-smart pointer?
+    VectorList<SP<SomeCamera>> activeNullableCameras;
+    std::transform(
+        activeNodes.begin(), activeNodes.end(), std::back_inserter(activeNullableCameras),
+        [](WorldNode* node) { return node->GetComponent<SomeCamera>(); }
+    );
 
-    std::copy_if(nodes.begin(), nodes.end(), std::back_inserter(activeNodes), [](SP<WorldNode> node) {
-        return node->IsActive();
-    });
+    VectorList<SP<SomeCamera>> activeCameras;
+    std::copy_if(
+        activeNullableCameras.begin(), activeNullableCameras.end(),
+        std::back_inserter(activeCameras), [](SP<SomeCamera> camera) { return camera != nullptr; }
+    );
 
     auto renderEngine = renderContext->renderEngine;
-    renderEngine->RenderStart();
 
-    for (auto node : activeNodes) {
-        auto camera = node->GetComponent<SomeCamera>();
-        if (nullptr == camera) {
-            continue;
+    for (auto& camera : activeCameras) {
+        RenderContextModel renderContextModel;
+
+        if (camera) {
+            camera->PreRender(activeNodes, renderContext, renderContextModel);
         }
 
-        camera->Render(activeNodes, renderContext);
+        renderEngine->RenderStart(renderContextModel);
+
+        if (camera) {
+#ifdef PROFILE
+            DevProfiler devProfilerRenderCamera("Render- Camera", [](String value) {
+                cout << value;
+            });
+#endif
+
+            auto cameraRenderModel =
+                camera->MakeRenderModel(activeNodes, *renderContext, renderContextModel);
+
+            drawCount += cameraRenderModel.renderModels.size();
+
+            for (auto& renderModel : cameraRenderModel.renderModels) {
+#ifdef PROFILE
+                DevProfiler devProfilerRenderProcess("Render- Process", [](String value) {
+                    cout << value;
+                });
+#endif
+                renderEngine->RenderProcess(renderModel);
+            }
+        }
+
+        renderEngine->RenderDraw();
     }
 
-    renderEngine->RenderDraw();
+    renderStats.Insert("draw.count", drawCount);
 
     renderContext->Present();
 
     renderFrameCount++;
 }
 
-void World::ProcessUIEvents(VectorList<SP<SomeUIEvent>> const& uiEvents) {
+void World::ProcessUIEvents(List<SP<SomeUIEvent>> const& uiEvents) {
+    GUARD(!IsEmpty(uiEvents))
+
+#ifdef PROFILE
+    DevProfiler devProfiler("ProcessUIEvents", [](String value) { cout << value; });
+#endif
+
     auto iterSystems = systems;
-    for (auto system : iterSystems) {
+    for (auto& system : iterSystems) {
         system->ProcessUIEvents(uiEvents);
     }
 }
@@ -131,6 +209,10 @@ Matrix4x4 World::LocalModelMatrix(WorldNode const& node) {
 }
 
 Matrix4x4 World::WorldModelMatrix(WorldNode const& node) {
+#ifdef PROFILE
+    // DevProfiler devProfiler("WorldModelMatrix", [](String value) { cout << value; });
+#endif
+
     auto modelMatrix = LocalModelMatrix(node);
 
     auto parent = SCAST<WorldNode>(node.Parent());
@@ -152,55 +234,62 @@ Matrix4x4 World::WorldModelMatrix(WorldNode const& node) {
     return modelMatrix;
 }
 
-void World::OnUpdate(TimeSlice time)
-{
-    updateGraph = root->CollectBreadthFirstGraph();
+void Update(WorldNode& node, TimeSlice time, WorldNode::NodeList& updateList) {
+    if (node.IsDestroyed()) {
+        node.OnDestroy();
 
-    auto iterSystems = systems;
-    for (auto system : iterSystems) {
-        system->OnUpdate(time);
-    }
+        // TODO: send OnDestroy to children
+        // TODO: remove the node
+        PJLog("WARNING. Destroying nodes is currently broken")
+    } else {
+        GUARD(node.IsActive())
 
-    VectorList<SP<WorldNode>> wakeupList;
-    for (auto node : updateGraph) {
-        auto worldNode = SCAST<WorldNode>(node);
+        node.CheckedAwake();
+        node.CheckedStart();
 
-        if (!worldNode->IsAwake()) {
-            worldNode->Awake();
-            wakeupList.Add(worldNode);
-        }
-    }
+        updateList.push_back(SCAST<WorldNode>(node.shared_from_this()));
+        node.OnUpdate(time);
 
-    for (auto worldNode : wakeupList) {
-        if (!worldNode->IsStarted()) {
-            worldNode->Start();
-        }
-    }
-
-    for (auto node : updateGraph) {
-        auto worldNode = SCAST<WorldNode>(node);
-
-        if (worldNode->IsDestroyed()) {
-            worldNode->OnDestroy();
-
-            auto subgraph = worldNode->CollectGraph();
-            for (auto node : subgraph) {
-                auto worldNode = SCAST<WorldNode>(node);
-                worldNode->Destroy();
-            }
-
-            auto parent = worldNode->Parent();
-            if (parent) {
-                parent->RemoveEdgesTo(worldNode);
-            }
-        } else if (worldNode->IsActive()) {
-            worldNode->OnUpdate(time);
-        }
+        auto childNodes = node.ChildNodes();
+        std::for_each(childNodes.begin(), childNodes.end(), [&](SP<WorldNode>& node) {
+            Update(*node, time, updateList);
+        });
     }
 }
 
+void World::OnUpdate(TimeSlice time) {
+#ifdef PROFILE
+    DevProfiler devProfiler("OnUpdate", [](String value) { cout << value; });
+#endif
+
+    // TODO: is graph being updated twice (when OnUpdate is re-enabled?)
+
+    auto iterSystems = systems;
+    for (auto& system : iterSystems) {
+        system->CheckedAwake();
+    }
+
+    for (auto& system : iterSystems) {
+        system->CheckedStart();
+    }
+
+    for (auto& system : iterSystems) {
+        system->OnUpdate(time);
+    }
+
+    updateList.clear();
+    Update(*root, time, updateList);
+}
+
 void World::Add(SP<WorldNode> node) {
-    root->AddEdge(StandardEdgeModel(), node);
+#ifdef PROFILE
+    DevProfiler devProfiler("Add", [](String value) { cout << value; });
+#endif
+
+    auto parent = root;
+    GUARD(node && parent)
+
+    parent->Add(node);
 }
 
 void World::SetRenderContext(SP<SomeRenderContext> renderContext) {

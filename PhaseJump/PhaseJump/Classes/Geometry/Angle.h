@@ -1,55 +1,49 @@
 #ifndef PJANGLE_H
 #define PJANGLE_H
 
-#include "Vector2.h"
 #include "FloatMath.h"
 #include "Macros_Operators.h"
+#include "Vector2.h"
 #include <math.h>
 
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 11/29/22
+ CODE REVIEW: 7/6/24
  */
-namespace PJ
-{
-    struct Angle
-    {
+namespace PJ {
+    struct Angle {
     protected:
-        float value;
+        float value = 0;
 
-        Angle(float value) : value(value)
-        {
-        }
+        Angle(float value) :
+            value(value) {}
 
     public:
         using This = Angle;
 
-        float Degrees() const
-        {
+        Angle() :
+            value(0) {}
+
+        float Degrees() const {
             return value;
         }
 
-        void SetDegrees(float value)
-        {
+        void SetDegrees(float value) {
             this->value = value;
         }
 
-        float Radians() const
-        {
+        float Radians() const {
             return value * FloatMath::DegreesToRadians;
         }
 
-        void SetRadians(float value)
-        {
+        void SetRadians(float value) {
             this->value = value / FloatMath::DegreesToRadians;
         }
 
-        Angle(Vector2 distance)
-        {
+        Angle(Vector2 distance) {
             // Prevent infinite/invalid angle
-            if (distance.x == 0 && distance.y == 0)
-            {
+            if (distance.x == 0 && distance.y == 0) {
                 this->value = 0;
                 return;
             }
@@ -60,34 +54,28 @@ namespace PJ
             this->value = result.Degrees();
         }
 
-        Angle Clipped() const
-        {
+        Angle Clipped() const {
             auto angle = Degrees();
             angle = fmod(angle, 360.0f);
-            if (angle < 0)
-            {
+            if (angle < 0) {
                 angle = 360.0f - fmod(abs(angle), 360.0f);
             }
             return Angle::DegreesAngle(angle);
         }
 
-        void Clip()
-        {
+        void Clip() {
             SetDegrees(Clipped().Degrees());
         }
 
-        static Angle RadiansAngle(float radians)
-        {
+        static Angle RadiansAngle(float radians) {
             return Angle(radians * FloatMath::RadiansToDegrees);
         }
 
-        static Angle DegreesAngle(float degrees)
-        {
+        static Angle DegreesAngle(float degrees) {
             return Angle(degrees);
         }
 
-        Vector2 ToVector2(float magnitude = 1.0f) const
-        {
+        Vector2 ToVector2(float magnitude = 1.0f) const {
             Vector2 result(0, 0);
 
             float sinVal = sin(Radians());
@@ -101,35 +89,26 @@ namespace PJ
             return result;
         }
 
-        /// <summary>
         /// Returns the closest turn between two angles.
         /// EXAMPLE: closest turn between angle 3 and angle 359 is -4, not 356.
-        /// </summary>
-        Angle MinAngleTo(Angle angle) const
-        {
+        Angle MinAngleTo(Angle angle) const {
             float firstAngle = Degrees();
             float finalAngle = angle.Degrees();
 
             float delta1, delta2;
             float result = 0;
 
-            if (finalAngle > firstAngle)
-            {
+            if (finalAngle > firstAngle) {
                 delta1 = finalAngle - firstAngle;
                 delta2 = -(360.0f - delta1);
-            }
-            else
-            {
+            } else {
                 delta1 = -(firstAngle - finalAngle);
                 delta2 = 360.0f + delta1;
             }
 
-            if (abs(delta1) < abs(delta2))
-            {
+            if (abs(delta1) < abs(delta2)) {
                 result = delta1;
-            }
-            else
-            {
+            } else {
                 result = delta2;
             }
 
@@ -138,13 +117,12 @@ namespace PJ
 
         MATH_OPERATORS(Angle, value)
 
-        operator Vector2() const
-        {
+        operator Vector2() const {
             return ToVector2();
         }
 
         static Angle const zero;
     };
-}
+} // namespace PJ
 
 #endif

@@ -1,39 +1,55 @@
-#ifndef PJBASE_H
-#define PJBASE_H
+#pragma once
 
 #include "StringConvertible.h"
-#include "Macros.h"
+#include "Utils.h"
 #include <memory>
 
 /*
  RATING: 5 stars
- Simple base class
- CODE REVIEW: 5/11/24
+ Simple type
+ CODE REVIEW: 7/8/24
+ PORTED TO: C++, C#
  */
 namespace PJ {
-    /// <summary>
-    /// Base class for many framework objects, provides standard behavior and provides polymorphism for factories
-    /// so we can use dynamic cast and `shared_from_this`
-    /// </summary>
+    /// Base class for many framework objects, provides standard behavior and
+    /// provides polymorphism for factories so we can use dynamic cast and
+    /// `shared_from_this`
     class Base : public StringConvertible, public std::enable_shared_from_this<Base> {
     protected:
+        /// If true, the object was started by calling Go
         bool didGo = false;
 
+        /// Called only if the object hasn't been started already
         virtual void GoInternal() {}
 
     public:
+        using RootBaseType = Base;
+
         virtual ~Base() {}
 
-        // Initiate some behavior
+        /// Start the object if needed
         virtual void Go() {
-            if (didGo) { return; }
+            GUARD(!didGo);
             didGo = true;
 
             GoInternal();
         }
 
-        String ToString() const override { return "Base"; }
+        /// Returns description for logs
+        String ToString() const override {
+            return "Base";
+        }
     };
-}
 
-#endif
+    /// Base that composes a core
+    template <class Core>
+    class OwnerBase : public Base {
+    public:
+        Core core;
+
+        OwnerBase() {}
+
+        OwnerBase(Core core) :
+            core(core) {}
+    };
+} // namespace PJ

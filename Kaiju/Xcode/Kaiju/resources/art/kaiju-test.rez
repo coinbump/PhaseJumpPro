@@ -1,0 +1,40 @@
+{
+    "resources": [
+        {
+            "type": "texture",
+            "path": "audio-pad.png"
+        },
+        {
+            "type": "texture",
+            "path": "little-demon.png"
+        },
+        {
+            "type": "texture",
+            "path": "heart-full.png"
+        },
+        {
+            "type": "rtexPacker.atlas",
+            "path": "man-run-atlas.json"
+        },
+        {
+            "type": "texture",
+            "path": "slider-thumb.png"
+        },
+        {
+            "type": "texture",
+            "path": "example-button-normal.png"
+        },
+        {
+            "type": "texture",
+            "path": "slider-track.png"
+        },
+        {
+            "type": "rtexPacker.atlas",
+            "path": "TestFont.json"
+        },
+        {
+            "type": "texturePacker.atlas",
+            "path": "TexturePacker.json"
+        }
+    ]
+}

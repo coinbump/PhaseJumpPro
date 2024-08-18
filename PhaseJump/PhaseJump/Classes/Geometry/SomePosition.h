@@ -1,86 +1,67 @@
-#ifndef PJSOMEPOSITION_H
-#define PJSOMEPOSITION_H
+#pragma once
 
+#include "Utils.h"
 #include "Vector3.h"
-#include "Macros.h"
 
 /*
  RATING: 5 stars
- Needs conversion logic. Has unit tests
- CODE REVIEW: 12/25/22
+ Has unit tests
+ CODE REVIEW: 7/6/24
  */
-namespace PJ
-{
+namespace PJ {
+    // FUTURE: needs conversion logic
     class WorldNode;
-    
-    /// <summary>
+
     /// Encapsulates both position and coordinates used (world/screen/local)
-    /// </summary>
-    class SomePosition
-    {
-    public:
-        virtual ~SomePosition() {}
-        
-        virtual Vector3 Position() const = 0;
-        virtual void SetPosition(Vector3 position) = 0;
 
-        operator Vector3() const { return Position(); }
-    };
-
-    class WorldPosition : public Vector3, public SomePosition
-    {
+    class WorldPosition : public Vector3 {
     public:
         using Base = Vector3;
 
-        Vector3 Position() const override { return *this; }
-        void SetPosition(Vector3 value) override { *this = value; }
+        WorldPosition() {}
 
-        WorldPosition() {
+        WorldPosition(Vector3 position) :
+            Base(position) {}
+
+        String ToString() const {
+            return "World: " + Base::ToString();
         }
-
-        WorldPosition(Vector3 position) : Base(position)
-        {
-        }
-
-        String ToString() const { return "World: " + Base::ToString(); }
     };
 
-    class LocalPosition : public Vector3, public SomePosition
-    {
+    class LocalPosition : public Vector3 {
     public:
         using Base = Vector3;
 
-        WP<WorldNode> reference;
+        LocalPosition() {}
 
-        LocalPosition() {
+        LocalPosition(Vector3 position) :
+            Base(position) {}
+
+        String ToString() const {
+            return "Local: " + Base::ToString();
         }
-
-        LocalPosition(Vector3 position, WP<WorldNode> reference) : Base(position), reference(reference)
-        {
-        }
-
-        Vector3 Position() const override { return *this; }
-        void SetPosition(Vector3 value) override { *((Base *)this) = value; }
-
-        String ToString() const { return "Local: " + Base::ToString(); }
     };
 
-    class ScreenPosition : public Vector2, public SomePosition
-    {
+    class ScreenPosition : public Vector2 {
     public:
         using Base = Vector2;
 
-        ScreenPosition() {
+        ScreenPosition() {}
+
+        ScreenPosition(Vector2 position) :
+            Vector2(position) {}
+
+        void SetPosition(Vector3 value) {
+            *this = Vector2(value.x, value.y);
         }
 
-        ScreenPosition(Vector2 position) : Vector2(position) {
+        String ToString() const {
+            return "Screen: " + Base::ToString();
         }
-
-        Vector3 Position() const override { return Vector3(this->x, this->y, 0); }
-        void SetPosition(Vector3 value) override { *this = Vector2(value.x, value.y); }
-
-        String ToString() const { return "Screen: " + Base::ToString(); }
     };
-}
 
-#endif
+    // Ensure that we haven't added virtual methods to these basic types
+    static_assert(!std::is_polymorphic_v<ScreenPosition>);
+    static_assert(!std::is_polymorphic_v<WorldPosition>);
+    static_assert(!std::is_polymorphic_v<LocalPosition>);
+} // namespace PJ

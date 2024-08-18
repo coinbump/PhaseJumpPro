@@ -1,13 +1,13 @@
 #ifndef PJUISYSTEM_H
 #define PJUISYSTEM_H
 
-#include "EventSystem.h"
-#include "DragModel.h"
-#include "SDLMouseDevice.h"
-#include "SomePointerUIEvent.h"
-#include "DragItems.h"
 #include "Camera.h"
+#include "DragItems.h"
+#include "DragModel.h"
+#include "EventSystem.h"
+#include "SDLMouseDevice.h"
 #include "SelectHandler.h"
+#include "SomePointerUIEvent.h"
 #include <memory>
 
 /*
@@ -22,45 +22,48 @@ namespace PJ {
     class UISystem : public EventSystem {
     public:
         using Base = EventSystem;
-        
-        static SP<UISystem> shared;
 
-        virtual SP<SomeCamera> Camera() const { return Camera::main; }
+        // TODO: fix this, it's causing problems when switching scenes
+        static UISystem* shared;
 
-        void ProcessUIEvents(VectorList<SP<SomeUIEvent>> const& uiEvents) override;
+        virtual SP<SomeCamera> Camera() const;
+
+        void ProcessUIEvents(List<SP<SomeUIEvent>> const& uiEvents) override;
 
         // *****************
         // MARK: - Selection
 
     protected:
-        Set<SP<SelectHandler>> selection;
+        OrderedSet<SP<SelectHandler>> selection;
 
     public:
-        Set<SP<SelectHandler>> const& Selection() const { return selection; }
-        void SetSelection(Set<SP<SelectHandler>> const& value);
+        virtual ~UISystem() {
+            GUARD(shared == this);
+            shared = nullptr;
+        }
+
+        OrderedSet<SP<SelectHandler>> const& Selection() const {
+            return selection;
+        }
+
+        void SetSelection(OrderedSet<SP<SelectHandler>> const& value);
         void UpdateSelectionFor(SP<SelectHandler> selectHandler);
 
-    public:
         virtual void StartDrag(SP<DragModel> dragModel);
         virtual void OnDragEnd();
         virtual void CheckDropTargets();
         virtual void OnDragUpdate();
 
-        DragItems DraggedItems() const
-        {
-            if (nullptr != dragModel)
-            {
-                VectorList<SP<SomeDragHandler>> list { dragModel->dragHandler };
+        DragItems DraggedItems() const {
+            if (nullptr != dragModel) {
+                VectorList<SP<SomeDragHandler>> list{ dragModel->dragHandler };
                 return DragItems(list);
-            }
-            else
-            {
+            } else {
                 return DragItems();
             }
         }
 
-        bool IsDragging() const
-        {
+        bool IsDragging() const {
             return dragState != DragState::Default;
         }
 
@@ -68,21 +71,16 @@ namespace PJ {
         void Awake() override;
         void OnUpdate(TimeSlice time) override;
 
-        bool ProcessPointerDownEvent(SP<PointerDownUIEvent<ScreenPosition>> pointerDownEvent) override;
-        bool ProcessPointerUpEvent(SP<PointerUpUIEvent> pointerUpEvent) override;
+        void OnPointerDown(PointerDownUIEvent const& pointerDownEvent) override;
+        void OnPointerUp(PointerUpUIEvent const& pointerUpEvent) override;
 
         // ****************************************
         // MARK: - UISystem+Drag
         // ****************************************
 
-        enum class DragState
-        {
-            Default, Drag, LockDragMouseDown, LockDragMouseUp
-        };
+        enum class DragState { Default, Drag, LockDragMouseDown, LockDragMouseUp };
 
-        /// <summary>
         /// If true, a click will start the drag, and a click will end it
-        /// </summary>
         bool lockDrag = false;
 
         /// Model that defines a drag in progress
@@ -95,6 +93,6 @@ namespace PJ {
         DragState dragState = DragState::Default;
         SP<SomeMouseDevice> mouseDevice = MAKE<SDLMouseDevice>();
     };
-}
+} // namespace PJ
 
 #endif

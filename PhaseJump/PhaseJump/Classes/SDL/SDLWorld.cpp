@@ -3,8 +3,7 @@
 using namespace std;
 using namespace PJ;
 
-void SDLWorld::MainLoop()
-{
+void SDLWorld::MainLoop() {
     auto result = uiEventPoller->PollUIEvents();
 
     ProcessUIEvents(result.uiEvents);

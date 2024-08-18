@@ -1,18 +1,17 @@
-#ifndef PJSOMEMESHBUILDER_H
-#define PJSOMEMESHBUILDER_H
+#pragma once
 
-#include "WorldComponent.h"
 #include "Mesh.h"
 #include "VertexList.h"
+#include "WorldComponent.h"
 
 /*
  RATING: 5 stars
- Simple interface
- CODE REVIEW: 4/14/23
+ Simple protocol
+ CODE REVIEW: 8/8/24
  */
 namespace PJ {
     /// Builds a render mesh with vertices
-    class SomeMeshBuilder : public WorldComponent {
+    class SomeMeshBuilder : public WorldComponent<> {
     public:
         using Base = WorldComponent;
 
@@ -20,8 +19,8 @@ namespace PJ {
 
         VertexList BuildVertexList();
 
+        // MARK: WorldComponent
+
         void Awake() override;
     };
-}
-
-#endif
+} // namespace PJ

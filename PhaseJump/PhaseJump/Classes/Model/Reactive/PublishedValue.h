@@ -9,14 +9,17 @@
  */
 namespace PJ {
     template <class Type>
+        requires std::equality_comparable<Type>
     struct PublishedValue {
         using Subscription = SomeSimpleSubscription<Type>;
         ValueSimpleSubject<Type> subject;
 
-        PublishedValue(Type const& value) : subject(value) {
-        }
+        PublishedValue(Type const& value) :
+            subject(value) {}
 
-        Type const& Value() const { return subject.Value(); }
+        Type const& Value() const {
+            return subject.Value();
+        }
 
         void SetValue(Type const& value) {
             if (subject.Value() == value) {
@@ -25,4 +28,4 @@ namespace PJ {
             subject.Send(value);
         }
     };
-}
+} // namespace PJ

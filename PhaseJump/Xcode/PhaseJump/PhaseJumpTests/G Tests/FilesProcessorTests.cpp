@@ -16,7 +16,8 @@ namespace FilesProcessorTests {
 using namespace FilesProcessorTests;
 
 TEST(FilesProcessor, Process) {
-    FilesProcessor sut(3, MAKE<TestFileProcessor>(), FilesProcessor::Settings(FileSearchType::Directory));
+    UP<SomeFileProcessor> fileProcessor = std::make_unique<TestFileProcessor>();
+    FilesProcessor sut(3, fileProcessor, FilesProcessor::Settings(FileSearchType::Directory));
     sut.Provide(FilePath(""));
     sut.Provide(FilePath(""));
     sut.Provide(FilePath(""));

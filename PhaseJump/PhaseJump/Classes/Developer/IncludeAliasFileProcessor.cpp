@@ -11,11 +11,13 @@ void IncludeAliasFileProcessor::Process(FilePath filePath) {
     auto extension = fm.FileExtension(filePath, false);
     if ("h" == extension) {
         String pathString = filePath.string();
-        VectorList<String> pathComponents = pathString.ComponentsSeparatedBy(fm.PreferredSeparator());
+        VectorList<String> pathComponents =
+            pathString.ComponentsSeparatedBy(fm.PreferredSeparator());
         VectorList<String> relativeComponents;
         VectorList<String> forwardComponents;
 
-        for (VectorList<String>::const_reverse_iterator i = pathComponents.rbegin(); i != pathComponents.rend(); i++) {
+        for (VectorList<String>::const_reverse_iterator i = pathComponents.rbegin();
+             i != pathComponents.rend(); i++) {
             if ((*i).ToLower() == "phasejump") {
                 break;
             }

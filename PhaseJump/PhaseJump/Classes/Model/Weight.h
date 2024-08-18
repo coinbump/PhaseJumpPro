@@ -1,49 +1,44 @@
-#ifndef PJWEIGHT_H
-#define PJWEIGHT_H
+#pragma once
 
-#include "SomeTransform.h"
-#include "Macros.h"
+#include "Transformer.h"
+#include "Utils.h"
 
 /*
  RATING: 5 stars
- Simple utility
- CODE REVIEW: 2/18/23
+ Simple type
+ CODE REVIEW: 8/3/24
+ PORTED TO: C++, C#
  */
-namespace PJ
-{
-    /// <summary>
+namespace PJ {
     /// Specifies the weight of a random event
-    /// </summary>
-    template <class Value>
-    class Weight
-    {
+    template <class Core>
+    class Weight {
     protected:
-        /// <summary>
         /// Base weight (never changes)
-        /// </summary>
         float weight = 1.0f;
 
     public:
-        using ValueTransform = SomeValueTransform<Weight<Value>>;
+        using Transform = PJ::SomeTransformer<Weight<Core>>;
 
-        Value value;
+        Core core;
 
-        /// <summary>
-        /// Optional object that dynamically adjusts the weight during evaluation
-        /// </summary>
-        SP<ValueTransform> adjust;
+        /// Optional object that dynamically adjusts the weight during
+        /// evaluation
+        SP<Transform> adjust;
 
-        Weight(float weight) : weight(weight)
-        {
+        Weight(float weight) :
+            weight(weight) {}
+
+        Weight(float weight, Core core) :
+            weight(weight),
+            core(core) {}
+
+        float Value() const {
+            return weight;
         }
 
-        Weight(float weight, Value value) : weight(weight), value(value)
-        {
+        void SetValue(float value) {
+            weight = value;
         }
-
-        float WeightValue() const { return weight; }
-        void SetWeightValue(float value) { weight = value; }
     };
-}
-
-#endif
+} // namespace PJ

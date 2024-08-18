@@ -1,15 +1,17 @@
 #ifndef PJRESOURCEREPOSITORY_H
 #define PJRESOURCEREPOSITORY_H
 
-#include "FilePath.h"
-#include "Result.h"
-#include "LoadResourcesPlan.h"
-#include "SomeLoadResourcesOperation.h"
-#include "_Map.h"
 #include "_String.h"
+#include "FilePath.h"
+#include "LoadedResources.h"
+#include "LoadResourcesPlan.h"
+#include "OrderedMap.h"
+#include "Result.h"
+#include "SomeLoadResourcesOperation.h"
 
+// CODE REVIEW: ?/23
 namespace PJ {
-    class SomeLoadResourcesModel;
+    class LoadResourcesModel;
     struct LoadedResource;
     struct LoadResourceInfo;
     class SomeFileManager;
@@ -19,15 +21,17 @@ namespace PJ {
     class SomeResourceRepository {
     public:
         virtual ~SomeResourceRepository() {}
-
-        virtual LoadResourcesPlan Scan(FilePath path, bool isRecursive) = 0;
     };
 
     /// Scans and loads resources
     class ResourceRepository : public SomeResourceRepository {
+    protected:
+        void Run(List<SP<SomeLoadResourcesOperation>> const& operations);
+
     public:
+        // TODO: SP-audit
         /// Defines how we're scanning/loading resources
-        SP<SomeLoadResourcesModel> loadResourcesModel;
+        SP<LoadResourcesModel> loadResourcesModel;
 
         /// Destination for the loaded resources
         SP<LoadedResources> loadedResources;
@@ -35,21 +39,18 @@ namespace PJ {
         /// File manager (for mock injection in unit tests)
         SP<SomeFileManager> fm;
 
-        ResourceRepository(SP<SomeLoadResourcesModel> loadResourcesModel, SP<LoadedResources> loadedResources, SP<SomeFileManager> fm) :
-        loadResourcesModel(loadResourcesModel),
-        loadedResources(loadedResources),
-        fm(fm) {
-        }
+        ResourceRepository(
+            SP<LoadResourcesModel> loadResourcesModel, SP<LoadedResources> loadedResources,
+            SP<SomeFileManager> fm
+        ) :
+            loadResourcesModel(loadResourcesModel),
+            loadedResources(loadedResources),
+            fm(fm) {}
 
-        // Important: always use this with threads or you will hang the app for large file lists
-        LoadResourcesPlan Scan(FilePath path, bool isRecursive) override;
         void Load(LoadResourceInfo info);
-        SP<SomeLoadResourcesOperation> LoadOperation(LoadResourceInfo info);
-        VectorList<SP<SomeLoadResourcesOperation>> LoadOperations(LoadResourcesPlan plan);
-        
-    protected:
-        std::optional<LoadResourceInfo> ScanFile(FilePath path);
+        List<SP<SomeLoadResourcesOperation>> LoadOperations(LoadResourceInfo info);
+        List<SP<SomeLoadResourcesOperation>> LoadOperations(LoadResourcesPlan plan);
     };
-}
+} // namespace PJ
 
 #endif

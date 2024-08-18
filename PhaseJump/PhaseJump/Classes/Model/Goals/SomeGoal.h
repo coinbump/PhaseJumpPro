@@ -2,24 +2,21 @@
 #define PJSOMEGOAL_H
 
 #include "_String.h"
-#include "Core.h"
-#include "GoalEvents.h"
 #include "Broadcaster.h"
+#include "GoalEvents.h"
+#include "StandardCore.h"
 #include <memory>
 
 /*
  RATING: 5 stars
  Hase unit tests
- CODE REVIEW: 12/29/22
+ CODE REVIEW: 7/5/24
  */
-namespace PJ
-{
-    /// <summary>
+namespace PJ {
     /// Goals are common in games to achieve progress.
-    /// EXAMPLE: complete a task N times, achieve N experience, get to the destination, etc.
-    /// </summary>
-    class SomeGoal : public Base
-    {
+    /// EXAMPLE: complete a task N times, achieve N experience, get to the
+    /// destination, etc.
+    class SomeGoal : public Base {
     public:
         String id;
 
@@ -27,26 +24,28 @@ namespace PJ
         bool isComplete = false;
 
     public:
-        bool IsComplete() const { return isComplete; }
-        void SetIsComplete(bool value)
-        {
-            if (isComplete == value) { return; }
+        bool IsComplete() const {
+            return isComplete;
+        }
+
+        void SetIsComplete(bool value) {
+            if (isComplete == value) {
+                return;
+            }
             isComplete = value;
-            if (isComplete)
-            {
+            if (isComplete) {
                 OnComplete();
             }
         }
 
-        Broadcaster broadcaster;
+        void Complete() {
+            SetIsComplete(true);
+        }
 
         virtual float Progress() const = 0;
 
-        virtual void OnComplete()
-        {
-            broadcaster.Broadcast(MAKE<GoalCompleteEvent>(SCAST<SomeGoal>(shared_from_this())));
-        }
+        virtual void OnComplete() {}
     };
-}
+} // namespace PJ
 
 #endif

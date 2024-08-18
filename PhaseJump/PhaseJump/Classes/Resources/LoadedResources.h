@@ -1,51 +1,55 @@
-#ifndef PJLOADEDRESOURCES_H
-#define PJLOADEDRESOURCES_H
+#pragma once
 
 #include "Base.h"
 #include "FilePath.h"
-#include "_Map.h"
+#include "UnorderedMap.h"
 
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 4/30/23
+ CODE REVIEW: 7/21/24
  */
 namespace PJ {
     /// Stores metadata for resource that was loaded
     struct LoadedResource {
+        /// Path of the resource
         FilePath filePath;
-        String typeId;
+
+        /// Each supported file extension is mapped to a type. The type determines how to load
+        /// the resource Allows for multiple file types to use the same load operation ("png",
+        /// "jpg", "jpeg" load a texture)
+        String type;
+
+        /// Unique identifier for this resource (default: uses file name without extension)
         String id;
+
+        /// The resource that was loaded
         SP<Base> resource;
 
-        LoadedResource() {
-        }
-        
-        LoadedResource(FilePath filePath, String typeId, String id, SP<Base> resource) :
-        filePath(filePath),
-        typeId(typeId),
-        id(id),
-        resource(resource) {
-        }
+        LoadedResource() {}
+
+        LoadedResource(FilePath filePath, String type, String id, SP<Base> resource) :
+            filePath(filePath),
+            type(type),
+            id(id),
+            resource(resource) {}
     };
 
     /// First key: resource type, second key: id
-    using LoadedResourceMap = Map<String, Map<String, LoadedResource>>;
+    using LoadedResourceMap = UnorderedMap<String, UnorderedMap<String, LoadedResource>>;
 
     struct LoadedResources {
         LoadedResourceMap map;
 
-        void Remove(String typeId, String id) {
-            auto i = map.find(typeId);
-            if (i != map.end()) {
-                auto & secondMap = i->second;
-                auto j = secondMap.find(id);
-                if (j != secondMap.end()) {
-                    secondMap.erase(j);
-                }
-            }
+        void Remove(String type, String id) {
+            auto i = map.find(type);
+            GUARD(i != map.end())
+
+            auto& secondMap = i->second;
+            auto j = secondMap.find(id);
+            GUARD(j != secondMap.end())
+
+            secondMap.erase(j);
         }
     };
-}
-
-#endif
+} // namespace PJ

@@ -3,19 +3,17 @@
 
 /*
  RATING: 5 stars
- Simple interface
- CODE REVIEW: 12/11/22
+ Simple protocol
+ CODE REVIEW: 5/18/24
  */
-namespace PJ
-{
+namespace PJ {
     template <class StateType>
-    class SomeStateMachine
-    {
+    class SomeStateMachine {
     public:
         virtual ~SomeStateMachine() {}
-        
+
         virtual StateType State() const = 0;
     };
-}
+} // namespace PJ
 
 #endif

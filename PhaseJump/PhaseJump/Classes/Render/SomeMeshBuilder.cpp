@@ -1,7 +1,7 @@
 #include "SomeMeshBuilder.h"
-#include "VertexList.h"
 #include "Mesh.h"
 #include "MeshRenderer.h"
+#include "VertexList.h"
 
 using namespace std;
 using namespace PJ;

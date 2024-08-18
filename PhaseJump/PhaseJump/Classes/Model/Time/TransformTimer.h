@@ -1,44 +1,35 @@
-#ifndef PJTRANSFORMTIMER_H
-#define PJTRANSFORMTIMER_H
+#pragma once
 
-#include "SomeTransform.h"
 #include "Timer.h"
+#include "TransformFunc.h"
+#include "Utils.h"
 #include <memory>
 
 /*
  RATING: 5 stars
- Simple utility
- CODE REVIEW: 11/27/22
+ Simple type
+ CODE REVIEW: 7/7/24
  */
-namespace PJ
-{
-    /// <summary>
+namespace PJ {
     /// A timer that runs for N duration, but whose progress is determined by an
     /// transform operation (usually an interpolation curve)
-    /// </summary>
-    class TransformTimer : public Timer
-    {
+    class TransformTimer : public Timer {
     public:
+        // TODO: use SomeTransformer here?
+        using Transform = PJ::TransformFunc<float>;
         using Base = Timer;
 
-        SP<SomeValueTransform<float>> transform;
+        Transform transform;
 
-        TransformTimer(float duration, SomeTimed::RunType type, SP<SomeValueTransform<float>> transform)
-            : Timer(duration, type), transform(transform)
-        {
-        }
+        TransformTimer(float duration, Runner::RunType type, Transform transform) :
+            Timer(duration, type),
+            transform(transform) {}
 
-        float Progress() const override
-        {
+        float Progress() const override {
             auto progress = Base::Progress();
-            if (!transform)
-            {
-                return progress;
-            }
+            GUARDR(transform, progress)
 
-            return transform->Transform(progress);
+            return transform(progress);
         }
     };
-}
-
-#endif
+} // namespace PJ

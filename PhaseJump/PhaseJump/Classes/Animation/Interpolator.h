@@ -1,53 +1,35 @@
-#ifndef PJANIMATIONCURVE_H_
-#define PJANIMATIONCURVE_H_
+#pragma once
 
-#include "FloatTransform.h"
-#include "SomeValueInterpolator.h"
-#include "SomeInterpolate.h"
+#include "EaseFunc.h"
+#include "Utils.h"
 #include <memory>
 
 /*
  RATING: 5 stars
- Simple class
- CODE REVIEW: 1/12/24
+ Has unit tests
+ CODE REVIEW: 8/15/24
  */
-namespace PJ
-{
-    /// <summary>
-    /// Specifies the details of an animation curve from start to end values, with an interpolation transform
-    /// </summary>
+namespace PJ {
+    /// Function that interpolates a value from start to end
+    /// Progress value is usually 0-1.0, but can overflow for elastic animations
+    /// Used so we can introduce interpolation for complex values if needed
     template <class T>
-    class Interpolator
-    {
-    public:
-        T start;
-        T end;
+    using InterpolateFunc = std::function<T(float progress)>;
 
-        /// Interpolates the animated value from start to end
-        SP<SomeValueInterpolator<T>> valueInterpolator;
-
-        /// The animation curve
-        SP<FloatTransform> transform = MAKE<InterpolateLinear>();
-
-        Interpolator(T start,
-                     T end,
-                     SP<SomeValueInterpolator<T>> valueInterpolator = MAKE<ValueInterpolator<T>>(),
-                     SP<FloatTransform> transform = MAKE<InterpolateLinear>()) :
-        start(start),
-        end(end),
-        valueInterpolator(valueInterpolator),
-        transform(transform) {
+    namespace Interpolator {
+        template <class T>
+        InterpolateFunc<T> MakeFunc(T start, T end) {
+            return [=](float progress) { return start + (end - start) * progress; };
         }
-        virtual ~Interpolator() {}
 
-        T ValueAt(float progress) {
-            if (nullptr == valueInterpolator) {
-                return T();
-            }
-
-            return valueInterpolator->ValueAt(start, end, transform->Transform(progress));
+        /// Aggregates ease func along with value interpolator
+        template <class T>
+        InterpolateFunc<T>
+        MakeEaseFunc(InterpolateFunc<T> valueTransform, EaseFunc ease = EaseFuncs::linear) {
+            return [=](float progress) {
+                GUARDR(valueTransform && ease, T())
+                return valueTransform(ease(progress));
+            };
         }
-    };
-}
-
-#endif
+    } // namespace Interpolator
+} // namespace PJ

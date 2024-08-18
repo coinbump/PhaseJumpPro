@@ -1,40 +1,40 @@
-#ifndef PJENUMCLASS_H
-#define PJENUMCLASS_H
+#pragma once
 
 #include "_String.h"
-#include "_Map.h"
-#include "Core.h"
 #include "Class.h"
+#include "OrderedMap.h"
+#include "StandardCore.h"
 #include "VectorList.h"
+#include <optional>
 
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 4/30/23
+ CODE REVIEW: 7/16/24
  */
 namespace PJ {
-    /// Defines the ids and user-facing display names of an enum for serialization and editing
+    /// Defines the ids and user-facing display names of an enum for
+    /// serialization and editing
     template <typename EnumType>
-    class EnumClass : public Class
-    {
+    class EnumClass : public Class<> {
     private:
         VectorList<EnumType> cases;
 
     protected:
-        /// Maps enum to name used for serialization
-        Map<EnumType, String> toIdMap;
+        /// Maps enum to id used for serialization
+        OrderedMap<EnumType, String> toIdMap;
 
         /// Maps id to enum
-        Map<String, EnumType> toEnumMap;
+        OrderedMap<String, EnumType> toEnumMap;
 
         /// Maps Enum to name visible to the user
-        Map<EnumType, String> toNameMap;
+        OrderedMap<EnumType, String> toNameMap;
 
     public:
         using Base = Class;
 
-        EnumClass(String id) : Base(id) {
-        }
+        EnumClass(String id) :
+            Base(id) {}
 
         void MapEnum(EnumType value, String id, String name) {
             cases.Add(value);
@@ -43,24 +43,34 @@ namespace PJ {
             toNameMap[value] = name;
         }
 
-        String IdOf(EnumType value) {
-            return toIdMap[value];
+        String Id(EnumType value) const {
+            String result;
+            auto i = toIdMap.find(value);
+            GUARDR(i != toIdMap.end(), result);
+            return i->second;
         }
 
-        String NameOf(EnumType value) {
-            return toNameMap[value];
+        String Name(EnumType value) const {
+            String result;
+            auto i = toNameMap.find(value);
+            GUARDR(i != toNameMap.end(), result);
+            return i->second;
         }
 
         int ToEnum(String id) const {
-            return toEnumMap[id];
+            int result = 0;
+            auto i = toEnumMap.find(id);
+            GUARDR(i != toEnumMap.end(), result);
+            return i->second;
         }
 
-        VectorList<EnumType> AllCases() const { return cases; }
-        size_t IndexOf(EnumType value) const {
-            auto result = cases.IndexOf(value);
-            return result ? result.value() : 0;
+        VectorList<EnumType> AllCases() const {
+            return cases;
+        }
+
+        std::optional<size_t> IndexOf(EnumType value) const {
+            auto result = PJ::IndexOf(cases, value);
+            return result ? std::make_optional<size_t>(result.value()) : std::optional<size_t>();
         }
     };
-}
-
-#endif
+} // namespace PJ

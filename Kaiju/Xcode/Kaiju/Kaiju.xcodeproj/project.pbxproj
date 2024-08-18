@@ -13,10 +13,6 @@
 		CD376CBD29E797DA00DC7950 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD376CBC29E797D900DC7950 /* OpenGL.framework */; };
 		CD420AA82957F3CE00C5D3E1 /* resources in Resources */ = {isa = PBXBuildFile; fileRef = CD420AA72957F3CE00C5D3E1 /* resources */; };
 		CD420AE92959FE6900C5D3E1 /* SDLTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD420AE82959FE6900C5D3E1 /* SDLTest.cpp */; };
-		CD420AEE2959FFA700C5D3E1 /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD420AEC2959FFA700C5D3E1 /* SDL2.framework */; };
-		CD420AEF2959FFA700C5D3E1 /* SDL2.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CD420AEC2959FFA700C5D3E1 /* SDL2.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		CD420AF02959FFA700C5D3E1 /* SDL2_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD420AED2959FFA700C5D3E1 /* SDL2_image.framework */; };
-		CD420AF12959FFA700C5D3E1 /* SDL2_image.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CD420AED2959FFA700C5D3E1 /* SDL2_image.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CD5FB81C291E130D004F2FB4 /* FilesProcessorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD5FB81B291E130D004F2FB4 /* FilesProcessorView.swift */; };
 		CD5FB81E291E13D5004F2FB4 /* SwiftBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD5FB81D291E13D5004F2FB4 /* SwiftBridge.swift */; };
 		CD5FB83229200602004F2FB4 /* ObjCBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD5FB83129200602004F2FB4 /* ObjCBridge.mm */; };
@@ -28,6 +24,10 @@
 		CD6FEB6C29170AE600F674D3 /* KaijuTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD6FEB6B29170AE600F674D3 /* KaijuTests.mm */; };
 		CD6FEB7629170AE600F674D3 /* KaijuUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6FEB7529170AE600F674D3 /* KaijuUITests.m */; };
 		CD6FEB7829170AE600F674D3 /* KaijuUITestsLaunchTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6FEB7729170AE600F674D3 /* KaijuUITestsLaunchTests.m */; };
+		CDD71CF72BFC3DBE00BA868A /* SDL3.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDD71CF52BFC3DBE00BA868A /* SDL3.framework */; };
+		CDD71CF82BFC3DBE00BA868A /* SDL3.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CDD71CF52BFC3DBE00BA868A /* SDL3.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		CDD71CF92BFC3DBE00BA868A /* SDL3_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDD71CF62BFC3DBE00BA868A /* SDL3_image.framework */; };
+		CDD71CFA2BFC3DBE00BA868A /* SDL3_image.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CDD71CF62BFC3DBE00BA868A /* SDL3_image.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CDF0FB7829EE11DA00B9EF1F /* AppDelegateBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDF0FB7729EE11DA00B9EF1F /* AppDelegateBridge.swift */; };
 /* End PBXBuildFile section */
 
@@ -55,9 +55,9 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				CD420AF12959FFA700C5D3E1 /* SDL2_image.framework in Embed Frameworks */,
+				CDD71CF82BFC3DBE00BA868A /* SDL3.framework in Embed Frameworks */,
 				CD0A848C291CBF630074CA4F /* PhaseJump.framework in Embed Frameworks */,
-				CD420AEF2959FFA700C5D3E1 /* SDL2.framework in Embed Frameworks */,
+				CDD71CFA2BFC3DBE00BA868A /* SDL3_image.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -65,14 +65,14 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		CD08CF092C44827000BF159A /* TestAudioScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestAudioScene.h; sourceTree = "<group>"; };
+		CD08CF0A2C44830100BF159A /* KaijuImGuiRenderer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KaijuImGuiRenderer.h; sourceTree = "<group>"; };
 		CD0A848A291CBF630074CA4F /* PhaseJump.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PhaseJump.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CD2A601A2B39EAFC000B801B /* SwiftTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftTest.swift; sourceTree = "<group>"; };
 		CD376CBC29E797D900DC7950 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		CD420AA72957F3CE00C5D3E1 /* resources */ = {isa = PBXFileReference; lastKnownFileType = folder; path = resources; sourceTree = "<group>"; };
 		CD420AE72959FE6900C5D3E1 /* SDLTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDLTest.h; sourceTree = "<group>"; };
 		CD420AE82959FE6900C5D3E1 /* SDLTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SDLTest.cpp; sourceTree = "<group>"; };
-		CD420AEC2959FFA700C5D3E1 /* SDL2.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SDL2.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		CD420AED2959FFA700C5D3E1 /* SDL2_image.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SDL2_image.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CD5FB81A291E130D004F2FB4 /* Kaiju-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Kaiju-Bridging-Header.h"; sourceTree = "<group>"; };
 		CD5FB81B291E130D004F2FB4 /* FilesProcessorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilesProcessorView.swift; sourceTree = "<group>"; };
 		CD5FB81D291E13D5004F2FB4 /* SwiftBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftBridge.swift; sourceTree = "<group>"; };
@@ -92,11 +92,15 @@
 		CD6FEB7129170AE600F674D3 /* KaijuUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KaijuUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CD6FEB7529170AE600F674D3 /* KaijuUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KaijuUITests.m; sourceTree = "<group>"; };
 		CD6FEB7729170AE600F674D3 /* KaijuUITestsLaunchTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KaijuUITestsLaunchTests.m; sourceTree = "<group>"; };
+		CD73D90A2C607D7300C81812 /* TestInput.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestInput.h; sourceTree = "<group>"; };
 		CD837E4D2A00AFCF00467542 /* TestTextureScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestTextureScene.h; sourceTree = "<group>"; };
-		CD86A73929F0C1540015BFCE /* TestSlicedSpriteScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestSlicedSpriteScene.h; sourceTree = "<group>"; };
+		CD86A73929F0C1540015BFCE /* TestSlicedTextureScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestSlicedTextureScene.h; sourceTree = "<group>"; };
+		CDC2EB542C6EE52500A85053 /* TestEmittersScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestEmittersScene.h; sourceTree = "<group>"; };
 		CDD0D2722BF04E25001C4A5B /* TestAnimatedTexturesScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestAnimatedTexturesScene.h; sourceTree = "<group>"; };
+		CDD71CF52BFC3DBE00BA868A /* SDL3.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SDL3.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CDD71CF62BFC3DBE00BA868A /* SDL3_image.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SDL3_image.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CDF0FB7729EE11DA00B9EF1F /* AppDelegateBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegateBridge.swift; sourceTree = "<group>"; };
-		CDF0FB8229EF943F00B9EF1F /* TestColorVaryScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestColorVaryScene.h; sourceTree = "<group>"; };
+		CDF0FB8229EF943F00B9EF1F /* TestGradientsScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestGradientsScene.h; sourceTree = "<group>"; };
 		CDF0FB8329EF951200B9EF1F /* TestMeshPathScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestMeshPathScene.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -105,10 +109,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CD420AF02959FFA700C5D3E1 /* SDL2_image.framework in Frameworks */,
+				CDD71CF92BFC3DBE00BA868A /* SDL3_image.framework in Frameworks */,
 				CD376CBD29E797DA00DC7950 /* OpenGL.framework in Frameworks */,
+				CDD71CF72BFC3DBE00BA868A /* SDL3.framework in Frameworks */,
 				CD0A848B291CBF630074CA4F /* PhaseJump.framework in Frameworks */,
-				CD420AEE2959FFA700C5D3E1 /* SDL2.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -132,9 +136,9 @@
 		CD0A8489291CBF630074CA4F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CDD71CF52BFC3DBE00BA868A /* SDL3.framework */,
+				CDD71CF62BFC3DBE00BA868A /* SDL3_image.framework */,
 				CD376CBC29E797D900DC7950 /* OpenGL.framework */,
-				CD420AEC2959FFA700C5D3E1 /* SDL2.framework */,
-				CD420AED2959FFA700C5D3E1 /* SDL2_image.framework */,
 				CD0A848A291CBF630074CA4F /* PhaseJump.framework */,
 			);
 			name = Frameworks;
@@ -174,6 +178,7 @@
 			isa = PBXGroup;
 			children = (
 				CDF0FB8029EF941700B9EF1F /* Scenes */,
+				CDF0FB8129EF941D00B9EF1F /* Test */,
 				CD420AE82959FE6900C5D3E1 /* SDLTest.cpp */,
 				CD420AE72959FE6900C5D3E1 /* SDLTest.h */,
 				CD5FB84029204DD2004F2FB4 /* Views */,
@@ -190,6 +195,7 @@
 				CD5FB83029200602004F2FB4 /* ObjCBridge.h */,
 				CD5FB83129200602004F2FB4 /* ObjCBridge.mm */,
 				CDF0FB7729EE11DA00B9EF1F /* AppDelegateBridge.swift */,
+				CD08CF0A2C44830100BF159A /* KaijuImGuiRenderer.h */,
 			);
 			path = Kaiju;
 			sourceTree = "<group>";
@@ -214,7 +220,6 @@
 		CDF0FB8029EF941700B9EF1F /* Scenes */ = {
 			isa = PBXGroup;
 			children = (
-				CDF0FB8129EF941D00B9EF1F /* Test */,
 				CD2A601A2B39EAFC000B801B /* SwiftTest.swift */,
 			);
 			path = Scenes;
@@ -223,11 +228,14 @@
 		CDF0FB8129EF941D00B9EF1F /* Test */ = {
 			isa = PBXGroup;
 			children = (
+				CD08CF092C44827000BF159A /* TestAudioScene.h */,
 				CDD0D2722BF04E25001C4A5B /* TestAnimatedTexturesScene.h */,
 				CD837E4D2A00AFCF00467542 /* TestTextureScene.h */,
-				CDF0FB8229EF943F00B9EF1F /* TestColorVaryScene.h */,
+				CDF0FB8229EF943F00B9EF1F /* TestGradientsScene.h */,
 				CDF0FB8329EF951200B9EF1F /* TestMeshPathScene.h */,
-				CD86A73929F0C1540015BFCE /* TestSlicedSpriteScene.h */,
+				CD86A73929F0C1540015BFCE /* TestSlicedTextureScene.h */,
+				CD73D90A2C607D7300C81812 /* TestInput.h */,
+				CDC2EB542C6EE52500A85053 /* TestEmittersScene.h */,
 			);
 			path = Test;
 			sourceTree = "<group>";

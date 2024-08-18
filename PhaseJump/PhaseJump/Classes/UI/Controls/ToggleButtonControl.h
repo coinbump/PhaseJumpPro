@@ -9,25 +9,22 @@
  Direct port
  CODE REVIEW: 6/18/23
  */
-namespace PJ
-{
-    /// <summary>
+namespace PJ {
     /// A button that, when pressed, toggles off and on
-    /// </summary>
-    class ToggleButtonControl : public ButtonControl
-    {
+    class ToggleButtonControl : public ButtonControl {
     public:
         using Base = ButtonControl;
 
         SP<SomeEffect> toggleEffect;
 
-        bool IsToggleOn() const
-        {
+        bool IsToggleOn() const {
             return isToogleOn;
         }
 
         void SetIsToggleOn(bool value) {
-            if (isToogleOn == value) { return; }
+            if (isToogleOn == value) {
+                return;
+            }
             isToogleOn = value;
             OnToggleChange();
         }
@@ -35,31 +32,29 @@ namespace PJ
     protected:
         bool isToogleOn = false;
 
-        void Awake() override
-        {
+        void Awake() override {
             Base::Awake();
 
             UpdateToggle();
         }
 
-        void OnPress() override
-        {
+        void OnPress() override {
             Base::OnPress();
 
             SetIsToggleOn(!IsToggleOn());
         }
 
-        void OnToggleChange()
-        {
+        void OnToggleChange() {
             UpdateToggle();
         }
 
-        virtual void UpdateToggle()
-        {
-            if (!toggleEffect) { return; }
+        virtual void UpdateToggle() {
+            if (!toggleEffect) {
+                return;
+            }
             toggleEffect->SetIsOn(isToogleOn);
         }
     };
-}
+} // namespace PJ
 
 #endif

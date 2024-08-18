@@ -1,20 +1,43 @@
-#ifndef PJSCENE_H
-#define PJSCENE_H
+#pragma once
 
 #include "SomeLoadResourcesOperation.h"
+#include "WorldComponent.h"
 
+/*
+ RATING: 5 stars
+ Has unit tests
+ CODE REVIEW: 8/17/24
+ */
 namespace PJ {
+    class World;
+
     /**
-     Scenes can be loaded into the world.
-     FUTURE: develop a file format, or parse Unity scenes?
+     Scenes load themselves into their parent node on start
      */
-    class Scene {
+    class Scene : public WorldComponent<> {
+    protected:
+        bool isLoaded = false;
+
     public:
-        /// First key: resource type, second key: id
-        LoadedResourceMap resources;
+        // FUTURE: develop a file format, or parse Unity/Godot scenes
+        using Base = WorldComponent<>;
+        using LoadFunc = std::function<void(WorldNode& root)>;
+
+        LoadFunc loadFunc;
 
         virtual ~Scene() {}
-    };
-}
 
-#endif
+        bool IsLoaded() const {
+            return isLoaded;
+        }
+
+        virtual void LoadInto(WorldNode& root) {
+            GUARD(loadFunc)
+            loadFunc(root);
+        }
+
+        // MARK: WorldComponent
+
+        void Start() override;
+    };
+} // namespace PJ

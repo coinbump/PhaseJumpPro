@@ -1,200 +1,166 @@
 #ifndef PJSTATEMACHINE_H
 #define PJSTATEMACHINE_H
 
-#include "CyclicGraph.h"
-#include "SomeStateMachine.h"
 #include "Broadcaster.h"
-#include "_Map.h"
-#include "_Set.h"
+#include "CyclicGraph.h"
 #include "List.h"
+#include "Log.h"
+#include "SomeStateMachine.h"
+#include "StandardEventCore.h"
+#include "UnorderedMap.h"
 #include <iostream>
 
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 12/11/22
+ CODE REVIEW: 7/6/24
  */
-namespace PJ
-{
-    template <class T>
-    class StateChangeEvent : public Event
-    {
+namespace PJ {
+    template <class StateType>
+    class StateChangeEvent : public Event<StandardEventCore> {
     public:
-        T prevState;
-        T state;
+        using Base = Event<StandardEventCore>;
 
-        StateChangeEvent(T prevState, T state, WP<PJ::Base> sentFrom) :
-        Event(String(""), sentFrom),
-        prevState(prevState),
-        state(state)
-        {
-        }
+        StateType prevState;
+        StateType state;
+
+        StateChangeEvent(StateType prevState, StateType state, WP<PJ::Base> sentFrom) :
+            Base(StandardEventCore(String(""), sentFrom)),
+            prevState(prevState),
+            state(state) {}
     };
 
-    struct StateMachineEdgeModel
-    {
+    struct StateMachineEdgeModel {
         using InputList = VectorList<String>;
 
-        /// <summary>
         /// Inputs that cause a transition to the next state
-        /// </summary>
         InputList inputs;
 
-        StateMachineEdgeModel(InputList inputs) : inputs(inputs)
-        {
-        }
+        StateMachineEdgeModel(InputList inputs) :
+            inputs(inputs) {}
     };
 
-    /// <summary>
-    /// State machine graph. Each node in the graph is a state. Edges are transitions
-    /// </summary>
-    template <class T>
-    class StateMachine : public CyclicGraph<StateMachineEdgeModel>, public SomeStateMachine<T>
-    {
+    /// State machine graph. Each node in the graph is a state. Edges are
+    /// transitions
+    template <class StateType>
+    class StateMachine : public CyclicGraph<CyclicGraphNode<StateMachineEdgeModel, StateType>>,
+                         public SomeStateMachine<StateType> {
     public:
-        using EdgeModel = StateMachineEdgeModel;
-        using Base = CyclicGraph<StateMachineEdgeModel>;
+        using EdgeCore = StateMachineEdgeModel;
+        using Node = CyclicGraphNode<EdgeCore, StateType>;
+        using Base = CyclicGraph<Node>;
         using InputList = VectorList<String>;
-
-        class Node : public CyclicGraphNode<EdgeModel>
-        {
-        public:
-            T state;
-
-            Node(T state) : state(state)
-            {
-            }
-        };
 
         using NodeSharedPtr = SP<Node>;
 
     protected:
-        T state = T();
-        T prevState = T();
+        StateType state = StateType();
+        StateType prevState = StateType();
 
-        Map<T, NodeSharedPtr> stateToNodeMap;
+        UnorderedMap<StateType, NodeSharedPtr> stateToNodeMap;
 
     public:
-        /// <summary>
-        /// Broadcast state change events
-        /// </summary>
-        Broadcaster broadcaster;
-
-        /// <summary>
         /// If true, state transitions can't occur
-        /// </summary>
         bool isLocked = false;
 
     public:
-        bool IsLocked() const { return isLocked; }
-        void SetIsLocked(bool value)
-        {
+        bool IsLocked() const {
+            return isLocked;
+        }
+
+        void SetIsLocked(bool value) {
             isLocked = value;
         }
 
-        T PrevState() const { return prevState; }
-
-        StateMachine()
-        {
+        void Lock() {
+            SetIsLocked(true);
         }
 
-        StateMachine(Broadcaster::ListenerWeakPtr listener)
-        {
-            AddListener(listener);
+        void Unlock() {
+            SetIsLocked(false);
         }
 
-        /// <summary>
+        StateType PrevState() const {
+            return prevState;
+        }
+
+        StateMachine() {}
+
         /// Return a node object for the state (if any)
-        /// </summary>
-        NodeSharedPtr NodeForState(T state) const
-        {
+        NodeSharedPtr NodeForState(StateType state) const {
             auto value = stateToNodeMap.find(state);
             if (value != stateToNodeMap.end()) {
                 return value->second;
             }
 
-            return NodeSharedPtr();
+            return nullptr;
         }
 
-        /// <summary>
         /// Add a state and a node in the graph
-        /// </summary>
-        NodeSharedPtr AddState(T state)
-        {
+        NodeSharedPtr AddState(StateType state) {
             auto node = NodeForState(state);
-            if (node)
-            {
+            if (node) {
                 return node;
             }
 
             node = MAKE<Node>(state);
-            this->nodes.Add(node);
+            this->nodes.insert(node);
 
             stateToNodeMap[state] = node;
 
             return node;
         }
 
-        void OnInput(String input)
-        {
+        void OnInput(String input) {
             auto state = this->state;
             auto node = NodeForState(state);
 
-            if (!node)
-            {
-                std::cout << "ERROR. State has no node in graph";
+            if (!node) {
+                PJLog("ERROR. State has no node in graph");
                 return;
             }
 
             // Search for a matching input. If we find it, do a state transition
-            for (auto edge : node->Edges())
-            {
-                for (auto edgeInput : edge->model.inputs)
-                {
-                    if (edgeInput == input)
-                    {
+            for (auto& edge : node->Edges()) {
+                for (auto& edgeInput : edge->core.inputs) {
+                    if (edgeInput == input) {
                         auto toNode = DCAST<Node>(edge->toNode->Value());
-                        if (!toNode) { continue; }
+                        if (!toNode) {
+                            continue;
+                        }
 
-                        SetState(toNode->state);
+                        SetState(toNode->core);
                         return;
                     }
                 }
             }
         }
 
-        /// <summary>
         /// Connect two states via inputs, adding them to the graph if necessary
-        /// </summary>
-        void ConnectStates(T fromState, InputList inputs, T toState)
-        {
+        void ConnectStates(StateType fromState, InputList inputs, StateType toState) {
             auto fromNode = AddState(fromState);
             auto toNode = AddState(toState);
 
-            if (nullptr == fromNode || nullptr == toNode) { return; }
+            if (nullptr == fromNode || nullptr == toNode) {
+                return;
+            }
 
-            AddEdge(fromNode, EdgeModel(inputs), toNode);
+            this->AddEdge(fromNode, EdgeCore(inputs), toNode);
         }
 
-        void AddListener(Broadcaster::ListenerWeakPtr listener)
-        {
-            broadcaster.AddListener(listener);
+        StateType State() const {
+            return state;
         }
 
-        T State() const { return state; }
-        void SetState(T value)
-        {
+        void SetState(StateType value) {
             auto newState = value;
-            if (newState == state)
-            {
+            if (newState == state) {
                 return;
             }
-            if (isLocked)
-            {
+            if (isLocked) {
                 return;
             }
-            if (!CanTransition(newState))
-            {
+            if (!CanTransition(newState)) {
                 return;
             }
 
@@ -203,30 +169,22 @@ namespace PJ
         }
 
     protected:
-        /// <summary>
         /// Sets the state value without broadcasting.
-        /// </summary>
-        virtual void SetStateInternal(T newState)
-        {
+        virtual void SetStateInternal(StateType newState) {
             prevState = state;
             state = newState;
         }
 
     public:
-        /// <summary>
         /// Return true if we can transition to the new state
-        /// </summary>
-        virtual bool CanTransition(T newState) { return true; }
+        virtual bool CanTransition(StateType newState) {
+            return true;
+        }
 
     protected:
-        /// <summary>
         /// Respond to state change
-        /// </summary>
-        virtual void OnStateChange(T newState)
-        {
-            broadcaster.Broadcast(MAKE<StateChangeEvent<T>>(prevState, newState, this->shared_from_this()));
-        }
+        virtual void OnStateChange(StateType newState) {}
     };
-}
+} // namespace PJ
 
 #endif

@@ -1,62 +1,87 @@
-#ifndef PJPOINTERCLICKUIEVENT_H
-#define PJPOINTERCLICKUIEVENT_H
+#pragma once
 
 #include "SomePointerUIEvent.h"
 
+/*
+ RATING: 5 stars
+ Simple types
+ CODE REVIEW: 8/9/24
+ */
 namespace PJ {
-    template <class Position>
-    class PointerClickUIEvent : public SomePointerUIEvent {
+    /// Sent for a pointer down event followed by a pointer up event over the same visual element
+    class PointerClickUIEvent : public SomePointerButtonUIEvent {
     public:
-        Position pressPosition;
+        using Base = SomePointerButtonUIEvent;
+        using InputButton = PointerInputButtonType;
 
-        PointerClickUIEvent(Position pressPosition, InputButton button) : pressPosition(pressPosition) {
-            this->button = button;
+        PointerClickUIEvent(ScreenPosition pressPosition, InputButton button) :
+            Base(button) {
+            this->screenPos = pressPosition;
         }
     };
 
-    template <class Position>
-    class PointerDownUIEvent : public SomePointerUIEvent {
+    /// Sent when a pointer button is pressed
+    class PointerDownUIEvent : public SomePointerButtonUIEvent {
     public:
-        Position pressPosition;
+        using Base = SomePointerButtonUIEvent;
+        using InputButton = PointerInputButtonType;
 
-        PointerDownUIEvent(Position pressPosition, InputButton button) : pressPosition(pressPosition) {
-            this->button = button;
+        PointerDownUIEvent(ScreenPosition pressPosition, InputButton button) :
+            Base(button) {
+            this->screenPos = pressPosition;
         }
     };
 
-    class PointerUpUIEvent : public SomeUIEvent {
+    /// Sent when a pointer button is released
+    class PointerUpUIEvent : public SomePointerButtonUIEvent {
     public:
-        using InputButton = PointerInputButton;
+        using Base = SomePointerButtonUIEvent;
+        using InputButton = PointerInputButtonType;
 
-        InputButton button;
-
-        PointerUpUIEvent(InputButton button) : button(button) {
-        }
+        PointerUpUIEvent(InputButton button) :
+            Base(button) {}
     };
 
-    template <class Position>
-    class MouseMotionUIEvent : public SomeUIEvent {
+    /// Sent when the pointer moves
+    class PointerMoveUIEvent : public SomeUIEvent {
     public:
-        Position position;
+        ScreenPosition screenPos;
         Vector2 delta;
 
-        MouseMotionUIEvent(Position position, Vector2 delta) : position(position), delta(delta) {
-        }
+        PointerMoveUIEvent(ScreenPosition position, Vector2 delta) :
+            screenPos(position),
+            delta(delta) {}
     };
 
-    class PointerEnterUIEvent : public SomePointerUIEvent {};
-    class PointerExitUIEvent : public SomePointerUIEvent {};
+    /// Sent when the pointer enters a visual element
+    class PointerEnterUIEvent : public SomePointerUIEvent {
+    public:
+        using Base = SomePointerUIEvent;
+
+        PointerEnterUIEvent() :
+            Base() {}
+    };
+
+    /// Sent when the pointer exits a visual element
+    class PointerExitUIEvent : public SomePointerUIEvent {
+    public:
+        using Base = SomePointerUIEvent;
+
+        PointerExitUIEvent() :
+            Base() {}
+    };
 
     /// Responds to pointer events
-    class SomePointerEventsResponder {
+    class SomePointerUIEventsResponder {
     public:
-        virtual ~SomePointerEventsResponder() {}
-        
-        virtual void OnPointerDownEvent(PointerDownUIEvent<LocalPosition> event) {}
-        virtual void OnPointerEnterEvent(PointerEnterUIEvent event) {}
-        virtual void OnPointerExitEvent(PointerExitUIEvent event) {}
-        virtual void OnPointerUpEvent(PointerUpUIEvent event) {}
-    };
-}
+        virtual ~SomePointerUIEventsResponder() {}
 
-#endif
+        virtual void OnPointerDown(PointerDownUIEvent event) {}
+
+        virtual void OnPointerEnter(PointerEnterUIEvent event) {}
+
+        virtual void OnPointerExit(PointerExitUIEvent event) {}
+
+        virtual void OnPointerUp(PointerUpUIEvent event) {}
+    };
+} // namespace PJ

@@ -1,23 +1,19 @@
 #include "SQLDatabase.h"
-#include "SQLUtils.h"
+#include "SQLTool.h"
 #include "SQLTypes.h"
-#include "StringVectorList.h"
+#include "VectorList.h"
 
 using namespace PJ;
 
-//#define __SQL_DEBUG__
+// #define __SQL_DEBUG__
 
-SQLDatabase::SQLDatabase()
-{
+SQLDatabase::SQLDatabase() {}
+
+SQLDatabase::~SQLDatabase() {
+    Close();
 }
 
-SQLDatabase::~SQLDatabase()
-{
-	Close();
-}
-
-void SQLDatabase::Close()
-{
+void SQLDatabase::Close() {
     if (NULL != db) {
         sqlite3_close(db);
         db = NULL;
@@ -27,30 +23,30 @@ void SQLDatabase::Close()
 /**
  Try to open/create the database. Throw an error if it fails
 
- Usage: don't forget to create directories to the file path first if you're creating a new database
+ Usage: don't forget to create directories to the file path first if you're
+ creating a new database
 
  sqlite3_open: https://www.sqlite.org/c3ref/open.html
  Flags: https://www.sqlite.org/c3ref/c_open_autoproxy.html
  */
-bool SQLDatabase::TryOpen(FilePath filePath, SQLDatabaseOpenType openType, int flags)
-{
-	Close();
+bool SQLDatabase::TryOpen(FilePath filePath, SQLDatabaseOpenType openType, int flags) {
+    Close();
 
     String databasePath(filePath.c_str());
     switch (openType) {
-        case SQLDatabaseOpenType::AtPath:
-            break;
-        case SQLDatabaseOpenType::InMemory:
-            databasePath = ":memory:";
-            break;
-        case SQLDatabaseOpenType::TemporaryOnDisk:
-            databasePath = "";
-            break;
+    case SQLDatabaseOpenType::AtPath:
+        break;
+    case SQLDatabaseOpenType::InMemory:
+        databasePath = ":memory:";
+        break;
+    case SQLDatabaseOpenType::TemporaryOnDisk:
+        databasePath = "";
+        break;
     }
 
     this->filePath = filePath;
 
-	int	openResult = sqlite3_open_v2(databasePath.c_str(), &db, flags, NULL);
+    int openResult = sqlite3_open_v2(databasePath.c_str(), &db, flags, NULL);
     auto isSuccess = (SQLITE_OK == openResult && NULL != db);
 
     if (!isSuccess) {
@@ -65,20 +61,20 @@ bool SQLDatabase::TryOpen(FilePath filePath, SQLDatabaseOpenType openType, int f
 
  https://www.sqlite.org/c3ref/prepare.html
  */
-int SQLDatabase::Prepare(SQLCommand& command)
-{
+int SQLDatabase::Prepare(SQLCommand& command) {
     if (command.statement.value.length() == 0) {
         PJLog("ERROR. Statement is empty");
         return SQLITE_MISUSE;
     }
 
-    int	result = sqlite3_prepare_v2(db, command.statement.value.c_str(), -1, &command.sqliteStatement, NULL);
+    int result =
+        sqlite3_prepare_v2(db, command.statement.value.c_str(), -1, &command.sqliteStatement, NULL);
 
 #ifdef __SQL_DEBUG__
-	PJLog("SQL. Prepare %s, RESULT: %d", command.statement.value.c_str(), result);
+    PJLog("SQL. Prepare %s, RESULT: %d", command.statement.value.c_str(), result);
 #endif
 
-	return result;
+    return result;
 }
 
 /**
@@ -86,26 +82,24 @@ int SQLDatabase::Prepare(SQLCommand& command)
 
  https://www.sqlite.org/c3ref/step.html
  */
-int SQLDatabase::Step(SQLCommand& command)
-{
+int SQLDatabase::Step(SQLCommand& command) {
     if (!command.IsPrepared()) {
         PJLog("ERROR. Statement must be prepared before Step");
         return SQLITE_MISUSE;
     }
 
-	int	result = sqlite3_step(command.sqliteStatement);
+    int result = sqlite3_step(command.sqliteStatement);
 
 #ifdef __SQL_DEBUG__
-	PJLog("SQL. Step RESULT: %d", result);
+    PJLog("SQL. Step RESULT: %d", result);
 #endif
 
-	return result;
+    return result;
 }
 
-void SQLDatabase::TryRun(SQLStatement statement)
-{
+void SQLDatabase::TryRun(SQLStatement statement) {
     SQLCommand command(statement);
-    
+
     // EXAMPLE: "insert into bank (game, paid) values (30, 400)"
     if (SQLITE_OK == Prepare(command)) {
         bool isDone = false;
@@ -114,30 +108,29 @@ void SQLDatabase::TryRun(SQLStatement statement)
             auto result = Step(command);
 
             switch (result) {
-                case SQLITE_DONE:
-                    isDone = true;
-                    break;
-                case SQLITE_ROW:
-                    continue;
-                    break;
-                default:
-                    throw(result);
-                    break;
+            case SQLITE_DONE:
+                isDone = true;
+                break;
+            case SQLITE_ROW:
+                continue;
+                break;
+            default:
+                throw(result);
+                break;
             }
         }
     }
 }
 
 // http://stackoverflow.com/questions/1601151/how-do-i-check-in-sqlite-whether-a-table-exists
-bool SQLDatabase::TableExists(String tableName)
-{
+bool SQLDatabase::TableExists(String tableName) {
     bool result = false;
 
     SQLStatement statement("SELECT name FROM sqlite_master WHERE type='table' AND name=");
     statement.Append(SQLValue(SQLValueType::Text, tableName));
 
     SQLCommand command(statement);
-    
+
     if (SQLITE_OK == Prepare(command)) {
         // If table exists, a row is returned.
         if (SQLITE_ROW == Step(command)) {
@@ -148,8 +141,7 @@ bool SQLDatabase::TableExists(String tableName)
     return result;
 }
 
-VectorList<String> SQLDatabase::TableNames()
-{
+VectorList<String> SQLDatabase::TableNames() {
     VectorList<String> result;
 
     SQLStatement statement("SELECT name FROM sqlite_master WHERE type='table'");
@@ -161,7 +153,7 @@ VectorList<String> SQLDatabase::TableNames()
             String tableName((const char*)sqlite3_column_text(command.sqliteStatement, 0));
 
             if (tableName == "sqlite_autoindex") {
-                continue;    // Skip the index tables.
+                continue; // Skip the index tables.
             }
             result.Add(tableName);
         }
@@ -170,31 +162,30 @@ VectorList<String> SQLDatabase::TableNames()
     return result;
 }
 
-bool SQLDatabase::CreateTable(String tableName, SQLTableSchema schema)
-{
+bool SQLDatabase::CreateTable(String tableName, SQLTableSchema schema) {
     String paramsString = " (";
-    StringVectorList paramList;
-    for (auto column : schema.columns) {
+    VectorList<String> paramList;
+    for (auto& column : schema.columns) {
         String pString;
         String name = column.name;
         String sqlValueType = "ANY";
 
         switch (column.valueType) {
-            case SQLValueType::Text:
-                sqlValueType = "TEXT";
-                break;
-            case SQLValueType::Real:
-                sqlValueType = "REAL";
-                break;
-            case SQLValueType::Int:
-                sqlValueType = "INTEGER";
-                break;
-            case SQLValueType::Blob:
-                sqlValueType = "BLOB";
-                break;
-            case SQLValueType::Any:
-                sqlValueType = "ANY";
-                break;
+        case SQLValueType::Text:
+            sqlValueType = "TEXT";
+            break;
+        case SQLValueType::Real:
+            sqlValueType = "REAL";
+            break;
+        case SQLValueType::Int:
+            sqlValueType = "INTEGER";
+            break;
+        case SQLValueType::Blob:
+            sqlValueType = "BLOB";
+            break;
+        case SQLValueType::Any:
+            sqlValueType = "ANY";
+            break;
         }
 
         pString.append("[");
@@ -232,23 +223,23 @@ bool SQLDatabase::CreateTable(String tableName, String paramsString) {
 }
 
 void SQLDatabase::BeginTransaction() {
-	switch (transactionStateMachine->State()) {
-		case SQLDatabase::TransactionState::InTransaction:
-			return;	// Already in transaction
-			break;
-		default:
-			break;
-	}
+    switch (transactionStateMachine->State()) {
+    case SQLDatabase::TransactionState::InTransaction:
+        return; // Already in transaction
+        break;
+    default:
+        break;
+    }
 
-	char *errorMessage = NULL;
-	if (SQLITE_OK == sqlite3_exec(db, "BEGIN TRANSACTION", NULL, NULL, &errorMessage)) {
-		transactionStateMachine->SetState(TransactionState::InTransaction);
-	}
+    char* errorMessage = NULL;
+    if (SQLITE_OK == sqlite3_exec(db, "BEGIN TRANSACTION", NULL, NULL, &errorMessage)) {
+        transactionStateMachine->SetState(TransactionState::InTransaction);
+    }
 }
 
 void SQLDatabase::EndTransaction() {
-	char *errorMessage = NULL;
-	if (SQLITE_OK == sqlite3_exec(db, "END TRANSACTION", NULL, NULL, &errorMessage)) {
-		transactionStateMachine->SetState(TransactionState::Default);
-	}
+    char* errorMessage = NULL;
+    if (SQLITE_OK == sqlite3_exec(db, "END TRANSACTION", NULL, NULL, &errorMessage)) {
+        transactionStateMachine->SetState(TransactionState::Default);
+    }
 }

@@ -1,19 +1,17 @@
-#ifndef PJLIST_H
-#define PJLIST_H
+#pragma once
 
-#include "Macros_Collections.h"
+#include "CollectionUtils.h"
 #include <list>
 #include <memory>
 
+// TODO: rethink using inheritance here
 /*
  RATING: 5 stars
- Adds convenience funcs to std::vector
- CODE REVIEW: 11/20/22
+ Extends std::list
+ CODE REVIEW: 6/8/24
  */
 namespace PJ {
-    /// <summary>
     /// Extends std::list with convenience methods
-    /// </summary>
     template <class T, class Allocator = std::allocator<T>>
     class List : public std::list<T> {
     public:
@@ -22,16 +20,16 @@ namespace PJ {
 
         List() {}
 
-        constexpr List(std::initializer_list<T> init,
-                       const Allocator& alloc = Allocator()) : Base(init, alloc) {
-        }
+        constexpr List(std::initializer_list<T> init, const Allocator& alloc = Allocator()) :
+            Base(init, alloc) {}
 
         // Convenience
-        void Append(T const& value) { this->push_back(value); }
-        void Add(T const& value) { this->push_back(value); }
+        void Append(T const& value) {
+            this->push_back(value);
+        }
 
-        COLLECTION_METHODS(List<T>, T)
+        void Add(T const& value) {
+            this->push_back(value);
+        }
     };
-}
-
-#endif
+} // namespace PJ

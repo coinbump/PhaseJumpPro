@@ -1,4 +1,4 @@
 #include "SDLTextureRenderer.h"
-#include <SDL2/SDL_main.h>
+#include <SDL3/SDL_main.h>
 
 using namespace PJ;

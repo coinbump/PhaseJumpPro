@@ -1,36 +1,39 @@
-#ifndef PJFIXEDNORMALRANDOM_H
-#define PJFIXEDNORMALRANDOM_H
+#pragma once
 
+#include "SomeRandom.h"
 #include "VectorList.h"
 
 /*
  RATING: 5 stars
- Simple utility
- CODE REVIEW: 12/29/22
+ Has unit tests
+ CODE REVIEW: 7/6/24
  */
-namespace PJ
-{
-    /// <summary>
+namespace PJ {
     /// Returns a fixed set of random values (for testing, debugging)
-    /// </summary>
-    class FixedRandom : public SomeRandom
-    {
+    class FixedRandom : public SomeRandom {
     public:
+        using T = float;
+        using Allocator = VectorList<float>::allocator_type;
+
         VectorList<float> values;
 
     protected:
         int valueIndex = 0;
 
     public:
-        float Value() override
-        {
-            if (values.Count() == 0) { return 0; }
+        FixedRandom() {}
 
-            auto index = valueIndex % values.Count();
+        constexpr FixedRandom(std::initializer_list<T> init, const Allocator& alloc = Allocator()) :
+            values(init, alloc) {}
+
+        float Value() override {
+            if (values.size() == 0) {
+                return 0;
+            }
+
+            auto index = valueIndex % values.size();
             valueIndex++;
             return values[index];
         }
     };
-}
-
-#endif
+} // namespace PJ

@@ -1,7 +1,7 @@
 #ifndef PJGOALEVENT_H
 #define PJGOALEVENT_H
 
-#include "Event.h"
+#include "SomeEvent.h"
 #include <memory>
 
 /*
@@ -9,22 +9,18 @@
  Simple utility
  CODE REVIEW: 5/11/24
  */
-namespace PJ
-{
+namespace PJ {
     class SomeGoal;
 
-    /// <summary>
     /// Event: goal has been completed
-    /// </summary>
-    class GoalCompleteEvent : public Event
-    {
+    class GoalCompleteEvent : public SomeEvent {
     public:
+        // TODO: SP-audit
         SP<SomeGoal> goal;
 
-        GoalCompleteEvent(SP<SomeGoal> goal) : goal(goal)
-        {
-        }
+        GoalCompleteEvent(SP<SomeGoal> goal) :
+            goal(goal) {}
     };
-}
+} // namespace PJ
 
 #endif

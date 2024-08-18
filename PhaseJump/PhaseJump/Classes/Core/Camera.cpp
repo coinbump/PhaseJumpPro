@@ -1,7 +1,5 @@
 #include "Camera.h"
-#include "Macros.h"
+#include "Utils.h"
 
 using namespace std;
 using namespace PJ;
-
-SP<SomeCamera> Camera::main;

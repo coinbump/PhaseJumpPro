@@ -1,11 +1,5 @@
 #import <XCTest/XCTest.h>
-#include "Types/_String.h"
-#include "Types/FloatClamp.h"
-#include "Types/FloatTransform.h"
-#include "AnimationCycleTypes.h"
-#include "Core/Updatable.h"
-#include "SomeTimed.h"
-#include "Timer.h"
+#include "_String.h"
 #include "gtest/gtest.h"
 
 using namespace PJ;

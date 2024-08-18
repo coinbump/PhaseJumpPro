@@ -1,63 +1,124 @@
 #include "AnimatedSpriteRenderer.h"
 #include "QuadMeshBuilder.h"
-#include "RenderMaterial.h"
+#include "RateFramePlayable.h"
 #include "RenderIntoModel.h"
-#include "SomeRenderEngine.h"
-#include "RenderModelBuilder.h"
+#include "RenderMaterial.h"
 #include "RenderModel.h"
-#include "Macros.h"
-#include "SomeFrameAnimator.h"
+#include "RenderModelBuilder.h"
+#include "SomeRenderEngine.h"
+#include "TextureAtlas.h"
+#include "Utils.h"
 
 using namespace std;
 using namespace PJ;
 
-AnimatedSpriteRenderer::AnimatedSpriteRenderer(TextureList const& textures) : textures(textures) {
-    material = MAKE<RenderMaterial>();
-    
-    frameAnimator = SCAST<SomeFrameAnimator>(MAKE<RateFrameAnimator>(5.0f));
+AnimatedSpriteRenderer::AnimatedSpriteRenderer(TextureList const& textures) {
+    std::transform(
+        textures.cbegin(), textures.cend(), std::back_inserter(frames),
+        [](SP<SomeTexture> texture) { return Frame(texture, Vector2::zero); }
+    );
 
-    if (!textures.IsEmpty()) {
+    material = MAKE<RenderMaterial>();
+
+    framePlayable = SCAST<SomeFramePlayable>(MAKE<RateFramePlayable>(textures.size(), 12.0f));
+
+    if (!IsEmpty(textures)) {
         auto texture = textures[0];
-        material->textures.Add(textures[0]);
+        material->Add(texture);
 
         QuadMeshBuilder builder(Vector2((float)texture->size.x, (float)texture->size.y));
         mesh = builder.BuildMesh();
     }
 }
 
-void AnimatedSpriteRenderer::RenderInto(RenderIntoModel model) {
-    if (nullptr == material || nullptr == material->shaderProgram) {
+AnimatedSpriteRenderer::AnimatedSpriteRenderer(TextureAtlas const& atlas) {
+    std::transform(
+        atlas.Textures().cbegin(), atlas.Textures().cend(), std::back_inserter(frames),
+        [](SP<AtlasTexture> texture) {
+            Vector2 size(texture->size.x, texture->size.y);
+            Vector2 trueSize(texture->trueSize.x, texture->trueSize.y);
+            Vector2 trimOrigin(texture->trimOrigin.x, texture->trimOrigin.y);
+
+            Vector2 truePosition(
+                trueSize.x / 2.0f * Vector2::left.x, trueSize.y / 2.0f * Vector2::up.y
+            );
+            Vector2 actualPosition(size.x / 2.0f * Vector2::left.x, size.y / 2.0f * Vector2::up.y);
+            Vector2 truePositionWithTrim = Vector2(
+                truePosition.x + trimOrigin.x * Vector2::right.x,
+                truePosition.y + trimOrigin.y * Vector2::down.y
+            );
+
+            return Frame(texture, truePositionWithTrim - actualPosition);
+        }
+    );
+
+    material = MAKE<RenderMaterial>();
+
+    auto const& textures = atlas.Textures();
+    framePlayable = SCAST<SomeFramePlayable>(MAKE<RateFramePlayable>(textures.size(), 12.0f));
+
+    if (!IsEmpty(textures)) {
+        auto texture = textures[0];
+        material->Add(texture);
+
+        QuadMeshBuilder builder(Vector2((float)texture->size.x, (float)texture->size.y));
+        mesh = builder.BuildMesh();
+    }
+}
+
+VectorList<RenderModel> AnimatedSpriteRenderer::MakeRenderModels(RenderIntoModel const& model) {
+    VectorList<RenderModel> result;
+
+    if (nullptr == material) {
         PJLog("ERROR. Missing material.");
-        return;
+        return result;
     }
 
+    GUARDR(owner, result)
+    GUARDR(frame >= 0 && frame < frames.size(), result)
+    auto frameModel = frames[frame];
+
+    auto mesh = this->mesh;
+    auto offset = frameModel.offset;
+    if (flipX) {
+        offset.x = -offset.x;
+    }
+    if (flipY) {
+        offset.y = -offset.y;
+    }
+
+    mesh.OffsetBy(offset);
+
     RenderModelBuilder builder;
-    auto renderModel = builder.Build(*material->shaderProgram,
-                                     mesh,
-                                     *material,
-                                     model.modelMatrix,
-                                     owner.lock()->transform->WorldPosition().z);
+    VectorList<SomeTexture*> textures{ frameModel.texture.get() };
+    auto renderModel = builder.Build(
+        mesh, *material, textures, ModelMatrix(), owner->transform->WorldPosition().z
+    );
 
-    std::transform(renderModel.uvs.begin(), renderModel.uvs.end(), renderModel.uvs.begin(), [this] (Vector2 uv) {
-        if (flipX) {
-            uv.x = 1.0f - uv.x;
+    std::transform(
+        renderModel.UVs().cbegin(), renderModel.UVs().cend(), renderModel.UVs().begin(),
+        [this](Vector2 uv) {
+            if (flipX) {
+                uv.x = 1.0f - uv.x;
+            }
+
+            if (flipY) {
+                uv.y = 1.0f - uv.y;
+            }
+            return uv;
         }
+    );
 
-        if (flipY) {
-            uv.y = 1.0f - uv.y;
-        }
-        return uv;
-    });
-
-    model.renderContext->renderEngine->RenderProcess(renderModel);
+    result.push_back(renderModel);
+    return result;
 }
 
 void AnimatedSpriteRenderer::SetColor(Color color) {
     if (material) {
-        if (material->uniformColors.IsEmpty()) {
-            material->uniformColors.Add(color);
+        if (IsEmpty(material->UniformColors())) {
+            material->AddUniformColor(color);
         } else {
-            material->uniformColors[0] = color;
+            material->SetUniformColor(0, color);
         }
     }
 }
@@ -65,23 +126,24 @@ void AnimatedSpriteRenderer::SetColor(Color color) {
 void AnimatedSpriteRenderer::OnUpdate(TimeSlice time) {
     Base::OnUpdate(time);
 
-    if (textures.IsEmpty()) {
+    if (IsEmpty(frames)) {
         return;
     }
-    if (nullptr == frameAnimator) {
-        return;
-    }
+    GUARD(framePlayable)
 
     int oldFrame = frame;
-    frame = frameAnimator->FrameForUpdate(time, int(textures.size()));
+    framePlayable->OnUpdate(time);
+    frame = framePlayable->Frame();
 
     if (oldFrame == frame) {
         return;
     }
 
-    auto texture = textures[frame];
-    material->textures = VectorList<SP<SomeTexture>>{texture};
+    GUARD(frame >= 0 && frame < frames.size())
+    auto frameModel = frames[frame];
 
-    QuadMeshBuilder builder(Vector2((float)texture->size.x, (float)texture->size.y));
+    QuadMeshBuilder builder(
+        Vector2((float)frameModel.texture->size.x, (float)frameModel.texture->size.y)
+    );
     mesh = builder.BuildMesh();
 }

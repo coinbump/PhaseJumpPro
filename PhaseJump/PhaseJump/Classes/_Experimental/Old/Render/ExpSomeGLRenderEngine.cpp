@@ -1,13 +1,6 @@
-//
-//  ExpSomeGLRenderEngine.cpp
-//  PhaseJump
-//
-//  Created by Jeremy Vineyard on 4/13/23.
-//
-
 #include <stdio.h>
 //
-//void SomeGLRenderEngine::RenderLineLoop(VectorList<float> const& vertices)
+// void SomeGLRenderEngine::RenderLineLoop(VectorList<float> const& vertices)
 //{
 //    RenderInternal([] () {
 //        //    VertexPointer(2, GL_FLOAT, 0, vertices);
@@ -15,7 +8,7 @@
 //    });
 //}
 //
-//void SomeGLRenderEngine::RenderLine(VectorList<float> const& vertices)
+// void SomeGLRenderEngine::RenderLine(VectorList<float> const& vertices)
 //{
 //    RenderInternal([] () {
 //        //    VertexPointer(2, GL_FLOAT, 0, &vertices);
@@ -28,26 +21,26 @@
 //  SomeGLRenderEngine.mm
 //  Phase Jump
 //
-//  Created by Jeremy Vineyard on 9/23/10.
 //  Copyright 2010 Coin Bump. All rights reserved.
 //
 //
-//#include "pch.h"
+// #include "pch.h"
 //
-//#include "SomeGLRenderEngine.h"
-//#include "PJ_GLHeaders.h"
-//#include "PJ_Math.h"
-//#include "PJ_DrawTexture.h"
-//#include "PJ_Types.h"
+// #include "SomeGLRenderEngine.h"
+// #include "PJ_GLHeaders.h"
+// #include "PJ_Math.h"
+// #include "PJ_DrawTexture.h"
+// #include "PJ_Types.h"
 //
-//PJ_RenderStateStack    pjREStateStack;
-//SomeGLRenderEngine*    PJ::renderEngine = NULL;    // Render engine.
-//PJ_RenderState        PJ::renderState;
+// PJ_RenderStateStack    pjREStateStack;
+// SomeGLRenderEngine*    PJ::renderEngine = NULL;    // Render engine.
+// PJ_RenderState        PJ::renderState;
 //
-//PJ_REMatrixStack    PJ::renderMatrixStack[static_cast<int>(MatrixStack::GLNumRenderStacks)];
-//int PJ::frameRenderCount = 0;
+// PJ_REMatrixStack
+// PJ::renderMatrixStack[static_cast<int>(MatrixStack::GLNumRenderStacks)]; int
+// PJ::frameRenderCount = 0;
 //
-//SomeGLRenderEngine::SomeGLRenderEngine()
+// SomeGLRenderEngine::SomeGLRenderEngine()
 //:    mRenderScale(PJ_Vector2(1.0, 1.0)),
 //    mRenderRotate(0),
 //    mDefaultRenderer(new Renderer)
@@ -67,7 +60,7 @@
 //    PushRenderState
 //
 // */
-//void SomeGLRenderEngine::PushRenderState() {
+// void SomeGLRenderEngine::PushRenderState() {
 //    pjREStateStack.push(PJ::renderState);
 //
 //    MatrixStack    curStack = PJ::renderState.mActiveMatrixStack;
@@ -87,13 +80,14 @@
 //    Does not pop bound textures (expensive).
 //
 // */
-//void SomeGLRenderEngine::PopRenderState() {
+// void SomeGLRenderEngine::PopRenderState() {
 //    if (pjREStateStack.empty()) { return; }
 //
 //    PJ_RenderState    newState = pjREStateStack.top();
 //    EnableScissorTest(newState.mScissorTestEnabled);
 //    BindFrameBuffer(newState.mFrameBufferBound);
-//    SetViewport(newState.mViewportX, newState.mViewportY, newState.mViewportWidth, newState.mViewportHeight);
+//    SetViewport(newState.mViewportX, newState.mViewportY,
+//    newState.mViewportWidth, newState.mViewportHeight);
 //    EnableBlend(newState.mBlendEnabled);
 //    SetRenderMode(newState.mRenderMode);
 //
@@ -108,18 +102,18 @@
 //    pjREStateStack.pop();
 //}
 //
-//GLuint SomeGLRenderEngine::FrameBufferId()
+// GLuint SomeGLRenderEngine::FrameBufferId()
 //{
 //    return PJ::renderState.mFrameBufferBound;
 //}
 //
-//void SomeGLRenderEngine::SetRenderColorRGBA(PJ_Color color)
+// void SomeGLRenderEngine::SetRenderColorRGBA(PJ_Color color)
 //{
 //    PJ_FColor    fColor = PJ_ColorToFColor(color);
 //    SetRenderColor(fColor);
 //}
 //
-//void SomeGLRenderEngine::SetRenderColorRGB(PJ_Color color)
+// void SomeGLRenderEngine::SetRenderColorRGB(PJ_Color color)
 //{
 //    // FUTURE: eliminate unnecessary state changes.
 //    PJ_FColor    fColor = PJ_ColorToFColor(color);
@@ -127,23 +121,26 @@
 //    SetRenderColor(fColor);
 //}
 //
-//void SomeGLRenderEngine::SetRenderColorRGBF(float red, float green, float blue)
+// void SomeGLRenderEngine::SetRenderColorRGBF(float red, float green, float
+// blue)
 //{
 //    PJ_FColor    fColor(red, green, blue, 1.0);
 //    SetRenderColor(fColor);
 //}
 //
-//void SomeGLRenderEngine::SetRenderColorRGBAF(float red, float green, float blue, float alpha)
+// void SomeGLRenderEngine::SetRenderColorRGBAF(float red, float green, float
+// blue, float alpha)
 //{
 //    SetRenderColor(PJ_FColor(red, green, blue, alpha));
 //}
 //
-//void SomeGLRenderEngine::Render2DQuad(ZQuad const& v)
+// void SomeGLRenderEngine::Render2DQuad(ZQuad const& v)
 //{
 //    Render2DTriangleStrip(&(*(const_cast<ZQuad*>(&v)))[0], 4);
 //}
 //
-//void SomeGLRenderEngine::Render2DTriangleStrip(void* vertices, int numVertices)
+// void SomeGLRenderEngine::Render2DTriangleStrip(void* vertices, int
+// numVertices)
 //{
 //    PreRender();
 //
@@ -151,13 +148,13 @@
 //    /*
 //         DOESN'T WORK:
 //
-//         Doesn't seem to work without a depth buffer, depth buffer doesn't support alpha blended
-//         polygons.
+//         Doesn't seem to work without a depth buffer, depth buffer doesn't
+//         support alpha blended polygons.
 //
 //     */
 ////#define __EXPERIMENTAL_23D__
-//#ifdef __DEBUG__
-//#ifdef __EXPERIMENTAL_23D__
+// #ifdef __DEBUG__
+// #ifdef __EXPERIMENTAL_23D__
 ////    vector<PJ_Vector3>    v3;
 ////    float* pVertices = static_cast<float*>(vertices);
 ////    for (int i = 0; i < numVertices; i++) {
@@ -170,31 +167,33 @@
 ////    VertexPointer(3, GL_FLOAT, 0, &v3[0]);
 ////    DrawArrays(GL_TRIANGLE_STRIP, 0, numVertices);
 ////    return;
-//#endif
-//#endif
+// #endif
+// #endif
 //
-//    VertexPointer(2, GL_FLOAT, 0, vertices);
-//    DrawArrays(GL_TRIANGLE_STRIP, 0, numVertices);
+//     VertexPointer(2, GL_FLOAT, 0, vertices);
+//     DrawArrays(GL_TRIANGLE_STRIP, 0, numVertices);
 //
-//    // For tracking optimizations.
-//    PJ::frameRenderCount++;
-//}
+//     // For tracking optimizations.
+//     PJ::frameRenderCount++;
+// }
 //
-//void SomeGLRenderEngine::Render2DTriangleFan(void* vertices, int numVertices)
+// void SomeGLRenderEngine::Render2DTriangleFan(void* vertices, int numVertices)
 //{
-//    PreRender();
+//     PreRender();
 //
-//    VertexPointer(2, GL_FLOAT, 0, vertices);
-//    DrawArrays(GL_TRIANGLE_FAN, 0, numVertices);
-//}
+//     VertexPointer(2, GL_FLOAT, 0, vertices);
+//     DrawArrays(GL_TRIANGLE_FAN, 0, numVertices);
+// }
 //
 //
 ///*
 //
-//    CHECKLIST: this assumes that the appropriate glElements vertices, etc. are already bound.
+//    CHECKLIST: this assumes that the appropriate glElements vertices, etc. are
+//    already bound.
 //
 // */
-//void SomeGLRenderEngine::RenderElementsTriangleStrip(GLsizei count, const GLvoid *indices)
+// void SomeGLRenderEngine::RenderElementsTriangleStrip(GLsizei count, const
+// GLvoid *indices)
 //{
 //    // IMPORTANT: the elements must be pointed to elsewhere.
 //    PreRender();
@@ -202,15 +201,15 @@
 //
 //}
 //
-//void SomeGLRenderEngine::SetActiveMatrixStack(MatrixStack renderStack)
+// void SomeGLRenderEngine::SetActiveMatrixStack(MatrixStack renderStack)
 //{
 //    PJ::renderState.mActiveMatrixStack = renderStack;
 //
 //}
 //
-//#pragma mark - MATRICES
+// #pragma mark - MATRICES
 //
-//void SomeGLRenderEngine::LoadIdentity()
+// void SomeGLRenderEngine::LoadIdentity()
 //{
 //    PJ::renderMatrixStack[static_cast<int>(PJ::renderState.mActiveMatrixStack)].LoadIdentity();
 //    LoadMatrix();
@@ -223,28 +222,30 @@
 //    __WIN_PHASE__: near, far are reserved keywords
 //
 // */
-//void SomeGLRenderEngine::LoadOrtho(float left, float right, float bottom, float top, float _near, float _far)
+// void SomeGLRenderEngine::LoadOrtho(float left, float right, float bottom,
+// float top, float _near, float _far)
 //{
-//    PJ::renderMatrixStack[static_cast<int>(PJ::renderState.mActiveMatrixStack)].mMatrix.LoadOrtho(left, right, bottom, top, _near, _far);
-//    LoadMatrix();
+//    PJ::renderMatrixStack[static_cast<int>(PJ::renderState.mActiveMatrixStack)].mMatrix.LoadOrtho(left,
+//    right, bottom, top, _near, _far); LoadMatrix();
 //
 //}
 //
-//void SomeGLRenderEngine::LoadPerspective(float fov_radians, float aspect, float zNear, float zFar)
+// void SomeGLRenderEngine::LoadPerspective(float fov_radians, float aspect,
+// float zNear, float zFar)
 //{
-//    PJ::renderMatrixStack[static_cast<int>(PJ::renderState.mActiveMatrixStack)].mMatrix.LoadPerspective(fov_radians, aspect, zNear, zFar);
-//    LoadMatrix();
+//    PJ::renderMatrixStack[static_cast<int>(PJ::renderState.mActiveMatrixStack)].mMatrix.LoadPerspective(fov_radians,
+//    aspect, zNear, zFar); LoadMatrix();
 //}
 //
-//void SomeGLRenderEngine::SetActiveMatrix(PJ_Matrix4& matrix, bool load)
+// void SomeGLRenderEngine::SetActiveMatrix(PJ_Matrix4& matrix, bool load)
 //{
-//    PJ::renderMatrixStack[static_cast<int>(PJ::renderState.mActiveMatrixStack)].mMatrix = matrix;
-//    if (load) {
+//    PJ::renderMatrixStack[static_cast<int>(PJ::renderState.mActiveMatrixStack)].mMatrix
+//    = matrix; if (load) {
 //        LoadMatrix();
 //    }
 //}
 //
-//void SomeGLRenderEngine::RotateAxisRad(Axis3D axis, float radians, bool load)
+// void SomeGLRenderEngine::RotateAxisRad(Axis3D axis, float radians, bool load)
 //{
 //    PJ_Matrix4    rotateMatrix;
 //
@@ -260,20 +261,22 @@
 //            break;
 //    }
 //
-//    PJ::renderMatrixStack[static_cast<int>(PJ::renderState.mActiveMatrixStack)].mMatrix = PJ::renderMatrixStack[static_cast<int>(PJ::renderState.mActiveMatrixStack)].mMatrix * rotateMatrix;
-//    if (load) {
+//    PJ::renderMatrixStack[static_cast<int>(PJ::renderState.mActiveMatrixStack)].mMatrix
+//    =
+//    PJ::renderMatrixStack[static_cast<int>(PJ::renderState.mActiveMatrixStack)].mMatrix
+//    * rotateMatrix; if (load) {
 //        LoadMatrix();
 //    }
 //
 //}
 //
-//void SomeGLRenderEngine::RotateAxisDeg(Axis3D axis, float degrees, bool load)
+// void SomeGLRenderEngine::RotateAxisDeg(Axis3D axis, float degrees, bool load)
 //{
 //    RotateAxisRad(axis, DEGREES_TO_RADIANSF(degrees), load);
 //
 //}
 //
-//void SomeGLRenderEngine::Translate(float x, float y, float z, bool load)
+// void SomeGLRenderEngine::Translate(float x, float y, float z, bool load)
 //{
 //    if (0 == x && 0 == y && 0 == z) { return; }
 //
@@ -281,53 +284,62 @@
 //    PJ_Matrix4    matrix;
 //    matrix.LoadTranslation(v);
 //
-//    PJ::renderMatrixStack[static_cast<int>(PJ::renderState.mActiveMatrixStack)].mMatrix = PJ::renderMatrixStack[static_cast<int>(PJ::renderState.mActiveMatrixStack)].mMatrix * matrix;
-//    if (load) {
+//    PJ::renderMatrixStack[static_cast<int>(PJ::renderState.mActiveMatrixStack)].mMatrix
+//    =
+//    PJ::renderMatrixStack[static_cast<int>(PJ::renderState.mActiveMatrixStack)].mMatrix
+//    * matrix; if (load) {
 //        LoadMatrix();
 //    }
 //
 //}
 //
-//void SomeGLRenderEngine::Scale(float x, float y, float z, bool load)
+// void SomeGLRenderEngine::Scale(float x, float y, float z, bool load)
 //{
 //    PJ_Vector3    v(x, y, z);
 //    PJ_Matrix4    matrix;
 //    matrix.LoadScale(v);
 //
-//    PJ::renderMatrixStack[static_cast<int>(PJ::renderState.mActiveMatrixStack)].mMatrix = PJ::renderMatrixStack[static_cast<int>(PJ::renderState.mActiveMatrixStack)].mMatrix * matrix;
-//    if (load) {
+//    PJ::renderMatrixStack[static_cast<int>(PJ::renderState.mActiveMatrixStack)].mMatrix
+//    =
+//    PJ::renderMatrixStack[static_cast<int>(PJ::renderState.mActiveMatrixStack)].mMatrix
+//    * matrix; if (load) {
 //        LoadMatrix();
 //    }
 //
 //}
 //
-//PJ_Matrix4 SomeGLRenderEngine::GetActiveMatrix() const {
-//    return PJ::renderMatrixStack[static_cast<int>(PJ::renderState.mActiveMatrixStack)].mMatrix;
+// PJ_Matrix4 SomeGLRenderEngine::GetActiveMatrix() const {
+//    return
+//    PJ::renderMatrixStack[static_cast<int>(PJ::renderState.mActiveMatrixStack)].mMatrix;
 //
 //}
 //
-//void SomeGLRenderEngine::SetBlendFunc(GLenum source, GLenum dest)
+// void SomeGLRenderEngine::SetBlendFunc(GLenum source, GLenum dest)
 //{
 //    PJ::renderState.SetBlendFunc(source, dest);
 //}
 //
-//void SomeGLRenderEngine::BlendFuncDefault()
+// void SomeGLRenderEngine::BlendFuncDefault()
 //{
 //    SetBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 //
 //}
 //
-//void SomeGLRenderEngine::PushMatrix()
+// void SomeGLRenderEngine::PushMatrix()
 //{
 //    PJ::renderMatrixStack[static_cast<int>(PJ::renderState.mActiveMatrixStack)].push(PJ::renderMatrixStack[static_cast<int>(PJ::renderState.mActiveMatrixStack)].mMatrix);
 //
 //}
 //
-//void SomeGLRenderEngine::PopMatrix(bool load)
+// void SomeGLRenderEngine::PopMatrix(bool load)
 //{
-//    if (PJ::renderMatrixStack[static_cast<int>(PJ::renderState.mActiveMatrixStack)].size() > 1) {
+//    if
+//    (PJ::renderMatrixStack[static_cast<int>(PJ::renderState.mActiveMatrixStack)].size()
+//    > 1) {
 //
-//        PJ::renderMatrixStack[static_cast<int>(PJ::renderState.mActiveMatrixStack)].mMatrix = PJ::renderMatrixStack[static_cast<int>(PJ::renderState.mActiveMatrixStack)].top();
+//        PJ::renderMatrixStack[static_cast<int>(PJ::renderState.mActiveMatrixStack)].mMatrix
+//        =
+//        PJ::renderMatrixStack[static_cast<int>(PJ::renderState.mActiveMatrixStack)].top();
 //        PJ::renderMatrixStack[static_cast<int>(PJ::renderState.mActiveMatrixStack)].pop();
 //
 //        if (load) {
@@ -337,23 +349,23 @@
 //
 //}
 //
-//#pragma mark - SomeGLRenderEngine::Renderer
+// #pragma mark - SomeGLRenderEngine::Renderer
 //
-//PJ_FColor& SomeGLRenderEngine::GetRenderColor() {
+// PJ_FColor& SomeGLRenderEngine::GetRenderColor() {
 //    if (mRenderColors.empty()) {
 //        mRenderColors.push_back(PJ_FColor::white);
 //    }
 //    return mRenderColors[0];
 //}
 //
-//PJ_FColor& SomeGLRenderEngine::GetRenderColorAt(size_t index) {
+// PJ_FColor& SomeGLRenderEngine::GetRenderColorAt(size_t index) {
 //    if (index < mRenderColors.size()) {
 //        return mRenderColors[index];
 //    }
 //    return mWhiteColor;
 //}
 //
-//void SomeGLRenderEngine::Renderer::SetRenderColor(PJ_FColor const& color) {
+// void SomeGLRenderEngine::Renderer::SetRenderColor(PJ_FColor const& color) {
 //    if (PJ::renderEngine->mRenderColors.empty()) {
 //        PJ::renderEngine->mRenderColors.push_back(color);
 //    }
@@ -362,7 +374,8 @@
 //    }
 //}
 //
-//void SomeGLRenderEngine::Renderer::RenderTexture(PJ_DrawTexture* tex, ZQuad const& v) {
+// void SomeGLRenderEngine::Renderer::RenderTexture(PJ_DrawTexture* tex, ZQuad
+// const& v) {
 //    PJ::renderEngine->BindTexture2D(tex->GetRenderID());
 //    PJ::renderEngine->Render2DQuad(v);
 //}
@@ -373,35 +386,36 @@
 //    Pseudocode below. Not part of the working project. Ignore.
 //
 // */
-//#if FALSE
+// #if FALSE
 //
 //
 ////#define __EXPERIMENTAL_3D__
-//#ifdef __EXPERIMENTAL_3D__
+// #ifdef __EXPERIMENTAL_3D__
 //
-//void PJ::renderEngine->Render2DTriangleStrip(void* _vertices, int numVertices)
+// void PJ::renderEngine->Render2DTriangleStrip(void* _vertices, int
+// numVertices)
 //{
-//    PreRender();
+//     PreRender();
 //
-//    int        totalValues = numVertices*3;
-//    float    *vertices = (float*) malloc(totalValues*sizeof(float));
-//    int    index = 0;
-//    for (int i = 0; i < totalValues; i += 3) {
-//        vertices[i]=    ((float*)_vertices)[index];
-//        vertices[i+1]=    ((float*)_vertices)[index+1];
-//        vertices[i+2] = -1;
-//        index += 2;
-//    }
+//     int        totalValues = numVertices*3;
+//     float    *vertices = (float*) malloc(totalValues*sizeof(float));
+//     int    index = 0;
+//     for (int i = 0; i < totalValues; i += 3) {
+//         vertices[i]=    ((float*)_vertices)[index];
+//         vertices[i+1]=    ((float*)_vertices)[index+1];
+//         vertices[i+2] = -1;
+//         index += 2;
+//     }
 //
-//    PJ::renderEngine->VertexPointer(3, GL_FLOAT, 0, vertices);
-//    PJ::renderEngine->DrawArrays(GL_TRIANGLE_STRIP, 0, numVertices);
+//     PJ::renderEngine->VertexPointer(3, GL_FLOAT, 0, vertices);
+//     PJ::renderEngine->DrawArrays(GL_TRIANGLE_STRIP, 0, numVertices);
 //
-//    free(vertices);
+//     free(vertices);
 //
-//}
+// }
 //
-//#else
-//#endif
+// #else
+// #endif
 //
 //// FUTURE: support this (currently unsupported as a matrix operation).
 ////void pjRE::Rotate3Rad(float radians, float x, float y, float z, bool load)
@@ -409,21 +423,13 @@
 ////    PJ_Matrix4    rotateMatrix;
 ////    PJ_Vector3    v(x, y, z);
 ////    rotateMatrix.Load3RadRotation(radians, v);
-////    PJ::renderMatrixStack[PJ::renderState.mActiveMatrixStack].mMatrix = PJ::renderMatrixStack[PJ::renderState.mActiveMatrixStack].mMatrix * rotateMatrix;
-////    if (load) {
-////        PJ::renderEngine->LoadMatrix();
-////    }
+////    PJ::renderMatrixStack[PJ::renderState.mActiveMatrixStack].mMatrix =
+/// PJ::renderMatrixStack[PJ::renderState.mActiveMatrixStack].mMatrix *
+/// rotateMatrix; /    if (load) { /        PJ::renderEngine->LoadMatrix(); / }
 ////
 ////}
 //
-//#endif
-
-
-
-
-
-
-
+// #endif
 
 //        GLuint          frameBufferBound;
 //        bool            isFrameBufferBound;
@@ -455,13 +461,13 @@
 //        Color RenderColor();
 //        Color RenderColorAt(size_t index);
 
-        /*
-         Renderer
+/*
+ Renderer
 
-         Use the renderer object to support switching in a batch renderer.
-         This makes auto-batching of textures easier.
+ Use the renderer object to support switching in a batch renderer.
+ This makes auto-batching of textures easier.
 
-         */
+ */
 //        class Renderer : public PJ_Renderer {
 //        public:
 //            // OVERRIDE:
@@ -469,8 +475,8 @@
 //            virtual void RenderTexture(PJ_DrawTexture* tex, ZQuad const& v);
 
 //        };
-//        PTR(PJ_Renderer)    mRenderer;    // OPTIONAL: encapsulates batch/no batch renders.
-//        PTR(PJ_Renderer)    mDefaultRenderer;
+//        PTR(PJ_Renderer)    mRenderer;    // OPTIONAL: encapsulates batch/no
+//        batch renders. PTR(PJ_Renderer)    mDefaultRenderer;
 
 //        GLuint FrameBuffer();
 //
@@ -484,8 +490,9 @@
 //        /*
 //         Matrix stacks.
 //
-//         Currently, the matrix stacks are separate from the render state. If it seems better to combine these in the future,
-//         feel free to do so. Can't think of a good reason right now.
+//         Currently, the matrix stacks are separate from the render state. If
+//         it seems better to combine these in the future, feel free to do so.
+//         Can't think of a good reason right now.
 //
 //         */
 //        virtual void PushMatrix();
@@ -500,7 +507,8 @@
 //        virtual void SetRenderMode(PJ_RenderMode const& mode) = 0;
 //
 //        // TEXTURES:
-//        virtual void BindTexture2D(GLuint texture, GLenum textureUnit = 0x84C0) = 0;    // GL_TEXTURE0: 0x84c0
+//        virtual void BindTexture2D(GLuint texture, GLenum textureUnit =
+//        0x84C0) = 0;    // GL_TEXTURE0: 0x84c0
 //
 //        // MATRICES:
 //        PJ_Matrix4 GetActiveMatrix() const;
@@ -510,13 +518,15 @@
 //        void Translate(float x, float y, float z, bool load);
 //        void Scale(float x, float y, float z, bool load);
 //        void LoadIdentity();
-//        void LoadOrtho(float left, float right, float bottom, float top, float _near, float _far);
-//        void LoadPerspective(float fov_radians, float aspect, float zNear, float zFar);
+//        void LoadOrtho(float left, float right, float bottom, float top, float
+//        _near, float _far); void LoadPerspective(float fov_radians, float
+//        aspect, float zNear, float zFar);
 //
-//        virtual void SetRenderAlpha(float alpha) { mRenderAlpha = alpha; }    // For interpolate factor type shaders
-//        void SetRenderColorRGBA(PJ_Color color);
-//        void SetRenderColorRGB(PJ_Color color);
-//        void SetRenderColorRGBF(float red, float green, float blue);
-//        void SetRenderColorRGBAF(float red, float green, float blue, float alpha);
-//        void SetRenderColor(Color const& fcolor) { mRenderer->SetRenderColor(fcolor); }
+//        virtual void SetRenderAlpha(float alpha) { mRenderAlpha = alpha; } //
+//        For interpolate factor type shaders void SetRenderColorRGBA(PJ_Color
+//        color); void SetRenderColorRGB(PJ_Color color); void
+//        SetRenderColorRGBF(float red, float green, float blue); void
+//        SetRenderColorRGBAF(float red, float green, float blue, float alpha);
+//        void SetRenderColor(Color const& fcolor) {
+//        mRenderer->SetRenderColor(fcolor); }
 //

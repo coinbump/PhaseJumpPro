@@ -1,20 +1,22 @@
-#ifndef PJRENDERINTOMODEL_H
-#define PJRENDERINTOMODEL_H
+#pragma once
 
+#include "Matrix4x4.h"
 #include "Vector3.h"
 #include <memory>
-#include "Matrix4x4.h"
 
-namespace PJ
-{
+/*
+ RATING: 5 stars
+ Simple type
+ CODE REVIEW: 8/11/24
+ */
+namespace PJ {
     class SomeRenderContext;
 
-    class RenderIntoModel
-    {
+    class RenderIntoModel {
     public:
-        SP<SomeRenderContext> renderContext;
-        Matrix4x4 modelMatrix;
-    };
-}
+        SomeRenderContext* renderContext;
 
-#endif
+        RenderIntoModel(SomeRenderContext* renderContext) :
+            renderContext(renderContext) {}
+    };
+} // namespace PJ

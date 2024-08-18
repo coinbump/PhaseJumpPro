@@ -1,77 +1,77 @@
 #ifndef PJTIMER_H_
 #define PJTIMER_H_
 
-#include "SomeTimed.h"
-#include "Types/_String.h"
+#include "_String.h"
+#include "TimedPlayable.h"
 #include <algorithm>
 
 /*
- * RATING: 5 stars
- * Simple timer with unit tests
- * CODE REVIEW: 11/5/22
+ RATING: 5 stars
+ Has unit tests
+ CODE REVIEW: 7/7/24
  */
 namespace PJ {
-	/// <summary>
     /// Keeps track of time for N seconds duration, and then triggers OnFinish
-    /// </summary>
-	class Timer : public SomeTimed
-	{
+    class Timer : public TimedPlayable {
     protected:
-        float timerState = 0;  // Time state of the timer
+        /// Time state
+        float state = 0;
 
     public:
-        /// <summary>
-        /// Optional id for hashing, debug logs
-        /// </summary>
-        String id;
+        using Base = TimedPlayable;
 
-        Timer(float duration, RunType runType)
-        : SomeTimed(duration, runType)
-        {
+        Timer(float duration, RunType runType) :
+            Base(duration, runType) {}
+
+        float State() const {
+            return state;
         }
 
-        float TimerState() const {
-            return timerState;
+        void SetState(float value) {
+            state = std::clamp(value, 0.0f, duration);
+            runner.SetIsFinished(state >= duration);
         }
 
-        void SetTimerState(float value) {
-            timerState = std::min(duration, std::max((float)0, value));
-            SetIsFinished(timerState >= duration);
-		}
+        void OnReset() override {
+            TimedPlayable::OnReset();
 
-		float Progress() const override
-		{
-            if (duration <= 0) { return 0; }
-            return std::min(1.0f, TimerState() / duration);
-		}
+            SetState(0);
+        }
 
-		void Reset() override
-		{
-            SomeTimed::Reset();
+        // MARK: Playable
 
-			SetTimerState(0);
-		}
+        float Progress() const override {
+            return std::clamp(state / duration, 0.0f, 1.0f);
+        }
 
-		/// <summary>
-        /// Method, because overriden property is get only
-        /// </summary>
-        /// <param name="progress"></param>
-		void SetProgress(float progress) {
-			progress = std::min(1.0f, std::max((float)0, progress));
-			SetTimerState(progress * duration);
-		}
+        float PlayTime() const override {
+            return state;
+        }
 
-		void OnUpdate(TimeSlice time) override
-		{
-			if (IsFinished() || duration <= 0) { return; }
+        void SetPlayTime(float time) override {
+            SetState(time);
+        }
 
-			auto delta = TimeDeltaFor(time);
-			//Debug.Log(id + ": OnUpdate delta: " + delta.ToString());
-			if (delta <= 0) { return; }
+        void SetProgress(float progress) {
+            progress = std::clamp(progress, 0.0f, 1.0f);
+            SetState(progress * duration);
+        }
 
-			SetTimerState(TimerState() + delta);
-		}
+        void OnUpdate(TimeSlice time) override {
+            Base::OnUpdate(time);
+
+            if (IsFinished() || duration <= 0) {
+                return;
+            }
+
+            auto delta = TimeDeltaFor(time);
+            if (delta <= 0) {
+                return;
+            }
+
+            SetState(state + delta);
+        }
     };
-}
+} // namespace PJ
 
 #endif

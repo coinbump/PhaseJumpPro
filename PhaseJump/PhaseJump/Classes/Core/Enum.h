@@ -1,15 +1,15 @@
 #ifndef PJENUM_H
 #define PJENUM_H
 
-#include "Core.h"
-#include "EnumClass.h"
 #include "_String.h"
+#include "EnumClass.h"
+#include "StandardCore.h"
 #include "VectorList.h"
 
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 4/30/23
+ CODE REVIEW: 7/21/24
  */
 namespace PJ {
     /// Uses EnumClass to map enum <-> String/name for serialization and display
@@ -18,22 +18,31 @@ namespace PJ {
     public:
         using EnumClassType = EnumClass<EnumType>;
 
-        SP<Core> core = MAKE<Core>();
+        StandardCore core;
 
         EnumType value = EnumType();
 
-        Enum(SP<EnumClassType> _class) {
-            this->core->SetClass(_class);
-        }
+        Enum(SP<EnumClassType> _class) :
+            core(_class) {}
 
         virtual ~Enum() {}
 
-        SP<EnumClassType> EnumClass() const { return SCAST<EnumClassType>(core->Class()); }
+        SP<EnumClassType> EnumClass() const {
+            return SCAST<EnumClassType>(core.Class());
+        }
 
-        virtual String Id() const { return EnumClass()->IdOf(value); }
-        virtual String Name() const { return EnumClass()->NameOf(value); }
-        virtual size_t Index() const { return EnumClass()->IndexOf(value); }
+        virtual String Id() const {
+            return EnumClass()->Id(value);
+        }
+
+        virtual String Name() const {
+            return EnumClass()->Name(value);
+        }
+
+        virtual std::optional<size_t> Index() const {
+            return EnumClass()->IndexOf(value);
+        }
     };
-}
+} // namespace PJ
 
 #endif

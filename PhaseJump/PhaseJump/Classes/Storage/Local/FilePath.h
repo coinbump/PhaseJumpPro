@@ -9,10 +9,8 @@
  CODE REVIEW: 5/11/24
  */
 namespace PJ {
-    /// <summary>
     /// Wraps a file path for easily joining path segments
-    /// </summary>
     using FilePath = std::filesystem::path;
-}
+} // namespace PJ
 
 #endif

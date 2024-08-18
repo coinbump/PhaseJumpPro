@@ -14,9 +14,9 @@ TEST(CycleAnimator, CycleOnceForward)
     auto testValue = -1.0f;
 
     CycleAnimator<float> sut(
-                             MAKE<Interpolator<float>>(0, 360),
+                             Interpolator::MakeFunc(0.0f, 360.0f),
                              MAKE<AnimationCycleTimer>(1.0f, AnimationCycleType::Once),
-                             MAKE<SetBinding<float>>([&testValue] (float value) { testValue = value; })
+                             [&testValue] (float value) { testValue = value; }
                              );
 
     sut.OnUpdate(TimeSlice(0.5f));
@@ -35,14 +35,12 @@ TEST(CycleAnimator, MatchInReverse)
     auto testValue = -1.0f;
 
     CycleAnimator<float> sut(
-                             MAKE<Interpolator<float>>(0, 360),
+                             Interpolator::MakeEaseFunc(Interpolator::MakeFunc(0.0f, 360.0f), EaseFuncs::inSquared),
                              MAKE<AnimationCycleTimer>(1.0f, AnimationCycleType::PingPong),
-                             MAKE<SetBinding<float>>([&testValue] (float value) { testValue = value; })
+                             [&testValue] (float value) { testValue = value; }
                              );
 
-    sut.reverseType = CycleAnimator<float>::ReverseType::Match;
-    sut.interpolator->transform = InterpolateTypes::easeInSquared;
-
+    sut.reverseInterpolator = Interpolator::MakeEaseFunc(Interpolator::MakeFunc(360.0f, 0.0f), EaseFuncs::inSquared);
     sut.OnUpdate(TimeSlice(1.0f));
     EXPECT_EQ(1.0f, sut.Progress());
 
@@ -56,13 +54,10 @@ TEST(CycleAnimator, RewindInReverse)
     auto testValue = -1.0f;
 
     CycleAnimator<float> sut(
-                             MAKE<Interpolator<float>>(0, 360),
+                             Interpolator::MakeEaseFunc(Interpolator::MakeFunc(0.0f, 360.0f), EaseFuncs::inSquared),
                              MAKE<AnimationCycleTimer>(1.0f, AnimationCycleType::PingPong),
-                             MAKE<SetBinding<float>>([&testValue] (float value) { testValue = value; })
+                             [&testValue] (float value) { testValue = value; }
                              );
-
-    sut.reverseType = CycleAnimator<float>::ReverseType::Rewind;
-    sut.interpolator->transform = InterpolateTypes::easeInSquared;
 
     sut.OnUpdate(TimeSlice(1.0f));
     EXPECT_EQ(1.0f, sut.Progress());

@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "Types/_String.h"
+#include "_String.h"
 
 #include "Modules.h"
 
@@ -7,20 +7,22 @@ using namespace PJ;
 
 TEST(Module, Core_Foo) {
     ClassRegistry classRegistry;
-    Modules::Core sut(classRegistry);
+    CoreModule sut(classRegistry);
     sut.Go();
 
-    EXPECT_TRUE(classRegistry.ContainsKey(ClassIds::foo));
-    EXPECT_NE(nullptr, DCAST<_Foo>(classRegistry.New(ClassIds::foo)));
-    EXPECT_EQ(nullptr, DCAST<_MacFoo>(classRegistry.New(ClassIds::foo)));
+    auto value = ContainsKey(classRegistry.map, ClassId::Foo);
+    EXPECT_TRUE(value);
+    EXPECT_NE(nullptr, DCAST<_Foo>(classRegistry.NewBase(ClassId::Foo)));
+    EXPECT_EQ(nullptr, DCAST<_MacFoo>(classRegistry.NewBase(ClassId::Foo)));
 }
 
 TEST(Module, MacPlatform_Foo) {
     ClassRegistry classRegistry;
-    Modules::MacPlatform sut(classRegistry);
+    MacPlatformModule sut(classRegistry);
     sut.Go();
 
-    EXPECT_TRUE(classRegistry.ContainsKey(ClassIds::foo));
-    EXPECT_NE(nullptr, DCAST<_Foo>(classRegistry.New(ClassIds::foo)));
-    EXPECT_NE(nullptr, DCAST<_MacFoo>(classRegistry.NewType<_MacFoo>(ClassIds::foo)));
+    auto value = ContainsKey(classRegistry.map, ClassId::Foo);
+    EXPECT_TRUE(value);
+    EXPECT_NE(nullptr, DCAST<_Foo>(classRegistry.NewBase(ClassId::Foo)));
+    EXPECT_NE(nullptr, DCAST<_MacFoo>(classRegistry.NewType<_MacFoo>(ClassId::Foo)));
 }

@@ -1,0 +1,14 @@
+TimedSequence.h
+AnimationCycleTimer.h
+AnimationCycleTypes.h
+Animator.h
+CycleAnimator.h
+Interpolator.h
+RateFrameAnimator.cpp
+RateFrameAnimator.h
+SomeAnimatedValue.h
+SomeEase.cpp
+SomeEase.h
+SomeFrameAnimator.cpp
+SomeFrameAnimator.h
+SomeValueInterpolator.h

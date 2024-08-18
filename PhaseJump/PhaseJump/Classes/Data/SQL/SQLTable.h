@@ -2,49 +2,50 @@
 #define SQLTABLE_H
 
 #include "_String.h"
-#include "SQLTypes.h"
-#include "SQLStatement.h"
-#include "SQLTableQueryArguments.h"
-#include "SQLTableMutateArguments.h"
+#include "OrderedSet.h"
 #include "SQLRowValues.h"
+#include "SQLStatement.h"
+#include "SQLTableMutateArguments.h"
+#include "SQLTableQueryArguments.h"
+#include "SQLTypes.h"
 #include "VectorList.h"
-#include "_Set.h"
-#include <vector>
+#include <memory>
 #include <set>
 #include <sqlite3.h>
-#include <memory>
+#include <vector>
 
 /*
  RATING: 5 stars
  Has unit tests
  CODE REVIEW: 3/30/23
  */
-namespace PJ
-{
+namespace PJ {
     class SQLDatabase;
-    class StringVectorList;
     class Tags;
 
     using SQLDatabaseSharedPtr = SP<SQLDatabase>;
 
     /**
-        Manages a SQL table, must be connected to an SQL database to work (via Connect).
+        Manages a SQL table, must be connected to an SQL database to work (via
+       Connect).
 
-        Managing Unique row IDs: http://www.sqlabs.com/blog/2010/12/sqlite-and-unique-rowid-something-you-really-need-to-know/
+        Managing Unique row IDs:
+       http://www.sqlabs.com/blog/2010/12/sqlite-and-unique-rowid-something-you-really-need-to-know/
      */
-    class SQLTable
-    {
+    class SQLTable {
     public:
-        enum class SetValueType {
-            Update,
-            Insert
-        };
+        enum class SetValueType { Update, Insert };
 
         String name;
         SQLDatabaseSharedPtr db;
 
-        String Name() const { return name; }
-        SQLDatabaseSharedPtr DB() const { return db; }
+        String Name() const {
+            return name;
+        }
+
+        SQLDatabaseSharedPtr DB() const {
+            return db;
+        }
 
         SQLTable(String name, SQLDatabaseSharedPtr db);
 
@@ -70,12 +71,12 @@ namespace PJ
 
         bool ColumnExists(String columnName);
         bool AddColumn(String columnName, String params);
-        Set<String> UniqueStrings(String columnName);
+        OrderedSet<String> UniqueStrings(String columnName);
 
         void SetValue(SQLTableMutateArguments mutation, SetValueType type);
         void SetIntValue(SQLTableMutateArguments mutation, SetValueType type);
         void SetFloatValue(SQLTableMutateArguments mutation, SetValueType type);
     };
-}
+} // namespace PJ
 
 #endif

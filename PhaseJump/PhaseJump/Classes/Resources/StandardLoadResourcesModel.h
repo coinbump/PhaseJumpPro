@@ -1,18 +1,23 @@
-#ifndef PJSTANDARDLOADRESOURCESMODEL_H
-#define PJSTANDARDLOADRESOURCESMODEL_H
+#pragma once
 
-#include "SomeLoadResourcesModel.h"
+#include "LoadResourcesModel.h"
 
 /*
- RATING: 4 stars
- Works. Only recognizes png for now
- CODE REVIEW: 4/30/23
+ RATING: 5 stars
+ Tested and works
+ CODE REVIEW: 7/21/24
  */
 namespace PJ {
-    class StandardLoadResourcesModel : public SomeLoadResourcesModel {
+    class StandardLoadResourcesModel : public LoadResourcesModel {
     public:
-        StandardLoadResourcesModel();
-    };
-}
+        enum class LoadType {
+            /// Load .rez files with metadata that describes each resource
+            Rez,
 
-#endif
+            /// Scan all files and load (won't work with complex resource types)
+            Scan
+        };
+
+        StandardLoadResourcesModel(LoadType loadType);
+    };
+} // namespace PJ

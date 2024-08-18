@@ -1,51 +1,55 @@
 #include "SomeDragHandler.h"
-#include "SomeCamera.h"
 #include "Matrix4x4.h"
-#include <TSMatrix4D.h>
+#include "SomeCamera.h"
 #include "World.h"
+#include <TSMatrix4D.h>
 
 using namespace std;
 using namespace PJ;
 
-bool SomeDragHandler::IsDragging() const
-{
+bool SomeDragHandler::IsDragging() const {
     return state == StateType::Drag;
 }
 
-void SomeDragHandler::OnDragEnd()
-{
+void SomeDragHandler::OnDragEnd() {
     state = StateType::Default;
 }
 
-void SomeDragHandler::StartDrag(WorldPosition inputPosition)
-{
+void SomeDragHandler::StartDrag(WorldPosition inputPosition) {
+    GUARD(owner)
+
     // Allow drag to be handled by another object
-    if (!dragTarget.expired())
-    {
+    if (!dragTarget.expired()) {
         dragTarget.lock()->StartDrag(inputPosition);
         return;
     }
 
     state = StateType::Drag;
 
-    dragStartPosition = owner.lock()->transform->WorldPosition();
+    dragStartPosition = owner->transform->WorldPosition();
     dragStartInputPosition = inputPosition;
 
     auto uiSystem = UISystem();
-    if (nullptr == uiSystem) { return; }
+    if (nullptr == uiSystem) {
+        return;
+    }
 
+    // TODO: do we need shared_from_this here?
     auto dragModel = MAKE<DragModel>(SCAST<SomeDragHandler>(shared_from_this()));
     uiSystem->StartDrag(dragModel);
 
     OnDragStart(inputPosition);
 }
 
-void SomeDragHandler::OnPointerDownEvent(PointerDownUIEvent<LocalPosition> event) {
-    if (owner.expired()) { return; }
-    //Debug.Log("DragHandler2D OnPointerDown at: " + eventData.pressPosition.ToString());
+void SomeDragHandler::OnPointerDown(PointerDownUIEvent event) {
+    GUARD(owner)
 
-    auto inputLocalPosition = event.pressPosition;
-    auto worldModelMatrix = World()->WorldModelMatrix(*owner.lock());
+    // Debug.Log("DragHandler2D OnPointerDown at: " +
+    // eventData.pressPosition.ToString());
+
+    auto inputLocalPosition = ScreenToLocal(*this, event.screenPos);
+    GUARD(Node()->World());
+    auto worldModelMatrix = Node()->World()->WorldModelMatrix(*owner);
     auto inputWorldPosition = worldModelMatrix.MultiplyPoint(inputLocalPosition);
     StartDrag(inputWorldPosition);
 }

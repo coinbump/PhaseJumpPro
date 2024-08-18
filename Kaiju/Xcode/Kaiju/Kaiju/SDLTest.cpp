@@ -1,35 +1,28 @@
 #ifndef _TESTS_
 
 #include "SDLTest.h"
+#include "KaijuImGuiRenderer.h"
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 #include <OpenGL/glext.h>
 #include <GLUT/glut.h>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_main.h>
-#include <SDL2/SDL_render.h>
-#include <SDL2/SDL_video.h>
-#include <SDL2_image/SDL_image.h>
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_main.h>
+#include <SDL3/SDL_render.h>
+#include <SDL3/SDL_video.h>
+#include <SDL3/SDL_gamepad.h>
+#include <SDL3/SDL_joystick.h>
+#include <SDL3_image/SDL_image.h>
 #include <PhaseJump/PhaseJump.h>
 #include <iostream>
-#include "TestColorVaryScene.h"
+#include "TestGradientsScene.h"
 #include "TestMeshPathScene.h"
 #include "TestTextureScene.h"
-#include "TestSlicedSpriteScene.h"
+#include "TestSlicedTextureScene.h"
 #include "TestAnimatedTexturesScene.h"
 
 using namespace PJ;
 using namespace std;
-
-bool my_tool_active = false;
-float my_color[4];
-bool isDone = false;
-bool show_demo_window = true;
-ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-
-//#define IMG
-
-SP<GLTexture> texture;
 
 class TestWorld : public SDLWorld {
 public:
@@ -41,55 +34,43 @@ public:
 protected:
     void GoInternal() override {
         Base::GoInternal();
-
-        auto cameraNode = Camera::main->owner.lock();
-        auto raycaster = std::make_shared<SimpleRaycaster2D>();
-        cameraNode->AddComponent(raycaster);
-    }
-
-    void ProcessUIEvents(VectorList<SP<SomeUIEvent>> const& uiEvents) override {
-        Base::ProcessUIEvents(uiEvents);
-
-        for (auto event : uiEvents) {
-            auto dropFileEvent = DCAST<DropFilesUIEvent>(event);
-            if (dropFileEvent) {
-                PJLog("Drop File");
-                root->Clear();
-
-                auto camera = SCAST<SomeCamera>(MAKE<OrthoCamera>());
-
-                auto cameraNode = MAKE<WorldNode>();
-                cameraNode->Add(camera);
-                root->AddEdge(StandardEdgeModel(), cameraNode);
-
-                VectorList<SP<SomeTexture>> glTextures;
-                for (auto filePath : dropFileEvent->filePaths) {
-                    auto loadTexture = MAKE<SDLLoadGLTextureOperation>(filePath, TextureMagnification::Linear);
-                    loadTexture->Run();
-                    auto textures = loadTexture->result->SuccessValue();
-                    if (textures.size() > 0) {
-                        texture = SCAST<GLTexture>(textures[0].resource);
-                        glTextures.Add(texture);
-                    }
-                }
-
-                TestAnimatedTexturesScene::TextureList textures2{glTextures};
-                TestAnimatedTexturesScene scene(textures2);
-                scene.LoadInto(*this);
-                continue;
-            }
-
-            auto pointerDownEvent = DCAST<PointerDownUIEvent<ScreenPosition>>(event);
-            if (pointerDownEvent) {
-                cout << "Pointer down at: " << pointerDownEvent->pressPosition.x << ", " << pointerDownEvent->pressPosition.y << "\n";
-            }
-        }
     }
 };
 
 void SDLFoo() {
+//    * SDL_InitSubSystem() might be preferred.
+//    *
+//    * The file I/O (for example: SDL_IOFromFile) and threading (SDL_CreateThread)
+//    * subsystems are initialized by default. Message boxes
+//    * (SDL_ShowSimpleMessageBox) also attempt to work without initializing the
+//    * video subsystem, in hopes of being useful in showing an error dialog when
+//    * SDL_Init fails. You must specifically initialize other subsystems if you
+//    * use them in your application.
+//    *
+//    * Logging (such as SDL_Log) works without initialization, too.
+//    *
+//    * `flags` may be any of the following OR'd together:
+//    *
+//    * - `SDL_INIT_TIMER`: timer subsystem
+//    * - `SDL_INIT_AUDIO`: audio subsystem; automatically initializes the events
+//    *   subsystem
+//    * - `SDL_INIT_VIDEO`: video subsystem; automatically initializes the events
+//    *   subsystem
+//    * - `SDL_INIT_JOYSTICK`: joystick subsystem; automatically initializes the
+//    *   events subsystem
+//    * - `SDL_INIT_HAPTIC`: haptic (force feedback) subsystem
+//    * - `SDL_INIT_GAMEPAD`: gamepad subsystem; automatically initializes the
+//    *   joystick subsystem
+//    * - `SDL_INIT_EVENTS`: events subsystem
+//    * - `SDL_INIT_SENSOR`: sensor subsystem; automatically initializes the events
+//    *   subsystem
+//    * - `SDL_INIT_CAMERA`: camera subsystem; automatically initializes the events
+//    *   subsystem
+
+    SDL_Init(SDL_INIT_AUDIO | SDL_INIT_GAMEPAD | SDL_INIT_JOYSTICK | SDL_INIT_HAPTIC);
+
     /* Enable standard application logging */
-    SDL_LogSetPriority(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_INFO);
+    SDL_SetLogPriority(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_INFO);
 
     int value;
     SDL_GL_GetAttribute(SDL_GL_DOUBLEBUFFER, &value);
@@ -103,6 +84,19 @@ void SDLFoo() {
     SDL_GL_GetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, &value);
     PJLog("SDL_GL_CONTEXT_MINOR_VERSION: %d", value);
 
+    if (SDL_HasGamepad()) {
+        SDL_Gamepad *gamepad;
+        SDL_SetGamepadEventsEnabled(SDL_TRUE);
+        gamepad = SDL_OpenGamepad(0);
+        SDL_SetGamepadLED(gamepad, 255, 0, 0);
+    } else {
+        SDL_Joystick *joystick;
+        SDL_SetJoystickEventsEnabled(SDL_TRUE);
+        joystick = SDL_OpenJoystick(0);
+    }
+
+    cout << "Is Joystick Enabled?: " << SDL_JoystickEventsEnabled();
+
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
     SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
@@ -113,61 +107,57 @@ void SDLFoo() {
 //    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
 //    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
 
-    auto windowConfig = SDLWindow::Configuration::openGL;
+    auto windowConfig = SDLPlatformWindow::Configuration::openGL;
+    windowConfig.size = Vector2Int(640, 480);
     windowConfig.SetIsResizable(true);
     windowConfig.SetIsFullscreenDesktop(true);
-    auto window = MAKE<SDLWindow>(windowConfig, Vector2Int(640, 480));
+    auto window = MAKE<SDLPlatformWindow>(windowConfig);
     window->SetWorld(MAKE<TestWorld>());
     window->Go();
 
-    auto eventSystem = MAKE<UISystem>();
-    auto systemNode = MAKE<WorldNode>();
-    systemNode->AddComponent(eventSystem);
-    window->World()->root->AddChild(systemNode);
+    auto world = window->World();
 
     auto renderContext = MAKE<SDLImGuiRenderContext>();
-    renderContext->clearColor = Color(0.2f, 0.8f, 0.1f, 1.0f);
+    renderContext->clearColor = Color::white;
     renderContext->Configure(*window);
 
-    auto node = MAKE<WorldNode>();
-    auto component = MAKE<FuncRenderer>([] (RenderIntoModel renderIntoModel) { ImGui::ShowDemoWindow(&show_demo_window); });
-    node->AddComponent(component);
-    window->World()->Add(node);
-    window->World()->SetRenderContext(renderContext);
-    window->World()->uiEventPoller = MAKE<SDLImGuiUIEventPoller>(*window);
+    auto imGuiNode = MAKE<WorldNode>();
+    auto component = MAKE<KaijuImGuiRenderer>();
+    imGuiNode->Add(component);
 
-    TestMeshPathScene testMeshPathScene;
-    testMeshPathScene.LoadInto(*window->World());
+    world->Add(imGuiNode);
+    world->SetRenderContext(renderContext);
+    world->uiEventPoller = MAKE<SDLImGuiUIEventPoller>(*window);
 
-//    TestColorVaryScene testColorVaryScene;
-//    testColorVaryScene.LoadInto(*window->World());
-
-    SP<SomeLoadResourcesModel> loadResourcesModel = SCAST<SomeLoadResourcesModel>(MAKE<StandardLoadResourcesModel>());
+    SP<LoadResourcesModel> loadResourcesModel = SCAST<LoadResourcesModel>(MAKE<StandardLoadResourcesModel>(StandardLoadResourcesModel::LoadType::Rez));
     SP<FileManager> fm = MAKE<FileManager>();
-    ResourceRepository resourceRepository(loadResourcesModel, window->World()->loadedResources, fm);
+    ResourceScanner resourceScanner(loadResourcesModel, fm);
+    ResourceRepository resourceRepository(loadResourcesModel, world->loadedResources, fm);
 
     FilePath path = SDL_GetBasePath();
     path /= FilePath("resources/art");
 
-    auto loadResourcesPlan = resourceRepository.Scan(path, true);
+    // TODO: we don't need to scan anymore, with single .rez file
+    auto loadResourcesPlan = resourceScanner.ScanAt(path, true);
     auto allInfos = loadResourcesPlan.AllInfos();
-    for (auto info : allInfos) {
+    for (auto& info : allInfos) {
         resourceRepository.Load(info);
     }
 
     // Register a mouse device
-    Mouse::current = MAKE<SDLMouseDevice>();
+    //Mouse::current = 
+    MAKE<SDLMouseDevice>();
 
-    texture = DCAST<GLTexture>(window->World()->loadedResources->map["texture"]["heart-full"].resource);
-    TestTextureScene testTextureScene(texture);
-    testTextureScene.LoadInto(*window->World());
+    auto testTextureNode = MAKE<WorldNode>();
+    auto testTextureScene = MAKE<TestTextureScene>();
+    testTextureNode->Add(testTextureScene);
+    world->Add(testTextureNode);
 
-    auto sliceTexture = DCAST<GLTexture>(window->World()->loadedResources->map["texture"]["example-button-normal"].resource);
-    TestSlicedSpriteScene testSlicedSpriteScene(sliceTexture);
-//    testSlicedSpriteScene.LoadInto(*window->World());
+    int count = 0;
+//    SDL_PenID* result = SDL_GetPens(&count);
 
-    window->World()->Go();
-    window->World()->Run();
+    world->Go();
+    world->Run();
 }
 
 #endif

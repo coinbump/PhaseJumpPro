@@ -1,61 +1,69 @@
 #include "GLRenderEngine.h"
 #include "GLHeaders.h"
 #include "GLShaderProgram.h"
-#include "GLVertexBuffer.h"
 #include "GLShaderProgramLoader.h"
-#include "Vector3.h"
-#include "RenderFeatures.h"
+#include "GLVertexBuffer.h"
+#include "RenderFeature.h"
 #include "RenderModel.h"
 #include "RGBAColor.h"
+#include "SomeGLRenderCommand.h"
+#include "SomeRenderCommandModel.h"
+#include "SomeRenderContext.h"
+#include "Utils.h"
+#include "Vector3.h"
+#include <type_traits>
 
 using namespace PJ;
 using namespace std;
 
-void GLRenderEngine::EnableVertexAttributeArray(GLuint location, bool isEnabled)
-{
+void GLRenderEngine::EnableVertexAttributeArray(GLuint location, bool isEnabled) {
     Base::EnableVertexAttributeArray(location, isEnabled);
 
     // NOTE: problem about checking state changes is that the vertex
     // attrib value might be difficult from program to program.
     if (isEnabled) {
         glEnableVertexAttribArray(location);
-    }
-    else {
+    } else {
         glDisableVertexAttribArray(location);
     }
 }
 
-void GLRenderEngine::VertexAttributePointer(GLuint location, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const GLvoid *pointer)
-{
-    RunGL([=] () { glVertexAttribPointer(location, size, type, normalized, stride, pointer); }, "glVertexAttribPointer");
+void GLRenderEngine::VertexAttributePointer(
+    GLuint location, GLint size, GLenum type, GLboolean normalized, GLsizei stride,
+    const GLvoid* pointer
+) {
+    RunGL(
+        [=]() { glVertexAttribPointer(location, size, type, normalized, stride, pointer); },
+        "glVertexAttribPointer"
+    );
 }
 
 void GLRenderEngine::DrawArrays(GLenum drawMode, GLint drawFirst, GLsizei drawCount) {
     glDrawArrays(drawMode, drawFirst, drawCount);
 }
 
-void GLRenderEngine::DrawElements(GLenum mode, GLsizei count, GLenum type, const void *indices) {
+void GLRenderEngine::DrawElements(GLenum mode, GLsizei count, GLenum type, const void* indices) {
     glDrawElements(mode, count, type, indices);
 }
 
 void GLRenderEngine::Use(GLShaderProgram& program) {
-    RunGL([&] () { glUseProgram(program.GLId()); }, "glUseProgram: " + program.id);
+    RunGL([&]() { glUseProgram(program.GLId()); }, "glUseProgram: " + program.id);
 
     // Enable attributes for vertex shader
     /*
-        IMPORTANT: Permissive enabling works fine on Mac/OS, but crashes on Windows.
-        Windows OpenGL requires that only the correct arrays are enabled for the shader.
+        IMPORTANT: Permissive enabling works fine on Mac/OS, but crashes on
+       Windows. Windows OpenGL requires that only the correct arrays are enabled
+       for the shader.
      */
-    Set<GLuint> activeAttributeLocations;
-    for (auto keyValue : program.attributeLocations) {
+    OrderedSet<GLuint> activeAttributeLocations;
+    for (auto& keyValue : program.attributeLocations) {
         auto location = keyValue.second;
-        activeAttributeLocations.Add(location);
+        activeAttributeLocations.insert(location);
     }
     EnableOnlyVertexAttributeArrays(activeAttributeLocations);
 }
 
-void GLRenderEngine::UniformMatrix4fv(GLint location, const GLfloat* value)
-{
+void GLRenderEngine::UniformMatrix4fv(GLint location, const GLfloat* value) {
     Base::UniformMatrix4fv(location, value);
 
     glUniformMatrix4fv(location, 1, GL_FALSE, value);
@@ -86,8 +94,7 @@ void GLRenderEngine::EnableFeature(String featureId, bool isEnabled) {
 
     if (isEnabled) {
         glEnable(glFeatureId.value());
-    }
-    else {
+    } else {
         glDisable(glFeatureId.value());
     }
 }
@@ -98,14 +105,14 @@ void GLRenderEngine::SetLineWidth(float lineWidth) {
     glLineWidth(lineWidth);
 }
 
-void GLRenderEngine::BindFrameBuffer(GLuint fb)
-{
+void GLRenderEngine::BindFrameBuffer(GLuint fb) {
     Base::BindFrameBuffer(fb);
 
     glBindFramebuffer(GL_FRAMEBUFFER, fb);
 }
 
 void GLRenderEngine::RunGL(std::function<void()> command, String name) {
+    GUARD(command)
     command();
 
     while (auto error = glGetError()) {
@@ -113,22 +120,22 @@ void GLRenderEngine::RunGL(std::function<void()> command, String name) {
     }
 }
 
-void GLRenderEngine::GoInternal()
-{
+void GLRenderEngine::GoInternal() {
     Base::GoInternal();
 
     const char* gl_version = (const char*)glGetString(GL_VERSION);
     PJLog("OpenGL Version: %s", gl_version);
 
     /*
-     A VAO (Vertex array object) stores pointers to VBOs (Vertex buffer objects) and is used
-     by the GPU to store state. You can swap VAOs if you want to swap bound VBO state.
+     A VAO (Vertex array object) stores pointers to VBOs (Vertex buffer objects)
+     and is used by the GPU to store state. You can swap VAOs if you want to
+     swap bound VBO state.
      */
-    RunGL([this] () { glGenVertexArrays(1, &vao); }, "glGenVertexArrays");
+    RunGL([this]() { glGenVertexArrays(1, &vao); }, "glGenVertexArrays");
     BindVertexArray(vao);
 
     // Load the shader programs from the info registry
-    for (auto info : GLShaderProgram::Info::registry) {
+    for (auto& info : GLShaderProgram::Info::registry) {
         GLShaderProgramLoader loader;
         auto program = loader.LoadFromShaderPaths(info.vertexShaderPath, info.fragmentShaderPath);
         if (!program) {
@@ -158,26 +165,25 @@ void GLRenderEngine::GoInternal()
 
     ScanGLExtensions();
 
-    featureIdToGLFeatureIdMap[RenderFeatures::Blend] = GL_BLEND;
-    featureIdToGLFeatureIdMap[RenderFeatures::ScissorTest] = GL_SCISSOR_TEST;
+    featureIdToGLFeatureIdMap[RenderFeature::Blend] = GL_BLEND;
+    featureIdToGLFeatureIdMap[RenderFeature::ScissorTest] = GL_SCISSOR_TEST;
 }
 
 void GLRenderEngine::SetBlendMode(GLBlendMode blendMode) {
     Base::SetBlendMode(blendMode);
 
-    RunGL([&] () { glBlendFunc(blendMode.sFactor, blendMode.dFactor); }, "glBlendFunc");
+    RunGL([&]() { glBlendFunc(blendMode.sFactor, blendMode.dFactor); }, "glBlendFunc");
 }
 
 void GLRenderEngine::BindVertexArray(GLuint vao) {
     Base::BindVertexArray(vao);
 
-    RunGL([=] () { glBindVertexArray(vao); }, "glBindVertexArray");
+    RunGL([=]() { glBindVertexArray(vao); }, "glBindVertexArray");
 }
 
-SP<GLVertexBuffer> GLRenderEngine::BuildVertexBuffer(GLVertexBufferPlan const& plan)
-{
+SP<GLVertexBuffer> GLRenderEngine::BuildVertexBuffer(GLVertexBufferPlan const& plan) {
     GLsizei totalSize = 0;
-    for (auto item : plan.items) {
+    for (auto& item : plan.items) {
         uint32_t itemSize = item.Size();
         totalSize += itemSize;
     }
@@ -187,18 +193,21 @@ SP<GLVertexBuffer> GLRenderEngine::BuildVertexBuffer(GLVertexBufferPlan const& p
     }
 
     GLuint VBO;
-    RunGL([&] () { glGenBuffers(1, &VBO); }, "Gen VBO");
-    RunGL([&] () { glBindBuffer(GL_ARRAY_BUFFER, VBO); }, "Bind VBO");
+    RunGL([&]() { glGenBuffers(1, &VBO); }, "Gen VBO");
+    RunGL([&]() { glBindBuffer(GL_ARRAY_BUFFER, VBO); }, "Bind VBO");
 
     int offset = 0;
 
-    RunGL([&] () { glBufferData(GL_ARRAY_BUFFER, totalSize, nullptr, GL_STATIC_DRAW); }, "VBO Data");
+    RunGL([&]() { glBufferData(GL_ARRAY_BUFFER, totalSize, nullptr, GL_STATIC_DRAW); }, "VBO Data");
 
     auto result = MAKE<GLVertexBuffer>(VBO);
 
-    for (auto item : plan.items) {
+    for (auto& item : plan.items) {
         auto itemSize = item.Size();
-        RunGL([&] () { glBufferSubData(GL_ARRAY_BUFFER, offset, itemSize, item.data->DataPointer()); }, "VBO Data");
+        RunGL(
+            [&]() { glBufferSubData(GL_ARRAY_BUFFER, offset, itemSize, item.data->Pointer()); },
+            "VBO Data"
+        );
 
         result->attributes[item.attributeId].offset = offset;
         result->attributes[item.attributeId].glType = item.glType;
@@ -212,93 +221,147 @@ SP<GLVertexBuffer> GLRenderEngine::BuildVertexBuffer(GLVertexBufferPlan const& p
 
 SP<GLIndexBuffer> GLRenderEngine::BuildIndexBuffer(VectorList<uint32_t> indices) {
     GLuint IBO;
-    RunGL([&] () { glGenBuffers(1, &IBO); }, "Gen IBO");
-    RunGL([&] () { glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO); }, "Bind IBO");
-    RunGL([&] () { glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(uint32_t), indices.data(), GL_STATIC_DRAW); }, "IBO Data");
+    RunGL([&]() { glGenBuffers(1, &IBO); }, "Gen IBO");
+    RunGL([&]() { glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO); }, "Bind IBO");
+    RunGL(
+        [&]() {
+            glBufferData(
+                GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(uint32_t), indices.data(),
+                GL_STATIC_DRAW
+            );
+        },
+        "IBO Data"
+    );
 
     return MAKE<GLIndexBuffer>(IBO);
 }
 
-void GLRenderEngine::BindVertexBuffer(GLuint vbo)
-{
+void GLRenderEngine::BindVertexBuffer(GLuint vbo) {
     Base::BindVertexBuffer(vbo);
 
-    RunGL([=] () { glBindBuffer(GL_ARRAY_BUFFER, vbo); }, "Bind VBO");
+    RunGL([=]() { glBindBuffer(GL_ARRAY_BUFFER, vbo); }, "Bind VBO");
 }
 
-void GLRenderEngine::BindIndexBuffer(GLuint ibo)
-{
+void GLRenderEngine::BindIndexBuffer(GLuint ibo) {
     Base::BindIndexBuffer(ibo);
-    
-    RunGL([=] () { glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo); }, "Bind IBO");
+
+    RunGL([=]() { glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo); }, "Bind IBO");
 }
 
-void GLRenderEngine::RenderStart() {
+SP<SomeGLRenderCommand> GLRenderEngine::BuildRenderCommand(SomeRenderCommandModel& proxyCommand) {
+    // FUTURE: replace with a map and factories
+    if (proxyCommand.id == RenderCommandId::ProjectionMatrixLoadOrthographic) {
+        auto command = As<RenderCommandModel<Vector2>>(&proxyCommand);
+        GUARDR(command, nullptr)
+        return GLRenderCommands::ProjectionMatrixLoadOrthographic(command->core);
+    } else if (proxyCommand.id == RenderCommandId::LoadTranslate) {
+        auto command = As<RenderCommandModel<Vector3>>(&proxyCommand);
+        GUARDR(command, nullptr)
+        return GLRenderCommands::LoadTranslate(command->core);
+    }
+
+    return nullptr;
+}
+
+void GLRenderEngine::RenderStart(RenderContextModel const& contextModel) {
     renderPlans.clear();
 
-    projectionMatrix.LoadOrthographic(0, renderState.viewport.width, 0, renderState.viewport.height, 1, -1);
-    viewMatrix.LoadTranslate(Vector3(renderState.viewport.width / 2.0f, renderState.viewport.height / 2.0f, 0));
+    auto& proxyCommands = contextModel.phasedProxyCommands;
+    auto thisPhaseProxyCommands = proxyCommands.find(RenderPhase::Start);
+    if (thisPhaseProxyCommands != proxyCommands.end() && !IsEmpty(thisPhaseProxyCommands->second)) {
+        for (auto& proxyCommandI : thisPhaseProxyCommands->second) {
+            auto& proxyCommandUP = proxyCommandI;
+
+            if (auto renderCommand = BuildRenderCommand(*proxyCommandUP)) {
+                renderCommand->Run(*this);
+            }
+        }
+    } else {
+        // If no projection commands are specified, use orthographic-cartesian
+        // projection
+        projectionMatrix.LoadOrthographic(
+            0, renderState.viewport.width, 0, renderState.viewport.height, 1, -1
+        );
+        viewMatrix.LoadTranslate(
+            Vector3(renderState.viewport.width / 2.0f, renderState.viewport.height / 2.0f, 0)
+        );
+    }
 }
 
-void GLRenderEngine::RenderProcess(RenderModel const& model)  {
-    auto glProgram = dynamic_cast<GLShaderProgram*>(&model.shaderProgram);
+void GLRenderEngine::RenderProcess(RenderModel const& model) {
+    auto glProgram = As<GLShaderProgram>(model.ShaderProgram());
     if (nullptr == glProgram) {
         PJLog("ERROR. GLShaderProgram required");
         return;
     }
 
-    VectorList<Vector3> vertices = model.vertices;
-    auto vertexCount = model.vertices.size();
+    VectorList<Vector3> const& vertices = model.Vertices();
+    VectorList<Vector2> const& uvs = model.UVs();
+    auto vertexCount = vertices.size();
 
     VectorList<Color> colors_float(vertexCount);
     VectorList<RGBAColor> colors_byte(vertexCount);
     VectorList<Vector2> texCoords(vertexCount);
 
-    // First pass of this is very inefficient. We'll create an IBO, VBO, etc. for each render pass.
-    // FUTURE: optimize as needed
+    // First pass of this is very inefficient. We'll create an IBO, VBO, etc.
+    // for each render pass. FUTURE: optimize as needed
     GLVertexBufferPlan vboPlan;
-    vboPlan.Add("a_position", model.vertices);
+    vboPlan.Add("a_position", vertices);
+
+    auto& modelColors = model.Colors();
 
     // For now we'll take the easy route and use float colors
     // FUTURE: evaluate converting colors to 32 bit single values for efficiency
     auto hasColorAttribute = glProgram->HasVertexAttribute("a_color");
     if (hasColorAttribute) {
-        auto isColorsEmpty = model.colors.size() == 0;
-        for (int i = 0; i < model.vertices.size(); i++) {
+        auto isColorsEmpty = modelColors.size() == 0;
+        for (int i = 0; i < vertices.size(); i++) {
             auto color = Color::white;
             if (!isColorsEmpty) {
-                auto colorIndex = i % model.colors.size();
-                color = model.colors[colorIndex];
+                auto colorIndex = i % modelColors.size();
+                color = modelColors[colorIndex];
             }
 
             switch (colorFormat) {
-                case ColorFormat::Float:
-                    colors_float[i] = color;
-                    break;
-                case ColorFormat::Byte:
-                    colors_byte[i] = (RGBAColor)color;
-                    break;
+            case ColorFormat::Float:
+                colors_float[i] = color;
+                break;
+            case ColorFormat::Byte:
+                colors_byte[i] = (RGBAColor)color;
+                break;
             }
         }
 
         switch (colorFormat) {
-            case ColorFormat::Float:
-                vboPlan.Add("a_color", colors_float);
-                break;
-            case ColorFormat::Byte:
-                vboPlan.Add("a_color", colors_byte);
-                break;
+        case ColorFormat::Float:
+            vboPlan.Add("a_color", colors_float);
+            break;
+        case ColorFormat::Byte:
+            vboPlan.Add("a_color", colors_byte);
+            break;
         }
     }
 
     auto hasTextureCoordAttribute = glProgram->HasVertexAttribute("a_texCoord");
     if (hasTextureCoordAttribute) {
-        if (model.uvs.size() != model.vertices.size()) {
+        if (uvs.size() != vertices.size()) {
             PJLog("ERROR. Trying to render a texture shader with invalid uvs.");
             return;
         }
 
-        texCoords = model.uvs;
+        texCoords = uvs;
+
+        /// Transform UV coordinates for texture atlas
+        if (model.textureModels.size() > 0) {
+            auto& firstTexture = model.textureModels[0];
+
+            std::transform(texCoords.begin(), texCoords.end(), texCoords.begin(), [=](Vector2 uv) {
+                uv *= firstTexture.size;
+                uv += firstTexture.origin;
+                return uv;
+            });
+        }
+
         vboPlan.Add("a_texCoord", texCoords);
     }
 
@@ -308,22 +371,27 @@ void GLRenderEngine::RenderProcess(RenderModel const& model)  {
 
 void GLRenderEngine::RenderDraw() {
     VectorList<SP<GLRenderPlan>> noBlendRenderPlans;
-    std::copy_if(renderPlans.begin(), renderPlans.end(), std::back_inserter(noBlendRenderPlans), [&](SP<GLRenderPlan> const& plan) {
-        return !plan->model.IsFeatureEnabled(RenderFeatures::Blend);
-    });
+    std::copy_if(
+        renderPlans.begin(), renderPlans.end(), std::back_inserter(noBlendRenderPlans),
+        [&](SP<GLRenderPlan> const& plan) {
+            return !plan->model.IsFeatureEnabled(RenderFeature::Blend);
+        }
+    );
 
     VectorList<SP<GLRenderPlan>> blendRenderPlans;
-    std::copy_if(renderPlans.begin(), renderPlans.end(), std::back_inserter(blendRenderPlans), [&](SP<GLRenderPlan> const& plan) {
-        return plan->model.IsFeatureEnabled(RenderFeatures::Blend);
-    });
+    std::copy_if(
+        renderPlans.begin(), renderPlans.end(), std::back_inserter(blendRenderPlans),
+        [&](SP<GLRenderPlan> const& plan) {
+            return plan->model.IsFeatureEnabled(RenderFeature::Blend);
+        }
+    );
 
-    struct ZSorter {
-        bool operator() (SP<GLRenderPlan> const& lhs, SP<GLRenderPlan> const& rhs) const {
+    std::sort(
+        blendRenderPlans.begin(), blendRenderPlans.end(),
+        [](SP<GLRenderPlan> const& lhs, SP<GLRenderPlan> const& rhs) {
             return lhs->model.z > rhs->model.z;
         }
-    };
-
-    std::sort(blendRenderPlans.begin(), blendRenderPlans.end(), ZSorter());
+    );
 
     glEnable(GL_DEPTH_TEST);
     RenderDrawPlans(noBlendRenderPlans);
@@ -336,14 +404,19 @@ void GLRenderEngine::RenderDraw() {
 }
 
 void GLRenderEngine::RenderDrawPlans(VectorList<SP<GLRenderPlan>> const& renderPlans) {
-    for (auto & rp : renderPlans) {
+    for (auto& rp : renderPlans) {
         auto vboPlan = rp->vboPlan;
         auto model = rp->model;
-        auto glProgram = dynamic_cast<GLShaderProgram*>(&model.shaderProgram);
+        auto glProgram = As<GLShaderProgram>(model.ShaderProgram());
+        GUARD(glProgram);
+
         auto modelMatrix = model.matrix;
 
         auto vbo = BuildVertexBuffer(vboPlan);
-        auto ibo = BuildIndexBuffer(model.indices);
+        GUARD(vbo)
+
+        auto ibo = BuildIndexBuffer(model.Indices());
+        GUARD(ibo)
 
         auto hasColorAttribute = glProgram->HasVertexAttribute("a_color");
         auto hasTextureCoordAttribute = glProgram->HasVertexAttribute("a_texCoord");
@@ -352,14 +425,12 @@ void GLRenderEngine::RenderDrawPlans(VectorList<SP<GLRenderPlan>> const& renderP
 
         Use(*glProgram);
 
-        for (int i = 0; i < model.textures.size(); i++) {
-            auto & texture = model.textures[i];
-
+        for (auto& texture : model.textureModels) {
             // ? glActiveTexture is causing VBO errors. Investigate
-    //        glActiveTexture(GL_TEXTURE0 + i);
-            glBindTexture(GL_TEXTURE_2D, texture->renderId);
+            //        glActiveTexture(GL_TEXTURE0 + i);
+            glBindTexture(GL_TEXTURE_2D, texture.renderId);
         }
-    //    glActiveTexture(0);
+        //    glActiveTexture(0);
 
         if (glProgram->uniformLocations.find("u_mvpMatrix") != glProgram->uniformLocations.end()) {
             Matrix4x4 viewProjectionMatrix = projectionMatrix * viewMatrix;
@@ -369,10 +440,11 @@ void GLRenderEngine::RenderDrawPlans(VectorList<SP<GLRenderPlan>> const& renderP
             UniformMatrix4fv(location, modelViewProjection.data());
         }
 
-        if (glProgram->uniformLocations.find("u_float") != glProgram->uniformLocations.end()) {
+        // TODO: These can be optimized by not using the has check, or has returns something
+        if (glProgram->HasUniform("u_float")) {
             float value = 1.0f;
-            if (model.uniformFloats.size() > 0) {
-                value = model.uniformFloats[0];
+            if (model.UniformFloats().size() > 0) {
+                value = model.UniformFloats()[0];
             }
 
             glUniform1f(glProgram->uniformLocations["u_float"], value);
@@ -380,8 +452,8 @@ void GLRenderEngine::RenderDrawPlans(VectorList<SP<GLRenderPlan>> const& renderP
 
         if (glProgram->HasUniform("u_color")) {
             Color color = Color::white;
-            if (model.uniformColors.size() > 0) {
-                color = model.uniformColors[0];
+            if (model.UniformColors().size() > 0) {
+                color = model.UniformColors()[0];
             }
             glUniform4f(glProgram->uniformLocations["u_color"], color.r, color.g, color.b, color.a);
         }
@@ -389,46 +461,53 @@ void GLRenderEngine::RenderDrawPlans(VectorList<SP<GLRenderPlan>> const& renderP
         BindVertexBuffer(vbo->glId);
         BindIndexBuffer(ibo->glId);
 
-        VertexAttributePointer(glProgram->attributeLocations["a_position"], 3, GL_FLOAT, false, 0, 0);
+        VertexAttributePointer(
+            glProgram->attributeLocations["a_position"], 3, GL_FLOAT, false, 0, 0
+        );
 
         if (hasColorAttribute) {
             auto attribute = vbo->attributes["a_color"];
 
-            VertexAttributePointer(glProgram->attributeLocations["a_color"], 4, attribute.glType, attribute.normalize, 0, (void*)(uintptr_t)attribute.offset);
+            VertexAttributePointer(
+                glProgram->attributeLocations["a_color"], 4, attribute.glType, attribute.normalize,
+                0, (void*)(uintptr_t)attribute.offset
+            );
         }
 
         if (hasTextureCoordAttribute) {
-            VertexAttributePointer(glProgram->attributeLocations["a_texCoord"], 2, GL_FLOAT, false, 0, (void*)(uintptr_t)vbo->attributes["a_texCoord"].offset);
+            VertexAttributePointer(
+                glProgram->attributeLocations["a_texCoord"], 2, GL_FLOAT, false, 0,
+                (void*)(uintptr_t)vbo->attributes["a_texCoord"].offset
+            );
         }
 
-        for (auto i : model.features) {
+        for (auto& i : model.Features()) {
             auto key = i.first;
             auto status = i.second;
 
             switch (status) {
-                case RenderFeatureStatus::Enable:
-                    EnableFeature(key, true);
-                    break;
-                case RenderFeatureStatus::Disable:
-                    EnableFeature(key, false);
-                    break;
+            case RenderFeatureStatus::Enable:
+                EnableFeature(key, true);
+                break;
+            case RenderFeatureStatus::Disable:
+                EnableFeature(key, false);
+                break;
             }
         }
 
-        DrawElements(GL_TRIANGLES, (GLsizei)model.indices.size(), GL_UNSIGNED_INT, nullptr);
+        DrawElements(GL_TRIANGLES, (GLsizei)model.Indices().size(), GL_UNSIGNED_INT, nullptr);
     }
 }
 
-void GLRenderEngine::ScanGLExtensions()
-{
-    Set<String> glExtensions;
+void GLRenderEngine::ScanGLExtensions() {
+    OrderedSet<String> glExtensions;
 
     GLint count;
     glGetIntegerv(GL_NUM_EXTENSIONS, &count);
 
     for (int i = 0; i < count; i++) {
         auto extensionId = (char*)glGetStringi(GL_EXTENSIONS, i);
-        glExtensions.Add(String(extensionId));
+        glExtensions.insert(String(extensionId));
     }
 
     PJLog("****** OPENGL EXTENSIONS ******");

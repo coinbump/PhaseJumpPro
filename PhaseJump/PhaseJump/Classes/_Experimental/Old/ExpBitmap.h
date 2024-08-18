@@ -1,10 +1,3 @@
-//
-//  ExpBitmap.hpp
-//  PhaseJump
-//
-//  Created by Jeremy Vineyard on 4/21/23.
-//
-
 #ifndef ExpBitmap_hpp
 #define ExpBitmap_hpp
 
@@ -51,11 +44,11 @@ class Image;
     Convolution Filters:
     http://www.roborealm.com/help/Convolution.php
     http://www.fho-emden.de/~hoffmann/bicubic03042002.pdf
-    Resampling Kernel: http://docs.google.com/viewer?a=v&q=cache:ILj2E1xoIxoJ:ftp2.bmtmicro.com/dlc/Resampling.pdf+bicubic+resampling+algorithm&hl=en&gl=us&pid=bl&srcid=ADGEEShHeAfwCSdpgzcpOAt3r1jvP8BcfekIpcOfFdJchMejQiNaeJxzfzS5-zNWidAXGvp00HqDY7Vva8dForCSd1jZrDh14pEZbsiXRrzzYnBHrgbJ6uVzbyKDLjvwAkIW6XbRR1Ke&sig=AHIEtbQWg08eTxsHW9sHIZ5xwY0QoUyY8w
+    Resampling Kernel:
+   http://docs.google.com/viewer?a=v&q=cache:ILj2E1xoIxoJ:ftp2.bmtmicro.com/dlc/Resampling.pdf+bicubic+resampling+algorithm&hl=en&gl=us&pid=bl&srcid=ADGEEShHeAfwCSdpgzcpOAt3r1jvP8BcfekIpcOfFdJchMejQiNaeJxzfzS5-zNWidAXGvp00HqDY7Vva8dForCSd1jZrDh14pEZbsiXRrzzYnBHrgbJ6uVzbyKDLjvwAkIW6XbRR1Ke&sig=AHIEtbQWg08eTxsHW9sHIZ5xwY0QoUyY8w
 
  */
-class ExpBitmap : public RetainObject
-{
+class ExpBitmap : public RetainObject {
 protected:
     void* get_pixel_data(int x, int y) const;
 
@@ -69,12 +62,12 @@ protected:
     FColor GetScaledBoxAverageColor(float x, float y, float scale);
 
 public:
-    PixelFormat    mPixelFormat;
-    BitmapAlpha    mAlphaFormat;
-    Vector2Int        mSize;
+    PixelFormat mPixelFormat;
+    BitmapAlpha mAlphaFormat;
+    Vector2Int mSize;
 
     // OPTIONAL:
-    String        mName;    // Use for identifying bitmaps.
+    String mName; // Use for identifying bitmaps.
 
     Bitmap();
     virtual ~Bitmap();
@@ -91,7 +84,11 @@ public:
     void ReplaceData(void* data, int width, int height);
 
     Bitmap* Copy();
-    virtual Bitmap* New() const { return NewBitmap(); }
+
+    virtual Bitmap* New() const {
+        return NewBitmap();
+    }
+
     virtual Bitmap* NewSubBitmap(VecRect2Int bounds);
     Bitmap* CreateUpsampleBicubic(int destWidth, int destHeight);
     Bitmap* CreateDownsampleBoxAverage(float scale);
@@ -111,37 +108,64 @@ public:
     int GetFirstPixelYOnVScanLine(int x) const;
     int ScanToAnyPixels(ScanLine scan, bool test = false, Color testColor = ColorNone) const;
 
-    static Bitmap* NewBitmap();    // Use to get platform-correct class
+    static Bitmap* NewBitmap(); // Use to get platform-correct class
 
     // RENDERS:
     void EraseRect(VecRect2Int const& rect);
 
     // UTILITIES:
     virtual VecRect2Int TrimToAnyPixels(int border);
-    virtual uint32_t FloodFillAnyAlpha(Vector2Int firstPixel, FColor fillColor, bool alter, VecRect2Int& fillBounds);
+    virtual uint32_t
+    FloodFillAnyAlpha(Vector2Int firstPixel, FColor fillColor, bool alter, VecRect2Int& fillBounds);
 
-    virtual Image* NewImage() { return NULL; }
-    virtual void ImportImage(Image* image) { PJLog("UNIMPLEMENTED. Bitmap.ImportImage not supported on this platform."); }
+    virtual Image* NewImage() {
+        return NULL;
+    }
 
-    virtual bool IsPremultAlpha() const { return true; }    // FUTURE: support test for this.
+    virtual void ImportImage(Image* image) {
+        PJLog("UNIMPLEMENTED. Bitmap.ImportImage not supported on this platform.");
+    }
 
-    bool empty() const { return Width() <= 0 || Height() <= 0; }
+    virtual bool IsPremultAlpha() const {
+        return true;
+    } // FUTURE: support test for this.
+
+    bool empty() const {
+        return Width() <= 0 || Height() <= 0;
+    }
 
     bool SearchIsOpaque() const;
-    uint32_t GetPixelDataSize() const { return BytesPerPixel(); }    // FUTURE: support more pixel formats
+
+    uint32_t GetPixelDataSize() const {
+        return BytesPerPixel();
+    } // FUTURE: support more pixel formats
+
     uint32_t BytesPerPixel() const;
 
     // DATA:
-    void* GetPixelData(int x, int y) const { return get_pixel_data(x, y); }
+    void* GetPixelData(int x, int y) const {
+        return get_pixel_data(x, y);
+    }
+
     char* NewVPixelLine(int x) const;
     char* NewHPixelLine(int y) const;
 
     // GO:
-    void Stop() { Flush(); }
-    uint32_t Width() const { return mSize.x(); }
-    uint32_t Height() const { return mSize.y(); }
-    uint32_t GetNumPixels() const { return Width() * Height(); }
+    void Stop() {
+        Flush();
+    }
 
+    uint32_t Width() const {
+        return mSize.x();
+    }
+
+    uint32_t Height() const {
+        return mSize.y();
+    }
+
+    uint32_t GetNumPixels() const {
+        return Width() * Height();
+    }
 };
 
 #endif /* ExpBitmap_hpp */

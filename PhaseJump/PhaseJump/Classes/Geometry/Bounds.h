@@ -16,16 +16,24 @@ namespace PJ {
         // Half the size of bounds
         Vector3 extents;
 
-        Bounds() {
+        Bounds() {}
+
+        Bounds(Vector3 center, Vector3 extents) :
+            center(center),
+            extents(extents) {}
+
+        Vector3 Min() const {
+            return center - extents;
         }
 
-        Bounds(Vector3 center, Vector3 extents) : center(center), extents(extents) {
+        Vector3 Max() const {
+            return center + extents;
         }
 
-        Vector3 Min() const { return center - extents; }
-        Vector3 Max() const { return center + extents; }
-        Vector3 Size() const { return extents * 2.0f; }
+        Vector3 Size() const {
+            return extents * 2.0f;
+        }
     };
-}
+} // namespace PJ
 
 #endif

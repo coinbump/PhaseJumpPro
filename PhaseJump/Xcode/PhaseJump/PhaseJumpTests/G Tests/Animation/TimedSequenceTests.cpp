@@ -13,8 +13,8 @@ using namespace TimedSequenceTests;
 TEST(TimedSequence, Tests)
 {
     TimedSequence sut;
-    auto timer1 = MAKE<Timer>(1.0f, SomeRunner::RunType::RunOnce);
-    auto timer2 = MAKE<Timer>(2.0f, SomeRunner::RunType::RunOnce);
+    auto timer1 = MAKE<Timer>(1.0f, Runner::RunType::RunOnce);
+    auto timer2 = MAKE<Timer>(2.0f, Runner::RunType::RunOnce);
     sut.Add(timer1);
     sut.Add(timer2);
 

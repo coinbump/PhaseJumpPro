@@ -1,24 +1,22 @@
 #ifndef PJGLVERTEXBUFFER_H
 #define PJGLVERTEXBUFFER_H
 
+#include "UnorderedMap.h"
+
 /*
  RATING: 5 stars
  Tested and works
  CODE REVIEW: 4/16/23
  */
-
-#include "_Map.h"
-
 namespace PJ {
     class GLSomeBuffer {
     public:
         GLuint glId = 0;
 
-        GLSomeBuffer() {
-        }
+        GLSomeBuffer() {}
 
-        GLSomeBuffer(GLuint glId) : glId(glId) {
-        }
+        GLSomeBuffer(GLuint glId) :
+            glId(glId) {}
 
         virtual ~GLSomeBuffer() {
             if (glId) {
@@ -28,9 +26,10 @@ namespace PJ {
     };
 
     /**
-     A vertex buffer (VBO) stores vertices, colors, etc. in a `GL_ARRAY_BUFFER` for access by the GPU.
-     Vertices can be rendered via an IBO (Index Buffer Object), which specifies the indices into the VBO.
-     A VBO can contain render components for multiple objects, to make batching draw calls easier
+     A vertex buffer (VBO) stores vertices, colors, etc. in a `GL_ARRAY_BUFFER`
+     for access by the GPU. Vertices can be rendered via an IBO (Index Buffer
+     Object), which specifies the indices into the VBO. A VBO can contain render
+     components for multiple objects, to make batching draw calls easier
 
      Usage: use pointers or the copied object will delete the buffer
      */
@@ -42,29 +41,27 @@ namespace PJ {
             bool normalize;
         };
 
-        Map<String, Attribute> attributes;
+        UnorderedMap<String, Attribute> attributes;
 
-        GLVertexBuffer() {
-        }
+        GLVertexBuffer() {}
 
-        GLVertexBuffer(GLuint glId) : GLSomeBuffer(glId) {
-        }
+        GLVertexBuffer(GLuint glId) :
+            GLSomeBuffer(glId) {}
     };
 
     /**
-     An index buffer (IBO/EBO) stores indices in a `GL_ELEMENT_ARRAY_BUFFER` for access by the GPU.
-     Specifies vertex indices in a Vertex Buffer (VBO)
+     An index buffer (IBO/EBO) stores indices in a `GL_ELEMENT_ARRAY_BUFFER` for
+     access by the GPU. Specifies vertex indices in a Vertex Buffer (VBO)
 
      Usage: use pointers or the copied object will delete the buffer
      */
     class GLIndexBuffer : public GLSomeBuffer {
     public:
-        GLIndexBuffer() {
-        }
+        GLIndexBuffer() {}
 
-        GLIndexBuffer(GLuint glId) : GLSomeBuffer(glId) {
-        }
+        GLIndexBuffer(GLuint glId) :
+            GLSomeBuffer(glId) {}
     };
-}
+} // namespace PJ
 
 #endif

@@ -2,23 +2,32 @@
 #define PJSOMERENDERCONTEXT_H
 
 #include "Base.h"
+#include "List.h"
+#include "SomeRenderCommandModel.h"
+#include "UnorderedMap.h"
 #include "Vector2.h"
+#include <memory>
 
-namespace PJ
-{
+// CODE REVIEW: ?/23
+namespace PJ {
     class SomeRenderer;
     class RenderIntoModel;
     class SomeRenderEngine;
+    class SomeRenderCommandModel;
 
-    /// <summary>
-    /// A render context is how we render graphics via a third party SDK like SDL or OpenGL
-    /// </summary>
-    class SomeRenderContext : public Base
-    {
+    struct RenderContextModel {
+        /// Proxy commands for the render engine to translate
+        UnorderedMap<String, List<UP<SomeRenderCommandModel>>> phasedProxyCommands;
+    };
+
+    /// A render context is how we render graphics via a third party SDK like
+    /// SDL or OpenGL
+    class SomeRenderContext : public Base {
     public:
         SP<SomeRenderEngine> renderEngine;
 
         SomeRenderContext() {}
+
         virtual ~SomeRenderContext() {}
 
         // Make context current, for renders
@@ -35,6 +44,6 @@ namespace PJ
 
         virtual void Render(SomeRenderer& renderer, RenderIntoModel model);
     };
-}
+} // namespace PJ
 
 #endif

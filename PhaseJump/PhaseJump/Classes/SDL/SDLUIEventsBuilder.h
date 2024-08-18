@@ -1,19 +1,21 @@
 #ifndef PJSDLUIEVENTSBUILDER_H
 #define PJSDLUIEVENTSBUILDER_H
 
-#include "VectorList.h"
 #include "List.h"
+#include "VectorList.h"
 #include <memory>
-#include <SDL2/SDL.h>
+#include <SDL3/SDL.h>
 
+// CODE REVIEW: ?/23
 namespace PJ {
     class SomeUIEvent;
 
     using SDLEventList = List<SDL_Event>;
 
     struct SDLUIEventsBuilder {
-        VectorList<SP<SomeUIEvent>> BuildUIEvents(SDLEventList const& events);
+        // TODO: SP-audit
+        List<SP<SomeUIEvent>> BuildUIEvents(SDLEventList const& events);
     };
-}
+} // namespace PJ
 
 #endif

@@ -1,21 +1,21 @@
 #ifndef PJGLRENDERSTATE_H
 #define PJGLRENDERSTATE_H
 
-#include "GLHeaders.h"
-#include "_Set.h"
 #include "_String.h"
-#include "_Map.h"
 #include "GLBlendMode.h"
+#include "GLHeaders.h"
+#include "OrderedMap.h"
+#include "OrderedSet.h"
 
 /*
  RATING: 5 stars
  Simple type
- CODE REVIEW: 4/14/23
+ CODE REVIEW: 8/8/24
  */
 namespace PJ {
-    /// Stores OpenGL render state for render debugging and deferred batch renders (future feature)
-    class GLRenderState
-    {
+    /// Stores OpenGL render state for render debugging and deferred batch
+    /// renders (future feature)
+    class GLRenderState {
     public:
         struct Viewport {
             GLint x = 0;
@@ -23,11 +23,14 @@ namespace PJ {
             GLsizei width = 0;
             GLsizei height = 0;
 
-            Viewport(GLint x, GLint y, GLsizei width, GLsizei height) : x(x), y(y), width(width), height(height) {
-            }
+            Viewport(GLint x, GLint y, GLsizei width, GLsizei height) :
+                x(x),
+                y(y),
+                width(width),
+                height(height) {}
         };
-    protected:
 
+    protected:
     public:
         /*
          A frame buffer is the render destination for OpenGL calls
@@ -37,20 +40,21 @@ namespace PJ {
         GLuint boundVBO = -1;
         GLuint boundIBO = -1;
 
-        Set<String> enabledFeatures;
+        OrderedSet<String> enabledFeatures;
         GLBlendMode blendMode = GLBlendMode::standard;
 
         /*
          A vertex shader accepts attributes as inputs
          Each attribute has a unique location index
-         To use these attributes we must enable them explicitly before rendering with the sahder
+         To use these attributes we must enable them explicitly before rendering
+         with the sahder
          */
-        Set<GLuint> activeAttributeLocations;
+        OrderedSet<GLuint> activeAttributeLocations;
 
-        Viewport viewport{-1, -1, -1, -1};
+        Viewport viewport{ -1, -1, -1, -1 };
 
         float lineWidth = 1;
     };
-}
+} // namespace PJ
 
 #endif

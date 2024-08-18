@@ -29,49 +29,47 @@ void SomeGLRenderEngine::SetBlendMode(GLBlendMode blendMode) {
 }
 
 void SomeGLRenderEngine::EnableFeature(String featureId, bool isEnabled) {
-    renderState.enabledFeatures.AddOrRemove(featureId, isEnabled);
+    AddOrRemove(renderState.enabledFeatures, featureId, isEnabled);
 }
 
-void SomeGLRenderEngine::EnableOnlyFeatures(Set<String> features) {
-    Set<String> iterFeatures;
+void SomeGLRenderEngine::EnableOnlyFeatures(OrderedSet<String> features) {
+    OrderedSet<String> iterFeatures;
 
-    std::set_difference(renderState.enabledFeatures.begin(),
-                        renderState.enabledFeatures.end(),
-                        features.begin(),
-                        features.end(),
-                        std::inserter(iterFeatures, iterFeatures.begin()));
+    std::set_difference(
+        renderState.enabledFeatures.begin(), renderState.enabledFeatures.end(), features.begin(),
+        features.end(), std::inserter(iterFeatures, iterFeatures.begin())
+    );
 
-    for (auto feature : iterFeatures) {
+    for (auto& feature : iterFeatures) {
         EnableFeature(feature, false);
     }
 
-    for (auto feature : features) {
+    for (auto& feature : features) {
         EnableFeature(feature, true);
     }
 }
 
-void SomeGLRenderEngine::UniformMatrix4fv(GLint location, const GLfloat* value) {
-}
+void SomeGLRenderEngine::UniformMatrix4fv(GLint location, const GLfloat* value) {}
 
 void SomeGLRenderEngine::EnableVertexAttributeArray(GLuint index, bool isEnabled) {
     if (isEnabled) {
-        renderState.activeAttributeLocations.Add(index);
+        renderState.activeAttributeLocations.insert(index);
     } else {
-        renderState.activeAttributeLocations.Remove(index);
+        renderState.activeAttributeLocations.erase(index);
     }
 }
 
 void SomeGLRenderEngine::DisableAllVertexAttributeArrays() {
     auto iterLocations = renderState.activeAttributeLocations;
-    for (auto location : iterLocations) {
+    for (auto& location : iterLocations) {
         EnableVertexAttributeArray(location, false);
     }
 }
 
-void SomeGLRenderEngine::EnableOnlyVertexAttributeArrays(Set<GLuint> attributeLocations) {
+void SomeGLRenderEngine::EnableOnlyVertexAttributeArrays(OrderedSet<GLuint> attributeLocations) {
     DisableAllVertexAttributeArrays();
 
-    for (auto location : attributeLocations) {
+    for (auto& location : attributeLocations) {
         EnableVertexAttributeArray(location, true);
     }
 }
@@ -84,17 +82,14 @@ void SomeGLRenderEngine::BindIndexBuffer(GLIndexBuffer ibo) {
     BindIndexBuffer(ibo.glId);
 }
 
-void SomeGLRenderEngine::BindVertexBuffer(GLuint vbo)
-{
+void SomeGLRenderEngine::BindVertexBuffer(GLuint vbo) {
     renderState.boundVBO = vbo;
 }
 
-void SomeGLRenderEngine::BindIndexBuffer(GLuint ibo)
-{
+void SomeGLRenderEngine::BindIndexBuffer(GLuint ibo) {
     renderState.boundIBO = ibo;
 }
 
-void SomeGLRenderEngine::BindVertexArray(GLuint vao)
-{
+void SomeGLRenderEngine::BindVertexArray(GLuint vao) {
     renderState.boundVAO = vao;
 }

@@ -1,0 +1,26 @@
+#pragma once
+
+#include "_String.h"
+
+/*
+ RATING: 5 stars
+ Simple types
+ CODE REVIEW: 8/8/24
+ */
+namespace PJ {
+    namespace RenderFeature {
+        /*
+         Enables transparent blending.
+
+         Blend has a performance cost and is usually avoided for 3D renders
+         For 2D renders, render unblended objects first, then sort
+         transparent-blend objects back-to-front
+         */
+        static auto const Blend = "blend";
+
+        /*
+         Enables optional clipping of rendered output
+         */
+        static auto const ScissorTest = "scissorTest";
+    }; // namespace RenderFeature
+} // namespace PJ

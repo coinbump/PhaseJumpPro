@@ -4,8 +4,8 @@
 #include "Log.h"
 #include "FloatMath.h"
 #include "Base.h"
-#include "Core.h"
-#include "Macros.h"
+#include "StandardCore.h"
+#include "Utils.h"
 #include <memory>
 
 #endif

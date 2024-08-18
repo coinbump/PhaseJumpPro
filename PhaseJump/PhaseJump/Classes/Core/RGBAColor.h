@@ -8,7 +8,7 @@
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 12/24/22
+ CODE REVIEW: 7/5/24
  */
 namespace PJ {
     /// Specifies the mask and bitshift schema for an N byte-color
@@ -23,25 +23,20 @@ namespace PJ {
         uint32_t blueShift;
         uint32_t alphaShift;
 
-        ComponentColorSchema(uint32_t redMask,
-                       uint32_t greenMask,
-                       uint32_t blueMask,
-                       uint32_t alphaMask,
+        ComponentColorSchema(
+            uint32_t redMask, uint32_t greenMask, uint32_t blueMask, uint32_t alphaMask,
 
-                       uint32_t redShift,
-                       uint32_t greenShift,
-                       uint32_t blueShift,
-                       uint32_t alphaShift)
-        : redMask(redMask),
-        greenMask(greenMask),
-        blueMask(blueMask),
-        alphaMask(alphaMask),
+            uint32_t redShift, uint32_t greenShift, uint32_t blueShift, uint32_t alphaShift
+        ) :
+            redMask(redMask),
+            greenMask(greenMask),
+            blueMask(blueMask),
+            alphaMask(alphaMask),
 
-        redShift(redShift),
-        greenShift(greenShift),
-        blueShift(blueShift),
-        alphaShift(alphaShift) {
-        }
+            redShift(redShift),
+            greenShift(greenShift),
+            blueShift(blueShift),
+            alphaShift(alphaShift) {}
 
         static const ComponentColorSchema rgba;
         static const ComponentColorSchema bgra;
@@ -52,16 +47,14 @@ namespace PJ {
     struct ComponentColor32 {
         uint32_t value;
 
-        ComponentColor32() : value(0) {
-        }
+        ComponentColor32() :
+            value(0) {}
 
-        ComponentColor32(int red, int green, int blue, int alpha)
-        {
+        ComponentColor32(int red, int green, int blue, int alpha) {
             value = ValueFromRGBA(red, green, blue, alpha);
         }
 
-        ComponentColor32(float red, float green, float blue, float alpha)
-        {
+        ComponentColor32(float red, float green, float blue, float alpha) {
             value = ValueFromRGBA(red * 255.0f, green * 255.0f, blue * 255.0f, alpha * 255.0f);
         }
 
@@ -69,20 +62,48 @@ namespace PJ {
             return value;
         }
 
-        uint32_t ValueFromRGBA(int red, int green, int blue, int alpha)
-        {
-            return ((uint32_t) red << ColorSchema.redShift) | ((uint32_t) green << ColorSchema.greenShift) | ((uint32_t) blue << ColorSchema.blueShift) | ((uint32_t) alpha << ColorSchema.alphaShift);
+        uint32_t ValueFromRGBA(int red, int green, int blue, int alpha) {
+            return ((uint32_t)red << ColorSchema.redShift) |
+                   ((uint32_t)green << ColorSchema.greenShift) |
+                   ((uint32_t)blue << ColorSchema.blueShift) |
+                   ((uint32_t)alpha << ColorSchema.alphaShift);
         }
 
-        int r() const { return ((value & ColorSchema.redMask) >> ColorSchema.redShift); }
-        int g() const { return ((value & ColorSchema.greenMask) >> ColorSchema.greenShift); }
-        int b() const { return ((value & ColorSchema.blueMask) >> ColorSchema.blueShift); }
-        int a() const { return ((value & ColorSchema.alphaMask) >> ColorSchema.alphaShift); }
+        bool IsOpaque() const {
+            return alphaFloat() >= 1.0f;
+        }
 
-        float redFloat() const { return ((float)r())/255.0f; }
-        float greenFloat() const { return ((float)g())/255.0f; }
-        float blueFloat() const { return ((float)b())/255.0f; }
-        float alphaFloat() const { return ((float)a())/255.0f; }
+        int r() const {
+            return ((value & ColorSchema.redMask) >> ColorSchema.redShift);
+        }
+
+        int g() const {
+            return ((value & ColorSchema.greenMask) >> ColorSchema.greenShift);
+        }
+
+        int b() const {
+            return ((value & ColorSchema.blueMask) >> ColorSchema.blueShift);
+        }
+
+        int a() const {
+            return ((value & ColorSchema.alphaMask) >> ColorSchema.alphaShift);
+        }
+
+        float redFloat() const {
+            return ((float)r()) / 255.0f;
+        }
+
+        float greenFloat() const {
+            return ((float)g()) / 255.0f;
+        }
+
+        float blueFloat() const {
+            return ((float)b()) / 255.0f;
+        }
+
+        float alphaFloat() const {
+            return ((float)a()) / 255.0f;
+        }
 
         template <ComponentColorSchema const& ResultColorSchema>
         operator ComponentColor32<ResultColorSchema>() const {
@@ -105,7 +126,8 @@ namespace PJ {
     };
 
     using RGBAColor = ComponentColor32<ComponentColorSchema::rgba>;
+    using Color32 = RGBAColor;
     using BGRAColor = ComponentColor32<ComponentColorSchema::bgra>;
-}
+} // namespace PJ
 
 #endif

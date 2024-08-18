@@ -4,21 +4,21 @@
 
 using namespace PJ;
 
-void SomePathLayout::ApplyLayout()
-{
+void SomePathLayout::ApplyLayout() {
+    GUARD(owner)
+
     auto path = BuildPath();
-    auto owner = this->owner.lock();
+    auto owner = this->owner;
 
     auto childCount = owner->ChildCount();
     float normalOffset = childCount > 1 ? 1.0f / (float)(childCount - 1) : 0;
 
     auto index = 0;
     auto children = owner->ChildNodes();
-    for (auto childObject : children) {
+    for (auto& childObject : children) {
         auto normalPosition = index * normalOffset;
 
-        if (index < positions.size())
-        {
+        if (index < positions.size()) {
             normalPosition = positions[index];
         }
 
@@ -27,30 +27,23 @@ void SomePathLayout::ApplyLayout()
 
         childObject->transform->SetLocalPosition(position);
 
-        if (orientToPath)
-        {
+        if (orientToPath) {
             auto prevPosition = normalPosition;
             auto nextPosition = normalPosition;
             auto orientDelta = .001f;
-            if (normalPosition == 0)
-            {
+            if (normalPosition == 0) {
                 nextPosition += orientDelta;
-            }
-            else if (normalPosition == 1.0f)
-            {
+            } else if (normalPosition == 1.0f) {
                 prevPosition -= orientDelta;
-            }
-            else
-            {
+            } else {
                 nextPosition = std::min(1.0f, nextPosition + orientDelta);
             }
 
-            auto rotationDegreeAngle = Angle(path->PositionAt(nextPosition) - path->PositionAt(prevPosition)).Degrees();
+            auto rotationDegreeAngle =
+                Angle(path->PositionAt(nextPosition) - path->PositionAt(prevPosition)).Degrees();
             rotationDegreeAngle += orientDegreeAngle;
             childObject->transform->SetRotation(Angle::DegreesAngle(rotationDegreeAngle));
-        }
-        else
-        {
+        } else {
             childObject->transform->SetRotation(Angle::DegreesAngle(0));
         }
 

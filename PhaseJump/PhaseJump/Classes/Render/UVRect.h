@@ -3,8 +3,8 @@
 
 #include "Vector2.h"
 
-namespace PJ
-{
+// CODE REVIEW: ?/23
+namespace PJ {
     // A UVRect has flipped coordinates from Rect
     // [0,0] is the bottom left. [1,1] is the top-right
     // For repeat textures, the UV value can extend past [1,1]
@@ -12,16 +12,18 @@ namespace PJ
         Vector2 origin;
         Vector2 size;
 
-        UVRect() {
-        }
+        UVRect() {}
 
-        UVRect(Vector2 origin, Vector2 size) : origin(origin), size(size) {
-        }
+        UVRect(Vector2 origin, Vector2 size) :
+            origin(origin),
+            size(size) {}
 
-        bool operator==(UVRect const& rhs) const { return this->origin == rhs.origin && this->size == rhs.size; }
+        bool operator==(UVRect const& rhs) const {
+            return this->origin == rhs.origin && this->size == rhs.size;
+        }
 
         static UVRect const one;
     };
-}
+} // namespace PJ
 
 #endif

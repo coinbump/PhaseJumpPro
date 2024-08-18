@@ -1,20 +1,20 @@
-#include "SQLCommand.h"
 #include "SQLTable.h"
-#include "SQLStatement.h"
+#include "SQLCommand.h"
 #include "SQLDatabase.h"
 #include "SQLRowValues.h"
-#include "StringVectorList.h"
+#include "SQLStatement.h"
+#include "VectorList.h"
 #include <sqlite3.h>
 
 using namespace std;
 using namespace PJ;
 
-SQLTable::SQLTable(String name, SQLDatabaseSharedPtr db) : name(name), db(db)
-{
-}
+SQLTable::SQLTable(String name, SQLDatabaseSharedPtr db) :
+    name(name),
+    db(db) {}
 
 SQLStatement SQLTable::BuildStatement(String columnName, std::optional<SQLWhereArguments> where) {
-    StringVectorList columnNames;
+    VectorList<String> columnNames;
     columnNames.Add(columnName);
 
     return BuildStatement(SQLTableQueryArguments(columnNames, where));
@@ -29,12 +29,13 @@ SQLStatement SQLTable::BuildStatement(SQLTableQueryArguments query) {
 
     String columnNamesString = "*";
 
-    if (columnNames.Count() > 0) {
-        StringVectorList identifiedColumnNames;
-        std::transform(columnNames.begin(), columnNames.end(), std::back_inserter(identifiedColumnNames), [](const String& value) {
-            return SQLIdentifierFormatter().Formatted(value);
-        });
-        
+    if (columnNames.size() > 0) {
+        VectorList<String> identifiedColumnNames;
+        std::transform(
+            columnNames.begin(), columnNames.end(), std::back_inserter(identifiedColumnNames),
+            [](const String& value) { return SQLIdentifierFormatter().Formatted(value); }
+        );
+
         columnNamesString = identifiedColumnNames.Joined(",");
     }
 
@@ -54,15 +55,13 @@ SQLStatement SQLTable::BuildStatement(SQLTableQueryArguments query) {
     return result;
 }
 
-VectorList<SP<Tags>> ColumnValues(VectorList<String> columnNames)
-{
+VectorList<SP<Tags>> ColumnValues(VectorList<String> columnNames) {
     VectorList<SP<Tags>> result;
 
     return result;
 }
 
-VectorList<SQLRowValues> SQLTable::RowValuesList(SQLTableQueryArguments query)
-{
+VectorList<SQLRowValues> SQLTable::RowValuesList(SQLTableQueryArguments query) {
     VectorList<SQLRowValues> result;
 
     auto statement = BuildStatement(SQLTableQueryArguments(query.columnNames, query.where));
@@ -77,23 +76,26 @@ VectorList<SQLRowValues> SQLTable::RowValuesList(SQLTableQueryArguments query)
                 String columnName = sqlite3_column_name(command.sqliteStatement, i);
                 int columnType = sqlite3_column_type(command.sqliteStatement, i);
                 switch (columnType) {
-                    case SQLITE_INTEGER: {
+                case SQLITE_INTEGER:
+                    {
                         auto value = sqlite3_column_int(command.sqliteStatement, i);
                         row.Add(columnName, value);
                         break;
                     }
-                    case SQLITE_FLOAT: {
+                case SQLITE_FLOAT:
+                    {
                         auto value = sqlite3_column_double(command.sqliteStatement, i);
                         row.Add(columnName, value);
                         break;
                     }
-                    case SQLITE_TEXT: {
+                case SQLITE_TEXT:
+                    {
                         String value = (const char*)sqlite3_column_text(command.sqliteStatement, i);
                         row.Add(columnName, value);
                         break;
                     }
-                    default:
-                        break;
+                default:
+                    break;
                 }
             }
 
@@ -108,10 +110,13 @@ VectorList<SQLRowValues> SQLTable::RowValuesList(SQLTableQueryArguments query)
 
  From: https://www.sqlite.org/c3ref/column_decltype.html
 
- "SQLite uses dynamic run-time typing. So just because a column is declared to contain a particular type does not mean that the data stored in that column is of the declared type. SQLite is strongly typed, but the typing is dynamic not static. Type is associated with individual values, not with the containers used to hold those values."
+ "SQLite uses dynamic run-time typing. So just because a column is declared to
+ contain a particular type does not mean that the data stored in that column is
+ of the declared type. SQLite is strongly typed, but the typing is dynamic not
+ static. Type is associated with individual values, not with the containers used
+ to hold those values."
  */
-VectorList<int> SQLTable::IntValues(SQLTableQueryArguments query)
-{
+VectorList<int> SQLTable::IntValues(SQLTableQueryArguments query) {
     VectorList<int> result;
 
     auto statement = BuildStatement(SQLTableQueryArguments(query.columnNames, query.where));
@@ -133,14 +138,12 @@ VectorList<int> SQLTable::IntValues(SQLTableQueryArguments query)
     return result;
 }
 
-int SQLTable::IntValue(SQLTableQueryArguments query, int defaultValue)
-{
+int SQLTable::IntValue(SQLTableQueryArguments query, int defaultValue) {
     auto values = IntValues(query);
-    return values.IsEmpty() ? defaultValue : values[0];
+    return IsEmpty(values) ? defaultValue : values[0];
 }
 
-VectorList<float> SQLTable::FloatValues(SQLTableQueryArguments query)
-{
+VectorList<float> SQLTable::FloatValues(SQLTableQueryArguments query) {
     VectorList<float> result;
 
     auto statement = BuildStatement(SQLTableQueryArguments(query.columnNames, query.where));
@@ -162,14 +165,12 @@ VectorList<float> SQLTable::FloatValues(SQLTableQueryArguments query)
     return result;
 }
 
-float SQLTable::FloatValue(SQLTableQueryArguments query, float defaultValue)
-{
+float SQLTable::FloatValue(SQLTableQueryArguments query, float defaultValue) {
     auto values = FloatValues(query);
-    return values.IsEmpty() ? defaultValue : values[0];
+    return IsEmpty(values) ? defaultValue : values[0];
 }
 
-VectorList<String> SQLTable::StringValues(SQLTableQueryArguments query)
-{
+VectorList<String> SQLTable::StringValues(SQLTableQueryArguments query) {
     VectorList<String> result;
 
     auto statement = BuildStatement(SQLTableQueryArguments(query.columnNames, query.where));
@@ -181,7 +182,8 @@ VectorList<String> SQLTable::StringValues(SQLTableQueryArguments query)
             for (int i = 0; i < columnCount; i++) {
                 int columnType = sqlite3_column_type(command.sqliteStatement, i);
                 if (columnType == SQLITE3_TEXT) {
-                    auto value = String((const char*)sqlite3_column_text(command.sqliteStatement, i));
+                    auto value =
+                        String((const char*)sqlite3_column_text(command.sqliteStatement, i));
                     result.Add(value);
                 }
             }
@@ -191,14 +193,12 @@ VectorList<String> SQLTable::StringValues(SQLTableQueryArguments query)
     return result;
 }
 
-String SQLTable::StringValue(SQLTableQueryArguments query, String defaultValue)
-{
+String SQLTable::StringValue(SQLTableQueryArguments query, String defaultValue) {
     auto values = StringValues(query);
-    return values.IsEmpty() ? defaultValue : values[0];
+    return IsEmpty(values) ? defaultValue : values[0];
 }
 
-void SQLTable::InsertRow()
-{
+void SQLTable::InsertRow() {
     SQLStatement statement("INSERT INTO ");
     statement.AppendIdentifier(name);
     statement.AppendString(" DEFAULT VALUES");
@@ -210,8 +210,7 @@ void SQLTable::InsertRow()
     }
 }
 
-void SQLTable::DeleteRow(String whereColumn, String whereMatch)
-{
+void SQLTable::DeleteRow(String whereColumn, String whereMatch) {
     SQLStatement statement("DELETE FROM ");
     statement.AppendIdentifier(name);
     statement.AppendString(" WHERE ");
@@ -227,8 +226,7 @@ void SQLTable::DeleteRow(String whereColumn, String whereMatch)
 }
 
 /// Deletes the entire table
-void SQLTable::Drop()
-{
+void SQLTable::Drop() {
     SQLStatement statement("DROP TABLE ");
     statement.AppendIdentifier(name);
 
@@ -239,13 +237,12 @@ void SQLTable::Drop()
     }
 }
 
-bool SQLTable::CellExists(SQLTableQueryArguments query)
-{
+bool SQLTable::CellExists(SQLTableQueryArguments query) {
     if (!query.where) {
         PJLog("ERROR. CellExists requires where clause.");
         return false;
     }
-    if (query.columnNames.IsEmpty()) {
+    if (IsEmpty(query.columnNames)) {
         PJLog("ERROR. CellExists requires column name");
         return false;
     }
@@ -272,18 +269,15 @@ bool SQLTable::CellExists(SQLTableQueryArguments query)
     return false;
 }
 
-void SQLTable::Run(SQLStatement statement)
-{
+void SQLTable::Run(SQLStatement statement) {
     SQLCommand command(statement);
 
     if (SQLITE_OK == db->Prepare(command)) {
-        while (SQLITE_ROW == db->Step(command)) {
-        }
+        while (SQLITE_ROW == db->Step(command)) {}
     }
 }
 
-bool SQLTable::AddColumn(String colName, String params)
-{
+bool SQLTable::AddColumn(String colName, String params) {
     auto tableName = name;
 
     // EXAMPLE: ALTER TABLE "Persons" ADD "DateOfBirth" date
@@ -305,15 +299,14 @@ bool SQLTable::AddColumn(String colName, String params)
 }
 
 /**
- OPTIMIZE: this is inefficient to check this every time a SQL value is altered, to optimize SQL,
- build the table first.
+ OPTIMIZE: this is inefficient to check this every time a SQL value is altered,
+ to optimize SQL, build the table first.
 
  http://stackoverflow.com/questions/2520945/sqlite-if-column-exists
  http://stackoverflow.com/questions/928865/find-sqlite-column-names-in-empty-table
  http://www.sqlite.org/pragma.html#pragma_table_info
  */
-bool SQLTable::ColumnExists(String columnName)
-{
+bool SQLTable::ColumnExists(String columnName) {
     auto tableName = name;
 
     SQLStatement statement("PRAGMA table_info(");
@@ -347,9 +340,9 @@ bool SQLTable::ColumnExists(String columnName)
     return false;
 }
 
-Set<String> SQLTable::UniqueStrings(String columnName) {
+OrderedSet<String> SQLTable::UniqueStrings(String columnName) {
     auto tableName = name;
-    Set<String> result;
+    OrderedSet<String> result;
 
     SQLStatement statement("SELECT ");
     statement.AppendIdentifier(columnName);
@@ -374,10 +367,10 @@ Set<String> SQLTable::UniqueStrings(String columnName) {
     return result;
 }
 
-void SQLTable::SetValue(SQLTableMutateArguments mutation, SetValueType type)
-{
+void SQLTable::SetValue(SQLTableMutateArguments mutation, SetValueType type) {
     // Modify existing values
-    // EXAMPLE: UPDATE table_name SET column1=value, column2=value2,... WHERE some_column=some_value
+    // EXAMPLE: UPDATE table_name SET column1=value, column2=value2,... WHERE
+    // some_column=some_value
     if (type == SetValueType::Update || mutation.where) {
         SQLStatement statement;
         statement.AppendString("UPDATE ");
@@ -396,9 +389,9 @@ void SQLTable::SetValue(SQLTableMutateArguments mutation, SetValueType type)
         }
 
         Run(statement);
-    }
-    else {
-        // SYNTAX: INSERT INTO table_name (column1, column2, column3,...) VALUES (value1, value2, value3,...)
+    } else {
+        // SYNTAX: INSERT INTO table_name (column1, column2, column3,...) VALUES
+        // (value1, value2, value3,...)
         SQLStatement statement("INSERT INTO ");
         statement.AppendIdentifier(name);
         statement.AppendString(" (");
@@ -411,12 +404,10 @@ void SQLTable::SetValue(SQLTableMutateArguments mutation, SetValueType type)
     }
 }
 
-void SQLTable::SetIntValue(SQLTableMutateArguments mutation, SetValueType type)
-{
+void SQLTable::SetIntValue(SQLTableMutateArguments mutation, SetValueType type) {
     SetValue(SQLTableMutateArguments(mutation.columnName, mutation.where, mutation.value), type);
 }
 
-void SQLTable::SetFloatValue(SQLTableMutateArguments mutation, SetValueType type)
-{
+void SQLTable::SetFloatValue(SQLTableMutateArguments mutation, SetValueType type) {
     SetValue(SQLTableMutateArguments(mutation.columnName, mutation.where, mutation.value), type);
 }

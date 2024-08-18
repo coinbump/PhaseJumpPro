@@ -1,9 +1,10 @@
 #ifndef PJCAMERA_H
 #define PJCAMERA_H
 
-#include "Macros.h"
+#include "Utils.h"
 #include <memory>
 
+// CODE REVIEW: ?/23
 namespace PJ {
     class SomeCamera;
 
@@ -11,9 +12,9 @@ namespace PJ {
     class Camera {
     public:
         static SP<SomeCamera> main;
-        
+
         virtual ~Camera() {}
     };
-}
+} // namespace PJ
 
 #endif

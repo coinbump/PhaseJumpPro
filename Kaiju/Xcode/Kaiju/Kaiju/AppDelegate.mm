@@ -1,10 +1,3 @@
-//
-//  AppDelegate.m
-//  Kaiju
-//
-//  Created by Jeremy Vineyard on 11/5/22.
-//
-
 #import "AppDelegate.h"
 #import <PhaseJump/PhaseJump.h>
 #include "SDLTest.h"

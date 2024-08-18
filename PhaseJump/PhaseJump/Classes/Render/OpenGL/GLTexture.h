@@ -1,26 +1,25 @@
 #ifndef PJGLTEXTURE_H
 #define PJGLTEXTURE_H
 
-#include "Base.h"
-#include "RenderTypes.h"
-#include "_Map.h"
 #include "_String.h"
+#include "Base.h"
 #include "GLHeaders.h"
+#include "OrderedMap.h"
+#include "RenderTypes.h"
 #include "SomeTexture.h"
 
 /*
  RATING: 5 stars
  Simple type
- CODE REVIEW: 4/21/23
+ CODE REVIEW: 8/8/24
  */
 namespace PJ {
     class GLTexture : public SomeTexture {
     public:
         using Base = SomeTexture;
 
-        GLTexture(String id, GLuint glId, Vector2Int size, TextureAlphaMode alphaMode)
-        : Base(id, glId, size, alphaMode) {
-        }
+        GLTexture(String id, GLuint glId, Vector2Int size, String alphaMode) :
+            Base(id, glId, size, alphaMode) {}
 
         virtual ~GLTexture() {
             if (renderId > 0) {
@@ -28,9 +27,31 @@ namespace PJ {
             }
         }
 
-        void SetTextureMagnification(TextureMagnification value) override;
-        void SetTextureWrap(TextureWrap value) override;
+        static GLint GLTextureMagnification(TextureMagnificationType textureMagnification) {
+            OrderedMap<TextureMagnificationType, GLint> map = {
+                { TextureMagnification::Nearest, GL_NEAREST },
+                { TextureMagnification::Linear, GL_LINEAR },
+            };
+            auto i = map.find(textureMagnification);
+            GUARDR(i != map.end(), GL_LINEAR);
+            return i->second;
+        }
+
+        static GLint GLTextureWrap(TextureWrapType textureWrap) {
+            OrderedMap<TextureWrapType, GLint> map = {
+                { TextureWrap::Clamp, GL_CLAMP_TO_EDGE },
+                { TextureWrap::Repeat, GL_REPEAT },
+            };
+            auto i = map.find(textureWrap);
+            GUARDR(i != map.end(), GL_CLAMP_TO_EDGE);
+            return i->second;
+        }
+
+        // MARK: SomeTexture
+
+        void SetTextureMagnification(TextureMagnificationType value) override;
+        void SetTextureWrap(TextureWrapType value) override;
     };
-}
+} // namespace PJ
 
 #endif

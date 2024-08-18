@@ -1,40 +1,48 @@
 #include "SDLLoadGLTextureOperation.h"
-#include "GLTexture.h"
 #include "Bitmap.h"
+#include "GLTexture.h"
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_surface.h>
 
 using namespace std;
 using namespace PJ;
 
-SDLLoadGLTextureOperation::SDLLoadGLTextureOperation(FilePath filePath, TextureMagnification textureMagnification) : textureMagnification(textureMagnification) {
-    this->info.filePath = filePath;
-}
-
-void SDLLoadGLTextureOperation::Run() {
+SomeLoadResourcesOperation::Result SDLLoadGLTextureOperation::LoadResources() {
     auto path = info.filePath;
 
-    SDL_Surface *surface = IMG_Load(path.string().c_str());
+    SDL_Surface* surface = IMG_Load(path.string().c_str());
     if (!surface) {
+        // TODO: set failure value? Why isn't this part of Run?
         PJLog("ERROR. Can't load GL texture at: %s", path.string().c_str());
-        return;
+        return Failure();
     }
 
+    int surfacePixelSize = 4;
     GLenum pixelFormat = GL_BGR;
-    if (surface->format->BytesPerPixel == 4) {
+    switch (surface->format) {
+    case SDL_PixelFormat::SDL_PIXELFORMAT_ARGB8888:
         pixelFormat = GL_BGRA;
-    } else {
+        surfacePixelSize = 4;
+        break;
+    default:
         PJLog("Only RGBA supported for now.");
-        return;
+        return Failure();
+        break;
     }
 
-    BGRABitmap bgraBitmap(Vector2Int(surface->w, surface->h), surface->pixels);
+    auto surfaceDataSize = surfacePixelSize * surface->w * surface->h;
+    BGRABitmap bgraBitmap(Vector2Int(surface->w, surface->h), surface->pixels, surfaceDataSize);
     RGBABitmap rgbaBitmap(Vector2Int(surface->w, surface->h));
 
     rgbaBitmap.Pixels().clear();
-    std::copy(bgraBitmap.Pixels().begin(), bgraBitmap.Pixels().end(), std::back_inserter(rgbaBitmap.Pixels()));
+    std::copy(
+        bgraBitmap.Pixels().begin(), bgraBitmap.Pixels().end(),
+        std::back_inserter(rgbaBitmap.Pixels())
+    );
 
-    // SDL does not load textures premultiplied, so if we want that, we need to apply it
-    // Premultiply
-    for (auto & pixel : rgbaBitmap.Pixels()) {
+    // SDL does not load textures premultiplied, so if we want that, we need to
+    // apply it Premultiply
+    for (auto& pixel : rgbaBitmap.Pixels()) {
         Color color(pixel);
         color.r *= color.a;
         color.g *= color.a;
@@ -47,15 +55,7 @@ void SDLLoadGLTextureOperation::Run() {
     glGenTextures(1, &glTexture);
     glBindTexture(GL_TEXTURE_2D, glTexture);
 
-    GLint glTextureMag = GL_LINEAR;
-    switch (textureMagnification) {
-        case TextureMagnification::Nearest:
-            glTextureMag = GL_NEAREST;
-            break;
-        case TextureMagnification::Linear:
-            glTextureMag = GL_LINEAR;
-            break;
-    }
+    GLint glTextureMag = GLTexture::GLTextureMagnification(textureMagnification);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, glTextureMag);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, glTextureMag);
@@ -66,7 +66,10 @@ void SDLLoadGLTextureOperation::Run() {
     int height = surface->h;
 
     // https://stackoverflow.com/questions/13666196/why-do-images-loaded-to-texture-with-img-load-in-sdl-and-opengl-look-bluish
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, rgbaBitmap.Size().x, rgbaBitmap.Size().y, 0, GL_RGBA, GL_UNSIGNED_BYTE, rgbaBitmap.Pixels().data());
+    glTexImage2D(
+        GL_TEXTURE_2D, 0, GL_RGBA, rgbaBitmap.Size().x, rgbaBitmap.Size().y, 0, GL_RGBA,
+        GL_UNSIGNED_BYTE, rgbaBitmap.Pixels().data()
+    );
 
     String id = path.filename().string();
     auto components = id.ComponentsSeparatedBy('.');
@@ -74,13 +77,15 @@ void SDLLoadGLTextureOperation::Run() {
         id = components[0];
     }
 
-    auto texture = MAKE<GLTexture>(id, glTexture, Vector2Int(width, height), TextureAlphaMode::Standard);
+    auto texture =
+        MAKE<GLTexture>(id, glTexture, Vector2Int(width, height), TextureAlphaMode::Standard);
+    texture->SomeTexture::SetTextureMagnification(textureMagnification);
 
-    LoadedResource loadedResource(info.filePath, info.typeId, info.id, SCAST<PJ::Base>(texture));
+    LoadedResource loadedResource(info.filePath, info.type, info.id, SCAST<PJ::Base>(texture));
     Success result;
     result.Add(loadedResource);
 
-    this->result = MAKE<Result>(result);
+    SDL_DestroySurface(surface);
 
-    SDL_FreeSurface(surface);
+    return result;
 }

@@ -6,21 +6,12 @@
 /*
  RATING: 5 stars
  Simple types
- CODE REVIEW: 3/29/23
+ CODE REVIEW: 7/13/24
  */
 namespace PJ {
-    enum class DataType {
-        Data,
-        XML
-    };
+    enum class DataType { Data, XML };
 
-    enum class SQLValueType {
-        Int,
-        Real,
-        Text,
-        Blob,
-        Any
-    };
+    enum class SQLValueType { Int, Real, Text, Blob, Any };
 
     /// Specifies how the database should be opened
     /// https://www.sqlite.org/c3ref/open.html
@@ -34,6 +25,6 @@ namespace PJ {
         // Create temporary database on disk
         TemporaryOnDisk
     };
-}
+} // namespace PJ
 
 #endif

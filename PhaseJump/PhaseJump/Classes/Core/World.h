@@ -1,64 +1,99 @@
 #ifndef PJWORLD_H
 #define PJWORLD_H
 
-#include "WorldComponent.h"
-#include "SomeUIEventPoller.h"
-#include "Updatable.h"
-#include "SomeRenderContext.h"
-#include "OrthoCamera.h"
 #include "EventSystem.h"
 #include "LoadedResources.h"
-#include "Macros.h"
+#include "OrthoCamera.h"
+#include "SomeRenderContext.h"
+#include "SomeUIEventPoller.h"
+#include "Updatable.h"
+#include "Utils.h"
+#include "WorldComponent.h"
 #include <memory>
 
-namespace PJ
-{
+// CODE REVIEW: ?/23
+namespace PJ {
     class WorldNode;
-    class WorldSystem;
+    class SomeWorldSystem;
+    class SomeCamera;
+    class RenderMaterial;
 
+    // TODO: Needs unit tests
     class World : public Base, public Updatable {
     protected:
         using TimePoint = std::chrono::time_point<std::chrono::steady_clock>;
 
         std::optional<TimePoint> fpsCheckTimePoint;
-        int renderFrameCount;
+        uint64_t renderFrameCount;
 
         void GoInternal() override;
 
-        WorldNode::NodeVectorList updateGraph;
-        VectorList<SP<WorldSystem>> systems;
+        WorldNode::NodeList updateList;
+        VectorList<SP<SomeWorldSystem>> systems;
+        SP<SomeCamera> mainCamera;
 
     public:
+        /// Use to display render stats like fps, render count, etc.
+        Tags renderStats;
+
+        // TODO: can this be a non-SP? But problem is CollectGraph assumes all SPs, so... <- revise
+        // CollectGraph?
         SP<WorldNode> root = MAKE<WorldNode>();
         SP<LoadedResources> loadedResources = MAKE<LoadedResources>();
         SP<SomeRenderContext> renderContext;
         SP<SomeCamera> camera;
         SP<SomeUIEventPoller> uiEventPoller;
 
-        WorldNode::NodeVectorList const& UpdateGraph() const { return updateGraph; }
+        /// Render materials that can be shared between objects
+        UnorderedMap<String, SP<RenderMaterial>> renderMaterials;
 
         World();
+
+        virtual SP<SomeCamera> MainCamera();
 
         virtual Matrix4x4 LocalModelMatrix(WorldNode const& node);
         virtual Matrix4x4 WorldModelMatrix(WorldNode const& node);
 
-        bool IsFinished() const override { return false; }
         void OnUpdate(TimeSlice time) override;
         virtual void Render();
 
         void Add(SP<WorldNode> node);
+        void Add(SP<SomeWorldSystem> system);
 
-        template <class T>
-        void AddComponent(SP<T> component) {
-            auto node = MAKE<WorldNode>();
-            node->AddComponent(component);
-            Add(node);
+        VectorList<SP<SomeWorldSystem>>& Systems() {
+            return systems;
         }
+
+        VectorList<SP<SomeWorldSystem>> const& Systems() const {
+            return systems;
+        }
+
+        /// Returns the first system that matches the type
+        template <class Type>
+        SP<Type> TypeSystem() {
+            auto found =
+                std::find_if(systems.begin(), systems.end(), [](SP<SomeWorldSystem> system) {
+                    return DCAST<Type>(system) != nullptr;
+                });
+            return found ? DCAST<Type>(found) : nullptr;
+        }
+
+        //        template <class T>
+        //        void AddComponent(SP<T> component) {
+        //            auto node = MAKE<WorldNode>();
+        //            node->AddComponent(component);
+        //            Add(node);
+        //        }
+
+        void Remove(SP<SomeWorldSystem> system);
+        void Remove(VectorList<SP<SomeWorldSystem>> systems);
+        void RemoveAllSystems();
+        void RemoveAllNodes();
 
         void SetRenderContext(SP<SomeRenderContext> renderContext);
 
-        virtual void ProcessUIEvents(VectorList<SP<SomeUIEvent>> const& uiEvents);
+        virtual void ProcessUIEvents(List<SP<SomeUIEvent>> const& uiEvents);
     };
-}
+} // namespace PJ
 
 #endif

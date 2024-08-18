@@ -1,16 +1,20 @@
 #ifndef PJSDLWORLD_H
 #define PJSDLWORLD_H
 
-#include "World.h"
-#include "SomeRenderer.h"
-#include "SDLTextureRenderer.h"
+#include "DevProfiler.h"
 #include "SDLEventPoller.h"
+#include "SDLTextureRenderer.h"
+#include "SomeRenderer.h"
 #include "VectorList.h"
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_main.h>
-#include <SDL2/SDL_render.h>
+#include "World.h"
 #include <memory>
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_main.h>
+#include <SDL3/SDL_render.h>
 
+// #define PROFILE
+
+// CODE REVIEW: ?/23
 namespace PJ {
     class SDLWorld : public World {
     public:
@@ -18,33 +22,54 @@ namespace PJ {
 
     protected:
         bool isDone = false;
-        SDL_Window *window;
+        SDL_Window* window;
         uint64_t startTime = 0;
 
     public:
-        SDLWorld() {
+        SDLWorld() {}
+
+        SDL_Window* SDL_Window() const {
+            return window;
         }
 
-        SDL_Window* SDL_Window() const { return window; }
-
-        virtual void Configure(struct SDL_Window *window, SP<SomeRenderContext> renderContext) {
+        virtual void Configure(struct SDL_Window* window, SP<SomeRenderContext> renderContext) {
             this->window = window;
             this->renderContext = renderContext;
         }
 
         void Run() {
-            startTime = SDL_GetTicks64();
+            startTime = SDL_GetTicks();
 
             while (!isDone) {
-                auto currentTime = SDL_GetTicks64();
+                auto currentTime = SDL_GetTicks();
                 double deltaTime = (currentTime - startTime) / 1000.0; // Convert to seconds.
                 startTime = currentTime;
 
-                OnUpdate(TimeSlice(deltaTime));
+                {
+#ifdef PROFILE
+                    DevProfiler devProfiler("SDL-OnUpdate", [](String value) {
+                        std::cout << value;
+                    });
+#endif
 
-                Render();
+                    OnUpdate(TimeSlice(deltaTime));
+                }
 
-                MainLoop();
+                {
+#ifdef PROFILE
+                    DevProfiler devProfiler("SDL-Render", [](String value) { std::cout << value; });
+#endif
+                    Render();
+                }
+
+                {
+#ifdef PROFILE
+                    DevProfiler devProfiler("SDL-MainLoop", [](String value) {
+                        std::cout << value;
+                    });
+#endif
+                    MainLoop();
+                }
             }
             SDL_Quit();
         }
@@ -56,6 +81,6 @@ namespace PJ {
 
         void MainLoop();
     };
-}
+} // namespace PJ
 
 #endif

@@ -1,33 +1,35 @@
 #ifndef PJCENTERPOLYMESHRENDERBUILDER_H
 #define PJCENTERPOLYMESHRENDERBUILDER_H
 
-#include "SomeCenterPolyMeshBuilder.h"
 #include "Mesh.h"
+#include "SomeCenterPolyMeshBuilder.h"
 
 /*
  RATING: 5 stars
- Tested and works. Needs unit tests
+ Tested and works. TODO: Needs unit tests
  CODE REVIEW: 4/16/23
  */
-namespace PJ
-{
-    /// <summary>
-    /// A mesh that can be defined by a center point at (0, 0) and a surrounding path
-    /// Example: capsule, rounded rectangle, arc, ellipse, circle
-    /// </summary>
-    class CenterPolyMeshBuilder : public SomeCenterPolyMeshBuilder
-    {
+namespace PJ {
+    /// A mesh that can be defined by a center point at (0, 0) and a surrounding
+    /// path Example: capsule, rounded rectangle, arc, ellipse, circle
+    class CenterPolyMeshBuilder : public SomeCenterPolyMeshBuilder {
     public:
-        int MeshVertexCount() const { return (int)polygon.size() + 1; }
-        int SliceCount() const { return (int)polygon.size() - 1; }
+        int MeshVertexCount() const {
+            return (int)polygon.size() + 1;
+        }
 
-        CenterPolyMeshBuilder() { }
+        int SliceCount() const {
+            return (int)polygon.size() - 1;
+        }
 
-        Mesh BuildMesh() override
-        {
+        CenterPolyMeshBuilder() {}
+
+        Mesh BuildMesh() override {
             Mesh result;
 
-            if (polygon.size() < 2) { return result; }
+            if (polygon.size() < 2) {
+                return result;
+            }
 
             auto vertexCount = MeshVertexCount();
 
@@ -49,22 +51,23 @@ namespace PJ
 
             Polygon polyWithCenter;
             polyWithCenter.Add(vertices[0]);
-            polyWithCenter.AddRange(polygon);
+            AddRange(polyWithCenter, polygon);
             auto polygonMin = polyWithCenter.Min();
             auto polygonSize = polyWithCenter.Size();
 
             // Edge vertices
             int vi = 1;
-            for (auto vertex : polygon)
-            {
+            for (auto& vertex : polygon) {
                 vertices[vi] = vertex;
-                uvs[vi] = Vector2((vertex.x - polygonMin.x) / polygonSize.x, (vertex.y - polygonMin.y) / polygonSize.y);
+                uvs[vi] = Vector2(
+                    (vertex.x - polygonMin.x) / polygonSize.x,
+                    (vertex.y - polygonMin.y) / polygonSize.y
+                );
                 vi++;
             }
 
             auto offset = 0;
-            for (int i = 0; i < sliceCount; i++)
-            {
+            for (int i = 0; i < sliceCount; i++) {
                 triangles[offset] = 0;
                 triangles[offset + 1] = i + 1;
                 triangles[offset + 2] = i + 2;
@@ -72,11 +75,13 @@ namespace PJ
                 offset += 3;
             }
 
-            result.Update(std::make_optional(vertices), std::make_optional(triangles), std::make_optional(uvs));
+            result.Update(
+                std::make_optional(vertices), std::make_optional(triangles), std::make_optional(uvs)
+            );
 
             return result;
         }
     };
-}
+} // namespace PJ
 
 #endif

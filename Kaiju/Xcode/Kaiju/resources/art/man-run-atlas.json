@@ -1,0 +1,313 @@
+{
+    "software": {
+        "name": "rTexPacker v4.0",
+        "url": "https://raylibtech.itch.io/rtexpacker"
+    },
+    "atlas": {
+        "imagePath": "man-run-atlas.png",
+        "width": 4096,
+        "height": 4096,
+        "spriteCount": 33,
+        "isFont": false,
+        "fontSize": 32
+    },
+    "sprites": [
+        {
+            "nameId": "man_run0001",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 1, "y": 1 },
+            "sourceSize": { "width": 550, "height": 600 },
+            "padding": 0,
+            "trimmed": true,
+            "trimRec": { "x": 93, "y": 13, "width": 349, "height": 586 }
+        },
+        {
+            "nameId": "man_run0002",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 2415, "y": 1 },
+            "sourceSize": { "width": 550, "height": 600 },
+            "padding": 0,
+            "trimmed": true,
+            "trimRec": { "x": 91, "y": 9, "width": 366, "height": 562 }
+        },
+        {
+            "nameId": "man_run0003",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 2651, "y": 588 },
+            "sourceSize": { "width": 550, "height": 600 },
+            "padding": 0,
+            "trimmed": true,
+            "trimRec": { "x": 88, "y": 6, "width": 387, "height": 532 }
+        },
+        {
+            "nameId": "man_run0004",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 2106, "y": 1145 },
+            "sourceSize": { "width": 550, "height": 600 },
+            "padding": 0,
+            "trimmed": true,
+            "trimRec": { "x": 87, "y": 2, "width": 415, "height": 498 }
+        },
+        {
+            "nameId": "man_run0005",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 1208, "y": 1145 },
+            "sourceSize": { "width": 550, "height": 600 },
+            "padding": 0,
+            "trimmed": true,
+            "trimRec": { "x": 74, "y": 0, "width": 454, "height": 508 }
+        },
+        {
+            "nameId": "man_run0006",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 386, "y": 1145 },
+            "sourceSize": { "width": 550, "height": 600 },
+            "padding": 0,
+            "trimmed": true,
+            "trimRec": { "x": 92, "y": 9, "width": 409, "height": 520 }
+        },
+        {
+            "nameId": "man_run0007",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 3039, "y": 588 },
+            "sourceSize": { "width": 550, "height": 600 },
+            "padding": 0,
+            "trimmed": true,
+            "trimRec": { "x": 111, "y": 20, "width": 362, "height": 531 }
+        },
+        {
+            "nameId": "man_run0008",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 1986, "y": 588 },
+            "sourceSize": { "width": 550, "height": 600 },
+            "padding": 0,
+            "trimmed": true,
+            "trimRec": { "x": 124, "y": 31, "width": 321, "height": 544 }
+        },
+        {
+            "nameId": "man_run0009",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 3704, "y": 1 },
+            "sourceSize": { "width": 550, "height": 600 },
+            "padding": 0,
+            "trimmed": true,
+            "trimRec": { "x": 142, "y": 42, "width": 277, "height": 557 }
+        },
+        {
+            "nameId": "man_run0010",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 471, "y": 588 },
+            "sourceSize": { "width": 550, "height": 600 },
+            "padding": 0,
+            "trimmed": true,
+            "trimRec": { "x": 155, "y": 44, "width": 226, "height": 555 }
+        },
+        {
+            "nameId": "man_run0011",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 916, "y": 588 },
+            "sourceSize": { "width": 550, "height": 600 },
+            "padding": 0,
+            "trimmed": true,
+            "trimRec": { "x": 156, "y": 46, "width": 187, "height": 553 }
+        },
+        {
+            "nameId": "man_run0012",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 1334, "y": 588 },
+            "sourceSize": { "width": 550, "height": 600 },
+            "padding": 0,
+            "trimmed": true,
+            "trimRec": { "x": 141, "y": 48, "width": 195, "height": 551 }
+        },
+        {
+            "nameId": "man_run0013",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 1776, "y": 588 },
+            "sourceSize": { "width": 550, "height": 600 },
+            "padding": 0,
+            "trimmed": true,
+            "trimRec": { "x": 125, "y": 51, "width": 209, "height": 548 }
+        },
+        {
+            "nameId": "man_run0014",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 1, "y": 588 },
+            "sourceSize": { "width": 550, "height": 600 },
+            "padding": 0,
+            "trimmed": true,
+            "trimRec": { "x": 116, "y": 43, "width": 221, "height": 556 }
+        },
+        {
+            "nameId": "man_run0015",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 2173, "y": 1 },
+            "sourceSize": { "width": 550, "height": 600 },
+            "padding": 0,
+            "trimmed": true,
+            "trimRec": { "x": 108, "y": 35, "width": 241, "height": 564 }
+        },
+        {
+            "nameId": "man_run0016",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 1601, "y": 1 },
+            "sourceSize": { "width": 550, "height": 600 },
+            "padding": 0,
+            "trimmed": true,
+            "trimRec": { "x": 105, "y": 27, "width": 290, "height": 572 }
+        },
+        {
+            "nameId": "man_run0017",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 351, "y": 1 },
+            "sourceSize": { "width": 550, "height": 600 },
+            "padding": 0,
+            "trimmed": true,
+            "trimRec": { "x": 101, "y": 17, "width": 281, "height": 583 }
+        },
+        {
+            "nameId": "man_run0018",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 1282, "y": 1 },
+            "sourceSize": { "width": 550, "height": 600 },
+            "padding": 0,
+            "trimmed": true,
+            "trimRec": { "x": 99, "y": 12, "width": 318, "height": 574 }
+        },
+        {
+            "nameId": "man_run0019",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 3347, "y": 1 },
+            "sourceSize": { "width": 550, "height": 600 },
+            "padding": 0,
+            "trimmed": true,
+            "trimRec": { "x": 96, "y": 8, "width": 356, "height": 557 }
+        },
+        {
+            "nameId": "man_run0020",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 1, "y": 1145 },
+            "sourceSize": { "width": 550, "height": 600 },
+            "padding": 0,
+            "trimmed": true,
+            "trimRec": { "x": 94, "y": 3, "width": 384, "height": 525 }
+        },
+        {
+            "nameId": "man_run0021",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 1663, "y": 1145 },
+            "sourceSize": { "width": 550, "height": 600 },
+            "padding": 0,
+            "trimmed": true,
+            "trimRec": { "x": 74, "y": 0, "width": 442, "height": 500 }
+        },
+        {
+            "nameId": "man_run0022",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 796, "y": 1145 },
+            "sourceSize": { "width": 550, "height": 600 },
+            "padding": 0,
+            "trimmed": true,
+            "trimRec": { "x": 83, "y": 9, "width": 411, "height": 516 }
+        },
+        {
+            "nameId": "man_run0023",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 3402, "y": 588 },
+            "sourceSize": { "width": 550, "height": 600 },
+            "padding": 0,
+            "trimmed": true,
+            "trimRec": { "x": 94, "y": 20, "width": 377, "height": 530 }
+        },
+        {
+            "nameId": "man_run0024",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 2308, "y": 588 },
+            "sourceSize": { "width": 550, "height": 600 },
+            "padding": 0,
+            "trimmed": true,
+            "trimRec": { "x": 107, "y": 31, "width": 342, "height": 543 }
+        },
+        {
+            "nameId": "man_run0025",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 3042, "y": 1 },
+            "sourceSize": { "width": 550, "height": 600 },
+            "padding": 0,
+            "trimmed": true,
+            "trimRec": { "x": 123, "y": 42, "width": 304, "height": 558 }
+        },
+        {
+            "nameId": "man_run0026",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 223, "y": 588 },
+            "sourceSize": { "width": 550, "height": 600 },
+            "padding": 0,
+            "trimmed": true,
+            "trimRec": { "x": 140, "y": 44, "width": 247, "height": 556 }
+        },
+        {
+            "nameId": "man_run0027",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 698, "y": 588 },
+            "sourceSize": { "width": 550, "height": 600 },
+            "padding": 0,
+            "trimmed": true,
+            "trimRec": { "x": 130, "y": 46, "width": 217, "height": 554 }
+        },
+        {
+            "nameId": "man_run0028",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 1104, "y": 588 },
+            "sourceSize": { "width": 550, "height": 600 },
+            "padding": 0,
+            "trimmed": true,
+            "trimRec": { "x": 117, "y": 48, "width": 229, "height": 552 }
+        },
+        {
+            "nameId": "man_run0029",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 1530, "y": 588 },
+            "sourceSize": { "width": 550, "height": 600 },
+            "padding": 0,
+            "trimmed": true,
+            "trimRec": { "x": 105, "y": 51, "width": 245, "height": 549 }
+        },
+        {
+            "nameId": "man_run0030",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 2782, "y": 1 },
+            "sourceSize": { "width": 550, "height": 600 },
+            "padding": 0,
+            "trimmed": true,
+            "trimRec": { "x": 100, "y": 42, "width": 259, "height": 558 }
+        },
+        {
+            "nameId": "man_run0031",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 1892, "y": 1 },
+            "sourceSize": { "width": 550, "height": 600 },
+            "padding": 0,
+            "trimmed": true,
+            "trimRec": { "x": 94, "y": 34, "width": 280, "height": 566 }
+        },
+        {
+            "nameId": "man_run0032",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 983, "y": 1 },
+            "sourceSize": { "width": 550, "height": 600 },
+            "padding": 0,
+            "trimmed": true,
+            "trimRec": { "x": 94, "y": 26, "width": 298, "height": 574 }
+        },
+        {
+            "nameId": "man_run0033",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 633, "y": 1 },
+            "sourceSize": { "width": 550, "height": 600 },
+            "padding": 0,
+            "trimmed": true,
+            "trimRec": { "x": 93, "y": 17, "width": 349, "height": 582 }
+        }
+    ]
+}

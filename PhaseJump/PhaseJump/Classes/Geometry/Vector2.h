@@ -1,23 +1,25 @@
 #ifndef PJVECTOR2_H
 #define PJVECTOR2_H
 
+#include "_String.h"
 #include "FloatMath.h"
 #include "IntMath.h"
 #include "Macros_Vectors.h"
-#include "_String.h"
+#include "StringConvertible.h"
 
 namespace Terathon {
     class Vector2D;
     class Point2D;
-}
+} // namespace Terathon
 
 /*
  RATING: 5 stars
- Utility class with unit tests
- CODE REVIEW: 11/11/22
+ Has unit tests
+ CODE REVIEW: 7/6/24
  */
 namespace PJ {
-    struct Vector2 {
+    // TODO: do we need a renderVector2 that has no inheritance?
+    struct Vector2 { //} : public StringConvertible {
     public:
         using This = Vector2;
 
@@ -25,8 +27,10 @@ namespace PJ {
         float y = 0;
 
         Vector2() {}
-        Vector2(float x, float y) : x(x), y(y) {
-        }
+
+        Vector2(float x, float y) :
+            x(x),
+            y(y) {}
 
         static Vector2 const down;
         static Vector2 const left;
@@ -35,11 +39,11 @@ namespace PJ {
         static Vector2 const up;
         static Vector2 const zero;
 
-        float& operator [](size_t index) {
+        float& operator[](size_t index) {
             return (&x)[index >= 0 && index < 2 ? index : index % 2];
         }
 
-        float const& operator [](size_t index) const {
+        float operator[](size_t index) const {
             return (&x)[index >= 0 && index < 2 ? index : index % 2];
         }
 
@@ -50,8 +54,7 @@ namespace PJ {
         operator Terathon::Vector2D() const;
         operator Terathon::Point2D() const;
 
-        void Normalize()
-        {
+        void Normalize() {
             float mag = Magnitude(true);
             for (int i = 0; i < 2; i++) {
                 (*this)[i] = (*this)[i] / mag;
@@ -60,13 +63,17 @@ namespace PJ {
 
         VECTOR_METHODS(Vector2, float, 2);
 
+        static This Uniform(float value) {
+            return Vector2(value, value);
+        }
+
+        // MARK: StringConvertible
+
         String ToString() const {
             std::stringstream stream;
             stream << "{" << x << ", " << y << "}";
             return stream.str();
         }
-
-        static This Uniform(float value) { return Vector2(value, value); }
     };
 
     VECTOR_EXTERNALMETHODS(Vector2, float);
@@ -79,17 +86,20 @@ namespace PJ {
         int y = 0;
 
         Vector2Int() {}
-        Vector2Int(int x, int y) : x(x), y(y) {
-        }
 
+        Vector2Int(int x, int y) :
+            x(x),
+            y(y) {}
+
+        static Vector2Int const zero;
         static Vector2Int const one;
         static Vector2Int const three;
 
-        int& operator [](size_t index) {
+        int& operator[](size_t index) {
             return (&x)[index >= 0 && index < 2 ? index : index % 2];
         }
 
-        int const& operator [](size_t index) const {
+        int operator[](size_t index) const {
             return (&x)[index >= 0 && index < 2 ? index : index % 2];
         }
 
@@ -98,14 +108,16 @@ namespace PJ {
         }
 
         VECTOR_METHODS(Vector2Int, int, 2);
-            
+
         String ToString() const {
             std::stringstream stream;
             stream << "{" << x << ", " << y << "}";
             return stream.str();
         }
 
-        static This Uniform(int value) { return Vector2Int(value, value); }
+        static This Uniform(int value) {
+            return Vector2Int(value, value);
+        }
     };
 
     VECTOR_EXTERNALMETHODS(Vector2Int, int);
@@ -113,6 +125,6 @@ namespace PJ {
     // Convenience names
     using Vec2 = Vector2;
     using Vec2I = Vector2Int;
-}
+} // namespace PJ
 
 #endif

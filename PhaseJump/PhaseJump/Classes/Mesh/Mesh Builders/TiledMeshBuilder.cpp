@@ -19,8 +19,7 @@ Vector2Int TiledMeshBuilder::MeshSize() const {
     return Vector2Int(numTilesX, numTilesY);
 } // Tested
 
-Mesh TiledMeshBuilder::BuildMesh()
-{
+Mesh TiledMeshBuilder::BuildMesh() {
     Mesh result;
 
     auto meshSize = MeshSize();
@@ -86,7 +85,9 @@ Mesh TiledMeshBuilder::BuildMesh()
         }
     }
 
-    result.Update(std::make_optional(vertices), std::make_optional(triangles), std::make_optional(uvs));
+    result.Update(
+        std::make_optional(vertices), std::make_optional(triangles), std::make_optional(uvs)
+    );
 
     return result;
 }

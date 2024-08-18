@@ -1,47 +1,44 @@
-#ifndef PJFACTORYREGISTRY_H
-#define PJFACTORYREGISTRY_H
+#pragma once
 
-#include <string>
-#include <map>
 #include "Factory.h"
-#include "Core.h"
-#include "_Map.h"
+#include "List.h"
+#include "ModifierFunc.h"
+#include "UnorderedMap.h"
+#include <map>
+#include <string>
 
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 11/10/22
+ CODE REVIEW: 8/11/24
  */
-namespace PJ
-{
-    /// <summary>
+namespace PJ {
     /// Store factories accessed by a class ID
-    /// </summary>
-    /// <typeparam name="Type"></typeparam>
-    template <class Type> class FactoryRegistry : public Map<std::string, SP<Factory<Type>>>
-    {
+    template <class Type, typename... Arguments>
+    class FactoryRegistry {
     public:
-        FactoryRegistry() {
-        }
+        using Map = UnorderedMap<String, SP<Factory<Type, Arguments...>>>;
 
-        SP<Type> New(String id)
-        {
-            if (this->ContainsKey(id)) {
-                auto & factory = (*this)[id];
-                auto result = factory->New();
+        Map map;
 
-                // Make sure the object gets the classID when created
-                auto coreResult = DCAST<Core>(result);
-                if (coreResult) {
-                    coreResult->SetClassId(id);
-                }
+        using ModifierFunc = PJ::ModifierFunc<Type>;
 
-                return result;
+        List<ModifierFunc> modifiers;
+
+        FactoryRegistry() {}
+
+        SP<Type> New(String id, Arguments... args) {
+            auto i = map.find(id);
+            GUARDR(i != map.end(), SP<Type>());
+
+            auto& factory = i->second;
+            auto result = factory->New(args...);
+
+            for (auto& modifier : modifiers) {
+                modifier(*result);
             }
 
-            return SP<Type>();
+            return result;
         }
     };
-}
-
-#endif
+} // namespace PJ

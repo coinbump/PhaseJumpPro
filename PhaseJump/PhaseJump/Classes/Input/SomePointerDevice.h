@@ -2,26 +2,27 @@
 #define PJSOMEPOINTERDEVICE_H
 
 #include "SomeInputDevice.h"
-#include "SomePosition.h"
 #include "SomePointerUIEvent.h"
+#include "SomePosition.h"
 
-namespace PJ
-{
-    /// <summary>
+// CODE REVIEW: ?/23
+namespace PJ {
     /// Some device that sends pointer inputs (mouse, stylus)
-    /// </summary>
-    class SomePointerDevice : public SomeInputDevice
-    {
+    class SomePointerDevice : public SomeInputDevice {
     protected:
         ScreenPosition position;
 
     public:
-        SomePointerDevice() {
+        SomePointerDevice() {}
+
+        virtual ScreenPosition Position() const {
+            return position;
         }
 
-        virtual ScreenPosition Position() const { return position; }
-        virtual bool IsButtonDown(PointerInputButton button) { return false; }
+        virtual bool IsButtonDown(PointerInputButtonType button) {
+            return false;
+        }
     };
-}
+} // namespace PJ
 
 #endif

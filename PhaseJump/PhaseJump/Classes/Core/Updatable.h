@@ -1,26 +1,25 @@
-#ifndef PJANIMATOR_H_
-#define PJANIMATOR_H_
+#pragma once
 
 #include "TimeSlice.h"
 
 /*
- * RATING: 5 stars
- * Simple interface
- * CODE REVIEW: 11/5/22
+ RATING: 5 stars
+ Simple protocol
+ CODE REVIEW: 6/13/24
+ PORTED TO: C++, C#
  */
-namespace PJ
-{
-    /// <summary>
+namespace PJ {
     /// An object that can receive time update events
-    /// </summary>
-    class Updatable
-    {
+    class Updatable {
     public:
         virtual ~Updatable() {}
-        
-        virtual void OnUpdate(TimeSlice time) = 0;
-        virtual bool IsFinished() const = 0;
-    };
-}
 
-#endif
+        /// Called for each time delta event
+        virtual void OnUpdate(TimeSlice time) = 0;
+
+        /// Allows for cleanup of old updatables
+        virtual bool IsFinished() const {
+            return false;
+        }
+    };
+} // namespace PJ

@@ -6,19 +6,15 @@
 /*
  RATING: 5 stars
  Simple interface
- Code review: 5/3/23
+ Code review: 7/18/24
  */
-namespace PJ
-{
-    /// <summary>
+namespace PJ {
     /// When the pointer is over the object, IsHovering becomes true
     /// (set by UI system only)
-    /// </summary>
-    class SomeHoverGestureHandler : public WorldComponent
-    {
+    class SomeHoverGestureHandler : public WorldComponent<> {
     public:
         virtual void SetIsHovering(bool value) = 0;
     };
-}
+} // namespace PJ
 
 #endif

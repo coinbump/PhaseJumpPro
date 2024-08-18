@@ -1,8 +1,8 @@
 #pragma once
 
-#include "SomeSimpleSubscription.h"
-#include "Macros.h"
 #include "List.h"
+#include "SomeSimpleSubscription.h"
+#include "Utils.h"
 
 /*
  RATING: 5 stars
@@ -22,8 +22,7 @@ namespace PJ {
         SubscriptionList subscriptions;
 
     protected:
-        virtual void SubscriberAdded(Subscription& subscription) {
-        }
+        virtual void SubscriberAdded(Subscription& subscription) {}
 
     public:
         virtual ~SomeSimplePublisher() {}
@@ -38,7 +37,9 @@ namespace PJ {
         }
 
         SubscriptionList ValidSubscriptions() const {
-            return subscriptions.Filter([](WP<Subscription> const& subscription) { return !subscription.expired(); });
+            return Filter(subscriptions, [](WP<Subscription> const& subscription) {
+                return !subscription.expired();
+            });
         }
 
         std::size_t SubscriptionsCount() const {
@@ -46,7 +47,7 @@ namespace PJ {
         }
 
         void Clean() {
-            subscriptions.RemoveIf([](WP<Subscription> const& subscription) {
+            RemoveIf(subscriptions, [](WP<Subscription> const& subscription) {
                 if (subscription.expired()) {
                     return true;
                 }
@@ -63,4 +64,4 @@ namespace PJ {
             return isComplete;
         }
     };
-}
+} // namespace PJ

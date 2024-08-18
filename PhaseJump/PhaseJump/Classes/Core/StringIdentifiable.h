@@ -4,20 +4,17 @@
 #include "_String.h"
 
 /*
- * RATING: 5 stars
- * Simple interface
- * CODE REVIEW: 11/7/22
+ RATING: 5 stars
+ Simple protocol
+ CODE REVIEW: 8/3/24
+ PORTED TO: C++, C#
  */
-namespace PJ
-{
-    /// <summary>
+namespace PJ {
     /// Interface for identifiable objects
-    /// </summary>
-    class StringIdentifiable
-    {
+    class StringIdentifiable {
     public:
         virtual String Id() const = 0;
     };
-}
+} // namespace PJ
 
 #endif

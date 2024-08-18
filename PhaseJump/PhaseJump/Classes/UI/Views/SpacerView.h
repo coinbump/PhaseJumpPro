@@ -3,14 +3,13 @@
 
 #include "View2D.h"
 
-namespace PJ
-{
-    /// <summary>
+// CODE REVIEW: ?/23
+namespace PJ {
     /// View with no intrinsic size used for spacing views in layouts
-    /// </summary>
-    public class SpacerView : public View2D
-    {
-    }
-}
+public
+
+    // TODO: add ResolvedView methods
+    class SpacerView : public View2D {}
+} // namespace PJ
 
 #endif

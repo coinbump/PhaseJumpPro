@@ -1,31 +1,22 @@
-#ifndef PJMATRIX_H
-#define PJMATRIX_H
+#pragma once
 
-#include <stdio.h>
-#include "VectorList.h"
 #include "Vector2.h"
+#include "VectorList.h"
+#include <stdio.h>
 
 // TODO: WORK IN PROGRESS
-namespace PJ
-{
-    class SomeMatrix
-    {
+namespace PJ {
+    class SomeMatrix {
     public:
         virtual ~SomeMatrix() {}
-        
-        enum class RotateDirection
-        {
-            Left, Right
-        };
+
+        enum class RotateDirection { Left, Right };
     };
 
-    /// <summary>
     /// Stores objects in an X,Y matrix structure (Y tuples of X cells)
-    /// </summary>
     /// <typeparam name="T">Type of thing to store</typeparam>
     template <class T>
-    class Matrix : public SomeMatrix
-    {
+    class Matrix : public SomeMatrix {
     public:
         using Tuple = VectorList<T>;
 
@@ -34,34 +25,37 @@ namespace PJ
         Vector2Int size;
 
     public:
-        int Width() const { return size.x; }
-        int Height() const { return size.y; }
+        int Width() const {
+            return size.x;
+        }
+
+        int Height() const {
+            return size.y;
+        }
+
         Vector2Int Size() const {
             return size;
         }
 
-        Matrix(Vector2Int matrixSize)
-        {
+        Matrix(Vector2Int matrixSize) {
             Vector2Int size(std::max(1, matrixSize.x), std::max(1, matrixSize.y));
             this->size = size;
-            
-            for (int i = 0; i < size.y; i++)
-            {
+
+            for (int i = 0; i < size.y; i++) {
                 tuples.Add(Tuple(size.x));
             }
         }
 
-        Tuple* TupleAt(int index) { return index < tuples.Count() ? &tuples[index] : nullptr; }
+        Tuple* TupleAt(int index) {
+            return index < tuples.size() ? &tuples[index] : nullptr;
+        }
 
-        void Rotate(RotateDirection direction)
-        {
+        void Rotate(RotateDirection direction) {
             VectorList<T> cells;
             VectorList<Vector2Int> locations;
 
-            for (int x = 0; x < size.x; x++)
-            {
-                for (int y = 0; y < size.y; y++)
-                {
+            for (int x = 0; x < size.x; x++) {
+                for (int y = 0; y < size.y; y++) {
                     Vector2Int location(x, y);
                     auto myCell = CellAt(location);
                     cells.Add(myCell);
@@ -76,48 +70,44 @@ namespace PJ
             Vector2Int newSize(size.y, size.x);
             Resize(newSize);
 
-            for (int i = 0; i < cells.Count(); i++)
-            {
+            for (int i = 0; i < cells.size(); i++) {
                 auto oldLocation = locations[i];
                 auto cell = cells[i];
 
                 Vector2Int newLocation(0, 0);
 
-                switch (direction)
-                {
-                    case RotateDirection::Left:
-                        newLocation = Vector2Int(oldLocation.y, Height() - oldLocation.x - 1);
-                        break;
-                    case RotateDirection::Right:
-                        newLocation = Vector2Int(Width() - 1 - oldLocation.y, oldLocation.x);
-                        break;
+                switch (direction) {
+                case RotateDirection::Left:
+                    newLocation = Vector2Int(oldLocation.y, Height() - oldLocation.x - 1);
+                    break;
+                case RotateDirection::Right:
+                    newLocation = Vector2Int(Width() - 1 - oldLocation.y, oldLocation.x);
+                    break;
                 }
 
                 SetCell(newLocation, cell);
             }
         }
 
-        void Resize(Vector2Int newSize)
-        {
+        void Resize(Vector2Int newSize) {
             auto newWidth = newSize.x;
             auto newHeight = newSize.y;
 
-            if (newWidth < 1 || newHeight < 1)
-            {
+            if (newWidth < 1 || newHeight < 1) {
                 return;
             }
 
             // Same size.
-            if (newWidth == Width() && newHeight == Height()) { return; }
+            if (newWidth == Width() && newHeight == Height()) {
+                return;
+            }
 
             // Change width of existing tuples first.
             int y = 0;
-            for (auto & tuple : tuples)
-            {
-                // Don't bother resizing tuples that are going to be deleted if the
-                // grid is shrinking.
-                if (y >= newHeight)
-                {
+            for (auto& tuple : tuples) {
+                // Don't bother resizing tuples that are going to be deleted if
+                // the grid is shrinking.
+                if (y >= newHeight) {
                     break;
                 }
 
@@ -127,14 +117,12 @@ namespace PJ
             }
 
             // Add new tuples
-            while (tuples.Count() < newHeight)
-            {
+            while (tuples.size() < newHeight) {
                 tuples.Add(Tuple(newWidth));
             }
 
             // Remove deleted tuples
-            if (tuples.Count() > newHeight)
-            {
+            if (tuples.size() > newHeight) {
                 tuples.resize(newHeight);
             }
 
@@ -142,56 +130,42 @@ namespace PJ
             size.y = newHeight;
         }
 
-        bool IsValidLocation(Vector2Int loc)
-        {
-            return (loc.x >= 0 && loc.x < Width() &&
-                    loc.y >= 0 && loc.y < Height());
+        bool IsValidLocation(Vector2Int loc) {
+            return (loc.x >= 0 && loc.x < Width() && loc.y >= 0 && loc.y < Height());
         }
 
-        virtual T CellAt(Vector2Int loc)
-        {
+        virtual T CellAt(Vector2Int loc) {
             if (!IsValidLocation(loc)) {
                 return T();
             }
-        
+
             return tuples[loc.y][loc.x];
         }
 
-        virtual void SetCell(Vector2Int loc, T content)
-        {
+        virtual void SetCell(Vector2Int loc, T content) {
             if (!IsValidLocation(loc)) {
                 return;
             }
-            
+
             tuples[loc.y][loc.x] = content;
         }
     };
 
-    /// <summary>
     /// Matrix of bools
-    /// </summary>
-    class MatrixBool : public Matrix<bool>
-    {
+    class MatrixBool : public Matrix<bool> {
     public:
         using Base = Matrix<bool>;
-        
-        MatrixBool(Vector2Int matrixSize) : Base(matrixSize)
-        {
-        }
+
+        MatrixBool(Vector2Int matrixSize) :
+            Base(matrixSize) {}
     };
 
-    /// <summary>
     /// Matrix of ints
-    /// </summary>
-    class MatrixInt : public Matrix<int>
-    {
+    class MatrixInt : public Matrix<int> {
     public:
         using Base = Matrix<int>;
-        
-        MatrixInt(Vector2Int matrixSize) : Base(matrixSize)
-        {
-        }
-    };
-}
 
-#endif
+        MatrixInt(Vector2Int matrixSize) :
+            Base(matrixSize) {}
+    };
+} // namespace PJ

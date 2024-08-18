@@ -13,10 +13,11 @@ namespace PJ {
     /// Manages an OpenGLShader
     class SomeGLShader;
 
+    // TODO: make this a load operation
     class GLShaderLoader {
     public:
         bool LoadFromPath(SomeGLShader& shader, FilePath path);
     };
-}
+} // namespace PJ
 
 #endif

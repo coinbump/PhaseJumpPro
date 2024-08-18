@@ -1,5 +1,4 @@
-#ifndef PJSOMELAYOUT_H
-#define PJSOMELAYOUT_H
+#pragma once
 
 #include "Vector3.h"
 #include "WorldComponent.h"
@@ -7,67 +6,39 @@
 
 /*
  RATING: 5 stars
- Simple layout
- CODE REVIEW: 12/27/22
+ Simple type
+ CODE REVIEW: 7/6/24
  */
-namespace PJ
-{
-    /// <summary>
-    /// Defines the layout of child game objects
-    /// (different than Unity's Layout Group for UI, which requires a Canvas)
-    /// </summary>
-    class SomeLayout : public WorldComponent
-    {
+namespace PJ {
+    /// Defines the layout of child world nodes
+    class SomeLayout : public WorldComponent<ComposeWorldComponentCore> {
     public:
-        using Base = WorldComponent;
+        using Base = WorldComponent<ComposeWorldComponentCore>;
+        using This = SomeLayout;
 
-        /// <summary>
-        /// If true, layout will be updated automatically.
-        /// If false, you must update layout manually
-        /// </summary>
+        /// If true, layout will be applied automatically
+        /// If false, you must apply layout manually
         bool autoApply = true;
 
-        /// <summary>
         /// Return the bounds-size of the layout
-        /// </summary>
-        /// <returns></returns>
-        virtual Vector3 Size() const
-        {
-            return Vector3::zero;
-        }
+        virtual Vector3 Size() const = 0;
 
-        /// <summary>
         /// Arrange child objects according to the layout
-        /// </summary>
         virtual void ApplyLayout() = 0;
 
     protected:
-        void Start() override
-        {
-            Base::Start();
+        void Awake() override {
+            Base::Awake();
 
-            if (autoApply)
-            {
-                ApplyLayout();
-            }
-        }
+            auto applyLayoutAction = [](SomeWorldComponent& worldComponent) {
+                auto thisComponent = static_cast<This*>(&worldComponent);
+                if (thisComponent->autoApply) {
+                    thisComponent->ApplyLayout();
+                }
+            };
 
-        void LateUpdate() override
-        {
-            Base::LateUpdate();
-
-            if (autoApply)
-            {
-                ApplyLayout();
-            }
-        }
-
-    public:
-        virtual Vector3 LayoutPositionAt(int index)
-        {
-            return Vector3::zero;
+            core.startFuncs.Add(applyLayoutAction);
+            core.lateUpdateFuncs.Add(applyLayoutAction);
         }
     };
-}
-
-#endif
+} // namespace PJ

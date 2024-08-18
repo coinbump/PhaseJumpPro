@@ -8,33 +8,25 @@
  Direct port
  CODE REVIEW: 6/18/23
  */
-namespace PJ
-{
-    /// <summary>
+namespace PJ {
     /// Updates with deltas of the drag while it is in progress
-    /// </summary>
-    class SomeDragGestureHandler2D : public SomeDragHandler
-    {
+    class SomeDragGestureHandler2D : public SomeDragHandler {
     public:
         using Base = SomeDragHandler;
 
-        void OnDragUpdate(WorldPosition inputPosition) override
-        {
+        void OnDragUpdate(WorldPosition inputPosition) override {
             auto delta = inputPosition - dragStartInputPosition;
             OnDragGestureUpdate(Vector2(delta.x, delta.y));
         }
 
-        virtual void OnDragGestureUpdate(Vector2 delta)
-        {
-        }
+        virtual void OnDragGestureUpdate(Vector2 delta) {}
 
-        void OnDragEnd() override
-        {
+        void OnDragEnd() override {
             Base::OnDragEnd();
 
             OnDragGestureUpdate(Vector2::zero);
         }
     };
-}
+} // namespace PJ
 
 #endif

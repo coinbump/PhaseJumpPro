@@ -1,68 +1,57 @@
-#ifndef PJANIMATOR_H
-#define PJANIMATOR_H
+#pragma once
 
-#include "SomeTimed.h"
 #include "Binding.h"
 #include "Interpolator.h"
+#include "Timer.h"
 #include <memory>
 
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 1/12/24
+ CODE REVIEW: 8/15/24
  */
-namespace PJ
-{
-    /// <summary>
-    /// Animates a value from start to end once
-    /// Value is changed by  interpolator (defines how to interpolate the value), and a binding (updates the value)
-    /// Example: animate a character from positions start to end
-    /// </summary>
+namespace PJ {
+    /**
+     Animates a value from start to end once
+
+     Value is changed by  interpolator, and a binding.
+     Interpolator interpolates start and end values
+     Binding sets the new value
+     Example: animate a character from positions start to end
+     */
     template <class T>
-    class Animator : public SomeTimed
-    {
+    class Animator : public Updatable {
     protected:
-        /// <summary>
-        /// Time value of animator
-        /// </summary>
-        float time = 0;
+        Timer timer;
 
     public:
-        using Base = SomeTimed;
+        /// Interpolates value from start to end
+        InterpolateFunc<T> interpolator;
 
-        /// <summary>
-        /// Interpolates from start to end
-        /// </summary>
-        SP<Interpolator<T>> interpolator;
-
-        /// <summary>
         /// Value binding to modify value
-        /// </summary>
-        SP<SetBinding<T>> binding;
+        SetBindingFunc<T> binding;
 
-        Animator(SP<Interpolator<T>> interpolator, float duration, SP<SetBinding<T>> binding) :
-            Base(duration, SomeRunner::RunType::RunOnce),
+        Animator(InterpolateFunc<T> interpolator, float duration, SetBindingFunc<T> binding) :
+            timer(duration, Runner::RunType::RunOnce),
             interpolator(interpolator),
-            binding(binding)
-        {
+            binding(binding) {}
+
+        float Progress() const {
+            return timer.Progress();
         }
 
-        float Progress() const override { return std::max(0.0f, std::min(1.0f, time / duration)); }
+        // MARK: Updatable
 
-        void OnUpdate(TimeSlice time) override
-        {
-            if (IsFinished()) { return; }
+        void OnUpdate(TimeSlice time) override {
+            GUARD(!timer.IsFinished())
+            timer.OnUpdate(time);
 
-            this->time += time.delta;
-            SetIsFinished(this->time >= duration);
+            auto curveValue = interpolator(timer.Progress());
+            binding(curveValue);
+        }
 
-            if (nullptr == interpolator) { return; }
-            auto curveValue = interpolator->ValueAt(Progress());
-
-            if (nullptr == binding) { return; }
-            binding->SetValue(curveValue);
+        bool IsFinished() const override {
+            return timer.IsFinished();
         }
     };
-}
-
-#endif
+} // namespace PJ

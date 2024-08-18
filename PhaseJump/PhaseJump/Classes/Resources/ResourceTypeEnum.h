@@ -5,20 +5,19 @@
 
 /*
  RATING: 5 stars
- Utility type
- CODE REVIEW: 4/30/23
+ Simple type
+ CODE REVIEW: 8/8/24
  */
 namespace PJ {
     /// Resource types recognized by ResourceRepository
-    enum class ResourceType {
-        Texture
-    };
+    enum class ResourceType { Texture };
 
     class ResourceTypeEnumClass : public EnumClass<ResourceType> {
     public:
         using Base = EnumClass<ResourceType>;
 
-        ResourceTypeEnumClass() : Base("enum.resourceType") {
+        ResourceTypeEnumClass() :
+            Base("enum.resourceType") {
             MapEnum(ResourceType::Texture, "texture", "Texture");
         }
     };
@@ -29,9 +28,9 @@ namespace PJ {
 
         static const SP<ResourceTypeEnumClass> enumClass;
 
-        ResourceTypeEnum() : Base(enumClass) {
-        }
+        ResourceTypeEnum() :
+            Base(enumClass) {}
     };
-}
+} // namespace PJ
 
 #endif
