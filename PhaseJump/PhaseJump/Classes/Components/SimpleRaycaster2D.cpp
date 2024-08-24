@@ -12,9 +12,8 @@ using namespace std;
 using namespace PJ;
 
 std::optional<RaycastHit2D> SimpleRaycaster2D::Raycast(Vector2 origin, Vector2 direction) {
-    GUARDR(Node()->World(), std::optional<RaycastHit2D>())
-
     std::optional<RaycastHit2D> result;
+    GUARDR(owner && owner->World(), result)
 
     auto owner = this->owner;
     GUARDR(owner, result)
@@ -26,14 +25,15 @@ std::optional<RaycastHit2D> SimpleRaycaster2D::Raycast(Vector2 origin, Vector2 d
         return result;
     }
 
+    auto world = owner->World();
+    GUARDR(world, result)
+
     // This is a brute force solution and not efficient
     // FUTURE: find more optimal raycast solutions as needed
-    auto root = ownerNode->Root();
-    GraphNodeTool<> graphNodeTool;
-    auto graph = graphNodeTool.CollectBreadthFirstGraph(root);
+    auto root = world->root;
 
-    auto world = Node()->World();
-    GUARDR(world, result)
+    WorldNode::NodeList graph;
+    CollectBreadthFirstTree(root, graph);
 
     for (auto& node : graph) {
         auto worldNode = SCAST<WorldNode>(node);

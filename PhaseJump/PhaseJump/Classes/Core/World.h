@@ -36,9 +36,7 @@ namespace PJ {
         /// Use to display render stats like fps, render count, etc.
         Tags renderStats;
 
-        // TODO: can this be a non-SP? But problem is CollectGraph assumes all SPs, so... <- revise
-        // CollectGraph?
-        SP<WorldNode> root = MAKE<WorldNode>();
+        SP<WorldNode> root = MAKE<WorldNode>("Root");
         SP<LoadedResources> loadedResources = MAKE<LoadedResources>();
         SP<SomeRenderContext> renderContext;
         SP<SomeCamera> camera;

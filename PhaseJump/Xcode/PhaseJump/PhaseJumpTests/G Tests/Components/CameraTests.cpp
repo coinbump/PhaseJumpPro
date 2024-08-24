@@ -22,8 +22,8 @@ using namespace PJTest;
 //    auto screenOne = sut->WorldToScreen(Vector3(1, 1, 0), renderContext);
 //    EXPECT_EQ(Vector3(1, 1, 0), screenOne);
 //
-//    cameraNode->transform->position.x = 1.0f;
-//    cameraNode->transform->position.y = 1.0f;
+//    cameraNode->transform.position.x = 1.0f;
+//    cameraNode->transform.position.y = 1.0f;
 //
 //    auto screenOneOffset = sut->WorldToScreen(Vector3(1, 1, 0), renderContext);
 //    EXPECT_EQ(Vector3(0, 0, 0), screenOneOffset);
@@ -50,7 +50,7 @@ TEST(Camera, TestOrtho_WorldToScreen) {
     auto screenOne = sut->WorldToScreen(Vector3(1, 1, 0));
     EXPECT_EQ(Vector2(201, 99), screenOne);
 
-    cameraNode->transform->SetWorldPosition(Vector3(1, 1, 0));
+    cameraNode->transform.SetWorldPosition(Vector3(1, 1, 0));
 
     auto screenOneOffset = sut->WorldToScreen(Vector3(1, 1, 0));
     EXPECT_EQ(Vector2(200, 100), screenOneOffset);
@@ -74,7 +74,7 @@ TEST(Camera, TestOrtho_ScreenToWorld) {
     auto screenOne = sut->ScreenToWorld(Vector2(201, 99));
     EXPECT_EQ(Vector3(1, 1, 0), screenOne);
 
-    cameraNode->transform->SetWorldPosition(Vector3(1, 1, 0));
+    cameraNode->transform.SetWorldPosition(Vector3(1, 1, 0));
 
     auto screenOneOffset = sut->ScreenToWorld(Vector2(200, 100));
     EXPECT_EQ(Vector3(-1, -1, 0), screenOneOffset);

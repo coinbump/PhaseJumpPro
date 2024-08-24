@@ -2,6 +2,7 @@
 #include "AtlasTexture.h"
 #include "LoadResourcesModel.h"
 #include "SDLLoadGLTextureOperation.h"
+#include "StringUtils.h"
 #include "TextureAtlas.h"
 #include "Utils.h"
 #include <json.hpp>
@@ -54,7 +55,7 @@ SomeLoadResourcesOperation::Result LoadTexturePackerAtlasOperation::LoadResource
 
         for (auto& frame : frames) {
             String fileName = frame["filename"];
-            auto fileNameComponents = fileName.ComponentsSeparatedBy('.');
+            auto fileNameComponents = ComponentsSeparatedBy(fileName, '.');
             String atlasTextureId = IsEmpty(fileNameComponents) ? fileName : fileNameComponents[0];
 
             auto frameInfo = frame["frame"];

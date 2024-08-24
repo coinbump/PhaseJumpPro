@@ -27,7 +27,7 @@ namespace PJ {
         WeightedRandomChoice() {}
 
         void Add(Weight weight) {
-            choices.Add(weight);
+            choices.push_back(weight);
         }
 
         Value Choose(SomeRandom& random) {
@@ -51,7 +51,7 @@ namespace PJ {
                     adjustedWeight = wr.adjust->Transform(wr).Value();
                 }
 
-                adjustedWeights.Add(Weight(adjustedWeight, wr.core));
+                PJ::Add(adjustedWeights, Weight(adjustedWeight, wr.core));
 
                 totalWeight += adjustedWeight;
             }

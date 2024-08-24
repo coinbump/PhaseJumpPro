@@ -124,7 +124,7 @@ namespace PJ {
                 *result = *top;
             }
 
-            stack.Add(result);
+            Add(stack, result);
 
             return result;
         }

@@ -28,7 +28,7 @@ namespace PJ {
         String description;
 
         /// Set of string tags that define type properties
-        TypeTagsSet typeTags;
+        TypeTagSet typeTags;
 
         /// Custom properties
         Tags tags;

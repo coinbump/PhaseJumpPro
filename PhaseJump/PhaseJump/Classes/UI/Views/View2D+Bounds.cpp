@@ -1,5 +1,5 @@
 #include "View2D.h"
-#include "WorldSizeAble2D.h"
+#include "WorldSizeable.h"
 
 using namespace PJ;
 using namespace std;
@@ -55,9 +55,9 @@ void View2D::UpdateFrameComponents() {
     //        unscaledFrameSize.y) / 2.0f;
     //    }
 
-    auto worldSizables = GetComponents<WorldSizeAble2D>();
+    auto worldSizables = GetComponents<WorldSizeable>();
     for (auto& worldSizable : worldSizables) {
-        worldSizable->SetWorldSize2D(unscaledFrameSize);
+        worldSizable->SetWorldSize(unscaledFrameSize);
     }
 }
 

@@ -69,7 +69,7 @@ namespace PJ {
             for (auto& view : childViews) {
                 auto intrinsicHeight = view->ProposedHeightWithConstraints(layoutSize);
                 if (!intrinsicHeight) {
-                    nonIntrinsicChildViews.Add(view);
+                    Add(nonIntrinsicChildViews, view);
                 } else {
                     intrinsicHeightChildViews[view] = intrinsicHeight.value();
                 }

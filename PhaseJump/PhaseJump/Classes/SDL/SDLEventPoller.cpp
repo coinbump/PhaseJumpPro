@@ -6,7 +6,7 @@ SDLEventPoller::Result SDLEventPoller::PollUIEvents() {
     SDL_Event event;
     SDLEventList events;
     while (SDL_PollEvent(&event)) {
-        events.Add(event);
+        Add(events, event);
     }
 
     return Process(events);

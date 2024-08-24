@@ -1,5 +1,4 @@
-#ifndef PJSOMERENDERCONTEXT_H
-#define PJSOMERENDERCONTEXT_H
+#pragma once
 
 #include "Base.h"
 #include "List.h"
@@ -11,14 +10,9 @@
 // CODE REVIEW: ?/23
 namespace PJ {
     class SomeRenderer;
-    class RenderIntoModel;
+    class RenderContextModel;
     class SomeRenderEngine;
     class SomeRenderCommandModel;
-
-    struct RenderContextModel {
-        /// Proxy commands for the render engine to translate
-        UnorderedMap<String, List<UP<SomeRenderCommandModel>>> phasedProxyCommands;
-    };
 
     /// A render context is how we render graphics via a third party SDK like
     /// SDL or OpenGL
@@ -42,8 +36,6 @@ namespace PJ {
         virtual Vector2 Size() const = 0;
         virtual Vector2Int PixelSize() const = 0;
 
-        virtual void Render(SomeRenderer& renderer, RenderIntoModel model);
+        virtual void Render(SomeRenderer& renderer, RenderContextModel model);
     };
 } // namespace PJ
-
-#endif

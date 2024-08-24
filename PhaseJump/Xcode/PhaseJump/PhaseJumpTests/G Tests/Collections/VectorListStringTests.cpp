@@ -1,5 +1,6 @@
 #include "gtest/gtest.h"
 
+#include "_String.h"
 #include "VectorList.h"
 
 using namespace std;
@@ -7,10 +8,10 @@ using namespace PJ;
 
 TEST(VectorListString, TestJoinStrings3) {
     VectorList<String> strings;
-    strings.Add("a");
-    strings.Add("b");
-    strings.Add("c");
+    Add(strings, "a");
+    Add(strings, "b");
+    Add(strings, "c");
 
-    auto sut = strings.Joined(",");
+    auto sut = Joined(strings, ",");
     EXPECT_EQ("a,b,c", sut);
 }

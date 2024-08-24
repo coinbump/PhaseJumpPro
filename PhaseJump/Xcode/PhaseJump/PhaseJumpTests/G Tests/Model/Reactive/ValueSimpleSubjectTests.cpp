@@ -23,7 +23,7 @@ TEST(ValueSimpleSubject, Test_Lifecycle)
     List<int> values;
 
     auto subscription = sut->Receive([&values](int const& value) {
-        values.Add(value);
+        values.push_back(value);
     });
 
     sut->Send(1);
@@ -48,7 +48,7 @@ TEST(ValueSimpleSubject, Test_SubscriptionExpired)
     List<int> values;
 
     auto subscription = sut->Receive([&values](int const& value) {
-        values.Add(value);
+        values.push_back(value);
     });
 
     EXPECT_EQ(1, sut->ValidSubscriptions().size());

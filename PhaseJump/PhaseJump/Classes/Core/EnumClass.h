@@ -37,7 +37,7 @@ namespace PJ {
             Base(id) {}
 
         void MapEnum(EnumType value, String id, String name) {
-            cases.Add(value);
+            cases.push_back(value);
             toIdMap[value] = id;
             toEnumMap[id] = value;
             toNameMap[value] = name;

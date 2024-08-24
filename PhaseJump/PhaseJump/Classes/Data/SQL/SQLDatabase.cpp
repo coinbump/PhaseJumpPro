@@ -155,7 +155,7 @@ VectorList<String> SQLDatabase::TableNames() {
             if (tableName == "sqlite_autoindex") {
                 continue; // Skip the index tables.
             }
-            result.Add(tableName);
+            Add(result, tableName);
         }
     }
 
@@ -197,9 +197,9 @@ bool SQLDatabase::CreateTable(String tableName, SQLTableSchema schema) {
             pString.append(" DEFAULT " + column.defaultValue.value());
         }
 
-        paramList.Add(pString);
+        Add(paramList, pString);
     }
-    paramsString.append(paramList.Joined(", "));
+    paramsString.append(Joined(paramList, ", "));
     paramsString += ")";
 
     return CreateTable(tableName, paramsString);

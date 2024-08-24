@@ -20,7 +20,7 @@ namespace PJ {
 
         // MARK: SomeRenderer
 
-        VectorList<RenderModel> MakeRenderModels(RenderIntoModel const& model) override;
+        VectorList<RenderModel> MakeRenderModels(RenderContextModel const& model) override;
     };
 } // namespace PJ
 

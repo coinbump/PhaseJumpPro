@@ -5,6 +5,7 @@
 #include "Matrix4x4.h"
 #include "Mesh.h"
 #include "RenderMaterial.h"
+#include "RenderTypes.h"
 #include "SomeTexture.h"
 #include "UnorderedMap.h"
 #include "Vector3.h"
@@ -31,11 +32,14 @@ namespace PJ {
     struct RenderModel {
         using This = RenderModel;
 
+        /// Allows us to find the last valid element of a pre-emptive vector resize
+        bool isValid = false;
+
         /// Mesh to be rendered
         Mesh mesh;
 
         /// Material used to render mesh. Sharing materials between objects allows batching
-        RenderMaterial material;
+        RenderMaterial* material = nullptr;
 
         /// Render model for textures (used to specify texture coordinates for texture atlas)
         VectorList<TextureRenderModel> textureModels;
@@ -48,10 +52,15 @@ namespace PJ {
         Matrix4x4 matrix;
 
         /// Varying values that are interpolated per-vertex
-        VectorList<Color> colors;
+        VectorList<RenderColor> colors;
 
-        RenderModel(RenderMaterial const& material) :
-            material(material) {}
+        /// Allows us to pre-emptively resize vectors with default elements
+        RenderModel() :
+            isValid(false) {}
+
+        RenderModel(RenderMaterial* material) :
+            material(material),
+            isValid(true) {}
 
         VectorList<Vector3>& Vertices() {
             return mesh.vertices;
@@ -80,35 +89,21 @@ namespace PJ {
             return mesh.uvs;
         };
 
-        VectorList<float> const& UniformFloats() const {
-            return material.UniformFloats();
-        }
-
-        VectorList<Color> const& UniformColors() const {
-            return material.UniformColors();
-        }
-
-        VectorList<Color>& Colors() {
+        VectorList<RenderColor>& Colors() {
             return colors;
         }
 
-        VectorList<Color> const& Colors() const {
+        VectorList<RenderColor> const& Colors() const {
             return colors;
-        }
-
-        UnorderedMap<String, RenderFeatureStatus> const& Features() const {
-            return material.Features();
-        }
-
-        SomeShaderProgram* ShaderProgram() const {
-            return material.ShaderProgram().get();
         }
 
         /// Returns true if a render feature is enabled for this operation
         bool IsFeatureEnabled(String feature) const {
+            GUARDR(material, false)
+
             // FUTURE: support feature defaults if needed
-            auto i = material.Features().find(feature);
-            if (i == material.Features().end()) {
+            auto i = material->Features().find(feature);
+            if (i == material->Features().end()) {
                 return false;
             }
             return i->second == RenderFeatureStatus::Enable;

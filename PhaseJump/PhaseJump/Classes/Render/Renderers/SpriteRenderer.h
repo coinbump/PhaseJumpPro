@@ -34,16 +34,16 @@ namespace PJ {
 
         Vector2 Size() const;
 
+        void SetColor(Color color) override;
+
+        // MARK: SomeRenderer
+
         std::optional<Vector3> WorldSize() const override {
             auto size = Size();
             return Vector3(size.x, size.y, 0);
         }
 
-        void SetColor(Color color) override;
-
-        // MARK: SomeRenderer
-
-        VectorList<RenderModel> MakeRenderModels(RenderIntoModel const& model) override;
+        VectorList<RenderModel> MakeRenderModels(RenderContextModel const& model) override;
     };
 
     using TextureRenderer = SpriteRenderer;

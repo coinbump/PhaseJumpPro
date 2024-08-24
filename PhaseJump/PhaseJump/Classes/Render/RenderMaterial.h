@@ -60,12 +60,13 @@ namespace PJ {
             return shaderProgram;
         }
 
+        /// Warning: Avoid using uniforms. They can't be batch-rendered
         VectorList<Color> const& UniformColors() const {
             return uniformColors;
         }
 
         void AddUniformColor(Color color) {
-            uniformColors.Add(color);
+            PJ::Add(uniformColors, color);
 
             OnChange();
         }
@@ -77,6 +78,7 @@ namespace PJ {
             OnChange();
         }
 
+        /// Warning: Avoid using uniforms. They can't be batch-rendered
         VectorList<float> const& UniformFloats() const {
             return uniformFloats;
         }
@@ -99,7 +101,7 @@ namespace PJ {
             // Material tracks the actual texture being used for renders,
             // not the child texture object (used in texture atlas)
             // Renderers should store the child texture separately from the material
-            textures.Add(renderTexture);
+            PJ::Add(textures, renderTexture);
 
             OnChange();
         }

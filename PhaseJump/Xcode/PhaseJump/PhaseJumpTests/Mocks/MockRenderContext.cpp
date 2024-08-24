@@ -4,9 +4,9 @@
 using namespace PJ;
 using namespace PJTest;
 
-void MockRenderContext::Render(SomeRenderer& renderer, RenderIntoModel model)
+void MockRenderContext::Render(SomeRenderer& renderer, RenderContextModel model)
 {
-    renderHistory.Add(model);
+    Add(renderHistory, model);
 
     renderer.RenderInto(model);
 }

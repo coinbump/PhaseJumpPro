@@ -28,6 +28,8 @@ namespace PJ {
 
         SP<SomeGLRenderCommand> BuildRenderCommand(SomeRenderCommandModel& proxyCommand);
 
+        virtual void RenderProcess(RenderModel const& model);
+
     public:
         using Base = SomeGLRenderEngine;
         GLuint vao = 0;
@@ -63,9 +65,12 @@ namespace PJ {
         void LoadMatrix() override {}
 
         void RenderStart(RenderContextModel const& model) override;
-        void RenderProcess(RenderModel const& model) override;
+        void RenderProcess(RenderProcessModel const& processModel) override;
         void RenderDraw() override;
         void RenderDrawPlans(VectorList<SP<GLRenderPlan>> const& renderPlans);
+
+        void ProjectionMatrixLoadOrthographic(Vector2 size) override;
+        void LoadTranslate(Vector3 value) override;
 
     protected:
         void GoInternal() override;

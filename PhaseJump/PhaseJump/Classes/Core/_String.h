@@ -1,6 +1,5 @@
 // Named _String.h to avoid conflict with C++ string.h
-#ifndef PJSTRING_H_
-#define PJSTRING_H_
+#pragma once
 
 #include "StringUtils.h"
 #include "Utils.h"
@@ -17,9 +16,6 @@
  CODE REVIEW: 7/6/24
  */
 namespace PJ {
-    template <class T, class Allocator>
-    class VectorList;
-
     /// Adds utility methods to std::string
     struct String : public std::string {
     public:
@@ -125,17 +121,6 @@ namespace PJ {
             return result;
         }
 
-        template <typename Inserter>
-        void Split(const String& s, char delimiter, Inserter inserter) {
-            std::istringstream stream(s);
-            std::string item;
-            while (std::getline(stream, item, delimiter)) {
-                *inserter++ = item;
-            }
-        }
-
-        VectorList<String, std::allocator<String>> ComponentsSeparatedBy(char delimiter);
-
         String Suffix(size_t size) const;
         String Prefix(size_t size) const;
 
@@ -177,5 +162,3 @@ struct std::hash<PJ::String> {
         return std::hash<string>{}(s);
     }
 };
-
-#endif

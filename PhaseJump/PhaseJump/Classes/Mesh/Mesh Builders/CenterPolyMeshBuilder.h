@@ -50,7 +50,7 @@ namespace PJ {
             uvs[0] = Vector2(0.5f, 0.5f);
 
             Polygon polyWithCenter;
-            polyWithCenter.Add(vertices[0]);
+            Add(polyWithCenter, vertices[0]);
             AddRange(polyWithCenter, polygon);
             auto polygonMin = polyWithCenter.Min();
             auto polygonSize = polyWithCenter.Size();

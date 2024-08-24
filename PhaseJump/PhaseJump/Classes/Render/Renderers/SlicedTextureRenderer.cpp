@@ -1,10 +1,11 @@
 #include "SlicedTextureRenderer.h"
 #include "QuadMeshBuilder.h"
-#include "RenderIntoModel.h"
+#include "RenderContextModel.h"
 #include "RenderMaterial.h"
 #include "RenderModel.h"
 #include "RenderModelBuilder.h"
 #include "SomeRenderEngine.h"
+#include "SomeShaderProgram.h"
 #include "TiledMeshBuilder.h"
 
 using namespace std;
@@ -18,6 +19,11 @@ SlicedTextureRenderer::SlicedTextureRenderer(
     slicePoints(slicePoints) {
 
     material = MAKE<RenderMaterial>();
+
+    auto program = SomeShaderProgram::registry.find("texture.uniform");
+    GUARD(program != SomeShaderProgram::registry.end())
+    material->SetShaderProgram(program->second);
+
     if (texture) {
         material->Add(texture);
     }
@@ -208,7 +214,7 @@ void SlicedTextureRenderer::SetSize(Vector2 worldSize) {
     BuildMesh();
 }
 
-VectorList<RenderModel> SlicedTextureRenderer::MakeRenderModels(RenderIntoModel const& model) {
+VectorList<RenderModel> SlicedTextureRenderer::MakeRenderModels(RenderContextModel const& model) {
     VectorList<RenderModel> result;
 
     if (nullptr == material) {
@@ -220,10 +226,8 @@ VectorList<RenderModel> SlicedTextureRenderer::MakeRenderModels(RenderIntoModel 
 
     RenderModelBuilder builder;
     VectorList<SomeTexture*> textures{ texture.get() };
-    auto renderModel = builder.Build(
-        mesh, *material, textures, ModelMatrix(), owner->transform->WorldPosition().z
-    );
-    model.renderContext->renderEngine->RenderProcess(renderModel);
+    auto renderModel =
+        builder.Build(mesh, *material, textures, ModelMatrix(), owner->transform.WorldPosition().z);
 
     result.push_back(renderModel);
     return result;

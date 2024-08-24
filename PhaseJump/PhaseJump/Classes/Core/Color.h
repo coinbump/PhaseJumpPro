@@ -42,6 +42,10 @@ namespace PJ {
             return r == rhs.r && g == rhs.g && b == rhs.b && a == rhs.a;
         }
 
+        bool IsOpaque() const {
+            return a >= 1.0f;
+        }
+
         Color WithAlpha(float a) const {
             Color result = *this;
             result.a = a;

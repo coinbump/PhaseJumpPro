@@ -3,7 +3,6 @@
 
 #include "Broadcaster.h"
 #include "PublishedValue.h"
-#include "RendererTool.h"
 #include "SomeDragHandler.h"
 #include "SomeListener.h"
 #include "UIControl2D.h"
@@ -52,7 +51,6 @@ namespace PJ {
         WorldPosition dragStartInputPosition;
         Vector3 thumbStartLocalPosition;
         SP<ThumbDragHandler> thumbDragHandler;
-        SP<RendererTool> rendererTool;
 
     public:
         std::optional<float> IntrinsicHeight() override;

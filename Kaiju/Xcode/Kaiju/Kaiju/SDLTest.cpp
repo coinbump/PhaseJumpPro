@@ -118,12 +118,13 @@ void SDLFoo() {
     auto world = window->World();
 
     auto renderContext = MAKE<SDLImGuiRenderContext>();
-    renderContext->clearColor = Color::white;
+    renderContext->clearColor = Color(.8, .8, .8, 1.0f);
     renderContext->Configure(*window);
 
-    auto imGuiNode = MAKE<WorldNode>();
+    auto imGuiNode = MAKE<WorldNode>("Kaiju imGui");
     auto component = MAKE<KaijuImGuiRenderer>();
     imGuiNode->Add(component);
+    imGuiNode->typeTags.insert("editor.vip");
 
     world->Add(imGuiNode);
     world->SetRenderContext(renderContext);

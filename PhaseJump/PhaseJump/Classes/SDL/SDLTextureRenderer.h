@@ -1,7 +1,7 @@
 #ifndef SpriteRenderer_h
 #define SpriteRenderer_h
 
-#include "RenderIntoModel.h"
+#include "RenderContextModel.h"
 #include "SDLColorBuilder.h"
 #include "SDLLoadSDLTextureOperation.h"
 #include "SDLRenderContext.h"
@@ -25,7 +25,7 @@ namespace PJ {
     //        {
     //        }
     //
-    //        void RenderInto(RenderIntoModel const& model) override {
+    //        void RenderInto(RenderContextModel const& model) override {
     //            if (owner.expired() || nullptr == texture) { return; }
     //
     //            auto node = owner.lock();

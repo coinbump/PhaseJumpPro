@@ -19,13 +19,13 @@ namespace MultiFunctionTests {
             auto func = [](List<int>& values, int value1, float value2) -> String {
                 int total = value1 + (int)value2;
 
-                values.Append(value1);
-                values.Append((int)value2);
+                values.push_back(value1);
+                values.push_back((int)value2);
 
                 return String(total);
             };
-            funcs.Append(func);
-            funcs.Append(func);
+            funcs.push_back(func);
+            funcs.push_back(func);
         }
     };
 
@@ -40,8 +40,8 @@ namespace MultiFunctionTests {
             auto func = [](int value, String& result) {
                 result += String(value);
             };
-            funcs.Add(func);
-            funcs.Add(func);
+            funcs.push_back(func);
+            funcs.push_back(func);
         }
     };
 }
@@ -66,8 +66,8 @@ TEST(MultiFunction, Tests)
 TEST(MultiFunction, Empty)
 {
     TestMultiFunction sut;
-    sut.reducer = [](std::optional<String> first, String next) -> String {
-        String firstValue = first.value_or("");
+    sut.reducer = [](String const& first, String next) -> String {
+        String firstValue = first;
         return firstValue + next;
     };
     auto result = sut.Run(sut.values, 3, 5.0f);

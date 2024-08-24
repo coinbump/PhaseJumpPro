@@ -1,8 +1,8 @@
 #include "SimpleGradientRenderer.h"
 #include "GLShaderProgram.h"
 #include "QuadMeshBuilder.h"
+#include "RenderContextModel.h"
 #include "RenderFeature.h"
-#include "RenderIntoModel.h"
 #include "RenderMaterial.h"
 #include "RenderModel.h"
 #include "RenderModelBuilder.h"
@@ -12,7 +12,7 @@ using namespace std;
 using namespace PJ;
 
 SimpleGradientRenderer::SimpleGradientRenderer(
-    RGBAColor startColor, RGBAColor endColor, Vector2 worldSize
+    Color startColor, Color endColor, Vector2 worldSize
 ) :
     model(worldSize),
     startColor(startColor),
@@ -26,8 +26,8 @@ SimpleGradientRenderer::SimpleGradientRenderer(
 
     // FUTURE: support different gradient directions if needed
     // FUTURE: support MultiGradientRenderer with multiple color stops if needed
-    auto program = GLShaderProgram::registry.find("color.vary");
-    GUARD(program != GLShaderProgram::registry.end())
+    auto program = SomeShaderProgram::registry.find("color.vary");
+    GUARD(program != SomeShaderProgram::registry.end())
 
     // FUTURE: support a colors builder that works for different mesh types
     material->SetShaderProgram(program->second);
@@ -36,15 +36,15 @@ SimpleGradientRenderer::SimpleGradientRenderer(
     material->EnableFeature(RenderFeature::Blend, !isOpaque);
 }
 
-VectorList<RenderModel> SimpleGradientRenderer::MakeRenderModels(RenderIntoModel const& model) {
+VectorList<RenderModel> SimpleGradientRenderer::MakeRenderModels(RenderContextModel const& model) {
     VectorList<SomeTexture*> textures;
     auto result = Base::MakeRenderModels(model, this->model.Mesh(), textures);
 
     if (!IsEmpty(result)) {
-        result[0].colors.Add(startColor);
-        result[0].colors.Add(endColor);
-        result[0].colors.Add(startColor);
-        result[0].colors.Add(endColor);
+        Add(result[0].colors, startColor);
+        Add(result[0].colors, endColor);
+        Add(result[0].colors, startColor);
+        Add(result[0].colors, endColor);
     }
 
     return result;

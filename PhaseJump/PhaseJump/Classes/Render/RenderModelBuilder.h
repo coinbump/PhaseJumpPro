@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Vector2.h"
 #include "VectorList.h"
 #include <memory>
 
@@ -11,11 +12,19 @@ namespace PJ {
     class RenderMaterial;
     class Matrix4x4;
     class SomeTexture;
+    class TextureRenderModel;
+
+    using UVTransformFunc = std::function<void(TextureRenderModel, VectorList<Vector2>& uvs)>;
+
+    namespace UVTransformFuncs {
+        extern UVTransformFunc textureCoordinates;
+    }
 
     struct RenderModelBuilder {
         RenderModel Build(
             Mesh const& mesh, RenderMaterial& material, VectorList<SomeTexture*> const& textures,
-            Matrix4x4 modelMatrix, float z
+            Matrix4x4 modelMatrix, float z,
+            UVTransformFunc uvTransformFunc = UVTransformFuncs::textureCoordinates
         );
     };
 } // namespace PJ

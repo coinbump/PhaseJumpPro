@@ -18,8 +18,8 @@ TEST(SQLTable, TestRowValuesList_MultiColumn_AndStarSelect) {
     EXPECT_FALSE(db->TableExists("test"));
 
     SQLTableSchema schema;
-    schema.columns.Add(SQLColumnSchema("test_l", SQLValueType::Int));
-    schema.columns.Add(SQLColumnSchema("test_r", SQLValueType::Text));
+    schema.columns.push_back(SQLColumnSchema("test_l", SQLValueType::Int));
+    schema.columns.push_back(SQLColumnSchema("test_r", SQLValueType::Text));
     EXPECT_TRUE(db->CreateTable("test", schema));
 
     EXPECT_NO_THROW({
@@ -50,8 +50,8 @@ TEST(SQLTable, TestIntValues_SingleColumn) {
     EXPECT_FALSE(db->TableExists("test"));
 
     SQLTableSchema schema;
-    schema.columns.Add(SQLColumnSchema("test_l", SQLValueType::Int));
-    schema.columns.Add(SQLColumnSchema("test_r", SQLValueType::Text));
+    schema.columns.push_back(SQLColumnSchema("test_l", SQLValueType::Int));
+    schema.columns.push_back(SQLColumnSchema("test_r", SQLValueType::Text));
     EXPECT_TRUE(db->CreateTable("test", schema));
 
     EXPECT_NO_THROW({
@@ -87,8 +87,8 @@ TEST(SQLTable, TestIntValues_MultiColumn) {
     EXPECT_FALSE(db->TableExists("test"));
 
     SQLTableSchema schema;
-    schema.columns.Add(SQLColumnSchema("test_l", SQLValueType::Int));
-    schema.columns.Add(SQLColumnSchema("test_r", SQLValueType::Int));
+    schema.columns.push_back(SQLColumnSchema("test_l", SQLValueType::Int));
+    schema.columns.push_back(SQLColumnSchema("test_r", SQLValueType::Int));
     EXPECT_TRUE(db->CreateTable("test", schema));
 
     EXPECT_NO_THROW({
@@ -98,8 +98,8 @@ TEST(SQLTable, TestIntValues_MultiColumn) {
 
     SP<SQLTable> table = MAKE<SQLTable>("test", db);
     VectorList<String> columnNames;
-    columnNames.Add("test_l");
-    columnNames.Add("test_r");
+    columnNames.push_back("test_l");
+    columnNames.push_back("test_r");
     auto values = table->IntValues(SQLTableQueryArguments(columnNames, std::nullopt));
 
     EXPECT_EQ(4, values.size());
@@ -119,8 +119,8 @@ TEST(SQLTableTests, TestFloatValues_SingleColumn) {
     EXPECT_FALSE(db->TableExists("test"));
 
     SQLTableSchema schema;
-    schema.columns.Add(SQLColumnSchema("test_l", SQLValueType::Real));
-    schema.columns.Add(SQLColumnSchema("test_r", SQLValueType::Text));
+    schema.columns.push_back(SQLColumnSchema("test_l", SQLValueType::Real));
+    schema.columns.push_back(SQLColumnSchema("test_r", SQLValueType::Text));
     EXPECT_TRUE(db->CreateTable("test", schema));
 
     EXPECT_NO_THROW({
@@ -156,8 +156,8 @@ TEST(SQLTable, TestFloatValues_MultiColumn) {
     EXPECT_FALSE(db->TableExists("test"));
 
     SQLTableSchema schema;
-    schema.columns.Add(SQLColumnSchema("test_l", SQLValueType::Real));
-    schema.columns.Add(SQLColumnSchema("test_r", SQLValueType::Real));
+    schema.columns.push_back(SQLColumnSchema("test_l", SQLValueType::Real));
+    schema.columns.push_back(SQLColumnSchema("test_r", SQLValueType::Real));
     EXPECT_TRUE(db->CreateTable("test", schema));
 
     EXPECT_NO_THROW({
@@ -167,8 +167,8 @@ TEST(SQLTable, TestFloatValues_MultiColumn) {
 
     SP<SQLTable> table = MAKE<SQLTable>("test", db);
     VectorList<String> columnNames;
-    columnNames.Add("test_l");
-    columnNames.Add("test_r");
+    columnNames.push_back("test_l");
+    columnNames.push_back("test_r");
     auto values = table->FloatValues(SQLTableQueryArguments(columnNames, std::nullopt));
 
     EXPECT_EQ(4, values.size());
@@ -188,8 +188,8 @@ TEST(SQLTableTests, TestStringValues_SingleColumn) {
     EXPECT_FALSE(db->TableExists("test"));
 
     SQLTableSchema schema;
-    schema.columns.Add(SQLColumnSchema("test_l", SQLValueType::Text));
-    schema.columns.Add(SQLColumnSchema("test_r", SQLValueType::Text));
+    schema.columns.push_back(SQLColumnSchema("test_l", SQLValueType::Text));
+    schema.columns.push_back(SQLColumnSchema("test_r", SQLValueType::Text));
     EXPECT_TRUE(db->CreateTable("test", schema));
 
     EXPECT_NO_THROW({
@@ -225,8 +225,8 @@ TEST(SQLTable, TestStringValues_MultiColumn) {
     EXPECT_FALSE(db->TableExists("test"));
 
     SQLTableSchema schema;
-    schema.columns.Add(SQLColumnSchema("test_l", SQLValueType::Text));
-    schema.columns.Add(SQLColumnSchema("test_r", SQLValueType::Text));
+    schema.columns.push_back(SQLColumnSchema("test_l", SQLValueType::Text));
+    schema.columns.push_back(SQLColumnSchema("test_r", SQLValueType::Text));
     EXPECT_TRUE(db->CreateTable("test", schema));
 
     EXPECT_NO_THROW({
@@ -236,8 +236,8 @@ TEST(SQLTable, TestStringValues_MultiColumn) {
 
     SP<SQLTable> table = MAKE<SQLTable>("test", db);
     VectorList<String> columnNames;
-    columnNames.Add("test_l");
-    columnNames.Add("test_r");
+    columnNames.push_back("test_l");
+    columnNames.push_back("test_r");
     auto values = table->StringValues(SQLTableQueryArguments(columnNames, std::nullopt));
 
     EXPECT_EQ(4, values.size());
@@ -255,8 +255,8 @@ TEST(SQLTableTests, TestDeleteRow) {
     });
 
     SQLTableSchema schema;
-    schema.columns.Add(SQLColumnSchema("test_l", SQLValueType::Text));
-    schema.columns.Add(SQLColumnSchema("test_r", SQLValueType::Text));
+    schema.columns.push_back(SQLColumnSchema("test_l", SQLValueType::Text));
+    schema.columns.push_back(SQLColumnSchema("test_r", SQLValueType::Text));
     EXPECT_TRUE(db->CreateTable("test", schema));
 
     EXPECT_NO_THROW({
@@ -284,8 +284,8 @@ TEST(SQLTableTests, TestDropTable) {
     });
 
     SQLTableSchema schema;
-    schema.columns.Add(SQLColumnSchema("test_l", SQLValueType::Text));
-    schema.columns.Add(SQLColumnSchema("test_r", SQLValueType::Text));
+    schema.columns.push_back(SQLColumnSchema("test_l", SQLValueType::Text));
+    schema.columns.push_back(SQLColumnSchema("test_r", SQLValueType::Text));
     EXPECT_TRUE(db->CreateTable("test", schema));
 
     SP<SQLTable> table = MAKE<SQLTable>("test", db);
@@ -303,8 +303,8 @@ TEST(SQLTableTests, TestCellExists) {
     });
 
     SQLTableSchema schema;
-    schema.columns.Add(SQLColumnSchema("test_l", SQLValueType::Int));
-    schema.columns.Add(SQLColumnSchema("test_r", SQLValueType::Text));
+    schema.columns.push_back(SQLColumnSchema("test_l", SQLValueType::Int));
+    schema.columns.push_back(SQLColumnSchema("test_r", SQLValueType::Text));
     EXPECT_TRUE(db->CreateTable("test", schema));
 
     EXPECT_NO_THROW({
@@ -345,8 +345,8 @@ TEST(SQLTableTests, TestSetValueUpdate) {
     });
 
     SQLTableSchema schema;
-    schema.columns.Add(SQLColumnSchema("test_l", SQLValueType::Int, std::make_optional("0")));
-    schema.columns.Add(SQLColumnSchema("test_r", SQLValueType::Text, std::make_optional("'a'")));
+    schema.columns.push_back(SQLColumnSchema("test_l", SQLValueType::Int, std::make_optional("0")));
+    schema.columns.push_back(SQLColumnSchema("test_r", SQLValueType::Text, std::make_optional("'a'")));
     EXPECT_TRUE(db->CreateTable("test", schema));
 
     SP<SQLTable> table = MAKE<SQLTable>("test", db);
@@ -371,8 +371,8 @@ TEST(SQLTableTests, TestSetValueInsert) {
     });
 
     SQLTableSchema schema;
-    schema.columns.Add(SQLColumnSchema("test_l", SQLValueType::Int, std::make_optional("0")));
-    schema.columns.Add(SQLColumnSchema("test_r", SQLValueType::Text, std::make_optional("'a'")));
+    schema.columns.push_back(SQLColumnSchema("test_l", SQLValueType::Int, std::make_optional("0")));
+    schema.columns.push_back(SQLColumnSchema("test_r", SQLValueType::Text, std::make_optional("'a'")));
     EXPECT_TRUE(db->CreateTable("test", schema));
 
     SP<SQLTable> table = MAKE<SQLTable>("test", db);

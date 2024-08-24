@@ -3,6 +3,7 @@
 #include "GLShaderProgram.h"
 #include "GLShaderProgramLoader.h"
 #include "GLVertexBuffer.h"
+#include "RenderContextModel.h"
 #include "RenderFeature.h"
 #include "RenderModel.h"
 #include "RGBAColor.h"
@@ -143,7 +144,7 @@ void GLRenderEngine::GoInternal() {
         }
 
         program->id = info.id;
-        GLShaderProgram::registry[info.id] = program;
+        SomeShaderProgram::registry[info.id] = program;
     }
 
     SetBlendMode(GLBlendMode(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
@@ -263,33 +264,54 @@ SP<SomeGLRenderCommand> GLRenderEngine::BuildRenderCommand(SomeRenderCommandMode
     return nullptr;
 }
 
+void GLRenderEngine::ProjectionMatrixLoadOrthographic(Vector2 size) {
+    projectionMatrix.LoadOrthographic(0, size.x, 0, size.y, 1, -1);
+}
+
+void GLRenderEngine::LoadTranslate(Vector3 value) {
+    viewMatrix.LoadTranslate(value);
+}
+
 void GLRenderEngine::RenderStart(RenderContextModel const& contextModel) {
     renderPlans.clear();
 
-    auto& proxyCommands = contextModel.phasedProxyCommands;
-    auto thisPhaseProxyCommands = proxyCommands.find(RenderPhase::Start);
-    if (thisPhaseProxyCommands != proxyCommands.end() && !IsEmpty(thisPhaseProxyCommands->second)) {
-        for (auto& proxyCommandI : thisPhaseProxyCommands->second) {
-            auto& proxyCommandUP = proxyCommandI;
+    //    auto& proxyCommands = contextModel.phasedProxyCommands;
+    //    auto thisPhaseProxyCommands = proxyCommands.find(RenderPhase::Start);
+    //    if (thisPhaseProxyCommands != proxyCommands.end() &&
+    //    !IsEmpty(thisPhaseProxyCommands->second)) {
+    //        for (auto& proxyCommandI : thisPhaseProxyCommands->second) {
+    //            auto& proxyCommandUP = proxyCommandI;
+    //
+    //            if (auto renderCommand = BuildRenderCommand(*proxyCommandUP)) {
+    //                renderCommand->Run(*this);
+    //            }
+    //        }
+    //    } else {
+    //        // If no projection commands are specified, use orthographic-cartesian
+    //        // projection
+    //        projectionMatrix.LoadOrthographic(
+    //            0, renderState.viewport.width, 0, renderState.viewport.height, 1, -1
+    //        );
+    //        viewMatrix.LoadTranslate(
+    //            Vector3(renderState.viewport.width / 2.0f, renderState.viewport.height / 2.0f, 0)
+    //        );
+    //    }
+}
 
-            if (auto renderCommand = BuildRenderCommand(*proxyCommandUP)) {
-                renderCommand->Run(*this);
-            }
-        }
-    } else {
-        // If no projection commands are specified, use orthographic-cartesian
-        // projection
-        projectionMatrix.LoadOrthographic(
-            0, renderState.viewport.width, 0, renderState.viewport.height, 1, -1
-        );
-        viewMatrix.LoadTranslate(
-            Vector3(renderState.viewport.width / 2.0f, renderState.viewport.height / 2.0f, 0)
-        );
+void GLRenderEngine::RenderProcess(RenderProcessModel const& processModel) {
+    for (auto& renderModel : processModel.renderModels) {
+#ifdef PROFILE
+        DevProfiler devProfilerRenderProcess("Render- Process", [](String value) {
+            cout << value;
+        });
+#endif
+        RenderProcess(renderModel);
     }
 }
 
 void GLRenderEngine::RenderProcess(RenderModel const& model) {
-    auto glProgram = As<GLShaderProgram>(model.ShaderProgram());
+    GUARD(model.material)
+    auto glProgram = As<GLShaderProgram>(model.material->ShaderProgram().get());
     if (nullptr == glProgram) {
         PJLog("ERROR. GLShaderProgram required");
         return;
@@ -351,22 +373,11 @@ void GLRenderEngine::RenderProcess(RenderModel const& model) {
 
         texCoords = uvs;
 
-        /// Transform UV coordinates for texture atlas
-        if (model.textureModels.size() > 0) {
-            auto& firstTexture = model.textureModels[0];
-
-            std::transform(texCoords.begin(), texCoords.end(), texCoords.begin(), [=](Vector2 uv) {
-                uv *= firstTexture.size;
-                uv += firstTexture.origin;
-                return uv;
-            });
-        }
-
         vboPlan.Add("a_texCoord", texCoords);
     }
 
     auto renderPlan = MAKE<GLRenderPlan>(model, vboPlan);
-    renderPlans.Add(renderPlan);
+    Add(renderPlans, renderPlan);
 }
 
 void GLRenderEngine::RenderDraw() {
@@ -407,7 +418,9 @@ void GLRenderEngine::RenderDrawPlans(VectorList<SP<GLRenderPlan>> const& renderP
     for (auto& rp : renderPlans) {
         auto vboPlan = rp->vboPlan;
         auto model = rp->model;
-        auto glProgram = As<GLShaderProgram>(model.ShaderProgram());
+        GUARD_CONTINUE(model.material)
+
+        auto glProgram = As<GLShaderProgram>(model.material->ShaderProgram().get());
         GUARD(glProgram);
 
         auto modelMatrix = model.matrix;
@@ -443,8 +456,8 @@ void GLRenderEngine::RenderDrawPlans(VectorList<SP<GLRenderPlan>> const& renderP
         // TODO: These can be optimized by not using the has check, or has returns something
         if (glProgram->HasUniform("u_float")) {
             float value = 1.0f;
-            if (model.UniformFloats().size() > 0) {
-                value = model.UniformFloats()[0];
+            if (model.material->UniformFloats().size() > 0) {
+                value = model.material->UniformFloats()[0];
             }
 
             glUniform1f(glProgram->uniformLocations["u_float"], value);
@@ -452,8 +465,8 @@ void GLRenderEngine::RenderDrawPlans(VectorList<SP<GLRenderPlan>> const& renderP
 
         if (glProgram->HasUniform("u_color")) {
             Color color = Color::white;
-            if (model.UniformColors().size() > 0) {
-                color = model.UniformColors()[0];
+            if (model.material->UniformColors().size() > 0) {
+                color = model.material->UniformColors()[0];
             }
             glUniform4f(glProgram->uniformLocations["u_color"], color.r, color.g, color.b, color.a);
         }
@@ -481,7 +494,7 @@ void GLRenderEngine::RenderDrawPlans(VectorList<SP<GLRenderPlan>> const& renderP
             );
         }
 
-        for (auto& i : model.Features()) {
+        for (auto& i : model.material->Features()) {
             auto key = i.first;
             auto status = i.second;
 

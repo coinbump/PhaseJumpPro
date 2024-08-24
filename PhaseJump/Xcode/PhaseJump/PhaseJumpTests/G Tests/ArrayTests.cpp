@@ -9,7 +9,7 @@ using namespace PJ;
 TEST(VectorList, Remove) {
     VectorList<String> sut;
 
-    sut.Add("test");
+    sut.push_back("test");
     EXPECT_EQ(1, sut.size());
 
     Remove(sut, "test");

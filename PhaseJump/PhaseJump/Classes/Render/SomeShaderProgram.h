@@ -1,7 +1,7 @@
-#ifndef PJSOMESHADERPROGRAM_H
-#define PJSOMESHADERPROGRAM_H
+#pragma once
 
 #include "_String.h"
+#include "UnorderedMap.h"
 
 /*
  RATING: 5 stars
@@ -14,7 +14,8 @@ namespace PJ {
         String id;
 
         virtual ~SomeShaderProgram() {}
+
+        /// Store loaded programs here for access later
+        static UnorderedMap<String, SP<SomeShaderProgram>> registry;
     };
 } // namespace PJ
-
-#endif

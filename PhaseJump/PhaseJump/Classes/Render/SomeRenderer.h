@@ -6,27 +6,23 @@
 #include "RenderModel.h"
 #include "SomeRenderContext.h"
 #include "WorldComponent.h"
+#include "WorldSizeable.h"
 #include <memory>
 
 // CODE REVIEW: ?/23
 namespace PJ {
     class RenderMaterial;
 
-    class SomeRenderer : public WorldComponent<> {
+    class SomeRenderer : public WorldComponent<>, public WorldSizeable {
     public:
         // (OPTIONAL) Material for render
         SP<RenderMaterial> material;
 
-        virtual VectorList<RenderModel> MakeRenderModels(RenderIntoModel const& model) = 0;
+        virtual VectorList<RenderModel> MakeRenderModels(RenderContextModel const& model) = 0;
 
         /// Allows custom rendering outside of the render engine
         /// Example: rendering ImGui UI
-        virtual void RenderInto(RenderIntoModel const& model) {}
-
-        /// Override to return intrinsic size of renderer (if any)
-        virtual std::optional<Vector3> WorldSize() const {
-            return std::nullopt;
-        }
+        virtual void RenderInto(RenderContextModel const& model) {}
 
         /// Override to set render color
         virtual void SetColor(Color color) {}
@@ -34,20 +30,24 @@ namespace PJ {
         // MARK: Convenience
 
         VectorList<RenderModel> MakeRenderModels(
-            RenderIntoModel const& model, Mesh const& mesh, VectorList<SomeTexture*> textures
+            RenderContextModel const& model, Mesh const& mesh, VectorList<SomeTexture*> textures
         );
+
+        // MARK: WorldSizeable
+
+        void SetWorldSize(Vector3 value) override {}
     };
 
     /// Render based on a function (used for imGui)
     class ActionRenderer : public SomeRenderer {
     public:
-        std::function<void(RenderIntoModel)> render;
+        std::function<void(RenderContextModel)> render;
 
-        ActionRenderer(std::function<void(RenderIntoModel)> render) :
+        ActionRenderer(std::function<void(RenderContextModel)> render) :
             render(render) {}
 
         // MARK: SomeRenderer
 
-        void RenderInto(RenderIntoModel const& model) override;
+        void RenderInto(RenderContextModel const& model) override;
     };
 } // namespace PJ

@@ -15,7 +15,7 @@ SQLTable::SQLTable(String name, SQLDatabaseSharedPtr db) :
 
 SQLStatement SQLTable::BuildStatement(String columnName, std::optional<SQLWhereArguments> where) {
     VectorList<String> columnNames;
-    columnNames.Add(columnName);
+    Add(columnNames, columnName);
 
     return BuildStatement(SQLTableQueryArguments(columnNames, where));
 }
@@ -36,7 +36,7 @@ SQLStatement SQLTable::BuildStatement(SQLTableQueryArguments query) {
             [](const String& value) { return SQLIdentifierFormatter().Formatted(value); }
         );
 
-        columnNamesString = identifiedColumnNames.Joined(",");
+        columnNamesString = Joined(identifiedColumnNames, ",");
     }
 
     result.AppendString(columnNamesString);
@@ -99,7 +99,7 @@ VectorList<SQLRowValues> SQLTable::RowValuesList(SQLTableQueryArguments query) {
                 }
             }
 
-            result.Add(row);
+            Add(result, row);
         }
     }
 
@@ -129,7 +129,7 @@ VectorList<int> SQLTable::IntValues(SQLTableQueryArguments query) {
                 int columnType = sqlite3_column_type(command.sqliteStatement, i);
                 if (columnType == SQLITE_INTEGER) {
                     auto value = sqlite3_column_int(command.sqliteStatement, i);
-                    result.Add(value);
+                    Add(result, value);
                 }
             }
         }
@@ -156,7 +156,7 @@ VectorList<float> SQLTable::FloatValues(SQLTableQueryArguments query) {
                 int columnType = sqlite3_column_type(command.sqliteStatement, i);
                 if (columnType == SQLITE_FLOAT) {
                     auto value = sqlite3_column_double(command.sqliteStatement, i);
-                    result.Add((float)value);
+                    Add(result, (float)value);
                 }
             }
         }
@@ -184,7 +184,7 @@ VectorList<String> SQLTable::StringValues(SQLTableQueryArguments query) {
                 if (columnType == SQLITE3_TEXT) {
                     auto value =
                         String((const char*)sqlite3_column_text(command.sqliteStatement, i));
-                    result.Add(value);
+                    Add(result, value);
                 }
             }
         }

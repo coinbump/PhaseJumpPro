@@ -3,6 +3,7 @@
  */
 in vec2 v_texCoord;
 
+// TODO: deprecate this shader. uniform colors can't be batched
 uniform sampler2D u_texture;
 uniform vec4 u_color;
 uniform float u_float;

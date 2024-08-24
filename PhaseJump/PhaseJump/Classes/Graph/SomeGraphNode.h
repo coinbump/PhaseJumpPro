@@ -15,7 +15,7 @@
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 5/12/24
+ CODE REVIEW: 5/12/23
  */
 namespace PJ {
     /// Use to build trees, graphs, state machines, etc.
@@ -35,6 +35,7 @@ namespace PJ {
         using NodeList = VectorList<NodeSharedPtr>;
 
         struct Edge {
+            // TODO: doesn't make sense
             NodeWeakPtr fromNode;
             EdgeCore core;
             NodeReferenceSharedPtr toNode;
@@ -98,7 +99,7 @@ namespace PJ {
 
             auto fromNode = SCAST<Node>(this->shared_from_this());
             auto forwardEdge = MAKE<Edge>(fromNode, model, toNode);
-            edges.Add(forwardEdge);
+            Add(edges, forwardEdge);
             toNode->Value()->FromNodes().insert(fromNode);
         }
 

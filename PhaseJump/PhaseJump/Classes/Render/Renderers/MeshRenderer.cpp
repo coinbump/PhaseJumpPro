@@ -1,6 +1,6 @@
 #include "MeshRenderer.h"
 #include "Angle.h"
-#include "RenderIntoModel.h"
+#include "RenderContextModel.h"
 #include "RenderModel.h"
 #include "RenderModelBuilder.h"
 #include "SomeRenderEngine.h"
@@ -8,7 +8,7 @@
 using namespace std;
 using namespace PJ;
 
-VectorList<RenderModel> MeshRenderer::MakeRenderModels(RenderIntoModel const& model) {
+VectorList<RenderModel> MeshRenderer::MakeRenderModels(RenderContextModel const& model) {
     VectorList<RenderModel> result;
     GUARDR(owner, result)
 
@@ -19,10 +19,9 @@ VectorList<RenderModel> MeshRenderer::MakeRenderModels(RenderIntoModel const& mo
 
     RenderModelBuilder builder;
     VectorList<SomeTexture*> textures;
-    auto renderModel = builder.Build(
-        mesh, *material, textures, ModelMatrix(), owner->transform->WorldPosition().z
-    );
+    auto renderModel =
+        builder.Build(mesh, *material, textures, ModelMatrix(), owner->transform.WorldPosition().z);
 
-    result.Add(renderModel);
+    Add(result, renderModel);
     return result;
 }

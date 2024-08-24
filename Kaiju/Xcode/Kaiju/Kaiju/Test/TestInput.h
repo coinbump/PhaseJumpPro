@@ -6,17 +6,17 @@ class TestInput : public WorldComponent<>, public SomeKeyUIEventsResponder, publ
     void OnKeyDown(KeyDownUIEvent event) override {
         std::cout << "Key: " << (char)event.keyCode.value << std::endl;
 
-        GUARD(owner && owner->transform)
-        owner->transform->value.position.x += 10;
+        GUARD(owner)
+        owner->transform.value.position.x += 10;
     }
 
     void OnInputAction(InputActionEvent const& event) override {
         std::cout << "Action: " << event.action << std::endl;
 
 //        if (event.action == "left") {
-//            owner->transform->value.position.x -= 10;
+//            owner->transform.value.position.x -= 10;
 //        } else if (event.action == "right") {
-//            owner->transform->value.position.x += 10;
+//            owner->transform.value.position.x += 10;
 //        }
     }
 
@@ -24,10 +24,10 @@ class TestInput : public WorldComponent<>, public SomeKeyUIEventsResponder, publ
         // TODO: support reading from any controller
         auto value = Input::FirstAxisValue(ControllerAxisId::LeftX);
         if (value < -0.5f) {
-            owner->transform->value.position.x -= 600.0f * time.delta;
+            owner->transform.value.position.x -= 600.0f * time.delta;
             owner->TypeComponent<AnimatedSpriteRenderer>()->flipX = false;
         } else if (value > 0.5f) {
-            owner->transform->value.position.x += 600.0f * time.delta;
+            owner->transform.value.position.x += 600.0f * time.delta;
             owner->TypeComponent<AnimatedSpriteRenderer>()->flipX = true;
         }
     }

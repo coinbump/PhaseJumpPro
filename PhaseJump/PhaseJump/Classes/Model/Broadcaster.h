@@ -9,12 +9,13 @@
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 7/5/24
+ CODE REVIEW: 7/5/23
  */
 namespace PJ {
     /// Broadcaster sends messages to listeners.
     class Broadcaster : public SomeBroadcaster {
     public:
+        // TODO: why WP?
         using ListenerWeakPtr = WP<SomeListener>;
         using ListenerList = VectorList<ListenerWeakPtr>;
         using EventSharedPtr = SP<SomeEvent>;
@@ -42,7 +43,7 @@ namespace PJ {
             if (listener.expired()) {
                 return;
             }
-            listeners.Add(listener);
+            Add(listeners, listener);
         }
 
         void Clear() {
@@ -52,11 +53,12 @@ namespace PJ {
         void Broadcast(EventPtr event) {
             ListenerList activeListeners;
 
+            // TODO: potential to crash
             for (auto listener : listeners) {
                 if (listener.expired()) {
                     continue;
                 }
-                activeListeners.Add(listener);
+                Add(activeListeners, listener);
 
                 listener.lock()->OnEvent(event);
             }

@@ -41,17 +41,17 @@ VectorList<FilePath> FileManager::PathList(FilePath path, bool isRecursive) {
     VectorList<FilePath> result;
 
     if (!IsDirectory(path)) {
-        result.Add(path);
+        Add(result, path);
         return result;
     }
 
     if (isRecursive) {
         for (auto& path : fs::recursive_directory_iterator{ path }) {
-            result.Add(path);
+            Add(result, path);
         }
     } else {
         for (auto& path : fs::directory_iterator{ path }) {
-            result.Add(path);
+            Add(result, path);
         }
     }
 

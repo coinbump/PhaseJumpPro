@@ -91,7 +91,7 @@
 //            Base(value) {}
 //
 //        virtual void SetValue(T value) override {
-//            Base::SetValue(transform->Transform(value));
+//            Base::SetValue(transform.Transform(value));
 //        }
 //    };
 //} // namespace PJ

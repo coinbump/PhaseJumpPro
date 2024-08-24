@@ -21,7 +21,7 @@ TEST(PublishedValue, Test_Lifecycle)
     List<int> values;
 
     auto subscription = sut->subject.Receive([&values](int const& value) {
-        values.Add(value);
+        values.push_back(value);
     });
 
     sut->SetValue(12);

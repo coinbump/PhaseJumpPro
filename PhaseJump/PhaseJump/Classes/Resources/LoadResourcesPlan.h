@@ -31,7 +31,7 @@ namespace PJ {
                 auto& secondMap = i.second;
                 for (auto& j : secondMap) {
                     auto info = j.second;
-                    result.Add(info);
+                    Add(result, info);
                 }
             }
 

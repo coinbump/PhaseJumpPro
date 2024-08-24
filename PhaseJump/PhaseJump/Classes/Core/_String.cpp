@@ -34,9 +34,3 @@ String String::Suffix(size_t size) const {
 
     return substr(this->size() - size, size);
 }
-
-VectorList<String> String::ComponentsSeparatedBy(char delimiter) {
-    VectorList<String> result;
-    Split(*this, delimiter, std::back_inserter(result));
-    return result;
-}

@@ -21,7 +21,7 @@ using namespace PJ;
         GLShaderProgramLoader loader;
         auto programInfo = loader.InfoFromPath([path UTF8String]);
         if (programInfo) {
-            GLShaderProgram::Info::registry.Add(programInfo.value());
+            Add(GLShaderProgram::Info::registry, programInfo.value());
         }
     }
 

@@ -31,7 +31,7 @@ namespace PJ {
         // TODO: rethink naming. Should it be MoveToWorldPosition?
         void MoveToPosition(Vector3 position, bool force = false) override {
             GUARD(owner)
-            NodeTransform& transform = *owner->transform;
+            NodeTransform& transform = owner->transform;
 
             if (IsKinematic() || force) {
                 transform.SetWorldPosition(position);
@@ -51,7 +51,7 @@ namespace PJ {
 
         Angle RotationAngle(bool clipRotation = false) const {
             GUARDR(owner, Angle::DegreesAngle(0))
-            NodeTransform& transform = *owner->transform;
+            NodeTransform& transform = owner->transform;
 
             return clipRotation ? Angle::DegreesAngle(-transform.LocalEulerAngles().z).Clipped()
                                 : Angle::DegreesAngle(-transform.LocalEulerAngles().z);
@@ -63,7 +63,7 @@ namespace PJ {
 
         void SetRotationAngle(Angle value, bool clipRotation = false) {
             GUARD(owner)
-            NodeTransform& transform = *owner->transform;
+            NodeTransform& transform = owner->transform;
 
             auto newAngle = value;
             if (clipRotation) {

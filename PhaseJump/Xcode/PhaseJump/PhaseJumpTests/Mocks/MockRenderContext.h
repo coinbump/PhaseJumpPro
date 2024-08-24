@@ -4,16 +4,17 @@
 #include "SomeRenderContext.h"
 #include "Vector2.h"
 #include "VectorList.h"
-#include "RenderIntoModel.h"
+#include "RenderContextModel.h"
 
 using namespace PJ;
 
 namespace PJTest {
-    class MockRenderContext : public PJ::SomeRenderContext
+
+        class MockRenderContext : public PJ::SomeRenderContext
     {
     public:
         Vector2 size;
-        VectorList<RenderIntoModel> renderHistory;
+        VectorList<RenderContextModel> renderHistory;
 
         MockRenderContext(Vector2 size = Vector2(400, 200)) : size(size) {
         }
@@ -33,7 +34,7 @@ namespace PJTest {
             return Vector2Int(Size().x / 2.0f, Size().y / 2.0f);
         }
 
-        void Render(SomeRenderer& renderer, RenderIntoModel model) override;
+        void Render(SomeRenderer& renderer, RenderContextModel model) override;
     };
 }
 

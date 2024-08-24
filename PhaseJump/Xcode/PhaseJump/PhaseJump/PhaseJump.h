@@ -17,6 +17,7 @@
 
 #include <PhaseJump/FileManager.h>
 #include <PhaseJump/FilePath.h>
+#include <PhaseJump/Font.h>
 
 #include <PhaseJump/GLShaderProgram.h>
 #include <PhaseJump/GLShaderProgramLoader.h>
@@ -70,6 +71,7 @@
 #include <PhaseJump/StandardCore.h>
 #include <PhaseJump/StandardEmitsBuilder.h>
 #include <PhaseJump/TextureAtlas.h>
+#include <PhaseJump/TextRenderer.h>
 #include <PhaseJump/VelocityKSteering.h>
 #include <PhaseJump/Void.h>
 #include <PhaseJump/VFlow.h>

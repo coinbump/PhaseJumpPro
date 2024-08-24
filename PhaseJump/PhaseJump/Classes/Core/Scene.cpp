@@ -12,6 +12,6 @@ void Scene::Start() {
     // Set flag early for unit tests
     isLoaded = true;
 
-    GUARD(owner && owner->world);
+    GUARD(owner && owner->World());
     LoadInto(*owner);
 }

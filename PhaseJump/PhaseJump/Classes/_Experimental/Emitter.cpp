@@ -68,14 +68,14 @@ List<Emitter::SpawnType> Emitter::EmitWithEmits(EmitList emits) {
     for (auto& emit : emits) {
         auto spawnDelay = emit.SpawnDelay();
         if (spawnDelay && *spawnDelay > 0) {
-            delayedEmits.Add(DelayedEmitModel(emit, *spawnDelay));
+            Add(delayedEmits, DelayedEmitModel(emit, *spawnDelay));
             continue;
         }
 
         auto spawn = Spawn(emit);
         GUARD_CONTINUE(spawn)
 
-        result.Add(spawn);
+        Add(result, spawn);
     }
 
     return result;
@@ -102,7 +102,7 @@ Emitter::SpawnType Emitter::Spawn(EmitModel const& emit) {
     GUARDR(spawnParent, nullptr)
 
     spawnParent->Add(newSpawn);
-    newSpawn->transform->SetLocalPosition(spawnPosition);
+    newSpawn->transform.SetLocalPosition(spawnPosition);
 
     if (maxAlive > 0) {
         emits.insert(newSpawn);

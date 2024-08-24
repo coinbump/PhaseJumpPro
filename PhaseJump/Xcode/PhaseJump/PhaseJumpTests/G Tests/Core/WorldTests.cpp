@@ -18,12 +18,12 @@ TEST(World, TestNodePositionsAtRoot) {
     world->Add(node);
     world->Go();
 
-    EXPECT_EQ(Vector3::zero, node->transform->LocalPosition());
-    EXPECT_EQ(Vector3::zero, node->transform->WorldPosition());
+    EXPECT_EQ(Vector3::zero, node->transform.LocalPosition());
+    EXPECT_EQ(Vector3::zero, node->transform.WorldPosition());
 
-    node->transform->SetLocalPosition(Vector3(1, 1, 0));
-    EXPECT_EQ(Vector3(1, 1, 0), node->transform->LocalPosition());
-    EXPECT_EQ(Vector3(1, 1, 0), node->transform->WorldPosition());
+    node->transform.SetLocalPosition(Vector3(1, 1, 0));
+    EXPECT_EQ(Vector3(1, 1, 0), node->transform.LocalPosition());
+    EXPECT_EQ(Vector3(1, 1, 0), node->transform.WorldPosition());
 }
 
 TEST(World, TestNodePositionsAsChild) {
@@ -35,16 +35,16 @@ TEST(World, TestNodePositionsAsChild) {
     world->Add(parentNode);
     world->Go();
 
-    EXPECT_EQ(Vector3::zero, node->transform->LocalPosition());
-    EXPECT_EQ(Vector3::zero, node->transform->WorldPosition());
+    EXPECT_EQ(Vector3::zero, node->transform.LocalPosition());
+    EXPECT_EQ(Vector3::zero, node->transform.WorldPosition());
 
-    node->transform->SetLocalPosition(Vector3(1, 1, 0));
-    EXPECT_EQ(Vector3(1, 1, 0), node->transform->LocalPosition());
-    EXPECT_EQ(Vector3(1, 1, 0), node->transform->WorldPosition());
+    node->transform.SetLocalPosition(Vector3(1, 1, 0));
+    EXPECT_EQ(Vector3(1, 1, 0), node->transform.LocalPosition());
+    EXPECT_EQ(Vector3(1, 1, 0), node->transform.WorldPosition());
 
-    parentNode->transform->SetLocalPosition(Vec3(10, 10, 0));
-    EXPECT_EQ(Vector3(1, 1, 0), node->transform->LocalPosition());
-    EXPECT_EQ(Vector3(11, 11, 0), node->transform->WorldPosition());
+    parentNode->transform.SetLocalPosition(Vec3(10, 10, 0));
+    EXPECT_EQ(Vector3(1, 1, 0), node->transform.LocalPosition());
+    EXPECT_EQ(Vector3(11, 11, 0), node->transform.WorldPosition());
 }
 
 //TEST(World, TestRender_ChildInsideParent) {
@@ -56,8 +56,8 @@ TEST(World, TestNodePositionsAsChild) {
 //    auto childNode = MAKE<WorldNode>();
 //    parentNode->AddEdge(childNode);
 //
-//    parentNode->transform->position = Vector3(10, 10, 0);
-//    childNode->transform->position = Vector3(1, 1, 0);
+//    parentNode->transform.position = Vector3(10, 10, 0);
+//    childNode->transform.position = Vector3(1, 1, 0);
 //    auto mockRenderer = MAKE<MockRenderer>();
 //    childNode->Add(SCAST<SomeWorldComponent>(mockRenderer));
 //

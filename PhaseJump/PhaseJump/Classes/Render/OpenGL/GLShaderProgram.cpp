@@ -3,7 +3,6 @@
 
 using namespace PJ;
 
-UnorderedMap<String, SP<GLShaderProgram>> GLShaderProgram::registry;
 VectorList<GLShaderProgram::Info> GLShaderProgram::Info::registry;
 
 GLShaderProgram::~GLShaderProgram() {

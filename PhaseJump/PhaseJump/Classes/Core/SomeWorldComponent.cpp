@@ -9,8 +9,8 @@ Matrix4x4 SomeWorldComponent::ModelMatrix() const {
     Matrix4x4 result;
     result.LoadIdentity();
 
-    GUARDR(owner && owner->world, result)
-    return owner->world->WorldModelMatrix(*owner);
+    GUARDR(owner && owner->World(), result)
+    return owner->World()->WorldModelMatrix(*owner);
 }
 
 void SomeWorldComponent::CheckedAwake() {

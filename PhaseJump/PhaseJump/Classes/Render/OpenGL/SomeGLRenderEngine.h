@@ -67,26 +67,28 @@ namespace PJ {
         void
         Add(String attributeId, CollectionData<T> const& collection, GLenum glType,
             bool normalize = false) {
-            items.Add(Item(
-                attributeId, (uint32_t)collection.ItemCount(), collection.ItemSize(), glType,
-                collection.Data(), normalize
-            ));
+            PJ::Add(
+                items, Item(
+                           attributeId, (uint32_t)collection.ItemCount(), collection.ItemSize(),
+                           glType, collection.Data(), normalize
+                       )
+            );
         }
 
         void Add(String attributeId, VectorList<Vector3> const& components) {
-            Add(attributeId, (CollectionData<Vector3>)components, GL_FLOAT);
+            Add(attributeId, ToCollectionData(components), GL_FLOAT);
         }
 
         void Add(String attributeId, VectorList<Color> const& components) {
-            Add(attributeId, (CollectionData<Color>)components, GL_FLOAT);
+            Add(attributeId, ToCollectionData(components), GL_FLOAT);
         }
 
         void Add(String attributeId, VectorList<RGBAColor> const& components) {
-            Add(attributeId, (CollectionData<RGBAColor>)components, GL_UNSIGNED_BYTE, true);
+            Add(attributeId, ToCollectionData(components), GL_UNSIGNED_BYTE, true);
         }
 
         void Add(String attributeId, VectorList<Vector2> const& components) {
-            Add(attributeId, (CollectionData<Vector2>)components, GL_FLOAT);
+            Add(attributeId, ToCollectionData(components), GL_FLOAT);
         }
     };
 

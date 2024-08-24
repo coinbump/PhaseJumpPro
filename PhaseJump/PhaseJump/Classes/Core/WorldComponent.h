@@ -36,20 +36,24 @@ namespace PJ {
             return owner->TypeComponent<T>();
         }
 
+        // TODO: use List?
         template <class T>
         VectorList<SP<T>> TypeComponents(WorldNode* owner) const {
-            GUARDR(owner, VectorList<SP<T>>())
-            return owner->TypeComponents<T>();
+            VectorList<SP<T>> result;
+            GUARDR(owner, result)
+            owner->TypeComponents<T>(result);
+            return result;
         }
 
         template <class T>
-        VectorList<SP<T>> TypeComponentsInChildren(WorldNode* owner) {
+        VectorList<SP<T>> ChildTypeComponents(WorldNode* owner) {
             GUARDR(owner, VectorList<SP<T>>())
-            return owner->TypeComponentsInChildren<T>();
+            return owner->ChildTypeComponents<T>();
         }
 
-        VectorList<SP<WorldNode>> ChildNodes(WorldNode* owner) const {
-            GUARDR(owner, VectorList<SP<WorldNode>>())
+        WorldNode::NodeList ChildNodes(WorldNode* owner) const {
+            WorldNode::NodeList result;
+            GUARDR(owner, result)
             return owner->ChildNodes();
         }
     };
@@ -58,6 +62,7 @@ namespace PJ {
     /// We can't declare these in SomeWorldComponent because it would create a
     /// circular include between SomeWorldComponent and WorldNode
     /// (template funcs can't be moved to the .cpp file to avoid this)
+    // TODO: rethink this
     template <class Core = Void>
     class WorldComponent : public SomeWorldComponent {
     public:
@@ -74,11 +79,11 @@ namespace PJ {
         }
 
         template <class T>
-        VectorList<SP<T>> TypeComponentsInChildren() {
-            return WorldNodeTool().TypeComponentsInChildren<T>(this->owner);
+        VectorList<SP<T>> ChildTypeComponents() {
+            return WorldNodeTool().ChildTypeComponents<T>(this->owner);
         }
 
-        VectorList<SP<WorldNode>> ChildNodes() const {
+        List<SP<WorldNode>> ChildNodes() const {
             return WorldNodeTool().ChildNodes(this->owner);
         }
 
@@ -92,7 +97,7 @@ namespace PJ {
 
         template <class T>
         VectorList<SP<T>> GetComponentsInChildren() const {
-            return TypeComponentsInChildren<T>();
+            return ChildTypeComponents<T>();
         }
 
         template <class T>

@@ -12,7 +12,7 @@ namespace PJ {
     //        Vector3 WorldToScreen(Vector3 vector, SomeRenderContext&
     //        renderContext) override {
     //            auto owner = this->owner.lock();
-    //            auto cameraPosition = owner->transform->position;
+    //            auto cameraPosition = owner->transform.position;
     //            return vector - cameraPosition;
     //        }
     //    };

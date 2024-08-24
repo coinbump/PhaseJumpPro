@@ -12,14 +12,19 @@ using namespace PJ;
 
 class TestGradientsScene : public Scene {
 public:
+    TestGradientsScene() {
+    }
+
     void LoadInto(WorldNode& root) {
+        root.name = "TestGradientsScene";
+
         auto camera = SCAST<SomeCamera>(MAKE<OrthoCamera>());
-        auto cameraNode = MAKE<WorldNode>();
+        auto cameraNode = MAKE<WorldNode>("Camera");
         cameraNode->Add(camera);
         root.Add(cameraNode);
 
         for (int i = 0; i < 30; i++) {
-            auto gradientNode = MAKE<WorldNode>();
+            auto gradientNode = MAKE<WorldNode>("Gradient");
             auto gradientRenderer = MAKE<SimpleGradientRenderer>(Color::white, Color::black.WithAlpha(1), Vector2(400, 400));
             gradientRenderer->model.SetMeshBuilderFunc([](MeshRendererModel const& model) {
                 // FUTURE: support colors builder for different meshes (vertices are different, so colors are wrong)
@@ -38,13 +43,15 @@ public:
 
             auto updater = MAKE<WorldComponent<ComposeWorldComponentCore>>();
             updater->core.updateFuncs.Add([=](auto& component, TimeSlice time) {
-                auto worldSize = gradientRenderer->WorldSize2D();
-                worldSize.x += 10 * time.delta;
+                auto worldSize = gradientRenderer->WorldSize();
+                GUARD(worldSize)
+
+                worldSize->x += 10 * time.delta;
 
                 /// Use x twice
-                gradientRenderer->SetWorldSize2D(Vector2(worldSize.x, worldSize.x));
+                gradientRenderer->SetWorldSize(Vector2(worldSize->x, worldSize->x));
 
-                gradientNode->transform->SetRotation(Angle::DegreesAngle(-gradientNode->transform->Rotation().z + 45.0f * time.delta));
+                gradientNode->transform.SetRotation(Angle::DegreesAngle(-gradientNode->transform.Rotation().z + 45.0f * time.delta));
             });
 
             gradientNode->Add(updater);

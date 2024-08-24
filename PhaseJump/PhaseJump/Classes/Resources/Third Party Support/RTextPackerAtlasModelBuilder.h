@@ -35,12 +35,22 @@ namespace PJ {
                 resultSprite.trimOrigin = Vector2Int(trimRec["x"], trimRec["y"]);
                 resultSprite.trimSize = Vector2Int(trimRec["width"], trimRec["height"]);
 
-                result.sprites.push_back(resultSprite);
+                // For packed font atlases
+                if (sprite.contains("char")) {
+                    nlohmann::json::value_type spriteChar = sprite["char"];
+                    int charValue = spriteChar["value"];
+                    int offsetX = spriteChar["offset"]["x"];
+                    int offsetY = spriteChar["offset"]["y"];
 
-                // TODO: how does this work? It's not working
-                if (sprite.contains(std::string{ std::string_view("char_from") })) {
-                    std::cout << "This is a font" << std::endl;
+                    RTexPackerAtlasModel::Char _char;
+                    _char.value = charValue;
+                    _char.offset = Vector2Int(offsetX, offsetY);
+                    _char.advanceX = spriteChar["advanceX"];
+
+                    resultSprite._char = _char;
                 }
+
+                result.sprites.push_back(resultSprite);
             }
 
             return result;

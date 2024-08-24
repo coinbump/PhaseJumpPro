@@ -58,6 +58,8 @@ public:
 //    }
 
     void LoadInto(WorldNode& root) {
+        root.name = "TestAnimatedTexturesScene";
+
         auto camera = SCAST<SomeCamera>(MAKE<OrthoCamera>());
         auto cameraNode = MAKE<WorldNode>();
         cameraNode->Add(camera);

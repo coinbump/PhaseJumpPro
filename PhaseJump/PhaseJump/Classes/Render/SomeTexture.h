@@ -44,6 +44,10 @@ namespace PJ {
 
         virtual ~SomeTexture() {}
 
+        Vector2Int Size() const {
+            return size;
+        }
+
         /// Returns the actual texture object used by the render engine
         /// In the case of a texture atlas, each child texture will have a link to its original
         /// render texture

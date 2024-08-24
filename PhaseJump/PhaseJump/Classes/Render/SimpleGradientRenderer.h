@@ -13,31 +13,27 @@
  */
 namespace PJ {
     /// Renders between start and end color
-    class SimpleGradientRenderer : public SomeRenderer, public WorldSizeAble2D {
+    class SimpleGradientRenderer : public SomeRenderer {
     public:
         using Base = SomeRenderer;
-        RGBAColor startColor;
-        RGBAColor endColor;
+        Color startColor;
+        Color endColor;
 
         MeshRendererModel model;
 
-        SimpleGradientRenderer(Color32 startColor, Color32 endColor, Vector2 worldSize);
+        SimpleGradientRenderer(Color startColor, Color endColor, Vector2 worldSize);
 
         // MARK: SomeRenderer
 
-        VectorList<RenderModel> MakeRenderModels(RenderIntoModel const& model) override;
+        VectorList<RenderModel> MakeRenderModels(RenderContextModel const& model) override;
+
+        // MARK: WorldSizeable
 
         std::optional<Vector3> WorldSize() const override {
             return model.WorldSize();
         }
 
-        // MARK: WorldSizeAble2D
-
-        Vector2 WorldSize2D() const override {
-            return model.WorldSize();
-        }
-
-        void SetWorldSize2D(Vector2 value) override {
+        void SetWorldSize(Vector3 value) override {
             model.SetWorldSize(value);
         }
     };

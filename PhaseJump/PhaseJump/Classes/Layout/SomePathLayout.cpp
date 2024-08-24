@@ -25,7 +25,7 @@ void SomePathLayout::ApplyLayout() {
         auto position = path->PositionAt(normalPosition);
         position += offset;
 
-        childObject->transform->SetLocalPosition(position);
+        childObject->transform.SetLocalPosition(position);
 
         if (orientToPath) {
             auto prevPosition = normalPosition;
@@ -42,9 +42,9 @@ void SomePathLayout::ApplyLayout() {
             auto rotationDegreeAngle =
                 Angle(path->PositionAt(nextPosition) - path->PositionAt(prevPosition)).Degrees();
             rotationDegreeAngle += orientDegreeAngle;
-            childObject->transform->SetRotation(Angle::DegreesAngle(rotationDegreeAngle));
+            childObject->transform.SetRotation(Angle::DegreesAngle(rotationDegreeAngle));
         } else {
-            childObject->transform->SetRotation(Angle::DegreesAngle(0));
+            childObject->transform.SetRotation(Angle::DegreesAngle(0));
         }
 
         index++;

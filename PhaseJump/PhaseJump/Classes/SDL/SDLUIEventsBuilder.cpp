@@ -38,7 +38,7 @@ void OnControllerButtonDown(String controllerId, int button, List<SP<SomeUIEvent
 
     String buttonId = map[button];
     auto event = MAKE<ControllerButtonDownUIEvent>(controllerId, buttonId, button);
-    result.Add(SCAST<SomeUIEvent>(event));
+    result.push_back(SCAST<SomeUIEvent>(event));
 }
 
 List<SP<SomeUIEvent>> SDLUIEventsBuilder::BuildUIEvents(SDLEventList const& events) {
@@ -82,7 +82,7 @@ List<SP<SomeUIEvent>> SDLUIEventsBuilder::BuildUIEvents(SDLEventList const& even
                 cout << "Axis: " << axisId << " Value: " << normalValue << std::endl;
 
                 auto event = MAKE<ControllerAxisUIEvent>(String((int)which), axisId, normalValue);
-                result.Add(SCAST<SomeUIEvent>(event));
+                result.push_back(SCAST<SomeUIEvent>(event));
                 break;
             }
         case SDL_EVENT_PEN_DOWN:
@@ -104,7 +104,7 @@ List<SP<SomeUIEvent>> SDLUIEventsBuilder::BuildUIEvents(SDLEventList const& even
                     List<FilePath>{ FilePath(droppedFile) },
                     ScreenPosition(Vector2(sdlEvent.drop.x, sdlEvent.drop.y))
                 );
-                dropFileEvents.Add(event);
+                dropFileEvents.push_back(event);
                 break;
             }
         case SDL_EVENT_KEY_DOWN:
@@ -114,7 +114,7 @@ List<SP<SomeUIEvent>> SDLUIEventsBuilder::BuildUIEvents(SDLEventList const& even
                 // FUTURE: SDL_Keymod mod;
 
                 auto event = MAKE<KeyDownUIEvent>(scanCode, keyCode);
-                result.Add(SCAST<SomeUIEvent>(event));
+                result.push_back(SCAST<SomeUIEvent>(event));
                 break;
             }
         case SDL_EVENT_KEY_UP:
@@ -124,7 +124,7 @@ List<SP<SomeUIEvent>> SDLUIEventsBuilder::BuildUIEvents(SDLEventList const& even
                 // FUTURE: SDL_Keymod mod;
 
                 auto event = MAKE<KeyUpUIEvent>(scanCode, keyCode);
-                result.Add(SCAST<SomeUIEvent>(event));
+                result.push_back(SCAST<SomeUIEvent>(event));
                 break;
             }
         case SDL_EVENT_MOUSE_BUTTON_DOWN:
@@ -132,13 +132,13 @@ List<SP<SomeUIEvent>> SDLUIEventsBuilder::BuildUIEvents(SDLEventList const& even
                 auto inputButton = PointerInputButtonFromSDLButton(sdlEvent.button.button);
                 auto screenPosition = ScreenPosition(Vector2(sdlEvent.button.x, sdlEvent.button.y));
                 auto event = MAKE<PointerDownUIEvent>(screenPosition, inputButton);
-                result.Add(SCAST<SomeUIEvent>(event));
+                result.push_back(SCAST<SomeUIEvent>(event));
                 break;
             }
         case SDL_EVENT_MOUSE_BUTTON_UP:
             {
                 auto inputButton = PointerInputButtonFromSDLButton(sdlEvent.button.button);
-                result.Add(MAKE<PointerUpUIEvent>(inputButton));
+                result.push_back(MAKE<PointerUpUIEvent>(inputButton));
                 break;
             }
         case SDL_EVENT_MOUSE_MOTION:
@@ -152,7 +152,7 @@ List<SP<SomeUIEvent>> SDLUIEventsBuilder::BuildUIEvents(SDLEventList const& even
 
                 auto screenPosition = ScreenPosition(Vector2(sdlEvent.motion.x, sdlEvent.motion.y));
                 auto delta = Vector2(sdlEvent.motion.xrel, sdlEvent.motion.yrel);
-                result.Add(MAKE<PointerMoveUIEvent>(screenPosition, delta));
+                result.push_back(MAKE<PointerMoveUIEvent>(screenPosition, delta));
                 break;
             }
         }
@@ -164,7 +164,7 @@ List<SP<SomeUIEvent>> SDLUIEventsBuilder::BuildUIEvents(SDLEventList const& even
             AddRange(combinedFilePaths, dropFileEvent->filePaths);
         }
         auto event = MAKE<DropFilesUIEvent>(combinedFilePaths, (*dropFileEvents.begin())->position);
-        result.Add(SCAST<SomeUIEvent>(event));
+        result.push_back(SCAST<SomeUIEvent>(event));
     }
 
     return result;

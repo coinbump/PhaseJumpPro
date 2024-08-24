@@ -26,6 +26,35 @@
 namespace PJ {
     // EXTRA: boards, mine sweeper
 
+    //    class SomeTextLayout {};
+    //
+    //    struct TextChar {
+    //        String value;
+    //        size_t index = 0;
+    //    };
+    //
+    //    class StandardTextLayout : public SomeTextLayout {
+    //        VectorList<Vector3> BuildLayout(String string) {
+    //            VectorList<Vector3> result;
+    //            return result;
+    //        }
+    //    };
+    //
+    //    struct TextLayoutModel {
+    //        struct Glyph {
+    //            TextChar textChar;
+    //            Vector2 pos;
+    //        };
+    //
+    //        VectorList<Glyph> glyphs;
+    //    };
+    //
+    //    class TextRenderModel {
+    //        Mesh mesh;
+    //        VectorList<Color> colors;
+    //    };
+    //
+
     /// Responsible for loading scenes
     class SceneRepository {};
 
@@ -797,38 +826,65 @@ namespace PJ {
         /// Focus point of the camera
         WP<WorldNode> target;
     };
-
-    class Glyph {
-    public:
-        String value;
-
-        /// Offset into the character (example: j hangs behind character bounds)
-        int originX;
-
-        /// Y offset for placing the trimmed glyph bitmap
-        int offsetY;
-
-        /// Distance from glyph origin to next glyph
-        int advanceX;
-
-        SP<AtlasTexture> texture;
-    };
-
     class TextureAtlas;
 
-    /// A font resource is defined by a texture atlas and a glyph map
-    class Font : public Base {
-    public:
-        SP<TextureAtlas> atlas;
-        UnorderedMap<String, Glyph> glyphs;
+    /// Defines the layout size and value of a text line
+    struct MeasuredTextLine {
+        String value;
+        Vector2 size;
     };
 
-    class TextLayout {
-        VectorList<Vector3> BuildLayout(String string) {
-            VectorList<Vector3> result;
-            return result;
+#if FALSE
+    class PJ_DrawFont : public PJ_Drawable {
+    public:
+        PJ_FColor mColor;    // Default color, can be ignored
+        PJ_String mFontName; // GetName is the drawable name (unique, for the cache)
+        PJ_DrawTexture* mTexture;
+        float mSize; // In points.
+
+        // METRICS:
+        PJ_String GetFontName() const {
+            return mFontName;
         }
+
+        float GetLineHeight(bool toNextLine) const;
+        float GetCharOrigin(PJ_ConstStr& _char) const;
+        float GetCharDescent(PJ_ConstStr& _char) const; // Descent of char
+        float GetCharAscent(PJ_ConstStr& _char) const;
+        float GetCharAdvance(PJ_ConstStr& _char) const;
+        float GetCharWidth(PJ_ConstStr& _char) const;
+        float GetCharHeight(PJ_ConstStr& _char) const;
+        float GetPrintCharWidth(PJ_ConstStr& _char, bool advance) const;
+
+        float GetAscent() const {
+            return mAscent;
+        }
+
+        float GetLeading() const {
+            return mLeading;
+        }
+
+        float GetDescent() const {
+            return mDescent;
+        }
+
+        float GetSpaceWidth() const {
+            PJ_String charStr;
+            charStr.append(1, ' ');
+            return GetCharWidth(charStr);
+        }
+
+        // RENDER:
+        PJCoord GetCharQuad(PJ_ConstStr& _char, PJ_REQuad& vertices, PJCoord x, PJCoord y);
+        void GetCharTexCoords(PJ_ConstStr& _char, PJ_REQuad& texCoords);
     };
+#endif
+
+    // ?? What is the point of this? Just fo r lolz?
+    //    class BezierCurveTextLayout : public SomeTextLayout {
+    //        BezierPath path;
+    //
+    //    };
 
     // TODO: re-evaluate using funcs
     class CenterJustifyTextLayout {
@@ -837,85 +893,12 @@ namespace PJ {
 
     class RightJustifyTextLayout {};
 
-    class BezierCurveTextLayout {};
+    struct TextLayoutInput {};
 
-    class TextMeshBuilder : public SomeMeshBuilder {
-    public:
-        String text;
-        SP<Font> font;
+    // TODO: this is incorrect, fix it
+    using ViewPosition = ScreenPosition;
 
-        Mesh BuildMesh() override {
-            Mesh result;
-
-            /// TODO: how do we add modifiers?
-            QuadMeshBuilder qmb;
-
-            return result;
-        }
-    };
-
-    class TextRenderer : public SomeRenderer {
-    protected:
-        String text;
-        SP<Font> font;
-        Mesh mesh;
-
-    public:
-        /// Size for justification
-        Vector2 textSize;
-
-        bool isLayoutNeeded = false;
-
-        using LayoutFunc = std::function<VectorList<Vector3>(Vector2)>;
-
-        LayoutFunc layoutFunc;
-
-        String Text() const {
-            return text;
-        }
-
-        void SetText(String text) {
-            GUARD(text != this->text)
-            this->text = text;
-            isLayoutNeeded = true;
-        }
-
-        void ApplyLayoutIfNeeded() {
-            GUARD(isLayoutNeeded)
-            GUARD(layoutFunc)
-
-            // layoutFunc(...)
-            // build mesh with all glyphs
-
-            isLayoutNeeded = false;
-        }
-
-        // ?? how do we pass in the # of visible characters to this func?
-        VectorList<RenderModel> MakeRenderModels(RenderIntoModel const& model) {
-            VectorList<RenderModel> result;
-
-            GUARDR(owner, result)
-
-            ApplyLayoutIfNeeded();
-
-            // Cache the individual glyph meshes so if we use text visibility animation
-            // we don't have to rebuild them all
-            //            if (nullptr == material || nullptr == material->shaderProgram) {
-            //                PJLog("ERROR. Missing material.");
-            //                return result;
-            //            }
-            //
-            //            RenderModelBuilder builder;
-            //            auto renderModel = builder.Build(
-            //                *material->shaderProgram, mesh, *material, ModelMatrix(),
-            //                owner->transform->WorldPosition().z
-            //            );
-
-            //            result.push_back(renderModel);
-            return result;
-        }
-    };
-
+#if FALSE
     class Label : View2D {
     protected:
         TextRenderer renderer;
@@ -928,6 +911,7 @@ namespace PJ {
         // TODO: need a text modifier?
         void SetIsUppercase(bool value) {}
     };
+#endif
 
     class ProgressBar : View2D {};
 

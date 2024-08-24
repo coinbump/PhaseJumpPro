@@ -3,9 +3,8 @@
 #include "SomeGraphNode.h"
 
 /*
- RATING: 5 stars
- Has unit tests
- CODE REVIEW: 5/12/24
+ TODO: this doesn't make sense for acyclic
+ CODE REVIEW: /23
  */
 namespace PJ {
     template <class EdgeCore = StandardEdgeCore>
@@ -31,7 +30,7 @@ namespace PJ {
         /// NOTE: may not work as expected when loops exist in the graph
         NodeList CollectDepthFirstGraph(SP<Node> fromNode) {
             NodeList result;
-            result.Add(fromNode);
+            Add(result, fromNode);
 
             NodeSet searchedNodes;
             searchedNodes.insert(fromNode);
@@ -44,7 +43,7 @@ namespace PJ {
         /// NOTE: may not work as expected when loops exist in the graph
         NodeList CollectBreadthFirstGraph(SP<Node> fromNode) {
             NodeList result;
-            result.Add(fromNode);
+            Add(result, fromNode);
 
             NodeSet searchedNodes;
             searchedNodes.insert(fromNode);
@@ -92,7 +91,7 @@ namespace PJ {
                 }
 
                 allNodes.insert(toNode->Value());
-                nodes.Add(toNode->Value());
+                Add(nodes, toNode->Value());
             }
 
             for (auto& edge : fromNode->Edges()) {
@@ -123,7 +122,7 @@ namespace PJ {
                 }
 
                 searchedNodes.insert(toNode->Value());
-                nodes.Add(toNode->Value());
+                Add(nodes, toNode->Value());
                 CollectDepthFirstChildren(nodes, toNode->Value(), searchedNodes);
             }
         }

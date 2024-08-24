@@ -23,7 +23,7 @@ namespace PJ {
 
         SQLTableQueryArguments(String columnName, std::optional<SQLWhereArguments> where) :
             where(where) {
-            columnNames.Append(columnName);
+            Add(columnNames, columnName);
         }
 
         SQLTableQueryArguments(

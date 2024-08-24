@@ -34,7 +34,7 @@ SomeUIEventPoller::Result SDLImGuiUIEventPoller::PollUIEvents() {
             }
         }
 
-        events.Add(event);
+        Add(events, event);
     }
 
     return SDLEventPoller(window).Process(events);

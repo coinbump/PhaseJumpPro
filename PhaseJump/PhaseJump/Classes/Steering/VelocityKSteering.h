@@ -26,7 +26,7 @@ namespace PJ {
             GUARD(owner)
 
             auto moveDelta = velocity * time.delta;
-            owner->transform->SetLocalPosition(owner->transform->LocalPosition() + moveDelta);
+            owner->transform.SetLocalPosition(owner->transform.LocalPosition() + moveDelta);
         }
     };
 } // namespace PJ

@@ -18,16 +18,22 @@ namespace PJ {
         using Base = SomeRenderer;
 
         MeshRendererModel model;
+        Color color;
 
-        ColorRenderer(Color32 color, Vector2 worldSize);
+        ColorRenderer(Color color, Vector2 worldSize);
+        ColorRenderer(SP<RenderMaterial> material, Color color, Vector2 worldSize);
 
-        void SetWorldSize(Vector3 value) {
-            model.SetWorldSize(value);
-        }
+        static SP<RenderMaterial> MakeMaterial(Color color);
 
         // MARK: SomeRenderer
 
-        VectorList<RenderModel> MakeRenderModels(RenderIntoModel const& model) override;
+        VectorList<RenderModel> MakeRenderModels(RenderContextModel const& model) override;
+
+        // MARK: WorldSizable
+
+        void SetWorldSize(Vector3 value) override {
+            model.SetWorldSize(value);
+        }
 
         std::optional<Vector3> WorldSize() const override {
             return Vector3(model.WorldSize());

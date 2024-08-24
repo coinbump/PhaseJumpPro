@@ -18,6 +18,32 @@ public:
     }
 };
 
+void DrawTree(WorldNode* node) {
+    GUARD(node);
+
+    if (ImGui::TreeNode(node->name.size() == 0 ? "???" : node->name.c_str())) {
+        bool isScene = !IsEmpty(node->GetComponents<Scene>());
+        bool isCamera = !IsEmpty(node->GetComponents<SomeCamera>());
+        bool isVIP = node->typeTags.contains("editor.vip");
+
+        if (!(isScene || isCamera || isVIP)) {
+            ImGui::SameLine();
+            //        if (ImGui::ImageButton("", my_tex_id, size, uv0, uv1, bg_col, tint_col))
+            //            pressed_count += 1;
+
+            // FUTURE: use imageButton
+            if (ImGui::SmallButton(node->IsActive() ? "on" : "off")) {
+                node->ToggleActive();
+            }
+        }
+
+        for (auto & childNode : node->ChildNodes()) {
+            DrawTree(childNode.get());
+        }
+        ImGui::TreePop();
+    }
+}
+
 class KaijuImGuiRenderer : public SomeRenderer {
 public:
     List<SP<KaijuSceneClass>> sceneClasses;
@@ -25,24 +51,24 @@ public:
     bool isToolActive = false;
 
     KaijuImGuiRenderer() {
-        sceneClasses.Add(MAKE<KaijuSceneClass>("test.texture", "Test Texture", []() { return MAKE<TestTextureScene>(); }));
-        sceneClasses.Add(MAKE<KaijuSceneClass>("test.slicedTexture", "Test Sliced Texture", []() { return MAKE<TestSlicedTextureScene>(); }));
-        sceneClasses.Add(MAKE<KaijuSceneClass>("test.gradients", "Test Gradients", []() { return MAKE<TestGradientsScene>(); }));
-        sceneClasses.Add(MAKE<KaijuSceneClass>("test.meshPath", "Test Mesh Path", []() { return MAKE<TestMeshPathScene>(); }));
-        sceneClasses.Add(MAKE<KaijuSceneClass>("test.audio", "Test Audio", []() { return MAKE<TestAudioScene>(); }));
-        sceneClasses.Add(MAKE<KaijuSceneClass>("test.emitters", "Test Emitters", []() { return MAKE<TestEmittersScene>(); }));
+        sceneClasses.push_back(MAKE<KaijuSceneClass>("test.texture", "Test Texture", []() { return MAKE<TestTextureScene>(); }));
+        sceneClasses.push_back(MAKE<KaijuSceneClass>("test.slicedTexture", "Test Sliced Texture", []() { return MAKE<TestSlicedTextureScene>(); }));
+        sceneClasses.push_back(MAKE<KaijuSceneClass>("test.gradients", "Test Gradients", []() { return MAKE<TestGradientsScene>(); }));
+        sceneClasses.push_back(MAKE<KaijuSceneClass>("test.meshPath", "Test Mesh Path", []() { return MAKE<TestMeshPathScene>(); }));
+        sceneClasses.push_back(MAKE<KaijuSceneClass>("test.audio", "Test Audio", []() { return MAKE<TestAudioScene>(); }));
+        sceneClasses.push_back(MAKE<KaijuSceneClass>("test.emitters", "Test Emitters", []() { return MAKE<TestEmittersScene>(); }));
     }
 
     // MARK: SomeRenderer
 
-    VectorList<RenderModel> MakeRenderModels(RenderIntoModel const& model) override {
+    VectorList<RenderModel> MakeRenderModels(RenderContextModel const& model) override {
         VectorList<RenderModel> result;
         return result;
     }
 
-    void RenderInto(RenderIntoModel const& model) override {
+    void RenderInto(RenderContextModel const& model) override {
         GUARD(owner)
-        auto world = owner->world;
+        auto world = owner->World();
         GUARD(world)
 
         if (!isWindowConfigured) {
@@ -56,14 +82,6 @@ public:
 
         ImGui::TextColored(ImVec4(1, 1, 0, 1), "Scenes");
 
-        // TODO: this is very, very slow :(
-//        GraphNodeTool<> nodeTool;
-//        auto graph = nodeTool.CollectBreadthFirstGraph(world->root);
-//
-//        // TODO: cache this count somewhere + fps and show both
-//        String total = String("Node Count: ") + String((int)graph.size());
-//        ImGui::TextColored(ImVec4(1, 1, 1, 1), "%s", total.c_str());
-        
         int fps = world->renderStats.SafeValue<int>("fps");
         String fpsString(fps);
         String fpsTitle = String("FPS: ") + fpsString;
@@ -97,7 +115,12 @@ public:
                 }
             }
         }
+
+        DrawTree(world->root.get());
+
         ImGui::EndChild();
+
         ImGui::End();
     }
 };
+

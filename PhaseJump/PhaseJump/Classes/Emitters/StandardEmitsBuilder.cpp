@@ -24,7 +24,7 @@ StandardEmitsBuilder::MakeSpread2DFunc(int emitCount, Angle angleStep, Angle var
 
             model.tags.Add(EmitModelTag::Angle2D, Angle::DegreesAngle(angle));
 
-            result.Add(model);
+            Add(result, model);
         }
 
         return result;

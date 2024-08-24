@@ -18,11 +18,12 @@ EventSystem::EventSystem() :
     inputCollectFunc([](EventSystem& system, List<WP<WorldNode>>& nodes) {
         GUARD(system.world && system.world->root)
 
-        GraphNodeTool<> tool;
-        auto collectedNodes = tool.CollectBreadthFirstGraph(system.world->root);
+        WorldNode::NodeList graph;
+        CollectBreadthFirstTree(system.world->root, graph);
+
         std::transform(
-            collectedNodes.begin(), collectedNodes.end(), std::back_inserter(nodes),
-            [](SP<SomeGraphNode<>> node) { return SCAST<WorldNode>(node); }
+            graph.begin(), graph.end(), std::back_inserter(nodes),
+            [](SP<WorldNode> node) { return node; }
         );
     }) {}
 
@@ -74,7 +75,7 @@ void EventSystem::OnPointerDown(PointerDownUIEvent const& pointerDownEvent) {
     );
 
     pointerDownNodesMap[pointerDownEvent.button].clear();
-    pointerDownNodesMap[pointerDownEvent.button].Add(hitNode);
+    Add(pointerDownNodesMap[pointerDownEvent.button], hitNode);
 }
 
 void EventSystem::OnPointerUp(PointerUpUIEvent const& pointerUpEvent) {
@@ -215,7 +216,7 @@ void EventSystem::OnMouseMotion(PointerMoveUIEvent const& event) {
         }
         pointerEnterNodes.clear();
 
-        pointerEnterNodes.Add(hitNode);
+        Add(pointerEnterNodes, hitNode);
 
         // The hit node already received a pointer enter event
         if (!isHitInPointerEnterNodes) {

@@ -1,11 +1,12 @@
 #include "AnimatedSpriteRenderer.h"
 #include "QuadMeshBuilder.h"
 #include "RateFramePlayable.h"
-#include "RenderIntoModel.h"
+#include "RenderContextModel.h"
 #include "RenderMaterial.h"
 #include "RenderModel.h"
 #include "RenderModelBuilder.h"
 #include "SomeRenderEngine.h"
+#include "SomeShaderProgram.h"
 #include "TextureAtlas.h"
 #include "Utils.h"
 
@@ -19,6 +20,10 @@ AnimatedSpriteRenderer::AnimatedSpriteRenderer(TextureList const& textures) {
     );
 
     material = MAKE<RenderMaterial>();
+
+    auto program = SomeShaderProgram::registry.find("texture.uniform");
+    GUARD(program != SomeShaderProgram::registry.end())
+    material->SetShaderProgram(program->second);
 
     framePlayable = SCAST<SomeFramePlayable>(MAKE<RateFramePlayable>(textures.size(), 12.0f));
 
@@ -54,6 +59,11 @@ AnimatedSpriteRenderer::AnimatedSpriteRenderer(TextureAtlas const& atlas) {
 
     material = MAKE<RenderMaterial>();
 
+    // TODO: use texture.vary for better batching
+    auto program = SomeShaderProgram::registry.find("texture.uniform");
+    GUARD(program != SomeShaderProgram::registry.end())
+    material->SetShaderProgram(program->second);
+
     auto const& textures = atlas.Textures();
     framePlayable = SCAST<SomeFramePlayable>(MAKE<RateFramePlayable>(textures.size(), 12.0f));
 
@@ -66,7 +76,7 @@ AnimatedSpriteRenderer::AnimatedSpriteRenderer(TextureAtlas const& atlas) {
     }
 }
 
-VectorList<RenderModel> AnimatedSpriteRenderer::MakeRenderModels(RenderIntoModel const& model) {
+VectorList<RenderModel> AnimatedSpriteRenderer::MakeRenderModels(RenderContextModel const& model) {
     VectorList<RenderModel> result;
 
     if (nullptr == material) {
@@ -78,7 +88,10 @@ VectorList<RenderModel> AnimatedSpriteRenderer::MakeRenderModels(RenderIntoModel
     GUARDR(frame >= 0 && frame < frames.size(), result)
     auto frameModel = frames[frame];
 
-    auto mesh = this->mesh;
+    auto& frameTexture = frameModel.texture;
+    GUARDR(frameTexture, result)
+
+    Mesh mesh = this->mesh;
     auto offset = frameModel.offset;
     if (flipX) {
         offset.x = -offset.x;
@@ -89,25 +102,21 @@ VectorList<RenderModel> AnimatedSpriteRenderer::MakeRenderModels(RenderIntoModel
 
     mesh.OffsetBy(offset);
 
+    std::transform(mesh.UVs().cbegin(), mesh.UVs().cend(), mesh.UVs().begin(), [this](Vector2 uv) {
+        if (flipX) {
+            uv.x = 1.0f - uv.x;
+        }
+
+        if (flipY) {
+            uv.y = 1.0f - uv.y;
+        }
+        return uv;
+    });
+
     RenderModelBuilder builder;
     VectorList<SomeTexture*> textures{ frameModel.texture.get() };
-    auto renderModel = builder.Build(
-        mesh, *material, textures, ModelMatrix(), owner->transform->WorldPosition().z
-    );
-
-    std::transform(
-        renderModel.UVs().cbegin(), renderModel.UVs().cend(), renderModel.UVs().begin(),
-        [this](Vector2 uv) {
-            if (flipX) {
-                uv.x = 1.0f - uv.x;
-            }
-
-            if (flipY) {
-                uv.y = 1.0f - uv.y;
-            }
-            return uv;
-        }
-    );
+    auto renderModel =
+        builder.Build(mesh, *material, textures, ModelMatrix(), owner->transform.WorldPosition().z);
 
     result.push_back(renderModel);
     return result;
@@ -121,6 +130,14 @@ void AnimatedSpriteRenderer::SetColor(Color color) {
             material->SetUniformColor(0, color);
         }
     }
+}
+
+Vector2 AnimatedSpriteRenderer::Size() const {
+    GUARDR(frame >= 0 && frame < frames.size(), Vector2::zero)
+    auto const& texture = frames[frame].texture;
+    auto textureSize = texture->Size();
+
+    return Vector2(textureSize.x, textureSize.y);
 }
 
 void AnimatedSpriteRenderer::OnUpdate(TimeSlice time) {

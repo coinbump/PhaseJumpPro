@@ -49,7 +49,7 @@ namespace PJ {
             auto operation = operationRegistry.New(info.type, info, *this);
             GUARDR(operation, result)
 
-            result.Add(operation);
+            Add(result, operation);
             return result;
         }
     };

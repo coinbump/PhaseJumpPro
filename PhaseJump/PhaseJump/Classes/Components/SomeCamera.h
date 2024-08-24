@@ -1,5 +1,4 @@
-#ifndef PJSOMECAMERA_H
-#define PJSOMECAMERA_H
+#pragma once
 
 #include "Vector3.h"
 #include "WorldComponent.h"
@@ -10,6 +9,7 @@ namespace PJ {
     class Matrix4x4;
     class RenderModel;
     class RenderContextModel;
+    class RenderProcessModel;
 
     /// Transforms the positions of an object from object space to screen space
     class SomeCoordinateConverter {
@@ -20,25 +20,14 @@ namespace PJ {
         virtual Vector3 ScreenToWorld(Vector2 position) = 0;
     };
 
-    struct CameraRenderModel {
-        VectorList<RenderModel> renderModels;
-    };
-
     /// A camera component performs coordinate conversion from world to screen
     /// space
     class SomeCamera : public WorldComponent<>, public SomeCoordinateConverter {
     public:
         virtual Matrix4x4 Matrix() = 0;
 
-        virtual void PreRender(
-            VectorList<WorldNode*>& nodes, SP<SomeRenderContext>, RenderContextModel& contextModel
-        ) {}
+        virtual void PreRender(RenderContextModel const& contextModel) {}
 
-        virtual CameraRenderModel MakeRenderModel(
-            VectorList<WorldNode*>& nodes, SomeRenderContext& renderContext,
-            RenderContextModel& contextModel
-        );
+        virtual RenderProcessModel MakeRenderModel(RenderContextModel const& contextModel);
     };
 } // namespace PJ
-
-#endif

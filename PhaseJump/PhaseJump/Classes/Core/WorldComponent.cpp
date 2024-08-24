@@ -12,7 +12,7 @@ LocalPosition PJ::ScreenToLocal(SomeWorldComponent& component, ScreenPosition sc
     auto owner = component.owner;
     GUARDR(owner, result)
 
-    auto world = owner->world;
+    auto world = owner->World();
     GUARDR(world, result)
 
     // Get the camera

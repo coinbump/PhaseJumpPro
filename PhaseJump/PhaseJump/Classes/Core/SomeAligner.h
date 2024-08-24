@@ -1,5 +1,6 @@
-#ifndef PJSOMEALIGNER_H
-#define PJSOMEALIGNER_H
+#pragma once
+
+#include <functional>
 
 /*
  RATING: 5 stars
@@ -7,6 +8,14 @@
  CODE REVIEW: 6/8/23
  */
 namespace PJ {
+    using AlignFunc = std::function<float(float layoutSize, float frameSize)>;
+
+    namespace AlignFuncs {
+        extern AlignFunc left;
+        extern AlignFunc center;
+        extern AlignFunc right;
+    } // namespace AlignFuncs
+
     /// Aligns a view inside another view
     /// This uses reading coordinates (positive Y is down)
     class SomeAligner {
@@ -24,5 +33,3 @@ namespace PJ {
         }
     };
 } // namespace PJ
-
-#endif

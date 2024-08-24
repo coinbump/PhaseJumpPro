@@ -1,6 +1,7 @@
 #include "gtest/gtest.h"
 #include "_String.h"
 #include "VectorList.h"
+#include "StringUtils.h"
 
 using namespace PJ;
 
@@ -106,7 +107,7 @@ TEST(String, ReplacingSuffix) {
 
 TEST(String, TestComponentsSeparatedBy) {
     auto string = String("test 1 2");
-    auto components = string.ComponentsSeparatedBy(' ');
+    auto components = ComponentsSeparatedBy(string, ' ');
     EXPECT_EQ(3, components.size());
     EXPECT_EQ("test", components[0]);
     EXPECT_EQ("1", components[1]);

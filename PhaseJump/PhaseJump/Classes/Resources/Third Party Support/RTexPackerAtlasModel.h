@@ -21,9 +21,9 @@ namespace PJ {
         };
 
         struct Char {
-            uint32_t value;
+            uint32_t value = 0;
             Vector2Int offset;
-            int advanceX;
+            int advanceX = 0;
         };
 
         struct Sprite {

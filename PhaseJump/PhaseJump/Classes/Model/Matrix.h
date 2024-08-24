@@ -42,7 +42,7 @@ namespace PJ {
             this->size = size;
 
             for (int i = 0; i < size.y; i++) {
-                tuples.Add(Tuple(size.x));
+                Add(tuples, Tuple(size.x));
             }
         }
 
@@ -58,9 +58,9 @@ namespace PJ {
                 for (int y = 0; y < size.y; y++) {
                     Vector2Int location(x, y);
                     auto myCell = CellAt(location);
-                    cells.Add(myCell);
+                    Add(cells, myCell);
 
-                    locations.Add(location);
+                    Add(locations, location);
                 }
             }
 
@@ -118,7 +118,7 @@ namespace PJ {
 
             // Add new tuples
             while (tuples.size() < newHeight) {
-                tuples.Add(Tuple(newWidth));
+                Add(tuples, Tuple(newWidth));
             }
 
             // Remove deleted tuples

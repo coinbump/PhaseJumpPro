@@ -1,5 +1,6 @@
 #include "IncludeAliasFileProcessor.h"
 #include "FileManager.h"
+#include "StringUtils.h"
 #include <iostream>
 
 using namespace std;
@@ -11,14 +12,15 @@ void IncludeAliasFileProcessor::Process(FilePath filePath) {
     auto extension = fm.FileExtension(filePath, false);
     if ("h" == extension) {
         String pathString = filePath.string();
-        VectorList<String> pathComponents =
-            pathString.ComponentsSeparatedBy(fm.PreferredSeparator());
+        VectorList<std::string> pathComponents =
+            ComponentsSeparatedBy(pathString, fm.PreferredSeparator());
         VectorList<String> relativeComponents;
         VectorList<String> forwardComponents;
 
-        for (VectorList<String>::const_reverse_iterator i = pathComponents.rbegin();
+        for (VectorList<std::string>::const_reverse_iterator i = pathComponents.rbegin();
              i != pathComponents.rend(); i++) {
-            if ((*i).ToLower() == "phasejump") {
+            String strI = *i;
+            if (strI.ToLower() == "phasejump") {
                 break;
             }
 
@@ -26,7 +28,7 @@ void IncludeAliasFileProcessor::Process(FilePath filePath) {
         }
 
         for (int i = 0; i < pathComponents.size() - relativeComponents.size(); i++) {
-            forwardComponents.Add(pathComponents[i]);
+            Add(forwardComponents, pathComponents[i]);
         }
 
         FilePath includeFilePath;

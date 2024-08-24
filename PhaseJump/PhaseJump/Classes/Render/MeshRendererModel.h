@@ -1,7 +1,7 @@
 #pragma once
 
 #include "SomeRenderer.h"
-#include "WorldSizeAble2D.h"
+#include "WorldSizeable.h"
 
 /*
  RATING: 5 stars

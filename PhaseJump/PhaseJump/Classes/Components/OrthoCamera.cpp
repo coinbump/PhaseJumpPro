@@ -1,5 +1,6 @@
 #include "OrthoCamera.h"
 #include "Matrix4x4.h"
+#include "RenderContextModel.h"
 #include "SomeRenderCommandModel.h"
 #include "SomeRenderEngine.h"
 #include "World.h"
@@ -16,7 +17,7 @@ Matrix4x4 OrthoCamera::Matrix() {
     GUARDR(owner, result)
     auto owner = this->owner;
 
-    auto worldPosition = owner->transform->WorldPosition();
+    auto worldPosition = owner->transform.WorldPosition();
 
     result.LoadTranslate(Vector3(-worldPosition.x, -worldPosition.y, 0));
 
@@ -40,7 +41,7 @@ Vector2 OrthoCamera::WorldToScreen(Vector3 position) {
     }
 
     auto size = renderContext->Size();
-    auto cameraPosition = owner->transform->WorldPosition();
+    auto cameraPosition = owner->transform.WorldPosition();
 
     Vector2 screenPosition(
         position.x - cameraPosition.x + size.x / 2.0f, cameraPosition.y + size.y / 2.0f - position.y
@@ -63,7 +64,7 @@ Vector3 OrthoCamera::ScreenToWorld(Vector2 position) {
     GUARDR(renderContext, result)
 
     auto size = renderContext->Size();
-    auto cameraPosition = owner->transform->WorldPosition();
+    auto cameraPosition = owner->transform.WorldPosition();
 
     Vector3 worldPosition(
         position.x - cameraPosition.x - size.x / 2.0f,
@@ -72,25 +73,22 @@ Vector3 OrthoCamera::ScreenToWorld(Vector2 position) {
     return worldPosition;
 }
 
-void OrthoCamera::PreRender(
-    VectorList<WorldNode*>& nodes, SP<SomeRenderContext> renderContext,
-    RenderContextModel& contextModel
-) {
-    Base::PreRender(nodes, renderContext, contextModel);
+void OrthoCamera::PreRender(RenderContextModel const& contextModel) {
+    Base::PreRender(contextModel);
+
+    auto renderContext = contextModel.renderContext;
+    GUARD(renderContext)
 
     GUARD(owner)
     auto owner = this->owner;
 
-    auto worldPosition = owner->transform->WorldPosition();
+    auto worldPosition = owner->transform.WorldPosition();
 
     GUARD(renderContext);
     auto size = renderContext->PixelSize();
     Vector2 orthoSize{ (float)size.x, (float)size.y };
 
-    auto& startPhaseList = contextModel.phasedProxyCommands[RenderPhase::Start];
-
-    auto orthoSizeCommand = RenderCommandModels::ProjectionMatrixLoadOrthographic(orthoSize);
-    startPhaseList.push_back(std::move(orthoSizeCommand));
+    renderContext->renderEngine->ProjectionMatrixLoadOrthographic(orthoSize);
 
     // Translate to standard position
     Vector3 translate(orthoSize.x / 2.0f, orthoSize.y / 2.0f, 0);
@@ -99,6 +97,5 @@ void OrthoCamera::PreRender(
     translate.x += worldPosition.x;
     translate.y += worldPosition.y;
 
-    auto loadTranslateCommand = RenderCommandModels::LoadTranslate(translate);
-    startPhaseList.push_back(std::move(loadTranslateCommand));
+    renderContext->renderEngine->LoadTranslate(translate);
 }

@@ -27,6 +27,14 @@ namespace PJ {
 
         Bounds bounds;
 
+        VectorList<Vector2>& UVs() {
+            return uvs;
+        }
+
+        VectorList<Vector2> const& UVs() const {
+            return uvs;
+        }
+
         void CalculateBounds() {
             bool hasFirst = false;
             Vector3 minValue;

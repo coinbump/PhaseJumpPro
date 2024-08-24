@@ -2,7 +2,7 @@
 #include "Camera.h"
 #include "DevProfiler.h"
 #include "GraphNodeTool.h"
-#include "RenderIntoModel.h"
+#include "RenderContextModel.h"
 #include "SomeCamera.h"
 #include "SomeRenderEngine.h"
 #include "SomeRenderer.h"
@@ -19,7 +19,7 @@ World::World() {
 
 void World::Add(SP<SomeWorldSystem> system) {
     system->SetWorld(this);
-    this->systems.Add(system);
+    this->systems.push_back(system);
 }
 
 void World::RemoveAllNodes() {
@@ -27,7 +27,7 @@ void World::RemoveAllNodes() {
 
     // This leaves dangling pointers to world, but we assume
     // that RemoveAll causes all child objects to be de-allocated
-    root->RemoveAllEdges();
+    root->RemoveAllChildren();
 
     // Clear cached values
     mainCamera.reset();
@@ -57,8 +57,9 @@ SP<SomeCamera> World::MainCamera() {
 
     GUARDR(!mainCamera, mainCamera)
 
-    GraphNodeTool<> graphNodeTool;
-    auto graph = graphNodeTool.CollectBreadthFirstGraph(root);
+    WorldNode::NodeList graph;
+    CollectBreadthFirstTree(root, graph);
+
     for (auto& node : graph) {
         auto worldNode = SCAST<WorldNode>(node);
 
@@ -74,20 +75,6 @@ SP<SomeCamera> World::MainCamera() {
 
 void World::GoInternal() {
     Base::GoInternal();
-
-    GraphNodeTool<> graphNodeTool;
-    auto graph = graphNodeTool.CollectBreadthFirstGraph(root);
-
-    // All nodes get Awake first, then all get Start
-    for (auto& node : graph) {
-        auto worldNode = SCAST<WorldNode>(node);
-        worldNode->CheckedAwake();
-    }
-
-    for (auto& node : graph) {
-        auto worldNode = SCAST<WorldNode>(node);
-        worldNode->CheckedStart();
-    }
 }
 
 void World::Render() {
@@ -122,7 +109,7 @@ void World::Render() {
     VectorList<WorldNode*> activeNodes;
     std::transform(
         updateList.begin(), updateList.end(), std::back_inserter(activeNodes),
-        [](SP<WorldNode::Node> node) { return static_cast<WorldNode*>(node.get()); }
+        [](SP<WorldNode> node) { return static_cast<WorldNode*>(node.get()); }
     );
 
     // TODO: should GetComponent return a non-smart pointer?
@@ -141,37 +128,27 @@ void World::Render() {
     auto renderEngine = renderContext->renderEngine;
 
     for (auto& camera : activeCameras) {
-        RenderContextModel renderContextModel;
-
-        if (camera) {
-            camera->PreRender(activeNodes, renderContext, renderContextModel);
-        }
+        RenderContextModel renderContextModel(renderContext.get(), activeNodes);
 
         renderEngine->RenderStart(renderContextModel);
 
         if (camera) {
+            camera->PreRender(renderContextModel);
+
 #ifdef PROFILE
             DevProfiler devProfilerRenderCamera("Render- Camera", [](String value) {
                 cout << value;
             });
 #endif
 
-            auto cameraRenderModel =
-                camera->MakeRenderModel(activeNodes, *renderContext, renderContextModel);
+            auto processModel = camera->MakeRenderModel(renderContextModel);
 
-            drawCount += cameraRenderModel.renderModels.size();
+            drawCount += processModel.renderModels.size();
 
-            for (auto& renderModel : cameraRenderModel.renderModels) {
-#ifdef PROFILE
-                DevProfiler devProfilerRenderProcess("Render- Process", [](String value) {
-                    cout << value;
-                });
-#endif
-                renderEngine->RenderProcess(renderModel);
-            }
+            renderEngine->RenderProcess(processModel);
+
+            renderEngine->RenderDraw();
         }
-
-        renderEngine->RenderDraw();
     }
 
     renderStats.Insert("draw.count", drawCount);
@@ -196,12 +173,12 @@ void World::ProcessUIEvents(List<SP<SomeUIEvent>> const& uiEvents) {
 
 Matrix4x4 World::LocalModelMatrix(WorldNode const& node) {
     Matrix4x4 translateMatrix, scaleMatrix, rotationMatrix;
-    translateMatrix.LoadTranslate(node.transform->LocalPosition());
-    scaleMatrix.LoadScale(node.transform->Scale());
+    translateMatrix.LoadTranslate(node.transform.LocalPosition());
+    scaleMatrix.LoadScale(node.transform.Scale());
 
     // This is 2D rotation only
     // FUTURE: support 3D rotation if needed.
-    rotationMatrix.LoadZRadRotation(Angle::DegreesAngle(node.transform->Rotation().z).Radians());
+    rotationMatrix.LoadZRadRotation(Angle::DegreesAngle(node.transform.Rotation().z).Radians());
 
     auto m1 = translateMatrix * rotationMatrix;
     auto modelMatrix = m1 * scaleMatrix;
@@ -215,7 +192,7 @@ Matrix4x4 World::WorldModelMatrix(WorldNode const& node) {
 
     auto modelMatrix = LocalModelMatrix(node);
 
-    auto parent = SCAST<WorldNode>(node.Parent());
+    auto parent = node.Parent();
 
     // Transform child to parent matrix
     while (parent) {
@@ -223,7 +200,7 @@ Matrix4x4 World::WorldModelMatrix(WorldNode const& node) {
 
         modelMatrix = parentModelMatrix * modelMatrix;
 
-        parent = SCAST<WorldNode>(parent->Parent());
+        parent = parent->Parent();
     }
 
     Matrix4x4 worldScaleMatrix;
@@ -244,6 +221,8 @@ void Update(WorldNode& node, TimeSlice time, WorldNode::NodeList& updateList) {
     } else {
         GUARD(node.IsActive())
 
+        // TODO: this isn't correct. All nodes should get CheckedAwake, then all nodes should get
+        // CheckedStart
         node.CheckedAwake();
         node.CheckedStart();
 

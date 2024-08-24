@@ -78,7 +78,7 @@ public:
 
                             // TODO: do this by default
                             auto thumbMaterial = spriteRenderer->material;
-                            thumbMaterial->SetShaderProgram(GLShaderProgram::registry["texture.uniform"]);
+                            thumbMaterial->SetShaderProgram(SomeShaderProgram::registry["texture.uniform"]);
                             thumbMaterial->EnableFeature(RenderFeature::Blend, true);
                             
                             ComponentTool ct;
@@ -111,6 +111,8 @@ public:
     }
 
     void LoadInto(WorldNode& root) {
+        root.name = "TestAudioScene";
+
         auto camera = SCAST<SomeCamera>(MAKE<OrthoCamera>());
         auto cameraNode = MAKE<WorldNode>();
         cameraNode->Add(camera);
@@ -120,7 +122,7 @@ public:
         cameraNode->Add(raycaster);
         root.Add(cameraNode);
 
-        World& world = *root.world;
+        World& world = *root.World();
 
         auto uiSystem = MAKE<UISystem>();
         world.Add(uiSystem);

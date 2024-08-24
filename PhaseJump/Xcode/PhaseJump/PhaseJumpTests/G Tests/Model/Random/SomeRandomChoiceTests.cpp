@@ -15,9 +15,9 @@ using namespace SomeRandomChoiceTests;
 TEST(WeightedRandom, MinMaxInt)
 {
     FixedRandom fixedRandom;
-    fixedRandom.values.Add(0.0f);
-    fixedRandom.values.Add(0.5f);
-    fixedRandom.values.Add(1.0f);
+    Add(fixedRandom.values, 0.0f);
+    Add(fixedRandom.values, 0.5f);
+    Add(fixedRandom.values, 1.0f);
 
     MinMaxIntRandomChoice sut(0, 10);
     EXPECT_EQ(0, sut.Choose(fixedRandom));
@@ -28,9 +28,9 @@ TEST(WeightedRandom, MinMaxInt)
 TEST(WeightedRandom, MinMaxFloat)
 {
     FixedRandom fixedRandom;
-    fixedRandom.values.Add(0.0f);
-    fixedRandom.values.Add(0.5f);
-    fixedRandom.values.Add(1.0f);
+    Add(fixedRandom.values, 0.0f);
+    Add(fixedRandom.values, 0.5f);
+    Add(fixedRandom.values, 1.0f);
 
     MinMaxFloatRandomChoice sut(0.0f, 10.0f);
     EXPECT_EQ(0, sut.Choose(fixedRandom));

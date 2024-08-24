@@ -6,21 +6,49 @@
 // #include "Valve.h"
 // #include <memory>
 //
+
+#include "Animator.h"
+
+namespace PJ {
+    /// Animates a value based on a valve that opens or closes
+    template <class T>
+    class AnimatedEffect : public SomeEffect {
+        Animator<T> animator;
+        Valve valve;
+    };
+
+    template <class T>
+    class SomeAnimatePropertyHandler : public WorldComponent<> {
+        WP<WorldNode> target;
+        T start;
+        T end;
+
+        virtual Animator<T> MakeAnimator() = 0;
+    };
+
+    class AnimateScaleHandler : public SomeAnimatePropertyHandler {
+        WP<WorldNode> target;
+        Vector3 start;
+        Vector3 end;
+    };
+} // namespace PJ
+
 ///*
 // RATING: 4 stars
 // Could use unit tests
 // CODE REVIEW: 12/26
 // */
 // namespace PJ {
-//    // TODO: review all effects
+//    // TODO: review all effects <- GET RID OF THIS, just use an animator
 //    /// Uses a valve->to perform animated changes when focus changes
 //    /// When this object receives focus, the valve->is opened over N time
 //    /// Check the valve->s state to find a normalized value (0-1.0) to use for
 //    /// animations
-//    class SomeAnimatedEffect : public SomeEffect {
+//    class ValveEffect : public SomeEffect {
 //    public:
 //        using Base = SomeEffect;
 //
+//         WP<Effect> child; // The effect that this valve changes
 //    protected:
 //        float turnOnTime;
 //        float turnOffTime;

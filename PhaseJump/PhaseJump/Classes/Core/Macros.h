@@ -28,3 +28,8 @@
     if (!(test)) {           \
         continue;            \
     }
+
+#define GUARD_BREAK(test) \
+    if (!(test)) {        \
+        break;            \
+    }

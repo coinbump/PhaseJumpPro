@@ -20,7 +20,7 @@ namespace PJ {
     class MultiFunction<Result(Arguments...)> : public SomeFunction<Result(Arguments...)> {
     public:
         using Func = std::function<Result(Arguments... args)>;
-        using Reducer = std::function<Result(std::optional<Result>, Result)>;
+        using Reducer = std::function<Result(Result const&, Result)>;
 
         List<Func> funcs;
         std::optional<Reducer> reducer;
@@ -35,8 +35,8 @@ namespace PJ {
                 GUARD(func)
                 Result thisResult = func(args...);
 
-                if (reducer) {
-                    Result reducedResult = reducer.value()(result, thisResult);
+                if (reducer && result) {
+                    Result reducedResult = reducer.value()(*result, thisResult);
                     result = reducedResult;
                 } else {
                     result = thisResult;

@@ -1,9 +1,8 @@
-#ifndef PJANIMATEHUEEFFECT_H
-#define PJANIMATEHUEEFFECT_H
+#pragma once
 
 #include "ModelColor.h"
-#include "RendererTool.h"
 #include "SomeEffect.h"
+#include "SwitchHandler.h"
 
 /*
  RATING: 5 stars
@@ -11,16 +10,16 @@
  CODE REVIEW: 5/11/23
  */
 namespace PJ {
+    class SomeRenderer;
+
     // TODO: re-evaluate all effects
     /// Animates the material's render color across the range of hues
-    class AnimateHueEffect : public WorldComponent<> {
+    class AnimateHueEffect : public SomeEffect {
     public:
         using Base = WorldComponent<>;
         using This = AnimateHueEffect;
 
-        AnimateHueEffect() {
-            // TODO: switchHandler = MAKE<ComposeSwitchHandler>(ComposeSwitchHandler(*this));
-        }
+        AnimateHueEffect() {}
 
         /// Time for a full cyle across all hues
         float cycleTime = 1;
@@ -35,17 +34,11 @@ namespace PJ {
         float value = 1;
 
     protected:
-        SP<RendererTool> rendererTool;
+        SP<SomeRenderer> renderer;
 
     public:
         void Awake() override;
         void OnUpdate(TimeSlice time) override;
-        void UpdateEffectProperties();
-
-        void OnSwitchChange() {
-            UpdateEffectProperties();
-        }
+        void UpdateEffectProperties() override;
     };
 } // namespace PJ
-
-#endif

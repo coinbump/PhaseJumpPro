@@ -1,6 +1,12 @@
 #pragma once
 
+#include "_String.h"
+#include "InfixOStreamIterator.h"
+#include "SomeDataContainer.h"
 #include "Utils.h"
+#include <functional>
+#include <optional>
+#include <sstream>
 
 /*
  RATING: 5 stars
@@ -113,4 +119,49 @@ namespace PJ {
         EraseAt(collection, index);
     }
 
+    /**
+     Collects a tree in BFS order.
+
+     Makes some assumptions. That Children() is implemented, and nodes are pointers
+     */
+    template <class Node, class NodeList>
+    void CollectBreadthFirstTree(Node const& fromNode, NodeList& result) {
+        result.clear();
+        result.push_back(fromNode);
+
+        std::function<void(NodeList&, Node const&)> collectFunc = [&](NodeList& result,
+                                                                      Node const& fromNode) {
+            for (auto& child : fromNode->Children()) {
+                result.push_back(child);
+            }
+            for (auto& child : fromNode->Children()) {
+                collectFunc(result, child);
+            }
+        };
+
+        collectFunc(result, fromNode);
+    }
+
+    template <class Collection>
+    void Append(Collection& collection, typename Collection::value_type value) {
+        collection.push_back(value);
+    }
+
+    template <class Collection>
+    void Add(Collection& collection, typename Collection::value_type value) {
+        collection.push_back(value);
+    }
+
+    template <class Collection>
+    bool IsValidIndex(Collection& collection, size_t index) {
+        return index >= 0 && index < collection.size();
+    }
+
+    template <class Collection>
+    CollectionData<typename Collection::value_type> ToCollectionData(Collection& collection) {
+        CollectionData<typename Collection::value_type> result(
+            collection.size(), (void*)collection.data()
+        );
+        return result;
+    }
 } // namespace PJ

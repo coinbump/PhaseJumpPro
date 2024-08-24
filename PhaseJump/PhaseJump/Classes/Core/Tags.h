@@ -94,14 +94,7 @@ namespace PJ {
         }
     };
 
-    /// Holds a set of type tag strings
+    /// A set of type tag strings
     /// Example: "enemy", "ghost" tags for an arcade game
-    class TypeTagsSet : UnorderedSet<String> {
-    public:
-        TypeTagsSet() :
-            UnorderedSet<String>() {}
-
-        TypeTagsSet(UnorderedSet<String> collection) :
-            UnorderedSet<String>(collection) {}
-    };
+    using TypeTagSet = UnorderedSet<String>;
 } // namespace PJ

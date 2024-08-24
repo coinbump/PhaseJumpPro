@@ -10,10 +10,10 @@ namespace PolygonTests {
     public:
         TestPolygon()
         {
-            Add(Vector3(0, 1, 0));
-            Add(Vector3(1, 1, 0));
-            Add(Vector3(1, 0, 0));
-            Add(Vector3(0, 0, 0));
+            push_back(Vector3(0, 1, 0));
+            push_back(Vector3(1, 1, 0));
+            push_back(Vector3(1, 0, 0));
+            push_back(Vector3(0, 0, 0));
         }
     };
 }

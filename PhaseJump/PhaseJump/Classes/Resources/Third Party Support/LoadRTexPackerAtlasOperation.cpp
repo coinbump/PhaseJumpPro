@@ -1,5 +1,6 @@
 #include "LoadRTexPackerAtlasOperation.h"
 #include "AtlasTexture.h"
+#include "Font.h"
 #include "LoadResourcesModel.h"
 #include "RTextPackerAtlasModelBuilder.h"
 #include "SDLLoadGLTextureOperation.h"
@@ -41,7 +42,6 @@ SomeLoadResourcesOperation::Result LoadRTexPackerAtlasOperation::LoadResources()
 
         auto& loadTextureOperation = *(*loadTextureOperations.begin());
 
-        // FUTURE: this should be created with a factory so it's not constrained to OpenGL
         loadTextureOperation.Run();
         GUARDR(loadTextureOperation.result, Failure())
         GUARDR(loadTextureOperation.result.value().IsSuccess(), Failure())
@@ -56,6 +56,8 @@ SomeLoadResourcesOperation::Result LoadRTexPackerAtlasOperation::LoadResources()
         Success result;
 
         auto textureAtlas = MAKE<TextureAtlas>();
+        VectorList<RTexPackerAtlasModel::Char> chars;
+        VectorList<SP<AtlasTexture>> charTextures;
 
         for (auto& sprite : model.sprites) {
             String alphaMode = texture->alphaMode;
@@ -63,6 +65,11 @@ SomeLoadResourcesOperation::Result LoadRTexPackerAtlasOperation::LoadResources()
                 texture, sprite.nameId, sprite.position, sprite.trimSize, sprite.trimOrigin,
                 sprite.sourceSize, alphaMode
             );
+
+            if (sprite._char) {
+                chars.push_back(*sprite._char);
+                charTextures.push_back(atlasTexture);
+            }
 
             LoadedResource loadedResource(
                 filePath, "texture", sprite.nameId, SCAST<PJ::Base>(atlasTexture)
@@ -76,6 +83,66 @@ SomeLoadResourcesOperation::Result LoadRTexPackerAtlasOperation::LoadResources()
             filePath, "texture.atlas", info.id, SCAST<PJ::Base>(textureAtlas)
         );
         result.Add(loadedAtlasResource);
+
+        if (model.atlas.isFont) {
+            auto font = MAKE<Font>();
+            font->atlas = textureAtlas;
+
+            for (int i = 0; i < chars.size(); i++) {
+                auto& _char = chars[i];
+                auto& charTexture = charTextures[i];
+
+                Font::Glyph glyph;
+                glyph.advanceX = _char.advanceX;
+                glyph.offset = _char.offset;
+
+                // FUTURE: support Unicode characters (ASCII for now)
+                glyph.value = std::string(1, (char)_char.value);
+                glyph.texture = charTexture;
+
+                font->glyphs[glyph.value] = glyph;
+            }
+
+            // rTexPacker doesn't give us any font metrics, so we have to calculate them
+            int ascent = 0;
+            int descent = 0;
+
+            VectorList<char> descendingChars{ 'g', 'j', 'p', 'q', 'y' };
+
+            for (auto& dc : descendingChars) {
+                std::string charString(1, dc);
+                auto glyphI = font->glyphs.find(charString);
+                GUARD_CONTINUE(glyphI != font->glyphs.end())
+
+                auto& glyph = glyphI->second;
+                descent = std::max(descent, glyph.offset.y);
+            }
+
+            constexpr int alphaCharCount = 26;
+
+            char uppercaseChars[alphaCharCount]{};
+            std::iota(std::begin(uppercaseChars), std::end(uppercaseChars), 'A');
+
+            for (int aIndex = 0; aIndex < alphaCharCount; aIndex++) {
+                auto upper = uppercaseChars[aIndex];
+                std::string charString(1, upper);
+
+                auto glyphI = font->glyphs.find(charString);
+                GUARD_CONTINUE(glyphI != font->glyphs.end())
+
+                auto& glyph = glyphI->second;
+
+                ascent = std::max(ascent, glyph.Height());
+            }
+
+            // These values are best guesses. Adjust as needed
+            font->metrics.ascent = ascent;
+            font->metrics.descent = descent;
+            font->metrics.leading = (ascent + descent) + 5;
+
+            LoadedResource loadedFontResource(filePath, "font", info.id, SCAST<PJ::Base>(font));
+            result.Add(loadedFontResource);
+        }
 
         return result;
     } catch (...) {

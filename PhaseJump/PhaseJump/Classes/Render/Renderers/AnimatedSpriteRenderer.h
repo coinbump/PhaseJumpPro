@@ -43,9 +43,16 @@ namespace PJ {
         AnimatedSpriteRenderer(TextureList const& textures);
         AnimatedSpriteRenderer(TextureAtlas const& atlas);
 
+        Vector2 Size() const;
+
         // MARK: SomeRenderer
 
-        VectorList<RenderModel> MakeRenderModels(RenderIntoModel const& model) override;
+        std::optional<Vector3> WorldSize() const override {
+            auto size = Size();
+            return Vector3(size.x, size.y, 0);
+        }
+
+        VectorList<RenderModel> MakeRenderModels(RenderContextModel const& model) override;
         void SetColor(Color color) override;
 
         // MARK: WorldComponent

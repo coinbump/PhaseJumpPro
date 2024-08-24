@@ -94,10 +94,10 @@ void ButtonControl::OnStateChange(TimedStateMachine<StateType>& inStateMachine) 
     auto owner = this->owner;
 
     // Forward button state change to state handler components
-    auto stateHandlers = owner->TypeComponentsInChildren<SomeStateHandler<StateType>>();
-    for (auto& stateHandler : stateHandlers) {
-        stateHandler->OnStateChange(inStateMachine.State());
-    }
+    //    auto stateHandlers = owner->ChildTypeComponents<SomeStateHandler<StateType>>();
+    //    for (auto& stateHandler : stateHandlers) {
+    //        stateHandler->OnStateChange(inStateMachine.State());
+    //    }
 }
 
 void ButtonControl::OnStateFinish(TimedStateMachine<StateType>& inStateMachine) {}

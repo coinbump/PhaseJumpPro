@@ -1,5 +1,6 @@
 #include "SliderControl.h"
 #include "Log.h"
+#include "SomeRenderer.h"
 
 using namespace std;
 using namespace PJ;
@@ -28,11 +29,11 @@ SP<WorldNode> SliderControl::Thumb() {
         return LOCK(thumb);
     }
 
-    auto childNodes = owner->ChildNodes();
+    auto const& childNodes = owner->ChildNodes();
     GUARDR(!IsEmpty(childNodes), nullptr)
 
     // Return the first child as the slider thumb
-    thumb = childNodes[0];
+    thumb = *childNodes.begin();
     return LOCK(thumb);
 }
 
@@ -43,8 +44,6 @@ void SliderControl::Awake() {
 
     valueSubscription =
         value.subject.Receive([this](float value) { this->UpdateThumbPositionForValue(value); });
-
-    rendererTool = MAKE<RendererTool>(*owner);
 
     auto thumb = Thumb();
     if (nullptr == thumb) {
@@ -85,8 +84,8 @@ void SliderControl::UpdateThumbPositionForValue(float value) {
     value = clamp(value, minValue, maxValue);
     float position = (value - minValue) / (maxValue - minValue);
 
-    auto localPosition = thumb->transform->LocalPosition();
-    thumb->transform->SetLocalPosition(
+    auto localPosition = thumb->transform.LocalPosition();
+    thumb->transform.SetLocalPosition(
         Vector3(minThumbX + position * (maxThumbX - minThumbX), localPosition.y, localPosition.z)
     );
 }
@@ -100,18 +99,18 @@ Vector2 SliderControl::TrackSize() {
 Vector2 SliderControl::RendererSize(WorldNode& target) {
     GUARDR(owner, Vector2::zero)
 
-    RendererTool rt(target);
-    auto size = rt.WorldSize();
-    if (size) {
-        return size.value() * owner->transform->Scale();
-    }
+    auto renderer = target.GetComponent<SomeRenderer>();
+    GUARDR(renderer, Vector2::zero)
 
-    return Vector2();
+    auto size = renderer->WorldSize();
+    GUARDR(size, Vector2::zero)
+
+    return size.value();
 }
 
 void SliderControl::OnDragThumbStart(WorldNode& thumb, WorldPosition inputPosition) {
     dragStartInputPosition = inputPosition;
-    thumbStartLocalPosition = thumb.transform->LocalPosition();
+    thumbStartLocalPosition = thumb.transform.LocalPosition();
 }
 
 void SliderControl::OnDragThumbEnd() {
@@ -133,8 +132,8 @@ void SliderControl::OnDragThumbUpdate(WorldNode& thumb, WorldPosition inputPosit
     x = clamp(x, minThumbX, maxThumbX);
 
     auto newLocalPosition =
-        Vector3(x, thumb.transform->LocalPosition().y, thumb.transform->LocalPosition().z);
-    thumb.transform->SetLocalPosition(newLocalPosition);
+        Vector3(x, thumb.transform.LocalPosition().y, thumb.transform.LocalPosition().z);
+    thumb.transform.SetLocalPosition(newLocalPosition);
 
     auto newValue = (newLocalPosition.x - minThumbX) / (maxThumbX - minThumbX);
     Value().SetValue(newValue);

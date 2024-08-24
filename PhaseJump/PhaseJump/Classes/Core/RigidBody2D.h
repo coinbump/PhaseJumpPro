@@ -14,7 +14,7 @@ namespace PJ {
 
         void MovePosition(Vector2 position) {
             GUARD(owner)
-            NodeTransform& transform = *owner->transform;
+            NodeTransform& transform = owner->transform;
 
             // TODO: is this correct? Local or world?
             transform.SetWorldPosition(Vector3(position.x, position.y, transform.WorldPosition().z)

@@ -1,6 +1,7 @@
 #include "SDLLoadGLTextureOperation.h"
 #include "Bitmap.h"
 #include "GLTexture.h"
+#include "StringUtils.h"
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_surface.h>
 
@@ -12,10 +13,11 @@ SomeLoadResourcesOperation::Result SDLLoadGLTextureOperation::LoadResources() {
 
     SDL_Surface* surface = IMG_Load(path.string().c_str());
     if (!surface) {
-        // TODO: set failure value? Why isn't this part of Run?
         PJLog("ERROR. Can't load GL texture at: %s", path.string().c_str());
         return Failure();
     }
+
+    // TODO: evaluate using SDL's GL_CreateTexture instead
 
     int surfacePixelSize = 4;
     GLenum pixelFormat = GL_BGR;
@@ -72,7 +74,7 @@ SomeLoadResourcesOperation::Result SDLLoadGLTextureOperation::LoadResources() {
     );
 
     String id = path.filename().string();
-    auto components = id.ComponentsSeparatedBy('.');
+    auto components = ComponentsSeparatedBy(id, '.');
     if (components.size() > 0) {
         id = components[0];
     }

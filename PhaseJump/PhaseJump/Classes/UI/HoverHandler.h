@@ -21,7 +21,7 @@ namespace PJ {
         VectorList<SP<SomeEffect>> HoverEffects() const {
             auto result = moreHoverEffects;
             if (hoverEffect) {
-                result.Add(hoverEffect);
+                Add(result, hoverEffect);
             }
             return result;
         }

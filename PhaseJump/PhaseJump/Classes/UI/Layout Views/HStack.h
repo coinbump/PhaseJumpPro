@@ -76,7 +76,7 @@ namespace PJ {
             for (auto& view : childViews) {
                 auto intrinsicWidth = view->ProposedWidthWithConstraints(layoutSize);
                 if (!intrinsicWidth) {
-                    nonIntrinsicChildViews.Add(view);
+                    Add(nonIntrinsicChildViews, view);
                 } else {
                     intrinsicWidthChildViews[view] = intrinsicWidth.value();
                 }

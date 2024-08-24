@@ -1,0 +1,5 @@
+{
+	"id": "texture.vary",
+	"shader.vertex": "vertex+texture+color",
+	"shader.fragment": "textureVary"
+}

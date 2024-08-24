@@ -9,8 +9,8 @@ TEST(Mesh, TestCalculateBounds) {
     Mesh sut;
 
     VectorList<Vector3> vertices;
-    vertices.Add(Vector3(-1, -2, -3));
-    vertices.Add(Vector3(1, 2, 3));
+    Add(vertices, Vector3(-1, -2, -3));
+    Add(vertices, Vector3(1, 2, 3));
 
     sut.vertices = vertices;
 
@@ -27,8 +27,8 @@ TEST(Mesh, TestOffsetBy) {
     Mesh sut;
 
     VectorList<Vector3> vertices;
-    vertices.Add(Vector3(-1, -2, -3));
-    vertices.Add(Vector3(1, 2, 3));
+    Add(vertices, Vector3(-1, -2, -3));
+    Add(vertices, Vector3(1, 2, 3));
 
     sut.vertices = vertices;
 
@@ -46,17 +46,17 @@ TEST(Mesh, TestPlusOperator) {
     Mesh sut2;
 
     VectorList<Vector3> vertices1;
-    vertices1.Add(Vector3(1, 2, 3));
-    vertices1.Add(Vector3(4, 5, 6));
+    Add(vertices1, Vector3(1, 2, 3));
+    Add(vertices1, Vector3(4, 5, 6));
 
     VectorList<Vector3> vertices2;
-    vertices2.Add(Vector3(7, 8, 9));
-    vertices2.Add(Vector3(10, 11, 12));
+    Add(vertices2, Vector3(7, 8, 9));
+    Add(vertices2, Vector3(10, 11, 12));
 
     VectorList<uint32_t> triangles;
-    triangles.Add(0);
-    triangles.Add(1);
-    triangles.Add(2);
+    Add(triangles, 0);
+    Add(triangles, 1);
+    Add(triangles, 2);
 
     sut1.vertices = vertices1;
     sut1.triangles = triangles;

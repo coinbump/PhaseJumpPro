@@ -74,7 +74,7 @@ namespace PJ {
         }
 
         virtual void ProvideFile(FilePath path) {
-            input.Add(path);
+            Add(input, path);
             inputCount = std::max((Int)input.size(), inputCount);
         }
 

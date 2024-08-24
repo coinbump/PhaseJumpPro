@@ -21,10 +21,7 @@ namespace PJ {
         Matrix4x4 Matrix() override;
         Vector2 WorldToScreen(Vector3 position) override;
         Vector3 ScreenToWorld(Vector2 position) override;
-        void PreRender(
-            // TODO: SP-audit
-            VectorList<WorldNode*>& nodes, SP<SomeRenderContext>, RenderContextModel& contextModel
-        ) override;
+        void PreRender(RenderContextModel const& contextModel) override;
     };
 } // namespace PJ
 

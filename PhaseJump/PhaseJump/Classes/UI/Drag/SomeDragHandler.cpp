@@ -26,7 +26,7 @@ void SomeDragHandler::StartDrag(WorldPosition inputPosition) {
 
     state = StateType::Drag;
 
-    dragStartPosition = owner->transform->WorldPosition();
+    dragStartPosition = owner->transform.WorldPosition();
     dragStartInputPosition = inputPosition;
 
     auto uiSystem = UISystem();

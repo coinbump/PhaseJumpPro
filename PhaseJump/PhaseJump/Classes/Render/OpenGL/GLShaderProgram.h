@@ -43,9 +43,6 @@ namespace PJ {
         bool isLinked = false;
 
     public:
-        /// Store loaded programs here for access later
-        static UnorderedMap<String, SP<GLShaderProgram>> registry;
-
         /// Map of attribute names to attribute location index
         UnorderedMap<String, GLuint> attributeLocations;
 

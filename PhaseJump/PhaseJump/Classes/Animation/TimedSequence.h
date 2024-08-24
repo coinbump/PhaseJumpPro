@@ -26,7 +26,7 @@ namespace PJ {
         };
 
         void Add(SP<TimedPlayable> timed) {
-            sequence.Add(timed);
+            PJ::Add(sequence, timed);
         }
 
         void OnUpdate(TimeSlice time) override {

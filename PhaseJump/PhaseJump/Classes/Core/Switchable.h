@@ -1,10 +1,9 @@
-#ifndef PJSWITCHABLE_H
-#define PJSWITCHABLE_H
+#pragma once
 
 /*
  RATING: 5 stars
  Simple protocol
- CODE REVIEW: 6/7/24
+ CODE REVIEW: 8/21/24
  */
 namespace PJ {
     /// Can be turned on or off
@@ -15,7 +14,9 @@ namespace PJ {
         virtual bool IsOn() const = 0;
         virtual void SetIsOn(bool value) = 0;
         virtual void OnSwitchChange() = 0;
+
+        void Toggle() {
+            SetIsOn(!IsOn());
+        }
     };
 } // namespace PJ
-
-#endif

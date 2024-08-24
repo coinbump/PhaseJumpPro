@@ -54,6 +54,14 @@ namespace PJ {
 
         // MARK: Lifecycle events
 
+        bool IsAwake() const {
+            return life.IsAwake();
+        }
+
+        bool IsStarted() const {
+            return life.IsStarted();
+        }
+
         /// Called before Start
         void CheckedAwake();
 

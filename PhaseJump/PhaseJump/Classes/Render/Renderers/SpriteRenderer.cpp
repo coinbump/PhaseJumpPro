@@ -1,10 +1,11 @@
 #include "SpriteRenderer.h"
 #include "QuadMeshBuilder.h"
-#include "RenderIntoModel.h"
+#include "RenderContextModel.h"
 #include "RenderMaterial.h"
 #include "RenderModel.h"
 #include "RenderModelBuilder.h"
 #include "SomeRenderEngine.h"
+#include "SomeShaderProgram.h"
 #include "Utils.h"
 
 using namespace std;
@@ -17,12 +18,18 @@ SpriteRenderer::SpriteRenderer(SP<SomeTexture> texture) :
 
     material->Add(texture);
 
+    // TODO: use texture.vary for better batching
+    auto program = SomeShaderProgram::registry.find("texture.uniform");
+    GUARD(program != SomeShaderProgram::registry.end())
+    material->SetShaderProgram(program->second);
+
     QuadMeshBuilder builder(Vector2((float)texture->size.x, (float)texture->size.y));
     mesh = builder.BuildMesh();
 }
 
 SpriteRenderer::SpriteRenderer(SP<RenderMaterial> material) {
     this->material = material;
+    GUARD(material)
 
     GUARD(!IsEmpty(material->Textures()))
 
@@ -31,7 +38,7 @@ SpriteRenderer::SpriteRenderer(SP<RenderMaterial> material) {
     mesh = builder.BuildMesh();
 }
 
-VectorList<RenderModel> SpriteRenderer::MakeRenderModels(RenderIntoModel const& model) {
+VectorList<RenderModel> SpriteRenderer::MakeRenderModels(RenderContextModel const& model) {
     VectorList<RenderModel> result;
 
     GUARDR(owner, result)
@@ -41,15 +48,11 @@ VectorList<RenderModel> SpriteRenderer::MakeRenderModels(RenderIntoModel const& 
         return result;
     }
 
-    RenderModelBuilder builder;
-    VectorList<SomeTexture*> textures{ texture.get() };
-    auto renderModel = builder.Build(
-        mesh, *material, textures, ModelMatrix(), owner->transform->WorldPosition().z
-    );
+    Mesh mesh = this->mesh;
 
     if (flipX || flipY) {
         std::transform(
-            renderModel.UVs().cbegin(), renderModel.UVs().cend(), renderModel.UVs().begin(),
+            mesh.UVs().cbegin(), mesh.UVs().cend(), mesh.UVs().begin(),
             [this](Vector2 uv) {
                 if (flipX) {
                     uv.x = 1.0f - uv.x;
@@ -62,6 +65,11 @@ VectorList<RenderModel> SpriteRenderer::MakeRenderModels(RenderIntoModel const& 
             }
         );
     }
+
+    RenderModelBuilder builder;
+    VectorList<SomeTexture*> textures{ texture.get() };
+    auto renderModel =
+        builder.Build(mesh, *material, textures, ModelMatrix(), owner->transform.WorldPosition().z);
 
     result.push_back(renderModel);
     return result;

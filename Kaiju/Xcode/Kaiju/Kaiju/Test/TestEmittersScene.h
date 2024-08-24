@@ -18,9 +18,14 @@ class TestEmittersScene : public Scene {
 public:
     SP<RenderMaterial> heartMaterial;
 
+    TestEmittersScene() {
+    }
+
     void LoadInto(WorldNode& root) {
+        root.name = "TestEmittersScene";
+
         auto camera = SCAST<SomeCamera>(MAKE<OrthoCamera>());
-        auto cameraNode = MAKE<WorldNode>();
+        auto cameraNode = MAKE<WorldNode>("Camera");
         cameraNode->Add(camera);
         root.Add(cameraNode);
         
@@ -28,7 +33,7 @@ public:
 //        cameraNode->Add(raycaster);
 //        root.Add(cameraNode);
 
-        World& world = *root.world;
+        World& world = *root.World();
 
 //        auto uiSystem = MAKE<UISystem>();
 //        world.Add(uiSystem);
@@ -37,21 +42,21 @@ public:
         GUARD(texture)
 
         heartMaterial = MAKE<RenderMaterial>();
-        heartMaterial->SetShaderProgram(GLShaderProgram::registry["texture.uniform"]);
+        heartMaterial->SetShaderProgram(SomeShaderProgram::registry["texture.uniform"]);
         heartMaterial->EnableFeature(RenderFeature::Blend, false);
         heartMaterial->Add(texture);
 
-        auto node = MAKE<WorldNode>();
+        auto node = MAKE<WorldNode>("Emitter");
         Emitter::SpawnFunc spawnFunc = [this](Emitter& emitter, EmitModel emit) {
-            auto node = MAKE<WorldNode>();
+            auto node = MAKE<WorldNode>("Heart");
 
 #define ACID_TEST
 
             // Used to test batching even if material isn't shared
 #ifdef ACID_TEST
-            auto texture = DCAST<GLTexture>(owner->world->loadedResources->map["texture"]["heart-full"].resource);
+            auto texture = DCAST<GLTexture>(owner->World()->loadedResources->map["texture"]["heart-full"].resource);
             auto heartMaterial = MAKE<RenderMaterial>();
-            heartMaterial->SetShaderProgram(GLShaderProgram::registry["texture.uniform"]);
+            heartMaterial->SetShaderProgram(SomeShaderProgram::registry["texture.uniform"]);
             heartMaterial->EnableFeature(RenderFeature::Blend, false);
             heartMaterial->Add(texture);
 #endif
