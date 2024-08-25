@@ -22,14 +22,15 @@ bool Font::CanDisplay(String text) {
 
     // FUTURE: support Unicode
     for (int i = 0; i < u32.size(); i++) {
-        auto _char = U32CharToString(u32[i]);
+        uint32_t u32Char = u32[i];
+        auto _char = U32CharToString(u32Char);
 
         // ASCII Whitespace:
         //        if (_char.size() == 1) {
         //            if (_char[0] == ' ' || _char[0] == '\n' || _char[0] == '\r') { continue; }
         //        }
 
-        if (glyphs.find(_char) == glyphs.end()) {
+        if (glyphs.find(u32Char) == glyphs.end()) {
             return false;
         }
     }

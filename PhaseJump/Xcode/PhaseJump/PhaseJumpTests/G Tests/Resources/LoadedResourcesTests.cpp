@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
 
 #include "LoadedResources.h"
-#include "_String.h"
+#include "StringUtils.h"
 
 using namespace std;
 using namespace PJ;

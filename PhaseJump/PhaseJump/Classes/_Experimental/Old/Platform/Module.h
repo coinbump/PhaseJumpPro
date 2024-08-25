@@ -1,10 +1,10 @@
 #ifndef PJMODULE_H
 #define PJMODULE_H
 
-#include "_String.h"
 #include "Base.h"
 #include "Class.h"
 #include "ClassRegistry.h"
+#include "StringUtils.h"
 #include "VectorList.h"
 #include <memory>
 

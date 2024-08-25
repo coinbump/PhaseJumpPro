@@ -1,11 +1,11 @@
 #pragma once
 
-#include "_String.h"
 #include "List.h"
 #include "OrderedSet.h"
 #include "SomeReference.h"
 #include "StandardCore.h"
 #include "StandardEdgeCore.h"
+#include "StringUtils.h"
 #include "Tags.h"
 #include "Updatable.h"
 #include "VectorList.h"

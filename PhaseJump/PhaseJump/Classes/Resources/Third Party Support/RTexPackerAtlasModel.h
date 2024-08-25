@@ -1,7 +1,7 @@
 #pragma once
 
-#include "_String.h"
 #include "List.h"
+#include "StringUtils.h"
 #include "Vector2.h"
 
 /*

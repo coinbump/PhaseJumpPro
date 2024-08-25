@@ -100,7 +100,7 @@ namespace PJ {
             return text;
         }
 
-        void SetText(String const& value) {
+        void SetText(StringView value) {
             GUARD(text != value)
             text = value;
             OnTextChange();

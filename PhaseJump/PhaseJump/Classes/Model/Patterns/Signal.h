@@ -1,8 +1,8 @@
 #ifndef PJSIGNAL_H
 #define PJSIGNAL_H
 
-#include "_String.h"
 #include "SomeEvent.h"
+#include "StringUtils.h"
 #include "UnorderedSet.h"
 #include "Utils.h"
 #include <memory>

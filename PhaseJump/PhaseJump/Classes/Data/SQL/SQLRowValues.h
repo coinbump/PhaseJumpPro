@@ -1,6 +1,6 @@
 #pragma once
 
-#include "_String.h"
+#include "StringUtils.h"
 #include "Tags.h"
 #include <memory>
 

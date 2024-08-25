@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 #include "MultiFunction.h"
-#include "_String.h"
+#include "StringUtils.h"
 
 using namespace PJ;
 using namespace std;
@@ -22,7 +22,7 @@ namespace MultiFunctionTests {
                 values.push_back(value1);
                 values.push_back((int)value2);
 
-                return String(total);
+                return MakeString(total);
             };
             funcs.push_back(func);
             funcs.push_back(func);
@@ -38,7 +38,7 @@ namespace MultiFunctionTests {
 
         void Configure() {
             auto func = [](int value, String& result) {
-                result += String(value);
+                result += MakeString(value);
             };
             funcs.push_back(func);
             funcs.push_back(func);
@@ -85,5 +85,5 @@ TEST(MultiFunction, VoidSpecialization)
     String result;
     sut.Run(value, result);
 
-    EXPECT_EQ(String(value) + String(value), result);
+    EXPECT_EQ(MakeString(value) + MakeString(value), result);
 }

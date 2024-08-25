@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
 
 #include "VectorList.h"
-#include "_String.h"
+#include "StringUtils.h"
 
 using namespace std;
 using namespace PJ;

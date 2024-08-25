@@ -1,37 +1,80 @@
 #pragma once
 
 #include "InfixOStreamIterator.h"
-#include <fstream>
+#include "Utils.h"
+#include <functional>
 #include <sstream>
 #include <string>
-#include <vector>
 
 /*
- CODE REVIEW: ?/23
- TODO: needs unit tests (copy from String)
+ RATING: 5 stars
+ Has unit tests
+ CODE REVIEW: 8/24/24
  */
 namespace PJ {
-    bool HasPrefix(std::string const& _string, std::string const& searchString);
+    /// Aliases `std::string` so can build an alternate implementation later if needed
+    using String = std::string;
 
-    bool HasSuffix(std::string const& _string, std::string const& searchString);
+    /// Aliases `std::string_view` so can build an alternate implementation later if needed
+    /// StringView is recommend over using String const&, for performance
+    using StringView = std::string_view;
 
-    std::vector<std::string> ComponentsSeparatedBy(std::string string, char delimiter);
+    template <class T>
+    String MakeString(T value) {
+        std::ostringstream stream;
+        stream << value;
+        return stream.str();
+    }
 
-    std::string U32CharToString(uint32_t _char);
+    String ToLower(StringView s);
+    String ToUpper(StringView s);
 
-    std::u32string ToU32String(std::string const& utf8);
+    String Lowercased(StringView _string);
+
+    String Uppercased(StringView _string);
+
+    bool HasPrefix(StringView _string, StringView searchString);
+
+    bool HasSuffix(StringView _string, StringView searchString);
+
+    bool StartsWith(StringView _string, StringView searchString);
+
+    bool EndsWith(StringView _string, StringView searchString);
+
+    String Prefix(StringView s, size_t size);
+
+    String Suffix(StringView s, size_t size);
+
+    String ReplacingSuffix(StringView _string, StringView search, StringView replace);
+
+    std::vector<String> ComponentsSeparatedBy(StringView string, char delimiter);
+
+    String U32CharToString(uint32_t _char);
+
+    std::u32string ToU32String(StringView utf8);
+
+    bool CompareNoCase(StringView lhs, StringView rhs);
+
+    /// Returns true if the string has numbers only (no - or delimiters)
+    bool IsNumbers(StringView _string);
+
+    /// Returns true if the string is a positive or negative numeric integer
+    bool IsNumericInt(StringView _string);
+
+    /// Returns true if the string is a postive or negative numeric real
+    bool IsNumericReal(StringView _string);
 
     template <typename Inserter>
-    void Split(const std::string& s, char delimiter, Inserter inserter) {
+    void Split(String const& s, char delimiter, Inserter inserter) {
         std::istringstream stream(s);
-        std::string item;
+        String item;
         while (std::getline(stream, item, delimiter)) {
-            *inserter++ = item;
+            inserter(item);
         }
     }
 
     template <class Collection>
-    std::string Joined(Collection const& collection, typename Collection::value_type delimiter) {
+    String Joined(Collection const& collection, typename Collection::value_type delimiter) {
         std::ostringstream stream;
         std::copy(
             collection.begin(), collection.end(),
@@ -39,4 +82,16 @@ namespace PJ {
         );
         return stream.str();
     }
+
+    template <class T>
+    T TypeValue(String _string) {
+        std::stringstream stream;
+        stream << _string;
+
+        T result;
+        stream >> result;
+        return result;
+    }
+
+    String Filter(String _string, std::function<bool(char)> check);
 } // namespace PJ

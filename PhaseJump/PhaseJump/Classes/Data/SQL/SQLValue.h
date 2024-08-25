@@ -1,8 +1,8 @@
 #ifndef SQLVALUE_H
 #define SQLVALUE_H
 
-#include "_String.h"
 #include "SQLTypes.h"
+#include "StringUtils.h"
 
 /*
  RATING: 5 stars

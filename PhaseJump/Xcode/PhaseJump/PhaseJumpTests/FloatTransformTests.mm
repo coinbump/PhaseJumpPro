@@ -1,5 +1,5 @@
 #import <XCTest/XCTest.h>
-#include "_String.h"
+#include "StringUtils.h"
 #include "gtest/gtest.h"
 
 using namespace PJ;

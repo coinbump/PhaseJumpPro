@@ -55,7 +55,7 @@ List<SP<SomeUIEvent>> SDLUIEventsBuilder::BuildUIEvents(SDLEventList const& even
         case SDL_EVENT_GAMEPAD_BUTTON_DOWN:
             {
                 auto which = sdlEvent.gaxis.which;
-                OnControllerButtonDown(String((int)which), sdlEvent.gbutton.button, result);
+                OnControllerButtonDown(MakeString((int)which), sdlEvent.gbutton.button, result);
                 break;
             }
         // TODO: this event isn't very useful because it only gets sent when the axis value changes.
@@ -81,7 +81,8 @@ List<SP<SomeUIEvent>> SDLUIEventsBuilder::BuildUIEvents(SDLEventList const& even
 
                 cout << "Axis: " << axisId << " Value: " << normalValue << std::endl;
 
-                auto event = MAKE<ControllerAxisUIEvent>(String((int)which), axisId, normalValue);
+                auto event =
+                    MAKE<ControllerAxisUIEvent>(MakeString((int)which), axisId, normalValue);
                 result.push_back(SCAST<SomeUIEvent>(event));
                 break;
             }

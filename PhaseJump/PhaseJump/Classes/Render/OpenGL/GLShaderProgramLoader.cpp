@@ -2,6 +2,7 @@
 #include "GLShaderLoader.h"
 #include "GLShaderProgram.h"
 #include "SomeGLShader.h"
+#include <fstream>
 #include <json.hpp>
 
 using namespace std;

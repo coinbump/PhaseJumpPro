@@ -1,8 +1,8 @@
 #ifndef PJFILEPROCESSOR_UTILITY_H
 #define PJFILEPROCESSOR_UTILITY_H
 
-#include "_String.h"
 #include "FilesProcessor.h"
+#include "StringUtils.h"
 #include <filesystem>
 
 // CODE REVIEW: ?/23
@@ -14,7 +14,7 @@ namespace PJ {
                 void Process(FilePath path) override {
                     std::error_code error;
                     std::filesystem::rename(
-                        path, String(path).ReplacingSuffix(".cs", ".h")
+                        path, ReplacingSuffix(String(path), ".cs", ".h")
                     ); //, error);
                 }
             };

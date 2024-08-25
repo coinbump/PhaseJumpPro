@@ -67,13 +67,16 @@ void TextRenderer::OnTextChange() {
 
         auto sourceIndex = line.sourceIndex;
 
+        auto const& charMetrics = line.charMetrics;
+
         // FUTURE: support Unicode
-        for (int i = 0; i < line.text.size(); i++, sourceIndex++) {
-            auto u32 = ToU32String(line.text);
-            auto charString = U32CharToString(u32[i]);
+        for (int i = 0; i < charMetrics.size(); i++, sourceIndex++) {
+            auto& cm = charMetrics[i];
+            auto u32 = ToU32String(cm.text);
+            uint32_t u32Char = u32[0];
 
             QuadMeshBuilder qm;
-            auto const& fontGlyphI = font->glyphs.find(charString);
+            auto const& fontGlyphI = font->glyphs.find(u32Char);
             GUARD_CONTINUE(fontGlyphI != font->glyphs.end());
 
             auto& fontGlyph = fontGlyphI->second;
@@ -108,7 +111,7 @@ void TextRenderer::OnTextChange() {
 
             mesh += quadMesh;
 
-            viewPos.x += fontGlyph.advanceX;
+            viewPos.x += cm.advanceX;
         }
     }
 

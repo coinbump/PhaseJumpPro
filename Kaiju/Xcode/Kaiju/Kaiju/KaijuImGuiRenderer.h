@@ -83,12 +83,12 @@ public:
         ImGui::TextColored(ImVec4(1, 1, 0, 1), "Scenes");
 
         int fps = world->renderStats.SafeValue<int>("fps");
-        String fpsString(fps);
+        String fpsString = MakeString(fps);
         String fpsTitle = String("FPS: ") + fpsString;
         ImGui::TextColored(fps < 30 ? ImVec4(1, 0, 0, 1) : ImVec4(0, 1, 0, 1), "%s", fpsTitle.c_str());
 
         int drawCount = world->renderStats.SafeValue<int>("draw.count");
-        String drawCountString(drawCount);
+        String drawCountString = MakeString(drawCount);
         String drawCountTitle = String("Draw Count: ") + drawCountString;
         ImGui::TextColored(ImVec4(1, 1, 1, 1), "%s", drawCountTitle.c_str());
 

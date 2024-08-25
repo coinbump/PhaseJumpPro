@@ -1,10 +1,10 @@
 #ifndef PJSOMEGOAL_H
 #define PJSOMEGOAL_H
 
-#include "_String.h"
 #include "Broadcaster.h"
 #include "GoalEvents.h"
 #include "StandardCore.h"
+#include "StringUtils.h"
 #include <memory>
 
 /*

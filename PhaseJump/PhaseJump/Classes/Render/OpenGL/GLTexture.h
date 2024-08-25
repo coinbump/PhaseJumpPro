@@ -1,12 +1,12 @@
 #ifndef PJGLTEXTURE_H
 #define PJGLTEXTURE_H
 
-#include "_String.h"
 #include "Base.h"
 #include "GLHeaders.h"
 #include "OrderedMap.h"
 #include "RenderTypes.h"
 #include "SomeTexture.h"
+#include "StringUtils.h"
 
 /*
  RATING: 5 stars

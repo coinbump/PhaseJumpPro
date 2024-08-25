@@ -1,11 +1,11 @@
 #ifndef PJVECTOR3_H
 #define PJVECTOR3_H
 
-#include "_String.h"
 #include "FloatMath.h"
 #include "IntMath.h"
 #include "Macros_Vectors.h"
 #include "StringConvertible.h"
+#include "StringUtils.h"
 #include "Vector2.h"
 
 namespace Terathon {

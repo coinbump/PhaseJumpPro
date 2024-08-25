@@ -1,13 +1,13 @@
 #ifndef PJSQLDATABASE_H
 #define PJSQLDATABASE_H
 
-#include "_String.h"
 #include "FilePath.h"
 #include "OrderedSet.h"
 #include "SQLCommand.h"
 #include "SQLStatement.h"
 #include "SQLTableSchema.h"
 #include "StateMachine.h"
+#include "StringUtils.h"
 #include "VectorList.h"
 #include <sqlite3.h>
 

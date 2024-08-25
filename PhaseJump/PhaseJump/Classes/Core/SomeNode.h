@@ -1,8 +1,8 @@
 #ifndef PJSOMENODE_H
 #define PJSOMENODE_H
 
-#include "_String.h"
 #include "OrderedSet.h"
+#include "StringUtils.h"
 #include "Vector3.h"
 #include "WorldComponent.h"
 #include <memory>

@@ -46,12 +46,10 @@
 		CD09402E29ECDF5700B0196F /* EllipseMeshBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = CD09402D29ECDF5700B0196F /* EllipseMeshBuilder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CD0A841C29189C290074CA4F /* libgtest.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDA98A4529189A3600B9B961 /* libgtest.a */; };
 		CD0A842629189FE70074CA4F /* FloatMultiplyTransformTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD0A842429189FE70074CA4F /* FloatMultiplyTransformTests.cpp */; };
-		CD0A842A2918A0690074CA4F /* StringTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD0A84282918A0690074CA4F /* StringTests.cpp */; };
 		CD0A842B2918A0690074CA4F /* FilePathTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD0A84292918A0690074CA4F /* FilePathTests.cpp */; };
 		CD0A84502918A1F00074CA4F /* Range.h in Headers */ = {isa = PBXBuildFile; fileRef = CD0A842F2918A1F00074CA4F /* Range.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CD0A84512918A1F00074CA4F /* TransformFunc.h in Headers */ = {isa = PBXBuildFile; fileRef = CD0A84302918A1F00074CA4F /* TransformFunc.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CD0A84522918A1F00074CA4F /* Types.h in Headers */ = {isa = PBXBuildFile; fileRef = CD0A84312918A1F00074CA4F /* Types.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		CD0A84562918A1F00074CA4F /* _String.h in Headers */ = {isa = PBXBuildFile; fileRef = CD0A84352918A1F00074CA4F /* _String.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CD0A84572918A1F00074CA4F /* Node.h in Headers */ = {isa = PBXBuildFile; fileRef = CD0A84372918A1F00074CA4F /* Node.h */; };
 		CD0A845E2918A1F00074CA4F /* Interpolator.h in Headers */ = {isa = PBXBuildFile; fileRef = CD0A84472918A1F00074CA4F /* Interpolator.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CD0A84602918A1F00074CA4F /* AnimationCycleTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = CD0A84492918A1F00074CA4F /* AnimationCycleTypes.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -68,7 +66,6 @@
 		CD0A8492291CC4100074CA4F /* Package.h in Headers */ = {isa = PBXBuildFile; fileRef = CD0A8490291CC4100074CA4F /* Package.h */; };
 		CD0A8495291CC4220074CA4F /* Module.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD0A8493291CC4220074CA4F /* Module.cpp */; };
 		CD0A8496291CC4220074CA4F /* Module.h in Headers */ = {isa = PBXBuildFile; fileRef = CD0A8494291CC4220074CA4F /* Module.h */; };
-		CD0A8499291DE71B0074CA4F /* _String.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD0A8497291DE71B0074CA4F /* _String.cpp */; };
 		CD0A849C291DED040074CA4F /* OrderedMap.h in Headers */ = {isa = PBXBuildFile; fileRef = CD0A849B291DED040074CA4F /* OrderedMap.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CD0A849F291DEDAD0074CA4F /* OrderedMapTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD0A849E291DEDAD0074CA4F /* OrderedMapTests.cpp */; };
 		CD0A84A3291DF5310074CA4F /* ClassRegistryTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD0A84A2291DF5310074CA4F /* ClassRegistryTests.cpp */; };
@@ -253,6 +250,8 @@
 		CD380EFD2C7A5DE400464CB3 /* TextMeasurer.h in Headers */ = {isa = PBXBuildFile; fileRef = CD380EFA2C7A5DDD00464CB3 /* TextMeasurer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CD380EFF2C7A606100464CB3 /* TextMeasurerTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD380EFE2C7A606100464CB3 /* TextMeasurerTests.cpp */; };
 		CD380F022C7A7C1900464CB3 /* SomeAligner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD380F002C7A7C1600464CB3 /* SomeAligner.cpp */; };
+		CD380F262C7AC23E00464CB3 /* LoadBitmapFontOperation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD380F242C7AC23E00464CB3 /* LoadBitmapFontOperation.cpp */; };
+		CD380F272C7AC23E00464CB3 /* LoadBitmapFontOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = CD380F252C7AC23E00464CB3 /* LoadBitmapFontOperation.h */; };
 		CD3BA43F2C680E3A00D7FBDB /* ExpEmitter.h in Headers */ = {isa = PBXBuildFile; fileRef = CD3BA43E2C680E3A00D7FBDB /* ExpEmitter.h */; };
 		CD3BA4402C680E3A00D7FBDB /* Emitter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD3BA43D2C680E3A00D7FBDB /* Emitter.cpp */; };
 		CD3BA4432C68497800D7FBDB /* SimpleGradientRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = CD3BA4422C68497800D7FBDB /* SimpleGradientRenderer.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -751,12 +750,10 @@
 		CD09402B29ECDE2100B0196F /* ArcMeshBuilder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ArcMeshBuilder.h; sourceTree = "<group>"; };
 		CD09402D29ECDF5700B0196F /* EllipseMeshBuilder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EllipseMeshBuilder.h; sourceTree = "<group>"; };
 		CD0A842429189FE70074CA4F /* FloatMultiplyTransformTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FloatMultiplyTransformTests.cpp; sourceTree = "<group>"; };
-		CD0A84282918A0690074CA4F /* StringTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringTests.cpp; sourceTree = "<group>"; };
 		CD0A84292918A0690074CA4F /* FilePathTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FilePathTests.cpp; sourceTree = "<group>"; };
 		CD0A842F2918A1F00074CA4F /* Range.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Range.h; sourceTree = "<group>"; };
 		CD0A84302918A1F00074CA4F /* TransformFunc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TransformFunc.h; sourceTree = "<group>"; };
 		CD0A84312918A1F00074CA4F /* Types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Types.h; sourceTree = "<group>"; };
-		CD0A84352918A1F00074CA4F /* _String.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _String.h; sourceTree = "<group>"; };
 		CD0A84372918A1F00074CA4F /* Node.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Node.h; sourceTree = "<group>"; };
 		CD0A84472918A1F00074CA4F /* Interpolator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Interpolator.h; sourceTree = "<group>"; };
 		CD0A84492918A1F00074CA4F /* AnimationCycleTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimationCycleTypes.h; sourceTree = "<group>"; };
@@ -773,7 +770,6 @@
 		CD0A8490291CC4100074CA4F /* Package.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Package.h; sourceTree = "<group>"; };
 		CD0A8493291CC4220074CA4F /* Module.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Module.cpp; sourceTree = "<group>"; };
 		CD0A8494291CC4220074CA4F /* Module.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Module.h; sourceTree = "<group>"; };
-		CD0A8497291DE71B0074CA4F /* _String.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = _String.cpp; sourceTree = "<group>"; };
 		CD0A849B291DED040074CA4F /* OrderedMap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OrderedMap.h; sourceTree = "<group>"; };
 		CD0A849E291DEDAD0074CA4F /* OrderedMapTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OrderedMapTests.cpp; sourceTree = "<group>"; };
 		CD0A84A2291DF5310074CA4F /* ClassRegistryTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ClassRegistryTests.cpp; sourceTree = "<group>"; };
@@ -959,6 +955,8 @@
 		CD380EFA2C7A5DDD00464CB3 /* TextMeasurer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TextMeasurer.h; sourceTree = "<group>"; };
 		CD380EFE2C7A606100464CB3 /* TextMeasurerTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TextMeasurerTests.cpp; sourceTree = "<group>"; };
 		CD380F002C7A7C1600464CB3 /* SomeAligner.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SomeAligner.cpp; sourceTree = "<group>"; };
+		CD380F242C7AC23E00464CB3 /* LoadBitmapFontOperation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoadBitmapFontOperation.cpp; sourceTree = "<group>"; };
+		CD380F252C7AC23E00464CB3 /* LoadBitmapFontOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadBitmapFontOperation.h; sourceTree = "<group>"; };
 		CD3BA43D2C680E3A00D7FBDB /* Emitter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Emitter.cpp; sourceTree = "<group>"; };
 		CD3BA43E2C680E3A00D7FBDB /* ExpEmitter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExpEmitter.h; sourceTree = "<group>"; };
 		CD3BA4412C68497800D7FBDB /* SimpleGradientRenderer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleGradientRenderer.cpp; sourceTree = "<group>"; };
@@ -1502,7 +1500,6 @@
 				CD5FB83C2920138E004F2FB4 /* FilesProcessorTests.cpp */,
 				CD0A84A4291E00BC0074CA4F /* ModuleTests.cpp */,
 				CDF9D9E9292990C100C912E9 /* SomeReferenceTests.cpp */,
-				CD0A84282918A0690074CA4F /* StringTests.cpp */,
 				CD0A84752918C9CE0074CA4F /* TagsTests.cpp */,
 				CD5FB82A291EB4C8004F2FB4 /* Vector2Tests.cpp */,
 				CDF9DA02292EEF8400C912E9 /* Vector3Tests.cpp */,
@@ -1562,8 +1559,6 @@
 		CD0A84362918A1F00074CA4F /* Core */ = {
 			isa = PBXGroup;
 			children = (
-				CD0A8497291DE71B0074CA4F /* _String.cpp */,
-				CD0A84352918A1F00074CA4F /* _String.h */,
 				CD1E7CEE29465E2500001DB9 /* Alignment.cpp */,
 				CDF9DA1F2933B55F00C912E9 /* Alignment.h */,
 				CDDD400E2951439100361C67 /* AnyFactory.h */,
@@ -2557,6 +2552,8 @@
 		CDC2EB382C69615D00A85053 /* Third Party Support */ = {
 			isa = PBXGroup;
 			children = (
+				CD380F242C7AC23E00464CB3 /* LoadBitmapFontOperation.cpp */,
+				CD380F252C7AC23E00464CB3 /* LoadBitmapFontOperation.h */,
 				CDC2EB352C69615A00A85053 /* LoadTexturePackerAtlasOperation.cpp */,
 				CDC2EB342C69615A00A85053 /* LoadTexturePackerAtlasOperation.h */,
 				CDC2EB252C688BAC00A85053 /* LoadRTexPackerAtlasOperation.cpp */,
@@ -3169,6 +3166,7 @@
 				CDD71C5D2BFC2FC100BA868A /* TSMatrix2D.h in Headers */,
 				CDD71C652BFC2FC100BA868A /* TSMotor3D.h in Headers */,
 				CD1E900629344DB800875FD9 /* SomePath.h in Headers */,
+				CD380F272C7AC23E00464CB3 /* LoadBitmapFontOperation.h in Headers */,
 				CD837DF029FB7AFE00467542 /* SomeCollider2D.h in Headers */,
 				CDDD400729511C8800361C67 /* TimedStateMachine.h in Headers */,
 				CD837E3629FF17B800467542 /* ResourceTypeEnum.h in Headers */,
@@ -3274,7 +3272,6 @@
 				CDD0D2642BF016A4001C4A5B /* SomeSimpleSubscription.h in Headers */,
 				CD380EE12C75851100464CB3 /* SomeDataContainer.h in Headers */,
 				CD73D8E52C4DEFC100C81812 /* PortEdgeCore.h in Headers */,
-				CD0A84562918A1F00074CA4F /* _String.h in Headers */,
 				CDDD402E2951439200361C67 /* StandardCore.h in Headers */,
 				CDC75B5C2A3FAED600AAAEEF /* SomeDropTarget.h in Headers */,
 				CDF759242A09F1B900C15C73 /* SomeStateHandler.h in Headers */,
@@ -3456,6 +3453,7 @@
 				CD2A6A5D29D3F56D0076BB3F /* SQLTypes.cpp in Sources */,
 				CD08CF1D2C48C51A00BF159A /* AudioStreamPlayer.cpp in Sources */,
 				CD181CEE2A03110E00478C25 /* ComponentTool.cpp in Sources */,
+				CD380F262C7AC23E00464CB3 /* LoadBitmapFontOperation.cpp in Sources */,
 				CD86A75029F0EF7C0015BFCE /* SDLUIEventsBuilder.cpp in Sources */,
 				CD86A73829F0BEA40015BFCE /* SDLLoadGLTextureOperation.cpp in Sources */,
 				CDC75B882A3FF54800AAAEEF /* SelectHandler.cpp in Sources */,
@@ -3578,7 +3576,6 @@
 				CDCA12BF29F30D13000F2694 /* MeshRenderer.cpp in Sources */,
 				CDCA12D529F32A70000F2694 /* ExpBitmap.cpp in Sources */,
 				CDC2EB332C694EB300A85053 /* ColorRenderer.cpp in Sources */,
-				CD0A8499291DE71B0074CA4F /* _String.cpp in Sources */,
 				CDD71C6B2BFC2FC100BA868A /* TSRigid3D.cpp in Sources */,
 				CD91BF912A0AF2D800FE4B58 /* SomeDragHandler.cpp in Sources */,
 				CD181CFB2A03472D00478C25 /* ExpView2D.cpp in Sources */,
@@ -3639,7 +3636,6 @@
 				CD0A847A2918D7BA0074CA4F /* FactoryTests.cpp in Sources */,
 				CDF9D9F3292ADE6B00C912E9 /* CollectionUtilsTests.cpp in Sources */,
 				CD1FF41D29DA666E006426E2 /* SQLStatementTests.cpp in Sources */,
-				CD0A842A2918A0690074CA4F /* StringTests.cpp in Sources */,
 				CD08CEFA2C42DBA100BF159A /* InterpolatorTests.cpp in Sources */,
 				CD1E7CD429458CC900001DB9 /* AcyclicGraphNodeTests.cpp in Sources */,
 				CDCA12E829F380B2000F2694 /* BitmapTests.cpp in Sources */,

@@ -62,6 +62,7 @@
 #include <PhaseJump/SpriteRenderer.h>
 #include <PhaseJump/StandardLoadResourcesModel.h>
 #include <PhaseJump/StandardRandom.h>
+#include <PhaseJump/StringUtils.h>
 #include <PhaseJump/TypeClass.h>
 #include <PhaseJump/UISystem.h>
 #include <PhaseJump/Utils.h>

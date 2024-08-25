@@ -1,6 +1,7 @@
 #pragma once
 
 #include "List.h"
+#include "StringUtils.h"
 #include "Transformer.h"
 
 /*
@@ -9,7 +10,6 @@
  CODE REVIEW: 8/6/24
  */
 namespace PJ {
-    class String;
     class SomeUIEvent;
 
     /// Abstract interface for object that produces N output results for a given input

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "_String.h"
 #include "InfixOStreamIterator.h"
 #include "SomeDataContainer.h"
+#include "StringUtils.h"
 #include "Utils.h"
 #include <functional>
 #include <optional>

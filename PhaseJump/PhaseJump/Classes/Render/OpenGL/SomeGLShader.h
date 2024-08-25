@@ -1,9 +1,9 @@
 #ifndef PJSOMEGLSHADER_H
 #define PJSOMEGLSHADER_H
 
-#include "_String.h"
 #include "FilePath.h"
 #include "GLHeaders.h"
+#include "StringUtils.h"
 
 /*
  RATING: 5 stars

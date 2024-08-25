@@ -1,7 +1,7 @@
 #ifndef PJSTRINGIDENTIFIABLE_H
 #define PJSTRINGIDENTIFIABLE_H
 
-#include "_String.h"
+#include "StringUtils.h"
 
 /*
  RATING: 5 stars

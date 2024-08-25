@@ -13,7 +13,16 @@ namespace PJ {
 
     /// Defines the metrics for a measured line of text
     struct TextLineMetrics {
+    public:
+        struct CharMetric {
+            String text;
+            float advanceX = 0;
+        };
+
         String text;
+
+        /// Advance for each character on the line (allows for custom kerning for character pairs)
+        VectorList<CharMetric> charMetrics;
 
         /// Line position (from top of ascent)
         float y = 0;
@@ -26,6 +35,15 @@ namespace PJ {
 
         TextLineMetrics(float fontLeading) {
             size.y = fontLeading;
+        }
+
+        void Add(StringView _char, float advanceX) {
+            CharMetric cm;
+            cm.text = _char;
+            cm.advanceX = advanceX;
+            charMetrics.push_back(cm);
+
+            text += _char;
         }
     };
 

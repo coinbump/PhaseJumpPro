@@ -1,8 +1,8 @@
 #pragma once
 
-#include "_String.h"
 #include "Base.h"
 #include "Class.h"
+#include "StringUtils.h"
 #include "Tags.h"
 #include <memory>
 

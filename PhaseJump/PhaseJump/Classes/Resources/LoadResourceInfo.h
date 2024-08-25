@@ -1,7 +1,7 @@
 #pragma once
 
-#include "_String.h"
 #include "FilePath.h"
+#include "StringUtils.h"
 #include "Tags.h"
 
 /*
@@ -34,7 +34,7 @@ namespace PJ {
 
         LoadResourceInfo() {}
 
-        LoadResourceInfo(FilePath filePath, StringC type, StringC id) :
+        LoadResourceInfo(FilePath filePath, StringView type, StringView id) :
             filePath(filePath),
             type(type),
             id(id) {}

@@ -1,7 +1,7 @@
 #ifndef PJTIMER_H_
 #define PJTIMER_H_
 
-#include "_String.h"
+#include "StringUtils.h"
 #include "TimedPlayable.h"
 #include <algorithm>
 

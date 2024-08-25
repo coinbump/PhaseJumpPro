@@ -13,14 +13,14 @@ bool FileManager::IsDirectory(FilePath filePath) const {
 }
 
 String FileManager::PathSeparatorString() const {
-    return String(filesystem::path::preferred_separator);
+    return MakeString(filesystem::path::preferred_separator);
 }
 
 String FileManager::FileExtension(FilePath filePath, bool withDot) const {
     auto result = String(filePath.extension().string());
 
     if (!withDot) {
-        result.RemoveIf([](char c) { return c == '.'; });
+        RemoveIf(result, [](char c) { return c == '.'; });
     }
 
     return result;

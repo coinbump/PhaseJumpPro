@@ -1,7 +1,7 @@
 #ifndef SDLFILEMANAGER_H
 #define SDLFILEMANAGER_H
 
-#include "_String.h"
+#include "StringUtils.h"
 #include <SDL3/SDL_filesystem.h>
 
 // CODE REVIEW: ?/23

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "_String.h"
 #include "Base.h"
+#include "StringUtils.h"
 #include "UnorderedMap.h"
 #include "Utils.h"
 

@@ -1,6 +1,6 @@
 #include "SQLTool.h"
-#include "_String.h"
 #include "SQLTypes.h"
+#include "StringUtils.h"
 #include <sqlite3.h>
 
 using namespace PJ;

@@ -1,11 +1,11 @@
 #ifndef PJVECTOR2_H
 #define PJVECTOR2_H
 
-#include "_String.h"
 #include "FloatMath.h"
 #include "IntMath.h"
 #include "Macros_Vectors.h"
 #include "StringConvertible.h"
+#include "StringUtils.h"
 
 namespace Terathon {
     class Vector2D;

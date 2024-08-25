@@ -1,7 +1,8 @@
 #pragma once
 
-#include "_String.h"
 #include "OrderedMap.h"
+#include "StringConvertible.h"
+#include "StringUtils.h"
 #include "UnorderedMap.h"
 #include "UnorderedSet.h"
 #include <any>
@@ -24,7 +25,7 @@ namespace PJ {
     };
 
     /// Holds custom attributes (tags) in a dictionary
-    struct Tags {
+    struct Tags : public StringConvertible {
         using Key = String;
         using MapValue = Tag;
         using Map = UnorderedMap<Key, MapValue>;
@@ -91,6 +92,57 @@ namespace PJ {
             }
 
             return false;
+        }
+
+        size_t size() const {
+            return map.size();
+        }
+
+        size_t Count() const {
+            return size();
+        }
+
+        Tags operator+(Tags const& rhs) const {
+            Tags result = *this;
+            result += rhs;
+            return result;
+        }
+
+        Tags& operator+=(Tags const& rhs) {
+            auto& result = *this;
+
+            for (auto& r : rhs.map) {
+                this->Add(r.first, r.second);
+            }
+
+            return result;
+        }
+
+        // MARK: - StringConvertible
+
+        String ToString() const override {
+            std::ostringstream ss;
+
+            for (auto& tagI : map) {
+                ss << tagI.first << ": ";
+
+                try {
+                    ss << std::any_cast<int>(tagI.second) << std::endl;
+                    continue;
+                } catch (...) {}
+
+                try {
+                    ss << std::any_cast<String>(tagI.second) << std::endl;
+                    continue;
+                } catch (...) {}
+
+                try {
+                    ss << std::any_cast<float>(tagI.second) << std::endl;
+                    continue;
+                } catch (...) {}
+            }
+
+            return ss.str();
         }
     };
 

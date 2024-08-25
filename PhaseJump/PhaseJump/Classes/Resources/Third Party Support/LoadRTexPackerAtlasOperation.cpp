@@ -71,10 +71,12 @@ SomeLoadResourcesOperation::Result LoadRTexPackerAtlasOperation::LoadResources()
                 charTextures.push_back(atlasTexture);
             }
 
-            LoadedResource loadedResource(
-                filePath, "texture", sprite.nameId, SCAST<PJ::Base>(atlasTexture)
-            );
-            result.Add(loadedResource);
+            if (!model.atlas.isFont) {
+                LoadedResource loadedResource(
+                    filePath, "texture", sprite.nameId, SCAST<PJ::Base>(atlasTexture)
+                );
+                result.Add(loadedResource);
+            }
 
             textureAtlas->Add(atlasTexture);
         }
@@ -94,10 +96,11 @@ SomeLoadResourcesOperation::Result LoadRTexPackerAtlasOperation::LoadResources()
 
                 Font::Glyph glyph;
                 glyph.advanceX = _char.advanceX;
+                glyph.size = charTexture->Size();
                 glyph.offset = _char.offset;
 
                 // FUTURE: support Unicode characters (ASCII for now)
-                glyph.value = std::string(1, (char)_char.value);
+                glyph.value = _char.value;
                 glyph.texture = charTexture;
 
                 font->glyphs[glyph.value] = glyph;
@@ -110,8 +113,7 @@ SomeLoadResourcesOperation::Result LoadRTexPackerAtlasOperation::LoadResources()
             VectorList<char> descendingChars{ 'g', 'j', 'p', 'q', 'y' };
 
             for (auto& dc : descendingChars) {
-                std::string charString(1, dc);
-                auto glyphI = font->glyphs.find(charString);
+                auto glyphI = font->glyphs.find(dc);
                 GUARD_CONTINUE(glyphI != font->glyphs.end())
 
                 auto& glyph = glyphI->second;
@@ -125,9 +127,8 @@ SomeLoadResourcesOperation::Result LoadRTexPackerAtlasOperation::LoadResources()
 
             for (int aIndex = 0; aIndex < alphaCharCount; aIndex++) {
                 auto upper = uppercaseChars[aIndex];
-                std::string charString(1, upper);
 
-                auto glyphI = font->glyphs.find(charString);
+                auto glyphI = font->glyphs.find(upper);
                 GUARD_CONTINUE(glyphI != font->glyphs.end())
 
                 auto& glyph = glyphI->second;

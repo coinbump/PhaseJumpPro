@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 #include "Tags.h"
-#include "_String.h"
+#include "StringUtils.h"
 #include "Utils.h"
 
 using namespace PJ;
@@ -22,9 +22,9 @@ TEST(Tags, Any_Cast) {
 
 TEST(Tags, Values) {
     Tags sut;
-    sut.Insert({"1", 1});
-    sut.Insert({"2", 2.5f});
-    sut.Insert({"3", String("test")});
+    sut.Add("1", 1);
+    sut.Add("2", 2.5f);
+    sut.Add("3", String("test"));
 
     EXPECT_TRUE(sut.ContainsTypeValue<int>("1"));
     EXPECT_TRUE(sut.ContainsTypeValue<float>("2"));
@@ -58,4 +58,16 @@ TEST(Tags, SharedPtr) {
     Tags sut;
     sut.Add({"1", MAKE<TestClass>()});
     EXPECT_NE(nullptr, sut.Value<SP<TestClass>>("1"));
+}
+
+TEST(Tags, PlusOperator) {
+    Tags sut1;
+    sut1.Add({"1", String("one")});
+    Tags sut2;
+    sut2.Add({"2", String("two")});
+
+    auto sut = sut1 + sut2;
+    EXPECT_EQ(2, sut.Count());
+    EXPECT_EQ("one", sut.Value<String>("1"));
+    EXPECT_EQ("two", sut.Value<String>("2"));
 }

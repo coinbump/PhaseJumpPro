@@ -2,7 +2,7 @@
 #include "WorldNode.h"
 #include "WorldComponent.h"
 #include "World.h"
-#include "_String.h"
+#include "StringUtils.h"
 
 using namespace PJ;
 using namespace std;

@@ -1,6 +1,7 @@
 #include "IncludeAliasFileProcessor.h"
 #include "FileManager.h"
 #include "StringUtils.h"
+#include <fstream>
 #include <iostream>
 
 using namespace std;
@@ -20,7 +21,7 @@ void IncludeAliasFileProcessor::Process(FilePath filePath) {
         for (VectorList<std::string>::const_reverse_iterator i = pathComponents.rbegin();
              i != pathComponents.rend(); i++) {
             String strI = *i;
-            if (strI.ToLower() == "phasejump") {
+            if (ToLower(strI) == "phasejump") {
                 break;
             }
 

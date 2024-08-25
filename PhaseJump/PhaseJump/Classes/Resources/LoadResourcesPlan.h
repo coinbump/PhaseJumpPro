@@ -1,10 +1,10 @@
 #ifndef PJLOADRESOURCESPLAN_H
 #define PJLOADRESOURCESPLAN_H
 
-#include "_String.h"
 #include "FilePath.h"
 #include "LoadResourceInfo.h"
 #include "OrderedMap.h"
+#include "StringUtils.h"
 #include "VectorList.h"
 
 /*

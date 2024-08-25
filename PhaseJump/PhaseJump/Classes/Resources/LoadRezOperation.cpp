@@ -1,5 +1,6 @@
 #include "LoadRezOperation.h"
 #include "LoadResourcesModel.h"
+#include <fstream>
 #include <json.hpp>
 
 using namespace std;

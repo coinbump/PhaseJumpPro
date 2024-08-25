@@ -10,14 +10,16 @@ namespace TextMeasurerTests {
         Font font;
         Font::Glyph ag;
         ag.offset = Vector2Int(-1, 0);
-        ag.advanceX = 6;
+        ag.advanceX = 5;
+        ag.size.x = 6;
 
         Font::Glyph bg;
         bg.offset = Vector2Int(0, 0);
         bg.advanceX = 9;
+        bg.size.x = 9;
 
-        font.glyphs["a"] = ag;
-        font.glyphs["b"] = bg;
+        font.glyphs['a'] = ag;
+        font.glyphs['b'] = bg;
         font.metrics.ascent = 4;
         font.metrics.descent = 2;
         font.metrics.leading = 10;

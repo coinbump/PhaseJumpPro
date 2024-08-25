@@ -3,8 +3,8 @@
 #include "SomeLoadResourcesOperation.h"
 
 /*
- RATING: 4 stars
- Tested and works, but relies on OpenGL load texture operation (for now)
+ RATING: 5 stars
+ Tested and works
  CODE REVIEW: 8/11/24
  */
 namespace PJ {

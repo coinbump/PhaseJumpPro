@@ -1,8 +1,8 @@
 #pragma once
 
-#include "_String.h"
 #include "Collections/UnorderedMap.h"
 #include "Factory.h"
+#include "StringUtils.h"
 #include "Utils.h"
 
 /*

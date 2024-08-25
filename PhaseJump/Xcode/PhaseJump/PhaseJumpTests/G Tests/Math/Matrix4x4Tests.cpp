@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
 
 #include "Matrix4x4.h"
-#include "_String.h"
+#include "StringUtils.h"
 #include <cmath>
 #include <TSMatrix4D.h>
 

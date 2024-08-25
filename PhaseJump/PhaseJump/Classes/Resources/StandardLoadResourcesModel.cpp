@@ -1,4 +1,5 @@
 #include "StandardLoadResourcesModel.h"
+#include "LoadBitmapFontOperation.h"
 #include "LoadRezOperation.h"
 #include "LoadRTexPackerAtlasOperation.h"
 #include "LoadTexturePackerAtlasOperation.h"
@@ -43,6 +44,12 @@ StandardLoadResourcesModel::StandardLoadResourcesModel(LoadType loadType) {
         MAKE<Factory<SomeLoadResourcesOperation, LoadResourceInfo, LoadResourcesModel&>>(
             [](LoadResourceInfo info, LoadResourcesModel& loadResourcesModel) {
                 return MAKE<LoadTexturePackerAtlasOperation>(info, loadResourcesModel);
+            }
+        );
+    operationRegistry.map["bitmapFont"] =
+        MAKE<Factory<SomeLoadResourcesOperation, LoadResourceInfo, LoadResourcesModel&>>(
+            [](LoadResourceInfo info, LoadResourcesModel& loadResourcesModel) {
+                return MAKE<LoadBitmapFontOperation>(info, loadResourcesModel);
             }
         );
     operationRegistry.map["rez"] =

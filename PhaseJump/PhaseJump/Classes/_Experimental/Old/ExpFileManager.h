@@ -1,8 +1,8 @@
 #ifndef EXPFILEMANAGER_H
 #define EXPFILEMANAGER_H
 
-#include "_String.h"
 #include "Core.h"
+#include "StringUtils.h"
 #include "VectorList.h"
 #include <filesystem>
 #include <iostream>

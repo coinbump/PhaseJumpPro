@@ -1,7 +1,7 @@
 #pragma once
 
-#include "_String.h"
 #include "SomeUIEvent.h"
+#include "StringUtils.h"
 
 /*
  RATING: 5 stars

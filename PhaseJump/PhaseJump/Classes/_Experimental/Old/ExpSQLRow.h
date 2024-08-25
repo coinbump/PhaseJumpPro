@@ -5,7 +5,7 @@
 //
 // #include "PJ_RetainObject.h"
 // #include "PJ_ValueMap.h"
-// #include "_String.h"
+// #include "StringUtils.h"
 //
 // class SQLRow;
 // typedef SP<SQLRow>	PJ_SQLRowPtr;

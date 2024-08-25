@@ -1,11 +1,11 @@
 #pragma once
 
-#include "_String.h"
 #include "FilePath.h"
 #include "LoadResourcesPlan.h"
 #include "OrderedMap.h"
 #include "Result.h"
 #include "SomeLoadResourcesOperation.h"
+#include "StringUtils.h"
 
 // CODE REVIEW: ?/23
 namespace PJ {

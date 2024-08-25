@@ -1,8 +1,8 @@
 #pragma once
 
-#include "_String.h"
 #include "List.h"
 #include "SomeRenderCommandModel.h"
+#include "StringUtils.h"
 #include "VectorList.h"
 
 namespace PJ {

@@ -1,11 +1,11 @@
 #pragma once
 
-#include "_String.h"
 #include "Base.h"
 #include "Class.h"
 #include "Factory.h"
 #include "FactoryRegistry.h"
 #include "List.h"
+#include "StringUtils.h"
 #include "Tags.h"
 #include "Utils.h"
 

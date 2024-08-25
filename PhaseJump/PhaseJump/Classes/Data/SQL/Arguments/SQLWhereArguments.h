@@ -1,7 +1,7 @@
 #ifndef SQLWHEREARGUMENTS_H
 #define SQLWHEREARGUMENTS_H
 
-#include "_String.h"
+#include "StringUtils.h"
 
 /*
  RATING: 5 stars

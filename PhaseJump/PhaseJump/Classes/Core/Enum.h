@@ -1,9 +1,9 @@
 #ifndef PJENUM_H
 #define PJENUM_H
 
-#include "_String.h"
 #include "EnumClass.h"
 #include "StandardCore.h"
+#include "StringUtils.h"
 #include "VectorList.h"
 
 /*

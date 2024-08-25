@@ -1,11 +1,11 @@
 #ifndef PJGLRENDERSTATE_H
 #define PJGLRENDERSTATE_H
 
-#include "_String.h"
 #include "GLBlendMode.h"
 #include "GLHeaders.h"
 #include "OrderedMap.h"
 #include "OrderedSet.h"
+#include "StringUtils.h"
 
 /*
  RATING: 5 stars

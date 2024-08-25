@@ -1,9 +1,9 @@
 #pragma once
 
-#include "_String.h"
 #include "Class.h"
 #include "OrderedMap.h"
 #include "StandardCore.h"
+#include "StringUtils.h"
 #include "VectorList.h"
 #include <optional>
 

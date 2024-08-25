@@ -1,13 +1,13 @@
 #ifndef SQLTABLE_H
 #define SQLTABLE_H
 
-#include "_String.h"
 #include "OrderedSet.h"
 #include "SQLRowValues.h"
 #include "SQLStatement.h"
 #include "SQLTableMutateArguments.h"
 #include "SQLTableQueryArguments.h"
 #include "SQLTypes.h"
+#include "StringUtils.h"
 #include "VectorList.h"
 #include <memory>
 #include <set>

@@ -326,9 +326,9 @@ bool SQLTable::ColumnExists(String columnName) {
             for (int i = 0; i < columnCount; i++) {
                 String colName(sqlite3_column_name(command.sqliteStatement, i));
 
-                if (colName.CompareNoCase("name")) {
+                if (CompareNoCase(colName, "name")) {
                     String colValue((const char*)sqlite3_column_text(command.sqliteStatement, i));
-                    if (colValue.CompareNoCase(columnName)) {
+                    if (CompareNoCase(colValue, columnName)) {
                         return true;
                     }
                     break;

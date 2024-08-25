@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "_String.h"
+#include "StringUtils.h"
 
 #include "Modules.h"
 
