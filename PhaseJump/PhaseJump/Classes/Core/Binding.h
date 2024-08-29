@@ -1,12 +1,12 @@
-#ifndef PJBINDING_H
-#define PJBINDING_H
+#pragma once
 
+#include "Macros.h"
 #include "SomeBinding.h"
 
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 5/12/24
+ CODE REVIEW: 8/25/24
  */
 namespace PJ {
     template <class T>
@@ -27,13 +27,13 @@ namespace PJ {
             setFunc(setFunc) {}
 
         T Value() override {
+            GUARDR(getFunc, T())
             return getFunc();
         }
 
         void SetValue(T const& value) override {
+            GUARD(setFunc)
             setFunc(value);
         }
     };
 } // namespace PJ
-
-#endif

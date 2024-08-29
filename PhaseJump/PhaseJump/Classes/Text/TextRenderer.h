@@ -118,7 +118,7 @@ namespace PJ {
 
         // MARK: SomeRenderer
 
-        VectorList<RenderModel> MakeRenderModels(RenderContextModel const& model) override;
+        VectorList<RenderModel> MakeRenderModels() override;
 
         // MARK: WorldSizeable
 

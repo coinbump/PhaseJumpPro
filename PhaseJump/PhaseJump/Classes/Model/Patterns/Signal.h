@@ -45,7 +45,6 @@ namespace PJ {
     /// Useful for responding to categories of behavior
     class SignalEvent : public SomeEvent {
     public:
-        // TODO: SP-audit
         SP<Signal<String>> signal;
 
         SignalEvent(SP<Signal<String>> signal) :

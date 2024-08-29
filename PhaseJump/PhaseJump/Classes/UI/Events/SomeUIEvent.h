@@ -2,6 +2,7 @@
 
 #include "SomeEvent.h"
 #include "SomePosition.h"
+#include "Tags.h"
 
 /*
  RATING: 5 stars

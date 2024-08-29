@@ -52,6 +52,8 @@ namespace PJ {
         void Use(GLShaderProgram& program) override;
         void RunGL(std::function<void()> command, String name) override;
 
+        void RenderProcess(RenderDrawModel const& processModel);
+
         std::optional<GLenum> FeatureIdToGLFeatureId(String featureId);
         SP<GLVertexBuffer> BuildVertexBuffer(GLVertexBufferPlan const& plan) override;
         SP<GLIndexBuffer> BuildIndexBuffer(VectorList<uint32_t> indices) override;
@@ -64,9 +66,8 @@ namespace PJ {
         // FUTURE: Implement as needed
         void LoadMatrix() override {}
 
-        void RenderStart(RenderContextModel const& model) override;
-        void RenderProcess(RenderProcessModel const& processModel) override;
-        void RenderDraw() override;
+        void RenderStart(RenderContextModel& contextModel) override;
+        void RenderDraw(RenderDrawModel const& drawModel) override;
         void RenderDrawPlans(VectorList<SP<GLRenderPlan>> const& renderPlans);
 
         void ProjectionMatrixLoadOrthographic(Vector2 size) override;

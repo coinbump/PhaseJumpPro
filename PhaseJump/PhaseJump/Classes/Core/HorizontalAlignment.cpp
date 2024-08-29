@@ -2,6 +2,6 @@
 
 using namespace PJ;
 
-const HorizontalAlignment HorizontalAlignment::leading(MAKE<LeadingAligner>());
-const HorizontalAlignment HorizontalAlignment::center(MAKE<CenterAligner>());
-const HorizontalAlignment HorizontalAlignment::trailing(MAKE<TrailingAligner>());
+const HorizontalAlignment HorizontalAlignment::leading(AlignFuncs::left);
+const HorizontalAlignment HorizontalAlignment::center(AlignFuncs::center);
+const HorizontalAlignment HorizontalAlignment::trailing(AlignFuncs::right);

@@ -15,7 +15,7 @@ TEST(CycleAnimator, CycleOnceForward)
 
     CycleAnimator<float> sut(
                              Interpolator::MakeFunc(0.0f, 360.0f),
-                             MAKE<AnimationCycleTimer>(1.0f, AnimationCycleType::Once),
+                             std::make_unique<AnimationCycleTimer>(1.0f, AnimationCycleType::Once),
                              [&testValue] (float value) { testValue = value; }
                              );
 
@@ -36,7 +36,7 @@ TEST(CycleAnimator, MatchInReverse)
 
     CycleAnimator<float> sut(
                              Interpolator::MakeEaseFunc(Interpolator::MakeFunc(0.0f, 360.0f), EaseFuncs::inSquared),
-                             MAKE<AnimationCycleTimer>(1.0f, AnimationCycleType::PingPong),
+                             std::make_unique<AnimationCycleTimer>(1.0f, AnimationCycleType::PingPong),
                              [&testValue] (float value) { testValue = value; }
                              );
 
@@ -55,7 +55,7 @@ TEST(CycleAnimator, RewindInReverse)
 
     CycleAnimator<float> sut(
                              Interpolator::MakeEaseFunc(Interpolator::MakeFunc(0.0f, 360.0f), EaseFuncs::inSquared),
-                             MAKE<AnimationCycleTimer>(1.0f, AnimationCycleType::PingPong),
+                             std::make_unique<AnimationCycleTimer>(1.0f, AnimationCycleType::PingPong),
                              [&testValue] (float value) { testValue = value; }
                              );
 

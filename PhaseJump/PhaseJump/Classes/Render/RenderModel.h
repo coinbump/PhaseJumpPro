@@ -32,9 +32,6 @@ namespace PJ {
     struct RenderModel {
         using This = RenderModel;
 
-        /// Allows us to find the last valid element of a pre-emptive vector resize
-        bool isValid = false;
-
         /// Mesh to be rendered
         Mesh mesh;
 
@@ -55,12 +52,10 @@ namespace PJ {
         VectorList<RenderColor> colors;
 
         /// Allows us to pre-emptively resize vectors with default elements
-        RenderModel() :
-            isValid(false) {}
+        RenderModel() {}
 
         RenderModel(RenderMaterial* material) :
-            material(material),
-            isValid(true) {}
+            material(material) {}
 
         VectorList<Vector3>& Vertices() {
             return mesh.vertices;

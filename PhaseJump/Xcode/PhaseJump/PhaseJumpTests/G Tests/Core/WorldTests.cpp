@@ -75,3 +75,4 @@ TEST(World, TestNodePositionsAsChild) {
 //
 //    EXPECT_EQ(Vector3(11, 11, 0), mockRenderer->renderHistory[0].position);
 //}
+

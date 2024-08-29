@@ -7,15 +7,15 @@
 
 /*
  RATING: 4 stars
- Tested and works. Needs unit tests (Has unit tests in C# equivalent)
- CODE REVIEW: 4/16/23
+ Tested and works (8/25/24). Needs unit tests (Has unit tests in C# equivalent)
+ CODE REVIEW: 8/25/24
  */
 namespace PJ {
     /// A plane mesh of NxN cells built across the x,y, or z axis
     class PlaneMeshBuilder : public SomeMeshBuilder {
     public:
         Vector2Int meshSize{ 3, 3 };
-        Vector2 worldSize{ 1.0f, 1.0f };
+        Vector2 worldSize{ 10.0f, 10.0f };
         Axis faceAxis = Axis::Z;
 
         Vector2Int VerticesSize() const {
@@ -24,7 +24,7 @@ namespace PJ {
             return Vector2Int(vertexXCount, vertexZCount);
         }
 
-        int MeshVertexCount() const {
+        size_t MeshVertexCount() const {
             return VerticesSize().x * VerticesSize().y;
         }
 
@@ -33,11 +33,10 @@ namespace PJ {
         PlaneMeshBuilder(
             Vector2 worldSize = Vector2::one, Vector2Int meshSize = Vector2Int::three,
             Axis faceAxis = Axis::Z
-        ) {
-            this->meshSize = meshSize;
-            this->worldSize = worldSize;
-            this->faceAxis = faceAxis;
-        }
+        ) :
+            meshSize(meshSize),
+            worldSize(worldSize),
+            faceAxis(faceAxis) {}
 
         Mesh BuildMesh() override {
             Mesh result;
@@ -45,18 +44,17 @@ namespace PJ {
             int vertexXCount = meshSize.x + 1;
             int vertexZCount = meshSize.y + 1;
             int verticesSize = vertexXCount * vertexZCount;
-            VectorList<Vector3> vertices;
-            vertices.resize(verticesSize);
+
+            VectorList<Vector3> vertices(verticesSize, Vector3::zero);
+
             auto cellCount = meshSize.x * meshSize.y;
             auto trianglesSize = cellCount * 6;
-            VectorList<uint32_t> triangles;
-            triangles.resize(trianglesSize);
+            VectorList<uint32_t> triangles(trianglesSize, 0);
             auto uvSize = verticesSize;
-            VectorList<Vector2> uvs;
-            uvs.resize(uvSize);
+            VectorList<Vector2> uvs(uvSize, Vector2::zero);
 
-            for (int z = 0, i = 0; z < vertexZCount; z++) {
-                for (int x = 0; x < vertexXCount; x++) {
+            for (size_t z = 0, i = 0; z < vertexZCount; z++) {
+                for (size_t x = 0; x < vertexXCount; x++) {
                     // Y, Z axes supported (for now)
                     switch (faceAxis) {
                     case Axis::Y:

@@ -124,6 +124,7 @@ namespace PJ {
 
         template <class T>
         SP<T> TypeComponent() const {
+            // TODO: use std::find_if (see: TypeSystem)
             for (auto& component : components) {
                 auto typeComponent = DCAST<T>(component);
                 if (typeComponent) {
@@ -138,6 +139,7 @@ namespace PJ {
         void TypeComponents(ComponentList& result) const {
             result.clear();
 
+            // TODO: use std:: func
             for (auto& component : components) {
                 auto typeComponent = DCAST<T>(component);
                 if (typeComponent) {
@@ -183,8 +185,10 @@ namespace PJ {
         }
 
         template <class T>
-        VectorList<SP<T>> GetComponentInChildren() {
-            return ChildTypeComponents<T>();
+        List<SP<T>> GetComponentsInChildren() {
+            List<SP<T>> result;
+            ChildTypeComponents<T>(result);
+            return result;
         }
 
         Vector3 Scale() const;

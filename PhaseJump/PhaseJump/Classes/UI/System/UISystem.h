@@ -1,10 +1,10 @@
-#ifndef PJUISYSTEM_H
-#define PJUISYSTEM_H
+#pragma once
 
 #include "Camera.h"
 #include "DragItems.h"
 #include "DragModel.h"
 #include "EventSystem.h"
+#include "OrderedSet.h"
 #include "SDLMouseDevice.h"
 #include "SelectHandler.h"
 #include "SomePointerUIEvent.h"
@@ -94,5 +94,3 @@ namespace PJ {
         SP<SomeMouseDevice> mouseDevice = MAKE<SDLMouseDevice>();
     };
 } // namespace PJ
-
-#endif

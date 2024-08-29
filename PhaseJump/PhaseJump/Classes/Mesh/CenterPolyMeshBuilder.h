@@ -1,49 +1,54 @@
-#ifndef PJCENTERPOLYMESHRENDERBUILDER_H
-#define PJCENTERPOLYMESHRENDERBUILDER_H
+#pragma once
 
+#include "Angle.h"
+#include "CenterPolyBuilder.h"
 #include "Mesh.h"
-#include "SomeCenterPolyMeshBuilder.h"
+#include "SomeMeshBuilder.h"
 
 /*
- RATING: 5 stars
- Tested and works. TODO: Needs unit tests
- CODE REVIEW: 4/16/23
+ RATING: 4 stars
+ Tested and works (8/25/24). Needs unit tests
+ CODE REVIEW: 8/25/24
  */
 namespace PJ {
     /// A mesh that can be defined by a center point at (0, 0) and a surrounding
     /// path Example: capsule, rounded rectangle, arc, ellipse, circle
-    class CenterPolyMeshBuilder : public SomeCenterPolyMeshBuilder {
+    class CenterPolyMeshBuilder : public SomeMeshBuilder {
     public:
-        int MeshVertexCount() const {
-            return (int)polygon.size() + 1;
+        Vector2 worldSize;
+        CenterPolyShape shape;
+
+        CenterPolyMeshBuilder(Vector2 worldSize, CenterPolyShape shape) :
+            worldSize(worldSize),
+            shape(shape) {}
+
+        size_t MeshVertexCount(Polygon const& poly) const {
+            return poly.size() + 1;
         }
 
-        int SliceCount() const {
-            return (int)polygon.size() - 1;
+        size_t SliceCount(Polygon const& poly) const {
+            GUARDR(!IsEmpty(poly), 0)
+            return poly.size() - 1;
         }
-
-        CenterPolyMeshBuilder() {}
 
         Mesh BuildMesh() override {
             Mesh result;
 
-            if (polygon.size() < 2) {
+            auto poly = CenterPolyBuilder().Build(Vector2::zero, worldSize, shape);
+
+            if (poly.size() < 2) {
                 return result;
             }
 
-            auto vertexCount = MeshVertexCount();
+            auto vertexCount = MeshVertexCount(poly);
 
-            VectorList<Vector3> vertices;
-            vertices.resize(vertexCount);
+            VectorList<Vector3> vertices(vertexCount, Vector3::zero);
+            VectorList<Vector2> uvs(vertexCount, Vector2::zero);
 
-            VectorList<Vector2> uvs;
-            uvs.resize(vertexCount);
-
-            auto sliceCount = SliceCount();
+            auto sliceCount = SliceCount(poly);
             auto trianglesCount = sliceCount * 3;
 
-            VectorList<uint32_t> triangles;
-            triangles.resize(trianglesCount);
+            VectorList<uint32_t> triangles(trianglesCount, 0);
 
             // Center vertex
             vertices[0] = Vector3::zero;
@@ -51,13 +56,13 @@ namespace PJ {
 
             Polygon polyWithCenter;
             Add(polyWithCenter, vertices[0]);
-            AddRange(polyWithCenter, polygon);
+            AddRange(polyWithCenter, poly);
             auto polygonMin = polyWithCenter.Min();
             auto polygonSize = polyWithCenter.Size();
 
             // Edge vertices
             int vi = 1;
-            for (auto& vertex : polygon) {
+            for (auto& vertex : poly) {
                 vertices[vi] = vertex;
                 uvs[vi] = Vector2(
                     (vertex.x - polygonMin.x) / polygonSize.x,
@@ -75,13 +80,9 @@ namespace PJ {
                 offset += 3;
             }
 
-            result.Update(
-                std::make_optional(vertices), std::make_optional(triangles), std::make_optional(uvs)
-            );
+            result.Update(vertices, triangles, uvs);
 
             return result;
         }
     };
 } // namespace PJ
-
-#endif

@@ -4,6 +4,7 @@
 #include <PhaseJump/AudioStreamPlayer.h>
 #include <PhaseJump/AtlasTexture.h>
 #include <PhaseJump/Base.h>
+#include <PhaseJump/BatchByMaterialRenderProcessor.h>
 #include <PhaseJump/ButtonControl.h>
 #include <PhaseJump/CirclePathLayout2D.h>
 #include <PhaseJump/CirclePositioner2D.h>
@@ -13,6 +14,8 @@
 #include <PhaseJump/ComponentTool.h>
 #include <PhaseJump/DragHandler2D.h>
 #include <PhaseJump/DropFilesUIEvent.h>
+#include <PhaseJump/CenterPolyFrameMeshBuilder.h>
+#include <PhaseJump/CenterPolyBuilder.h>
 #include <PhaseJump/EllipseMeshBuilder.h>
 
 #include <PhaseJump/FileManager.h>
@@ -29,10 +32,12 @@
 #include <PhaseJump/Log.h>
 #include <PhaseJump/MeshRenderer.h>
 
+#include <PhaseJump/PolyFrameMeshBuilder.h>
 #include <PhaseJump/RectPositioner2D.h>
 #include <PhaseJump/RenderFeature.h>
 #include <PhaseJump/RenderMaterial.h>
 #include <PhaseJump/RenderModel.h>
+#include <PhaseJump/RenderSystem.h>
 #include <PhaseJump/ResourceRepository.h>
 #include <PhaseJump/ResourceScanner.h>
 #include <PhaseJump/Macros.h>
@@ -68,6 +73,8 @@
 #include <PhaseJump/Utils.h>
 #include <PhaseJump/QuadMeshBuilder.h>
 #include <PhaseJump/QuadFrameMeshBuilder.h>
+#include <PhaseJump/ShowBoundsRenderProcessor.h>
+#include <PhaseJump/ShowCollidersRenderProcessor.h>
 #include <PhaseJump/SimpleGradientRenderer.h>
 #include <PhaseJump/StandardCore.h>
 #include <PhaseJump/StandardEmitsBuilder.h>

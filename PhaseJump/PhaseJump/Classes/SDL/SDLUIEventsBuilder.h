@@ -1,5 +1,4 @@
-#ifndef PJSDLUIEVENTSBUILDER_H
-#define PJSDLUIEVENTSBUILDER_H
+#pragma once
 
 #include "List.h"
 #include "VectorList.h"
@@ -13,9 +12,6 @@ namespace PJ {
     using SDLEventList = List<SDL_Event>;
 
     struct SDLUIEventsBuilder {
-        // TODO: SP-audit
         List<SP<SomeUIEvent>> BuildUIEvents(SDLEventList const& events);
     };
 } // namespace PJ
-
-#endif

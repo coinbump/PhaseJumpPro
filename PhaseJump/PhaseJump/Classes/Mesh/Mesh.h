@@ -81,9 +81,7 @@ namespace PJ {
         }
 
         /// Fit the uvs to the position and scale of the rect
-        void FitUVsTo(Rect r) {
-            // TODO:
-        }
+        // FUTURE: void FitUVsTo(Rect r)
 
         void Update(
             std::optional<VectorList<Vector3>> vertices,

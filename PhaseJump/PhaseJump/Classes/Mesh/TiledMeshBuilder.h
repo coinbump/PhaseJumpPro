@@ -1,5 +1,4 @@
-#ifndef PJTILEDMESHBUILDER_H
-#define PJTILEDMESHBUILDER_H
+#pragma once
 
 #include "Mesh.h"
 #include "PlaneMeshBuilder.h"
@@ -35,5 +34,3 @@ namespace PJ {
         Mesh BuildMesh() override;
     };
 } // namespace PJ
-
-#endif

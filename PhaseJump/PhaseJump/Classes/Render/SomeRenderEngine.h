@@ -36,19 +36,20 @@ namespace PJ {
         List<RenderPhase> phases;
     };
 
+    // TODO: Rename to RenderCameraModel?
     struct RenderProcessModel {
-        VectorList<RenderModel> renderModels;
+        VectorList<RenderModel> models;
+    };
 
-        /// Temporary materials used by debug render processors
-        VectorList<SP<RenderMaterial>> tempMaterials;
+    struct RenderDrawModel {
+        VectorList<RenderModel> models;
     };
 
     /// A render engine should be able to perform standard render operations
     class SomeRenderEngine : public Base {
     public:
-        virtual void RenderStart(RenderContextModel const& contextModel) = 0;
-        virtual void RenderProcess(RenderProcessModel const& processModel) = 0;
-        virtual void RenderDraw() = 0;
+        virtual void RenderStart(RenderContextModel& contextModel) = 0;
+        virtual void RenderDraw(RenderDrawModel const& drawModel) = 0;
 
         virtual void SetLineWidth(float lineWidth) = 0;
         virtual void EnableFeature(String featureId, bool isEnabled) = 0;

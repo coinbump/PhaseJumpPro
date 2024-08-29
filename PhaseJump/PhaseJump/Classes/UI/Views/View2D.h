@@ -1,5 +1,4 @@
-#ifndef PJVIEW2D_H
-#define PJVIEW2D_H
+#pragma once
 
 #include "Node2D.h"
 #include "PointerClickUIEvent.h"
@@ -11,6 +10,7 @@
 namespace PJ {
     // TODO: add ResolvedView methods
     class View2D : public Node2D, public SomePointerUIEventsResponder {
+
     protected:
         std::optional<float> intrinsicWidth;
         std::optional<float> intrinsicHeight;
@@ -92,5 +92,3 @@ namespace PJ {
         virtual void _ApplyLayout(Vector2 layoutSize) {}
     };
 } // namespace PJ
-
-#endif

@@ -123,7 +123,7 @@ void TextRenderer::OnTextChange() {
     OnColorChange();
 }
 
-VectorList<RenderModel> TextRenderer::MakeRenderModels(RenderContextModel const& model) {
+VectorList<RenderModel> TextRenderer::MakeRenderModels() {
     VectorList<RenderModel> result;
 
     // TODO: optmize this. Only build when needed

@@ -23,7 +23,7 @@ namespace PJ {
     class SomeLoadResourcesOperation : public SomeOperation {
     public:
         struct Success {
-            // TODO: SP-Audit
+            // TODO: Should be UP
             using LoadOperationsList = List<SP<SomeLoadResourcesOperation>>;
 
             VectorList<LoadedResource> loadedResources;

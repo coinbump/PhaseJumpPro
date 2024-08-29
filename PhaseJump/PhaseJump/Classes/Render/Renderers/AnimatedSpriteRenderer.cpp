@@ -21,7 +21,7 @@ AnimatedSpriteRenderer::AnimatedSpriteRenderer(TextureList const& textures) {
 
     material = MAKE<RenderMaterial>();
 
-    auto program = SomeShaderProgram::registry.find("texture.uniform");
+    auto program = SomeShaderProgram::registry.find("texture.vary");
     GUARD(program != SomeShaderProgram::registry.end())
     material->SetShaderProgram(program->second);
 
@@ -59,8 +59,7 @@ AnimatedSpriteRenderer::AnimatedSpriteRenderer(TextureAtlas const& atlas) {
 
     material = MAKE<RenderMaterial>();
 
-    // TODO: use texture.vary for better batching
-    auto program = SomeShaderProgram::registry.find("texture.uniform");
+    auto program = SomeShaderProgram::registry.find("texture.vary");
     GUARD(program != SomeShaderProgram::registry.end())
     material->SetShaderProgram(program->second);
 
@@ -76,7 +75,7 @@ AnimatedSpriteRenderer::AnimatedSpriteRenderer(TextureAtlas const& atlas) {
     }
 }
 
-VectorList<RenderModel> AnimatedSpriteRenderer::MakeRenderModels(RenderContextModel const& model) {
+VectorList<RenderModel> AnimatedSpriteRenderer::MakeRenderModels() {
     VectorList<RenderModel> result;
 
     if (nullptr == material) {
@@ -118,18 +117,14 @@ VectorList<RenderModel> AnimatedSpriteRenderer::MakeRenderModels(RenderContextMo
     auto renderModel =
         builder.Build(mesh, *material, textures, ModelMatrix(), owner->transform.WorldPosition().z);
 
+    renderModel.colors = VectorList<RenderColor>(mesh.vertices.size(), color);
+
     result.push_back(renderModel);
     return result;
 }
 
 void AnimatedSpriteRenderer::SetColor(Color color) {
-    if (material) {
-        if (IsEmpty(material->UniformColors())) {
-            material->AddUniformColor(color);
-        } else {
-            material->SetUniformColor(0, color);
-        }
-    }
+    this->color = color;
 }
 
 Vector2 AnimatedSpriteRenderer::Size() const {

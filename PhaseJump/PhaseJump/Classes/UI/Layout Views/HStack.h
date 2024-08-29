@@ -117,8 +117,7 @@ namespace PJ {
                 frame.size.y = preferredHeight ? preferredHeight.value() : preferredStackHeight;
 
                 frame.origin.x = x;
-                frame.origin.y =
-                    alignment.aligner->AlignedOrigin(preferredStackHeight, frame.size.y);
+                frame.origin.y = alignment.aligner(preferredStackHeight, frame.size.y);
                 view->SetFrame(frame);
 
                 x += frame.size.x;

@@ -47,6 +47,23 @@ namespace PJ {
 
         World();
 
+        /// Returns the first system that matches the type
+        template <class Type>
+        SP<Type> TypeSystem() {
+            auto found =
+                std::find_if(systems.begin(), systems.end(), [](SP<SomeWorldSystem> system) {
+                    return DCAST<Type>(system) != nullptr;
+                });
+
+            GUARDR(found != systems.end(), nullptr)
+            return DCAST<Type>(*found);
+        }
+
+        template <class Type>
+        SP<Type> GetSystem() {
+            return TypeSystem<Type>();
+        }
+
         virtual SP<SomeCamera> MainCamera();
 
         virtual Matrix4x4 LocalModelMatrix(WorldNode const& node);
@@ -66,16 +83,6 @@ namespace PJ {
             return systems;
         }
 
-        /// Returns the first system that matches the type
-        template <class Type>
-        SP<Type> TypeSystem() {
-            auto found =
-                std::find_if(systems.begin(), systems.end(), [](SP<SomeWorldSystem> system) {
-                    return DCAST<Type>(system) != nullptr;
-                });
-            return found ? DCAST<Type>(found) : nullptr;
-        }
-
         //        template <class T>
         //        void AddComponent(SP<T> component) {
         //            auto node = MAKE<WorldNode>();
@@ -92,6 +99,8 @@ namespace PJ {
 
         virtual void ProcessUIEvents(List<SP<SomeUIEvent>> const& uiEvents);
     };
+
+    LocalPosition ScreenToLocal(SomeWorldComponent& component, ScreenPosition screenPos);
 } // namespace PJ
 
 #endif

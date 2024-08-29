@@ -40,6 +40,7 @@ namespace PJ {
         /// Node is responsible for setting this to null when the component is removed
         WorldNode* owner = nullptr;
 
+        // TODO: decide between IsActive/IsEnabled
         bool IsEnabled() const {
             return isEnabled;
         }

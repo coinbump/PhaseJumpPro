@@ -36,9 +36,10 @@ SimpleGradientRenderer::SimpleGradientRenderer(
     material->EnableFeature(RenderFeature::Blend, !isOpaque);
 }
 
-VectorList<RenderModel> SimpleGradientRenderer::MakeRenderModels(RenderContextModel const& model) {
+VectorList<RenderModel> SimpleGradientRenderer::MakeRenderModels() {
     VectorList<SomeTexture*> textures;
-    auto result = Base::MakeRenderModels(model, this->model.Mesh(), textures);
+
+    auto result = this->Base::MakeRenderModels(this->model.Mesh(), textures);
 
     if (!IsEmpty(result)) {
         Add(result[0].colors, startColor);

@@ -1,13 +1,12 @@
-#ifndef PJELLIPSEMESHBUILDER_H
-#define PJELLIPSEMESHBUILDER_H
+#pragma once
 
 #include "Angle.h"
 #include "ArcMeshBuilder.h"
 
 /*
  RATING: 5 stars
- Tested and works
- CODE REVIEW: 4/16/23
+ Tested and works (8/25/24)
+ CODE REVIEW: 8/25/24
  */
 namespace PJ {
     /// Renders an ellipse
@@ -16,17 +15,15 @@ namespace PJ {
         Angle angleStep = Angle::DegreesAngle(10.0f);
         Vector2 worldSize = Vector2(1.0f, 1.0f);
 
-        EllipseMeshBuilder(Angle angleStep, Vector2 worldSize) :
+        EllipseMeshBuilder(Vector2 worldSize, Angle angleStep = Angle::DegreesAngle(10)) :
             angleStep(angleStep),
             worldSize(worldSize) {}
 
         Mesh BuildMesh() override {
             return ArcMeshBuilder(
-                       Angle::DegreesAngle(0), Angle::DegreesAngle(360.0f), angleStep, worldSize
+                       worldSize, Angle::DegreesAngle(0), Angle::DegreesAngle(360.0f), angleStep
             )
                 .BuildMesh();
         }
     };
 } // namespace PJ
-
-#endif

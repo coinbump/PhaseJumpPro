@@ -7,15 +7,13 @@
 
 using namespace PJ;
 
-void ActionRenderer::RenderInto(RenderContextModel const& model) {
-    render(model);
+void ActionRenderer::RenderInto(RenderContextModel const& contextModel) {
+    render(contextModel);
 }
 
-VectorList<RenderModel> SomeRenderer::MakeRenderModels(
-    RenderContextModel const& model, Mesh const& mesh, VectorList<SomeTexture*> textures
-) {
+VectorList<RenderModel>
+SomeRenderer::MakeRenderModels(Mesh const& mesh, VectorList<SomeTexture*> textures) {
     VectorList<RenderModel> result;
-    GUARDR(owner, result)
 
     if (nullptr == material) {
         PJLog("ERROR. Missing material.");

@@ -19,32 +19,14 @@ namespace PJ {
             VerticalAlignment VerticalAlignmentFrom(VerticalAlignmentType type);
         };
 
-        SP<SomeAligner> aligner;
+        AlignFunc aligner;
 
-        VerticalAlignment(SP<SomeAligner> aligner) :
+        VerticalAlignment(AlignFunc aligner) :
             aligner(aligner) {}
 
         static const VerticalAlignment top;
         static const VerticalAlignment center;
         static const VerticalAlignment bottom;
-    };
-
-    struct TopAligner : public SomeAligner {
-    public:
-        virtual ~TopAligner() {}
-
-        float AlignedOrigin(float layoutSize, float frameSize) override {
-            return 0;
-        }
-    };
-
-    struct BottomAligner : public SomeAligner {
-    public:
-        virtual ~BottomAligner() {}
-
-        float AlignedOrigin(float layoutSize, float frameSize) override {
-            return layoutSize - frameSize;
-        }
     };
 } // namespace PJ
 

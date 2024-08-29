@@ -42,6 +42,7 @@ namespace PJ {
             return iterator->second;
         }
 
+        // TODO: should be UP
         virtual List<SP<SomeLoadResourcesOperation>> MakeLoadOperations(LoadResourceInfo info) {
             List<SP<SomeLoadResourcesOperation>> result;
 

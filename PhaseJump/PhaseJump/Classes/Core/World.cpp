@@ -78,18 +78,11 @@ void World::GoInternal() {
 }
 
 void World::Render() {
+    GUARD(renderContext)
+
 #ifdef PROFILE
     DevProfiler devProfiler("Render", [](String value) { cout << value; });
 #endif
-
-    // TODO: should this be a system?
-    GUARD(renderContext)
-
-    renderContext->Bind();
-    renderContext->Clear();
-
-    int drawCount = 0;
-
     auto now = std::chrono::steady_clock::now();
     if (fpsCheckTimePoint) {
         auto duration =
@@ -106,54 +99,34 @@ void World::Render() {
         fpsCheckTimePoint = now;
     }
 
-    VectorList<WorldNode*> activeNodes;
+    VectorList<WorldNode*> nodes;
+    nodes.reserve(updateList.size());
     std::transform(
-        updateList.begin(), updateList.end(), std::back_inserter(activeNodes),
-        [](SP<WorldNode> node) { return static_cast<WorldNode*>(node.get()); }
+        updateList.begin(), updateList.end(), std::back_inserter(nodes),
+        [](SP<WorldNode> node) { return node.get(); }
     );
 
-    // TODO: should GetComponent return a non-smart pointer?
-    VectorList<SP<SomeCamera>> activeNullableCameras;
-    std::transform(
-        activeNodes.begin(), activeNodes.end(), std::back_inserter(activeNullableCameras),
-        [](WorldNode* node) { return node->GetComponent<SomeCamera>(); }
-    );
+    VectorList<SomeCamera*> cameras;
+    std::transform(nodes.begin(), nodes.end(), std::back_inserter(cameras), [](WorldNode* node) {
+        auto result = node->GetComponent<SomeCamera>();
+        return (result && result->IsEnabled()) ? result.get() : nullptr;
+    });
 
-    VectorList<SP<SomeCamera>> activeCameras;
-    std::copy_if(
-        activeNullableCameras.begin(), activeNullableCameras.end(),
-        std::back_inserter(activeCameras), [](SP<SomeCamera> camera) { return camera != nullptr; }
-    );
+    RenderContextModel contextModel(renderContext.get(), nodes, cameras);
 
-    auto renderEngine = renderContext->renderEngine;
+    int drawCount = 0;
 
-    for (auto& camera : activeCameras) {
-        RenderContextModel renderContextModel(renderContext.get(), activeNodes);
+    // Prevent iteration-mutation crash
+    auto iterSystems = systems;
+    for (auto& system : iterSystems) {
+        auto result = system->Render(contextModel);
 
-        renderEngine->RenderStart(renderContextModel);
-
-        if (camera) {
-            camera->PreRender(renderContextModel);
-
-#ifdef PROFILE
-            DevProfiler devProfilerRenderCamera("Render- Camera", [](String value) {
-                cout << value;
-            });
-#endif
-
-            auto processModel = camera->MakeRenderModel(renderContextModel);
-
-            drawCount += processModel.renderModels.size();
-
-            renderEngine->RenderProcess(processModel);
-
-            renderEngine->RenderDraw();
+        if (result) {
+            drawCount += result->tags.SafeValue<int>("draw.count");
         }
     }
 
     renderStats.Insert("draw.count", drawCount);
-
-    renderContext->Present();
 
     renderFrameCount++;
 }
@@ -273,4 +246,35 @@ void World::Add(SP<WorldNode> node) {
 
 void World::SetRenderContext(SP<SomeRenderContext> renderContext) {
     this->renderContext = renderContext;
+}
+
+#include "Matrix4x4.h"
+#include "World.h"
+#include "WorldNode.h"
+#include <TSMatrix4D.h>
+
+using namespace PJ;
+
+LocalPosition PJ::ScreenToLocal(SomeWorldComponent& component, ScreenPosition screenPos) {
+    LocalPosition result;
+
+    auto owner = component.owner;
+    GUARDR(owner, result)
+
+    auto world = owner->World();
+    GUARDR(world, result)
+
+    // Get the camera
+    SP<SomeCamera> camera = world->MainCamera();
+    GUARDR(camera, result)
+
+    auto worldPosition = camera->ScreenToWorld(screenPos);
+
+    auto worldModelMatrix = world->WorldModelMatrix(*owner);
+    Terathon::Point3D point(worldPosition.x, worldPosition.y, worldPosition.z);
+    auto localPosition = Terathon::InverseTransform(worldModelMatrix, point);
+
+    result = LocalPosition(Vector3(localPosition.x, localPosition.y, 0));
+
+    return result;
 }

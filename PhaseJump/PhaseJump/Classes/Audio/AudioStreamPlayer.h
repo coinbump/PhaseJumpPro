@@ -9,7 +9,8 @@
  CODE REVIEW: 8/9/24
  */
 namespace PJ {
-    class AudioStreamPlayer : public WorldComponent<> {
+    // TODO: should we use composition or inheritance for components?
+    class AudioStreamPlayer {
     public:
         SP<SomeAudioStream> audioStream;
 
@@ -17,5 +18,7 @@ namespace PJ {
             GUARD(audioStream)
             audioStream->Play();
         }
+
+        WORLD_COMPONENT_SUPPORT_VOID(AudioStreamPlayer)
     };
 } // namespace PJ

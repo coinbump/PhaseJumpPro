@@ -4,6 +4,11 @@
 #include "Vector2.h"
 #include "Vector3.h"
 
+/*
+ RATING: 4 stars
+ Tested and works (8/25/24). Needs unit tests
+ CODE REVIEW: 8/25/24
+ */
 namespace PJ {
     /// Abstract interface to an object that builds a poly frame mesh
     class SomePolyFrameMeshBuilder : public SomeMeshBuilder {
@@ -11,7 +16,7 @@ namespace PJ {
         virtual size_t PolyVertexCount() const = 0;
 
         /// Mesh requires both inner-frame and outer-frame vertices
-        size_t MeshVertexCount() {
+        size_t MeshVertexCount() const {
             return PolyVertexCount() * 2;
         }
     };

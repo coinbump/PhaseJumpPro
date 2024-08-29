@@ -11,16 +11,10 @@
  */
 namespace PJ {
     /// Builds a render mesh with vertices
-    class SomeMeshBuilder : public WorldComponent<> {
+    class SomeMeshBuilder {
     public:
-        using Base = WorldComponent;
+        virtual ~SomeMeshBuilder() {}
 
         virtual Mesh BuildMesh() = 0;
-
-        VertexList BuildVertexList();
-
-        // MARK: WorldComponent
-
-        void Awake() override;
     };
 } // namespace PJ

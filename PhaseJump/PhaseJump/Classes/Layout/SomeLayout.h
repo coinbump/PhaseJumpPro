@@ -11,9 +11,9 @@
  */
 namespace PJ {
     /// Defines the layout of child world nodes
-    class SomeLayout : public WorldComponent<ComposeWorldComponentCore> {
+    class SomeLayout : public WorldComponent<FuncWorldComponentCore> {
     public:
-        using Base = WorldComponent<ComposeWorldComponentCore>;
+        using Base = WorldComponent<FuncWorldComponentCore>;
         using This = SomeLayout;
 
         /// If true, layout will be applied automatically
@@ -37,8 +37,10 @@ namespace PJ {
                 }
             };
 
-            core.startFuncs.Add(applyLayoutAction);
-            core.lateUpdateFuncs.Add(applyLayoutAction);
+            core.startFunc = applyLayoutAction;
+
+            // FUTURE: add needsLayout flag to layouts so they don't keep rebuilding
+            core.lateUpdateFunc = applyLayoutAction;
         }
     };
 } // namespace PJ

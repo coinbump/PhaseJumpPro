@@ -5,8 +5,9 @@
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 7/13/24
+ CODE REVIEW: 7/13/23
  */
+// TODO: rethink this. Is this approach any better?
 namespace PJ {
     /// Limits an action until N seconds have passed after the last time it
     /// happened Example: bullets only fire at a certain rate, rapid fire power

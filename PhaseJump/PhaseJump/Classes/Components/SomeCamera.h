@@ -27,7 +27,5 @@ namespace PJ {
         virtual Matrix4x4 Matrix() = 0;
 
         virtual void PreRender(RenderContextModel const& contextModel) {}
-
-        virtual RenderProcessModel MakeRenderModel(RenderContextModel const& contextModel);
     };
 } // namespace PJ

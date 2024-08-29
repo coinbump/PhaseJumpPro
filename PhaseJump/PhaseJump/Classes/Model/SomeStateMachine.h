@@ -1,10 +1,9 @@
-#ifndef PJSOMESTATEMACHINE_H
-#define PJSOMESTATEMACHINE_H
+#pragma once
 
 /*
  RATING: 5 stars
  Simple protocol
- CODE REVIEW: 5/18/24
+ CODE REVIEW: 8/25/24
  */
 namespace PJ {
     template <class StateType>
@@ -15,5 +14,3 @@ namespace PJ {
         virtual StateType State() const = 0;
     };
 } // namespace PJ
-
-#endif

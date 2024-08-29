@@ -74,6 +74,15 @@ namespace PJ {
         collection.insert(collection.end(), source.begin(), source.end());
     }
 
+    //    template <class Collection,
+    //        class _Type = Collection,
+    //        std::enable_if_t<std::is_same<_Type, std::vector<typename
+    //        Collection::value_type>>::value>* = nullptr>
+    //    void AddRange(Collection& collection, Collection const& source) {
+    //        collection.reserve(collection.size() + source.size());
+    //        collection.insert(collection.end(), source.begin(), source.end());
+    //    }
+
     template <class Collection>
     std::optional<size_t>
     IndexOf(Collection const& collection, typename Collection::value_type const& item) {

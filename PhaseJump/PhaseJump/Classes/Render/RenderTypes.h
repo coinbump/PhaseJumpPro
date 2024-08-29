@@ -25,6 +25,12 @@ namespace PJ {
         Disable
     };
 
+    enum class RenderOpacityType {
+        Opaque,
+
+        Blend
+    };
+
     std::ostream& operator<<(std::ostream& os, RenderFeatureStatus const& value);
 
     using TextureAlphaModeType = String;

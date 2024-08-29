@@ -18,8 +18,7 @@ SpriteRenderer::SpriteRenderer(SP<SomeTexture> texture) :
 
     material->Add(texture);
 
-    // TODO: use texture.vary for better batching
-    auto program = SomeShaderProgram::registry.find("texture.uniform");
+    auto program = SomeShaderProgram::registry.find("texture.vary");
     GUARD(program != SomeShaderProgram::registry.end())
     material->SetShaderProgram(program->second);
 
@@ -38,10 +37,8 @@ SpriteRenderer::SpriteRenderer(SP<RenderMaterial> material) {
     mesh = builder.BuildMesh();
 }
 
-VectorList<RenderModel> SpriteRenderer::MakeRenderModels(RenderContextModel const& model) {
+VectorList<RenderModel> SpriteRenderer::MakeRenderModels() {
     VectorList<RenderModel> result;
-
-    GUARDR(owner, result)
 
     if (nullptr == material) {
         PJLog("ERROR. Missing material.");
@@ -68,8 +65,11 @@ VectorList<RenderModel> SpriteRenderer::MakeRenderModels(RenderContextModel cons
 
     RenderModelBuilder builder;
     VectorList<SomeTexture*> textures{ texture.get() };
-    auto renderModel =
-        builder.Build(mesh, *material, textures, ModelMatrix(), owner->transform.WorldPosition().z);
+    auto renderModel = builder.Build(
+        mesh, *material, textures, ModelMatrix(), 0
+    ); // TODO: owner->transform.WorldPosition().z);
+
+    renderModel.colors = VectorList<RenderColor>(mesh.vertices.size(), color);
 
     result.push_back(renderModel);
     return result;
@@ -84,11 +84,5 @@ Vector2 SpriteRenderer::Size() const {
 }
 
 void SpriteRenderer::SetColor(Color color) {
-    if (material) {
-        if (IsEmpty(material->UniformColors())) {
-            material->AddUniformColor(color);
-        } else {
-            material->SetUniformColor(0, color);
-        }
-    }
+    this->color = color;
 }

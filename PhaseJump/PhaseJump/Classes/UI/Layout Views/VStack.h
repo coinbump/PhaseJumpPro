@@ -111,7 +111,7 @@ namespace PJ {
                 }
 
                 frame.origin.y = y;
-                frame.origin.x = alignment.aligner->AlignedOrigin(layoutSize.x, frame.size.x);
+                frame.origin.x = alignment.aligner(layoutSize.x, frame.size.x);
 
                 view->SetFrame(frame);
 

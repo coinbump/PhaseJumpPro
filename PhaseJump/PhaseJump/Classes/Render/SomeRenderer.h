@@ -18,20 +18,19 @@ namespace PJ {
         // (OPTIONAL) Material for render
         SP<RenderMaterial> material;
 
-        virtual VectorList<RenderModel> MakeRenderModels(RenderContextModel const& model) = 0;
+        virtual VectorList<RenderModel> MakeRenderModels() = 0;
 
         /// Allows custom rendering outside of the render engine
         /// Example: rendering ImGui UI
-        virtual void RenderInto(RenderContextModel const& model) {}
+        virtual void RenderInto(RenderContextModel const& contextModel) {}
 
         /// Override to set render color
         virtual void SetColor(Color color) {}
 
         // MARK: Convenience
 
-        VectorList<RenderModel> MakeRenderModels(
-            RenderContextModel const& model, Mesh const& mesh, VectorList<SomeTexture*> textures
-        );
+        VectorList<RenderModel>
+        MakeRenderModels(Mesh const& mesh, VectorList<SomeTexture*> textures);
 
         // MARK: WorldSizeable
 
@@ -48,6 +47,6 @@ namespace PJ {
 
         // MARK: SomeRenderer
 
-        void RenderInto(RenderContextModel const& model) override;
+        void RenderInto(RenderContextModel const& contextModel) override;
     };
 } // namespace PJ

@@ -29,6 +29,7 @@ namespace PJ {
 
     protected:
         Mesh mesh;
+        Color color;
 
         int frame = 0;
         float position = 0;
@@ -52,7 +53,7 @@ namespace PJ {
             return Vector3(size.x, size.y, 0);
         }
 
-        VectorList<RenderModel> MakeRenderModels(RenderContextModel const& model) override;
+        VectorList<RenderModel> MakeRenderModels() override;
         void SetColor(Color color) override;
 
         // MARK: WorldComponent

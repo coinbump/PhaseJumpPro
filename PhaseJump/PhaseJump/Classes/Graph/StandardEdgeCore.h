@@ -8,7 +8,7 @@
 /*
  RATING: 5 stars
  Simple model
- CODE REVIEW: 5/12/24
+ CODE REVIEW: 8/25/24
  */
 namespace PJ {
     /// Default implementation of an edge model for a graph

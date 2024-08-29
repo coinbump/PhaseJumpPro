@@ -73,11 +73,8 @@ namespace PJ {
                     childPreferredHeight ? childPreferredHeight.value() : preferredStackHeight;
 
                 frame.size = Vector2(childWidth, childHeight);
-                frame.origin.x = alignment.horizontalAlignment.aligner->AlignedOrigin(
-                    layoutSize.x, frame.size.x
-                );
-                frame.origin.y =
-                    alignment.verticalAlignment.aligner->AlignedOrigin(layoutSize.y, frame.size.y);
+                frame.origin.x = alignment.horizontalAlignment.aligner(layoutSize.x, frame.size.x);
+                frame.origin.y = alignment.verticalAlignment.aligner(layoutSize.y, frame.size.y);
 
                 view->SetFrame(frame);
             }

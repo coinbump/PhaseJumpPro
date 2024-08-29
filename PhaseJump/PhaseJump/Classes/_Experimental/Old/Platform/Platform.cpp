@@ -21,8 +21,8 @@ namespace PJ {
     /// and a NextStep implementation
     class SomePlatform : public Base {
     protected:
-        std::unique_ptr<SomePlatform> parent;
-        std::unique_ptr<SomePlatform> child;
+        UP<SomePlatform> parent;
+        UP<SomePlatform> child;
 
     public:
         virtual ~SomePlatform() {}

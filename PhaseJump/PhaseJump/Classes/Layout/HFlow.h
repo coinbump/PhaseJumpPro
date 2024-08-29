@@ -1,5 +1,4 @@
-#ifndef PJHFLOW_H
-#define PJHFLOW_H
+#pragma once
 
 #include "SomeLayout2D.h"
 
@@ -19,14 +18,17 @@ namespace PJ {
             spacing(spacing) {}
 
         Vector3 Size() const override {
-            return Vector3(spacing * (ChildNodes().size() - 1), 0, 0);
+            GUARDR(owner, Vector3::zero)
+            return Vector3(spacing * (owner->ChildNodes().size() - 1), 0, 0);
         }
 
         void ApplyLayout() override {
+            GUARD(owner)
+
             auto firstPos = -Size().x / 2;
             auto position = firstPos;
 
-            auto childNodes = ChildNodes();
+            auto childNodes = owner->ChildNodes();
             for (auto& child : childNodes) {
                 child->transform.SetLocalPosition(
                     Vector3(position, 0, child->transform.LocalPosition().z)
@@ -36,5 +38,3 @@ namespace PJ {
         }
     };
 } // namespace PJ
-
-#endif

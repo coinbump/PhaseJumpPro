@@ -12,7 +12,7 @@ namespace PJTest
 //        
 //        // MARK: SomeRenderer
 //
-//        VectorList<RenderModel> MakeRenderModels(RenderContextModel const& model) override {
+//        VectorList<RenderModel> MakeRenderModels() override {
 //            VectorList<RenderModel> result;
 //
 //            Add(renderHistory, model);
@@ -20,7 +20,7 @@ namespace PJTest
 //            return result;
 //        }
 //
-//        void RenderInto(RenderContextModel const& model) override {
+//        void RenderInto(RenderContextModel const& contextModel) override {
 //        }
 //    };
 }

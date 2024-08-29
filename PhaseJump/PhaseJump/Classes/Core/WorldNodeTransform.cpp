@@ -8,64 +8,41 @@
 using namespace std;
 using namespace PJ;
 
-// TODO: need unit tests
 Vector3 WorldNodeTransform::WorldPosition() const {
     auto result = value.position;
 
-    auto owner = &this->owner;
-    if (owner) {
-        auto world = owner->World();
-        if (world) {
-            auto parentNode = owner->Parent();
-            if (parentNode) {
-                auto worldModelMatrix = world->WorldModelMatrix(*parentNode);
-                result = worldModelMatrix.MultiplyPoint(result);
-                return result;
-            }
-        }
-    }
+    auto world = owner.World();
+    GUARDR(world, result)
+
+    auto parentNode = owner.Parent();
+    GUARDR(parentNode, result)
+
+    auto worldModelMatrix = world->WorldModelMatrix(*parentNode);
+    result = worldModelMatrix.MultiplyPoint(result);
 
     return result;
 }
 
-// TODO: need unit tests
-void WorldNodeTransform::SetWorldPosition(Vector3 position) {
-    auto owner = &this->owner;
-    if (owner) {
-        auto world = owner->World();
-        if (world) {
-            auto parentNode = owner->Parent();
-            if (parentNode) {
-                auto worldModelMatrix = world->WorldModelMatrix(*parentNode);
-                Terathon::Point3D point(position.x, position.y, position.z);
-                auto localPosition = Terathon::InverseTransform(worldModelMatrix, point);
+void WorldNodeTransform::SetWorldPosition(Vector3 position, SetLocalPosFunc func) {
+    auto world = owner.World();
+    auto parentNode = owner.Parent();
 
-                value.position = Vector3(localPosition.x, localPosition.y, localPosition.z);
-            }
-            return;
+    if (world && parentNode) {
+        auto worldModelMatrix = world->WorldModelMatrix(*parentNode);
+        Terathon::Point3D point(position.x, position.y, position.z);
+        auto localPosition = Terathon::InverseTransform(worldModelMatrix, point);
+
+        if (func) {
+            func(*this, Vector3(localPosition.x, localPosition.y, localPosition.z));
         }
+        return;
     }
 
     value.position = position;
 }
 
 void WorldNodeTransform::SetWorldPositionXY(Vector3 position) {
-    auto owner = &this->owner;
-    if (owner) {
-        auto world = owner->World();
-        if (world) {
-            auto parentNode = owner->Parent();
-            if (parentNode) {
-                auto worldModelMatrix = world->WorldModelMatrix(*parentNode);
-                Terathon::Point3D point(position.x, position.y, position.z);
-                auto localPosition = Terathon::InverseTransform(worldModelMatrix, point);
-
-                value.position =
-                    Vector3(localPosition.x, localPosition.y, owner->transform.LocalPosition().z);
-            }
-            return;
-        }
-    }
-
-    value.position = position;
+    SetWorldPosition(position, [](WorldNodeTransform& transform, Vector3 localPos) {
+        transform.value.position = Vector3(localPos.x, localPos.y, transform.value.position.z);
+    });
 }

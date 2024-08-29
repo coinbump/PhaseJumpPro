@@ -2,6 +2,7 @@
 
 #include "List.h"
 #include "SomeUIEvent.h"
+#include "VectorList.h"
 
 /*
  RATING: 5 stars
@@ -30,7 +31,7 @@ namespace PJ {
         static auto const LeftTrigger = "left.trigger";
         static auto const RightTrigger = "right.trigger";
 
-        extern List<String> allCases;
+        extern VectorList<String> allCases;
     } // namespace ControllerAxisId
 
     /// An event from an input controller (joystick, gamepad, etc.)

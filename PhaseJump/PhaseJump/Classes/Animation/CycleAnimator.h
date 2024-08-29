@@ -21,17 +21,17 @@ namespace PJ {
         InterpolateFunc<T> reverseInterpolator;
 
         /// Cycle progress for Once, Loop, PingPong
-        SP<AnimationCycleTimer> timer;
+        UP<AnimationCycleTimer> timer;
 
         /// Value binding to modify value
         SetBindingFunc<T> binding;
 
         CycleAnimator(
-            InterpolateFunc<T> interpolator, SP<AnimationCycleTimer> timer,
+            InterpolateFunc<T> interpolator, UP<AnimationCycleTimer> timer,
             SetBindingFunc<T> binding
         ) :
             interpolator(interpolator),
-            timer(timer),
+            timer(std::move(timer)),
             binding(binding) {}
 
         float Progress() const {

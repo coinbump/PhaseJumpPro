@@ -23,11 +23,11 @@ namespace PJ {
         ColorRenderer(Color color, Vector2 worldSize);
         ColorRenderer(SP<RenderMaterial> material, Color color, Vector2 worldSize);
 
-        static SP<RenderMaterial> MakeMaterial(Color color);
+        static SP<RenderMaterial> MakeMaterial(RenderOpacityType opacityType);
 
         // MARK: SomeRenderer
 
-        VectorList<RenderModel> MakeRenderModels(RenderContextModel const& model) override;
+        VectorList<RenderModel> MakeRenderModels() override;
 
         // MARK: WorldSizable
 

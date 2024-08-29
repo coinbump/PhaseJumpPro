@@ -1,6 +1,7 @@
 #include "SlicedTextureRenderer.h"
 #include "QuadMeshBuilder.h"
 #include "RenderContextModel.h"
+#include "RenderFeature.h"
 #include "RenderMaterial.h"
 #include "RenderModel.h"
 #include "RenderModelBuilder.h"
@@ -20,9 +21,10 @@ SlicedTextureRenderer::SlicedTextureRenderer(
 
     material = MAKE<RenderMaterial>();
 
-    auto program = SomeShaderProgram::registry.find("texture.uniform");
+    auto program = SomeShaderProgram::registry.find("texture.vary");
     GUARD(program != SomeShaderProgram::registry.end())
     material->SetShaderProgram(program->second);
+    material->EnableFeature(RenderFeature::Blend, true);
 
     if (texture) {
         material->Add(texture);
@@ -214,7 +216,7 @@ void SlicedTextureRenderer::SetSize(Vector2 worldSize) {
     BuildMesh();
 }
 
-VectorList<RenderModel> SlicedTextureRenderer::MakeRenderModels(RenderContextModel const& model) {
+VectorList<RenderModel> SlicedTextureRenderer::MakeRenderModels() {
     VectorList<RenderModel> result;
 
     if (nullptr == material) {
@@ -222,12 +224,13 @@ VectorList<RenderModel> SlicedTextureRenderer::MakeRenderModels(RenderContextMod
         return result;
     }
 
-    GUARDR(owner, result)
-
     RenderModelBuilder builder;
     VectorList<SomeTexture*> textures{ texture.get() };
-    auto renderModel =
-        builder.Build(mesh, *material, textures, ModelMatrix(), owner->transform.WorldPosition().z);
+    auto renderModel = builder.Build(
+        mesh, *material, textures, ModelMatrix(), 0
+    ); // TODO: owner->transform.WorldPosition().z);
+
+    renderModel.colors = VectorList<RenderColor>(mesh.vertices.size(), Color::white);
 
     result.push_back(renderModel);
     return result;

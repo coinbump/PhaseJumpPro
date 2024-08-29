@@ -7,8 +7,8 @@
 
 /*
  RATING: 5 stars
- Utility class with unit tests
- CODE REVIEW: 5/12/24
+ Has unit tests
+ CODE REVIEW: 8/25/24
  PORTED TO: C++, C#
  */
 namespace PJ {

@@ -94,6 +94,22 @@ namespace PJ {
     // This won't work. SwiftUI is Swift code, you'd need an entire Swift-language parser
     class SwiftUIRepository {};
 
+    class Box2DNode {
+    public:
+        WP<WorldNode> link;
+    };
+
+    class Box2DSystem {
+        List<Box2DNode> nodes;
+
+        void OnAdd(List<WorldNode> const& nodes) {} // TODO: <- sent to all systems
+
+        void OnRemove(List<WorldNode> const& nodes) {} // TODO: <- sent to all system
+
+        // TODO:
+        void OnFixedUpdate() {}
+    };
+
     class MatrixBoardView2D : public WorldComponent<> {
     public:
         using Base = WorldComponent<>;
@@ -770,13 +786,6 @@ namespace PJ {
     /// SDF-signed fonts for accessibility. Problem: need fonts with rounded corners?
     class SDFTextRenderer {};
 
-    class Box2DSystem {
-        /// ? Map of UUID to object id? Does each object have its own id?
-        /// Each iteration after box2D system updates, it kinetically moves all the nodes
-        /// If someone moves the node manually then shrug?
-        /// ?How does the node know to send its move event back up to the Box2D system?
-    }; // TODO: use #ifdef to enable
-
     class TextureBuffer {};
 
     class BehaviorGraphNode {};
@@ -804,8 +813,6 @@ namespace PJ {
     class a2DFXSystem {};
 
     class ResourcePack {};
-
-    class RenderSystem {};
 
     class TileMap {};
 

@@ -4,8 +4,8 @@
 #include "Base.h"
 #include "Class.h"
 #include "ClassRegistry.h"
+#include "List.h"
 #include "StringUtils.h"
-#include "VectorList.h"
 #include <memory>
 
 /*
@@ -32,7 +32,7 @@ namespace PJ {
     protected:
         ClassRegistry<>& classRegistry;
 
-        VectorList<ModuleSharedPtr> dependencies;
+        List<ModuleSharedPtr> dependencies;
 
         virtual void Configure() = 0;
 

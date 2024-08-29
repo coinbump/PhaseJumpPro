@@ -20,7 +20,7 @@ namespace PJ {
 
         // MARK: Updatable
 
-        void OnUpdate(TimeSlice time) {
+        void OnUpdate(TimeSlice time) override {
             Base::OnUpdate(time);
 
             GUARD(owner)

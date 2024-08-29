@@ -26,22 +26,19 @@ Mesh TiledMeshBuilder::BuildMesh() {
 
     auto cellCount = meshSize.x * meshSize.y;
     auto trianglesSize = cellCount * 6;
-    VectorList<uint32_t> triangles;
-    triangles.resize(trianglesSize);
+    VectorList<uint32_t> triangles(trianglesSize, 0);
 
     int vertexXCount = meshSize.x * 2;
     int vertexYCount = meshSize.y * 2;
     int verticesSize = vertexXCount * vertexYCount;
 
-    VectorList<Vector3> vertices;
-    vertices.resize(verticesSize);
+    VectorList<Vector3> vertices(verticesSize, Vector3::zero);
     auto uvSize = verticesSize;
-    VectorList<Vector2> uvs;
-    uvs.resize(uvSize);
+    VectorList<Vector2> uvs(uvSize, Vector2::zero);
 
-    for (int meshY = 0, i = 0; meshY < meshSize.y; meshY++) {
-        for (int y = 0; y < 2; y++) {
-            for (int meshX = 0; meshX < meshSize.x; meshX++) {
+    for (size_t meshY = 0, i = 0; meshY < meshSize.y; meshY++) {
+        for (size_t y = 0; y < 2; y++) {
+            for (size_t meshX = 0; meshX < meshSize.x; meshX++) {
                 auto yThis = meshY + y;
 
                 float yTarget = yThis * tileSize.y;
@@ -85,9 +82,7 @@ Mesh TiledMeshBuilder::BuildMesh() {
         }
     }
 
-    result.Update(
-        std::make_optional(vertices), std::make_optional(triangles), std::make_optional(uvs)
-    );
+    result.Update(vertices, triangles, uvs);
 
     return result;
 }

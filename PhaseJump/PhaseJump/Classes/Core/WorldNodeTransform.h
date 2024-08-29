@@ -3,16 +3,21 @@
 #include "GeoTransform.h"
 #include "Utils.h"
 
-// CODE REVIEW: ?/23
+/*
+ RATING: 5 stars
+ Has unit tests
+ CODE REVIEW: 8/27/24
+ */
 namespace PJ {
     class WorldNode;
 
     /// Keeps track of the object's world position as it is modified
     struct WorldNodeTransform {
+        using SetLocalPosFunc = std::function<void(WorldNodeTransform&, Vector3 localPos)>;
+
         WorldNode& owner;
         GeoTransform value;
 
-        // We can't set the owner here because it requires shared_from_this
         WorldNodeTransform(WorldNode& owner) :
             owner(owner) {}
 
@@ -85,7 +90,12 @@ namespace PJ {
         }
 
         Vector3 WorldPosition() const;
-        void SetWorldPosition(Vector3 position);
+
+        void SetWorldPosition(
+            Vector3 position,
+            SetLocalPosFunc func = [](WorldNodeTransform& transform,
+                                      Vector3 localPos) { transform.value.position = localPos; }
+        );
 
         /// Set only x,y world positon. Leave z intact
         void SetWorldPositionXY(Vector3 position);

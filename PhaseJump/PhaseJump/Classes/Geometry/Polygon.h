@@ -14,6 +14,7 @@
  */
 namespace PJ {
     // TODO: does it make sense for this to use Vector2 instead?
+    // TODO: don't inherit from VectorList
     /// Stores vertices for closed polygon
     struct Polygon : public VectorList<Vector3> {
         Vector3 Min() const {

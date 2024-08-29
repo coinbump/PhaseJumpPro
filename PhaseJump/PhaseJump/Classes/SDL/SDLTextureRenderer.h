@@ -25,7 +25,7 @@ namespace PJ {
     //        {
     //        }
     //
-    //        void RenderInto(RenderContextModel const& model) override {
+    //        void RenderInto(RenderContextModel const& contextModel) override {
     //            if (owner.expired() || nullptr == texture) { return; }
     //
     //            auto node = owner.lock();

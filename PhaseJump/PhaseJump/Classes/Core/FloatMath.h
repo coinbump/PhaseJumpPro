@@ -6,7 +6,7 @@
 /*
  RATING: 5 stars
  Simple abstraction
- CODE REVIEW: 5/13/24
+ CODE REVIEW: 8/25/24
  */
 namespace PJ {
     /// Defines type and operations for math operations

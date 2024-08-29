@@ -18,6 +18,7 @@ namespace PJ {
     class SpriteRenderer : public SomeRenderer {
     protected:
         Mesh mesh;
+        Color color;
 
         /// Material holds the render texture, this is the actual texture object (child texture for
         /// texture atlas)
@@ -43,7 +44,7 @@ namespace PJ {
             return Vector3(size.x, size.y, 0);
         }
 
-        VectorList<RenderModel> MakeRenderModels(RenderContextModel const& model) override;
+        VectorList<RenderModel> MakeRenderModels() override;
     };
 
     using TextureRenderer = SpriteRenderer;

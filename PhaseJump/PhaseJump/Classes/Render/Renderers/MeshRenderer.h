@@ -1,13 +1,13 @@
-#ifndef PJMESHRENDERER_H
-#define PJMESHRENDERER_H
+#pragma once
 
+#include "MeshRendererModel.h"
 #include "SomeRenderer.h"
 #include <memory>
 
 /*
- BUG: vertices aren't adjusted for object's position
+ RATING: 5 stars
  Tested and works
- CODE REVIEW: 4/17/23
+ CODE REVIEW: 8/25/24
  */
 namespace PJ {
     class RenderMaterial;
@@ -16,12 +16,33 @@ namespace PJ {
     /// Renders a mesh
     class MeshRenderer : public SomeRenderer {
     public:
-        Mesh mesh;
+        /// Defines mesh and mesh builder func
+        MeshRendererModel model;
+
+        /// If set, use this color. If not use colors
+        std::optional<Color> color;
+
+        /// Contains 1 color per mesh vertex
+        VectorList<RenderColor> colors;
+
+        MeshRenderer(Vector3 worldSize);
 
         // MARK: SomeRenderer
 
-        VectorList<RenderModel> MakeRenderModels(RenderContextModel const& model) override;
+        VectorList<RenderModel> MakeRenderModels() override;
+
+        void SetColor(Color color) override {
+            this->color = color;
+        }
+
+        // MARK: WorldSizeable
+
+        std::optional<Vector3> WorldSize() const override {
+            return model.WorldSize();
+        }
+
+        void SetWorldSize(Vector3 value) override {
+            model.SetWorldSize(value);
+        }
     };
 } // namespace PJ
-
-#endif

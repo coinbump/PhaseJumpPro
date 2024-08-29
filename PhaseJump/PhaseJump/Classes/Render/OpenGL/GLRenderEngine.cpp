@@ -272,7 +272,7 @@ void GLRenderEngine::LoadTranslate(Vector3 value) {
     viewMatrix.LoadTranslate(value);
 }
 
-void GLRenderEngine::RenderStart(RenderContextModel const& contextModel) {
+void GLRenderEngine::RenderStart(RenderContextModel& contextModel) {
     renderPlans.clear();
 
     //    auto& proxyCommands = contextModel.phasedProxyCommands;
@@ -298,8 +298,8 @@ void GLRenderEngine::RenderStart(RenderContextModel const& contextModel) {
     //    }
 }
 
-void GLRenderEngine::RenderProcess(RenderProcessModel const& processModel) {
-    for (auto& renderModel : processModel.renderModels) {
+void GLRenderEngine::RenderProcess(RenderDrawModel const& drawModel) {
+    for (auto& renderModel : drawModel.models) {
 #ifdef PROFILE
         DevProfiler devProfilerRenderProcess("Render- Process", [](String value) {
             cout << value;
@@ -380,7 +380,9 @@ void GLRenderEngine::RenderProcess(RenderModel const& model) {
     Add(renderPlans, renderPlan);
 }
 
-void GLRenderEngine::RenderDraw() {
+void GLRenderEngine::RenderDraw(RenderDrawModel const& drawModel) {
+    RenderProcess(drawModel);
+
     VectorList<SP<GLRenderPlan>> noBlendRenderPlans;
     std::copy_if(
         renderPlans.begin(), renderPlans.end(), std::back_inserter(noBlendRenderPlans),

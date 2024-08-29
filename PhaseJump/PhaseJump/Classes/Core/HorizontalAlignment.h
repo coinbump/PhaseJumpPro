@@ -13,27 +13,14 @@
 namespace PJ {
     /// Horizontal alignment in a horizontal flow
     struct HorizontalAlignment {
-        // TODO: SP audit
-        SP<SomeAligner> aligner;
+        AlignFunc aligner;
 
-        HorizontalAlignment(SP<SomeAligner> aligner) :
+        HorizontalAlignment(AlignFunc aligner) :
             aligner(aligner) {}
 
         static const HorizontalAlignment leading;
         static const HorizontalAlignment center;
         static const HorizontalAlignment trailing;
-    };
-
-    struct LeadingAligner : public SomeAligner {
-        float AlignedOrigin(float layoutSize, float frameSize) override {
-            return 0;
-        }
-    };
-
-    struct TrailingAligner : public SomeAligner {
-        float AlignedOrigin(float layoutSize, float frameSize) override {
-            return layoutSize - frameSize;
-        }
     };
 } // namespace PJ
 

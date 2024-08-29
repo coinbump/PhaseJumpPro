@@ -8,14 +8,21 @@
 namespace PJ {
     class SomeRenderContext;
     class WorldNode;
+    class SomeCamera;
 
     struct RenderContextModel {
+        /// Pointer, not reference for model copies
         SomeRenderContext* renderContext = nullptr;
 
-        VectorList<WorldNode*> const& nodes;
+        VectorList<WorldNode*> nodes;
+        VectorList<SomeCamera*> cameras;
 
-        RenderContextModel(SomeRenderContext* renderContext, VectorList<WorldNode*> const& nodes) :
+        RenderContextModel(
+            SomeRenderContext* renderContext, VectorList<WorldNode*> const& nodes,
+            VectorList<SomeCamera*> const& cameras
+        ) :
             renderContext(renderContext),
-            nodes(nodes) {}
+            nodes(nodes),
+            cameras(cameras) {}
     };
 } // namespace PJ

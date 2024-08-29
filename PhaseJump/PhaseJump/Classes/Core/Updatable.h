@@ -22,31 +22,4 @@ namespace PJ {
             return false;
         }
     };
-
-    // TODO: unfinished
-    //    class Updatables : public Updatable {
-    //    public:
-    //        VectorList<WP<Updatable>> updatables;
-    //
-    //        // MARK: Updatable
-    //
-    //        /// Called for each time delta event
-    //        virtual void OnUpdate(TimeSlice time) {
-    //            VectorList<WP<Updatable>> freshUpdatables;
-    //
-    //            std::for_each(updatables.begin(), updatables.end(), [](WP<Updatable> u) {
-    //                GUARD(!u.expired())
-    //
-    //                auto lock = u.lock();
-    //                freshUpdatables.Add(lock);
-    //            });
-    //
-    //
-    //        }
-    //
-    //        /// Allows for cleanup of old updatables
-    //        virtual bool IsFinished() const {
-    //            return false;
-    //        }
-    //    };
 } // namespace PJ

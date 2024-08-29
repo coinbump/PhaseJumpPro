@@ -23,7 +23,7 @@ namespace PJ {
         using FactoryFunc = std::function<SP<Type>()>;
 
         /// Factory to produce an object of this class type
-        std::unique_ptr<Factory> factory;
+        UP<Factory> factory;
 
         TypeClass(String id, FactoryFunc allocator) :
             Base(id),

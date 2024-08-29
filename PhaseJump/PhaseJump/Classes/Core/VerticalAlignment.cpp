@@ -2,9 +2,9 @@
 
 using namespace PJ;
 
-const VerticalAlignment VerticalAlignment::top(MAKE<TopAligner>());
-const VerticalAlignment VerticalAlignment::center(MAKE<CenterAligner>());
-const VerticalAlignment VerticalAlignment::bottom(MAKE<BottomAligner>());
+const VerticalAlignment VerticalAlignment::top(AlignFuncs::left);
+const VerticalAlignment VerticalAlignment::center(AlignFuncs::center);
+const VerticalAlignment VerticalAlignment::bottom(AlignFuncs::right);
 
 VerticalAlignment VerticalAlignment::Builder::VerticalAlignmentFrom(VerticalAlignmentType type) {
     switch (type) {

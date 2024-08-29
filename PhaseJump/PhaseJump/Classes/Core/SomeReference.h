@@ -7,8 +7,8 @@
 
 /*
  RATING: 5 stars
- Simple protocol with unit tests
- CODE REVIEW: 5/12/24
+ Has unit tests
+ CODE REVIEW: 8/25/24
  */
 namespace PJ {
     /// Interface for a reference type. Allows either strong or weak reference

@@ -19,7 +19,8 @@ ColorRenderer::ColorRenderer(Color color, Vector2 worldSize) :
         return builder.BuildMesh();
     });
 
-    material = MakeMaterial(color);
+    material =
+        MakeMaterial(color.IsOpaque() ? RenderOpacityType::Opaque : RenderOpacityType::Blend);
 }
 
 ColorRenderer::ColorRenderer(SP<RenderMaterial> material, Color color, Vector2 worldSize) :
@@ -33,7 +34,7 @@ ColorRenderer::ColorRenderer(SP<RenderMaterial> material, Color color, Vector2 w
     });
 }
 
-SP<RenderMaterial> ColorRenderer::MakeMaterial(Color color) {
+SP<RenderMaterial> ColorRenderer::MakeMaterial(RenderOpacityType opacityType) {
     auto program = SomeShaderProgram::registry.find("color.vary");
     GUARDR(program != SomeShaderProgram::registry.end(), nullptr)
 
@@ -41,16 +42,14 @@ SP<RenderMaterial> ColorRenderer::MakeMaterial(Color color) {
 
     material->SetShaderProgram(program->second);
 
-    bool isOpaque = color.IsOpaque();
-    material->EnableFeature(RenderFeature::Blend, !isOpaque);
+    material->EnableFeature(RenderFeature::Blend, opacityType == RenderOpacityType::Blend);
 
     return material;
 }
 
-VectorList<RenderModel> ColorRenderer::MakeRenderModels(RenderContextModel const& model) {
+VectorList<RenderModel> ColorRenderer::MakeRenderModels() {
     VectorList<SomeTexture*> textures;
     VectorList<RenderModel> result;
-    GUARDR(owner, result)
 
     if (nullptr == material) {
         PJLog("ERROR. Missing material.");
