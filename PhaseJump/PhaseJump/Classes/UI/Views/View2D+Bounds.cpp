@@ -4,18 +4,32 @@
 using namespace PJ;
 using namespace std;
 
-void View2D::SetFrame(Rect const& value) {
-    if (frame == value) {
-        return;
-    }
+/*
+ RATING: 5 stars
+ Simple funcs
+ CODE REVIEW: 9/7/24
+ */
+View2D& View2D::SetFrame(Rect const& value) {
+    GUARDR(frame != value, *this)
+    bool didFrameSizeChange = frame.size != value.size;
     frame = value;
     OnFrameChange();
+
+    if (didFrameSizeChange) {
+        OnViewSizeChange();
+    }
+
+    return *this;
 }
 
 Rect View2D::Bounds() const {
     auto result = Frame();
-    result.origin = Vector2::zero;
+    result.origin = vec2Zero;
     return result;
+}
+
+void View2D::Awake() {
+    UpdateFrameComponents();
 }
 
 void View2D::SetWorldSize2D(Vector2 value) {
@@ -24,58 +38,24 @@ void View2D::SetWorldSize2D(Vector2 value) {
     SetFrame(newFrame);
 }
 
-void View2D::OnFrameChange() {
+void View2D::OnFrameChange() {}
+
+void View2D::OnViewSizeChange() {
     UpdateFrameComponents();
-    OnViewSizeChange();
 }
 
 void View2D::UpdateFrameComponents() {
     auto frameSize = Frame().size;
-    auto unscaledFrameSize = frameSize;
-
-    // TODO: size SimplePolygonCollider2D
-
-    // FUTURE:
-    //    if (TryGetComponent(out BoxCollider2D boxCollider))
-    //    {
-    //        boxCollider.offset = Vector2::zero;
-    //        boxCollider.size = unscaledFrameSize;
-    //    }
-    //
-    //    if (TryGetComponent(out CapsuleCollider2D capsuleCollider))
-    //    {
-    //        capsuleCollider.offset = Vector2::zero;
-    //        capsuleCollider.size = unscaledFrameSize;
-    //    }
-    //
-    //    if (TryGetComponent(out CircleCollider2D circleCollider))
-    //    {
-    //        circleCollider.offset = Vector2::zero;
-    //        circleCollider.radius = Mathf.Max(unscaledFrameSize.x,
-    //        unscaledFrameSize.y) / 2.0f;
-    //    }
 
     auto worldSizables = GetComponents<WorldSizeable>();
     for (auto& worldSizable : worldSizables) {
-        worldSizable->SetWorldSize(unscaledFrameSize);
+        worldSizable->SetWorldSize(frameSize);
     }
 }
 
-Rect View2D::ParentBounds() {
+std::optional<Rect> View2D::ParentBounds() {
     auto parent = ParentView();
-    Rect parentBounds;
+    GUARDR(parent, std::nullopt)
 
-    // TODO:
-    //    if (parent)
-    //    {
-    //        parentBounds = parent.Bounds();
-    //    }
-    //    else
-    //    {
-    //        auto screenWorldSize = Utils.ScreenWorldSize(Camera);
-    //        // Debug.Log("ScreenWorldSize: " + screenWorldSize.ToString());
-    //        parentBounds.size = screenWorldSize;
-    //    }
-
-    return parentBounds;
+    return parent->Bounds();
 }

@@ -14,6 +14,9 @@ namespace PJ {
     /// Handles animation cycle logic for an animation
     // TODO: use composition for behavior, not enums
     class AnimationCycleTimer : Playable {
+    public:
+        using This = AnimationCycleTimer;
+
     protected:
         Timer timer;
 
@@ -22,7 +25,7 @@ namespace PJ {
 
     public:
         AnimationCycleTimer(float duration, AnimationCycleType cycleType) :
-            timer(duration, Runner::RunType::RunOnce),
+            timer(duration, Runner::RunType::Once),
             cycleType(cycleType),
             cycleState(AnimationCycleState::Forward) {}
 

@@ -49,7 +49,7 @@ namespace PJ {
                 auto vector = (Vector2)Angle::DegreesAngle(angle);
                 auto vertex =
                     Vector3(center.x + vector.x * radii.x, center.y + vector.y * radii.y, 0);
-                Add(poly, vertex);
+                Add(poly.value, vertex);
 
                 angle += angleStep;
             }
@@ -59,7 +59,7 @@ namespace PJ {
                 auto vector = (Vector2)Angle::DegreesAngle(endAngleDegrees);
                 auto vertex =
                     Vector3(center.x + vector.x * radii.x, center.y + vector.y * radii.y, 0);
-                Add(poly, vertex);
+                Add(poly.value, vertex);
             }
 
             return poly;

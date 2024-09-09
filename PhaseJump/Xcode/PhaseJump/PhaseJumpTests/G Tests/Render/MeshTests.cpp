@@ -1,6 +1,5 @@
-#include "gtest/gtest.h"
-
 #include "Mesh.h"
+#include "gtest/gtest.h"
 
 using namespace std;
 using namespace PJ;
@@ -12,15 +11,14 @@ TEST(Mesh, TestCalculateBounds) {
     Add(vertices, Vector3(-1, -2, -3));
     Add(vertices, Vector3(1, 2, 3));
 
-    sut.vertices = vertices;
+    sut.SetVertices(vertices);
 
-    sut.CalculateBounds();
-
-    EXPECT_EQ(Vector3(0, 0, 0), sut.bounds.center);
-    EXPECT_EQ(Vector3(1, 2, 3), sut.bounds.extents);
-    EXPECT_EQ(Vector3(-1, -2, -3), sut.bounds.Min());
-    EXPECT_EQ(Vector3(1, 2, 3), sut.bounds.Max());
-    EXPECT_EQ(Vector3(2, 4, 6), sut.bounds.Size());
+    auto sutBounds = sut.GetBounds();
+    EXPECT_EQ(Vector3(0, 0, 0), sutBounds.center);
+    EXPECT_EQ(Vector3(1, 2, 3), sutBounds.extents);
+    EXPECT_EQ(Vector3(-1, -2, -3), sutBounds.Min());
+    EXPECT_EQ(Vector3(1, 2, 3), sutBounds.Max());
+    EXPECT_EQ(Vector3(2, 4, 6), sutBounds.Size());
 }
 
 TEST(Mesh, TestOffsetBy) {
@@ -30,15 +28,15 @@ TEST(Mesh, TestOffsetBy) {
     Add(vertices, Vector3(-1, -2, -3));
     Add(vertices, Vector3(1, 2, 3));
 
-    sut.vertices = vertices;
+    sut.SetVertices(vertices);
 
     sut.OffsetBy(Vector2(1, 1));
 
-    EXPECT_EQ(Vector3(0, -1, -3), sut.vertices[0]);
-    EXPECT_EQ(Vector3(2, 3, 3), sut.vertices[1]);
+    EXPECT_EQ(Vector3(0, -1, -3), sut.Vertices()[0]);
+    EXPECT_EQ(Vector3(2, 3, 3), sut.Vertices()[1]);
 
     sut.OffsetBy(Vector3(10, 10, 10));
-    EXPECT_EQ(Vector3(12, 13, 13), sut.vertices[1]);
+    EXPECT_EQ(Vector3(12, 13, 13), sut.Vertices()[1]);
 }
 
 TEST(Mesh, TestPlusOperator) {
@@ -58,24 +56,24 @@ TEST(Mesh, TestPlusOperator) {
     Add(triangles, 1);
     Add(triangles, 2);
 
-    sut1.vertices = vertices1;
-    sut1.triangles = triangles;
-    sut2.vertices = vertices2;
-    sut2.triangles = triangles;
+    sut1.SetVertices(vertices1);
+    sut1.BaseTriangles() = triangles;
+    sut2.SetVertices(vertices2);
+    sut2.BaseTriangles() = triangles;
 
     auto sut3 = sut1 + sut2;
 
-    EXPECT_EQ(4, sut3.vertices.size());
-    EXPECT_EQ(Vector3(1, 2, 3), sut3.vertices[0]);
-    EXPECT_EQ(Vector3(4, 5, 6), sut3.vertices[1]);
-    EXPECT_EQ(Vector3(7, 8, 9), sut3.vertices[2]);
-    EXPECT_EQ(Vector3(10, 11, 12), sut3.vertices[3]);
+    EXPECT_EQ(4, sut3.Vertices().size());
+    EXPECT_EQ(Vector3(1, 2, 3), sut3.Vertices()[0]);
+    EXPECT_EQ(Vector3(4, 5, 6), sut3.Vertices()[1]);
+    EXPECT_EQ(Vector3(7, 8, 9), sut3.Vertices()[2]);
+    EXPECT_EQ(Vector3(10, 11, 12), sut3.Vertices()[3]);
 
-    EXPECT_EQ(6, sut3.triangles.size());
-    EXPECT_EQ(0, sut3.triangles[0]);
-    EXPECT_EQ(1, sut3.triangles[1]);
-    EXPECT_EQ(2, sut3.triangles[2]);
-    EXPECT_EQ(2, sut3.triangles[3]);
-    EXPECT_EQ(3, sut3.triangles[4]);
-    EXPECT_EQ(4, sut3.triangles[5]);
+    EXPECT_EQ(6, sut3.Triangles().size());
+    EXPECT_EQ(0, sut3.Triangles()[0]);
+    EXPECT_EQ(1, sut3.Triangles()[1]);
+    EXPECT_EQ(2, sut3.Triangles()[2]);
+    EXPECT_EQ(2, sut3.Triangles()[3]);
+    EXPECT_EQ(3, sut3.Triangles()[4]);
+    EXPECT_EQ(4, sut3.Triangles()[5]);
 }

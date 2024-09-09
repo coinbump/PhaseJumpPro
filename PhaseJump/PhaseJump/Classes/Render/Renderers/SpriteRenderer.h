@@ -1,5 +1,4 @@
-#ifndef PJSPRITERENDERER_H
-#define PJSPRITERENDERER_H
+#pragma once
 
 #include "SomeRenderer.h"
 #include "SomeTexture.h"
@@ -8,17 +7,17 @@
 /*
  RATING: 5 stars
  Tested and works
- CODE REVIEW: 4/21/23
+ CODE REVIEW: 9/6/24
  */
 namespace PJ {
-    class RenderMaterial;
-    struct Mesh;
-
     /// Renders a single texture as a sprite
     class SpriteRenderer : public SomeRenderer {
+    public:
+        using Base = SomeRenderer;
+        using This = SpriteRenderer;
+
     protected:
-        Mesh mesh;
-        Color color;
+        Color color = Color::white;
 
         /// Material holds the render texture, this is the actual texture object (child texture for
         /// texture atlas)
@@ -35,19 +34,18 @@ namespace PJ {
 
         Vector2 Size() const;
 
-        void SetColor(Color color) override;
+        // MARK: SomeWorldComponent
+
+        String TypeName() const override {
+            return "SpriteRenderer";
+        }
 
         // MARK: SomeRenderer
 
-        std::optional<Vector3> WorldSize() const override {
-            auto size = Size();
-            return Vector3(size.x, size.y, 0);
-        }
+        void SetColor(Color color) override;
 
         VectorList<RenderModel> MakeRenderModels() override;
     };
 
     using TextureRenderer = SpriteRenderer;
 } // namespace PJ
-
-#endif

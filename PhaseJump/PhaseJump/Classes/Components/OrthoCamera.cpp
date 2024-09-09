@@ -1,5 +1,6 @@
 #include "OrthoCamera.h"
 #include "Matrix4x4.h"
+#include "Mesh.h"
 #include "RenderContextModel.h"
 #include "SomeRenderCommandModel.h"
 #include "SomeRenderEngine.h"
@@ -10,92 +11,136 @@ using namespace PJ;
 
 OrthoCamera::~OrthoCamera() {}
 
-// TODO: what should this be named?
-Matrix4x4 OrthoCamera::Matrix() {
-    Matrix4x4 result;
+Vector2 OrthoCamera::RenderContextSize() const {
+    GUARDR(owner && owner->World() && owner->World()->renderContext, vec2Zero)
 
-    GUARDR(owner, result)
-    auto owner = this->owner;
+    // FUTURE: re-evaluate Size vs PixelSize with hi-DP screens
+    auto contextSize = owner->World()->renderContext->PixelSize();
+    return Vector2(contextSize.x, contextSize.y);
+}
 
-    auto worldPosition = owner->transform.WorldPosition();
+Vector2 OrthoCamera::RenderContextExtents() const {
+    return RenderContextSize() / 2.0f;
+}
 
-    result.LoadTranslate(Vector3(-worldPosition.x, -worldPosition.y, 0));
+Vector2 OrthoCamera::CameraExtents() const {
+    auto contextSize = RenderContextSize();
+    Vector2 result(contextSize.x / 2.0f, contextSize.y / 2.0f);
+    float heightToWidth = result.x / result.y;
+
+    if (halfHeight && *halfHeight > 0) {
+        result = Vector2(*halfHeight * heightToWidth, *halfHeight);
+    }
 
     return result;
 }
 
-// Note: this assumes the ortho camera matches the screen exactly
-// FUTURE: support ortho camera size
+Vector2 OrthoCamera::CameraSize() const {
+    return CameraExtents() * 2.0f;
+}
+
+Vector2 OrthoCamera::WorldToScreenScale() const {
+    auto cameraSize = CameraSize();
+    auto contextSize = RenderContextSize();
+
+    // Prevent divide by zero
+    GUARDR(cameraSize != vec2Zero && contextSize != vec2Zero, vec2One)
+
+    Vector2 result = contextSize / cameraSize;
+    return result;
+}
+
 Vector2 OrthoCamera::WorldToScreen(Vector3 position) {
-    Vector2 result;
-
-    GUARDR(owner, result)
-    auto owner = this->owner;
-
-    auto world = owner->World();
-    GUARDR(world, result)
-
-    auto renderContext = world->renderContext;
-    if (nullptr == renderContext) {
-        return result;
-    }
-
-    auto size = renderContext->Size();
+    auto contextExtents = RenderContextExtents();
     auto cameraPosition = owner->transform.WorldPosition();
 
+    auto scale = WorldToScreenScale();
+    position *= scale;
+    cameraPosition *= scale;
+
+    // FUTURE: update to support different coordinate systems
     Vector2 screenPosition(
-        position.x - cameraPosition.x + size.x / 2.0f, cameraPosition.y + size.y / 2.0f - position.y
+        position.x - cameraPosition.x + contextExtents.x,
+        cameraPosition.y + contextExtents.y - position.y
     );
+
     return screenPosition;
 }
 
-// Note: this assumes the ortho camera matches the screen exactly
-// FUTURE: support ortho camera size
 Vector3 OrthoCamera::ScreenToWorld(Vector2 position) {
-    Vector3 result;
-
-    GUARDR(owner, result)
-    auto owner = this->owner;
-
-    auto world = owner->World();
-    GUARDR(world, result)
-
-    auto renderContext = world->renderContext;
-    GUARDR(renderContext, result)
-
-    auto size = renderContext->Size();
+    auto contextExtents = RenderContextExtents();
     auto cameraPosition = owner->transform.WorldPosition();
 
+    auto worldToScreenScale = WorldToScreenScale();
+    GUARDR(worldToScreenScale.x != 0 && worldToScreenScale.y != 0, Vector3::zero)
+    auto screenToWorldScale = vec2One / worldToScreenScale;
+
+    Vector2 screenCartesian =
+        Vector2(position.x + contextExtents.x * vecLeft, -position.y + contextExtents.y * vecUp);
+    screenCartesian *= screenToWorldScale;
+
+    // FUTURE: update to support different coordinate systems
     Vector3 worldPosition(
-        position.x - cameraPosition.x - size.x / 2.0f,
-        size.y / 2.0f - position.y - cameraPosition.y, 0
+        screenCartesian.x + cameraPosition.x, screenCartesian.y + cameraPosition.y, 0
     );
+
     return worldPosition;
 }
 
 void OrthoCamera::PreRender(RenderContextModel const& contextModel) {
     Base::PreRender(contextModel);
 
+    GUARD(owner)
+
     auto renderContext = contextModel.renderContext;
     GUARD(renderContext)
-
-    GUARD(owner)
-    auto owner = this->owner;
+    GUARD(renderContext->renderEngine);
 
     auto worldPosition = owner->transform.WorldPosition();
 
-    GUARD(renderContext);
-    auto size = renderContext->PixelSize();
-    Vector2 orthoSize{ (float)size.x, (float)size.y };
-
-    renderContext->renderEngine->ProjectionMatrixLoadOrthographic(orthoSize);
+    auto cameraExtents = CameraExtents();
+    renderContext->renderEngine->ProjectionMatrixLoadOrthographic(cameraExtents * 2.0f);
 
     // Translate to standard position
-    Vector3 translate(orthoSize.x / 2.0f, orthoSize.y / 2.0f, 0);
+    Vector3 translate(cameraExtents.x, cameraExtents.y, 0);
 
     // Translate to camera position
-    translate.x += worldPosition.x;
-    translate.y += worldPosition.y;
+    translate.x -= worldPosition.x;
+    translate.y -= worldPosition.y;
 
     renderContext->renderEngine->LoadTranslate(translate);
+}
+
+bool OrthoCamera::IsCulled(Mesh const& mesh) {
+    auto halfSize = CameraExtents();
+
+    bool result = false;
+
+    switch (frustrum) {
+    case Frustrum::None:
+        {
+            Vector3 cameraExtents(halfSize.x, halfSize.y, 0);
+            Bounds cameraBounds2D(Vector3::zero, cameraExtents);
+            Vector3 meshCenter2D(mesh.GetBounds().center.x, mesh.GetBounds().center.y, 0);
+            Vector3 meshExtents2D(mesh.GetBounds().extents.x, mesh.GetBounds().extents.y, 0);
+            Bounds meshBounds2D(meshCenter2D, meshExtents2D);
+
+            result = !cameraBounds2D.TestCollide(meshBounds2D);
+            break;
+        }
+    case Frustrum::Enabled:
+        {
+            // TODO: this doesn't make sense. OpenGL always has a frustrum. Rethink this (is this
+            // just for debugging culls?)
+            Vector3 frustrumExtents(halfSize.x, halfSize.y, abs(farClip - nearClip) / 2.0f);
+            Vector3 frustrumCenter(0, 0, nearClip + frustrumExtents.z * Vector3::forward.z);
+
+            Bounds frustrumBounds(frustrumCenter, frustrumExtents);
+            Bounds meshBounds = mesh.GetBounds();
+            result = !frustrumBounds.TestCollide(meshBounds);
+            break;
+        }
+    }
+
+    return result;
 }

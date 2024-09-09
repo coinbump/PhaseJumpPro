@@ -66,7 +66,7 @@ namespace PJ {
         /// Resolve texture to a render model we use for the render
         virtual std::optional<TextureRenderModel> MakeRenderModel() const {
             GUARDR(renderId, std::nullopt)
-            return TextureRenderModel(renderId, Vector2::zero, Vector2::one);
+            return TextureRenderModel(renderId, vec2Zero, vec2One);
         }
     };
 } // namespace PJ

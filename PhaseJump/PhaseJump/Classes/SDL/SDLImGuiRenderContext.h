@@ -13,11 +13,12 @@ namespace PJ {
     class SDLPlatformWindow;
     class SomeGLRenderEngine;
 
+    // TODO: can this be a render processor instead? or a system?
     /// Renders `ImGUI` widgets via `SDL`
     class SDLImGuiRenderContext : public SomeRenderContext {
     protected:
         SDL_Window* window = nullptr;
-        SDL_GLContext glContext = NULL;
+        SDL_GLContext glContext = nullptr;
         ImGuiContext* imGuiContext = nullptr;
 
     public:

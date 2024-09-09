@@ -1,5 +1,4 @@
-#ifndef PJSOMEPATHLAYOUT_H
-#define PJSOMEPATHLAYOUT_H
+#pragma once
 
 #include "Angle.h"
 #include "SomeLayout.h"
@@ -23,10 +22,14 @@ namespace PJ {
 
         VectorList<float> positions;
 
+        virtual SP<SomePath> BuildPath() = 0;
+
+        // MARK: SomeLayout
+
         void ApplyLayout() override;
 
-        virtual SP<SomePath> BuildPath() = 0;
+        virtual Vector3 Size() const override {
+            return Vector3::zero;
+        };
     };
 } // namespace PJ
-
-#endif

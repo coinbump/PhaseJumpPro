@@ -1,5 +1,4 @@
-#ifndef PJSDLIMGUIUIEVENTPOLLER_H
-#define PJSDLIMGUIUIEVENTPOLLER_H
+#pragma once
 
 #include "FilePath.h"
 #include "SomePosition.h"
@@ -23,5 +22,3 @@ namespace PJ {
         Result PollUIEvents() override;
     };
 }; // namespace PJ
-
-#endif

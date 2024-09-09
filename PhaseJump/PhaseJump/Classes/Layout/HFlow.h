@@ -12,9 +12,9 @@ namespace PJ {
     /// matter)
     class HFlow : public SomeLayout2D {
     public:
-        float spacing = 1.0f;
+        float spacing = 10;
 
-        HFlow(float spacing = 1.0f) :
+        HFlow(float spacing = 10) :
             spacing(spacing) {}
 
         Vector3 Size() const override {
@@ -25,7 +25,7 @@ namespace PJ {
         void ApplyLayout() override {
             GUARD(owner)
 
-            auto firstPos = -Size().x / 2;
+            auto firstPos = (Size().x / 2) * vecLeft;
             auto position = firstPos;
 
             auto childNodes = owner->ChildNodes();

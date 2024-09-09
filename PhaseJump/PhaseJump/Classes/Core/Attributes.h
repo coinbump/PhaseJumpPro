@@ -9,9 +9,9 @@
  */
 namespace PJ {
     namespace AttributeId {
-        static auto const DefaultValue = "default.value";
-        static auto const Name = "name";
-        static auto const Range = "range";
+        auto constexpr DefaultValue = "default.value";
+        auto constexpr Name = "name";
+        auto constexpr Range = "range";
     } // namespace AttributeId
 
     namespace Attributes {

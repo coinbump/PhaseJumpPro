@@ -6,7 +6,11 @@
 #include "Utils.h"
 #include <memory>
 
-// CODE REVIEW: ?/23
+/*
+ RATING: 5 stars
+ Tested and works
+ CODE REVIEW: 9/6/24
+ */
 namespace PJ {
     class RenderMaterial;
     struct Mesh;
@@ -15,6 +19,10 @@ namespace PJ {
     /// Renders multiple textures as a sprite
     class AnimatedSpriteRenderer : public SomeRenderer {
     public:
+        using Base = SomeRenderer;
+        using This = AnimatedSpriteRenderer;
+        using TextureList = VectorList<SP<SomeTexture>>;
+
         struct Frame {
             SP<SomeTexture> texture;
             Vector2 offset;
@@ -24,12 +32,8 @@ namespace PJ {
                 offset(offset) {}
         };
 
-        using Base = SomeRenderer;
-        using TextureList = VectorList<SP<SomeTexture>>;
-
     protected:
-        Mesh mesh;
-        Color color;
+        Color color = Color::white;
 
         int frame = 0;
         float position = 0;
@@ -46,15 +50,17 @@ namespace PJ {
 
         Vector2 Size() const;
 
-        // MARK: SomeRenderer
+        // MARK: SomeWorldComponent
 
-        std::optional<Vector3> WorldSize() const override {
-            auto size = Size();
-            return Vector3(size.x, size.y, 0);
+        String TypeName() const override {
+            return "AnimatedSpriteRenderer";
         }
 
-        VectorList<RenderModel> MakeRenderModels() override;
+        // MARK: SomeRenderer
+
         void SetColor(Color color) override;
+
+        VectorList<RenderModel> MakeRenderModels() override;
 
         // MARK: WorldComponent
 

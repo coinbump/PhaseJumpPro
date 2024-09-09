@@ -62,6 +62,8 @@
 #include "SomeStateMachine.h"
 #include "StateMachine.h"
 #include "CycleAnimator.h"
+#include "Agent.h"
+#include "AgentSystem.h"
 #include "SomeKeyframeInterpolatorFactory.h"
 #include "SomeKeyframe.h"
 #include "ValueKeyframe.h"

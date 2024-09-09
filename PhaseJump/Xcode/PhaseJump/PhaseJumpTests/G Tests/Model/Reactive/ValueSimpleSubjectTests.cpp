@@ -65,3 +65,23 @@ TEST(ValueSimpleSubject, Test_SubscriptionExpired)
     List<int> expectedValues{10};
     EXPECT_EQ(expectedValues, values);
 }
+
+TEST(ValueSimpleSubject, Test_SubscriptionCancelled)
+{
+    auto sut = MAKE<ValueSimpleSubject<int>>(10);
+
+    List<int> values;
+
+    auto subscription = sut->Receive([&values](int const& value) {
+        values.push_back(value);
+    });
+
+    EXPECT_EQ(1, sut->ValidSubscriptions().size());
+    subscription->Cancel();
+    EXPECT_EQ(1, sut->ValidSubscriptions().size());
+
+    EXPECT_EQ(1, sut->SubscriptionsCount());
+    sut->Clean();
+    EXPECT_EQ(0, sut->SubscriptionsCount());
+    EXPECT_EQ(0, sut->ValidSubscriptions().size());
+}

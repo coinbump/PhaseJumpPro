@@ -2,9 +2,12 @@
 
 #include "SomeCancellable.h"
 
-// CODE REVIEW: ?/23
+/*
+ RATING: 5 stars
+ Has unit tests
+ CODE REVIEW: 9/1/24
+ */
 namespace PJ {
-    // TODO: why do we need a class at all? Can it just be a func?
     template <class Input>
     struct SomeSimpleSubscription : public Cancellable {
         virtual ~SomeSimpleSubscription() {}
@@ -16,13 +19,13 @@ namespace PJ {
     };
 
     template <class Input>
-    struct InSimpleSubscription : public SomeSimpleSubscription<Input> {
+    struct SimpleSubscription : public SomeSimpleSubscription<Input> {
         using ReceiveValue = Input const&;
         using ReceiveFunc = std::function<void(ReceiveValue)>;
 
         ReceiveFunc receiveFunc;
 
-        InSimpleSubscription(ReceiveFunc receiveFunc) :
+        SimpleSubscription(ReceiveFunc receiveFunc) :
             receiveFunc(receiveFunc) {}
 
         void Receive(ReceiveValue value) override {

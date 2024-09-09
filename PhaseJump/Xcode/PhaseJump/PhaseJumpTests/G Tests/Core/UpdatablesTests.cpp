@@ -13,7 +13,6 @@ namespace UpdatablesTests {
     public:
         float finishTime = 0;
         float time = 0;
-        bool isFinished = false;
 
         TestUpdatable(float finishTime) : finishTime(finishTime) {
         }
@@ -21,10 +20,6 @@ namespace UpdatablesTests {
         void OnUpdate(TimeSlice time) override {
             this->time += time.delta;
             isFinished = this->time >= finishTime;
-        }
-
-        bool IsFinished() const override {
-            return isFinished;
         }
     };
 }
@@ -44,16 +39,116 @@ TEST(Updatables, Toggles)
     EXPECT_FALSE(u2->IsFinished());
     EXPECT_EQ(0.5f, u1->time);
     EXPECT_EQ(0.5f, u2->time);
-    
+    EXPECT_EQ(2, sut.Count());
+
     sut.OnUpdate(TimeSlice(0.5f));
     EXPECT_TRUE(u1->IsFinished());
     EXPECT_FALSE(u2->IsFinished());
     EXPECT_EQ(1.0f, u1->time);
     EXPECT_EQ(1.0f, u2->time);
+    EXPECT_EQ(1, sut.Count());
 
     sut.OnUpdate(TimeSlice(1));
     EXPECT_TRUE(u1->IsFinished());
     EXPECT_TRUE(u2->IsFinished());
     EXPECT_EQ(1.0f, u1->time);
     EXPECT_EQ(2.0f, u2->time);
+}
+
+TEST(Updatables, PointerDeallocates)
+{
+    auto u1 = MAKE<TestUpdatable>(1);
+    auto u2 = MAKE<TestUpdatable>(2);
+    Updatables sut;
+    sut.Add(u1);
+    sut.Add(u2);
+
+    sut.OnUpdate(TimeSlice(0.5f));
+    EXPECT_EQ(2, sut.Count());
+
+    u2.reset();
+
+    sut.OnUpdate(TimeSlice(0.5f));
+    EXPECT_TRUE(u1->IsFinished());
+    EXPECT_EQ(1, sut.Count());
+}
+
+TEST(Updatables, MakeTimedFunc)
+{
+    float delta = 0;
+    auto sut = Updatables::MakeTimedFunc(3, [&](TimeSlice time) {
+        delta += time.delta;
+        return FinishType::Continue;
+    });
+
+    sut(TimeSlice(1));
+    EXPECT_EQ(1, delta);
+    sut(TimeSlice(2));
+    EXPECT_EQ(3, delta);
+
+    sut(TimeSlice(2));
+    EXPECT_EQ(3, delta);
+}
+
+TEST(Updatables, MakeTimedFuncFractional)
+{
+    float delta = 0;
+    auto sut = Updatables::MakeTimedFunc(3, [&](TimeSlice time) {
+        delta += time.delta;
+        return FinishType::Continue;
+    });
+
+    sut(TimeSlice(1.5f));
+    EXPECT_EQ(1.5f, delta);
+    sut(TimeSlice(1.5f));
+    EXPECT_EQ(3, delta);
+
+    sut(TimeSlice(2));
+    EXPECT_EQ(3, delta);
+}
+
+TEST(Updatables, MakeDelayFunc)
+{
+    float delta = 0;
+    auto sut = Updatables::MakeDelayFunc(3, [&](TimeSlice time) {
+        delta += time.delta;
+        return FinishType::Continue;
+    });
+
+    sut(TimeSlice(1));
+    EXPECT_EQ(0, delta);
+    sut(TimeSlice(2));
+    EXPECT_EQ(0, delta);
+
+    sut(TimeSlice(2));
+    EXPECT_EQ(2, delta);
+}
+
+TEST(Updatables, MakeDelayFuncFractional)
+{
+    float delta = 0;
+    auto sut = Updatables::MakeDelayFunc(2.5f, [&](TimeSlice time) {
+        delta += time.delta;
+        return FinishType::Continue;
+    });
+
+    sut(TimeSlice(1));
+    EXPECT_EQ(0, delta);
+    sut(TimeSlice(1.5f));
+    EXPECT_EQ(0, delta);
+
+    sut(TimeSlice(2));
+    EXPECT_EQ(2, delta);
+}
+
+TEST(Updatables, MakeSpeedFunc)
+{
+    float delta = 0;
+    auto sut = Updatables::MakeSpeedFunc(2, [&](TimeSlice time) {
+        delta += time.delta;
+        return FinishType::Continue;
+    });
+
+    sut(TimeSlice(1));
+    EXPECT_EQ(2, delta);
 }

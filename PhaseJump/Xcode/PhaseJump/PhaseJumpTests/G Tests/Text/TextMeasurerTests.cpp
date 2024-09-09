@@ -34,7 +34,7 @@ TEST(TextMeasurer, NoRoomToWrap)
 {
     auto font = MakeFont();
     TextMeasurer sut(font);
-    auto values = sut.MeasureLines("aba", Vector2::zero, LineClip::None);
+    auto values = sut.Measure("aba", vec2Zero, LineClip::None).lines;
 
     EXPECT_EQ(0, values.size());
 }
@@ -43,7 +43,7 @@ TEST(TextMeasurer, SingleLineNoClip)
 {
     auto font = MakeFont();
     TextMeasurer sut(font);
-    auto values = sut.MeasureLines("aba", Vector2(1000, 0), LineClip::None);
+    auto values = sut.Measure("aba", Vector2(1000, 0), LineClip::None).lines;
 
     ASSERT_EQ(1, values.size());
     EXPECT_EQ("aba", values[0].text);
@@ -55,7 +55,7 @@ TEST(TextMeasurer, SingleLinePartialClipWithClip)
 {
     auto font = MakeFont();
     TextMeasurer sut(font);
-    auto values = sut.MeasureLines("aba", Vector2(1000, font.Height() - 1), LineClip::Partial);
+    auto values = sut.Measure("aba", Vector2(1000, font.Height() - 1), LineClip::Partial).lines;
 
     ASSERT_EQ(0, values.size());
 }
@@ -64,7 +64,7 @@ TEST(TextMeasurer, SingleLinePartialClipNoClip)
 {
     auto font = MakeFont();
     TextMeasurer sut(font);
-    auto values = sut.MeasureLines("aba", Vector2(1000, font.Height()), LineClip::Partial);
+    auto values = sut.Measure("aba", Vector2(1000, font.Height()), LineClip::Partial).lines;
 
     ASSERT_EQ(1, values.size());
     EXPECT_EQ("aba", values[0].text);
@@ -76,7 +76,7 @@ TEST(TextMeasurer, SingleLineHiddenClipWithClip)
 {
     auto font = MakeFont();
     TextMeasurer sut(font);
-    auto values = sut.MeasureLines("aba", Vector2(1000, -1), LineClip::Hidden);
+    auto values = sut.Measure("aba", Vector2(1000, -1), LineClip::Hidden).lines;
 
     ASSERT_EQ(0, values.size());
 }
@@ -85,7 +85,7 @@ TEST(TextMeasurer, SingleLineHiddenClipNoClip)
 {
     auto font = MakeFont();
     TextMeasurer sut(font);
-    auto values = sut.MeasureLines("aba", Vector2(1000, font.Height() - 3), LineClip::Hidden);
+    auto values = sut.Measure("aba", Vector2(1000, font.Height() - 3), LineClip::Hidden).lines;
 
     ASSERT_EQ(1, values.size());
     EXPECT_EQ("aba", values[0].text);
@@ -97,7 +97,7 @@ TEST(TextMeasurer, MultiLineWrap)
 {
     auto font = MakeFont();
     TextMeasurer sut(font);
-    auto values = sut.MeasureLines("aba", Vector2(14, font.Height()), LineClip::None);
+    auto values = sut.Measure("aba", Vector2(14, font.Height()), LineClip::None).lines;
 
     ASSERT_EQ(2, values.size());
     EXPECT_EQ("ab", values[0].text);
@@ -114,7 +114,7 @@ TEST(TextMeasurer, MultiLineWrapWithNewline)
 {
     auto font = MakeFont();
     TextMeasurer sut(font);
-    auto values = sut.MeasureLines("a\nb\na", Vector2(1000, font.Height()), LineClip::None);
+    auto values = sut.Measure("a\nb\na", Vector2(1000, font.Height()), LineClip::None).lines;
 
     ASSERT_EQ(3, values.size());
     EXPECT_EQ("a", values[0].text);
@@ -130,9 +130,9 @@ TEST(TextMeasurer, MultiLineWrapWithMetricsFunc)
 {
     auto font = MakeFont();
     TextMeasurer sut(font);
-    auto values = sut.MeasureLines("aba", Vector2(14, font.Height()), LineClip::None, []() {
+    auto values = sut.Measure("aba", Vector2(14, font.Height()), LineClip::None, []() {
         return FontMeasureMetrics(30);
-    });
+    }).lines;
 
     ASSERT_EQ(2, values.size());
     EXPECT_EQ("ab", values[0].text);

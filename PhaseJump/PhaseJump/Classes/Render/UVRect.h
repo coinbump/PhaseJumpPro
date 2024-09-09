@@ -1,9 +1,12 @@
-#ifndef PJUVRECT_H
-#define PJUVRECT_H
+#pragma once
 
 #include "Vector2.h"
 
-// CODE REVIEW: ?/23
+/*
+ RATING: 5 stars
+ Simple type
+ CODE REVIEW: 9/6/24
+ */
 namespace PJ {
     // A UVRect has flipped coordinates from Rect
     // [0,0] is the bottom left. [1,1] is the top-right
@@ -12,18 +15,16 @@ namespace PJ {
         Vector2 origin;
         Vector2 size;
 
-        UVRect() {}
+        constexpr UVRect() {}
 
-        UVRect(Vector2 origin, Vector2 size) :
+        constexpr UVRect(Vector2 origin, Vector2 size) :
             origin(origin),
             size(size) {}
 
         bool operator==(UVRect const& rhs) const {
             return this->origin == rhs.origin && this->size == rhs.size;
         }
-
-        static UVRect const one;
     };
-} // namespace PJ
 
-#endif
+    static constexpr UVRect uvRectOne{ { 0, 0 }, { 1, 1 } };
+} // namespace PJ

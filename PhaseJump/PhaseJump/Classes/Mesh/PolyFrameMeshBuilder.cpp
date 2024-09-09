@@ -5,7 +5,7 @@ using namespace PJ;
 
 Mesh PolyFrameMeshBuilder::BuildMesh() {
     Mesh mesh;
-    GUARDR(poly.size() >= 2, mesh);
+    GUARDR(poly.Count() >= 2, mesh);
 
     auto segmentCount = SegmentCount();
 
@@ -14,13 +14,13 @@ Mesh PolyFrameMeshBuilder::BuildMesh() {
     auto trianglesSize = segmentCount * 6;
     VectorList<uint32_t> triangles(trianglesSize, 0);
     auto uvSize = vertexCount;
-    VectorList<Vector2> uvs(uvSize, Vector2::zero);
+    VectorList<Vector2> uvs(uvSize, vec2Zero);
 
     // Outer frame
     auto meshVertexIndex = 0;
     for (size_t i = 0; i < segmentCount; i++) {
         auto vertex = poly[i];
-        auto nextVertex = poly[(i + 1) % poly.size()];
+        auto nextVertex = poly[(i + 1) % poly.Count()];
 
         Vector2 angleVector(nextVertex.x - vertex.x, nextVertex.y - vertex.y);
         // Debug.Log("Angle Vector: " + angleVector.ToString());
@@ -59,7 +59,7 @@ Mesh PolyFrameMeshBuilder::BuildMesh() {
         }
     } else {
         for (size_t i = 0; i < uvSize; i++) {
-            uvs[i] = Vector2::zero;
+            uvs[i] = vec2Zero;
         }
     }
 

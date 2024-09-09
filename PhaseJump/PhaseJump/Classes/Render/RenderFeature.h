@@ -16,11 +16,11 @@ namespace PJ {
          For 2D renders, render unblended objects first, then sort
          transparent-blend objects back-to-front
          */
-        static auto const Blend = "blend";
+        auto constexpr Blend = "blend";
 
         /*
          Enables optional clipping of rendered output
          */
-        static auto const ScissorTest = "scissorTest";
+        auto constexpr ScissorTest = "scissorTest";
     }; // namespace RenderFeature
 } // namespace PJ

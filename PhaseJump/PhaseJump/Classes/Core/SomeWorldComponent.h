@@ -1,7 +1,9 @@
 #pragma once
 
 #include "Base.h"
+#include "Macros.h"
 #include "Updatable.h"
+#include "Updatables.h"
 #include "WorldNodeTransform.h"
 #include "WorldPartLife.h"
 #include <memory>
@@ -32,6 +34,12 @@ namespace PJ {
 
         WorldPartLife life;
 
+        /// Called before Start by CheckedAwake
+        virtual void Awake() {}
+
+        /// Called after Awake by CheckedStart
+        virtual void Start() {}
+
     public:
         using This = SomeWorldComponent;
         using NodeTransform = WorldNodeTransform;
@@ -40,7 +48,14 @@ namespace PJ {
         /// Node is responsible for setting this to null when the component is removed
         WorldNode* owner = nullptr;
 
-        // TODO: decide between IsActive/IsEnabled
+        /// Add objects that need time updates here: timers, animations, etc.
+        Updatables updatables;
+
+        SomeWorldComponent() {}
+
+        // Prevent accidental copies
+        DELETE_COPY(SomeWorldComponent)
+
         bool IsEnabled() const {
             return isEnabled;
         }
@@ -50,6 +65,9 @@ namespace PJ {
         }
 
         virtual void DestroyOwner(float afterSeconds = 0) = 0;
+
+        /// Returns the type name of this component for browsers and debugging
+        virtual String TypeName() const = 0;
 
         Matrix4x4 ModelMatrix() const;
 
@@ -69,12 +87,6 @@ namespace PJ {
         /// Called after Awake
         void CheckedStart();
 
-        /// Called before Start
-        virtual void Awake() {}
-
-        /// Called after Awake
-        virtual void Start() {}
-
         /// Called after OnUpdate
         virtual void LateUpdate() {}
 
@@ -84,6 +96,8 @@ namespace PJ {
         // MARK: Updatable
 
         /// Called in game loop for time delta update events
-        void OnUpdate(TimeSlice time) override {}
+        void OnUpdate(TimeSlice time) override {
+            updatables.OnUpdate(time);
+        }
     };
 } // namespace PJ

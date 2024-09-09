@@ -100,7 +100,7 @@ public:
     void SetPixelColor(uint32_t x, uint32_t y, Color color);
     void SetPixelIndexColor(uint32_t i, Color color);
     bool AnyPixelsOnVScanLine(int x, bool test = false, Color testColor = ColorNone) const;
-    bool AnyPixelsOnHScanLine(int y, bool test = false, Color testColor = ColorNone) const;
+    bool AnyPixelsOnScanLine(int y, bool test = false, Color testColor = ColorNone) const;
     int GetFirstPixelScanlineLToR(int y) const;
     int GetFirstPixelScanlineRToL(int y) const;
     int GetFirstPixelScanlineTToB(int x) const;

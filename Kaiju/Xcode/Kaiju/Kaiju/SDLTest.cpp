@@ -1,7 +1,7 @@
 #ifndef _TESTS_
 
 #include "SDLTest.h"
-#include "KaijuImGuiRenderer.h"
+#include "KaijuImGuiRenderProcessor.h"
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 #include <OpenGL/glext.h>
@@ -121,12 +121,6 @@ void SDLFoo() {
     renderContext->clearColor = Color(.8, .8, .8, 1.0f);
     renderContext->Configure(*window);
 
-    auto imGuiNode = MAKE<WorldNode>("Kaiju imGui");
-    auto component = MAKE<KaijuImGuiRenderer>();
-    imGuiNode->Add(component);
-    imGuiNode->typeTags.insert("editor.vip");
-
-    world->Add(imGuiNode);
     world->SetRenderContext(renderContext);
     world->uiEventPoller = MAKE<SDLImGuiUIEventPoller>(*window);
 
@@ -145,6 +139,16 @@ void SDLFoo() {
         resourceRepository.Load(info);
     }
 
+    auto designSystem = MAKE<DesignSystem>();
+    designSystem->Add(UIElement::SliderTrack, world->Texture("slider-track"));
+    designSystem->Add(UIElement::SliderThumb, world->Texture("slider-thumb"));
+    designSystem->Add(UIElement::SliderVerticalTrack, world->Texture("slider-track-v"));
+    designSystem->Add(UIElement::SliderVerticalThumb, world->Texture("slider-thumb-v"));
+    designSystem->SetTag(UIElement::SliderTrack, UITag::SlicePoints, SlicedTextureRenderer::SlicePoints{{12, 12}, {12, 12}});
+    designSystem->SetTag(UIElement::SliderTrack, UITag::EndCapSize, 20.0f);
+
+    world->designSystem = designSystem;
+
     // Register a mouse device
     //Mouse::current = 
     MAKE<SDLMouseDevice>();
@@ -154,7 +158,54 @@ void SDLFoo() {
     testTextureNode->Add(testTextureScene);
     world->Add(testTextureNode);
 
+    auto uiSystem = MAKE<UISystem>();
+    uiSystem->typeTags.insert("editor.vip");
+    world->Add(uiSystem);
+
+    auto renderSystem = MAKE<RenderWorldSystem>();
+    renderSystem->typeTags.insert("editor.vip");
+    world->Add(renderSystem);
+
+    auto showMesh = MAKE<ShowMeshRenderProcessor>();
+    showMesh->Enable(false);
+    renderSystem->Add(showMesh);
+
+    auto cameraCull = MAKE<CameraCullRenderProcessor>();
+    renderSystem->Add(cameraCull);
+
+    auto order = MAKE<OrderRenderProcessor>([](RenderModel const& lhs, RenderModel const& rhs) {
+        return lhs.mesh.GetBounds().Min().x < rhs.mesh.GetBounds().Min().x;
+    });
+    order->Enable(false);
+    renderSystem->Add(order);
+
+    auto imGuiProcessor = MAKE<KaijuImGuiRenderProcessor>(*world);
+    renderSystem->Add(imGuiProcessor);
+    
+    auto depthFirstOrder = MAKE<DepthFirstOrderRenderProcessor>();
+    depthFirstOrder->Enable(false);
+    renderSystem->Add(depthFirstOrder);
+
+    auto showColliders = MAKE<ShowCollidersRenderProcessor>();
+    showColliders->Enable(false);
+    renderSystem->Add(showColliders);
+//    renderSystem->AddProcessor<ShowCollidersRenderProcessor>()
+//        .SetActive(false)
+
+    auto showBounds = MAKE<ShowBoundsRenderProcessor>();
+    showBounds->Enable(false);
+    renderSystem->Add(showBounds);
+
+    auto overrideFeatures = MAKE<OverrideFeaturesRenderProcessor>();
+    overrideFeatures->map[RenderFeature::Blend] = RenderFeatureState::Disable;
+    overrideFeatures->Enable(false);
+    renderSystem->Add(overrideFeatures);
+
+    auto batch = MAKE<BatchByMaterialRenderProcessor>();
+    renderSystem->Add(batch);
+
     int count = 0;
+
 //    SDL_PenID* result = SDL_GetPens(&count);
 
     world->Go();

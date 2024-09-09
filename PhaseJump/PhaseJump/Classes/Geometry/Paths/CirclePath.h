@@ -1,5 +1,4 @@
-#ifndef PJCIRCLEPATH_H
-#define PJCIRCLEPATH_H
+#pragma once
 
 #include "Angle.h"
 #include "SomePath.h"
@@ -26,5 +25,3 @@ namespace PJ {
 
     // FUTURE: support rotated circles in 3D space if needed
 } // namespace PJ
-
-#endif

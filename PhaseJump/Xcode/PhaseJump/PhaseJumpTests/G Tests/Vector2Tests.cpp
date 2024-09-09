@@ -129,3 +129,12 @@ TEST(Vector2Int, TestEquality) {
     EXPECT_NE(sut, sut2);
     EXPECT_EQ(sut2, sut3);
 }
+
+TEST(Vector2, AxisValue) {
+    Vector2 sut(1, 3);
+
+    EXPECT_EQ(1, sut.AxisValue(Axis2D::X));
+    EXPECT_EQ(3, sut.AxisValue(Axis2D::Y));
+    EXPECT_EQ(3, sut.AxisValueReverse(Axis2D::X));
+    EXPECT_EQ(1, sut.AxisValueReverse(Axis2D::Y));
+}

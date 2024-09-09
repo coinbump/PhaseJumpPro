@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Function.h"
 #include "SomeRandom.h"
 #include "Vector3.h"
+#include <functional>
 
 /*
  RATING: 5 stars

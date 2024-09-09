@@ -1,6 +1,4 @@
-#ifndef SDLFILEMANAGER_H
-#define SDLFILEMANAGER_H
-
+#pragma once
 #include "StringUtils.h"
 #include <SDL3/SDL_filesystem.h>
 
@@ -12,5 +10,3 @@ namespace PJ {
         }
     };
 } // namespace PJ
-
-#endif

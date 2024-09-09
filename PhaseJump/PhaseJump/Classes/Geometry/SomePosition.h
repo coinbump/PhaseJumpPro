@@ -6,7 +6,7 @@
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 7/6/24
+ CODE REVIEW: 7/6/23
  */
 namespace PJ {
     // FUTURE: needs conversion logic
@@ -28,6 +28,7 @@ namespace PJ {
         }
     };
 
+    // TODO: Re-evaluate. Do we really need these?
     class LocalPosition : public Vector3 {
     public:
         using Base = Vector3;
@@ -42,6 +43,7 @@ namespace PJ {
         }
     };
 
+    // TODO: Re-evaluate. Do we really need these?
     class ScreenPosition : public Vector2 {
     public:
         using Base = Vector2;

@@ -1,4 +1,5 @@
 #include "GLShaderProgram.h"
+#include "Funcs.h"
 #include "GLHeaders.h"
 
 using namespace PJ;
@@ -120,13 +121,13 @@ bool GLShaderProgram::Link() {
 
     glGetProgramiv(glId, GL_ACTIVE_UNIFORMS, &count);
 
-    for (int i = 0; i < count; i++) {
+    ForCount(0, count, [&](int i) {
         glGetActiveUniform(glId, (GLuint)i, bufferSize, &length, &size, &type, name);
         auto location = glGetUniformLocation(glId, name);
         uniformLocations[String(name)] = location;
 
         PJLog("Uniform #%d Type: %u Name: %s\n Index: %d", i, type, name, location);
-    }
+    });
 
     return isLinked;
 }

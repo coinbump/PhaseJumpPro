@@ -7,10 +7,4 @@
    <FileRef
       location = "container:Kaiju.xcodeproj">
    </FileRef>
-   <FileRef
-      location = "group:../../../submodules/SDL_image/Xcode/SDL_image.xcodeproj">
-   </FileRef>
-   <FileRef
-      location = "group:../../../submodules/SDL/Xcode/SDL/SDL.xcodeproj">
-   </FileRef>
 </Workspace>

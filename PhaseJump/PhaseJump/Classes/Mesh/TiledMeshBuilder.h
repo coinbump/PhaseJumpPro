@@ -23,8 +23,7 @@ namespace PJ {
         UVRect uvBounds;
 
         TiledMeshBuilder(
-            Vector2 worldSize = Vector2::one, Vector2 tileSize = Vector2::one,
-            UVRect uvBounds = UVRect::one
+            Vector2 worldSize = vec2One, Vector2 tileSize = vec2One, UVRect uvBounds = uvRectOne
         ) :
             worldSize(worldSize),
             tileSize(tileSize),

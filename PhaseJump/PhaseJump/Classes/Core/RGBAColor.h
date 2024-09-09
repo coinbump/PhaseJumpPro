@@ -45,16 +45,16 @@ namespace PJ {
     /// Stores RGBA as a 32-bit value, one byte for each color component
     template <ComponentColorSchema const& ColorSchema>
     struct ComponentColor32 {
-        uint32_t value;
+        uint32_t value = 0;
 
         ComponentColor32() :
             value(0) {}
 
-        ComponentColor32(int red, int green, int blue, int alpha) {
+        ComponentColor32(int red, int green, int blue, int alpha = 255) {
             value = ValueFromRGBA(red, green, blue, alpha);
         }
 
-        ComponentColor32(float red, float green, float blue, float alpha) {
+        ComponentColor32(float red, float green, float blue, float alpha = 1.0f) {
             value = ValueFromRGBA(red * 255.0f, green * 255.0f, blue * 255.0f, alpha * 255.0f);
         }
 

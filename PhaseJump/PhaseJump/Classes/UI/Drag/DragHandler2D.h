@@ -1,5 +1,4 @@
-#ifndef PJDRAGHANDLER2D_H
-#define PJDRAGHANDLER2D_H
+#pragma once
 
 #include "SomeDragHandler.h"
 
@@ -19,6 +18,10 @@ namespace PJ {
     public:
         using Base = SomeDragHandler;
 
+        using OnDragUpdateFunc = std::function<void(DragHandler2D&)>;
+
+        OnDragUpdateFunc onDragUpdateFunc;
+
         /// What to do when the object is dropped
         enum class DropType {
             Stay,    // Stay at position where it was dropped
@@ -28,9 +31,15 @@ namespace PJ {
         DropType dropType = DropType::Stay;
 
         virtual void Drop();
+
+        DragHandler2D& SetOnDragUpdateFunc(OnDragUpdateFunc onDragUpdateFunc) {
+            this->onDragUpdateFunc = onDragUpdateFunc;
+            return *this;
+        }
+
+        // MARK: SomeDragHandler
+
         void OnDragUpdate(WorldPosition inputPosition) override;
         void OnDragEnd() override;
     };
 } // namespace PJ
-
-#endif

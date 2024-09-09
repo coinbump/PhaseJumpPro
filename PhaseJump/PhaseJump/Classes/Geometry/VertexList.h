@@ -7,7 +7,7 @@
 /*
  RATING: 5 stars
  Simple type
- CODE REVIEW: 4/14/24
+ CODE REVIEW: 9/1/24
  */
 namespace PJ {
     /// Stores vertices of a mesh

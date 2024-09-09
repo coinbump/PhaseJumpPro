@@ -1,5 +1,4 @@
-#ifndef PJSDLEVENTPOLLER_H
-#define PJSDLEVENTPOLLER_H
+#pragma once
 
 #include "SDLUIEventsBuilder.h"
 #include "SomeUIEventPoller.h"
@@ -19,5 +18,3 @@ namespace PJ {
         Result Process(SDLEventList const& events);
     };
 } // namespace PJ
-
-#endif

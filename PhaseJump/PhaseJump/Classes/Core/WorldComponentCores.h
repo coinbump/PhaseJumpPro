@@ -21,6 +21,10 @@ namespace PJ {
     public:
         using Owner = WorldComponent<VoidWorldComponentCore>;
 
+        String TypeName() const {
+            return "VoidWorldComponentCore";
+        }
+
         void Awake(Owner& component) {}
 
         void Start(Owner& component) {}
@@ -41,6 +45,10 @@ namespace PJ {
         VoidFunc startFunc;
         VoidFunc lateUpdateFunc;
         OnUpdateFunc onUpdateFunc;
+
+        String TypeName() const {
+            return "FuncWorldComponentCore";
+        }
 
         void Awake(Owner& component) {
             GUARD(awakeFunc)
@@ -77,6 +85,10 @@ namespace PJ {
         OnUpdateMultiFunc onUpdateFuncs;
 
     public:
+        String TypeName() const {
+            return "MultiFuncWorldComponentCore";
+        }
+
         VoidMultiFunc& AwakeFuncs() {
             return awakeFuncs;
         }

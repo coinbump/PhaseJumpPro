@@ -1,72 +1,102 @@
 #include "SliderControl.h"
 #include "Log.h"
+#include "SomeDragGestureHandler2D.h"
 #include "SomeRenderer.h"
 
 using namespace std;
 using namespace PJ;
 
-SliderControl::SliderControl() {}
+SliderControl::SliderControl(Axis2D axis) :
+    axis(axis) {}
 
 std::optional<float> SliderControl::IntrinsicHeight() {
-    auto thumb = Thumb();
-    if (nullptr != thumb) {
-        return RendererSize(*thumb).y;
-    }
+    // TODO: come back to this when we work on views
+    return std::nullopt;
+    //    auto thumbBounds = ThumbBounds();
+    //    auto trackBounds = TrackBounds();
+    //    auto boundingBounds = thumbBounds + trackBounds;
+    //
+    //    return boundingBounds.height;
+}
 
-    // FUTURE: support more complex layouts, like a thumb that is below the
-    // track
-    return Base::IntrinsicHeight();
+Rect SliderControl::TrackFrame() const {
+    // TODO: this isn't quite right. Come back to this when we work on views
+    //    auto trackSize = TrackSize();
+    //    Rect result(Vector2(0, 0), trackSize);
+    //    return result;
+
+    Rect result(vec2Zero, vec2Zero);
+    return result;
+}
+
+std::optional<Rect> SliderControl::ThumbFrame() const {
+    // TODO: this isn't quite right. Come back to this when we work on views
+    Rect result(vec2Zero, vec2Zero);
+    return result;
+
+    //    auto thumbSize = ThumbSize();
+    //    Rect result(Vector2(0, thumb->transform.LocalPosition().y), thumbSize);
+    //    return result;
+
+    //    auto thumb = Thumb();
+    //    GUARDR(thumb, std::nullopt);
+    //
+    //    auto thumbSize = ThumbSize();
+    //    Rect result(Vector2(0, thumb->transform.LocalPosition().y), thumbSize);
+    //    return result;
 }
 
 PublishedValue<float>& SliderControl::Value() {
     return value;
 }
 
-SP<WorldNode> SliderControl::Thumb() {
-    GUARDR(owner, nullptr)
-
+SP<WorldNode> SliderControl::Thumb() const {
     if (!thumb.expired()) {
         return LOCK(thumb);
     }
 
-    auto const& childNodes = owner->ChildNodes();
-    GUARDR(!IsEmpty(childNodes), nullptr)
-
-    // Return the first child as the slider thumb
-    thumb = *childNodes.begin();
-    return LOCK(thumb);
+    return nullptr;
 }
 
 void SliderControl::Awake() {
     Base::Awake();
 
-    GUARD(owner)
-
-    valueSubscription =
-        value.subject.Receive([this](float value) { this->UpdateThumbPositionForValue(value); });
-
-    auto thumb = Thumb();
-    if (nullptr == thumb) {
-        PJLog("ERROR. Missing Thumb.");
-        return;
+    if (thumb.expired()) {
+        auto const& childNodes = owner->ChildNodes();
+        if (!IsEmpty(childNodes)) {
+            thumb = *childNodes.begin();
+        } else {
+            PJLog("ERROR. SliderControl is missing thumb.");
+            return;
+        }
     }
 
-    thumbDragHandler = thumb->AddComponent<ThumbDragHandler>();
-    thumbDragHandler->target = SCAST<SliderControl>(shared_from_this());
-}
+    auto thumbLock = LOCK(thumb);
+    GUARD(thumbLock)
 
-// FUTURE: rethink this when we support View sizing for sprites
-// std::optional<Vector2> SliderControl::SpriteRendererSize(SpriteRenderer
-// spriteRenderer)
-//{
-//    auto result = Base::SpriteRendererSize(spriteRenderer);
-//    if (nullptr != result)
-//    {
-//        return std::make_optional(new(result.value.x, trackSize));
-//    }
-//
-//    return result;
-//}
+    WP<This> weakThis = SCAST<This>(shared_from_this());
+
+    thumbDragHandler = thumbLock->AddComponentPtr<SomeDragGestureHandler2D>();
+    thumbDragHandler->onDragGestureUpdateFunc = [weakThis](auto update) {
+        GUARD(!weakThis.expired())
+        auto target = weakThis.lock();
+
+        switch (update.type) {
+        case SomeDragGestureHandler2D::Update::Type::Start:
+            target->OnDragThumbStart(*update.gesture.owner, update.worldPosition);
+            break;
+        case SomeDragGestureHandler2D::Update::Type::End:
+            target->OnDragThumbEnd();
+            break;
+        case SomeDragGestureHandler2D::Update::Type::Update:
+            target->OnDragThumbUpdate(*update.gesture.owner, update.worldPosition);
+            break;
+        }
+    };
+
+    valueSubscription =
+        value.Receive([this](float value) { this->UpdateThumbPositionForValue(value); });
+}
 
 void SliderControl::UpdateThumbPositionForValue(float value) {
     // Don't move the thumb while the user is dragging it.
@@ -75,88 +105,81 @@ void SliderControl::UpdateThumbPositionForValue(float value) {
     }
 
     auto thumb = Thumb();
-    if (nullptr == thumb) {
-        return;
-    }
-    auto minThumbX = MinThumbX(*thumb);
-    auto maxThumbX = MaxThumbX(*thumb);
+    GUARD(thumb)
+
+    auto minThumbPos = MinThumbPos(*thumb);
+    auto maxThumbPos = MaxThumbPos(*thumb);
 
     value = clamp(value, minValue, maxValue);
     float position = (value - minValue) / (maxValue - minValue);
 
     auto localPosition = thumb->transform.LocalPosition();
-    thumb->transform.SetLocalPosition(
-        Vector3(minThumbX + position * (maxThumbX - minThumbX), localPosition.y, localPosition.z)
-    );
+
+    Vector2 newPos;
+    newPos.AxisValue(axis) = minThumbPos + position * (maxThumbPos - minThumbPos);
+    newPos.AxisValueReverse(axis) = ((Vector2)localPosition).AxisValueReverse(axis);
+
+    thumb->transform.SetLocalPosition(Vector3(newPos.x, newPos.y, localPosition.z));
 }
 
-Vector2 SliderControl::TrackSize() {
-    GUARDR(owner, Vector2::zero)
+Vector2 SliderControl::TrackSize() const {
+    GUARDR(owner, {})
 
-    return RendererSize(*owner);
+    auto rendererSize = RendererSize(*owner);
+    Vector2 result;
+    result.AxisValue(axis) = frame.size.AxisValue(axis);
+    result.AxisValueReverse(axis) = rendererSize.AxisValueReverse(axis);
+
+    return result;
 }
 
-Vector2 SliderControl::RendererSize(WorldNode& target) {
-    GUARDR(owner, Vector2::zero)
-
+Vector2 SliderControl::RendererSize(WorldNode& target) const {
     auto renderer = target.GetComponent<SomeRenderer>();
-    GUARDR(renderer, Vector2::zero)
+    GUARDR(renderer, {})
 
     auto size = renderer->WorldSize();
-    GUARDR(size, Vector2::zero)
+    GUARDR(size, {})
 
-    return size.value();
+    return *size;
 }
 
-void SliderControl::OnDragThumbStart(WorldNode& thumb, WorldPosition inputPosition) {
+void SliderControl::OnDragThumbStart(WorldNode& thumb, Vector2 inputPosition) {
     dragStartInputPosition = inputPosition;
     thumbStartLocalPosition = thumb.transform.LocalPosition();
 }
 
-void SliderControl::OnDragThumbEnd() {
-    broadcaster.Broadcast(MAKE<EndDragThumbEvent>());
+void SliderControl::OnDragThumbEnd() {}
+
+Vector2 SliderControl::ThumbSize() const {
+    auto thumb = Thumb();
+    GUARDR(thumb, {})
+    return RendererSize(*thumb);
 }
 
-float SliderControl::HalfTrackWidth(WorldNode& thumb) {
-    auto trackWidth = TrackSize().x;
-    auto thumbWidth = RendererSize(thumb).x;
+float SliderControl::HalfTrackLength(WorldNode& thumb) {
+    auto trackWidth = TrackSize().AxisValue(axis);
+    auto thumbWidth = ThumbSize().AxisValue(axis);
 
     auto halfTrackWidth = trackWidth / 2.0f - endCapSize - thumbWidth / 2.0f;
     return halfTrackWidth;
 }
 
-void SliderControl::OnDragThumbUpdate(WorldNode& thumb, WorldPosition inputPosition) {
-    auto x = thumbStartLocalPosition.x + (inputPosition.x - dragStartInputPosition.x);
-    auto minThumbX = MinThumbX(thumb);
-    auto maxThumbX = MaxThumbX(thumb);
-    x = clamp(x, minThumbX, maxThumbX);
+void SliderControl::OnDragThumbUpdate(WorldNode& thumb, Vector2 inputPosition) {
+    auto pos = ((Vector2)thumbStartLocalPosition).AxisValue(axis) +
+               (inputPosition.AxisValue(axis) - dragStartInputPosition.AxisValue(axis));
+    auto minThumbPos = MinThumbPos(thumb);
+    auto maxThumbPos = MaxThumbPos(thumb);
+    pos = clamp(pos, minThumbPos, maxThumbPos);
 
-    auto newLocalPosition =
-        Vector3(x, thumb.transform.LocalPosition().y, thumb.transform.LocalPosition().z);
+    auto thumbPosition = thumb.transform.LocalPosition();
+
+    Vector2 newPos;
+    newPos.AxisValue(axis) = pos;
+    newPos.AxisValueReverse(axis) = ((Vector2)thumbPosition).AxisValueReverse(axis);
+
+    auto newLocalPosition = Vector3(newPos.x, newPos.y, thumbPosition.z);
     thumb.transform.SetLocalPosition(newLocalPosition);
 
-    auto newValue = (newLocalPosition.x - minThumbX) / (maxThumbX - minThumbX);
+    auto newValue = (newPos.AxisValue(axis) - minThumbPos) / (maxThumbPos - minThumbPos);
     Value().SetValue(newValue);
-}
-
-// MARK: - ThumbDragHandler
-
-void SliderControl::ThumbDragHandler::OnDragStart(WorldPosition inputPosition) {
-    Base::OnDragStart(inputPosition);
-
-    GUARD(owner)
-    auto owner = this->owner;
-    LOCK(target)->OnDragThumbStart(*owner, inputPosition);
-}
-
-void SliderControl::ThumbDragHandler::OnDragEnd() {
-    Base::OnDragEnd();
-
-    LOCK(target)->OnDragThumbEnd();
-}
-
-void SliderControl::ThumbDragHandler::OnDragUpdate(WorldPosition inputPosition) {
-    GUARD(owner)
-    auto owner = this->owner;
-    LOCK(target)->OnDragThumbUpdate(*owner, inputPosition);
 }

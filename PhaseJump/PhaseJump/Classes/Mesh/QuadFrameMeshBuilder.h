@@ -42,13 +42,13 @@ namespace PJ {
             auto trianglesSize = meshVertexCount * 3;
             VectorList<uint32_t> triangles(trianglesSize, 0);
             auto uvSize = meshVertexCount;
-            VectorList<Vector2> uvs(uvSize, Vector2::zero);
+            VectorList<Vector2> uvs(uvSize, vec2Zero);
 
             // Outer frame
-            vertices[0] = Vector3(-worldSize.x / 2.0f, worldSize.y * 0.5f * Vector2::up.y, 0);
-            vertices[1] = Vector3(worldSize.x / 2.0f, worldSize.y * 0.5f * Vector2::up.y, 0);
-            vertices[2] = Vector3(worldSize.x / 2.0f, worldSize.y * 0.5f * Vector2::down.y, 0);
-            vertices[3] = Vector3(-worldSize.x / 2.0f, worldSize.y * 0.5f * Vector2::down.y, 0);
+            vertices[0] = Vector3(-worldSize.x / 2.0f, worldSize.y * 0.5f * vecUp, 0);
+            vertices[1] = Vector3(worldSize.x / 2.0f, worldSize.y * 0.5f * vecUp, 0);
+            vertices[2] = Vector3(worldSize.x / 2.0f, worldSize.y * 0.5f * vecDown, 0);
+            vertices[3] = Vector3(-worldSize.x / 2.0f, worldSize.y * 0.5f * vecDown, 0);
             uvs[0] = Vector2(0, 1);
             uvs[1] = Vector2(1, 1);
             uvs[2] = Vector2(1, 0);
@@ -59,10 +59,10 @@ namespace PJ {
                 std::abs(worldSize.x - strokeSize.x * 2.0f),
                 std::abs(worldSize.y - strokeSize.y * 2.0f)
             );
-            vertices[4] = Vector3(-frameSize.x / 2.0f, frameSize.y * 0.5f * Vector2::up.y, 0);
-            vertices[5] = Vector3(frameSize.x / 2.0f, frameSize.y * 0.5f * Vector2::up.y, 0);
-            vertices[6] = Vector3(frameSize.x / 2.0f, frameSize.y * 0.5f * Vector2::down.y, 0);
-            vertices[7] = Vector3(-frameSize.x / 2.0f, frameSize.y * 0.5f * Vector2::down.y, 0);
+            vertices[4] = Vector3(-frameSize.x / 2.0f, frameSize.y * 0.5f * vecUp, 0);
+            vertices[5] = Vector3(frameSize.x / 2.0f, frameSize.y * 0.5f * vecUp, 0);
+            vertices[6] = Vector3(frameSize.x / 2.0f, frameSize.y * 0.5f * vecDown, 0);
+            vertices[7] = Vector3(-frameSize.x / 2.0f, frameSize.y * 0.5f * vecDown, 0);
 
             auto frameRatioX = strokeSize.x / worldSize.x;
             auto frameRatioY = strokeSize.y / worldSize.y;

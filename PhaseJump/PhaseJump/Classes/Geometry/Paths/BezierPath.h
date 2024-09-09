@@ -1,6 +1,6 @@
-#ifndef PJBEZIERPATH_H
-#define PJBEZIERPATH_H
+#pragma once
 
+#include "SomePath.h"
 #include "Vector3.h"
 #include "VectorList.h"
 #include <memory>
@@ -15,10 +15,20 @@ namespace PJ {
     class BezierPath : public SomePath {
         // TODO: Unit tests
     public:
+        using Base = SomePath;
+        using This = BezierPath;
+
         VectorList<Vector3> controlPoints;
+
+        BezierPath() {}
 
         BezierPath(VectorList<Vector3> controlPoints) :
             controlPoints(controlPoints) {}
+
+        This& SetControlPoints(VectorList<Vector3> const& value) {
+            this->controlPoints = value;
+            return *this;
+        }
 
         Vector3 PositionAt(float progress) override {
             auto t = progress;
@@ -53,5 +63,3 @@ namespace PJ {
         }
     };
 } // namespace PJ
-
-#endif

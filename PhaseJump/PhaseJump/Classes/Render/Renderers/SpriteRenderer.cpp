@@ -1,6 +1,7 @@
 #include "SpriteRenderer.h"
 #include "QuadMeshBuilder.h"
 #include "RenderContextModel.h"
+#include "RenderFeature.h"
 #include "RenderMaterial.h"
 #include "RenderModel.h"
 #include "RenderModelBuilder.h"
@@ -12,40 +13,51 @@ using namespace std;
 using namespace PJ;
 
 SpriteRenderer::SpriteRenderer(SP<SomeTexture> texture) :
+    Base(texture ? Vector3(texture->size.x, texture->size.y, 0) : Vector3::zero),
     texture(texture) {
-    material = MAKE<RenderMaterial>();
+    model.material = MAKE<RenderMaterial>();
     GUARD(texture);
 
-    material->Add(texture);
+    model.SetMeshBuilderFunc([](RendererModel const& model) {
+        QuadMeshBuilder builder(model.WorldSize());
+        return builder.BuildMesh();
+    });
+
+    model.material->Add(texture);
 
     auto program = SomeShaderProgram::registry.find("texture.vary");
     GUARD(program != SomeShaderProgram::registry.end())
-    material->SetShaderProgram(program->second);
-
-    QuadMeshBuilder builder(Vector2((float)texture->size.x, (float)texture->size.y));
-    mesh = builder.BuildMesh();
+    model.material->SetShaderProgram(program->second);
+    model.material->EnableFeature(RenderFeature::Blend, true);
+    model.SetWorldSize(Vector2(texture->size.x, texture->size.y));
 }
 
-SpriteRenderer::SpriteRenderer(SP<RenderMaterial> material) {
-    this->material = material;
+SpriteRenderer::SpriteRenderer(SP<RenderMaterial> material) :
+    Base(vec2Zero) {
+    model.material = material;
     GUARD(material)
+
+    model.SetMeshBuilderFunc([](RendererModel const& model) {
+        QuadMeshBuilder builder(model.WorldSize());
+        return builder.BuildMesh();
+    });
 
     GUARD(!IsEmpty(material->Textures()))
 
     texture = *material->Textures().begin();
-    QuadMeshBuilder builder(Vector2((float)texture->size.x, (float)texture->size.y));
-    mesh = builder.BuildMesh();
+    model.SetWorldSize(Vector2(texture->size.x, texture->size.y));
 }
 
 VectorList<RenderModel> SpriteRenderer::MakeRenderModels() {
     VectorList<RenderModel> result;
 
+    auto material = model.material;
     if (nullptr == material) {
         PJLog("ERROR. Missing material.");
         return result;
     }
 
-    Mesh mesh = this->mesh;
+    Mesh mesh = model.Mesh();
 
     if (flipX || flipY) {
         std::transform(
@@ -65,22 +77,17 @@ VectorList<RenderModel> SpriteRenderer::MakeRenderModels() {
 
     RenderModelBuilder builder;
     VectorList<SomeTexture*> textures{ texture.get() };
-    auto renderModel = builder.Build(
-        mesh, *material, textures, ModelMatrix(), 0
-    ); // TODO: owner->transform.WorldPosition().z);
+    auto renderModel = builder.Build(*this, mesh, *material, textures);
 
-    renderModel.colors = VectorList<RenderColor>(mesh.vertices.size(), color);
+    renderModel.colors = VectorList<RenderColor>(mesh.Vertices().size(), color);
 
     result.push_back(renderModel);
     return result;
 }
 
 Vector2 SpriteRenderer::Size() const {
-    if (material && texture) {
-        return Vector2((float)texture->size.x, (float)texture->size.y);
-    }
-
-    return Vector2();
+    GUARDR(texture, {})
+    return Vector2((float)texture->size.x, (float)texture->size.y);
 }
 
 void SpriteRenderer::SetColor(Color color) {

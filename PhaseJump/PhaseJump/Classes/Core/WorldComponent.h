@@ -1,9 +1,9 @@
 #pragma once
 
-#include "MultiFunction.h"
 #include "SomePosition.h"
 #include "SomeWorldComponent.h"
 #include "Updatable.h"
+#include "Updatables.h"
 #include "WorldComponentCores.h"
 #include "WorldNode.h"
 #include <memory>
@@ -21,6 +21,7 @@ namespace PJ {
     template <class Core = VoidWorldComponentCore>
     class WorldComponent : public SomeWorldComponent {
     public:
+        using Base = SomeWorldComponent;
         using ComponentList = WorldNode::ComponentList;
         using NodeList = WorldNode::NodeList;
 
@@ -75,6 +76,10 @@ namespace PJ {
 
         // MARK: SomeWorldComponent
 
+        String TypeName() const override {
+            return core.TypeName();
+        }
+
         void Awake() override {
             core.Awake(*this);
         }
@@ -87,7 +92,11 @@ namespace PJ {
             core.LateUpdate(*this);
         }
 
+        // MARK: Updatable
+
         void OnUpdate(TimeSlice time) override {
+            Base::OnUpdate(time);
+
             core.OnUpdate(*this, time);
         }
 

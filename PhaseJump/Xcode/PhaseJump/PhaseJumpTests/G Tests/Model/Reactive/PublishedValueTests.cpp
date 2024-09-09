@@ -20,7 +20,7 @@ TEST(PublishedValue, Test_Lifecycle)
 
     List<int> values;
 
-    auto subscription = sut->subject.Receive([&values](int const& value) {
+    auto subscription = sut->Receive([&values](int const& value) {
         values.push_back(value);
     });
 

@@ -33,7 +33,7 @@ namespace PJ {
         VectorList<float> uniformFloats;
 
         /// Render features enabled or disabled for this material
-        UnorderedMap<String, RenderFeatureStatus> features;
+        UnorderedMap<String, RenderFeatureState> features;
 
         /// Cached propertyId that identifies the properties of this material, to determine if it
         /// can be combined with another render material. This also allows us to group propertyIds
@@ -83,7 +83,7 @@ namespace PJ {
             return uniformFloats;
         }
 
-        UnorderedMap<String, RenderFeatureStatus> const& Features() const {
+        UnorderedMap<String, RenderFeatureState> const& Features() const {
             return features;
         }
 
@@ -124,7 +124,7 @@ namespace PJ {
 
         void EnableFeature(String feature, bool isEnabled) {
             features[feature] =
-                isEnabled ? RenderFeatureStatus::Enable : RenderFeatureStatus::Disable;
+                isEnabled ? RenderFeatureState::Enable : RenderFeatureState::Disable;
 
             OnChange();
         }

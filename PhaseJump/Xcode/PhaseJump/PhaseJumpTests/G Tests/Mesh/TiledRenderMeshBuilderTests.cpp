@@ -24,152 +24,159 @@ TEST(TiledMeshBuilder, TestBuildMeshEven) {
     TiledMeshBuilder builder(Vector2(10, 10), Vector2(5, 5));
     auto sut = builder.BuildMesh();
 
-    EXPECT_EQ(16, sut.vertices.size());
+    EXPECT_EQ(16, sut.Vertices().size());
 
-    EXPECT_EQ(Vector2(-5, 5), (Vector2)sut.vertices[0]);
-    EXPECT_EQ(Vector2(0, 5), (Vector2)sut.vertices[1]);
-    EXPECT_EQ(Vector2(-5, 0), (Vector2)sut.vertices[4]);
-    EXPECT_EQ(Vector2(0, 0), (Vector2)sut.vertices[5]);
+    EXPECT_EQ(Vector2(-5, 5), (Vector2)sut.Vertices()[0]);
+    EXPECT_EQ(Vector2(0, 5), (Vector2)sut.Vertices()[1]);
+    EXPECT_EQ(Vector2(-5, 0), (Vector2)sut.Vertices()[4]);
+    EXPECT_EQ(Vector2(0, 0), (Vector2)sut.Vertices()[5]);
 
-    EXPECT_EQ(Vector2(0, 5), (Vector2)sut.vertices[2]);
-    EXPECT_EQ(Vector2(5, 5), (Vector2)sut.vertices[3]);
-    EXPECT_EQ(Vector2(0, 0), (Vector2)sut.vertices[6]);
-    EXPECT_EQ(Vector2(5, 0), (Vector2)sut.vertices[7]);
+    EXPECT_EQ(Vector2(0, 5), (Vector2)sut.Vertices()[2]);
+    EXPECT_EQ(Vector2(5, 5), (Vector2)sut.Vertices()[3]);
+    EXPECT_EQ(Vector2(0, 0), (Vector2)sut.Vertices()[6]);
+    EXPECT_EQ(Vector2(5, 0), (Vector2)sut.Vertices()[7]);
 
-    EXPECT_EQ(Vector2(-5, 0), (Vector2)sut.vertices[8]);
-    EXPECT_EQ(Vector2(0, 0), (Vector2)sut.vertices[9]);
-    EXPECT_EQ(Vector2(-5, -5), (Vector2)sut.vertices[12]);
-    EXPECT_EQ(Vector2(0, -5), (Vector2)sut.vertices[13]);
+    EXPECT_EQ(Vector2(-5, 0), (Vector2)sut.Vertices()[8]);
+    EXPECT_EQ(Vector2(0, 0), (Vector2)sut.Vertices()[9]);
+    EXPECT_EQ(Vector2(-5, -5), (Vector2)sut.Vertices()[12]);
+    EXPECT_EQ(Vector2(0, -5), (Vector2)sut.Vertices()[13]);
 
-    EXPECT_EQ(Vector2(0, 0), (Vector2)sut.vertices[10]);
-    EXPECT_EQ(Vector2(5, 0), (Vector2)sut.vertices[11]);
-    EXPECT_EQ(Vector2(0, -5), (Vector2)sut.vertices[14]);
-    EXPECT_EQ(Vector2(5, -5), (Vector2)sut.vertices[15]);
+    EXPECT_EQ(Vector2(0, 0), (Vector2)sut.Vertices()[10]);
+    EXPECT_EQ(Vector2(5, 0), (Vector2)sut.Vertices()[11]);
+    EXPECT_EQ(Vector2(0, -5), (Vector2)sut.Vertices()[14]);
+    EXPECT_EQ(Vector2(5, -5), (Vector2)sut.Vertices()[15]);
 
-    EXPECT_EQ(16, sut.uvs.size());
+    auto sutUVs = sut.UVs();
 
-    EXPECT_EQ(Vector2(0, 1), sut.uvs[0]);
-    EXPECT_EQ(Vector2(1, 1), sut.uvs[1]);
-    EXPECT_EQ(Vector2(0, 0), sut.uvs[4]);
-    EXPECT_EQ(Vector2(1, 0), sut.uvs[5]);
+    EXPECT_EQ(16, sutUVs.size());
 
-    EXPECT_EQ(Vector2(0, 1), sut.uvs[2]);
-    EXPECT_EQ(Vector2(1, 1), sut.uvs[3]);
-    EXPECT_EQ(Vector2(0, 0), sut.uvs[6]);
-    EXPECT_EQ(Vector2(1, 0), sut.uvs[7]);
+    EXPECT_EQ(Vector2(0, 1), sutUVs[0]);
+    EXPECT_EQ(Vector2(1, 1), sutUVs[1]);
+    EXPECT_EQ(Vector2(0, 0), sutUVs[4]);
+    EXPECT_EQ(Vector2(1, 0), sutUVs[5]);
 
-    EXPECT_EQ(Vector2(0, 1), sut.uvs[8]);
-    EXPECT_EQ(Vector2(1, 1), sut.uvs[9]);
-    EXPECT_EQ(Vector2(0, 0), sut.uvs[12]);
-    EXPECT_EQ(Vector2(1, 0), sut.uvs[13]);
+    EXPECT_EQ(Vector2(0, 1), sutUVs[2]);
+    EXPECT_EQ(Vector2(1, 1), sutUVs[3]);
+    EXPECT_EQ(Vector2(0, 0), sutUVs[6]);
+    EXPECT_EQ(Vector2(1, 0), sutUVs[7]);
 
-    EXPECT_EQ(Vector2(0, 1), sut.uvs[10]);
-    EXPECT_EQ(Vector2(1, 1), sut.uvs[11]);
-    EXPECT_EQ(Vector2(0, 0), sut.uvs[14]);
-    EXPECT_EQ(Vector2(1, 0), sut.uvs[15]);
+    EXPECT_EQ(Vector2(0, 1), sutUVs[8]);
+    EXPECT_EQ(Vector2(1, 1), sutUVs[9]);
+    EXPECT_EQ(Vector2(0, 0), sutUVs[12]);
+    EXPECT_EQ(Vector2(1, 0), sutUVs[13]);
 
-    EXPECT_EQ(24, sut.triangles.size());
-    EXPECT_EQ(0, sut.triangles[0]);
-    EXPECT_EQ(1, sut.triangles[1]);
-    EXPECT_EQ(4, sut.triangles[2]);
-    EXPECT_EQ(1, sut.triangles[3]);
-    EXPECT_EQ(5, sut.triangles[4]);
-    EXPECT_EQ(4, sut.triangles[5]);
+    EXPECT_EQ(Vector2(0, 1), sutUVs[10]);
+    EXPECT_EQ(Vector2(1, 1), sutUVs[11]);
+    EXPECT_EQ(Vector2(0, 0), sutUVs[14]);
+    EXPECT_EQ(Vector2(1, 0), sutUVs[15]);
 
-    EXPECT_EQ(2, sut.triangles[6]);
-    EXPECT_EQ(3, sut.triangles[7]);
-    EXPECT_EQ(6, sut.triangles[8]);
-    EXPECT_EQ(3, sut.triangles[9]);
-    EXPECT_EQ(7, sut.triangles[10]);
-    EXPECT_EQ(6, sut.triangles[11]);
+    auto sutTris = sut.Triangles();
 
-    EXPECT_EQ(8, sut.triangles[12]);
-    EXPECT_EQ(9, sut.triangles[13]);
-    EXPECT_EQ(12, sut.triangles[14]);
-    EXPECT_EQ(9, sut.triangles[15]);
-    EXPECT_EQ(13, sut.triangles[16]);
-    EXPECT_EQ(12, sut.triangles[17]);
+    EXPECT_EQ(24, sutTris.size());
+    EXPECT_EQ(0, sutTris[0]);
+    EXPECT_EQ(1, sutTris[1]);
+    EXPECT_EQ(4, sutTris[2]);
+    EXPECT_EQ(1, sutTris[3]);
+    EXPECT_EQ(5, sutTris[4]);
+    EXPECT_EQ(4, sutTris[5]);
 
-    EXPECT_EQ(10, sut.triangles[18]);
-    EXPECT_EQ(11, sut.triangles[19]);
-    EXPECT_EQ(14, sut.triangles[20]);
-    EXPECT_EQ(11, sut.triangles[21]);
-    EXPECT_EQ(15, sut.triangles[22]);
-    EXPECT_EQ(14, sut.triangles[23]);
+    EXPECT_EQ(2, sutTris[6]);
+    EXPECT_EQ(3, sutTris[7]);
+    EXPECT_EQ(6, sutTris[8]);
+    EXPECT_EQ(3, sutTris[9]);
+    EXPECT_EQ(7, sutTris[10]);
+    EXPECT_EQ(6, sutTris[11]);
+
+    EXPECT_EQ(8, sutTris[12]);
+    EXPECT_EQ(9, sutTris[13]);
+    EXPECT_EQ(12, sutTris[14]);
+    EXPECT_EQ(9, sutTris[15]);
+    EXPECT_EQ(13, sutTris[16]);
+    EXPECT_EQ(12, sutTris[17]);
+
+    EXPECT_EQ(10, sutTris[18]);
+    EXPECT_EQ(11, sutTris[19]);
+    EXPECT_EQ(14, sutTris[20]);
+    EXPECT_EQ(11, sutTris[21]);
+    EXPECT_EQ(15, sutTris[22]);
+    EXPECT_EQ(14, sutTris[23]);
 }
 
 TEST(TiledMeshBuilder, TestUVBoundsInternal) {
     TiledMeshBuilder builder(Vector2(10, 10), Vector2(5, 5), UVRect(Vector2(.1, .1), Vector2(.5, .5)));
     auto sut = builder.BuildMesh();
+    auto sutUVs = sut.UVs();
 
-    EXPECT_EQ(16, sut.uvs.size());
+    EXPECT_EQ(16, sutUVs.size());
 
-    EXPECT_EQ(Vector2(.1, .6), sut.uvs[0]);
-    EXPECT_EQ(Vector2(.6, .6), sut.uvs[1]);
-    EXPECT_EQ(Vector2(.1, .1), sut.uvs[4]);
-    EXPECT_EQ(Vector2(.6, .1), sut.uvs[5]);
+    EXPECT_EQ(Vector2(.1, .6), sutUVs[0]);
+    EXPECT_EQ(Vector2(.6, .6), sutUVs[1]);
+    EXPECT_EQ(Vector2(.1, .1), sutUVs[4]);
+    EXPECT_EQ(Vector2(.6, .1), sutUVs[5]);
 
-    EXPECT_EQ(Vector2(.1, .6), sut.uvs[2]);
-    EXPECT_EQ(Vector2(.6, .6), sut.uvs[3]);
-    EXPECT_EQ(Vector2(.1, .1), sut.uvs[6]);
-    EXPECT_EQ(Vector2(.6, .1), sut.uvs[7]);
+    EXPECT_EQ(Vector2(.1, .6), sutUVs[2]);
+    EXPECT_EQ(Vector2(.6, .6), sutUVs[3]);
+    EXPECT_EQ(Vector2(.1, .1), sutUVs[6]);
+    EXPECT_EQ(Vector2(.6, .1), sutUVs[7]);
 
-    EXPECT_EQ(Vector2(.1, .6), sut.uvs[8]);
-    EXPECT_EQ(Vector2(.6, .6), sut.uvs[9]);
-    EXPECT_EQ(Vector2(.1, .1), sut.uvs[12]);
-    EXPECT_EQ(Vector2(.6, .1), sut.uvs[13]);
+    EXPECT_EQ(Vector2(.1, .6), sutUVs[8]);
+    EXPECT_EQ(Vector2(.6, .6), sutUVs[9]);
+    EXPECT_EQ(Vector2(.1, .1), sutUVs[12]);
+    EXPECT_EQ(Vector2(.6, .1), sutUVs[13]);
 
-    EXPECT_EQ(Vector2(.1, .6), sut.uvs[10]);
-    EXPECT_EQ(Vector2(.6, .6), sut.uvs[11]);
-    EXPECT_EQ(Vector2(.1, .1), sut.uvs[14]);
-    EXPECT_EQ(Vector2(.6, .1), sut.uvs[15]);
+    EXPECT_EQ(Vector2(.1, .6), sutUVs[10]);
+    EXPECT_EQ(Vector2(.6, .6), sutUVs[11]);
+    EXPECT_EQ(Vector2(.1, .1), sutUVs[14]);
+    EXPECT_EQ(Vector2(.6, .1), sutUVs[15]);
 }
 
 TEST(TiledMeshBuilder, TestBuildMeshUneven) {
     TiledMeshBuilder builder(Vector2(10, 10), Vector2(8, 8));
     auto sut = builder.BuildMesh();
 
-    EXPECT_EQ(16, sut.vertices.size());
+    EXPECT_EQ(16, sut.Vertices().size());
 
-    EXPECT_EQ(Vector2(-5, 5), (Vector2)sut.vertices[0]);
-    EXPECT_EQ(Vector2(3, 5), (Vector2)sut.vertices[1]);
-    EXPECT_EQ(Vector2(-5, -3), (Vector2)sut.vertices[4]);
-    EXPECT_EQ(Vector2(3, -3), (Vector2)sut.vertices[5]);
+    EXPECT_EQ(Vector2(-5, 5), (Vector2)sut.Vertices()[0]);
+    EXPECT_EQ(Vector2(3, 5), (Vector2)sut.Vertices()[1]);
+    EXPECT_EQ(Vector2(-5, -3), (Vector2)sut.Vertices()[4]);
+    EXPECT_EQ(Vector2(3, -3), (Vector2)sut.Vertices()[5]);
 
-    EXPECT_EQ(Vector2(3, 5), (Vector2)sut.vertices[2]);
-    EXPECT_EQ(Vector2(5, 5), (Vector2)sut.vertices[3]);
-    EXPECT_EQ(Vector2(3, -3), (Vector2)sut.vertices[6]);
-    EXPECT_EQ(Vector2(5, -3), (Vector2)sut.vertices[7]);
+    EXPECT_EQ(Vector2(3, 5), (Vector2)sut.Vertices()[2]);
+    EXPECT_EQ(Vector2(5, 5), (Vector2)sut.Vertices()[3]);
+    EXPECT_EQ(Vector2(3, -3), (Vector2)sut.Vertices()[6]);
+    EXPECT_EQ(Vector2(5, -3), (Vector2)sut.Vertices()[7]);
 
-    EXPECT_EQ(Vector2(-5, -3), (Vector2)sut.vertices[8]);
-    EXPECT_EQ(Vector2(3, -3), (Vector2)sut.vertices[9]);
-    EXPECT_EQ(Vector2(-5, -5), (Vector2)sut.vertices[12]);
-    EXPECT_EQ(Vector2(3, -5), (Vector2)sut.vertices[13]);
+    EXPECT_EQ(Vector2(-5, -3), (Vector2)sut.Vertices()[8]);
+    EXPECT_EQ(Vector2(3, -3), (Vector2)sut.Vertices()[9]);
+    EXPECT_EQ(Vector2(-5, -5), (Vector2)sut.Vertices()[12]);
+    EXPECT_EQ(Vector2(3, -5), (Vector2)sut.Vertices()[13]);
 
-    EXPECT_EQ(Vector2(3, -3), (Vector2)sut.vertices[10]);
-    EXPECT_EQ(Vector2(5, -3), (Vector2)sut.vertices[11]);
-    EXPECT_EQ(Vector2(3, -5), (Vector2)sut.vertices[14]);
-    EXPECT_EQ(Vector2(5, -5), (Vector2)sut.vertices[15]);
+    EXPECT_EQ(Vector2(3, -3), (Vector2)sut.Vertices()[10]);
+    EXPECT_EQ(Vector2(5, -3), (Vector2)sut.Vertices()[11]);
+    EXPECT_EQ(Vector2(3, -5), (Vector2)sut.Vertices()[14]);
+    EXPECT_EQ(Vector2(5, -5), (Vector2)sut.Vertices()[15]);
 
-    EXPECT_EQ(16, sut.uvs.size());
+    auto sutUVs = sut.UVs();
+    
+    EXPECT_EQ(16, sutUVs.size());
 
-    EXPECT_EQ(Vector2(0, 1), sut.uvs[0]);
-    EXPECT_EQ(Vector2(1, 1), sut.uvs[1]);
-    EXPECT_EQ(Vector2(0, 0), sut.uvs[4]);
-    EXPECT_EQ(Vector2(1, 0), sut.uvs[5]);
+    EXPECT_EQ(Vector2(0, 1), sutUVs[0]);
+    EXPECT_EQ(Vector2(1, 1), sutUVs[1]);
+    EXPECT_EQ(Vector2(0, 0), sutUVs[4]);
+    EXPECT_EQ(Vector2(1, 0), sutUVs[5]);
 
-    EXPECT_EQ(Vector2(0, 1), sut.uvs[2]);
-    EXPECT_EQ(Vector2(0.25, 1), sut.uvs[3]);
-    EXPECT_EQ(Vector2(0, 0), sut.uvs[6]);
-    EXPECT_EQ(Vector2(0.25, 0), sut.uvs[7]);
+    EXPECT_EQ(Vector2(0, 1), sutUVs[2]);
+    EXPECT_EQ(Vector2(0.25, 1), sutUVs[3]);
+    EXPECT_EQ(Vector2(0, 0), sutUVs[6]);
+    EXPECT_EQ(Vector2(0.25, 0), sutUVs[7]);
 
-    EXPECT_EQ(Vector2(0, 1), sut.uvs[8]);
-    EXPECT_EQ(Vector2(1, 1), sut.uvs[9]);
-    EXPECT_EQ(Vector2(0, 0.75), sut.uvs[12]);
-    EXPECT_EQ(Vector2(1, 0.75), sut.uvs[13]);
+    EXPECT_EQ(Vector2(0, 1), sutUVs[8]);
+    EXPECT_EQ(Vector2(1, 1), sutUVs[9]);
+    EXPECT_EQ(Vector2(0, 0.75), sutUVs[12]);
+    EXPECT_EQ(Vector2(1, 0.75), sutUVs[13]);
 
-    EXPECT_EQ(Vector2(0, 1), sut.uvs[10]);
-    EXPECT_EQ(Vector2(0.25, 1), sut.uvs[11]);
-    EXPECT_EQ(Vector2(0, 0.75), sut.uvs[14]);
-    EXPECT_EQ(Vector2(0.25, 0.75), sut.uvs[15]);
+    EXPECT_EQ(Vector2(0, 1), sutUVs[10]);
+    EXPECT_EQ(Vector2(0.25, 1), sutUVs[11]);
+    EXPECT_EQ(Vector2(0, 0.75), sutUVs[14]);
+    EXPECT_EQ(Vector2(0.25, 0.75), sutUVs[15]);
 }

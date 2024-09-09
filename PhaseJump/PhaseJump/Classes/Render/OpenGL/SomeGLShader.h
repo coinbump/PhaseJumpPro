@@ -1,5 +1,4 @@
-#ifndef PJSOMEGLSHADER_H
-#define PJSOMEGLSHADER_H
+#pragma once
 
 #include "FilePath.h"
 #include "GLHeaders.h"
@@ -43,5 +42,3 @@ namespace PJ {
         VertexGLShader();
     };
 } // namespace PJ
-
-#endif

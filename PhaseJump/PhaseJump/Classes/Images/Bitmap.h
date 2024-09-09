@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <memory>
 #include <optional>
+#include <span>
 
 /*
  RATING: 5 stars
@@ -54,8 +55,67 @@ namespace PJ {
         Vector2Int size;
 
     public:
-        Pixel* Data() const {
-            return pixels.size() > 0 ? const_cast<Pixel*>(pixels.data()) : nullptr;
+        void FlipV() {
+            GUARD(size.x > 0 && size.y > 0)
+
+            for (int i = 0; i < size.y; i++) {
+                auto j = size.y - i - 1;
+                GUARD_BREAK(j > i)
+
+                auto iData = ScanLineData(i);
+                auto jData = ScanLineData(j);
+
+                VectorList<Pixel> swapLine;
+                swapLine.assign(iData.begin(), iData.end());
+
+                std::copy(jData.begin(), jData.end(), iData.begin());
+                std::copy(swapLine.begin(), swapLine.end(), jData.begin());
+            }
+        }
+
+        template <class Check>
+        bool AnyPixelsOnScanLine(int y, Check check) {
+            auto lineData = ScanLineData(y);
+            GUARDR(!lineData.empty(), false)
+
+            for (auto& pixel : lineData) {
+                if (check(pixel)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        template <class Check>
+        std::optional<int> FirstPixelIndexOnScanLine(int y, Check check) {
+            auto lineData = ScanLineData(y);
+            GUARDR(!lineData.empty(), std::nullopt)
+
+            for (size_t i = 0; i < lineData.size(); i++) {
+                if (check(lineData[i])) {
+                    return i;
+                }
+            }
+
+            return std::nullopt;
+        }
+
+        std::span<Pixel> Data() {
+            return pixels.size() > 0 ? std::span<Pixel>(pixels) : std::span<Pixel>();
+        }
+
+        std::span<Pixel> ScanLineData(int y) {
+            GUARDR(IsValidY(y), std::span<Pixel>());
+
+            return std::span<Pixel>(pixels.data() + (size.x * y), size.x);
+        }
+
+        bool IsValidY(int y) const {
+            GUARDR(pixels.size() > 0 && size.x > 0 && size.y > 0, false);
+            GUARDR(y >= 0 && y < size.y, false);
+
+            return true;
         }
 
         size_t DataSize() const {
@@ -90,9 +150,7 @@ namespace PJ {
 
         Bitmap(Vector2Int size, void* pixels = nullptr, size_t pixelsDataSize = 0) {
             this->size = size;
-            if (size.x <= 0 || size.y <= 0) {
-                return;
-            }
+            GUARD(size.x > 0 && size.y > 0)
 
             auto pixelCount = size.x * size.y;
             this->pixels.resize(pixelCount);
@@ -104,14 +162,17 @@ namespace PJ {
             memcpy(this->pixels.data(), pixels, std::min(totalSize, pixelsDataSize));
         }
 
-        Pixel* PixelDataAt(Vector2Int loc) const {
+        std::span<Pixel> PixelDataAt(Vector2Int loc, size_t count) const {
             auto index = LocToIndex(loc);
-            GUARDR(index, nullptr)
+            GUARDR(index, std::span<Pixel>())
 
-            return (Pixel*)pixels.data() + index.value();
+            // Check: pixels.size is 2, index is 1, max # of items copied is 1 (2 - 1)
+            auto maxCount = pixels.size() - *index;
+            auto minCount = std::min(count, maxCount);
+            return std::span<Pixel>((Pixel*)pixels.data() + *index, minCount);
         }
 
-        std::optional<uint32_t> LocToIndex(Vector2Int loc) const {
+        std::optional<int> LocToIndex(Vector2Int loc) const {
             GUARDR(loc.x >= 0 && loc.y >= 0, std::nullopt)
             GUARDR(loc.x < size.x && loc.y < size.y, std::nullopt)
 
@@ -124,27 +185,27 @@ namespace PJ {
         Color PixelColorAt(Vector2Int loc) const {
             Color result = Color::clear;
 
-            auto pixelData = PixelDataAt(loc);
-            GUARDR(pixelData, result)
+            auto pixelData = PixelDataAt(loc, 1);
+            GUARDR(!pixelData.empty(), result)
 
-            return *pixelData;
+            return pixelData[0];
         }
 
         RGBAColor PixelColor32At(Vector2Int loc) const {
             RGBAColor result(0, 0, 0, 0);
 
-            auto pixelData = PixelDataAt(loc);
-            GUARDR(pixelData, result);
+            auto pixelData = PixelDataAt(loc, 1);
+            GUARDR(!pixelData.empty(), result);
 
-            return *pixelData;
+            return pixelData[0];
         }
 
         void SetPixelColor(Vector2Int loc, Color color) {
-            auto pixelData = PixelDataAt(loc);
-            GUARD(pixelData);
+            auto pixelData = PixelDataAt(loc, 1);
+            GUARD(!pixelData.empty());
 
             RGBAColor color32 = color;
-            *pixelData = color32;
+            pixelData[0] = color32;
         }
 
         void Resize(Vector2Int size) {
@@ -163,6 +224,7 @@ namespace PJ {
                 return;
             }
 
+            // FUTURE: update with std::span and std::copy
             char* sourceData = (char*)oldPixels.data();
             size_t sourceLineSize = PixelSize() * oldSize.x;
             size_t destLineSize = PixelSize() * size.x;
@@ -174,7 +236,9 @@ namespace PJ {
             GUARD(copyHeight > 0)
 
             for (int y = 0; y < copyHeight; y++) {
-                memcpy(PixelDataAt(Vector2Int(0, y)), sourceData, lineCopySize);
+                memcpy(
+                    PixelDataAt(Vector2Int(0, y), lineCopySize).data(), sourceData, lineCopySize
+                );
                 sourceData += sourceLineSize;
             }
         }
@@ -184,10 +248,21 @@ namespace PJ {
             return &pixels[index];
         }
 
+        Pixel const* operator[](size_t index) const {
+            GUARDR(index >= 0 && index < this->pixels.size(), nullptr)
+            return &pixels[index];
+        }
+
         Pixel* operator[](Vector2Int loc) {
             auto index = LocToIndex(loc);
             GUARDR(index, nullptr)
-            return (*this)[index.value()];
+            return &(pixels[*index]);
+        }
+
+        Pixel const* operator[](Vector2Int loc) const {
+            auto index = LocToIndex(loc);
+            GUARDR(index, nullptr)
+            return &(pixels[*index]);
         }
     };
 

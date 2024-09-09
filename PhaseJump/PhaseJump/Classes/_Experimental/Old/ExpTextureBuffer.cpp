@@ -1,4 +1,9 @@
+#include "SomeRenderContext.h"
 #include <stdio.h>
+
+namespace PJ {
+    class SomeTextureBuffer : public SomeRenderContext {};
+} // namespace PJ
 
 #if FALSE
 
@@ -152,6 +157,7 @@ void PJ_GLES2TextureBuffer::Bind() {
 }
 
 void PJ_GLES2TextureBuffer::Clear() {
+    // TODO: send to render engine
     glClear(GL_COLOR_BUFFER_BIT);
 }
 

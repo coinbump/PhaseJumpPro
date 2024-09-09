@@ -7,24 +7,14 @@
 
 using namespace PJ;
 
-void ActionRenderer::RenderInto(RenderContextModel const& contextModel) {
-    render(contextModel);
-}
-
 VectorList<RenderModel>
 SomeRenderer::MakeRenderModels(Mesh const& mesh, VectorList<SomeTexture*> textures) {
     VectorList<RenderModel> result;
-
-    if (nullptr == material) {
-        PJLog("ERROR. Missing material.");
-        return result;
-    }
+    GUARDR(owner, result)
+    GUARDR_LOG(model.material, result, String("ERROR. Missing material"))
 
     RenderModelBuilder builder;
-    auto renderModel = builder.Build(
-        mesh, *material, textures, ModelMatrix(),
-        0 // TODO: rethink this: owner->transform.WorldPosition().z
-    );
+    auto renderModel = builder.Build(*this, mesh, *model.material, textures);
 
     Add(result, renderModel);
     return result;

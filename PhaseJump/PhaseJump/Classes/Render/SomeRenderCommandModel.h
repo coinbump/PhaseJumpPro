@@ -32,8 +32,8 @@ namespace PJ {
     };
 
     namespace RenderCommandId {
-        static auto const ProjectionMatrixLoadOrthographic = "projection.matrix.load.orthographic";
-        static auto const LoadTranslate = "load.translate";
+        auto constexpr ProjectionMatrixLoadOrthographic = "projection.matrix.load.orthographic";
+        auto constexpr LoadTranslate = "load.translate";
     } // namespace RenderCommandId
 
     namespace RenderCommandModels {

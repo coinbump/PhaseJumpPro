@@ -1,9 +1,9 @@
 #pragma once
 
 #include "Base.h"
-#include "Function.h"
 #include "Playable.h"
 #include "Runner.h"
+#include <functional>
 
 /*
  RATING: 5 stars
@@ -29,11 +29,8 @@ namespace PJ {
 
         Runner runner;
 
-        // TODO: SomeFunction probably isn't needed, because you can wrap the TimedPlayable in an
-        // outer object that has the state that the func needs
-        /// Allows  functional composition of behavior
-        UP<SomeFunction<void(This&, TimeSlice)>> updateFunc;
-        UP<SomeFunction<void(This&)>> onFinishFunc;
+        std::function<void(This&, TimeSlice)> onUpdateFunc;
+        std::function<void(This&)> onFinishFunc;
 
         TimedPlayable(float duration, RunType runType) :
             runner(runType),
@@ -49,7 +46,7 @@ namespace PJ {
         }
 
         void Stop() override {
-            runner.runType = RunType::RunOnce;
+            runner.runType = RunType::Once;
             runner.SetIsFinished(true);
         }
 
@@ -60,7 +57,7 @@ namespace PJ {
 
         virtual void OnFinish() {
             GUARD(onFinishFunc);
-            (*onFinishFunc)(*this);
+            (onFinishFunc)(*this);
         }
 
         virtual void OnReset() {}
@@ -87,8 +84,8 @@ namespace PJ {
         void OnUpdate(TimeSlice time) override {
             GUARD(!isPaused);
 
-            GUARD(updateFunc);
-            (*updateFunc)(*this, TimeSlice(TimeDeltaFor(time)));
+            GUARD(onUpdateFunc);
+            (onUpdateFunc)(*this, TimeSlice(TimeDeltaFor(time)));
         }
 
         void SetDuration(float duration) {

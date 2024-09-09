@@ -26,17 +26,23 @@ namespace WorldNodeTests {
 
 using namespace WorldNodeTests;
 
+TEST(WorldNode, Id)
+{
+    SP<WorldNode> sut = MAKE<WorldNode>("name");
+    EXPECT_EQ((uint64_t)sut.get(), sut->IntId());
+}
+
 TEST(WorldNode, Toggles)
 {
     WorldNode sut("name");
     EXPECT_EQ(String("name"), sut.name);
-    EXPECT_TRUE(sut.IsActive());
+    EXPECT_TRUE(sut.IsEnabled());
     EXPECT_FALSE(sut.IsAwake());
     EXPECT_FALSE(sut.IsStarted());
     EXPECT_FALSE(sut.IsDestroyed());
 
-    sut.ToggleActive();
-    EXPECT_FALSE(sut.IsActive());
+    sut.ToggleEnable();
+    EXPECT_FALSE(sut.IsEnabled());
 
     sut.Destroy();
     EXPECT_TRUE(sut.IsDestroyed());
@@ -107,7 +113,7 @@ TEST(WorldNode, AddComponent_Null)
 TEST(WorldNode, AddComponentT)
 {
     WorldNode sut("");
-    EXPECT_NE(nullptr,  sut.AddComponent<WorldComponent<>>());
+    sut.AddComponent<WorldComponent<>>();
     EXPECT_EQ(1, sut.Components().size());
 }
 

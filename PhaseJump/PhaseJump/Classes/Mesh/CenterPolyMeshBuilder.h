@@ -23,27 +23,27 @@ namespace PJ {
             shape(shape) {}
 
         size_t MeshVertexCount(Polygon const& poly) const {
-            return poly.size() + 1;
+            return poly.Count() + 1;
         }
 
         size_t SliceCount(Polygon const& poly) const {
-            GUARDR(!IsEmpty(poly), 0)
-            return poly.size() - 1;
+            GUARDR(!IsEmpty(poly.value), 0)
+            return poly.Count() - 1;
         }
 
         Mesh BuildMesh() override {
             Mesh result;
 
-            auto poly = CenterPolyBuilder().Build(Vector2::zero, worldSize, shape);
+            auto poly = CenterPolyBuilder().Build(vec2Zero, worldSize, shape);
 
-            if (poly.size() < 2) {
+            if (poly.Count() < 2) {
                 return result;
             }
 
             auto vertexCount = MeshVertexCount(poly);
 
             VectorList<Vector3> vertices(vertexCount, Vector3::zero);
-            VectorList<Vector2> uvs(vertexCount, Vector2::zero);
+            VectorList<Vector2> uvs(vertexCount, vec2Zero);
 
             auto sliceCount = SliceCount(poly);
             auto trianglesCount = sliceCount * 3;
@@ -55,14 +55,14 @@ namespace PJ {
             uvs[0] = Vector2(0.5f, 0.5f);
 
             Polygon polyWithCenter;
-            Add(polyWithCenter, vertices[0]);
-            AddRange(polyWithCenter, poly);
+            Add(polyWithCenter.value, vertices[0]);
+            AddRange(polyWithCenter.value, poly.value);
             auto polygonMin = polyWithCenter.Min();
             auto polygonSize = polyWithCenter.Size();
 
             // Edge vertices
             int vi = 1;
-            for (auto& vertex : poly) {
+            for (auto& vertex : poly.value) {
                 vertices[vi] = vertex;
                 uvs[vi] = Vector2(
                     (vertex.x - polygonMin.x) / polygonSize.x,

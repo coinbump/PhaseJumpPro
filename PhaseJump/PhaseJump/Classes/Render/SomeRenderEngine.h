@@ -14,32 +14,14 @@
 namespace PJ {
     struct RenderModel;
     struct RenderContextModel;
-    class RenderProcessModel;
     class RenderMaterial;
 
     /// Standard render phases: start -> preProcess -> processs -> postProcess
     namespace RenderPhaseId {
-        static auto const Start = "start";
-        static auto const PreProcess = "preProcess";
-        static auto const PostProcess = "postProcess";
+        auto constexpr Start = "start";
+        auto constexpr PreProcess = "preProcess";
+        auto constexpr PostProcess = "postProcess";
     } // namespace RenderPhaseId
-
-    using RenderProcessorFunc =
-        std::function<RenderProcessModel(RenderContextModel const&, RenderProcessModel&)>;
-
-    struct RenderPhase {
-        String id;
-        VectorList<RenderProcessorFunc> processorFuncs;
-    };
-
-    struct RenderPipeline {
-        List<RenderPhase> phases;
-    };
-
-    // TODO: Rename to RenderCameraModel?
-    struct RenderProcessModel {
-        VectorList<RenderModel> models;
-    };
 
     struct RenderDrawModel {
         VectorList<RenderModel> models;

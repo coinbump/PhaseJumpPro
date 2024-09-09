@@ -29,7 +29,7 @@ namespace PJ {
             strokeWidth(strokeWidth) {}
 
         size_t PolyVertexCount() const {
-            return poly.size();
+            return poly.Count();
         }
 
         size_t SegmentCount() const {

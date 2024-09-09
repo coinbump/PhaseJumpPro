@@ -19,7 +19,7 @@ namespace PJ {
     using RenderColor = Color;
 #endif
 
-    enum class RenderFeatureStatus {
+    enum class RenderFeatureState {
         Enable,
 
         Disable
@@ -31,26 +31,26 @@ namespace PJ {
         Blend
     };
 
-    std::ostream& operator<<(std::ostream& os, RenderFeatureStatus const& value);
+    std::ostream& operator<<(std::ostream& os, RenderFeatureState const& value);
 
     using TextureAlphaModeType = String;
 
     namespace TextureAlphaMode {
-        static auto const Standard = "standard";
-        static auto const PremultiplyAlpha = "premultiply.alpha";
+        auto constexpr Standard = "standard";
+        auto constexpr PremultiplyAlpha = "premultiply.alpha";
     }; // namespace TextureAlphaMode
 
     using TextureMagnificationType = String;
 
     namespace TextureMagnification {
-        static auto const Nearest = "nearest";
-        static auto const Linear = "linear";
+        auto constexpr Nearest = "nearest";
+        auto constexpr Linear = "linear";
     }; // namespace TextureMagnification
 
     using TextureWrapType = String;
 
     namespace TextureWrap {
-        static auto const Clamp = "clamp";
-        static auto const Repeat = "repeat";
+        auto constexpr Clamp = "clamp";
+        auto constexpr Repeat = "repeat";
     }; // namespace TextureWrap
 } // namespace PJ

@@ -168,7 +168,7 @@ void ExpBitmap::RenderBitmap(ExpBitmap* bitmap, int x, int y) {
     }
 }
 
-bool ExpBitmap::AnyPixelsOnHScanLine(int y, bool test, Color testColor) const {
+bool ExpBitmap::AnyPixelsOnScanLine(int y, bool test, Color testColor) const {
     bool result = false;
 
     // FUTURE: optimize if needed.
@@ -287,7 +287,7 @@ int ExpBitmap::ScanToAnyPixels(ScanLine scan, bool test, Color testColor) const 
         {
             // Scan top to bottom.
             for (int y = 0; y < size.y; y++) {
-                if (AnyPixelsOnHScanLine(y, test, testColor)) {
+                if (AnyPixelsOnScanLine(y, test, testColor)) {
                     result = y;
                     break;
                 }
@@ -309,7 +309,7 @@ int ExpBitmap::ScanToAnyPixels(ScanLine scan, bool test, Color testColor) const 
     case ScanLine::ScanFromBottom:
         {
             for (int y = size.y - 1; y >= 0; y--) {
-                if (AnyPixelsOnHScanLine(y, test, testColor)) {
+                if (AnyPixelsOnScanLine(y, test, testColor)) {
                     result = y;
                     break;
                 }

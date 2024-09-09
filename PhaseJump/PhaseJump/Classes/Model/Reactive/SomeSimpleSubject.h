@@ -5,26 +5,26 @@
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 5/11/24
+ CODE REVIEW: 9/1/24
  */
 namespace PJ {
     /// Backing for a publisher
-    template <typename Input>
-    struct SomeSimpleSubject : public SomeSimplePublisher<Input> {};
+    template <typename Output>
+    struct SomeSimpleSubject : public SomeSimplePublisher<Output> {};
 
     /// Stored value backing for a publisher
-    template <typename Input>
-    struct ValueSimpleSubject : public SomeSimpleSubject<Input> {
-        using Base = SomeSimpleSubject<Input>;
+    template <typename Output>
+    struct ValueSimpleSubject : public SomeSimpleSubject<Output> {
+        using Base = SomeSimpleSubject<Output>;
 
     protected:
-        Input value = Input();
+        Output value = Output();
 
     public:
-        ValueSimpleSubject(Input const& value) :
+        ValueSimpleSubject(Output const& value) :
             value(value) {}
 
-        void Send(Input const& value) {
+        void Send(Output const& value) {
             if (this->isComplete) {
                 return;
             }
@@ -41,14 +41,14 @@ namespace PJ {
             }
         }
 
-        void SubscriberAdded(Base::Subscription& subscription) override {
-            Base::SubscriberAdded(subscription);
+        void OnAdd(Base::Subscription& subscription) override {
+            Base::OnAdd(subscription);
 
             // Send the initial value
             subscription.Receive(value);
         }
 
-        Input const& Value() const {
+        Output const& Value() const {
             return value;
         }
     };

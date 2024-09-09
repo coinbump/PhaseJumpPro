@@ -1,5 +1,7 @@
 #pragma once
 
+#include <iostream>
+
 // MARK: - Template Specialization
 
 /// Enable a function if Type is the same as CheckType
@@ -13,15 +15,38 @@
         typename _Type = TemplateType,              \
         std::enable_if_t<std::is_same<_Type, CheckType>::value>* = nullptr>
 
+#define DELETE_COPY(Type)       \
+    Type(Type const&) = delete; \
+    Type& operator=(Type const&) = delete;
+
 // TODO: add unit tests
 #define GUARD(test) \
     if (!(test)) {  \
         return;     \
     }
 
+#define GUARD_THROW(test, exception) \
+    if (!(test)) {                   \
+        throw exception;             \
+    }
+
 #define GUARDR(test, result) \
     if (!(test)) {           \
         return result;       \
+    }
+
+// TODO: only run if in DEBUG build
+#define GUARD_LOG(test, message)           \
+    if (!(test)) {                         \
+        std::cout << message << std::endl; \
+        return;                            \
+    }
+
+// TODO: only run if in DEBUG build
+#define GUARDR_LOG(test, result, message)  \
+    if (!(test)) {                         \
+        std::cout << message << std::endl; \
+        return result;                     \
     }
 
 #define GUARD_CONTINUE(test) \
@@ -33,3 +58,15 @@
     if (!(test)) {        \
         break;            \
     }
+
+// TODO: re-evaluate these
+// #define STR(a) #a
+//
+///// Adds getter and setters for value
+// #def ine  GET_SET(value, ValueType, ValueFunc)            \
+//    ValueType const& ValueFunc() const {                \
+//        return value;                                   \
+//    }                                                   \
+//    void SetSTR(ValueFunc)(ValueType const& newValue) { \
+//        this->value = newValue;                         \
+//    }

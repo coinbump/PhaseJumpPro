@@ -1,5 +1,4 @@
-#ifndef PJSOMEGLRENDERENGINE_H
-#define PJSOMEGLRENDERENGINE_H
+#pragma once
 
 #include "Base.h"
 #include "Color.h"
@@ -163,5 +162,3 @@ namespace PJ {
         virtual void RunRender(std::function<void()> render);
     };
 } // namespace PJ
-
-#endif

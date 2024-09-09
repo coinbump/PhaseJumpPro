@@ -1,15 +1,19 @@
 #pragma once
 
+#include "RenderProcessingModel.h"
 #include "Vector3.h"
 #include "WorldComponent.h"
 
-// CODE REVIEW: 4/9/23
+/*
+ RATING: 5 stars
+ Simple protocol
+ CODE REVIEW: 9/2/24
+ */
 namespace PJ {
-    class SomeRenderContext;
-    class Matrix4x4;
-    class RenderModel;
+    class RenderProcessingModel;
     class RenderContextModel;
-    class RenderProcessModel;
+    class Mesh;
+    class SomeRenderContext;
 
     /// Transforms the positions of an object from object space to screen space
     class SomeCoordinateConverter {
@@ -24,8 +28,18 @@ namespace PJ {
     /// space
     class SomeCamera : public WorldComponent<>, public SomeCoordinateConverter {
     public:
-        virtual Matrix4x4 Matrix() = 0;
+        /// Allows each camera to have its own render pipeline
+        /// Add render processors to the render system when you want them to be shared between
+        /// cameras
+        RenderProcessingModel processingModel;
+
+        /// If specified, the camera will render into this context instead of the default
+        /// Use when rendering into a texture buffer
+        // TODO: WIP
+        SP<SomeRenderContext> renderContext;
 
         virtual void PreRender(RenderContextModel const& contextModel) {}
+
+        virtual bool IsCulled(Mesh const& mesh) = 0;
     };
 } // namespace PJ

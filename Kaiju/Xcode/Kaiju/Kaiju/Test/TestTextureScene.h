@@ -3,24 +3,36 @@
 #include <PhaseJump/PhaseJump.h>
 #include "TestInput.h"
 
+using namespace std;
 using namespace PJ;
 
-class TestStateHandler : public SomeStateHandler<ButtonControl::StateType> {
-    using StateType = ButtonControlStateType;
+//class TestStateHandler : public SomeStateHandler<ButtonControl::StateType> {
+//    using StateType = ButtonControlStateType;
+//
+//    void OnStateChange(StateType state) override {
+//        GUARD(owner)
+//        
+//        switch (state) {
+//            case StateType::Press:
+//                owner->transform.SetScale(Vector2::Uniform(3.0f));
+//                break;
+//            default:
+//                owner->transform.SetScale(Vector2::Uniform(1.0f));
+//                break;
+//        }
+//    }
+//};
 
-    void OnStateChange(StateType state) override {
-        GUARD(owner)
-        
-        switch (state) {
-            case StateType::Press:
-                owner->transform.SetScale(Vector2::Uniform(3.0f));
-                break;
-            default:
-                owner->transform.SetScale(Vector2::Uniform(1.0f));
-                break;
-        }
-    }
-};
+namespace PJ {
+}
+
+#if FALSE
+// quickBuilder <- allows you to switch which UI you use
+
+// PROBLEM: this is still too complex
+AddSlider(Axis2D::X, "slider-track", {{12, 12}, {12, 12}}, "slider-thumb", 10)
+    .SetLocalPosition(Vector3(0, -200, 0);
+#endif
 
 class TestTextureScene : public Scene {
 public:
@@ -33,84 +45,82 @@ public:
     void LoadInto(WorldNode& root) override {
         root.name = "TestTextureScene";
 
-        auto camera = SCAST<SomeCamera>(MAKE<OrthoCamera>());
-        auto cameraNode = MAKE<WorldNode>("Camera");
-        cameraNode->Add(camera);
+//        WorldNode& cameraNode = root.AddNode("Camera");
+//        cameraNode.AddComponent<OrthoCamera>();//.SetHalfHeight(owner->World()->renderContext->PixelSize().y);
+//        cameraNode.AddComponent<SimpleRaycaster2D>();
 
-        auto raycaster = MAKE<SimpleRaycaster2D>();
-        cameraNode->Add(raycaster);
-        root.Add(cameraNode);
-        
         World& world = *root.World();
 
-        auto uiSystem = MAKE<UISystem>();
-        world.Add(uiSystem);
+//#define BUFFER
+#ifdef BUFFER
+        auto bufferCamera = root.AddComponent<OrthoCamera>();
+        auto textureBuffer = MAKE<GLTextureBuffer>();
+        textureBuffer->Build(Vector2Int(2000, 1000));
+        bufferCamera.renderContext = textureBuffer;
 
-        auto inputMap = DCAST<InputTriggerMap>(uiSystem->inputMap);
-        if (inputMap) {
-            inputMap->AddTrigger("mouse", [](SomeUIEvent const& event) { return Is<PointerDownUIEvent>(event); });
-            inputMap->AddTrigger("north", [](SomeUIEvent const& event) {
-                auto concreteEvent = As<ControllerButtonDownUIEvent>(&event);
-                GUARDR(concreteEvent, false)
+        // TODO: test texture buffer with glClear(blue)
+        // TODO: problem: this would mean that the buffer camera is rendering its own texture into itself?
+        auto& bufferRenderNode = root.AddNode();
+        bufferRenderNode.AddComponent<SpriteRenderer>(textureBuffer->Texture());
+        bufferRenderNode.transform.SetRotation(Vector3(0, 0, -45));
+#endif
+        
+//        auto inputMap = DCAST<InputTriggerMap>(uiSystem->inputMap);
+//        if (inputMap) {
+//            inputMap->AddTrigger("mouse", [](SomeUIEvent const& event) { return Is<PointerDownUIEvent>(event); });
+//            inputMap->AddTrigger("north", [](SomeUIEvent const& event) {
+//                auto concreteEvent = As<ControllerButtonDownUIEvent>(&event);
+//                GUARDR(concreteEvent, false)
+//
+//                return concreteEvent->buttonId == ControllerButtonId::North;
+//            });
+//            inputMap->AddTrigger("south", [](SomeUIEvent const& event) {
+//                auto concreteEvent = As<ControllerButtonDownUIEvent>(&event);
+//                GUARDR(concreteEvent, false)
+//
+//                return concreteEvent->buttonId == ControllerButtonId::South;
+//            });
+//            inputMap->AddTrigger("east", [](SomeUIEvent const& event) {
+//                auto concreteEvent = As<ControllerButtonDownUIEvent>(&event);
+//                GUARDR(concreteEvent, false)
+//
+//                return concreteEvent->buttonId == ControllerButtonId::East;
+//            });
+//            inputMap->AddTrigger("west", [](SomeUIEvent const& event) {
+//                auto concreteEvent = As<ControllerButtonDownUIEvent>(&event);
+//                GUARDR(concreteEvent, false)
+//
+//                return concreteEvent->buttonId == ControllerButtonId::West;
+//            });
+//            inputMap->AddTrigger("left", [](SomeUIEvent const& event) {
+//                auto concreteEvent = As<ControllerAxisUIEvent>(&event);
+//                GUARDR(concreteEvent && concreteEvent->value <= -0.5f, false)
+//
+//                return concreteEvent->axisId == ControllerAxisId::LeftX;
+//            });
+//            inputMap->AddTrigger("right", [](SomeUIEvent const& event) {
+//                auto concreteEvent = As<ControllerAxisUIEvent>(&event);
+//                GUARDR(concreteEvent && concreteEvent->value >= 0.5f, false)
+//
+//                return concreteEvent->axisId == ControllerAxisId::LeftX;
+//            });
+//        }
 
-                return concreteEvent->buttonId == ControllerButtonId::North;
-            });
-            inputMap->AddTrigger("south", [](SomeUIEvent const& event) {
-                auto concreteEvent = As<ControllerButtonDownUIEvent>(&event);
-                GUARDR(concreteEvent, false)
+        for (int i = 0; i < 1; i++) {
+//            auto font = DCAST<Font>(world.loadedResources->map["font"]["TestFont"].resource);
+            auto font = DCAST<Font>(world.loadedResources->map["font"]["ArialBlack-32"].resource);
 
-                return concreteEvent->buttonId == ControllerButtonId::South;
-            });
-            inputMap->AddTrigger("east", [](SomeUIEvent const& event) {
-                auto concreteEvent = As<ControllerButtonDownUIEvent>(&event);
-                GUARDR(concreteEvent, false)
-
-                return concreteEvent->buttonId == ControllerButtonId::East;
-            });
-            inputMap->AddTrigger("west", [](SomeUIEvent const& event) {
-                auto concreteEvent = As<ControllerButtonDownUIEvent>(&event);
-                GUARDR(concreteEvent, false)
-
-                return concreteEvent->buttonId == ControllerButtonId::West;
-            });
-            inputMap->AddTrigger("left", [](SomeUIEvent const& event) {
-                auto concreteEvent = As<ControllerAxisUIEvent>(&event);
-                GUARDR(concreteEvent && concreteEvent->value <= -0.5f, false)
-
-                return concreteEvent->axisId == ControllerAxisId::LeftX;
-            });
-            inputMap->AddTrigger("right", [](SomeUIEvent const& event) {
-                auto concreteEvent = As<ControllerAxisUIEvent>(&event);
-                GUARDR(concreteEvent && concreteEvent->value >= 0.5f, false)
-
-                return concreteEvent->axisId == ControllerAxisId::LeftX;
-            });
-        }
-
-        {
-            auto font = DCAST<Font>(world.loadedResources->map["font"]["TestFont"].resource);
             if (font) {
                 auto textureAtlas = font->atlas;
 
                 if (textureAtlas && !IsEmpty(textureAtlas->Textures())) {
-//                    auto taa = DCAST<TextureAtlas>(world.loadedResources->map["texture.atlas"]["TexturePacker"].resource);
-//                    auto taNode = MAKE<WorldNode>();
-//                    auto sr = MAKE<SpriteRenderer>(taa->Textures()[0]);
-//                    taNode->Add(sr);
-//                    taNode->transform.SetScale2D(Vector2(0.5, 0.5));
-//                    sr->material->EnableFeature(RenderFeature::Blend, true);
-//                    world.Add(taNode);
-
-                    auto textNode = MAKE<WorldNode>();
-                    world.Add(textNode);
-
-//                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean a luctus ipsum, vel auctor orci. Vestibulum sed convallis sem. Aenean sed turpis metus. Praesent in justo laoreet, interdum ligula et, dictum magna. Duis varius in magna vitae rhoncus. Maecenas rutrum ipsum in felis ultrices viverra. Duis gravida est nec odio fermentum aliquam.\nMaecenas vehicula enim sed tellus pulvinar, quis congue purus mollis. Pellentesque felis nulla, interdum sit amet lobortis at, pulvinar vel purus. Quisque hendrerit eget velit egestas laoreet. Mauris facilisis commodo justo, at porttitor mauris facilisis vel. Integer sollicitudin convallis lacus quis sollicitudin. Vestibulum accumsan leo eu ante lobortis.";
-
-                    auto textRenderer = MAKE<TextRenderer>(font, "This is a test of centered text\nAnd then we have more text on the next line", Vector2(400, 400));
-                    textRenderer->SetLineAlignFunc(AlignFuncs::center);
-                    textRenderer->SetColor(Color::black);
-                    textNode->Add(textRenderer);
-                    textNode->transform.SetLocalPosition(Vector3(-100, -100, 0));
+                    WorldNode& textNode = world.AddNode();
+                    textNode.AddComponent<TextRenderer>(font, "This is a test of centered text\nAnd then we have more text on the next line", Vector2(400, 400))
+                        .SetLineAlignFunc(AlignFuncs::center)
+                        .SetTextColor(Color::blue)
+                        .SizeToFit();
+                    textNode.transform.SetLocalPosition(Vector3(-100 + 20*i, -100 + 20*i, 0));
+                    textNode.AddComponent<AnimateHueEffect>().SetIsOn(true);
 
 //                    textRenderer->SetModifyColorsFunc([](TextRenderer& textRenderer, VectorList<RenderColor>& colors) {
 //                        auto const& renderChars = textRenderer.RenderChars();
@@ -172,49 +182,27 @@ public:
 //        cameraNode2->transform.SetWorldPosition(Vector3(10, 10, 0));
 //        root.Add(cameraNode2);
 
+#define SLIDER
+
 #ifdef SLIDER
         {
-            auto sliceTexture = DCAST<GLTexture>(world.loadedResources->map["texture"]["slider-track"].resource);
-
-            auto trackNode = MAKE<WorldNode>("Slider track");
-            std::array<Vector2Int, 2> slicePoints{Vector2Int(12, 12), Vector2Int(12, 12)};
-            auto trackRenderer = MAKE<SlicedTextureRenderer>(sliceTexture, Vector2(300, 33), slicePoints);
-            trackNode->Add(trackRenderer);
-
-            auto trackMaterial = trackRenderer->material;
-            trackMaterial->SetShaderProgram(SomeShaderProgram::registry["texture.uniform"]);
-            trackMaterial->EnableFeature(RenderFeature::Blend, true);
-
-            auto animateHueEffect = MAKE<AnimateHueEffect>();
-            animateHueEffect->SetIsOn(true);
-
-            auto thumbTexture = DCAST<GLTexture>(world.loadedResources->map["texture"]["slider-thumb"].resource);
-            auto thumbNode = MAKE<WorldNode>("Slider thumb");
-            auto thumbRenderer = MAKE<SpriteRenderer>(thumbTexture);
-            thumbNode->Add(thumbRenderer);
-
-            auto thumbMaterial = thumbRenderer->material;
-            thumbMaterial->SetShaderProgram(SomeShaderProgram::registry["texture.uniform"]);
-            thumbMaterial->EnableFeature(RenderFeature::Blend, true);
-
-            auto sliderControl = MAKE<SliderControl>();
-            sliderControl->endCapSize = 10;
-            trackNode->Add(sliderControl);
-            trackNode->Add(thumbNode);
-
-            auto worldPtr = &world;
-            valueSubscription = sliderControl->Value().subject.Receive([=](float value) {
-                auto camera = worldPtr->MainCamera();
-                GUARD(camera)
-                camera->owner->transform.SetWorldPosition(Vector3(0, value * 100, 0));
+#if FALSE
+            auto slider = DuckUI::AddSlider(world, "My slider", 0, 10, [](float value) {
+                // Receive slider value here
             });
 
-            ComponentTool ct;
-            auto collider = MAKE<PolygonCollider2D>();
-            ct.AddComponent(*thumbNode, collider);
-            ct.AddComponent(*thumbNode, animateHueEffect);
+#endif
+            root.AddSlider("My slider", {500, 33}, [](float value) {
+                // Receive slider value here
+                std::cout << "Slider: " << value << std::endl;
+            })
+            .SetLocalPosition({0, -200, 0});
 
-            root.Add(trackNode);
+            root.AddSliderVertical("Vertical slider", {33, 500}, [](float value) {
+                // Receive slider value here
+                std::cout << "VerticalSlider: " << value << std::endl;
+            })
+            .SetLocalPosition({-300, 000, 0});
         }
 #endif
 
@@ -229,7 +217,7 @@ public:
 
 
         {
-            auto meshNode = MAKE<WorldNode>("Animated runner");
+            WorldNode& meshNode = root.AddNode("Animated runner");
 //            meshNode->Add(camera);
             //        auto renderer = MAKE<MeshRenderer>();
             //        meshNode->AddComponent(renderer);
@@ -239,47 +227,80 @@ public:
 //            meshNode->transform.value.SetRotation(Angle::DegreesAngle(45));
 
             auto renderer = animatedTexture;
-            meshNode->Add(renderer);
-            meshNode->SetScale2D(0.5);
+            animatedTexture->SetColor(Color::blue);
+            meshNode.Add(renderer);
+            meshNode.SetScale2D(0.5);
+
+            WorldNode& cameraNode = meshNode.AddNode("Camera");
+            auto camera = cameraNode.AddComponentPtr<OrthoCamera>();
+            camera->SetHalfHeight(owner->World()->renderContext->PixelSize().y / 2.0f);
+            cameraNode.AddComponent<SimpleRaycaster2D>();
+
+//            updatables.Add([camera](TimeSlice time) {
+//                GUARDR(camera->halfHeight, FinishType::Continue)
+//                camera->SetHalfHeight(*camera->halfHeight + 10.0f * time.delta);
+//
+//                return FinishType::Continue;
+//            });
+
+#if FALSE
+            updatables.Add(MAKE<PeriodicRepeater>(3, 2, []() {... })
+            updatables.Add(
+                           RunNTimes(3, DelayDriver(10, []() {
+                               // Do something
+                           })
+                                       )
+#endif
+
+//            updatables.AddContinue([camera](TimeSlice time) {
+//                GUARD(camera->halfHeight)
+//                camera->SetHalfHeight(*camera->halfHeight + 10.0f * time.delta);
+//            });
+           updatables.AddTimed(3, [camera](TimeSlice time) {
+               GUARDR(camera->halfHeight, FinishType::Continue)
+               camera->SetHalfHeight(*camera->halfHeight + 50.0f * time.delta);
+
+               return FinishType::Continue;
+           });
 
             auto maxTextureTrueSize = textureAtlas->MaxTextureTrueSize();
 //            auto frameRenderer = MAKE<SimpleGradientRenderer>(Color::red, Color::blue, Vector2(maxTextureTrueSize.x, maxTextureTrueSize.y));
 
             auto frameRenderer = MAKE<ColorRenderer>(Color::red, Vector2(maxTextureTrueSize.x, maxTextureTrueSize.y));
 
-            frameRenderer->model.SetMeshBuilderFunc([](MeshRendererModel const& model) {
+            frameRenderer->model.SetMeshBuilderFunc([](RendererModel const& model) {
                 QuadFrameMeshBuilder meshBuilder(model.WorldSize(), Vector2(3, 3));
                 return meshBuilder.BuildMesh();
             });
 //            meshNode->Add(frameRenderer);
 
             auto testKeyboard = MAKE<TestInput>();
-            meshNode->Add(testKeyboard);
+            meshNode.Add(testKeyboard);
 
             //        auto material = MAKE<RenderMaterial>();
-            auto material = renderer->material;
+            auto material = renderer->model.material;
 
-            auto program = SomeShaderProgram::registry["texture.uniform"];//texture.interp.uniform"]; //"texture.uniform"
-            if (program) {
-                material->SetShaderProgram(program);
-                //            material->textures.Add(RenderTexture(texture->glId));
-
-                //            material->colors.Add(Color::white);
-                //            material->colors.Add(Color::red);
-                //            material->colors.Add(Color::white);
-                //            material->colors.Add(Color::red);
-
-                //            material->uniformColors.Add(Color::blue);
-                //            material->uniformFloats.Add(0);//0.5f);
-
-                material->EnableFeature(RenderFeature::Blend, true);
-
-                //            QuadMeshBuilder builder(Vector2(400, 400));
-                //            auto renderMesh = builder.BuildMesh();
-                //            meshRenderer->material = material;
-                //            meshRenderer->mesh = renderMesh;
-            }
-            meshNode->transform.SetWorldPosition(Vector3(200, 0, -0.2f));
+//            auto program = SomeShaderProgram::registry["texture.uniform"];//texture.interp.uniform"]; //"texture.uniform"
+//            if (program) {
+//                material->SetShaderProgram(program);
+//                //            material->textures.Add(RenderTexture(texture->glId));
+//
+//                //            material->colors.Add(Color::white);
+//                //            material->colors.Add(Color::red);
+//                //            material->colors.Add(Color::white);
+//                //            material->colors.Add(Color::red);
+//
+//                //            material->uniformColors.Add(Color::blue);
+//                //            material->uniformFloats.Add(0);//0.5f);
+//
+//                material->EnableFeature(RenderFeature::Blend, true);
+//
+//                //            QuadMeshBuilder builder(Vector2(400, 400));
+//                //            auto renderMesh = builder.BuildMesh();
+//                //            meshRenderer->material = material;
+//                //            meshRenderer->mesh = renderMesh;
+//            }
+            meshNode.transform.SetWorldPosition(Vector3(200, 0, -0.2f));
             //        meshNode->transform.scale.x = 10.0f;
             //        meshNode->transform.scale.y = 10.0f;
             //        renderer->flipX = true;
@@ -287,24 +308,20 @@ public:
 
             //        meshNode->SetActive(false);
 
-            //        auto uiSystem = MAKE<UISystem>();
-            //        root.AddComponent(uiSystem);
 
-            auto button = MAKE<ButtonControl>();
-            auto ts = MAKE<TestStateHandler>();
+//            auto button = MAKE<ButtonControl>();
+//            auto ts = MAKE<TestStateHandler>();
             auto dragHandler = MAKE<DragHandler2D>();
-            auto animateHueEffect = MAKE<AnimateHueEffect>();
+//            auto animateHueEffect = MAKE<AnimateHueEffect>();
 //            animateHueEffect->switchHandler->SetIsOn(true);
 
             ComponentTool ct;
             auto collider = MAKE<PolygonCollider2D>();
-            ct.AddComponent(*meshNode, collider);
+            ct.AddComponent(meshNode, collider);
 //                    ct.AddComponent(*meshNode, button);
-            ct.AddComponent(*meshNode, dragHandler);
-            ct.AddComponent(*meshNode, ts);
+            ct.AddComponent(meshNode, dragHandler);
+//            ct.AddComponent(meshNode, ts);
 //            ct.AddComponent(*meshNode, animateHueEffect);
-
-            root.Add(meshNode);
         }
     }
 };

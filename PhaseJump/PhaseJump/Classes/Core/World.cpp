@@ -1,5 +1,4 @@
 #include "World.h"
-#include "Camera.h"
 #include "DevProfiler.h"
 #include "GraphNodeTool.h"
 #include "RenderContextModel.h"
@@ -106,13 +105,21 @@ void World::Render() {
         [](SP<WorldNode> node) { return node.get(); }
     );
 
+    VectorList<SomeCamera*> optionalCameras;
+    std::transform(
+        nodes.begin(), nodes.end(), std::back_inserter(optionalCameras),
+        [](WorldNode* node) {
+            auto result = node->GetComponent<SomeCamera>();
+            return (result && result->IsEnabled()) ? result.get() : nullptr;
+        }
+    );
     VectorList<SomeCamera*> cameras;
-    std::transform(nodes.begin(), nodes.end(), std::back_inserter(cameras), [](WorldNode* node) {
-        auto result = node->GetComponent<SomeCamera>();
-        return (result && result->IsEnabled()) ? result.get() : nullptr;
-    });
+    std::copy_if(
+        optionalCameras.begin(), optionalCameras.end(), std::back_inserter(cameras),
+        [](SomeCamera* camera) { return camera != nullptr; }
+    );
 
-    RenderContextModel contextModel(renderContext.get(), nodes, cameras);
+    RenderContextModel contextModel(renderContext.get(), root.get(), nodes, cameras);
 
     int drawCount = 0;
 
@@ -127,6 +134,7 @@ void World::Render() {
     }
 
     renderStats.Insert("draw.count", drawCount);
+    renderStats.Insert("node.count", (int)contextModel.nodes.size());
 
     renderFrameCount++;
 }
@@ -192,15 +200,17 @@ void Update(WorldNode& node, TimeSlice time, WorldNode::NodeList& updateList) {
         // TODO: remove the node
         PJLog("WARNING. Destroying nodes is currently broken")
     } else {
-        GUARD(node.IsActive())
-
-        // TODO: this isn't correct. All nodes should get CheckedAwake, then all nodes should get
-        // CheckedStart
-        node.CheckedAwake();
-        node.CheckedStart();
-
+        GUARD(node.IsEnabled())
         updateList.push_back(SCAST<WorldNode>(node.shared_from_this()));
-        node.OnUpdate(time);
+
+        if (!node.World()->IsPaused()) {
+            // TODO: this isn't correct. All nodes should get CheckedAwake, then all nodes should
+            // get CheckedStart
+            node.CheckedAwake();
+            node.CheckedStart();
+
+            node.OnUpdate(time);
+        }
 
         auto childNodes = node.ChildNodes();
         std::for_each(childNodes.begin(), childNodes.end(), [&](SP<WorldNode>& node) {
@@ -216,17 +226,19 @@ void World::OnUpdate(TimeSlice time) {
 
     // TODO: is graph being updated twice (when OnUpdate is re-enabled?)
 
-    auto iterSystems = systems;
-    for (auto& system : iterSystems) {
-        system->CheckedAwake();
-    }
+    if (!isPaused) {
+        auto iterSystems = systems;
+        for (auto& system : iterSystems) {
+            system->CheckedAwake();
+        }
 
-    for (auto& system : iterSystems) {
-        system->CheckedStart();
-    }
+        for (auto& system : iterSystems) {
+            system->CheckedStart();
+        }
 
-    for (auto& system : iterSystems) {
-        system->OnUpdate(time);
+        for (auto& system : iterSystems) {
+            system->OnUpdate(time);
+        }
     }
 
     updateList.clear();
@@ -277,4 +289,14 @@ LocalPosition PJ::ScreenToLocal(SomeWorldComponent& component, ScreenPosition sc
     result = LocalPosition(Vector3(localPosition.x, localPosition.y, 0));
 
     return result;
+}
+
+SP<SomeTexture> World::Texture(String name) {
+    try {
+        auto& typeMap = loadedResources->map.at("texture");
+        auto result = typeMap.at(name);
+        return DCAST<SomeTexture>(result.resource);
+    } catch (...) {
+        return nullptr;
+    }
 }

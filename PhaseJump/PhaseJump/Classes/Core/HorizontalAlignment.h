@@ -7,8 +7,8 @@
 
 /*
  RATING: 5 stars
- Hase unit tests
- CODE REVIEW: 4/14/24
+ Has unit tests
+ CODE REVIEW: 4/14/23
  */
 namespace PJ {
     /// Horizontal alignment in a horizontal flow

@@ -2,9 +2,9 @@
 
 #include "EmitModel.h"
 #include "EmitterTypes.h"
-#include "Function.h"
 #include "Log.h"
 #include "OrderedSet.h"
+#include "SomeDriver.h"
 #include "StandardRandom.h"
 #include "Timer.h"
 #include "WorldComponent.h"
@@ -75,26 +75,18 @@ namespace PJ {
         /// Emits that have been built, but are delayed
         List<DelayedEmitModel> delayedEmits;
 
-        /// Interval timer for building emits
-        Timer fireTimer;
+        /// Driver for building emits
+        UP<SomeDriver> fireDriver;
 
     public:
-        /// Returns the time between emits
-        float EmitTime() const;
-
-        /// Sets the time between emits
-        void SetEmitTime(float value);
-
         Emitter(SpawnFunc spawnFunc, float fireTime);
+        Emitter(SpawnFunc spawnFunc, UP<SomeDriver>& fireDriver);
 
         virtual bool CanSpawn();
 
         virtual EmitList Fire();
 
     protected:
-        /// Called when the emit timer finishes
-        virtual void OnFireTimerFinish();
-
         virtual List<SpawnType> EmitWithEmits(EmitList emits);
 
         virtual SpawnType MakeSpawn(EmitModel const& emit);

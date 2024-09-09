@@ -5,99 +5,53 @@
 using namespace std;
 using namespace PJ;
 
-void ButtonControl::SetIsHovering(bool value) {
-    isHovering = value;
-
-    if (isTracking) {
-        return;
-    }
-
-    GUARD(composeTimedStateMachine)
-    composeTimedStateMachine->SetState(isHovering ? StateType::Hover : StateType::Normal);
-}
-
 ButtonControl::ButtonControl() {}
 
 void ButtonControl::Awake() {
     Base::Awake();
-
-    composeTimedStateMachine = std::make_unique<ComposeTimedStateMachine<StateType>>(*this);
 }
 
 void ButtonControl::OnPointerDown(PointerDownUIEvent _event) {
-    GUARD(composeTimedStateMachine)
-
-    switch (trackingType) {
-    case TrackingType::Immediate:
+    switch (trackType) {
+    case TrackType::Immediate:
         OnPress();
         break;
-    case TrackingType::Track:
+    case TrackType::Track:
         isTracking = true;
-        composeTimedStateMachine->SetState(StateType::Press);
+        SetIsPressed(true);
         break;
     }
 }
 
 void ButtonControl::OnPointerEnter(PointerEnterUIEvent _event) {
-    GUARD(composeTimedStateMachine)
-
-    if (!isTracking) {
-        return;
-    }
-    composeTimedStateMachine->SetState(StateType::Press);
+    GUARD(isTracking)
+    SetIsPressed(true);
 }
 
 void ButtonControl::OnPointerExit(PointerExitUIEvent _event) {
-    GUARD(composeTimedStateMachine)
-
-    if (!isTracking) {
-        return;
-    }
-    composeTimedStateMachine->SetState(StateType::Normal);
+    GUARD(isTracking)
+    SetIsPressed(false);
 }
 
 void ButtonControl::OnPointerUp(PointerUpUIEvent _event) {
-    GUARD(composeTimedStateMachine)
-
-    if (!isTracking) {
-        return;
-    }
+    GUARD(isTracking)
     isTracking = false;
 
-    bool wasPressed = false;
-    switch (composeTimedStateMachine->State()) {
-    case StateType::Press:
-        composeTimedStateMachine->SetState(isHovering ? StateType::Hover : StateType::Normal);
-        wasPressed = true;
-        break;
-    default:
-        composeTimedStateMachine->SetState(StateType::Normal);
-        break;
-    }
+    bool wasPressed = isPressed;
+    SetIsPressed(false);
 
     if (wasPressed) {
         OnPress();
     }
 }
 
+void ButtonControl::SetIsPressed(bool value) {
+    GUARD(value != isPressed)
+    isPressed = value;
+    OnStateChange();
+}
+
 void ButtonControl::OnPress() {
-    // Debug.Log("Button Pressed");
-    auto listener = Listener();
-    if (nullptr == listener) {
-        return;
-    }
-    listener->OnEvent(MAKE<PressEvent>(id));
+    GUARD(onPressFunc)
+    onPressFunc(*this);
 }
-
-void ButtonControl::OnStateChange(TimedStateMachine<StateType>& inStateMachine) {
-    GUARD(owner)
-    auto owner = this->owner;
-
-    // Forward button state change to state handler components
-    //    auto stateHandlers = owner->ChildTypeComponents<SomeStateHandler<StateType>>();
-    //    for (auto& stateHandler : stateHandlers) {
-    //        stateHandler->OnStateChange(inStateMachine.State());
-    //    }
-}
-
-void ButtonControl::OnStateFinish(TimedStateMachine<StateType>& inStateMachine) {}

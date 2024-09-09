@@ -14,14 +14,18 @@ namespace PJ {
         /// Pointer, not reference for model copies
         SomeRenderContext* renderContext = nullptr;
 
+        /// Root node, used for z-order sorting
+        WorldNode* root = nullptr;
+
         VectorList<WorldNode*> nodes;
         VectorList<SomeCamera*> cameras;
 
         RenderContextModel(
-            SomeRenderContext* renderContext, VectorList<WorldNode*> const& nodes,
+            SomeRenderContext* renderContext, WorldNode* root, VectorList<WorldNode*> const& nodes,
             VectorList<SomeCamera*> const& cameras
         ) :
             renderContext(renderContext),
+            root(root),
             nodes(nodes),
             cameras(cameras) {}
     };

@@ -48,7 +48,7 @@ namespace PJ {
                 return;
             }
 
-            float radians = atan2(distance.y * Vector2::down.y, distance.x);
+            float radians = atan2(distance.y * vecDown, distance.x);
             auto angle = Angle::DegreesAngle((FloatMath::RadiansToDegrees * radians) + 90.0f);
             auto result = angle.Clipped();
             this->value = result.Degrees();
@@ -82,7 +82,7 @@ namespace PJ {
             float cosVal = cos(Radians());
 
             float x = magnitude * sinVal;
-            float y = magnitude * cosVal * Vector2::up.y;
+            float y = magnitude * cosVal * vecUp;
             result.x = x;
             result.y = y;
 

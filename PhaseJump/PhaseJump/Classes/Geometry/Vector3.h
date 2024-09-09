@@ -20,28 +20,31 @@ namespace Terathon {
  */
 namespace PJ {
     // TODO: do we need a renderVector3 that has no inheritance?
-    class Vector3 { //} : public StringConvertible {
+    class Vector3 {
     public:
+        using This = Vector3;
+
         float x = 0;
         float y = 0;
         float z = 0;
 
-        Vector3() {}
+        constexpr Vector3() {}
 
-        Vector3(float x, float y, float z) :
+        constexpr Vector3(float x, float y, float z) :
             x(x),
             y(y),
             z(z) {}
 
-        Vector3(Vector2 const& value) :
+        constexpr Vector3(Vector2 const& value) :
             x(value.x),
             y(value.y),
             z(0) {}
 
-        static Vector3 Uniform(float value) {
+        static constexpr Vector3 Uniform(float value) {
             return Vector3(value, value, value);
         }
 
+        // TODO: cleanup using constexpr (see Vector2)
         static Vector3 const one;
         static Vector3 const zero;
         static Vector3 const forward;
@@ -73,7 +76,31 @@ namespace PJ {
             }
         }
 
+        float& AxisValue(Axis axis) {
+            switch (axis) {
+            case Axis::X:
+                return x;
+            case Axis::Y:
+                return y;
+            case Axis::Z:
+                return z;
+            }
+        }
+
+        float AxisValue(Axis axis) const {
+            switch (axis) {
+            case Axis::X:
+                return x;
+            case Axis::Y:
+                return y;
+            case Axis::Z:
+                return z;
+            }
+        }
+
         VECTOR_METHODS(Vector3, float, 3);
+
+        friend std::ostream& operator<<(std::ostream&, Vector3 const& value);
 
         // MARK: StringConvertible
 
@@ -118,6 +145,11 @@ namespace PJ {
 
     // Convenience names
     using Vec3 = Vector3;
+
+    // MARK: Stream friend operators
+
+    std::ostream& operator<<(std::ostream& os, PJ::Vector3 const& value);
+
 } // namespace PJ
 
 #endif

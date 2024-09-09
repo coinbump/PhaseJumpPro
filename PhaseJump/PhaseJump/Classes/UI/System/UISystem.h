@@ -1,12 +1,12 @@
 #pragma once
 
-#include "Camera.h"
 #include "DragItems.h"
 #include "DragModel.h"
-#include "EventSystem.h"
+#include "EventWorldSystem.h"
 #include "OrderedSet.h"
 #include "SDLMouseDevice.h"
 #include "SelectHandler.h"
+#include "SomeCamera.h"
 #include "SomePointerUIEvent.h"
 #include <memory>
 
@@ -17,11 +17,13 @@
 namespace PJ {
     class SomeUIEvent;
     class SomeMouseDevice;
+    class SomeFocusCoordinator;
+    class FocusHandler;
 
     /// Handled advanced user input like drag and drop, hover, etc.
-    class UISystem : public EventSystem {
+    class UISystem : public EventWorldSystem {
     public:
-        using Base = EventSystem;
+        using Base = EventWorldSystem;
 
         // TODO: fix this, it's causing problems when switching scenes
         static UISystem* shared;
@@ -37,6 +39,12 @@ namespace PJ {
         OrderedSet<SP<SelectHandler>> selection;
 
     public:
+        // TODO: VectorList<UP<SomeFocusCoordinator>> focusCoordinators;
+        WP<FocusHandler> focus;
+
+        UISystem(String name = "UI") :
+            Base(name) {}
+
         virtual ~UISystem() {
             GUARD(shared == this);
             shared = nullptr;

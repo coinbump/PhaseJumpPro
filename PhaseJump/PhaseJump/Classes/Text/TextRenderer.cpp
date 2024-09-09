@@ -12,27 +12,29 @@ using namespace std;
 using namespace PJ;
 
 TextRenderer::TextRenderer(SP<Font> font, String text, Vector2 size) :
+    Base(vec2Zero),
     font(font),
     text(text),
     size(size) {
 
     GUARD(font && font->atlas && font->atlas->Textures().size() > 0)
 
-    material = MAKE<RenderMaterial>();
+    model.material = MAKE<RenderMaterial>();
     auto program = SomeShaderProgram::registry["texture.vary"];
-    material->Add(font->atlas->Textures()[0]);
-    material->SetShaderProgram(program);
-    material->EnableFeature(RenderFeature::Blend, true);
+    model.material->Add(font->atlas->Textures()[0]);
+    model.material->SetShaderProgram(program);
+    model.material->EnableFeature(RenderFeature::Blend, true);
 }
 
 void TextRenderer::SetColor(Color color) {
     this->color = color;
+    OnColorChange();
 }
 
 void TextRenderer::OnColorChange() {
-    GUARD(!IsEmpty(mesh.vertices))
+    GUARD(!IsEmpty(mesh.Vertices()))
 
-    VectorList<RenderColor> colors(mesh.vertices.size(), color);
+    VectorList<RenderColor> colors(mesh.Vertices().size(), color);
 
     if (modifyColorsFunc) {
         modifyColorsFunc(*this, colors);
@@ -42,6 +44,15 @@ void TextRenderer::OnColorChange() {
 }
 
 void TextRenderer::OnTextChange() {
+    isBuildNeeded = true;
+
+    BuildIfNeeded();
+}
+
+void TextRenderer::BuildIfNeeded() {
+    GUARD(isBuildNeeded)
+    isBuildNeeded = false;
+
     GUARD(font)
 
     auto atlas = font->atlas;
@@ -54,9 +65,15 @@ void TextRenderer::OnTextChange() {
     renderChars.clear();
 
     TextMeasurer tm(*font);
-    auto lines = tm.MeasureLines(text, size, lineClip);
+    metrics = tm.Measure(text, size, lineClip);
+
+    auto& lines = metrics->lines;
+
+    float textHeight = 0;
 
     for (auto& line : lines) {
+        textHeight += line.size.y;
+
         float lineX = 0;
         if (lineAlignFunc) {
             lineX = lineAlignFunc(size.x, line.size.x);
@@ -91,22 +108,20 @@ void TextRenderer::OnTextChange() {
             auto textureModel = atlasTexture->MakeRenderModel();
             GUARD_CONTINUE(textureModel)
 
-            quadMesh.OffsetBy(Vector2(
-                (qm.worldSize.x / 2.0f) * Vector2::right.x,
-                (qm.worldSize.y / 2.0f) * Vector2::down.y
-            ));
+            quadMesh.OffsetBy(
+                Vector2((qm.worldSize.x / 2.0f) * vecRight, (qm.worldSize.y / 2.0f) * vecDown)
+            );
 
             quadMesh.OffsetBy(Vector2(
-                (size.x / 2.0f) * Vector2::left.x +
-                    (viewPos.x + fontGlyph.offset.x) * Vector2::right.x,
-                (size.y / 2.0f) * Vector2::up.y + (viewPos.y + fontGlyph.offset.y) * Vector2::down.y
+                (size.x / 2.0f) * vecLeft + (viewPos.x + fontGlyph.offset.x) * vecRight,
+                (size.y / 2.0f) * vecUp + (viewPos.y + fontGlyph.offset.y) * vecDown
             ));
 
             UVTransformFuncs::textureCoordinates(*textureModel, quadMesh.UVs());
 
             RenderChar renderChar;
             renderChar.sourceIndex = sourceIndex;
-            renderChar.vertexIndex = mesh.vertices.size();
+            renderChar.vertexIndex = mesh.Vertices().size();
             renderChars.push_back(renderChar);
 
             mesh += quadMesh;
@@ -115,8 +130,13 @@ void TextRenderer::OnTextChange() {
         }
     }
 
+    if (textAlignFunc) {
+        mesh.OffsetBy(Vector3(0, textAlignFunc(size.y, textHeight) * vecDown, 0));
+    }
+
     if (modifyVerticesFunc) {
-        modifyVerticesFunc(*this, mesh.vertices);
+        modifyVerticesFunc(*this, mesh.ModifiableVertices());
+        mesh.SetNeedsCalculate();
     }
 
     this->mesh = mesh;
@@ -125,8 +145,6 @@ void TextRenderer::OnTextChange() {
 
 VectorList<RenderModel> TextRenderer::MakeRenderModels() {
     VectorList<RenderModel> result;
-
-    // TODO: optmize this. Only build when needed
 
     GUARDR(font, result)
 
@@ -138,13 +156,21 @@ VectorList<RenderModel> TextRenderer::MakeRenderModels() {
 
     RenderModelBuilder builder;
     VectorList<SomeTexture*> textures{ atlasTextures[0].get() };
-    auto renderModel = builder.Build(
-        mesh, *material, textures, ModelMatrix(), owner->transform.WorldPosition().z,
-        UVTransformFunc()
-    );
+    auto renderModel = builder.Build(*this, mesh, *model.material, textures, UVTransformFunc());
 
     renderModel.colors = this->colors;
 
     result.push_back(renderModel);
     return result;
+}
+
+// TODO: this can't work because the size it's using to measure is the wrong size, it needs to be as
+// large as possible (or based on # of lines?)
+TextRenderer& TextRenderer::SizeToFit() {
+    BuildIfNeeded();
+    GUARDR(metrics, *this)
+
+    size = metrics->size;
+
+    return *this;
 }

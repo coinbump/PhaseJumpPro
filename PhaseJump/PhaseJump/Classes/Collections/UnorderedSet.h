@@ -10,7 +10,7 @@
  CODE REVIEW: 8/3/24
  */
 namespace PJ {
-    /// Adds utility code to `std::unordered_set`
+    /// Alias for std so can build an alternate implementation if needed
     template <
         class Type, class _Hash = std::hash<Type>, class _Pred = std::equal_to<Type>,
         class _Alloc = std::allocator<Type>>

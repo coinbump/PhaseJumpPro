@@ -27,7 +27,7 @@ namespace PJ {
         void ApplyLayout() override {
             GUARD(owner)
 
-            auto firstPos = (Size().y / 2) * Vector2::up.y;
+            auto firstPos = (Size().y / 2) * vecUp;
             auto position = firstPos;
 
             auto childNodes = owner->ChildNodes();
@@ -35,7 +35,7 @@ namespace PJ {
                 child->transform.SetLocalPosition(
                     Vector3(0, position, child->transform.LocalPosition().z)
                 );
-                position += spacing * Vector2::down.y;
+                position += spacing * vecDown;
             }
         }
     };

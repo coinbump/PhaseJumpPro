@@ -11,6 +11,7 @@
  CODE REVIEW: 8/3/24
  */
 namespace PJ {
+    /// Alias for std so can build an alternate implementation if needed
     template <class Key, class Type>
     using OrderedMap = std::map<Key, Type>;
 

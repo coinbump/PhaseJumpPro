@@ -13,7 +13,7 @@ public:
     void LoadInto(WorldNode& root) {
         root.name = "TestMeshPathScene";
 
-        auto camera = SCAST<SomeCamera>(MAKE<OrthoCamera>());
+        auto camera = MAKE<OrthoCamera>();
         auto cameraNode = MAKE<WorldNode>("Camera");
         cameraNode->Add(camera);
         root.Add(cameraNode);
@@ -31,23 +31,19 @@ public:
         int count = 20;
         for (int i = 0; i < count; i++) {
             auto meshNode = MAKE<WorldNode>("Mesh");
-            auto meshRenderer = MAKE<MeshRenderer>();
+            auto meshRenderer = MAKE<MeshRenderer>(Vector3(40, 20, 0));
             meshNode->Add(meshRenderer);
+
+            meshRenderer->model.SetMeshBuilderFunc([](RendererModel const& model) {
+                EllipseMeshBuilder builder(model.WorldSize(), Angle::DegreesAngle(5.0f));
+                return builder.BuildMesh();
+            });
 
             float progress = (float)i/(float)count;
 
-            auto material = MAKE<RenderMaterial>();
-            auto program = SomeShaderProgram::registry["color.uniform"];
-            if (program) {
-                material->SetShaderProgram(program);
-                material->AddUniformColor(Color(progress, 1.0f - progress, 0, 1));
+            meshRenderer->SetColor(Color(progress, 1.0f - progress, 0, 1));
 
-                EllipseMeshBuilder builder(Angle::DegreesAngle(5.0f), Vector2(40, 20));
-                auto renderMesh = builder.BuildMesh();
-                meshRenderer->material = material;
-                meshRenderer->mesh = renderMesh;
-            }
-    //        window->World()->Add(meshNode);
+        //        window->World()->Add(meshNode);
             meshNode->transform.SetScale(Vector3(1.0f + progress, 1.0f + progress, 1));
     //        meshNode->transform.rotation.z = -(progress * 360.0f);
             pathNode->Add(meshNode);
@@ -69,20 +65,16 @@ public:
         int count = 20;
         for (int i = 0; i < count; i++) {
             auto meshNode = MAKE<WorldNode>("Mesh");
-            auto meshRenderer = MAKE<MeshRenderer>();
+            auto meshRenderer = MAKE<MeshRenderer>(Vector3(40, 20, 0));
             meshNode->Add(meshRenderer);
 
-            auto material = MAKE<RenderMaterial>();
-            auto program = SomeShaderProgram::registry["color.uniform"];
-            if (program) {
-                material->SetShaderProgram(program);
-                material->AddUniformColor(Color(1.0f, 0, 0, 1));
+            meshRenderer->model.SetMeshBuilderFunc([](RendererModel const& model) {
+                EllipseMeshBuilder builder(model.WorldSize(), Angle::DegreesAngle(5.0f));
+                return builder.BuildMesh();
+            });
 
-                EllipseMeshBuilder builder(Angle::DegreesAngle(5.0f), Vector2(40, 20));
-                auto renderMesh = builder.BuildMesh();
-                meshRenderer->material = material;
-                meshRenderer->mesh = renderMesh;
-            }
+            meshRenderer->SetColor(Color(1.0f, 0, 0, 1));
+
             pathNode->Add(meshNode);
         }
 

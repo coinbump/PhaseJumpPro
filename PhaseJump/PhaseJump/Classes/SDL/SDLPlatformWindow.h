@@ -135,7 +135,7 @@ namespace PJ {
         // MARK: SomePlatformWindow
 
         Vector2Int Size() const override {
-            GUARDR(window, Vector2Int::zero)
+            GUARDR(window, {})
 
             int x, y;
             SDL_GetWindowSize(window, &x, &y);
@@ -143,7 +143,7 @@ namespace PJ {
         }
 
         Vector2Int PixelSize() const override {
-            GUARDR(window, Vector2Int::zero)
+            GUARDR(window, {})
 
             int x, y;
             SDL_GetWindowSizeInPixels(window, &x, &y);

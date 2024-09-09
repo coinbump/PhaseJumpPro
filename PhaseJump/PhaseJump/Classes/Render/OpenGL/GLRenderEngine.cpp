@@ -1,4 +1,5 @@
 #include "GLRenderEngine.h"
+#include "Funcs.h"
 #include "GLHeaders.h"
 #include "GLShaderProgram.h"
 #include "GLShaderProgramLoader.h"
@@ -265,6 +266,8 @@ SP<SomeGLRenderCommand> GLRenderEngine::BuildRenderCommand(SomeRenderCommandMode
 }
 
 void GLRenderEngine::ProjectionMatrixLoadOrthographic(Vector2 size) {
+    // TODO: are these 1, -1 values correct? Should we use values from the camera?
+    // TODO: should we be using glOrtho/glMatrixMode instead?
     projectionMatrix.LoadOrthographic(0, size.x, 0, size.y, 1, -1);
 }
 
@@ -310,8 +313,10 @@ void GLRenderEngine::RenderProcess(RenderDrawModel const& drawModel) {
 }
 
 void GLRenderEngine::RenderProcess(RenderModel const& model) {
-    GUARD(model.material)
-    auto glProgram = As<GLShaderProgram>(model.material->ShaderProgram().get());
+    auto modelMaterial = model.Material();
+
+    GUARD(modelMaterial)
+    auto glProgram = As<GLShaderProgram>(modelMaterial->ShaderProgram().get());
     if (nullptr == glProgram) {
         PJLog("ERROR. GLShaderProgram required");
         return;
@@ -399,6 +404,7 @@ void GLRenderEngine::RenderDraw(RenderDrawModel const& drawModel) {
         }
     );
 
+    // Sort blended back-to-front
     std::sort(
         blendRenderPlans.begin(), blendRenderPlans.end(),
         [](SP<GLRenderPlan> const& lhs, SP<GLRenderPlan> const& rhs) {
@@ -406,10 +412,19 @@ void GLRenderEngine::RenderDraw(RenderDrawModel const& drawModel) {
         }
     );
 
+    // Sort opaque front-to-back
+    std::sort(
+        noBlendRenderPlans.begin(), noBlendRenderPlans.end(),
+        [](SP<GLRenderPlan> const& lhs, SP<GLRenderPlan> const& rhs) {
+            return lhs->model.z < rhs->model.z;
+        }
+    );
+
     glEnable(GL_DEPTH_TEST);
     RenderDrawPlans(noBlendRenderPlans);
 
     glDisable(GL_DEPTH_TEST);
+    // TODO: do we need glDepthFunc here?
     RenderDrawPlans(blendRenderPlans);
 
     // FUTURE: support batching, logging
@@ -420,9 +435,10 @@ void GLRenderEngine::RenderDrawPlans(VectorList<SP<GLRenderPlan>> const& renderP
     for (auto& rp : renderPlans) {
         auto vboPlan = rp->vboPlan;
         auto model = rp->model;
-        GUARD_CONTINUE(model.material)
+        auto modelMaterial = model.Material();
+        GUARD_CONTINUE(modelMaterial)
 
-        auto glProgram = As<GLShaderProgram>(model.material->ShaderProgram().get());
+        auto glProgram = As<GLShaderProgram>(modelMaterial->ShaderProgram().get());
         GUARD(glProgram);
 
         auto modelMatrix = model.matrix;
@@ -458,8 +474,8 @@ void GLRenderEngine::RenderDrawPlans(VectorList<SP<GLRenderPlan>> const& renderP
         // TODO: These can be optimized by not using the has check, or has returns something
         if (glProgram->HasUniform("u_float")) {
             float value = 1.0f;
-            if (model.material->UniformFloats().size() > 0) {
-                value = model.material->UniformFloats()[0];
+            if (modelMaterial->UniformFloats().size() > 0) {
+                value = modelMaterial->UniformFloats()[0];
             }
 
             glUniform1f(glProgram->uniformLocations["u_float"], value);
@@ -467,8 +483,8 @@ void GLRenderEngine::RenderDrawPlans(VectorList<SP<GLRenderPlan>> const& renderP
 
         if (glProgram->HasUniform("u_color")) {
             Color color = Color::white;
-            if (model.material->UniformColors().size() > 0) {
-                color = model.material->UniformColors()[0];
+            if (modelMaterial->UniformColors().size() > 0) {
+                color = modelMaterial->UniformColors()[0];
             }
             glUniform4f(glProgram->uniformLocations["u_color"], color.r, color.g, color.b, color.a);
         }
@@ -496,15 +512,15 @@ void GLRenderEngine::RenderDrawPlans(VectorList<SP<GLRenderPlan>> const& renderP
             );
         }
 
-        for (auto& i : model.material->Features()) {
+        for (auto& i : modelMaterial->Features()) {
             auto key = i.first;
             auto status = i.second;
 
             switch (status) {
-            case RenderFeatureStatus::Enable:
+            case RenderFeatureState::Enable:
                 EnableFeature(key, true);
                 break;
-            case RenderFeatureStatus::Disable:
+            case RenderFeatureState::Disable:
                 EnableFeature(key, false);
                 break;
             }
@@ -520,10 +536,10 @@ void GLRenderEngine::ScanGLExtensions() {
     GLint count;
     glGetIntegerv(GL_NUM_EXTENSIONS, &count);
 
-    for (int i = 0; i < count; i++) {
+    ForCount(0, count, [&](int i) {
         auto extensionId = (char*)glGetStringi(GL_EXTENSIONS, i);
         glExtensions.insert(String(extensionId));
-    }
+    });
 
     PJLog("****** OPENGL EXTENSIONS ******");
     for (auto& extension : glExtensions) {

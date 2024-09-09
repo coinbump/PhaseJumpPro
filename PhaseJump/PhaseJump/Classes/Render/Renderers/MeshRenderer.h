@@ -1,13 +1,12 @@
 #pragma once
 
-#include "MeshRendererModel.h"
 #include "SomeRenderer.h"
 #include <memory>
 
 /*
  RATING: 5 stars
  Tested and works
- CODE REVIEW: 8/25/24
+ CODE REVIEW: 9/6/24
  */
 namespace PJ {
     class RenderMaterial;
@@ -16,8 +15,7 @@ namespace PJ {
     /// Renders a mesh
     class MeshRenderer : public SomeRenderer {
     public:
-        /// Defines mesh and mesh builder func
-        MeshRendererModel model;
+        using Base = SomeRenderer;
 
         /// If set, use this color. If not use colors
         std::optional<Color> color;
@@ -27,22 +25,18 @@ namespace PJ {
 
         MeshRenderer(Vector3 worldSize);
 
+        // MARK: SomeWorldComponent
+
+        String TypeName() const override {
+            return "MeshRenderer";
+        }
+
         // MARK: SomeRenderer
 
         VectorList<RenderModel> MakeRenderModels() override;
 
         void SetColor(Color color) override {
             this->color = color;
-        }
-
-        // MARK: WorldSizeable
-
-        std::optional<Vector3> WorldSize() const override {
-            return model.WorldSize();
-        }
-
-        void SetWorldSize(Vector3 value) override {
-            model.SetWorldSize(value);
         }
     };
 } // namespace PJ

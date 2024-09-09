@@ -23,6 +23,10 @@ namespace PJ {
         Timer(float duration, RunType runType) :
             Base(duration, runType) {}
 
+        // Copy properties, not compose funcs (storing captured this)
+        Timer(Timer const& rhs) :
+            Base(rhs.duration, rhs.runner.runType) {}
+
         float State() const {
             return state;
         }
@@ -69,6 +73,10 @@ namespace PJ {
                 return;
             }
 
+            // We can't break down large deltas because events will get compressed
+            // Example: an event happens every 3 seconds, we get a 9 second delta,
+            // they should be 3 seconds apart but are 0 seconds apart instead
+            // Need a different mechanism to support fast forward in sims
             SetState(state + delta);
         }
     };

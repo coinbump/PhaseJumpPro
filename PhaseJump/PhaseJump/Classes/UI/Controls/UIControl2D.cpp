@@ -6,11 +6,13 @@ using namespace PJ;
 void UIControl2D::Awake() {
     Base::Awake();
 
-    auto node = Node();
-    if (!node) {
-        return;
-    }
+    OnStateChange();
 
-    hoverGestureHandler = node->AddComponent<HoverGestureHandler>();
-    hoverGestureHandler->target = SCAST<UIControl2D>(shared_from_this());
+    GUARD(owner)
+    owner->AddComponent<HoverGestureHandler>(SCAST<UIControl2D>(shared_from_this()));
+}
+
+void UIControl2D::OnStateChange() {
+    GUARD(onControlUpdateFunc)
+    onControlUpdateFunc(*this);
 }

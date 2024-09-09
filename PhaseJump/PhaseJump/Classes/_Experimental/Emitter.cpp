@@ -1,27 +1,33 @@
 #include "Emitter.h"
+// #include <box2d/box2d.h>
 
 using namespace std;
 using namespace PJ;
 
 // #define PROFILE
 
-float Emitter::EmitTime() const {
-    return fireTimer.duration;
-}
-
-void Emitter::SetEmitTime(float value) {
-    fireTimer.SetDuration(value);
-}
+// void foo() {
+//     b2WorldDef worldDef = b2DefaultWorldDef();
+//     //    b2WorldDef worldDef2 = b2DefaultWorldDef();
+//     //    worldDef.workerCount = settings.workerCount;
+//     //    worldDef.enqueueTask = EnqueueTask;
+//     //    worldDef.finishTask = FinishTask;
+//     //    worldDef.userTaskContext = this;
+//     //    worldDef.enableSleep = settings.enableSleep;
+//
+//     auto m_worldId = b2CreateWorld(&worldDef);
+// }
 
 Emitter::Emitter(SpawnFunc spawnFunc, float fireTime) :
-    spawnFunc(spawnFunc),
-    fireTimer(fireTime, Runner::RunType::Repeat) {
-
-    fireTimer.onFinishFunc =
-        std::make_unique<Function<void(TimedPlayable&)>>([this](TimedPlayable& timedPlayable) {
-            this->OnFireTimerFinish();
-        });
+    spawnFunc(spawnFunc) {
+    fireDriver = std::make_unique<TimerDriver>(fireTime, Runner::RunType::Repeat, [this]() {
+        this->Fire();
+    });
 }
+
+Emitter::Emitter(SpawnFunc spawnFunc, UP<SomeDriver>& fireDriver) :
+    spawnFunc(spawnFunc),
+    fireDriver(std::move(fireDriver)) {}
 
 void Emitter::OnUpdate(TimeSlice time) {
     Base::OnUpdate(time);
@@ -40,8 +46,8 @@ void Emitter::OnUpdate(TimeSlice time) {
     delayedEmits = unfinishedEmits;
     EmitWithEmits(finishedEmits);
 
-    GUARD(EmitTime() > 0)
-    fireTimer.OnUpdate(time);
+    GUARD(fireDriver);
+    fireDriver->OnUpdate(time);
 }
 
 bool Emitter::CanSpawn() {
@@ -115,10 +121,6 @@ Emitter::SpawnType Emitter::Spawn(EmitModel const& emit) {
     }
 
     return newSpawn;
-}
-
-void Emitter::OnFireTimerFinish() {
-    Fire();
 }
 
 /// Returns local position for new spawn

@@ -1,11 +1,10 @@
-#ifndef PJSOMEHOVERGESTUREHANDLER_H
-#define PJSOMEHOVERGESTUREHANDLER_H
+#pragma once
 
 #include "WorldComponent.h"
 
 /*
  RATING: 5 stars
- Simple interface
+ Simple protocol
  Code review: 7/18/24
  */
 namespace PJ {
@@ -14,7 +13,11 @@ namespace PJ {
     class SomeHoverGestureHandler : public WorldComponent<> {
     public:
         virtual void SetIsHovering(bool value) = 0;
+
+        // MARK: SomeWorldComponent
+
+        String TypeName() const override {
+            return "SomeHoverGestureHandler";
+        }
     };
 } // namespace PJ
-
-#endif

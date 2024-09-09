@@ -1,28 +1,34 @@
 #pragma once
 
-#include "Axis.h"
-#include "Bounds.h"
 #include "Mesh.h"
+#include "RendererModel.h"
 #include "RenderModel.h"
 #include "SomeRenderContext.h"
 #include "WorldComponent.h"
 #include "WorldSizeable.h"
 #include <memory>
 
-// CODE REVIEW: ?/23
+/*
+ RATING: 5 stars
+ Tested and works
+ CODE REVIEW: 9/6/24
+ */
 namespace PJ {
     class RenderMaterial;
+    class RenderContextModel;
+    class RenderModel;
+    class SomeTexture;
 
     class SomeRenderer : public WorldComponent<>, public WorldSizeable {
     public:
-        // (OPTIONAL) Material for render
-        SP<RenderMaterial> material;
+        /// Defines model for renderer
+        RendererModel model;
 
+        SomeRenderer(Vector3 worldSize) :
+            model(worldSize) {}
+
+        /// Create models to send to the render engine for a render
         virtual VectorList<RenderModel> MakeRenderModels() = 0;
-
-        /// Allows custom rendering outside of the render engine
-        /// Example: rendering ImGui UI
-        virtual void RenderInto(RenderContextModel const& contextModel) {}
 
         /// Override to set render color
         virtual void SetColor(Color color) {}
@@ -34,19 +40,12 @@ namespace PJ {
 
         // MARK: WorldSizeable
 
-        void SetWorldSize(Vector3 value) override {}
-    };
+        std::optional<Vector3> WorldSize() const override {
+            return model.WorldSize();
+        }
 
-    /// Render based on a function (used for imGui)
-    class ActionRenderer : public SomeRenderer {
-    public:
-        std::function<void(RenderContextModel)> render;
-
-        ActionRenderer(std::function<void(RenderContextModel)> render) :
-            render(render) {}
-
-        // MARK: SomeRenderer
-
-        void RenderInto(RenderContextModel const& contextModel) override;
+        void SetWorldSize(Vector3 value) override {
+            model.SetWorldSize(value);
+        }
     };
 } // namespace PJ

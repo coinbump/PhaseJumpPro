@@ -1,5 +1,4 @@
-#ifndef PJHOVERHANDLER_H
-#define PJHOVERHANDLER_H
+#pragma once
 
 #include "SomeEffect.h"
 #include "SomeHoverGestureHandler.h"
@@ -33,5 +32,3 @@ namespace PJ {
         }
     };
 } // namespace PJ
-
-#endif

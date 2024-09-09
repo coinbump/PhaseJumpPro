@@ -50,7 +50,6 @@ namespace PJ {
 
     template <class Collection, class UnaryPred>
     void RemoveIf(Collection& collection, UnaryPred check) {
-        GUARD(check)
         collection.erase(
             std::remove_if(collection.begin(), collection.end(), check), collection.end()
         );

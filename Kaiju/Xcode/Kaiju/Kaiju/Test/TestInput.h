@@ -22,13 +22,25 @@ class TestInput : public WorldComponent<>, public SomeKeyUIEventsResponder, publ
 
     void OnUpdate(TimeSlice time) override {
         // TODO: support reading from any controller
-        auto value = Input::FirstAxisValue(ControllerAxisId::LeftX);
-        if (value < -0.5f) {
-            owner->transform.value.position.x -= 600.0f * time.delta;
-            owner->TypeComponent<AnimatedSpriteRenderer>()->flipX = false;
-        } else if (value > 0.5f) {
-            owner->transform.value.position.x += 600.0f * time.delta;
-            owner->TypeComponent<AnimatedSpriteRenderer>()->flipX = true;
+        {
+            auto value = Input::FirstAxisValue(ControllerAxisId::LeftX);
+            if (value < -0.5f) {
+                owner->transform.value.position.x -= 600.0f * time.delta;
+                owner->TypeComponent<AnimatedSpriteRenderer>()->flipX = false;
+            } else if (value > 0.5f) {
+                owner->transform.value.position.x += 600.0f * time.delta;
+                owner->TypeComponent<AnimatedSpriteRenderer>()->flipX = true;
+            }
+        }
+        {
+            auto value = Input::FirstAxisValue(ControllerAxisId::LeftY);
+            if (value < -0.5f) {
+                owner->transform.value.position.y += 600.0f * time.delta;
+                owner->TypeComponent<AnimatedSpriteRenderer>()->flipX = false;
+            } else if (value > 0.5f) {
+                owner->transform.value.position.y -= 600.0f * time.delta;
+                owner->TypeComponent<AnimatedSpriteRenderer>()->flipX = true;
+            }
         }
     }
 };

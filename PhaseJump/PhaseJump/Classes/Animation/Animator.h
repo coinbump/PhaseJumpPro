@@ -32,7 +32,7 @@ namespace PJ {
         SetBindingFunc<T> binding;
 
         Animator(InterpolateFunc<T> interpolator, float duration, SetBindingFunc<T> binding) :
-            timer(duration, Runner::RunType::RunOnce),
+            timer(duration, Runner::RunType::Once),
             interpolator(interpolator),
             binding(binding) {}
 

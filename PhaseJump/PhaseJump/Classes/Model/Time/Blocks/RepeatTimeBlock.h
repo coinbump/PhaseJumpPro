@@ -1,12 +1,13 @@
 #pragma once
 
 #include "TimeBlock.h"
+#include "Updatable.h"
 
 // CODE REVIEW: ?/23
 namespace PJ {
     // TODO: needs unit tests
     /// Repeats a time block based on its type
-    class RepeatTimeBlock : public TimeBlock {
+    class RepeatUpdatable : public Updatable {
         /// Repeat logic for time block
         class SomeRepeater {
         public:

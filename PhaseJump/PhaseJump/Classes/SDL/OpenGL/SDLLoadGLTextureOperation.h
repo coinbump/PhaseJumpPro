@@ -1,5 +1,4 @@
-#ifndef PJSDLLOADGLTEXTUREOPERATION_H
-#define PJSDLLOADGLTEXTUREOPERATION_H
+#pragma once
 
 #include "FilePath.h"
 #include "GLHeaders.h"
@@ -34,5 +33,3 @@ namespace PJ {
         Result LoadResources() override;
     };
 } // namespace PJ
-
-#endif

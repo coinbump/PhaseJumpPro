@@ -1,88 +1,96 @@
-#ifndef PJSLIDERCONTROL_H
-#define PJSLIDERCONTROL_H
+#pragma once
 
-#include "Broadcaster.h"
+#include "Axis.h"
 #include "PublishedValue.h"
 #include "SomeDragHandler.h"
-#include "SomeListener.h"
 #include "UIControl2D.h"
 
 /*
  RATING: 4 stars
- Tested and works. Needs unit tests
- CODE REVIEW: 5/11/23
+ Tested and works. Needs unit tests + intrinsic height logic for view layout
+ CODE REVIEW: 9/2/24
  */
 namespace PJ {
+    class SomeDragGestureHandler2D;
+
+    /**
+     Slider UI control
+     Built with 2 nodes and two renderers
+     The parent node is the track
+     The track node contains the track renderer and a child node which is the thumb
+     The thumb node contains a renderer for the thumb
+
+     The thumb node must have a collider attached for hit testing
+     */
     class SliderControl : public UIControl2D {
-    protected:
-        /// Sends thumb drag events to track
-        class ThumbDragHandler : public SomeDragHandler {
-        public:
-            using Base = SomeDragHandler;
-
-            WP<SliderControl> target;
-
-            void OnDragStart(WorldPosition inputPosition) override;
-            void OnDragEnd() override;
-            void OnDragUpdate(WorldPosition inputPosition) override;
-        };
-
     public:
-        class EndDragThumbEvent : public SomeEvent {};
+        // FUTURE: support snap positions
+        using Base = UIControl2D;
+        using This = SliderControl;
 
-        /// The object for the thumb (if nullptr, the first child object is
+        /// The object for the thumb (if not specified, the first child object is
         /// used)
         WP<WorldNode> thumb;
-
-        /// Size of the end caps where the thumb can't reach
-        float endCapSize = 0;
 
         float minValue = 0;
         float maxValue = 1.0f;
 
-        Broadcaster broadcaster;
+    public:
+        Axis2D axis = Axis2D::X;
+
+        SliderControl(Axis2D axis = Axis2D::X);
+
+        PublishedValue<float>& Value();
+
+        auto& SetEndCapSize(float value) {
+            endCapSize = value;
+            return *this;
+        }
+
+        // MARK: View2D
+
+        std::optional<float> IntrinsicHeight() override;
 
     protected:
+        /// Value clamped between minValue and maxValue
         PublishedValue<float> value{ 0.0 };
 
-        // TODO: SP audit
-        SP<PublishedValue<float>::Subscription> valueSubscription;
+        SP<Cancellable> valueSubscription;
 
-        WorldPosition dragStartInputPosition;
+        /// Size of the end caps where the thumb can't reach
+        float endCapSize = 0;
+
+        Vector2 dragStartInputPosition;
         Vector3 thumbStartLocalPosition;
-        SP<ThumbDragHandler> thumbDragHandler;
+        SP<SomeDragGestureHandler2D> thumbDragHandler;
 
-    public:
-        std::optional<float> IntrinsicHeight() override;
-        PublishedValue<float>& Value();
-        SP<WorldNode> Thumb();
+        Rect TrackFrame() const;
+        std::optional<Rect> ThumbFrame() const;
+        Vector2 RendererSize(WorldNode& target) const;
 
-    protected:
-        void Awake() override;
-
-    protected:
-        void UpdateThumbPositionForValue(float value);
-
-    public:
-        SliderControl();
-        Vector2 TrackSize();
-        Vector2 RendererSize(WorldNode& target);
-        void OnDragThumbStart(WorldNode& thumb, WorldPosition inputPosition);
+        void OnDragThumbStart(WorldNode& thumb, Vector2 inputPosition);
+        void OnDragThumbUpdate(WorldNode& thumb, Vector2 inputPosition);
         void OnDragThumbEnd();
 
-    protected:
-        float HalfTrackWidth(WorldNode& thumb);
+        Vector2 TrackSize() const;
+        Vector2 ThumbSize() const;
 
-        float MinThumbX(WorldNode& thumb) {
-            return -HalfTrackWidth(thumb);
+        SP<WorldNode> Thumb() const;
+
+        void UpdateThumbPositionForValue(float value);
+
+        float HalfTrackLength(WorldNode& thumb);
+
+        float MinThumbPos(WorldNode& thumb) {
+            return -HalfTrackLength(thumb);
         }
 
-        float MaxThumbX(WorldNode& thumb) {
-            return HalfTrackWidth(thumb);
+        float MaxThumbPos(WorldNode& thumb) {
+            return HalfTrackLength(thumb);
         }
 
-        void OnDragThumbUpdate(WorldNode& thumb, WorldPosition inputPosition);
+        // MARK: SomeWorldComponent
+
+        void Awake() override;
     };
 } // namespace PJ
-
-#endif

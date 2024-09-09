@@ -11,6 +11,28 @@
 namespace PJ {
     class Font;
 
+    enum class TextWrap {
+        /// Wrap by individual characters
+        Character,
+
+        /// Wrap words
+        Word
+
+        // FUTURE: support contextual grammar-type word wrap if needed
+        // Grammar
+    };
+
+    enum class TextWordWrap {
+        /// Split words when there isn't enough horizontal space
+        Break,
+
+        /// Never split individual words
+        None
+
+        // FUTURE: split, and add dash after first part of broken word
+        // AddDash
+    };
+
     /// Defines the metrics for a measured line of text
     struct TextLineMetrics {
     public:
@@ -47,6 +69,26 @@ namespace PJ {
         }
     };
 
+    struct TextMetrics {
+        VectorList<TextLineMetrics> lines;
+        Vector2 size;
+
+        TextMetrics(VectorList<TextLineMetrics> lines, Vector2 size) :
+            lines(lines),
+            size(size) {}
+
+        static Vector2 CalculateSize(VectorList<TextLineMetrics> const& lines) {
+            Vector2 result;
+
+            std::for_each(lines.cbegin(), lines.cend(), [&](TextLineMetrics const& line) {
+                result.x = std::max(result.x, line.size.x);
+                result.y += line.size.y;
+            });
+
+            return result;
+        }
+    };
+
     /// Defines line clip behavior when text extends outside its available bounds
     enum class LineClip {
         /// Don't clip lines
@@ -73,11 +115,16 @@ namespace PJ {
         using MeasureMetricsFunc = std::function<FontMeasureMetrics()>;
 
         Font& font;
+        TextWrap textWrap;
+        TextWordWrap textWordWrap;
 
-        TextMeasurer(Font& font) :
+        TextMeasurer(
+            Font& font, TextWrap textWrap = TextWrap::Word,
+            TextWordWrap textWordWrap = TextWordWrap::Break
+        ) :
             font(font) {}
 
-        VectorList<TextLineMetrics> MeasureLines(
+        TextMetrics Measure(
             String text, Vector2 textSize, LineClip lineClip = LineClip::Hidden,
             MeasureMetricsFunc metricsFunc = MeasureMetricsFunc()
         );

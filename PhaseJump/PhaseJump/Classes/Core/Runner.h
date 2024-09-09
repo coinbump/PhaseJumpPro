@@ -11,12 +11,12 @@ namespace PJ {
     /// Allows for repeating timers
     class Runner {
     public:
-        // TODO: use composition for behavior, not enums
+        // TODO: use composition for behavior, not enums?
         enum class RunType {
-            // Destroy when finished
-            RunOnce,
+            // Run one time
+            Once,
 
-            // Repeats (example: timer that does an update every N seconds)
+            // Repeats (restarts after finish)
             Repeat
         };
 

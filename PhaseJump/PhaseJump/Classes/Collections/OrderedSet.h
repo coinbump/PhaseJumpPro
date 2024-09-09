@@ -10,6 +10,7 @@
  CODE REVIEW: 8/3/24
  */
 namespace PJ {
+    /// Alias for std so can build an alternate implementation if needed
     template <class Type, class _Compare = std::less<Type>, class _Allocator = std::allocator<Type>>
     using OrderedSet = std::set<Type, _Compare, _Allocator>;
 

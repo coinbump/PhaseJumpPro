@@ -51,6 +51,13 @@ TEST(Vector3, TestEquality) {
     EXPECT_EQ(sut2, sut3);
 }
 
+TEST(Vector3, OperatorStream) {
+    Vector3 sut(1, 2, 3);
+    ostringstream ss;
+    ss << sut;
+    EXPECT_EQ("{1, 2, 3}", ss.str());
+}
+
 // MARK: - Vector3Int
 
 TEST(Vector3Int, TestInit) {
@@ -91,4 +98,12 @@ TEST(Vector3Int, TestEquality) {
 
     EXPECT_NE(sut, sut2);
     EXPECT_EQ(sut2, sut3);
+}
+
+TEST(Vector3, AxisValue) {
+    Vector3 sut(1, 3, 4);
+
+    EXPECT_EQ(1, sut.AxisValue(Axis::X));
+    EXPECT_EQ(3, sut.AxisValue(Axis::Y));
+    EXPECT_EQ(4, sut.AxisValue(Axis::Z));
 }

@@ -7,14 +7,14 @@
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 5/11/24
+ CODE REVIEW: 9/1/24
  */
 namespace PJ {
     /// Lightweight publisher, without the complexity of full Reactive support
-    template <typename Input>
+    template <typename Output>
     struct SomeSimplePublisher {
-        using Subscription = SomeSimpleSubscription<Input>;
-        using ReceiveFunc = std::function<void(Input const&)>;
+        using Subscription = SomeSimpleSubscription<Output>;
+        using ReceiveFunc = std::function<void(Output const&)>;
         using SubscriptionList = List<WP<Subscription>>;
 
     protected:
@@ -22,16 +22,19 @@ namespace PJ {
         SubscriptionList subscriptions;
 
     protected:
-        virtual void SubscriberAdded(Subscription& subscription) {}
+        virtual void OnAdd(Subscription& subscription) {}
 
     public:
         virtual ~SomeSimplePublisher() {}
 
-        virtual SP<Subscription> Receive(ReceiveFunc func) {
-            auto result = MAKE<InSimpleSubscription<Input>>(func);
+        /// Call to receive new values
+        /// Store the subscription to hold a reference to it
+        /// To stop receiving values, cancel the subscription
+        SP<Subscription> Receive(ReceiveFunc func) {
+            auto result = MAKE<SimpleSubscription<Output>>(func);
             this->subscriptions.push_back(result);
 
-            SubscriberAdded(*result);
+            OnAdd(*result);
 
             return result;
         }

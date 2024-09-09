@@ -26,6 +26,15 @@ namespace PJ {
         return stream.str();
     }
 
+    template <class... Arguments>
+    String MakeString(Arguments&&... args) {
+        std::ostringstream stream;
+
+        ([&] { stream << args; }(), ...);
+
+        return stream.str();
+    }
+
     String ToLower(StringView s);
     String ToUpper(StringView s);
 

@@ -13,44 +13,48 @@ using namespace std;
 using namespace PJ;
 
 SlicedTextureRenderer::SlicedTextureRenderer(
-    SP<SomeTexture> texture, Vector2 worldSize, std::array<Vector2Int, 2> slicePoints
+    SP<SomeTexture> texture, Vector2 worldSize, SlicePoints slicePoints
 ) :
+    Base(worldSize),
     texture(texture),
-    size(worldSize),
     slicePoints(slicePoints) {
 
-    material = MAKE<RenderMaterial>();
+    model.material = MAKE<RenderMaterial>();
 
     auto program = SomeShaderProgram::registry.find("texture.vary");
     GUARD(program != SomeShaderProgram::registry.end())
-    material->SetShaderProgram(program->second);
-    material->EnableFeature(RenderFeature::Blend, true);
+    model.material->SetShaderProgram(program->second);
+    model.material->EnableFeature(RenderFeature::Blend, true);
 
     if (texture) {
-        material->Add(texture);
+        model.material->Add(texture);
     }
 
-    BuildMesh();
+    model.SetMeshBuilderFunc([this](RendererModel const& model) {
+        return BuildMesh(model.WorldSize());
+    });
 }
 
 PJ::SlicedTextureRenderer::BuildModel SlicedTextureRenderer::MakeBuildModel() const {
     BuildModel result;
 
+    auto material = model.material;
     GUARDR(material, result)
     GUARDR(texture, result)
 
-    result.sliceLeft = (float)min(texture->size.x - 1, max(0, slicePoints[0].x));
-    result.sliceTop = (float)min(texture->size.y - 1, max(0, slicePoints[0].y));
-    result.sliceRightOffset = (float)min(texture->size.x - 1, max(0, slicePoints[1].x));
-    result.sliceBottomOffset = (float)min(texture->size.y - 1, max(0, slicePoints[1].y));
+    result.sliceLeft = (float)min(texture->size.x - 1, max(0, slicePoints.topLeft.x));
+    result.sliceTop = (float)min(texture->size.y - 1, max(0, slicePoints.topLeft.y));
+    result.sliceRightOffset = (float)min(texture->size.x - 1, max(0, slicePoints.bottomRight.x));
+    result.sliceBottomOffset = (float)min(texture->size.y - 1, max(0, slicePoints.bottomRight.y));
 
     result.sliceRight = texture->size.x - result.sliceRightOffset;
     result.sliceBottom = texture->size.y - result.sliceBottomOffset;
 
+    auto size = model.WorldSize();
     result.left = -size.x / 2.0f + result.sliceLeft;
-    result.top = (size.y / 2.0f) * Vector2::up.y + result.sliceTop * Vector2::down.y;
+    result.top = (size.y / 2.0f) * vecUp + result.sliceTop * vecDown;
     result.right = size.x / 2.0f - result.sliceRightOffset;
-    result.bottom = (size.y / 2.0f) * Vector2::down.y + result.sliceBottomOffset * Vector2::up.y;
+    result.bottom = (size.y / 2.0f) * vecDown + result.sliceBottomOffset * vecUp;
 
     result.textureSize = texture->size;
     result.topAndBottomWorldWidth = size.x - result.sliceLeft - result.sliceRightOffset;
@@ -108,8 +112,11 @@ PJ::SlicedTextureRenderer::BuildModel SlicedTextureRenderer::MakeBuildModel() co
     return result;
 }
 
-void SlicedTextureRenderer::BuildMesh() {
-    GUARD(material && texture)
+Mesh SlicedTextureRenderer::BuildMesh(Vector3 worldSize) {
+    auto material = model.material;
+    GUARDR(material && texture, {})
+
+    Mesh mesh;
 
     std::array<Mesh, 9> meshList;
 
@@ -205,32 +212,26 @@ void SlicedTextureRenderer::BuildMesh() {
            meshList[MeshIndex::Left] + meshList[MeshIndex::Center] + meshList[MeshIndex::Right] +
            meshList[MeshIndex::BottomLeft] + meshList[MeshIndex::Bottom] +
            meshList[MeshIndex::BottomRight];
-}
 
-void SlicedTextureRenderer::SetSize(Vector2 worldSize) {
-    if (this->size == worldSize) {
-        return;
-    }
-
-    this->size = worldSize;
-    BuildMesh();
+    return mesh;
 }
 
 VectorList<RenderModel> SlicedTextureRenderer::MakeRenderModels() {
     VectorList<RenderModel> result;
 
+    auto material = model.material;
     if (nullptr == material) {
         PJLog("ERROR. Missing material.");
         return result;
     }
 
+    auto mesh = model.Mesh();
+
     RenderModelBuilder builder;
     VectorList<SomeTexture*> textures{ texture.get() };
-    auto renderModel = builder.Build(
-        mesh, *material, textures, ModelMatrix(), 0
-    ); // TODO: owner->transform.WorldPosition().z);
+    auto renderModel = builder.Build(*this, mesh, *material, textures);
 
-    renderModel.colors = VectorList<RenderColor>(mesh.vertices.size(), Color::white);
+    renderModel.colors = VectorList<RenderColor>(mesh.Vertices().size(), Color::white);
 
     result.push_back(renderModel);
     return result;

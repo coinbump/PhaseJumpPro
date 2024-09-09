@@ -9,18 +9,36 @@
  CODE REVIEW: 8/25/24
  */
 namespace PJ {
-    /// A plane mesh that is oriented to xy space, and defaults to 1x1 size
+    namespace QuadMesh {
+        extern VectorList<uint32_t> const triangles;
+        extern VectorList<Vector2> const uvs;
+    } // namespace QuadMesh
+
+    /// 1x1 quad mesh, oriented to x-y plane
     class QuadMeshBuilder : public SomeMeshBuilder {
     public:
-        Vector2Int meshSize{ 1, 1 };
         Vector2 worldSize{ 10.0f, 10.0f };
 
-        QuadMeshBuilder(Vector2 worldSize = Vector2::one, Vector2Int meshSize = Vector2Int::one) :
-            worldSize(worldSize),
-            meshSize(meshSize) {}
+        QuadMeshBuilder(Vector2 worldSize = vec2One) :
+            worldSize(worldSize) {}
 
         Mesh BuildMesh() override {
-            return PlaneMeshBuilder(worldSize, meshSize, Axis::Y).BuildMesh();
+            float halfX = worldSize.x / 2.0f;
+            float halfY = worldSize.y / 2.0f;
+
+            Mesh result({ { halfX * vecLeft, halfY * vecUp, 0 },
+                          { halfX * vecRight, halfY * vecUp, 0 },
+                          { halfX * vecLeft, halfY * vecDown, 0 },
+                          { halfX * vecRight, halfY * vecDown, 0 } });
+
+            // FUTURE: this is an interesting idea, because copying a pointer is faster than a
+            // vector copy But it adds more complexity and edge cases elsewhere. Re-evaluate later
+            // result.SetSharedTriangles(&QuadMesh::triangles);
+
+            result.BaseTriangles() = QuadMesh::triangles;
+            result.SetUVs(QuadMesh::uvs);
+
+            return result;
         }
     };
 } // namespace PJ

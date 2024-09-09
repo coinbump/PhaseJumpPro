@@ -5,6 +5,7 @@
 #include "EmitModel.h"
 #include "Emitter.h"
 #include "List.h"
+#include "MatrixPiece.h"
 #include "PublishedValue.h"
 #include "QuadMeshBuilder.h"
 #include "RateLimiter.h"
@@ -24,6 +25,115 @@
 #include "WorldNode.h"
 
 namespace PJ {
+    using EventModifierType = String;
+
+    namespace EventModifier {
+
+        auto constexpr Control = "control";
+        auto constexpr Option = "option";
+        auto constexpr Shift = "shift";
+    } // namespace EventModifier
+
+    struct KeyboardShortcut {
+        using ModifierSet = UnorderedSet<EventModifierType>;
+
+        String value;
+        ModifierSet modifiers;
+    };
+
+    struct MenuItem {
+        using Func = std::function<void()>;
+
+        String title;
+        VectorList<KeyboardShortcut> shortcuts;
+        VectorList<MenuItem> items;
+        Func func;
+    };
+
+    class Menu : public SomeKeyUIEventsResponder {
+    public:
+        String title;
+        VectorList<MenuItem> items;
+
+        void OnKeyDown(KeyDownUIEvent event) {
+            // TODO: iterate through items and sub-items, find one with a shortcut that matches
+        }
+    };
+
+    namespace TextStyleId {
+        auto constexpr Bold = "bold";
+        auto constexpr Italic = "italic";
+        auto constexpr Underline = "underline";
+        auto constexpr Strikethrough = "strike";
+        auto constexpr Caps = "caps";
+    } // namespace TextStyleId
+
+    /// Rich text is composed of multiple text parts.
+    /// Each part can be an attribute, or text, or something else
+    class SomeTextPart {
+    public:
+        size_t index;
+    };
+
+    /// Wraps a texture to allow us to change properties without altering
+    /// the original texture
+    class Image {
+        Vector2 size;
+        SP<SomeTexture> texture;
+    };
+
+    /// Image inside rich text
+    class ImageTextPart : public SomeTextPart {
+    public:
+        Image image;
+    };
+
+    /// String inside rich text
+    class StringTextPart : public SomeTextPart {
+    public:
+        String value;
+    };
+
+    /// Style attribute inside rich text
+    /// Attributes are pushed on to the stack and then popped when they end
+    class SomeAttributeTextPart : public SomeTextPart {
+    public:
+        enum class Type { Start, End };
+
+        Type type = Type::Start;
+    };
+
+    /// Font attribute inside rich text
+    class FontAttributeTextPart : public SomeAttributeTextPart {
+    public:
+        String name;
+        float size = 12;
+
+        FontAttributeTextPart(String name, float size) :
+            name(name),
+            size(size) {}
+    };
+
+    /// Style attribute inside rich text
+    class StyleAttributeTextPart : public SomeAttributeTextPart {
+    public:
+        UnorderedSet<String> styles;
+    };
+
+    struct TextStyle {
+        UnorderedSet<String> styles;
+        String fontName;
+        float fontSize = 12;
+    };
+
+    class RichTextMeasurer {};
+
+    class RichTextRenderer : public SomeRenderer {};
+
+    class AnimateApp : public Scene {};
+
+    class ImageApp : public Scene {};
+
     // EXTRA: boards, mine sweeper
 
     //    class SomeTextLayout {};
@@ -177,7 +287,7 @@ namespace PJ {
         //                    {
         //                        for (int y = 0; y < matrixSize.y; y++)
         //                        {
-        //                            RemoveAt(new Vector2Int(x, y));
+        //                            RemoveAt(Vector2Int(x, y));
         //                        }
         //                    }
         //                }
@@ -256,7 +366,7 @@ namespace PJ {
         //                    auto column = (int)(viewPosition.x / CellSize.x);
         //                    auto row = (int)(viewPosition.y / CellSize.y);
         //
-        //                    return new Vector2Int(column, row);
+        //                    return Vector2Int(column, row);
         //                }
         //
         //                Vector2 LocationToLocalPosition(Vector2Int cell)
@@ -313,7 +423,7 @@ namespace PJ {
         //                    auto oldOrigin = piece.origin;
         //                    if (newOrigin == oldOrigin) { return MoveResult.Fail; }
         //
-        //                    auto excludeList = new HashSet<MatrixPiece>();
+        //                    auto excludeList = new UnorderedSet<MatrixPiece>();
         //                    excludeList.Add(piece);
         //                    if (board.IsPieceBlockedAt(newOrigin, piece, excludeList))
         //                    {
@@ -328,7 +438,7 @@ namespace PJ {
         //                    if (duration > 0)
         //                    {
         //                        node.moveAnimator = new(
-        //                            new Vector2Interpolator(node.transform.localPosition,
+        //                            Vector2Interpolator(node.transform.localPosition,
         //                            endPosition), new(duration, AnimationCycleType.Once), new
         //                            SetBinding<Vector2>((Vector2 position) =>
         //                            node.transform.localPosition = position)
@@ -350,7 +460,7 @@ namespace PJ {
         //
         //                    auto topLeftCellPosition = LocationToLocalPosition(pieceOrigin);
         //                    auto bottomRightCellPosition = LocationToLocalPosition(pieceOrigin +
-        //                    new Vector2Int(pieceSize.x - 1, pieceSize.y - 1));
+        //                    Vector2Int(pieceSize.x - 1, pieceSize.y - 1));
         //
         //                    auto x = topLeftCellPosition.x + (bottomRightCellPosition.x -
         //                    topLeftCellPosition.x) / 2.0f; auto y = topLeftCellPosition.y +
@@ -964,7 +1074,7 @@ namespace PJ {
                 GUARD(!tab.second.expired());
 
                 auto tabLock = tab.second.lock();
-                tabLock->SetActive(tabLock == selectedNode);
+                tabLock->Enable(tabLock == selectedNode);
             }
         }
     };
@@ -984,12 +1094,95 @@ namespace PJ {
         // focused? SEE: https://docs.godotengine.org/en/stable/tutorials/ui/gui_navigation.html
     };
 
+    class PaintCanvas : public View2D {};
+
+    class ImageCanvas : public View2D {
+        // Reference bitmapFilters list
+    };
+
+    class ObjectCanvas : public View2D {};
+
+    class PortGraphCanvas : public ObjectCanvas {};
+
+    class PortGraphCanvasModel {};
+
+    class TimelineCanvas : public ObjectCanvas {};
+
+    class CanvasTool {};
+
+    class SomePaintTool : public CanvasTool {};
+
+    class BrushPaintTool : public SomePaintTool {};
+
+    class ErasePaintTool : public SomePaintTool {};
+
+    class CanvasToolClass;
+
+    class ToolCanvasModel {
+        VectorList<CanvasToolClass> toolClasses;
+        SP<CanvasTool> activeTool;
+    };
+
+    class TimelineCanvasModel {};
+
+    /// An app that allows properties to be animated along the timeline
+    class TimelineApp : public Scene {};
+
+    class UITheme {
+        using ElementId = String;
+
+        // TODO: does this need to be a tree? Or can it just be a straight Tags object?
+        // Maps UI element IDs to properties (color, font name, font size, etc.)
+        UnorderedMap<ElementId, Tags> map;
+    };
+
+    /// "Duck" for "ugly duckling" UI. A bare bones, simple
+    namespace DuckUI {
+        class Button;
+        class ImageButton;
+        class ImageToggleButton;
+        class Switch;
+        class Checkbox;
+        class Slider;
+        class TabBar;
+        class TabView;
+        class TextInput;
+        class PopupMenu;
+        class ColorPicker;
+        class WindowTitleBar;
+        class View;
+    } // namespace DuckUI
+
     class Feed : public View2D {};
 
-    // PlatformWindow and Window are not the same thing
-    class Window : public View2D {};
+    class Cursor {
+    public:
+        Image image;
+        Vector2 hotSpot;
+
+        static void Hide();
+        static void UnHide();
+    };
+
+    namespace CursorId {
+        /// The native OS cursor
+        auto constexpr Native = "native";
+
+        // TODO: add from here: https://developer.apple.com/documentation/appkit/nscursor
+    }; // namespace CursorId
+
+    class CursorArea {
+    public:
+        String cursorId;
+        // UISystem checks for collision, changes cursor <- the OS cursor or the node cursor?
+    };
 
     class WindowManager {};
+
+    // PlatformWindow and Window are not the same thing
+    class Window : public View2D {
+        // WindowModel
+    };
 
     class SegmentButton : public UIControl2D {
         struct Segment {
@@ -1002,12 +1195,12 @@ namespace PJ {
     };
 
     namespace ThemeKey {
-        static auto const ButtonBackgroundColor = "button.background.color";
+        auto constexpr ButtonBackgroundColor = "button.background.color";
     }
 
     /// Collection of shared UI properties and modifiers
     /// Example: button.background.color = "0x442314"
-    class UITheme {
+    class UIThemeV2 {
     public:
         Tags tags;
 

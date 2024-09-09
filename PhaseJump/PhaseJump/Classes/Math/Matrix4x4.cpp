@@ -47,10 +47,10 @@ Matrix4x4::operator Terathon::Transform3D() const {
 
 String Matrix4x4::ToString() const {
     stringstream s;
-    s << a() << e() << i() << m() << "\n";
-    s << b() << f() << j() << n() << "\n";
-    s << c() << g() << k() << o() << "\n";
-    s << d() << h() << l() << p() << "\n";
+    s << a() << e() << i() << m() << std::endl;
+    s << b() << f() << j() << n() << std::endl;
+    s << c() << g() << k() << o() << std::endl;
+    s << d() << h() << l() << p() << std::endl;
 
     return s.str();
 }
@@ -250,6 +250,7 @@ void Matrix4x4::LoadPerspective(float fov_radians, float aspect, float zNear, fl
 void Matrix4x4::LoadOrthographic(
     float left, float right, float bottom, float top, float zNear, float zFar
 ) {
+    // TODO: is this correct? far and near might be switched? (create scene to test)
     float r_l = right - left;
     float t_b = top - bottom;
     float f_n = zFar - zNear;

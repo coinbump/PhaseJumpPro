@@ -1,6 +1,6 @@
-#ifndef PJVECTOR2_H
-#define PJVECTOR2_H
+#pragma once
 
+#include "Axis.h"
 #include "FloatMath.h"
 #include "IntMath.h"
 #include "Macros_Vectors.h"
@@ -18,26 +18,18 @@ namespace Terathon {
  CODE REVIEW: 7/6/24
  */
 namespace PJ {
-    // TODO: do we need a renderVector2 that has no inheritance?
-    struct Vector2 { //} : public StringConvertible {
+    struct Vector2 {
     public:
         using This = Vector2;
 
         float x = 0;
         float y = 0;
 
-        Vector2() {}
+        constexpr Vector2() {}
 
-        Vector2(float x, float y) :
+        constexpr Vector2(float x, float y) :
             x(x),
             y(y) {}
-
-        static Vector2 const down;
-        static Vector2 const left;
-        static Vector2 const one;
-        static Vector2 const right;
-        static Vector2 const up;
-        static Vector2 const zero;
 
         float& operator[](size_t index) {
             return (&x)[index >= 0 && index < 2 ? index : index % 2];
@@ -54,6 +46,42 @@ namespace PJ {
         operator Terathon::Vector2D() const;
         operator Terathon::Point2D() const;
 
+        float& AxisValue(Axis2D axis) {
+            switch (axis) {
+            case Axis2D::X:
+                return x;
+            case Axis2D::Y:
+                return y;
+            }
+        }
+
+        float AxisValue(Axis2D axis) const {
+            switch (axis) {
+            case Axis2D::X:
+                return x;
+            case Axis2D::Y:
+                return y;
+            }
+        }
+
+        float& AxisValueReverse(Axis2D axis) {
+            switch (axis) {
+            case Axis2D::X:
+                return y;
+            case Axis2D::Y:
+                return x;
+            }
+        }
+
+        float AxisValueReverse(Axis2D axis) const {
+            switch (axis) {
+            case Axis2D::X:
+                return y;
+            case Axis2D::Y:
+                return x;
+            }
+        }
+
         void Normalize() {
             float mag = Magnitude(true);
             for (int i = 0; i < 2; i++) {
@@ -63,7 +91,7 @@ namespace PJ {
 
         VECTOR_METHODS(Vector2, float, 2);
 
-        static This Uniform(float value) {
+        static constexpr This Uniform(float value) {
             return Vector2(value, value);
         }
 
@@ -76,8 +104,6 @@ namespace PJ {
         }
     };
 
-    VECTOR_EXTERNALMETHODS(Vector2, float);
-
     class Vector2Int {
     public:
         using This = Vector2Int;
@@ -85,9 +111,9 @@ namespace PJ {
         int x = 0;
         int y = 0;
 
-        Vector2Int() {}
+        constexpr Vector2Int() {}
 
-        Vector2Int(int x, int y) :
+        constexpr Vector2Int(int x, int y) :
             x(x),
             y(y) {}
 
@@ -115,16 +141,25 @@ namespace PJ {
             return stream.str();
         }
 
-        static This Uniform(int value) {
+        static constexpr This Uniform(int value) {
             return Vector2Int(value, value);
         }
     };
 
-    VECTOR_EXTERNALMETHODS(Vector2Int, int);
-
     // Convenience names
     using Vec2 = Vector2;
     using Vec2I = Vector2Int;
-} // namespace PJ
 
-#endif
+    // FUTURE: support alternate coordinate systems if needed
+    constexpr float vecLeft = -1;
+    constexpr float vecRight = 1;
+    constexpr float vecUp = 1;
+    constexpr float vecDown = -1;
+
+    constexpr Vector2 vec2Left{ vecLeft, 0 };
+    constexpr Vector2 vec2Right{ vecRight, 0 };
+    constexpr Vector2 vec2Up{ 0, vecUp };
+    constexpr Vector2 vec2Down{ 0, vecDown };
+    constexpr Vector2 vec2Zero{ 0, 0 };
+    constexpr Vector2 vec2One{ 1, 1 };
+} // namespace PJ

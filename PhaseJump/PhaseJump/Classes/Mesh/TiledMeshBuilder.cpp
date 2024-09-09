@@ -3,8 +3,6 @@
 using namespace std;
 using namespace PJ;
 
-UVRect const UVRect::one(Vector2(0, 0), Vector2(1, 1));
-
 Vector2Int TiledMeshBuilder::MeshSize() const {
     int numTilesX = (int)floor(worldSize.x / tileSize.x);
     if (fmod(worldSize.x, tileSize.x)) {
@@ -34,7 +32,7 @@ Mesh TiledMeshBuilder::BuildMesh() {
 
     VectorList<Vector3> vertices(verticesSize, Vector3::zero);
     auto uvSize = verticesSize;
-    VectorList<Vector2> uvs(uvSize, Vector2::zero);
+    VectorList<Vector2> uvs(uvSize, vec2Zero);
 
     for (size_t meshY = 0, i = 0; meshY < meshSize.y; meshY++) {
         for (size_t y = 0; y < 2; y++) {

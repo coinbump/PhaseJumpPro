@@ -19,6 +19,10 @@ namespace PJ {
             audioStream->Play();
         }
 
+        String TypeName() const {
+            return "AudioStreamPlayer";
+        }
+
         WORLD_COMPONENT_SUPPORT_VOID(AudioStreamPlayer)
     };
 } // namespace PJ

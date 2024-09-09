@@ -44,7 +44,7 @@ void SDLImGuiRenderContext::Configure(SDL_Window* window) {
 
     glContext = SDL_GL_CreateContext(window);
     ImGui_ImplSDL3_InitForOpenGL(window, glContext);
-    ImGui_ImplOpenGL3_Init("#version 150");
+    ImGui_ImplOpenGL3_Init(); // ALT: "#version 150");
 
     SP<GLRenderEngine> glRenderEngine = MAKE<GLRenderEngine>();
     //    glRenderEngine->colorFormat = ColorFormat::Byte;
@@ -79,14 +79,16 @@ void SDLImGuiRenderContext::Bind() {
     ImGui_ImplSDL3_NewFrame();
     ImGui::NewFrame();
 
-    auto io = ImGui::GetIO();
+    auto pixelSize = PixelSize();
 
-    _GLRenderEngine()->SetViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
+    // TODO: shouldn't be relying on GL here
+    _GLRenderEngine()->SetViewport(0, 0, pixelSize.x, pixelSize.y);
     glUseProgram(0); // You may want this if using this code in an OpenGL 3+
                      // context where shaders may be bound
 }
 
 void SDLImGuiRenderContext::Clear() {
+    // TODO: shouldn't be relying on GL here
     glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
@@ -106,11 +108,17 @@ void SDLImGuiRenderContext::Present() {
 }
 
 Vector2 SDLImGuiRenderContext::Size() const {
-    auto io = ImGui::GetIO();
-    return Vector2(io.DisplaySize.x, io.DisplaySize.y);
+    GUARDR(window, vec2Zero)
+
+    int x, y;
+    SDL_GetWindowSize(window, &x, &y);
+    return Vector2(x, y);
 }
 
 Vector2Int SDLImGuiRenderContext::PixelSize() const {
-    auto io = ImGui::GetIO();
-    return Vector2Int(io.DisplaySize.x, io.DisplaySize.y);
+    GUARDR(window, Vector2Int(0, 0))
+
+    int x, y;
+    SDL_GetWindowSizeInPixels(window, &x, &y);
+    return Vector2Int(x, y);
 }

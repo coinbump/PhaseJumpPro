@@ -9,7 +9,7 @@
  CODE REVIEW: 8/20/24
  */
 namespace PJ {
-    /// Aliases std::list so can build an alternate implementation later if needed
+    /// Alias for std so can build an alternate implementation if needed
     template <class T, class Allocator = std::allocator<T>>
     using List = std::list<T, Allocator>;
 } // namespace PJ

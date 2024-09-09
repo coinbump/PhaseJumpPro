@@ -14,9 +14,9 @@ namespace PJ {
     /// Standard pointer input button ids
     /// Create your own ids for custom behavior
     namespace PointerInputButton {
-        static auto const Left = "left";
-        static auto const Right = "right";
-        static auto const Middle = "middle";
+        auto constexpr Left = "left";
+        auto constexpr Right = "right";
+        auto constexpr Middle = "middle";
     } // namespace PointerInputButton
 
     /// Pointer device UI event

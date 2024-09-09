@@ -21,39 +21,39 @@ namespace PJ {
             shape(shape) {}
 
         size_t MeshVertexCount(Polygon const& poly) const {
-            return (poly.size()) * 2;
+            return (poly.Count()) * 2;
         }
 
         size_t SliceCount(Polygon const& poly) const {
-            return poly.size() - 1;
+            return poly.Count() - 1;
         }
 
         Mesh BuildMesh() override {
             Mesh result;
 
-            auto poly = CenterPolyBuilder().Build(Vector2::zero, worldSize, shape);
+            auto poly = CenterPolyBuilder().Build(vec2Zero, worldSize, shape);
 
-            if (poly.size() < 2) {
+            if (poly.Count() < 2) {
                 return result;
             }
 
             auto vertexCount = MeshVertexCount(poly);
             VectorList<Vector3> vertices(vertexCount, Vector3::zero);
             auto uvCount = vertexCount;
-            VectorList<Vector2> uvs(uvCount, Vector2::zero);
+            VectorList<Vector2> uvs(uvCount, vec2Zero);
             auto sliceCount = SliceCount(poly);
             auto trianglesCount = sliceCount * 6;
             VectorList<uint32_t> triangles(trianglesCount, 0);
 
             Polygon polyWithCenter;
-            polyWithCenter.push_back(Vector3::zero);
-            AddRange(polyWithCenter, poly);
+            polyWithCenter.Add(Vector3::zero);
+            AddRange(polyWithCenter.value, poly.value);
             auto polygonMin = polyWithCenter.Min();
             auto polygonSize = polyWithCenter.Size();
 
             // Edge vertices
             int vi = 0;
-            for (auto& vertex : poly) {
+            for (auto& vertex : poly.value) {
                 vertices[vi] = vertex;
                 uvs[vi] = Vector2(
                     (vertex.x - polygonMin.x) / polygonSize.x,
@@ -68,12 +68,12 @@ namespace PJ {
             size_t index = 0;
 
             // This has only been tested with closed shapes
-            for (auto& vertex : poly) {
+            for (auto& vertex : poly.value) {
                 auto thisVertex = vertex;
 
                 Vector3 reference = vertex;
                 //                if (poly.IsClosed()) {
-                //                    reference = poly[poly.size() - 2];
+                //                    reference = poly[poly.Count() - 2];
                 //                }
                 if (hasPrevVertex) {
                     reference = prevVertex;
@@ -85,8 +85,8 @@ namespace PJ {
                 auto lineVector = vertex - reference;
                 Angle lineAngle(lineVector);
 
-                auto nextLineVertex = poly[poly.size() - 1];
-                if (index + 1 < poly.size()) {
+                auto nextLineVertex = poly[poly.Count() - 1];
+                if (index + 1 < poly.Count()) {
                     nextLineVertex = poly[index + 1];
                 }
 
@@ -117,11 +117,11 @@ namespace PJ {
             for (size_t i = 0; i < sliceCount; i++) {
                 triangles[offset] = (uint32_t)i;
                 triangles[offset + 1] = (uint32_t)i + 1;
-                triangles[offset + 2] = (uint32_t)(i + poly.size());
+                triangles[offset + 2] = (uint32_t)(i + poly.Count());
 
                 triangles[offset + 3] = (uint32_t)i + 1;
-                triangles[offset + 4] = (uint32_t)(i + poly.size() + 1);
-                triangles[offset + 5] = (uint32_t)(i + poly.size());
+                triangles[offset + 4] = (uint32_t)(i + poly.Count() + 1);
+                triangles[offset + 5] = (uint32_t)(i + poly.Count());
 
                 offset += 6;
             }

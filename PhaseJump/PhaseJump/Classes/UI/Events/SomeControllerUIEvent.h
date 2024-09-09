@@ -11,25 +11,25 @@
  */
 namespace PJ {
     namespace ControllerButtonId {
-        static auto const South = "south";
-        static auto const East = "east";
-        static auto const West = "west";
-        static auto const North = "north";
-        static auto const LeftStick = "left.stick";
-        static auto const RightStick = "right.stick";
-        static auto const LeftShoulder = "left.shoulder";
-        static auto const RightShoulder = "right.shoulder";
+        auto constexpr South = "south";
+        auto constexpr East = "east";
+        auto constexpr West = "west";
+        auto constexpr North = "north";
+        auto constexpr LeftStick = "left.stick";
+        auto constexpr RightStick = "right.stick";
+        auto constexpr LeftShoulder = "left.shoulder";
+        auto constexpr RightShoulder = "right.shoulder";
 
         // FUTURE: add more button Ids as needed
     } // namespace ControllerButtonId
 
     namespace ControllerAxisId {
-        static auto const LeftX = "left.x";
-        static auto const LeftY = "left.y";
-        static auto const RightX = "right.x";
-        static auto const RightY = "right.y";
-        static auto const LeftTrigger = "left.trigger";
-        static auto const RightTrigger = "right.trigger";
+        auto constexpr LeftX = "left.x";
+        auto constexpr LeftY = "left.y";
+        auto constexpr RightX = "right.x";
+        auto constexpr RightY = "right.y";
+        auto constexpr LeftTrigger = "left.trigger";
+        auto constexpr RightTrigger = "right.trigger";
 
         extern VectorList<String> allCases;
     } // namespace ControllerAxisId

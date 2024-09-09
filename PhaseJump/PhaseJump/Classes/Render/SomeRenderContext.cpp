@@ -3,7 +3,3 @@
 #include "SomeRenderer.h"
 
 using namespace PJ;
-
-void SomeRenderContext::Render(SomeRenderer& renderer, RenderContextModel model) {
-    renderer.RenderInto(model);
-}

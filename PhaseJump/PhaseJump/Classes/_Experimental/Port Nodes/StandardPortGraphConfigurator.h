@@ -8,12 +8,12 @@ namespace PJ {
     class SomeAttribute;
 
     namespace PortGraphAttributeId {
-        static auto const NoPort = "portGraph.noPort";
+        auto constexpr NoPort = "portGraph.noPort";
     } // namespace PortGraphAttributeId
 
     namespace PortGraphNodeClassId {
-        static auto const VarFloat = "var.float";
-        static auto const MultiplyFloat = "mult.float";
+        auto constexpr VarFloat = "var.float";
+        auto constexpr MultiplyFloat = "mult.float";
     } // namespace PortGraphNodeClassId
 
     namespace PortGraphAttributes {

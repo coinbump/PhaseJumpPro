@@ -13,14 +13,14 @@
 namespace PJ {
     /// Tag names for common emit model properties
     namespace EmitModelTag {
-        static auto const StartVelocity = "velocity.start";
-        static auto const EndVelocity = "velocity.end";
-        static auto const StartColor = "color.start";
-        static auto const EndColor = "color.end";
-        static auto const Offset = "offset";
-        static auto const Delay = "delay";
-        static auto const Duration = "duration";
-        static auto const Angle2D = "angle";
+        auto constexpr StartVelocity = "velocity.start";
+        auto constexpr EndVelocity = "velocity.end";
+        auto constexpr StartColor = "color.start";
+        auto constexpr EndColor = "color.end";
+        auto constexpr Offset = "offset";
+        auto constexpr Delay = "delay";
+        auto constexpr Duration = "duration";
+        auto constexpr Angle2D = "angle";
     } // namespace EmitModelTag
 
     /**

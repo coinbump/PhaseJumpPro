@@ -1,17 +1,22 @@
 #pragma once
 
-#include "Node2D.h"
 #include "PointerClickUIEvent.h"
 #include "Rect.h"
 #include "UISystem.h"
+#include "WorldComponent.h"
+#include "WorldSizeable.h"
 #include <optional>
 
 // CODE REVIEW: ?/23
 namespace PJ {
     // TODO: add ResolvedView methods
-    class View2D : public Node2D, public SomePointerUIEventsResponder {
+    class View2D : public WorldComponent<>,
+                   public SomePointerUIEventsResponder,
+                   public WorldSizeable {
 
     protected:
+        // ?? Isn't this the same thing as optional worldsize? NO. Because a view might have a value
+        // for width, but not height
         std::optional<float> intrinsicWidth;
         std::optional<float> intrinsicHeight;
 
@@ -36,7 +41,7 @@ namespace PJ {
             return frame;
         }
 
-        void SetFrame(Rect const& value);
+        View2D& SetFrame(Rect const& value);
 
         /// Local bounds (origin is always zero)
         Rect Bounds() const;
@@ -45,28 +50,34 @@ namespace PJ {
             return Frame().size;
         }
 
+        // TODO: get rid of all WorldSize2D??
         void SetWorldSize2D(Vector2 value);
+
+        // MARK: WorldSizeable
+
+        std::optional<Vector3> WorldSize() const override {
+            return frame.size;
+        }
+
+        void SetWorldSize(Vector3 value) override {
+            SetFrame({ frame.origin, { value.x, value.y } });
+        }
 
     protected:
         virtual void OnFrameChange();
         virtual void UpdateFrameComponents();
 
     public:
-        virtual Rect ParentBounds();
+        virtual std::optional<Rect> ParentBounds();
 
         // ***************
         // MARK: - Layout
 
         // TODO:
-        SP<View2D> ParentView() const {
-            return nullptr;
-        }
+        View2D* ParentView() const;
+        SP<View2D> FirstChildView() const;
 
-        SP<View2D> FirstChildView() const {
-            return nullptr;
-        }
-
-        virtual void OnViewSizeChange() {}
+        virtual void OnViewSizeChange();
 
         virtual VectorList<SP<View2D>> ChildViews() const {
             return VectorList<SP<View2D>>();
@@ -90,5 +101,9 @@ namespace PJ {
 
     protected:
         virtual void _ApplyLayout(Vector2 layoutSize) {}
+
+        // MARK: SomeComponent
+
+        void Awake() override;
     };
 } // namespace PJ

@@ -31,7 +31,7 @@ namespace PJ {
         PlaneMeshBuilder() {}
 
         PlaneMeshBuilder(
-            Vector2 worldSize = Vector2::one, Vector2Int meshSize = Vector2Int::three,
+            Vector2 worldSize = vec2One, Vector2Int meshSize = Vector2Int::three,
             Axis faceAxis = Axis::Z
         ) :
             meshSize(meshSize),
@@ -51,7 +51,7 @@ namespace PJ {
             auto trianglesSize = cellCount * 6;
             VectorList<uint32_t> triangles(trianglesSize, 0);
             auto uvSize = verticesSize;
-            VectorList<Vector2> uvs(uvSize, Vector2::zero);
+            VectorList<Vector2> uvs(uvSize, vec2Zero);
 
             for (size_t z = 0, i = 0; z < vertexZCount; z++) {
                 for (size_t x = 0; x < vertexXCount; x++) {
@@ -60,8 +60,8 @@ namespace PJ {
                     case Axis::Y:
                         {
                             auto faceValue =
-                                worldSize.y * 0.5f * Vector2::up.y +
-                                ((float)z / (vertexZCount - 1)) * worldSize.y * Vector2::down.y;
+                                worldSize.y * 0.5f * vecUp +
+                                ((float)z / (vertexZCount - 1)) * worldSize.y * vecDown;
                             vertices[i] = Vector3(
                                 (float)x / (vertexXCount - 1) * worldSize.x - worldSize.x / 2.0f,
                                 faceValue, 0

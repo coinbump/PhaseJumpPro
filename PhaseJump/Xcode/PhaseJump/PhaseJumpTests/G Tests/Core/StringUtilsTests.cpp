@@ -205,3 +205,8 @@ TEST(StringUtils, IsNumericReal) {
     EXPECT_FALSE(IsNumericReal("123a0"));
     EXPECT_TRUE(IsNumericReal("1230"));
 }
+
+TEST(StringUtils, MakeStringFolded) {
+    EXPECT_EQ("135", MakeString(1, 3, 5));
+    EXPECT_EQ("1,5", MakeString(1, ",", 5));
+}

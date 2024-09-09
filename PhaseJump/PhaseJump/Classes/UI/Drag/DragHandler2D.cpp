@@ -23,6 +23,8 @@ void DragHandler2D::OnDragUpdate(WorldPosition inputPosition) {
     auto internalOffset = dragStartPosition - dragStartInputPosition;
     transform.SetWorldPositionXY(inputPosition + internalOffset);
 
+    GUARD(onDragUpdateFunc)
+    onDragUpdateFunc(*this);
     // PJLog("Internal Offset: " + internalOffset.ToString() + " transform: " +
     // transform.ToString());
 }

@@ -17,6 +17,7 @@ namespace Terathon {
  */
 // TODO: need unit tests
 namespace PJ {
+    // TODO: rename this to just Matrix?
     /// A column-major 4x4 matrix
     struct Matrix4x4 {
         static constexpr size_t size = 16;

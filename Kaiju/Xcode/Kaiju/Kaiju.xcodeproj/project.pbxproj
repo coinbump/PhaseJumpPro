@@ -28,6 +28,8 @@
 		CDD71CF82BFC3DBE00BA868A /* SDL3.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CDD71CF52BFC3DBE00BA868A /* SDL3.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CDD71CF92BFC3DBE00BA868A /* SDL3_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDD71CF62BFC3DBE00BA868A /* SDL3_image.framework */; };
 		CDD71CFA2BFC3DBE00BA868A /* SDL3_image.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CDD71CF62BFC3DBE00BA868A /* SDL3_image.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		CDDB6F7D2C8E51710073D3A2 /* ExampleLifeMatrixRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDDB6F7C2C8E51710073D3A2 /* ExampleLifeMatrixRenderer.cpp */; };
+		CDDB6F7F2C8E56150073D3A2 /* ExampleLifeAgentGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDDB6F7E2C8E56150073D3A2 /* ExampleLifeAgentGroup.cpp */; };
 		CDF0FB7829EE11DA00B9EF1F /* AppDelegateBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDF0FB7729EE11DA00B9EF1F /* AppDelegateBridge.swift */; };
 /* End PBXBuildFile section */
 
@@ -66,8 +68,12 @@
 
 /* Begin PBXFileReference section */
 		CD08CF092C44827000BF159A /* TestAudioScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestAudioScene.h; sourceTree = "<group>"; };
-		CD08CF0A2C44830100BF159A /* KaijuImGuiRenderer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KaijuImGuiRenderer.h; sourceTree = "<group>"; };
+		CD08CF0A2C44830100BF159A /* KaijuImGuiRenderProcessor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KaijuImGuiRenderProcessor.h; sourceTree = "<group>"; };
 		CD0A848A291CBF630074CA4F /* PhaseJump.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PhaseJump.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CD21C6892C855770004EE116 /* TestZOrderScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestZOrderScene.h; sourceTree = "<group>"; };
+		CD21C6C82C8819E4004EE116 /* TestEditBezierScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestEditBezierScene.h; sourceTree = "<group>"; };
+		CD21C6CD2C8908E0004EE116 /* TestThemeScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestThemeScene.h; sourceTree = "<group>"; };
+		CD21C6CE2C891993004EE116 /* TestUIScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestUIScene.h; sourceTree = "<group>"; };
 		CD2A601A2B39EAFC000B801B /* SwiftTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftTest.swift; sourceTree = "<group>"; };
 		CD376CBC29E797D900DC7950 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		CD420AA72957F3CE00C5D3E1 /* resources */ = {isa = PBXFileReference; lastKnownFileType = folder; path = resources; sourceTree = "<group>"; };
@@ -99,6 +105,12 @@
 		CDD0D2722BF04E25001C4A5B /* TestAnimatedTexturesScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestAnimatedTexturesScene.h; sourceTree = "<group>"; };
 		CDD71CF52BFC3DBE00BA868A /* SDL3.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SDL3.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CDD71CF62BFC3DBE00BA868A /* SDL3_image.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SDL3_image.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CDDB6F782C8E37CA0073D3A2 /* ExampleLifeMatrixRenderer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExampleLifeMatrixRenderer.h; sourceTree = "<group>"; };
+		CDDB6F792C8E37CA0073D3A2 /* ExampleLifeAgent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExampleLifeAgent.h; sourceTree = "<group>"; };
+		CDDB6F7A2C8E37CA0073D3A2 /* ExampleLifeAgentGroup.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExampleLifeAgentGroup.h; sourceTree = "<group>"; };
+		CDDB6F7B2C8E3D540073D3A2 /* ExampleLifeScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExampleLifeScene.h; sourceTree = "<group>"; };
+		CDDB6F7C2C8E51710073D3A2 /* ExampleLifeMatrixRenderer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ExampleLifeMatrixRenderer.cpp; sourceTree = "<group>"; };
+		CDDB6F7E2C8E56150073D3A2 /* ExampleLifeAgentGroup.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ExampleLifeAgentGroup.cpp; sourceTree = "<group>"; };
 		CDF0FB7729EE11DA00B9EF1F /* AppDelegateBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegateBridge.swift; sourceTree = "<group>"; };
 		CDF0FB8229EF943F00B9EF1F /* TestGradientsScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestGradientsScene.h; sourceTree = "<group>"; };
 		CDF0FB8329EF951200B9EF1F /* TestMeshPathScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestMeshPathScene.h; sourceTree = "<group>"; };
@@ -177,6 +189,7 @@
 		CD6FEB5429170AE500F674D3 /* Kaiju */ = {
 			isa = PBXGroup;
 			children = (
+				CDDB6F742C8E37660073D3A2 /* Examples */,
 				CDF0FB8029EF941700B9EF1F /* Scenes */,
 				CDF0FB8129EF941D00B9EF1F /* Test */,
 				CD420AE82959FE6900C5D3E1 /* SDLTest.cpp */,
@@ -195,7 +208,7 @@
 				CD5FB83029200602004F2FB4 /* ObjCBridge.h */,
 				CD5FB83129200602004F2FB4 /* ObjCBridge.mm */,
 				CDF0FB7729EE11DA00B9EF1F /* AppDelegateBridge.swift */,
-				CD08CF0A2C44830100BF159A /* KaijuImGuiRenderer.h */,
+				CD08CF0A2C44830100BF159A /* KaijuImGuiRenderProcessor.h */,
 			);
 			path = Kaiju;
 			sourceTree = "<group>";
@@ -217,6 +230,43 @@
 			path = KaijuUITests;
 			sourceTree = "<group>";
 		};
+		CDDB6F742C8E37660073D3A2 /* Examples */ = {
+			isa = PBXGroup;
+			children = (
+				CDDB6F772C8E37830073D3A2 /* Checkers Example */,
+				CDDB6F762C8E37760073D3A2 /* Minesweeper Example */,
+				CDDB6F752C8E37710073D3A2 /* Life Example */,
+			);
+			path = Examples;
+			sourceTree = "<group>";
+		};
+		CDDB6F752C8E37710073D3A2 /* Life Example */ = {
+			isa = PBXGroup;
+			children = (
+				CDDB6F792C8E37CA0073D3A2 /* ExampleLifeAgent.h */,
+				CDDB6F7E2C8E56150073D3A2 /* ExampleLifeAgentGroup.cpp */,
+				CDDB6F7A2C8E37CA0073D3A2 /* ExampleLifeAgentGroup.h */,
+				CDDB6F7C2C8E51710073D3A2 /* ExampleLifeMatrixRenderer.cpp */,
+				CDDB6F782C8E37CA0073D3A2 /* ExampleLifeMatrixRenderer.h */,
+				CDDB6F7B2C8E3D540073D3A2 /* ExampleLifeScene.h */,
+			);
+			path = "Life Example";
+			sourceTree = "<group>";
+		};
+		CDDB6F762C8E37760073D3A2 /* Minesweeper Example */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = "Minesweeper Example";
+			sourceTree = "<group>";
+		};
+		CDDB6F772C8E37830073D3A2 /* Checkers Example */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = "Checkers Example";
+			sourceTree = "<group>";
+		};
 		CDF0FB8029EF941700B9EF1F /* Scenes */ = {
 			isa = PBXGroup;
 			children = (
@@ -228,14 +278,18 @@
 		CDF0FB8129EF941D00B9EF1F /* Test */ = {
 			isa = PBXGroup;
 			children = (
-				CD08CF092C44827000BF159A /* TestAudioScene.h */,
 				CDD0D2722BF04E25001C4A5B /* TestAnimatedTexturesScene.h */,
-				CD837E4D2A00AFCF00467542 /* TestTextureScene.h */,
+				CD08CF092C44827000BF159A /* TestAudioScene.h */,
+				CD21C6C82C8819E4004EE116 /* TestEditBezierScene.h */,
+				CDC2EB542C6EE52500A85053 /* TestEmittersScene.h */,
 				CDF0FB8229EF943F00B9EF1F /* TestGradientsScene.h */,
+				CD73D90A2C607D7300C81812 /* TestInput.h */,
 				CDF0FB8329EF951200B9EF1F /* TestMeshPathScene.h */,
 				CD86A73929F0C1540015BFCE /* TestSlicedTextureScene.h */,
-				CD73D90A2C607D7300C81812 /* TestInput.h */,
-				CDC2EB542C6EE52500A85053 /* TestEmittersScene.h */,
+				CD837E4D2A00AFCF00467542 /* TestTextureScene.h */,
+				CD21C6CD2C8908E0004EE116 /* TestThemeScene.h */,
+				CD21C6CE2C891993004EE116 /* TestUIScene.h */,
+				CD21C6892C855770004EE116 /* TestZOrderScene.h */,
 			);
 			path = Test;
 			sourceTree = "<group>";
@@ -373,6 +427,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CD2A601B2B39EAFC000B801B /* SwiftTest.swift in Sources */,
+				CDDB6F7F2C8E56150073D3A2 /* ExampleLifeAgentGroup.cpp in Sources */,
 				CD5FB81C291E130D004F2FB4 /* FilesProcessorView.swift in Sources */,
 				CD6FEB5A29170AE500F674D3 /* ViewController.mm in Sources */,
 				CD420AE92959FE6900C5D3E1 /* SDLTest.cpp in Sources */,
@@ -380,6 +435,7 @@
 				CD6FEB6129170AE600F674D3 /* main.m in Sources */,
 				CD5FB81E291E13D5004F2FB4 /* SwiftBridge.swift in Sources */,
 				CD5FB83229200602004F2FB4 /* ObjCBridge.mm in Sources */,
+				CDDB6F7D2C8E51710073D3A2 /* ExampleLifeMatrixRenderer.cpp in Sources */,
 				CD6FEB5729170AE500F674D3 /* AppDelegate.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

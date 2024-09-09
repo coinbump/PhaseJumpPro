@@ -1,5 +1,4 @@
-#ifndef PJSOMELAYOUT2D_H
-#define PJSOMELAYOUT2D_H
+#pragma once
 
 #include "SomeLayout.h"
 
@@ -14,5 +13,3 @@ namespace PJ {
         void ApplyLayout() override {}
     };
 } // namespace PJ
-
-#endif

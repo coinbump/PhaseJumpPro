@@ -54,7 +54,7 @@ namespace PJ {
             ListenerList activeListeners;
 
             // TODO: potential to crash
-            for (auto listener : listeners) {
+            for (auto& listener : listeners) {
                 if (listener.expired()) {
                     continue;
                 }

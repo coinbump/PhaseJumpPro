@@ -7,7 +7,6 @@
 #include "Vector2.h"
 #include <memory>
 
-// CODE REVIEW: ?/23
 namespace PJ {
     class SomeRenderer;
     class RenderContextModel;
@@ -18,6 +17,7 @@ namespace PJ {
     /// SDL or OpenGL
     class SomeRenderContext : public Base {
     public:
+        // TODO: re-evaluate engine storage here
         SP<SomeRenderEngine> renderEngine;
 
         SomeRenderContext() {}
@@ -36,6 +36,7 @@ namespace PJ {
         virtual Vector2 Size() const = 0;
         virtual Vector2Int PixelSize() const = 0;
 
-        virtual void Render(SomeRenderer& renderer, RenderContextModel model);
+        /// Some render contexts are build on demand (texture buffer)
+        virtual void Build(Vector2Int size) {}
     };
 } // namespace PJ

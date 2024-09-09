@@ -1,49 +1,30 @@
-#ifndef PJBUTTONCONTROL_H
-#define PJBUTTONCONTROL_H
+#pragma once
 
 #include "ComposeTimedStateMachine.h"
 #include "StandardEventCore.h"
 #include "UIControl2D.h"
 
 /*
- RATING: 4 stars
- Tested and works. Needs unit tests
- CODE REVIEW: 5/8/23
+ RATING: 5 stars
+ Tested and works
+ CODE REVIEW: 9/4/24
  */
 namespace PJ {
-    /// Button state
-    // TODO: Use struct-composition for these, not enum
-    enum class ButtonControlStateType {
-        // Default
-        Normal,
-
-        // Pointer (mouse) is hovering over
-        Hover,
-
-        // Is pressed while tracking pointer input
-        Press,
-
-        // Disabled
-        Disabled
-    };
-
-    // FUTURE: ButtonView wraps this
-    class ButtonControl : public UIControl2D,
-                          public SomeTimedStateMachineOwner<ButtonControlStateType> {
+    class ButtonControl : public UIControl2D {
     public:
+        using This = ButtonControl;
         using Base = UIControl2D;
-        using StateType = ButtonControlStateType;
 
-        class PressEvent : public Event<StandardEventCore> {
-        public:
-            using Base = Event<StandardEventCore>;
+        using OnPressFunc = std::function<void(ButtonControl&)>;
 
-            PressEvent(String id) :
-                Base(StandardEventCore(id)) {}
-        };
+    protected:
+        bool isTracking = false;
+        bool isPressed = false;
 
-        // TODO: Use struct-composition for these, not enum
-        enum class TrackingType {
+        void SetIsPressed(bool value);
+
+    public:
+        enum class TrackType {
             // Track the button
             Track,
 
@@ -51,16 +32,23 @@ namespace PJ {
             Immediate
         };
 
-        void SetIsHovering(bool value) override;
+        TrackType trackType = TrackType::Track;
 
-        TrackingType trackingType = TrackingType::Track;
+        /// Called when the button is pressed
+        OnPressFunc onPressFunc;
 
-    protected:
-        UP<ComposeTimedStateMachine<StateType>> composeTimedStateMachine;
-        bool isTracking = false;
+        bool IsTracking() const {
+            return isTracking;
+        }
+
+        bool IsPressed() const {
+            return isPressed;
+        }
 
     public:
         ButtonControl();
+
+        // MARK: SomePointerUIEventsResponder
 
         void OnPointerDown(PointerDownUIEvent _event) override;
         void OnPointerEnter(PointerEnterUIEvent _event) override;
@@ -72,10 +60,5 @@ namespace PJ {
 
         /// Called when the button is pressed
         virtual void OnPress();
-
-        void OnStateChange(TimedStateMachine<StateType>& inStateMachine) override;
-        void OnStateFinish(TimedStateMachine<StateType>& inStateMachine) override;
     };
 } // namespace PJ
-
-#endif

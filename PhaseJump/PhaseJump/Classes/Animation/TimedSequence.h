@@ -18,13 +18,8 @@ namespace PJ {
         // TODO: SP audit
         VectorList<SP<TimedPlayable>> sequence;
         int index = 0;
-        bool isFinished = false;
 
     public:
-        bool IsFinished() const override {
-            return isFinished;
-        };
-
         void Add(SP<TimedPlayable> timed) {
             PJ::Add(sequence, timed);
         }

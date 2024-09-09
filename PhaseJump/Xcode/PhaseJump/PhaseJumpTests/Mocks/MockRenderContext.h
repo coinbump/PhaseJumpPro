@@ -1,5 +1,4 @@
-#ifndef PJTESTMOCKRENDERCONTEXT_H
-#define PJTESTMOCKRENDERCONTEXT_H
+#pragma once
 
 #include "SomeRenderContext.h"
 #include "Vector2.h"
@@ -8,9 +7,13 @@
 
 using namespace PJ;
 
+/*
+ RATING: 5 stars
+ Simple type, used for tests
+ CODE REVIEW: 9/2/24
+ */
 namespace PJTest {
-
-        class MockRenderContext : public PJ::SomeRenderContext
+    class MockRenderContext : public PJ::SomeRenderContext
     {
     public:
         Vector2 size;
@@ -31,11 +34,7 @@ namespace PJTest {
 
         Vector2Int PixelSize() const override
         {
-            return Vector2Int(Size().x / 2.0f, Size().y / 2.0f);
+            return Vector2Int(size.x, size.y);
         }
-
-        void Render(SomeRenderer& renderer, RenderContextModel model) override;
     };
 }
-
-#endif

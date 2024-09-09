@@ -1,5 +1,4 @@
-#ifndef PJSTATEMACHINE_H
-#define PJSTATEMACHINE_H
+#pragma once
 
 #include "Broadcaster.h"
 #include "CyclicGraph.h"
@@ -30,23 +29,23 @@ namespace PJ {
             state(state) {}
     };
 
-    struct StateMachineEdgeModel {
+    struct StateMachineEdgeCore {
         using InputList = VectorList<String>;
 
         /// Inputs that cause a transition to the next state
         InputList inputs;
 
-        StateMachineEdgeModel(InputList inputs) :
+        StateMachineEdgeCore(InputList inputs) :
             inputs(inputs) {}
     };
 
     /// State machine graph. Each node in the graph is a state. Edges are
     /// transitions
     template <class StateType>
-    class StateMachine : public CyclicGraph<CyclicGraphNode<StateMachineEdgeModel, StateType>>,
+    class StateMachine : public CyclicGraph<CyclicGraphNode<StateMachineEdgeCore, StateType>>,
                          public SomeStateMachine<StateType> {
     public:
-        using EdgeCore = StateMachineEdgeModel;
+        using EdgeCore = StateMachineEdgeCore;
         using Node = CyclicGraphNode<EdgeCore, StateType>;
         using Base = CyclicGraph<Node>;
         using InputList = VectorList<String>;
@@ -186,5 +185,3 @@ namespace PJ {
         virtual void OnStateChange(StateType newState) {}
     };
 } // namespace PJ
-
-#endif

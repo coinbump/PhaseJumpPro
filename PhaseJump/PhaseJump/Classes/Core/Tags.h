@@ -53,14 +53,11 @@ namespace PJ {
         /// Creates a value if it doesn't exist
         template <class T, class Allocator = DefaultAllocator<T>>
         T SafeValue(Key key, Allocator allocator = Allocator()) const {
-            auto value = map.find(key);
-
-            if (value != map.end()) {
-                try {
-                    auto castValue = std::any_cast<T>(value->second);
-                    return castValue;
-                } catch (...) {}
-            }
+            try {
+                auto mapValue = map.at(key);
+                auto castValue = std::any_cast<T>(mapValue);
+                return castValue;
+            } catch (...) {}
 
             return allocator();
         }

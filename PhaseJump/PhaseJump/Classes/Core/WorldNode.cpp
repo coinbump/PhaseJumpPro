@@ -1,5 +1,16 @@
 #include "WorldNode.h"
+#include "Colliders2D.h"
+#include "Color.h"
+#include "ColorRenderer.h"
+#include "DragHandler2D.h"
+#include "EllipseMeshBuilder.h"
 #include "Matrix4x4.h"
+#include "OrthoCamera.h"
+#include "SlicedTextureRenderer.h"
+#include "SliderControl.h"
+#include "SomeCollider2D.h"
+#include "SpriteRenderer.h"
+#include "Theme.h"
 #include "World.h"
 #include <TSMatrix4D.h>
 
@@ -54,16 +65,17 @@ std::size_t WorldNode::ChildCount() {
     return children.size();
 }
 
-bool WorldNode::IsActive() const {
-    return isActive && !isDestroyed;
+bool WorldNode::IsEnabled() const {
+    return isEnabled && !isDestroyed;
 }
 
-void WorldNode::SetActive(bool isActive) {
-    this->isActive = isActive;
+WorldNode& WorldNode::Enable(bool value) {
+    isEnabled = value;
+    return *this;
 }
 
-void WorldNode::ToggleActive() {
-    SetActive(!isActive);
+void WorldNode::ToggleEnable() {
+    Enable(!isEnabled);
 }
 
 // MARK: Add and remove
@@ -161,32 +173,42 @@ void WorldNode::RemoveAllComponents() {
     components.clear();
 }
 
+Matrix4x4 WorldNode::ModelMatrix() const {
+    Matrix4x4 result;
+    result.LoadIdentity();
+
+    GUARDR(world, result)
+    return world->WorldModelMatrix(*this);
+}
+
 Vector3 WorldNode::Scale() const {
     return transform.Scale();
 }
 
-void WorldNode::SetScale(Vector3 value) {
+WorldNode& WorldNode::SetScale(Vector3 value) {
     transform.SetScale(value);
+    return *this;
 }
 
-void WorldNode::SetScale(float value) {
-    SetScale(Vector3::Uniform(value));
+WorldNode& WorldNode::SetScale(float value) {
+    return SetScale(Vector3::Uniform(value));
 }
 
-void WorldNode::SetScale2D(Vector2 value) {
+WorldNode& WorldNode::SetScale2D(Vector2 value) {
     SetScale(Vector3(value.x, value.y, 1.0f));
+    return *this;
 }
 
-void WorldNode::SetScale2D(float value) {
-    SetScale(Vector3(value, value, 1.0f));
+WorldNode& WorldNode::SetScale2D(float value) {
+    return SetScale(Vector3(value, value, 1.0f));
 }
 
 Vector3 WorldNode::LocalScale() const {
     return Scale();
 }
 
-void WorldNode::SetLocalScale(Vector3 value) {
-    SetScale(value);
+WorldNode& WorldNode::SetLocalScale(Vector3 value) {
+    return SetScale(value);
 }
 
 World* WorldNode::World() const {
@@ -226,3 +248,123 @@ void WorldNode::OnUpdate(TimeSlice time) {
         component->OnUpdate(time);
     }
 }
+
+// TODO: new QuickBuild namespace?
+// MARK: - Quick build
+
+WorldNode& WorldNode::AddCircle(float radius, Color color) {
+    this->AddComponent<ColorRenderer>(color, Vector2(radius * 2, radius * 2))
+        .SetMeshBuilderFunc([](RendererModel const& model) {
+            return EllipseMeshBuilder(model.WorldSize()).BuildMesh();
+        });
+
+    return *this;
+}
+
+WorldNode& WorldNode::AddDrag(OnDragUpdateFunc onDragUpdateFunc) {
+    this->AddComponent<DragHandler2D>().SetOnDragUpdateFunc(onDragUpdateFunc);
+
+    if (!this->TypeComponent<SomeCollider2D>()) {
+        PJLog("WARNING. Drag requires a collider");
+    }
+
+    return *this;
+}
+
+WorldNode& WorldNode::AddSquareCollider(float size) {
+    auto& polyC = this->AddComponent<PolygonCollider2D>();
+    polyC.poly = Polygon::MakeSquare(size);
+
+    return *this;
+}
+
+WorldNode& WorldNode::AddRectCollider(Vector2 size) {
+    auto& polyC = this->AddComponent<PolygonCollider2D>();
+    polyC.poly = Polygon::MakeRect(size);
+
+    return *this;
+}
+
+WorldNode& WorldNode::AddCircleCollider(float radius) {
+    AddComponent<CircleCollider2D>(radius);
+    return *this;
+}
+
+void _AddSlider(
+    World& world, WorldNode& parent, DesignSystem& designSystem, SP<SomeTexture> trackTexture,
+    SP<SomeTexture> thumbTexture, String name, Vector2 worldSize, Axis2D axis,
+    std::function<void(float)> valueFunc
+) {
+    GUARD(trackTexture && thumbTexture)
+
+    SlicedTextureRenderer::SlicePoints slicePoints =
+        designSystem.TagValue<SlicedTextureRenderer::SlicePoints>(
+            UIElement::SliderTrack, UITag::SlicePoints
+        );
+
+    auto& sliderNode = parent.AddNode("Slider track");
+
+    sliderNode.AddComponent<SlicedTextureRenderer>(trackTexture, vec2Zero, slicePoints);
+    auto& sliderControl = sliderNode.AddComponent<SliderControl>(axis);
+
+    float endCapSize = designSystem.TagValue<float>(UIElement::SliderTrack, UITag::EndCapSize);
+    sliderControl.SetEndCapSize(endCapSize).SetFrame(Rect({ 0, 0 }, worldSize));
+    auto& thumbNode = sliderNode.AddNode("Slider thumb");
+
+    thumbNode.AddComponent<PolygonCollider2D>().SetPoly(
+        Polygon::MakeRect(Vector2(thumbTexture->size.x, thumbTexture->size.y))
+    );
+
+    thumbNode.AddComponent<SpriteRenderer>(thumbTexture);
+
+    if (valueFunc) {
+        // Subscribe to value and store subscription
+        // Careful: watch out for strong reference cycles when using smart pointers
+        sliderNode.cancellables.insert(sliderControl.Value().Receive(valueFunc));
+    }
+}
+
+WorldNode&
+WorldNode::AddSlider(String name, Vector2 worldSize, std::function<void(float)> valueFunc) {
+    GUARDR(world, *this)
+
+    auto designSystem = world->designSystem;
+    GUARDR_LOG(designSystem, *this, "Missing design system")
+
+    auto trackTexture = designSystem->Texture(UIElement::SliderTrack);
+    GUARDR_LOG(trackTexture, *this, "Missing slider track texture")
+
+    auto thumbTexture = designSystem->Texture(UIElement::SliderThumb);
+    GUARDR_LOG(thumbTexture, *this, "Missing slider thumb texture")
+
+    _AddSlider(
+        *world, *this, *designSystem, trackTexture, thumbTexture, name, worldSize, Axis2D::X,
+        valueFunc
+    );
+    return *this;
+}
+
+WorldNode&
+WorldNode::AddSliderVertical(String name, Vector2 worldSize, std::function<void(float)> valueFunc) {
+    GUARDR(world, *this)
+
+    auto designSystem = world->designSystem;
+    GUARDR_LOG(designSystem, *this, "Missing design system")
+
+    // FUTURE: support UV rotation so we don't have to duplicate textures
+    auto trackTexture = designSystem->Texture(UIElement::SliderVerticalTrack);
+    GUARDR_LOG(trackTexture, *this, "Missing slider track texture")
+
+    auto thumbTexture = designSystem->Texture(UIElement::SliderVerticalThumb);
+    GUARDR_LOG(thumbTexture, *this, "Missing slider thumb texture")
+
+    _AddSlider(
+        *world, *this, *designSystem, trackTexture, thumbTexture, name, worldSize, Axis2D::Y,
+        valueFunc
+    );
+    return *this;
+}
+
+/*
+ FUTURE: Quick Build options:
+ */

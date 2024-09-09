@@ -6,7 +6,7 @@
 
 /*
  RATING: 5 stars
- Hase unit tests
+ Has unit tests
  CODE REVIEW: 7/6/24
  */
 namespace PJ {

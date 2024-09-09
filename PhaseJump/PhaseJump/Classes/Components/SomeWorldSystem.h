@@ -34,8 +34,13 @@ namespace PJ {
         virtual void Start() {}
 
     public:
+        String name;
+
         /// Tags that define the object's type
         TypeTagSet typeTags;
+
+        SomeWorldSystem(String name = "") :
+            name(name) {}
 
         virtual ~SomeWorldSystem() {}
 

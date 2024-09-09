@@ -14,12 +14,12 @@ using namespace PJ;
 SimpleGradientRenderer::SimpleGradientRenderer(
     Color startColor, Color endColor, Vector2 worldSize
 ) :
-    model(worldSize),
+    Base(worldSize),
     startColor(startColor),
     endColor(endColor) {
-    material = MAKE<RenderMaterial>();
+    model.material = MAKE<RenderMaterial>();
 
-    model.SetMeshBuilderFunc([](MeshRendererModel const& model) {
+    model.SetMeshBuilderFunc([](RendererModel const& model) {
         QuadMeshBuilder builder(model.WorldSize());
         return builder.BuildMesh();
     });
@@ -30,16 +30,16 @@ SimpleGradientRenderer::SimpleGradientRenderer(
     GUARD(program != SomeShaderProgram::registry.end())
 
     // FUTURE: support a colors builder that works for different mesh types
-    material->SetShaderProgram(program->second);
+    model.material->SetShaderProgram(program->second);
 
     bool isOpaque = startColor.IsOpaque() && endColor.IsOpaque();
-    material->EnableFeature(RenderFeature::Blend, !isOpaque);
+    model.material->EnableFeature(RenderFeature::Blend, !isOpaque);
 }
 
 VectorList<RenderModel> SimpleGradientRenderer::MakeRenderModels() {
     VectorList<SomeTexture*> textures;
 
-    auto result = this->Base::MakeRenderModels(this->model.Mesh(), textures);
+    auto result = Base::MakeRenderModels(model.Mesh(), textures);
 
     if (!IsEmpty(result)) {
         Add(result[0].colors, startColor);

@@ -1,22 +1,29 @@
 // In this header, you should import all the public headers of your framework using statements like #import <PhaseJump/PublicHeader.h>
+#include <PhaseJump/AgentGroup.h>
+#include <PhaseJump/AgentSystem.h>
 #include <PhaseJump/AnimateHueEffect.h>
 #include <PhaseJump/AnimatedSpriteRenderer.h>
 #include <PhaseJump/AudioStreamPlayer.h>
 #include <PhaseJump/AtlasTexture.h>
 #include <PhaseJump/Base.h>
 #include <PhaseJump/BatchByMaterialRenderProcessor.h>
+#include <PhaseJump/BezierPath.h>
+#include <PhaseJump/BezierPathLayout.h>
 #include <PhaseJump/ButtonControl.h>
+#include <PhaseJump/CameraCullRenderProcessor.h>
+#include <PhaseJump/CenterPolyFrameMeshBuilder.h>
+#include <PhaseJump/CenterPolyBuilder.h>
 #include <PhaseJump/CirclePathLayout2D.h>
 #include <PhaseJump/CirclePositioner2D.h>
 #include <PhaseJump/Class.h>
-#include <PhaseJump/Emitter.h>
 #include <PhaseJump/ColorRenderer.h>
+#include <PhaseJump/Colliders2D.h>
 #include <PhaseJump/ComponentTool.h>
+#include <PhaseJump/DepthFirstOrderRenderProcessor.h>
 #include <PhaseJump/DragHandler2D.h>
 #include <PhaseJump/DropFilesUIEvent.h>
-#include <PhaseJump/CenterPolyFrameMeshBuilder.h>
-#include <PhaseJump/CenterPolyBuilder.h>
 #include <PhaseJump/EllipseMeshBuilder.h>
+#include <PhaseJump/Emitter.h>
 
 #include <PhaseJump/FileManager.h>
 #include <PhaseJump/FilePath.h>
@@ -25,19 +32,24 @@
 #include <PhaseJump/GLShaderProgram.h>
 #include <PhaseJump/GLShaderProgramLoader.h>
 #include <PhaseJump/GLTexture.h>
+#include <PhaseJump/GLTextureBuffer.h>
 
 #include <PhaseJump/HFlow.h>
 #include <PhaseJump/Input.h>
 #include <PhaseJump/InputTriggerMap.h>
 #include <PhaseJump/Log.h>
+#include <PhaseJump/Matrix.h>
 #include <PhaseJump/MeshRenderer.h>
+#include <PhaseJump/OrderRenderProcessor.h>
+#include <PhaseJump/OverrideFeaturesRenderProcessor.h>
 
 #include <PhaseJump/PolyFrameMeshBuilder.h>
 #include <PhaseJump/RectPositioner2D.h>
 #include <PhaseJump/RenderFeature.h>
 #include <PhaseJump/RenderMaterial.h>
 #include <PhaseJump/RenderModel.h>
-#include <PhaseJump/RenderSystem.h>
+#include <PhaseJump/RenderModelBuilder.h>
+#include <PhaseJump/RenderWorldSystem.h>
 #include <PhaseJump/ResourceRepository.h>
 #include <PhaseJump/ResourceScanner.h>
 #include <PhaseJump/Macros.h>
@@ -54,7 +66,7 @@
 #include <PhaseJump/SDLPlatformWindow.h>
 #include <PhaseJump/SDLWorld.h>
 #include <PhaseJump/Scene.h>
-#include <PhaseJump/Colliders2D.h>
+#include <PhaseJump/ScrollBarControl.h>
 #include <PhaseJump/SimpleRaycaster2D.h>
 #include <PhaseJump/SlicedTextureRenderer.h>
 #include <PhaseJump/SliderControl.h>
@@ -68,6 +80,7 @@
 #include <PhaseJump/StandardLoadResourcesModel.h>
 #include <PhaseJump/StandardRandom.h>
 #include <PhaseJump/StringUtils.h>
+#include <PhaseJump/Theme.h>
 #include <PhaseJump/TypeClass.h>
 #include <PhaseJump/UISystem.h>
 #include <PhaseJump/Utils.h>
@@ -75,7 +88,10 @@
 #include <PhaseJump/QuadFrameMeshBuilder.h>
 #include <PhaseJump/ShowBoundsRenderProcessor.h>
 #include <PhaseJump/ShowCollidersRenderProcessor.h>
+#include <PhaseJump/ShowMeshRenderProcessor.h>
 #include <PhaseJump/SimpleGradientRenderer.h>
+#include <PhaseJump/SomeDragGestureHandler2D.h>
+#include <PhaseJump/SomeUIEvent.h>
 #include <PhaseJump/StandardCore.h>
 #include <PhaseJump/StandardEmitsBuilder.h>
 #include <PhaseJump/TextureAtlas.h>

@@ -7,9 +7,9 @@
  */
 namespace PJ {
     namespace ClassId {
-        static auto const Window = "window";
+        auto constexpr Window = "window";
 
         // For unit tests
-        static auto const Foo = "foo";
+        auto constexpr Foo = "foo";
     }; // namespace ClassId
 } // namespace PJ

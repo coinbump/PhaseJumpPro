@@ -24,14 +24,14 @@ static void SDLCALL MyNewAudioCallback(void *userdata, SDL_AudioStream *stream, 
 
 class TestAudioPad : public WorldComponent<>, public SomePointerUIEventsResponder {
 public:
-    SP<AudioStreamPlayer> audioStreamPlayer;
+    SP<WorldComponent<AudioStreamPlayer>> audioStreamPlayer;
 
-    TestAudioPad(SP<AudioStreamPlayer> audioStreamPlayer) : audioStreamPlayer(audioStreamPlayer) {
+    TestAudioPad(SP<WorldComponent<AudioStreamPlayer>> audioStreamPlayer) : audioStreamPlayer(audioStreamPlayer) {
     }
 
     void OnPointerDown(PointerDownUIEvent event) {
         GUARD(audioStreamPlayer);
-        audioStreamPlayer->Play();
+        audioStreamPlayer->core.Play();
     }
 };
 
@@ -39,6 +39,9 @@ public:
 class TestAudioSystem : public SomeWorldSystem {
 public:
     using Base = SomeWorldSystem;
+
+    TestAudioSystem(String name = "Test Audio") : Base(name) {
+    }
 
     void ProcessUIEvents(List<SP<SomeUIEvent>> const& uiEvents) override {
         Base::ProcessUIEvents(uiEvents);
@@ -65,7 +68,7 @@ public:
                         auto loadedResources = operation.LoadedResources();
                         if (!IsEmpty(loadedResources)) {
                             auto stream = SCAST<SDLAudioStream>(loadedResources[0].resource);
-                            auto player = MAKE<AudioStreamPlayer>();
+                            auto player = MAKE<WorldComponent<AudioStreamPlayer>>();
                             auto playerNode = MAKE<WorldNode>();
                             playerNode->Add(player);
                             world->Add(playerNode);
@@ -77,8 +80,7 @@ public:
                             playerNode->Add(spriteRenderer);
 
                             // TODO: do this by default
-                            auto thumbMaterial = spriteRenderer->material;
-                            thumbMaterial->SetShaderProgram(SomeShaderProgram::registry["texture.uniform"]);
+                            auto thumbMaterial = spriteRenderer->model.material;
                             thumbMaterial->EnableFeature(RenderFeature::Blend, true);
                             
                             ComponentTool ct;
@@ -93,8 +95,8 @@ public:
 
                             // TODO: playerNode->SetWorldPosition(
 
-                            player->audioStream = stream;
-                            player->Play();
+                            player->core.audioStream = stream;
+                            player->core.Play();
                         }
                     }
                 }
@@ -113,19 +115,11 @@ public:
     void LoadInto(WorldNode& root) {
         root.name = "TestAudioScene";
 
-        auto camera = SCAST<SomeCamera>(MAKE<OrthoCamera>());
-        auto cameraNode = MAKE<WorldNode>();
-        cameraNode->Add(camera);
-        root.Add(cameraNode);
-
-        auto raycaster = MAKE<SimpleRaycaster2D>();
-        cameraNode->Add(raycaster);
-        root.Add(cameraNode);
+        WorldNode& cameraNode = root.AddNode("Camera");
+        cameraNode.AddComponent<OrthoCamera>();
+        cameraNode.AddComponent<SimpleRaycaster2D>();
 
         World& world = *root.World();
-
-        auto uiSystem = MAKE<UISystem>();
-        world.Add(uiSystem);
 
         // TODO: clean this up somewhere
         world.Add(MAKE<TestAudioSystem>());

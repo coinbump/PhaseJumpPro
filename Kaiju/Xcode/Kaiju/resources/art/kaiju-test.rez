@@ -6,6 +6,10 @@
         },
         {
             "type": "texture",
+            "path": "little-demon.png"
+        },
+        {
+            "type": "texture",
             "path": "heart-full.png"
         },
         {
@@ -14,15 +18,23 @@
         },
         {
             "type": "texture",
-            "path": "slider-thumb.png"
-        },
-        {
-            "type": "texture",
             "path": "example-button-normal.png"
         },
         {
             "type": "texture",
+            "path": "slider-thumb.png"
+        },
+        {
+            "type": "texture",
             "path": "slider-track.png"
+        },
+        {
+            "type": "texture",
+            "path": "slider-thumb-v.png"
+        },
+        {
+            "type": "texture",
+            "path": "slider-track-v.png"
         },
         {
             "type": "rtexPacker.atlas",
@@ -31,6 +43,10 @@
         {
             "type": "texturePacker.atlas",
             "path": "TexturePacker.json"
+        },
+        {
+            "type": "bitmapFont",
+            "path": "ArialBlack-32.fnt"
         }
     ]
 }

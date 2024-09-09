@@ -11,7 +11,6 @@ namespace PJ {
     class TimeBlock : public Updatable {
     protected:
         UP<TimeBlock> child;
-        bool isFinished = false;
 
         virtual void OnFinish() {}
 
@@ -22,10 +21,6 @@ namespace PJ {
 
         TimeBlock(UP<TimeBlock>& child) :
             child(std::move(child)) {}
-
-        bool IsFinished() const override {
-            return isFinished;
-        }
 
         void Finish() {
             GUARD(!isFinished)

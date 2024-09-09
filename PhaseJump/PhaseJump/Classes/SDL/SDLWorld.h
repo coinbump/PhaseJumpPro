@@ -2,8 +2,10 @@
 #define PJSDLWORLD_H
 
 #include "DevProfiler.h"
+#include "PlaneMeshBuilder.h"
 #include "SDLEventPoller.h"
 #include "SDLTextureRenderer.h"
+#include "SomeMeshBuilder.h"
 #include "SomeRenderer.h"
 #include "VectorList.h"
 #include "World.h"
@@ -16,7 +18,7 @@
 
 // CODE REVIEW: ?/23
 namespace PJ {
-    // TODO: this should really be a system shouldn't it?
+    // TODO: this should really be a system shouldn't it? SDLWorldDriverSystem?
     class SDLWorld : public World {
     public:
         using Base = World;
@@ -38,42 +40,7 @@ namespace PJ {
             this->renderContext = renderContext;
         }
 
-        void Run() {
-            startTime = SDL_GetTicks();
-
-            while (!isDone) {
-                auto currentTime = SDL_GetTicks();
-                double deltaTime = (currentTime - startTime) / 1000.0; // Convert to seconds.
-                startTime = currentTime;
-
-                {
-#ifdef PROFILE
-                    DevProfiler devProfiler("SDL-OnUpdate", [](String value) {
-                        std::cout << value;
-                    });
-#endif
-
-                    OnUpdate(TimeSlice(deltaTime));
-                }
-
-                {
-#ifdef PROFILE
-                    DevProfiler devProfiler("SDL-Render", [](String value) { std::cout << value; });
-#endif
-                    Render();
-                }
-
-                {
-#ifdef PROFILE
-                    DevProfiler devProfiler("SDL-MainLoop", [](String value) {
-                        std::cout << value;
-                    });
-#endif
-                    MainLoop();
-                }
-            }
-            SDL_Quit();
-        }
+        void Run();
 
     protected:
         void GoInternal() override {

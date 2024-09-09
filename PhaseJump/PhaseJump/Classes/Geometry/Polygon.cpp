@@ -14,7 +14,7 @@ using namespace PJ;
 bool Polygon::TestHit(Vector2 pt) const {
     float testx = pt.x;
     float testy = pt.y;
-    auto nvert = size();
+    auto nvert = value.size();
 
     int c = 0;
 
@@ -31,7 +31,7 @@ bool Polygon::TestHit(Vector2 pt) const {
 String Polygon::ToString() const {
     stringstream s;
     s << "[";
-    for (auto& v : *this) {
+    for (auto& v : value) {
         s << v.ToString() << ", ";
     }
     s << "]";

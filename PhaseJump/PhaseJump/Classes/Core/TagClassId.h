@@ -8,18 +8,18 @@
  */
 namespace PJ {
     namespace TagClassId {
-        static auto const Tag = "tag";
-        static auto const Int = "int";
-        static auto const Int64 = "int64";
-        static auto const Float = "float";
-        static auto const Bitfield = "bits";
-        static auto const Bool = "bool";
-        static auto const Color = "color";
-        static auto const Enum = "enum";
-        static auto const String = "str";
-        static auto const Vector2 = "vec2";
-        static auto const Vector2I = "vec2i";
-        static auto const Object = "obj";
-        static auto const Class = "class";
+        auto constexpr Tag = "tag";
+        auto constexpr Int = "int";
+        auto constexpr Int64 = "int64";
+        auto constexpr Float = "float";
+        auto constexpr Bitfield = "bits";
+        auto constexpr Bool = "bool";
+        auto constexpr Color = "color";
+        auto constexpr Enum = "enum";
+        auto constexpr String = "str";
+        auto constexpr Vector2 = "vec2";
+        auto constexpr Vector2I = "vec2i";
+        auto constexpr Object = "obj";
+        auto constexpr Class = "class";
     }; // namespace TagClassId
 } // namespace PJ

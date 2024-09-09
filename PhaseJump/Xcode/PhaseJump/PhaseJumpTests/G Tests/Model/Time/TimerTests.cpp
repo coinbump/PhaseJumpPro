@@ -30,7 +30,7 @@ namespace TimerTests {
 using namespace TimerTests;
 
 TEST(Timer, RunOnce) {
-    auto timer = Timer(1.0f, Runner::RunType::RunOnce);
+    auto timer = Timer(1.0f, Runner::RunType::Once);
     timer.OnUpdate(TimeSlice(.3f));
     EXPECT_EQ(.3f, timer.State());
     EXPECT_EQ(.3f, timer.Progress());
@@ -75,7 +75,7 @@ TEST(Timer, Repeat) {
 }
 
 TEST(Timer, Stop) {
-    auto timer = Timer(1.0f, Runner::RunType::RunOnce);
+    auto timer = Timer(1.0f, Runner::RunType::Once);
     timer.OnUpdate(TimeSlice(.3f));
     EXPECT_EQ(.3f, timer.State());
     EXPECT_EQ(.3f, timer.Progress());
@@ -89,11 +89,11 @@ TEST(Timer, Stop) {
 
 TEST(Timer, UpdateFuncs) {
     float value = 0;
-    auto timer = Timer(1.0f, Runner::RunType::RunOnce);
+    auto timer = Timer(1.0f, Runner::RunType::Once);
 
-    timer.updateFunc = std::make_unique<Function<void(TimedPlayable&, TimeSlice)>>([&](TimedPlayable& timedPlayable, TimeSlice time) {
+    timer.onUpdateFunc = [&](TimedPlayable& timedPlayable, TimeSlice time) {
         value += time.delta;
-    });
+    };
 
     timer.OnUpdate(TimeSlice(.3f));
     EXPECT_NEAR(0.3f, value, std::numeric_limits<float>::epsilon());
@@ -105,11 +105,11 @@ TEST(Timer, UpdateFuncs) {
 
 TEST(Timer, UpdateFuncsWhenPaused) {
     float value = 0;
-    auto timer = Timer(1.0f, Runner::RunType::RunOnce);
+    auto timer = Timer(1.0f, Runner::RunType::Once);
 
-    timer.updateFunc = std::make_unique<Function<void(TimedPlayable&, TimeSlice)>>([&](TimedPlayable& timedPlayable, TimeSlice time) {
+    timer.onUpdateFunc = [&](TimedPlayable& timedPlayable, TimeSlice time) {
         value += time.delta;
-    });
+    };
 
     timer.Pause();
     timer.OnUpdate(TimeSlice(.3f));

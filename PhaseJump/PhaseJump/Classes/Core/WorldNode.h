@@ -1,6 +1,8 @@
 #pragma once
 
 #include "CollectionUtils.h"
+#include "Color.h"
+#include "Identifiable.h"
 #include "List.h"
 #include "Log.h"
 #include "SomeWorldComponent.h"
@@ -20,6 +22,11 @@
 namespace PJ {
     class LocalPosition;
     class World;
+    class Matrix4x4;
+    class OrthoCamera;
+    class Theme;
+    class DragHandler2D;
+    class Cancellable;
 
     /**
      Node in a world graph
@@ -28,25 +35,31 @@ namespace PJ {
 
      Each component provides composable logic for their owner node
      */
-    class WorldNode : public Base, public Updatable {
+    class WorldNode : public Base, public Updatable, public IntIdentifiable<WorldNode> {
     public:
         using Base = PJ::Base;
         using This = WorldNode;
         using ComponentList = List<SP<SomeWorldComponent>>;
         using NodeTransform = WorldNodeTransform;
         using NodeList = List<SP<WorldNode>>;
+        using OnDragUpdateFunc = std::function<void(DragHandler2D&)>;
 
         friend class World;
+        friend class IntIdentifiable<WorldNode>;
 
     protected:
         ComponentList components;
         float destroyCountdown = 0;
         bool isDestroyed = false;
-        bool isActive = true;
+        bool isEnabled = true;
 
         WorldPartLife life;
         WorldNode* parent = nullptr;
         NodeList children;
+
+        uint64_t IntIdImpl() const {
+            return (uint64_t)this;
+        }
 
     public:
         NodeTransform transform;
@@ -64,7 +77,13 @@ namespace PJ {
         /// Tags that define the object's type
         TypeTagSet typeTags;
 
+        /// Stores subscriptions to reactive values
+        UnorderedSet<SP<Cancellable>> cancellables;
+
         WorldNode(String name = "");
+
+        // Prevent accidental copies
+        DELETE_COPY(WorldNode)
 
         virtual ~WorldNode() {}
 
@@ -93,11 +112,13 @@ namespace PJ {
 
         std::size_t ChildCount();
 
-        bool IsActive() const;
+        bool IsEnabled() const;
 
-        void SetActive(bool isActive);
+        This& Enable(bool value);
 
-        void ToggleActive();
+        void ToggleEnable();
+
+        Matrix4x4 ModelMatrix() const;
 
         // MARK: Add and remove
 
@@ -105,14 +126,43 @@ namespace PJ {
 
         void Add(SP<SomeWorldComponent> component);
 
-        template <class T>
-        SP<T> AddComponent() {
-            auto component = MAKE<T>();
+        template <class T, typename... Arguments>
+        T& AddComponent(Arguments... args) {
+            auto component = MAKE<T>(args...);
+            Add(component);
+            return *component;
+        }
+
+        template <class T, typename... Arguments>
+        SP<T> AddComponentPtr(Arguments... args) {
+            auto component = MAKE<T>(args...);
             Add(component);
             return component;
         }
 
         void Add(SP<WorldNode> node);
+
+        template <typename... Arguments>
+        WorldNode& AddNode(Arguments... args) {
+            SP<WorldNode> result = MAKE<WorldNode>(args...);
+            Add(result);
+            return *result;
+        }
+
+        template <typename... Arguments>
+        SP<WorldNode> AddNodePtr(Arguments... args) {
+            SP<WorldNode> result = MAKE<WorldNode>(args...);
+            Add(result);
+            return result;
+        }
+
+        template <typename... Arguments>
+        WorldNode& AddNodeAt(Vector3 pos, Arguments... args) {
+            SP<WorldNode> result = MAKE<WorldNode>(args...);
+            Add(result);
+            result->SetLocalPosition(pos);
+            return *result;
+        }
 
         void Remove(SP<WorldNode> node);
 
@@ -192,18 +242,42 @@ namespace PJ {
         }
 
         Vector3 Scale() const;
-
-        void SetScale(Vector3 value);
-
-        void SetScale(float value);
-
-        void SetScale2D(Vector2 value);
-
-        void SetScale2D(float value);
-
+        This& SetScale(Vector3 value);
+        This& SetScale(float value);
+        This& SetScale2D(Vector2 value);
+        This& SetScale2D(float value);
         Vector3 LocalScale() const;
+        This& SetLocalScale(Vector3 value);
 
-        void SetLocalScale(Vector3 value);
+        This& SetLocalPosition(Vector3 position) {
+            transform.SetLocalPosition(position);
+            return *this;
+        }
+
+        This& SetWorldPosition(Vector3 position) {
+            transform.SetWorldPosition(position);
+            return *this;
+        }
+
+        /*
+         Quick build methods can be used for rapid prototyping
+         */
+
+        // MARK: Quick build
+
+        WorldNode& AddCircle(float radius, Color color = Color::gray);
+        WorldNode& AddDrag(OnDragUpdateFunc onDragUpdateFunc);
+        WorldNode& AddSquareCollider(float size);
+        WorldNode& AddRectCollider(Vector2 size);
+        WorldNode& AddCircleCollider(float radius);
+        WorldNode& AddCircleHandle(
+            float radius, Color color = Color::gray, float strokeWidth = 4,
+            Color strokeColor = Color::black
+        );
+        WorldNode& AddCircleHandle(float radius, float strokeWidth = 4, Theme* theme = nullptr);
+        WorldNode& AddSlider(String name, Vector2 worldSize, std::function<void(float)> valueFunc);
+        WorldNode&
+        AddSliderVertical(String name, Vector2 worldSize, std::function<void(float)> valueFunc);
 
         // MARK: Updatable
 

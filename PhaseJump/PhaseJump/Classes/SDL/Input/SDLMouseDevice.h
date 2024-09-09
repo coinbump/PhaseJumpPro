@@ -1,5 +1,4 @@
-#ifndef PJSDLMOUSEDEVICE_H
-#define PJSDLMOUSEDEVICE_H
+#pragma once
 
 #include "SomeMouseDevice.h"
 
@@ -20,5 +19,3 @@ namespace PJ {
         bool IsButtonDown(PointerInputButtonType button) override;
     };
 } // namespace PJ
-
-#endif

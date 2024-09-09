@@ -18,13 +18,23 @@ namespace PJ {
 
     /// Renders a single texture as a 9-slice
     class SlicedTextureRenderer : public SomeRenderer {
-    protected:
-        Mesh mesh;
+    public:
+        using Base = SomeRenderer;
 
-        /// First point is offset from top-left of texture. Second point is
-        /// offset from bottom-right
-        std::array<Vector2Int, 2> slicePoints;
-        Vector2 size;
+        struct SlicePoints {
+            Vector2Int topLeft;
+            Vector2Int bottomRight;
+
+            SlicePoints() {}
+
+            SlicePoints(Vector2Int topLeft, Vector2Int bottomRight) :
+                topLeft(topLeft),
+                bottomRight(bottomRight) {}
+        };
+
+    protected:
+        /// First point is offset from top-left of texture
+        SlicePoints slicePoints;
 
         /// Material holds the render texture, this is the actual texture object (child texture for
         /// texture atlas)
@@ -88,18 +98,14 @@ namespace PJ {
             BottomRight
         };
 
-        SP<RenderMaterial> material;
-
-        SlicedTextureRenderer(
-            SP<SomeTexture> texture, Vector2 worldSize, std::array<Vector2Int, 2> slicePoints
-        );
-
-        void SetSize(Vector2 worldSize);
+        SlicedTextureRenderer(SP<SomeTexture> texture, Vector2 worldSize, SlicePoints slicePoints);
 
         BuildModel MakeBuildModel() const;
 
-        std::optional<Vector3> WorldSize() const override {
-            return std::make_optional(Vector3(size.x, size.y, 0));
+        // MARK: SomeWorldComponent
+
+        String TypeName() const override {
+            return "SlicedTextureRenderer";
         }
 
         // MARK: - SomeRenderer
@@ -107,7 +113,7 @@ namespace PJ {
         VectorList<RenderModel> MakeRenderModels() override;
 
     protected:
-        void BuildMesh();
+        Mesh BuildMesh(Vector3 worldSize);
     };
 } // namespace PJ
 
