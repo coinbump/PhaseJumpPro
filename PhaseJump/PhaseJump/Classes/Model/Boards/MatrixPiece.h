@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Log.h"
+#include "Dev.h"
 #include "Matrix.h"
 #include "Vector2.h"
 
@@ -86,7 +86,7 @@ namespace PJ {
             }
 
             if (height <= 0 || width <= 0) {
-                PJLog("Error. Invalid piece shape");
+                PJ::Log("Error. Invalid piece shape");
                 return false;
             }
 

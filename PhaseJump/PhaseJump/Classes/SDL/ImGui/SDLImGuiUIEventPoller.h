@@ -8,6 +8,7 @@
 
 class SDL_Window;
 
+// TODO: can we do this with composition instead?
 // CODE REVIEW: ?/23
 namespace PJ {
     /// Polls SDL events and forwards them to Dear ImGui

@@ -2,8 +2,8 @@
 #define PJLOADRESOURCESPLAN_H
 
 #include "FilePath.h"
-#include "LoadResourceInfo.h"
 #include "OrderedMap.h"
+#include "ResourceInfo.h"
 #include "StringUtils.h"
 #include "VectorList.h"
 
@@ -18,14 +18,14 @@ namespace PJ {
 
     // TODO: should the second key be the file path? might have multiple resources with the same id
     // in different folders?
-    using ResourceInfoMap = OrderedMap<ResourceType, OrderedMap<ResourceId, LoadResourceInfo>>;
+    using ResourceInfoMap = OrderedMap<ResourceType, OrderedMap<ResourceId, ResourceInfo>>;
 
     /// Plan to load a collection of resources
     struct LoadResourcesPlan {
         ResourceInfoMap infoMap;
 
-        VectorList<LoadResourceInfo> AllInfos() const {
-            VectorList<LoadResourceInfo> result;
+        VectorList<ResourceInfo> AllInfos() const {
+            VectorList<ResourceInfo> result;
 
             for (auto& i : infoMap) {
                 auto& secondMap = i.second;

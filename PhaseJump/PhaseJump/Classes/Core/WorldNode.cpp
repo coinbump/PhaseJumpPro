@@ -1,16 +1,5 @@
 #include "WorldNode.h"
-#include "Colliders2D.h"
 #include "Color.h"
-#include "ColorRenderer.h"
-#include "DragHandler2D.h"
-#include "EllipseMeshBuilder.h"
-#include "Matrix4x4.h"
-#include "OrthoCamera.h"
-#include "SlicedTextureRenderer.h"
-#include "SliderControl.h"
-#include "SomeCollider2D.h"
-#include "SpriteRenderer.h"
-#include "Theme.h"
 #include "World.h"
 #include <TSMatrix4D.h>
 
@@ -29,6 +18,11 @@ void WorldNode::Destroy(float countdown) {
     }
 
     destroyCountdown = countdown;
+}
+
+void WorldNode::UnDestroy() {
+    destroyCountdown = 0;
+    isDestroyed = false;
 }
 
 void WorldNode::OnDestroy() {
@@ -88,7 +82,7 @@ void WorldNode::Add(SP<SomeWorldComponent> component) {
     GUARD(component)
 
     if (nullptr != component->owner) {
-        PJLog("ERROR. Can't add parented component");
+        PJ::Log("ERROR. Can't add parented component");
         return;
     }
 
@@ -108,7 +102,7 @@ void WorldNode::Add(SP<WorldNode> node) {
     GUARD(node)
 
     if (nullptr != node->Parent()) {
-        PJLog("ERROR. Can't add a previously parented node");
+        PJ::Log("ERROR. Can't add a previously parented node");
         return;
     }
 
@@ -126,11 +120,7 @@ void WorldNode::Add(SP<WorldNode> node) {
 
 void WorldNode::Remove(SP<WorldNode> node) {
     GUARD(node)
-
-    if (this != node->parent) {
-        PJLog("ERROR. Can't remove un-parented node");
-        return;
-    }
+    GUARD_LOG(node->Parent() == this, "ERROR. Can't remove un-parented node")
 
     node->parent = nullptr;
 
@@ -141,6 +131,11 @@ void WorldNode::Remove(SP<WorldNode> node) {
     }
 
     PJ::Remove(children, node);
+}
+
+void WorldNode::Remove(WorldNode& node) {
+    GUARD_LOG(node.Parent() == this, "ERROR. Can't remove un-parented node")
+    Remove(SCAST<WorldNode>(node.shared_from_this()));
 }
 
 void WorldNode::RemoveAllChildren() {
@@ -248,123 +243,3 @@ void WorldNode::OnUpdate(TimeSlice time) {
         component->OnUpdate(time);
     }
 }
-
-// TODO: new QuickBuild namespace?
-// MARK: - Quick build
-
-WorldNode& WorldNode::AddCircle(float radius, Color color) {
-    this->AddComponent<ColorRenderer>(color, Vector2(radius * 2, radius * 2))
-        .SetMeshBuilderFunc([](RendererModel const& model) {
-            return EllipseMeshBuilder(model.WorldSize()).BuildMesh();
-        });
-
-    return *this;
-}
-
-WorldNode& WorldNode::AddDrag(OnDragUpdateFunc onDragUpdateFunc) {
-    this->AddComponent<DragHandler2D>().SetOnDragUpdateFunc(onDragUpdateFunc);
-
-    if (!this->TypeComponent<SomeCollider2D>()) {
-        PJLog("WARNING. Drag requires a collider");
-    }
-
-    return *this;
-}
-
-WorldNode& WorldNode::AddSquareCollider(float size) {
-    auto& polyC = this->AddComponent<PolygonCollider2D>();
-    polyC.poly = Polygon::MakeSquare(size);
-
-    return *this;
-}
-
-WorldNode& WorldNode::AddRectCollider(Vector2 size) {
-    auto& polyC = this->AddComponent<PolygonCollider2D>();
-    polyC.poly = Polygon::MakeRect(size);
-
-    return *this;
-}
-
-WorldNode& WorldNode::AddCircleCollider(float radius) {
-    AddComponent<CircleCollider2D>(radius);
-    return *this;
-}
-
-void _AddSlider(
-    World& world, WorldNode& parent, DesignSystem& designSystem, SP<SomeTexture> trackTexture,
-    SP<SomeTexture> thumbTexture, String name, Vector2 worldSize, Axis2D axis,
-    std::function<void(float)> valueFunc
-) {
-    GUARD(trackTexture && thumbTexture)
-
-    SlicedTextureRenderer::SlicePoints slicePoints =
-        designSystem.TagValue<SlicedTextureRenderer::SlicePoints>(
-            UIElement::SliderTrack, UITag::SlicePoints
-        );
-
-    auto& sliderNode = parent.AddNode("Slider track");
-
-    sliderNode.AddComponent<SlicedTextureRenderer>(trackTexture, vec2Zero, slicePoints);
-    auto& sliderControl = sliderNode.AddComponent<SliderControl>(axis);
-
-    float endCapSize = designSystem.TagValue<float>(UIElement::SliderTrack, UITag::EndCapSize);
-    sliderControl.SetEndCapSize(endCapSize).SetFrame(Rect({ 0, 0 }, worldSize));
-    auto& thumbNode = sliderNode.AddNode("Slider thumb");
-
-    thumbNode.AddComponent<PolygonCollider2D>().SetPoly(
-        Polygon::MakeRect(Vector2(thumbTexture->size.x, thumbTexture->size.y))
-    );
-
-    thumbNode.AddComponent<SpriteRenderer>(thumbTexture);
-
-    if (valueFunc) {
-        // Subscribe to value and store subscription
-        // Careful: watch out for strong reference cycles when using smart pointers
-        sliderNode.cancellables.insert(sliderControl.Value().Receive(valueFunc));
-    }
-}
-
-WorldNode&
-WorldNode::AddSlider(String name, Vector2 worldSize, std::function<void(float)> valueFunc) {
-    GUARDR(world, *this)
-
-    auto designSystem = world->designSystem;
-    GUARDR_LOG(designSystem, *this, "Missing design system")
-
-    auto trackTexture = designSystem->Texture(UIElement::SliderTrack);
-    GUARDR_LOG(trackTexture, *this, "Missing slider track texture")
-
-    auto thumbTexture = designSystem->Texture(UIElement::SliderThumb);
-    GUARDR_LOG(thumbTexture, *this, "Missing slider thumb texture")
-
-    _AddSlider(
-        *world, *this, *designSystem, trackTexture, thumbTexture, name, worldSize, Axis2D::X,
-        valueFunc
-    );
-    return *this;
-}
-
-WorldNode&
-WorldNode::AddSliderVertical(String name, Vector2 worldSize, std::function<void(float)> valueFunc) {
-    GUARDR(world, *this)
-
-    auto designSystem = world->designSystem;
-    GUARDR_LOG(designSystem, *this, "Missing design system")
-
-    // FUTURE: support UV rotation so we don't have to duplicate textures
-    auto trackTexture = designSystem->Texture(UIElement::SliderVerticalTrack);
-    GUARDR_LOG(trackTexture, *this, "Missing slider track texture")
-
-    auto thumbTexture = designSystem->Texture(UIElement::SliderVerticalThumb);
-    GUARDR_LOG(thumbTexture, *this, "Missing slider thumb texture")
-
-    _AddSlider(
-        *world, *this, *designSystem, trackTexture, thumbTexture, name, worldSize, Axis2D::Y,
-        valueFunc
-    );
-    return *this;
-}
-
-/*
- FUTURE: Quick Build options:
- */

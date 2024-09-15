@@ -1,16 +1,20 @@
 #pragma once
 
+#if DEVELOPMENT
+#include <PhaseJump-Dev/PhaseJump-Dev.h>
+#else
 #include <PhaseJump/PhaseJump.h>
+#endif
 
-class TestInput : public WorldComponent<>, public SomeKeyUIEventsResponder, public SomeInputActionEventResponder {
-    void OnKeyDown(KeyDownUIEvent event) override {
+class TestInput : public WorldComponent<> {
+    void OnKeyDown(KeyDownUIEvent const& event) {
         std::cout << "Key: " << (char)event.keyCode.value << std::endl;
 
         GUARD(owner)
         owner->transform.value.position.x += 10;
     }
 
-    void OnInputAction(InputActionEvent const& event) override {
+    void OnInputAction(InputActionEvent const& event) {
         std::cout << "Action: " << event.action << std::endl;
 
 //        if (event.action == "left") {
@@ -42,5 +46,11 @@ class TestInput : public WorldComponent<>, public SomeKeyUIEventsResponder, publ
                 owner->TypeComponent<AnimatedSpriteRenderer>()->flipX = true;
             }
         }
+    }
+
+    // MARK: SomeWorldComponent
+
+    String TypeName() const override {
+        return "TestInput";
     }
 };

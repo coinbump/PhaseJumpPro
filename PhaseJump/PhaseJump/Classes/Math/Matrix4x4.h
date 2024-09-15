@@ -1,5 +1,4 @@
-#ifndef PJMATRIX4x4_h
-#define PJMATRIX4x4_h
+#pragma once
 
 #include "StringUtils.h"
 #include "Vector3.h"
@@ -17,7 +16,6 @@ namespace Terathon {
  */
 // TODO: need unit tests
 namespace PJ {
-    // TODO: rename this to just Matrix?
     /// A column-major 4x4 matrix
     struct Matrix4x4 {
         static constexpr size_t size = 16;
@@ -204,5 +202,3 @@ namespace PJ {
         String ToString() const;
     };
 } // namespace PJ
-
-#endif

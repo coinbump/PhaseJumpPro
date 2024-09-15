@@ -2,4 +2,4 @@
 
 #include <stdio.h>
 
-extern void SDLFoo();
+extern void KaijuGo();

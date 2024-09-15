@@ -20,7 +20,7 @@ PJ::UVTransformFunc UVTransformFuncs::textureCoordinates = [](TextureRenderModel
 
 RenderModel RenderModelBuilder::Build(
     SomeRenderer& renderer, Mesh const& mesh, RenderMaterial& material,
-    VectorList<SomeTexture*> const& textures, UVTransformFunc uvTransformFunc
+    VectorList<SP<SomeTexture>> const& textures, UVTransformFunc uvTransformFunc
 ) {
     auto result = Build(renderer.owner, mesh, material, textures, uvTransformFunc);
     result.zIndex = renderer.model.zIndex;
@@ -29,7 +29,7 @@ RenderModel RenderModelBuilder::Build(
 
 RenderModel RenderModelBuilder::Build(
     WorldNode* node, Mesh const& mesh, RenderMaterial& material,
-    VectorList<SomeTexture*> const& textures, UVTransformFunc uvTransformFunc
+    VectorList<SP<SomeTexture>> const& textures, UVTransformFunc uvTransformFunc
 ) {
     RenderModel renderModel(&material);
     renderModel.name = node ? node->name : "";
@@ -53,29 +53,3 @@ RenderModel RenderModelBuilder::Build(
 
     return renderModel;
 }
-
-// RenderModel RenderModelBuilder::Build(
-//     Mesh const& mesh, RenderMaterial& material, VectorList<SomeTexture*> const& textures,
-//     Matrix4x4 modelMatrix, float z, UVTransformFunc uvTransformFunc
-//) {
-//     RenderModel renderModel(&material);
-//     renderModel.mesh = mesh;
-//     renderModel.matrix = modelMatrix;
-//     renderModel.z = z;
-//
-//     for (auto& texture : textures) {
-//         GUARD_CONTINUE(texture)
-//
-//         auto textureRenderModel = texture->MakeRenderModel();
-//         GUARD_CONTINUE(textureRenderModel)
-//
-//         Add(renderModel.textureModels, *textureRenderModel);
-//     }
-//
-//     if (!IsEmpty(textures) && uvTransformFunc) {
-//         auto& textureModel = renderModel.textureModels[0];
-//         uvTransformFunc(textureModel, renderModel.UVs());
-//     }
-//
-//     return renderModel;
-// }

@@ -47,7 +47,7 @@ namespace PJ {
         using This = CoreTransformer<Value, Result, Core>;
         using Func = std::function<Result(Core& core, Value value)>;
 
-        Core core;
+        Core core{};
 
         Func func;
 

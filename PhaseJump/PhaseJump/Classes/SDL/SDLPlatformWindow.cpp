@@ -34,10 +34,10 @@ void SDLPlatformWindow::GoInternal() {
         break;
     }
 
-    if (!world) {
-        world = MAKE<SDLWorld>();
-    }
-    world->Configure(window, MAKE<SDLRenderContext>(renderer));
+    GUARD(world)
+    world->Configure(window, nullptr);
+
+    // world->Configure(window, MAKE<SDLRenderContext>(renderer));
 
     // IMPORTANT: Call world->Go after you've built your scene
 }

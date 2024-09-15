@@ -2,8 +2,8 @@
 
 #include "Broadcaster.h"
 #include "CyclicGraph.h"
+#include "Dev.h"
 #include "List.h"
-#include "Log.h"
 #include "SomeStateMachine.h"
 #include "StandardEventCore.h"
 #include "UnorderedMap.h"
@@ -115,7 +115,7 @@ namespace PJ {
             auto node = NodeForState(state);
 
             if (!node) {
-                PJLog("ERROR. State has no node in graph");
+                PJ::Log("ERROR. State has no node in graph");
                 return;
             }
 

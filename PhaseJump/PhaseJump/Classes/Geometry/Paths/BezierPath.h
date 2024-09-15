@@ -8,12 +8,11 @@
 /*
  RATING: 5 stars
  Simple path
- CODE REVIEW: 4/12/23
+ CODE REVIEW: 9/14/24
  */
 namespace PJ {
     /// Model that defines a circle path
     class BezierPath : public SomePath {
-        // TODO: Unit tests
     public:
         using Base = SomePath;
         using This = BezierPath;

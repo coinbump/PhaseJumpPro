@@ -83,6 +83,10 @@ namespace PJ {
 
         // MARK: SomeWorldComponent
 
+        String TypeName() const override {
+            return "ScrollBarControl";
+        }
+
         void Awake() override;
     };
 } // namespace PJ

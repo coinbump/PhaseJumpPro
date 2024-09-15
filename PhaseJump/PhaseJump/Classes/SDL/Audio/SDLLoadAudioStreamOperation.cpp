@@ -15,8 +15,8 @@ SomeLoadResourcesOperation::Result SDLLoadAudioStreamOperation::LoadResources() 
     if (SDL_LoadWAV(info.filePath.c_str(), &inputAudioSpec, &audioBuffer, &bufferLength) == 0) {
         auto audioStream = MAKE<SDLAudioStream>(audioBuffer, bufferLength, inputAudioSpec);
 
-        LoadedResource loadedResource(
-            info.filePath, info.type, info.id, SCAST<PJ::Base>(audioStream)
+        ResourceModel loadedResource(
+            SCAST<PJ::Base>(audioStream), info.id, info.filePath, info.type
         );
         Success result;
         result.Add(loadedResource);

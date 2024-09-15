@@ -12,6 +12,7 @@
 // CODE REVIEW: ?/23
 namespace PJ {
     class WorldNode;
+    class DropFilesUIEvent;
 
     struct LocalHit {
         LocalPosition localPos;
@@ -50,6 +51,7 @@ namespace PJ {
 
         std::optional<LocalHit> TestLocalHit(ScreenPosition screenPosition);
 
+        virtual void OnDropFiles(DropFilesUIEvent const& event, List<WP<WorldNode>> const& nodes);
         virtual void OnPointerDown(PointerDownUIEvent const& event);
         virtual void OnPointerUp(PointerUpUIEvent const& event);
         virtual void OnMouseMotion(PointerMoveUIEvent const& event);
@@ -57,16 +59,17 @@ namespace PJ {
         virtual void OnInputAction(InputActionEvent const& event, List<WP<WorldNode>> const& nodes);
 
     protected:
-        template <class Responder>
-        void DispatchEvent(SPC<WorldNode> node, std::function<void(Responder&)> command) {
-            GUARD(command)
+        void DispatchEvent(SP<WorldNode> node, String signalId, SomeSignal const& signal) {
+            GUARD(node && node->IsEnabled());
 
             auto iterComponents = node->Components();
-            for (auto& component : iterComponents) {
-                auto responder = DCAST<Responder>(component);
-                GUARD_CONTINUE(responder)
-                command(*responder);
-            }
+            std::for_each(iterComponents.begin(), iterComponents.end(), [&](auto& component) {
+                GUARD(component->IsEnabled())
+                try {
+                    auto i = component->signalHandlers.at(signalId);
+                    i(*component, signal);
+                } catch (...) {}
+            });
         }
     };
 } // namespace PJ

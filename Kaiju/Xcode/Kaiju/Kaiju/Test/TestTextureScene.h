@@ -1,6 +1,10 @@
 #pragma once
 
+#if DEVELOPMENT
+#include <PhaseJump-Dev/PhaseJump-Dev.h>
+#else
 #include <PhaseJump/PhaseJump.h>
+#endif
 #include "TestInput.h"
 
 using namespace std;
@@ -45,24 +49,31 @@ public:
     void LoadInto(WorldNode& root) override {
         root.name = "TestTextureScene";
 
-//        WorldNode& cameraNode = root.AddNode("Camera");
-//        cameraNode.AddComponent<OrthoCamera>();//.SetHalfHeight(owner->World()->renderContext->PixelSize().y);
-//        cameraNode.AddComponent<SimpleRaycaster2D>();
+//        WorldNode& cameraNode = root.And("Camera");
+//        cameraNode.With<OrthoCamera>();//.SetHalfHeight(owner->World()->renderContext->PixelSize().y);
+//        cameraNode.With<SimpleRaycaster2D>();
 
         World& world = *root.World();
 
-//#define BUFFER
+#define BUFFER
 #ifdef BUFFER
-        auto bufferCamera = root.AddComponent<OrthoCamera>();
-        auto textureBuffer = MAKE<GLTextureBuffer>();
+        auto& bufferCamera = root.With<OrthoCamera>();
+        auto textureBuffer = world.renderContext->renderEngine->MakeTextureBuffer();
         textureBuffer->Build(Vector2Int(2000, 1000));
+//        textureBuffer->clearColor = Color::blue;
         bufferCamera.renderContext = textureBuffer;
 
-        // TODO: test texture buffer with glClear(blue)
-        // TODO: problem: this would mean that the buffer camera is rendering its own texture into itself?
-        auto& bufferRenderNode = root.AddNode();
-        bufferRenderNode.AddComponent<SpriteRenderer>(textureBuffer->Texture());
-        bufferRenderNode.transform.SetRotation(Vector3(0, 0, -45));
+        auto& bufferRenderNode = root.And("Buffer render");
+        auto& spriteRenderer = bufferRenderNode.With<SpriteRenderer>(textureBuffer->Texture());
+
+        auto program = SomeShaderProgram::registry.find("chromaticAberrationSimple");
+//        auto program = SomeShaderProgram::registry.find("texture.uniform");
+        if (program != SomeShaderProgram::registry.end()) {
+            spriteRenderer.model.material->SetShaderProgram(program->second);
+        }
+
+        // TODO: this is cheating the UV coordinates for now, don't forget
+        bufferRenderNode.transform.SetRotation(Vector3(0, 0, -180));
 #endif
         
 //        auto inputMap = DCAST<InputTriggerMap>(uiSystem->inputMap);
@@ -108,19 +119,19 @@ public:
 
         for (int i = 0; i < 1; i++) {
 //            auto font = DCAST<Font>(world.loadedResources->map["font"]["TestFont"].resource);
-            auto font = DCAST<Font>(world.loadedResources->map["font"]["ArialBlack-32"].resource);
+            auto font = DCAST<Font>(world.FindFontWithSize(32));
 
             if (font) {
                 auto textureAtlas = font->atlas;
 
                 if (textureAtlas && !IsEmpty(textureAtlas->Textures())) {
-                    WorldNode& textNode = world.AddNode();
-                    textNode.AddComponent<TextRenderer>(font, "This is a test of centered text\nAnd then we have more text on the next line", Vector2(400, 400))
+                    WorldNode& textNode = world.And();
+                    textNode.With<TextRenderer>(font, "This is a test of centered text\nAnd then we have more text on the next line", Vector2(400, 400))
                         .SetLineAlignFunc(AlignFuncs::center)
                         .SetTextColor(Color::blue)
                         .SizeToFit();
                     textNode.transform.SetLocalPosition(Vector3(-100 + 20*i, -100 + 20*i, 0));
-                    textNode.AddComponent<AnimateHueEffect>().SetIsOn(true);
+                    textNode.With<AnimateHueEffect>().SetIsOn(true);
 
 //                    textRenderer->SetModifyColorsFunc([](TextRenderer& textRenderer, VectorList<RenderColor>& colors) {
 //                        auto const& renderChars = textRenderer.RenderChars();
@@ -192,13 +203,15 @@ public:
             });
 
 #endif
-            root.AddSlider("My slider", {500, 33}, [](float value) {
+            QB(root)
+                .Slider("My slider", {500, 33}, [](float value) {
                 // Receive slider value here
                 std::cout << "Slider: " << value << std::endl;
             })
             .SetLocalPosition({0, -200, 0});
 
-            root.AddSliderVertical("Vertical slider", {33, 500}, [](float value) {
+            QB(root)
+                .Slider("Vertical slider", {33, 500}, [](float value) {
                 // Receive slider value here
                 std::cout << "VerticalSlider: " << value << std::endl;
             })
@@ -217,10 +230,10 @@ public:
 
 
         {
-            WorldNode& meshNode = root.AddNode("Animated runner");
+            WorldNode& meshNode = root.And("Animated runner");
 //            meshNode->Add(camera);
             //        auto renderer = MAKE<MeshRenderer>();
-            //        meshNode->AddComponent(renderer);
+            //        meshNode->With(renderer);
 
 //            auto renderer = MAKE<SpriteRenderer>(texture);
 //            meshNode->Add(renderer);
@@ -231,10 +244,10 @@ public:
             meshNode.Add(renderer);
             meshNode.SetScale2D(0.5);
 
-            WorldNode& cameraNode = meshNode.AddNode("Camera");
-            auto camera = cameraNode.AddComponentPtr<OrthoCamera>();
+            WorldNode& cameraNode = meshNode.And("Camera");
+            auto camera = cameraNode.WithPtr<OrthoCamera>();
             camera->SetHalfHeight(owner->World()->renderContext->PixelSize().y / 2.0f);
-            cameraNode.AddComponent<SimpleRaycaster2D>();
+            cameraNode.With<SimpleRaycaster2D>();
 
 //            updatables.Add([camera](TimeSlice time) {
 //                GUARDR(camera->halfHeight, FinishType::Continue)
@@ -268,7 +281,7 @@ public:
 
             auto frameRenderer = MAKE<ColorRenderer>(Color::red, Vector2(maxTextureTrueSize.x, maxTextureTrueSize.y));
 
-            frameRenderer->model.SetMeshBuilderFunc([](RendererModel const& model) {
+            frameRenderer->model.SetBuildMeshFunc([](RendererModel const& model) {
                 QuadFrameMeshBuilder meshBuilder(model.WorldSize(), Vector2(3, 3));
                 return meshBuilder.BuildMesh();
             });

@@ -1,8 +1,8 @@
 #pragma once
 
+#include "Dev.h"
 #include "EmitModel.h"
 #include "EmitterTypes.h"
-#include "Log.h"
 #include "OrderedSet.h"
 #include "SomeDriver.h"
 #include "StandardRandom.h"
@@ -59,7 +59,7 @@ namespace PJ {
 
         /// Spawns objects based on emit models
         SpawnFunc spawnFunc = [](This& emitter, EmitModel emit) {
-            PJLog("ERROR. Must implement a spawn func");
+            PJ::Log("ERROR. Must implement a spawn func");
             return std::nullopt;
         };
 
@@ -85,6 +85,12 @@ namespace PJ {
         virtual bool CanSpawn();
 
         virtual EmitList Fire();
+
+        // MARK: SomeWorldComponent
+
+        String TypeName() const override {
+            return "Emitter";
+        }
 
     protected:
         virtual List<SpawnType> EmitWithEmits(EmitList emits);

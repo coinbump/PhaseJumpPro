@@ -1,7 +1,7 @@
 #ifndef PJSQLSTATEMENT_H
 #define PJSQLSTATEMENT_H
 
-#include "Log.h"
+#include "Dev.h"
 #include "SQLTool.h"
 #include "SQLTypes.h"
 #include "SQLValue.h"
@@ -40,7 +40,7 @@ namespace PJ {
 
         void AppendIdentifier(String identifier, bool isEscaped = false) {
             if (SQLTool().IsReservedKeyword(identifier)) {
-                PJLog("WARNING. %s is reserved by SQL.", identifier.c_str());
+                PJ::Log("WARNING. ", identifier, " is reserved by SQL.");
             }
 
             SQLIdentifierFormatter formatter;

@@ -1,6 +1,10 @@
 #pragma once
 
+#if DEVELOPMENT
+#include <PhaseJump-Dev/PhaseJump-Dev.h>
+#else
 #include <PhaseJump/PhaseJump.h>
+#endif
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_audio.h>
 
@@ -22,16 +26,28 @@ static void SDLCALL MyNewAudioCallback(void *userdata, SDL_AudioStream *stream, 
     }
 }
 
-class TestAudioPad : public WorldComponent<>, public SomePointerUIEventsResponder {
+class TestAudioPad : public WorldComponent<> {
 public:
+    using This = TestAudioPad;
+
     SP<WorldComponent<AudioStreamPlayer>> audioStreamPlayer;
 
     TestAudioPad(SP<WorldComponent<AudioStreamPlayer>> audioStreamPlayer) : audioStreamPlayer(audioStreamPlayer) {
+        signalHandlers[SignalId::PointerDown] = [](auto& component, auto& signal) {
+            auto event = static_cast<PointerDownUIEvent const*>(&signal);
+            static_cast<This*>(&component)->OnPointerDown(*event);
+        };
     }
 
-    void OnPointerDown(PointerDownUIEvent event) {
+    void OnPointerDown(PointerDownUIEvent const& event) {
         GUARD(audioStreamPlayer);
         audioStreamPlayer->core.Play();
+    }
+
+    // MARK: SomeWorldComponent
+
+    String TypeName() const override {
+        return "TestAudioPad";
     }
 };
 
@@ -62,18 +78,17 @@ public:
                         // FUTURE: const SDL_AudioSpec outputAudioSpec = { SDL_AUDIO_S16, 2, 48000 };
 
                         StandardLoadResourcesModel loadResourcesModel(StandardLoadResourcesModel::LoadType::Rez);
-                        SDLLoadAudioStreamOperation operation(LoadResourceInfo(filePath, "audio", ""), loadResourcesModel);
+                        SDLLoadAudioStreamOperation operation(ResourceInfo("", filePath, "audio"), loadResourcesModel);
                         operation.Run();
 
                         auto loadedResources = operation.LoadedResources();
                         if (!IsEmpty(loadedResources)) {
                             auto stream = SCAST<SDLAudioStream>(loadedResources[0].resource);
-                            auto player = MAKE<WorldComponent<AudioStreamPlayer>>();
                             auto playerNode = MAKE<WorldNode>();
-                            playerNode->Add(player);
+                            auto player = playerNode->WithCorePtr<AudioStreamPlayer>();
                             world->Add(playerNode);
 
-                            auto texture = DCAST<GLTexture>(world->loadedResources->map["texture"]["audio-pad"].resource);
+                            auto texture = world->FindTexture("audio-pad");
                             GUARD(texture)
                             auto spriteRenderer = MAKE<SpriteRenderer>(texture);
 
@@ -115,9 +130,9 @@ public:
     void LoadInto(WorldNode& root) {
         root.name = "TestAudioScene";
 
-        WorldNode& cameraNode = root.AddNode("Camera");
-        cameraNode.AddComponent<OrthoCamera>();
-        cameraNode.AddComponent<SimpleRaycaster2D>();
+        WorldNode& cameraNode = root.And("Camera");
+        cameraNode.With<OrthoCamera>();
+        cameraNode.With<SimpleRaycaster2D>();
 
         World& world = *root.World();
 

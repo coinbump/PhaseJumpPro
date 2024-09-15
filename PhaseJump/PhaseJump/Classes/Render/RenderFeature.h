@@ -18,9 +18,20 @@ namespace PJ {
          */
         auto constexpr Blend = "blend";
 
-        /*
-         Enables optional clipping of rendered output
-         */
+        /// Enables optional clipping of rendered output
         auto constexpr ScissorTest = "scissorTest";
+
+        /// Enables culling of back faces
+        auto constexpr CullFace = "cullFace";
+
+        /// Enables 2D textures
+        auto constexpr Texture2D = "texture2D";
+
+        /// Enables Z-ordering via depth testing
+        auto constexpr DepthTest = "depthTest";
+
+        /// Enables MSAA rendering
+        auto constexpr MultiSample = "multiSample";
+
     }; // namespace RenderFeature
 } // namespace PJ

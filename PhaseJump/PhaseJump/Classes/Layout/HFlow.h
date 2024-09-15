@@ -1,11 +1,12 @@
 #pragma once
 
 #include "SomeLayout2D.h"
+#include "WorldNode.h"
 
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 7/6/24
+ CODE REVIEW: 9/14/24
  */
 namespace PJ {
     /// Flow the objects with non-contextual spacing (object size doesn't
@@ -17,10 +18,13 @@ namespace PJ {
         HFlow(float spacing = 10) :
             spacing(spacing) {}
 
-        Vector3 Size() const override {
+        Vector3 Size() const {
             GUARDR(owner, Vector3::zero)
             return Vector3(spacing * (owner->ChildNodes().size() - 1), 0, 0);
         }
+
+    protected:
+        // MARK: SomeLayout
 
         void ApplyLayout() override {
             GUARD(owner)

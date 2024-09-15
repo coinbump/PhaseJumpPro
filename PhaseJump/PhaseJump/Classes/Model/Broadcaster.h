@@ -18,7 +18,7 @@ namespace PJ {
         // TODO: why WP?
         using ListenerWeakPtr = WP<SomeListener>;
         using ListenerList = VectorList<ListenerWeakPtr>;
-        using EventSharedPtr = SP<SomeEvent>;
+        using EventSharedPtr = SP<SomeSignal>;
         using EventPtr = EventSharedPtr const&;
 
         ListenerList listeners;

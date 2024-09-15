@@ -68,6 +68,7 @@ namespace PJ {
      QuickBench: https://quick-bench.com/
      Tracy Profiler: https://github.com/wolfpld/tracy/releases
      RenderDoc: https://renderdoc.org
+     Compiler Explorer: https://godbolt.org
      */
     struct DevABProfiler {
         using Result = DevProfiler::Result;

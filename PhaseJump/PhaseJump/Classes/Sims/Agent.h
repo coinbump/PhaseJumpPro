@@ -26,13 +26,14 @@ namespace PJ {
 
     public:
         Group* group = nullptr;
-        Core core;
+        Core core{};
 
         OnStepFunc onStepFunc;
         OnUpdateFunc onUpdateFunc;
 
         Agent() {
             resetFunc = [](auto& agent) { ((This*)&agent)->core = Core(); };
+            // std::cout << "Agent init" << std::endl;
         }
 
         void OnUpdate(TimeSlice time) {

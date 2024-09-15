@@ -54,6 +54,12 @@ namespace PJ {
             OnSelectChange();
         }
 
+        // MARK: SomeWorldComponent
+
+        String TypeName() const override {
+            return "SelectHandler";
+        }
+
     protected:
         void Awake() override {
             Base::Awake();

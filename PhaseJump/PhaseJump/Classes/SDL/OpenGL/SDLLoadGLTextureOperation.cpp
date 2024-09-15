@@ -13,26 +13,60 @@ SomeLoadResourcesOperation::Result SDLLoadGLTextureOperation::LoadResources() {
 
     SDL_Surface* surface = IMG_Load(path.string().c_str());
     if (!surface) {
-        PJLog("ERROR. Can't load GL texture at: %s", path.string().c_str());
+        PJ::Log("ERROR. Can't load GL texture at: ", path.string());
         return Failure();
     }
 
     // TODO: evaluate using SDL's GL_CreateTexture instead
 
-    int surfacePixelSize = 4;
-    GLenum pixelFormat = GL_BGR;
-    switch (surface->format) {
-    case SDL_PixelFormat::SDL_PIXELFORMAT_ARGB8888:
-        pixelFormat = GL_BGRA;
-        surfacePixelSize = 4;
-        break;
-    default:
-        PJLog("Only RGBA supported for now.");
-        return Failure();
-        break;
-    }
+    auto pixelFormatDetails = SDL_GetPixelFormatDetails(surface->format);
+    GUARDR(pixelFormatDetails, Failure())
 
-    auto surfaceDataSize = surfacePixelSize * surface->w * surface->h;
+    // TODO: this is Unfinished. The problem is that ComponentColor requires a constant color schema
+    auto details = pixelFormatDetails;
+    ComponentColorSchema colorSchema{ details->Rmask,  details->Gmask,  details->Bmask,
+                                      details->Amask,  details->Rshift, details->Gshift,
+                                      details->Bshift, details->Ashift };
+    using SDLColor = ComponentColor32<ComponentColorSchema::bgra>;
+
+    struct SDLPixelFormat {
+        using Pixel = SDLColor;
+
+        SDL_PixelFormatDetails const* details = nullptr;
+
+        size_t ColorComponentBitSize(ColorComponent component) const {
+            switch (component) {
+            case ColorComponent::Red:
+                return details->Rbits;
+            case ColorComponent::Green:
+                return details->Gbits;
+            case ColorComponent::Blue:
+                return details->Bbits;
+            case ColorComponent::Alpha:
+                return details->Abits;
+            }
+        }
+
+        size_t PixelSize() const {
+            return details->bytes_per_pixel;
+        }
+
+        ComponentColorSchema MakeColorSchema() {
+            return { details->Rmask,  details->Gmask,  details->Bmask,  details->Amask,
+                     details->Rshift, details->Gshift, details->Bshift, details->Ashift };
+        }
+    };
+
+    SDLPixelFormat pixelFormat(pixelFormatDetails);
+    using SDLBitmap = Bitmap<SDLPixelFormat>;
+
+    // TODO: use this information for loading images
+    //    typedef struct SDL_PixelFormatDetails
+    //    {
+    //        Uint8 padding[2];
+    //    } SDL_PixelFormatDetails;
+
+    auto surfaceDataSize = pixelFormat.PixelSize() * surface->w * surface->h;
     BGRABitmap bgraBitmap(Vector2Int(surface->w, surface->h), surface->pixels, surfaceDataSize);
     RGBABitmap rgbaBitmap(Vector2Int(surface->w, surface->h));
 
@@ -83,7 +117,7 @@ SomeLoadResourcesOperation::Result SDLLoadGLTextureOperation::LoadResources() {
         MAKE<GLTexture>(id, glTexture, Vector2Int(width, height), TextureAlphaMode::Standard);
     texture->SomeTexture::SetTextureMagnification(textureMagnification);
 
-    LoadedResource loadedResource(info.filePath, info.type, info.id, SCAST<PJ::Base>(texture));
+    ResourceModel loadedResource(SCAST<PJ::Base>(texture), info.id, info.filePath, info.type);
     Success result;
     result.Add(loadedResource);
 

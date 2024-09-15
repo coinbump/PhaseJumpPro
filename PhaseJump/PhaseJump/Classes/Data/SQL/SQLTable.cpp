@@ -239,11 +239,11 @@ void SQLTable::Drop() {
 
 bool SQLTable::CellExists(SQLTableQueryArguments query) {
     if (!query.where) {
-        PJLog("ERROR. CellExists requires where clause.");
+        PJ::Log("ERROR. CellExists requires where clause.");
         return false;
     }
     if (IsEmpty(query.columnNames)) {
-        PJLog("ERROR. CellExists requires column name");
+        PJ::Log("ERROR. CellExists requires column name");
         return false;
     }
 
@@ -360,7 +360,7 @@ OrderedSet<String> SQLTable::UniqueStrings(String columnName) {
 
 #ifdef __DEBUG__
     for (auto& _i : uniqueNames) {
-        PJLog("Unique value: %s", (_i).c_str());
+        PJ::Log("Unique value: ", (_i).c_str());
     }
 #endif
 

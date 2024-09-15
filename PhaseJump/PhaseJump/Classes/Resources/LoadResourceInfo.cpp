@@ -1,1 +1,1 @@
-#include "LoadResourceInfo.h"
+#include "ResourceInfo.h"

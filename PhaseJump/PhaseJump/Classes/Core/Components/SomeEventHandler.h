@@ -7,7 +7,7 @@
 
 // CODE REVIEW: ?/23
 namespace PJ {
-    class SomeEvent;
+    class SomeSignal;
 
     /// A component that listens to events
     // TODO: is this being used via inheritance anymore? Do we need it?

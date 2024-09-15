@@ -2,6 +2,7 @@
 
 #include "InfixOStreamIterator.h"
 #include "Utils.h"
+#include "VectorList.h"
 #include <functional>
 #include <sstream>
 #include <string>
@@ -91,6 +92,8 @@ namespace PJ {
         );
         return stream.str();
     }
+
+    String Joined(std::initializer_list<String> initializer, String delimiter);
 
     template <class T>
     T TypeValue(String _string) {

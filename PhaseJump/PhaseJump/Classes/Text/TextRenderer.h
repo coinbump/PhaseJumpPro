@@ -5,7 +5,11 @@
 #include "SomeRenderer.h"
 #include "TextMeasurer.h"
 
-// CODE REVIEW: ?/23
+/*
+ RATING: 4 stars
+ Tested and works. Missing word wrap
+ CODE REVIEW: 9/10/24
+ */
 namespace PJ {
     class Font;
 
@@ -17,41 +21,46 @@ namespace PJ {
         using Base = SomeRenderer;
 
         using ModifyColorsFunc =
-            std::function<void(TextRenderer&, VectorList<RenderColor>& colors)>;
+            std::function<void(TextRenderer const&, VectorList<RenderColor>& colors)>;
         using ModifyVerticesFunc =
-            std::function<void(TextRenderer&, VectorList<Vector3>& vertices)>;
+            std::function<void(TextRenderer const&, VectorList<Vector3>& vertices)>;
 
         /// Because of whitespace, there isn't a direct 1-to-1 relationship between the text
-        /// characters and the mesh vertices. This allows to establish a relationship
+        /// characters and the mesh vertices. This allows us to establish a relationship
         struct RenderChar {
             size_t sourceIndex = 0;
             size_t vertexIndex = 0;
         };
 
     protected:
+        /// Text area size. Text will be wrapped/clipped inside this
         Vector2 size;
-        SP<Font> font;
-        String text;
-        Color color = Color::white;
-        bool isBuildNeeded = true;
 
+        /// Font for text render
+        SP<Font> font;
+
+        /// Text to render
+        String text;
+
+        /// Line clip behavior when text measurer reaches the end of the text area
         LineClip lineClip = LineClip::Partial;
 
-        Mesh mesh;
-        VectorList<RenderColor> colors;
+        /// Measured information for rendering characters
         VectorList<RenderChar> renderChars;
 
+        /// Custom funcs allow users of this renderer to modify its behavior
         ModifyColorsFunc modifyColorsFunc;
         ModifyVerticesFunc modifyVerticesFunc;
 
+        /// Measured text metrics
         std::optional<TextMetrics> metrics;
 
         // FUTURE: support locale-aware leading/trailing alignment
         AlignFunc lineAlignFunc = AlignFuncs::center;
         AlignFunc textAlignFunc = AlignFuncs::center;
 
+        /// Called when the text content changes
         virtual void OnTextChange();
-        virtual void OnColorChange();
 
     public:
         /// Optional. Sets the max # of characters to be rendered, for reveal-type animations
@@ -66,7 +75,7 @@ namespace PJ {
         TextRenderer& SizeToFit();
 
         /// Builds the mesh and metrics if needed
-        void BuildIfNeeded();
+        Mesh BuildMesh();
 
         VectorList<RenderChar> const& RenderChars() const {
             return renderChars;
@@ -74,7 +83,7 @@ namespace PJ {
 
         TextRenderer& SetModifyColorsFunc(ModifyColorsFunc value) {
             modifyColorsFunc = value;
-            OnColorChange();
+            model.SetVertexColorsNeedsBuild();
             return *this;
         }
 
@@ -147,11 +156,6 @@ namespace PJ {
 
             OnTextChange();
         }
-
-        // MARK: SomeRenderer
-
-        VectorList<RenderModel> MakeRenderModels() override;
-        void SetColor(Color color) override;
 
         // MARK: WorldSizeable
 

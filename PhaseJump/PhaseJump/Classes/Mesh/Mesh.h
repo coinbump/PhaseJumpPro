@@ -1,14 +1,15 @@
-#ifndef PJMESH_H
-#define PJMESH_H
+#pragma once
 
 #include "Bounds.h"
 #include "Color.h"
 #include "Macros.h"
 #include "Matrix4x4.h"
 #include "Rect.h"
+#include "SharedVector.h"
 #include "Vector2.h"
 #include "Vector3.h"
 #include "VectorList.h"
+#include <span>
 
 /*
  RATING: 5 stars
@@ -17,9 +18,10 @@
  */
 namespace PJ {
     /// Stores properties for rendering a mesh
-    struct Mesh {
+    class Mesh {
     public:
         using This = Mesh;
+        using TrianglesSpan = std::span<uint32_t const>;
 
     protected:
         bool needsCalculate = true;
@@ -29,12 +31,7 @@ namespace PJ {
 
         /// Used by index buffer (IBO) to keep vertices list smaller and improve
         /// performance
-        VectorList<uint32_t> triangles;
-
-        // FUTURE: this is an interesting idea, because copying a pointer is faster than a vector
-        // copy But it adds more complexity and edge cases elsewhere. Re-evaluate later
-        /// Copying vectors is expensive for large lists. Use to share indices between meshes
-        // VectorList<uint32_t> const* sharedTriangles = nullptr;
+        SharedVector<uint32_t> triangles;
 
         Bounds bounds;
 
@@ -113,27 +110,22 @@ namespace PJ {
             uvs = value;
         }
 
-        constexpr VectorList<uint32_t> const& Triangles() const {
+        constexpr std::span<uint32_t const> Triangles() const {
             // return sharedTriangles ? *sharedTriangles : triangles;
-            return triangles;
+            return triangles.Value();
         }
 
-        void SetTriangles(VectorList<uint32_t> const& value) {
+        void SetTriangles(std::span<uint32_t const> value) {
             triangles = value;
         }
 
-        // TODO: re-evaluate the idea of shared triangles (can we abstract this with CRTP? What
-        // about add operation and batch?)
-        VectorList<uint32_t>& BaseTriangles() {
-            return triangles;
+        void SetModifiableTriangles(VectorList<uint32_t> const& value) {
+            triangles = value;
         }
 
-        // FUTURE: this is an interesting idea, because copying a pointer is faster than a vector
-        // copy But it adds more complexity and edge cases elsewhere. Re-evaluate later
-        //        This& SetSharedTriangles(VectorList<uint32_t> const* value) {
-        //            sharedTriangles = value;
-        //            return *this;
-        //        }
+        VectorList<uint32_t>& ModifiableTriangles() {
+            return triangles.Modifiable();
+        }
 
         void OffsetBy(Vector2 offset) {
             for (auto& v : vertices) {
@@ -184,12 +176,13 @@ namespace PJ {
 
             AddRange(result.vertices, rhs.vertices);
 
-            auto newTriangles = rhs.Triangles();
+            VectorList<uint32_t> newTriangles;
+            newTriangles.assign(rhs.Triangles().begin(), rhs.Triangles().end());
             for (auto& triangle : newTriangles) {
                 triangle += triangleOffset;
             }
 
-            AddRange(result.triangles, newTriangles);
+            AddRange(result.triangles.Modifiable(), newTriangles);
             AddRange(result.uvs, rhs.uvs);
 
             result.needsCalculate = true;
@@ -213,5 +206,3 @@ namespace PJ {
         }
     };
 } // namespace PJ
-
-#endif

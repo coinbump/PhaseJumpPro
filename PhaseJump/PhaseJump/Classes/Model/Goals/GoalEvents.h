@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SomeEvent.h"
+#include "SomeSignal.h"
 #include <memory>
 
 /*
@@ -12,7 +12,7 @@ namespace PJ {
     class SomeGoal;
 
     /// Event: goal has been completed
-    class GoalCompleteEvent : public SomeEvent {
+    class GoalCompleteEvent : public SomeSignal {
     public:
         SP<SomeGoal> goal;
 

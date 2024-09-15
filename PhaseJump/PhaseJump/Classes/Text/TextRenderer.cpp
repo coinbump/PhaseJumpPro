@@ -24,42 +24,31 @@ TextRenderer::TextRenderer(SP<Font> font, String text, Vector2 size) :
     model.material->Add(font->atlas->Textures()[0]);
     model.material->SetShaderProgram(program);
     model.material->EnableFeature(RenderFeature::Blend, true);
-}
 
-void TextRenderer::SetColor(Color color) {
-    this->color = color;
-    OnColorChange();
-}
+    auto defaultFunc = model.BuildVertexColorsFunc();
 
-void TextRenderer::OnColorChange() {
-    GUARD(!IsEmpty(mesh.Vertices()))
+    model.SetBuildMeshFunc([this](auto& model) { return this->BuildMesh(); });
 
-    VectorList<RenderColor> colors(mesh.Vertices().size(), color);
+    model.SetBuildVertexColorsFunc([=, this](auto& model, auto& colors) {
+        defaultFunc(model, colors);
 
-    if (modifyColorsFunc) {
-        modifyColorsFunc(*this, colors);
-    }
-
-    this->colors = colors;
+        GUARD(this->modifyColorsFunc)
+        this->modifyColorsFunc(*this, colors);
+    });
 }
 
 void TextRenderer::OnTextChange() {
-    isBuildNeeded = true;
-
-    BuildIfNeeded();
+    model.SetMeshNeedsBuild();
 }
 
-void TextRenderer::BuildIfNeeded() {
-    GUARD(isBuildNeeded)
-    isBuildNeeded = false;
-
-    GUARD(font)
+Mesh TextRenderer::BuildMesh() {
+    GUARDR(font, {})
 
     auto atlas = font->atlas;
-    GUARD(atlas)
+    GUARDR(atlas, {})
 
     auto& atlasTextures = atlas->Textures();
-    GUARD(!IsEmpty(atlasTextures))
+    GUARDR(!IsEmpty(atlasTextures), {})
 
     Mesh mesh;
     renderChars.clear();
@@ -139,35 +128,12 @@ void TextRenderer::BuildIfNeeded() {
         mesh.SetNeedsCalculate();
     }
 
-    this->mesh = mesh;
-    OnColorChange();
-}
-
-VectorList<RenderModel> TextRenderer::MakeRenderModels() {
-    VectorList<RenderModel> result;
-
-    GUARDR(font, result)
-
-    auto atlas = font->atlas;
-    GUARDR(atlas, result)
-
-    auto& atlasTextures = atlas->Textures();
-    GUARDR(!IsEmpty(atlasTextures), result)
-
-    RenderModelBuilder builder;
-    VectorList<SomeTexture*> textures{ atlasTextures[0].get() };
-    auto renderModel = builder.Build(*this, mesh, *model.material, textures, UVTransformFunc());
-
-    renderModel.colors = this->colors;
-
-    result.push_back(renderModel);
-    return result;
+    return mesh;
 }
 
 // TODO: this can't work because the size it's using to measure is the wrong size, it needs to be as
 // large as possible (or based on # of lines?)
 TextRenderer& TextRenderer::SizeToFit() {
-    BuildIfNeeded();
     GUARDR(metrics, *this)
 
     size = metrics->size;

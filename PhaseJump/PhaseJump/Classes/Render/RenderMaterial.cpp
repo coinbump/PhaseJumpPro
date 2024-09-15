@@ -1,5 +1,5 @@
 #include "RenderMaterial.h"
-#include "Log.h"
+#include "Dev.h"
 #include "PropertyIdBuilder.h"
 #include "SomeShaderProgram.h"
 

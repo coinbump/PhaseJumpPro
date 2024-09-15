@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 
-#include "LoadedResources.h"
+#include "ResourceModels.h"
 #include "StringUtils.h"
 
 using namespace std;
@@ -14,12 +14,12 @@ namespace LoadedResourcesTests {
 using namespace LoadedResourcesTests;
 
 TEST(LoadedResources, TestRemove) {
-    LoadedResources sut;
-    sut.map["type"]["id"] = LoadedResource("path", "type", "id", MAKE<Base>());
+    ResourceModels sut;
+    sut.map["type"]["id"] = ResourceModel(MAKE<Base>(), "id", "path", "type");
 
-    EXPECT_EQ("path", sut.map["type"]["id"].filePath.string());
+    EXPECT_EQ("path", sut.map["type"]["id"].info.filePath.string());
 
     sut.Remove("type", "id");
 
-    EXPECT_EQ("", sut.map["type"]["id"].filePath.string());
+    EXPECT_EQ("", sut.map["type"]["id"].info.filePath.string());
 }

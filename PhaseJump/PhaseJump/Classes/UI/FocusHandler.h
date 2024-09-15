@@ -1,8 +1,8 @@
 #pragma once
 
 #include "SomeEffect.h"
-#include "SomeEvent.h"
 #include "SomeResolver.h"
+#include "SomeSignal.h"
 #include "UISystem.h"
 #include "WorldComponent.h"
 
@@ -18,7 +18,7 @@ namespace PJ {
         WP<WorldNode> next;
     };
 
-    class FocusEvent : public SomeEvent {
+    class FocusEvent : public SomeSignal {
     public:
         String id;
     };

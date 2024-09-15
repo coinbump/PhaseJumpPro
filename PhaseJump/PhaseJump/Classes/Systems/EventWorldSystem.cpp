@@ -1,6 +1,8 @@
 #include "EventWorldSystem.h"
+#include "DropFilesUIEvent.h"
 #include "Input.h"
 #include "Matrix4x4.h"
+#include "SignalTypes.h"
 #include "SomeCamera.h"
 #include "SomeControllerUIEvent.h"
 #include "SomePosition.h"
@@ -36,7 +38,7 @@ std::optional<PJ::LocalHit> EventWorldSystem::TestLocalHit(ScreenPosition screen
     GUARDR(camera, std::nullopt)
 
     // Get the raycaster
-    auto raycaster = camera->GetComponent<SomeRaycaster2D>();
+    auto raycaster = camera->owner->GetComponent<SomeRaycaster2D>();
     GUARDR(raycaster, std::nullopt)
 
     auto worldPosition = camera->ScreenToWorld(screenPosition);
@@ -69,11 +71,7 @@ void EventWorldSystem::OnPointerDown(PointerDownUIEvent const& pointerDownEvent)
     // Send mouse down event to node components
     auto localPointerDownEvent = PointerDownUIEvent(screenPos, pointerDownEvent.button);
     auto hitNode = hit->node.lock();
-
-    DispatchEvent<SomePointerUIEventsResponder>(
-        hitNode, [&](SomePointerUIEventsResponder& responder
-                 ) { responder.OnPointerDown(localPointerDownEvent); }
-    );
+    DispatchEvent(hitNode, SignalId::PointerDown, localPointerDownEvent);
 
     pointerDownNodesMap[pointerDownEvent.button].clear();
     Add(pointerDownNodesMap[pointerDownEvent.button], hitNode);
@@ -91,11 +89,7 @@ void EventWorldSystem::OnPointerUp(PointerUpUIEvent const& pointerUpEvent) {
         // Send event to node components
         // TODO: Currently we aren't sending the local position
         auto localPointerUpEvent = PointerUpUIEvent(pointerUpEvent.button);
-
-        DispatchEvent<SomePointerUIEventsResponder>(
-            _node, [&](SomePointerUIEventsResponder& responder
-                   ) { responder.OnPointerUp(localPointerUpEvent); }
-        );
+        DispatchEvent(_node, SignalId::PointerUp, localPointerUpEvent);
     }
 }
 
@@ -147,6 +141,23 @@ void EventWorldSystem::ProcessUIEvents(List<SP<SomeUIEvent>> const& uiEvents) {
             OnKeyDown(*keyDownEvent, inputNodes);
             continue;
         }
+
+        auto dropFilesEvent = DCAST<DropFilesUIEvent>(event);
+        if (dropFilesEvent) {
+            inputCollectFunc(*this, inputNodes);
+            OnDropFiles(*dropFilesEvent, inputNodes);
+        }
+    }
+}
+
+void EventWorldSystem::OnDropFiles(
+    DropFilesUIEvent const& event, List<WP<WorldNode>> const& nodes
+) {
+    for (auto& node : nodes) {
+        GUARD_CONTINUE(!node.expired())
+        auto _node = node.lock();
+
+        DispatchEvent(_node, SignalId::DropFiles, event);
     }
 }
 
@@ -155,9 +166,7 @@ void EventWorldSystem::OnKeyDown(KeyDownUIEvent const& event, List<WP<WorldNode>
         GUARD_CONTINUE(!node.expired())
         auto _node = node.lock();
 
-        DispatchEvent<SomeKeyUIEventsResponder>(_node, [&](SomeKeyUIEventsResponder& responder) {
-            responder.OnKeyDown(event);
-        });
+        DispatchEvent(_node, SignalId::KeyDown, event);
     }
 }
 
@@ -168,9 +177,7 @@ void EventWorldSystem::OnInputAction(
         GUARD_CONTINUE(!node.expired())
         auto _node = node.lock();
 
-        DispatchEvent<SomeInputActionEventResponder>(
-            _node, [&](SomeInputActionEventResponder& responder) { responder.OnInputAction(event); }
-        );
+        DispatchEvent(_node, SignalId::InputAction, event);
     }
 }
 
@@ -187,10 +194,8 @@ void EventWorldSystem::OnMouseMotion(PointerMoveUIEvent const& event) {
             // pointerMotionEvent->position.ToString() << std::endl;
 
             auto _node = node.lock();
-            DispatchEvent<SomePointerUIEventsResponder>(
-                _node, [&](SomePointerUIEventsResponder& responder
-                       ) { responder.OnPointerExit(PointerExitUIEvent()); }
-            );
+            PointerExitUIEvent event;
+            DispatchEvent(_node, SignalId::PointerExit, event);
         }
         pointerEnterNodes.clear();
     } else {
@@ -211,11 +216,8 @@ void EventWorldSystem::OnMouseMotion(PointerMoveUIEvent const& event) {
 
             // cout << "Log: Pointer Exit: " <<
             // pointerMotionEvent->position.ToString() << std::endl;
-
-            DispatchEvent<SomePointerUIEventsResponder>(
-                _node, [&](SomePointerUIEventsResponder& responder
-                       ) { responder.OnPointerExit(PointerExitUIEvent()); }
-            );
+            PointerExitUIEvent event;
+            DispatchEvent(_node, SignalId::PointerExit, event);
         }
         pointerEnterNodes.clear();
 
@@ -223,10 +225,8 @@ void EventWorldSystem::OnMouseMotion(PointerMoveUIEvent const& event) {
 
         // The hit node already received a pointer enter event
         if (!isHitInPointerEnterNodes) {
-            DispatchEvent<SomePointerUIEventsResponder>(
-                hitNode, [&](SomePointerUIEventsResponder& responder
-                         ) { responder.OnPointerEnter(PointerEnterUIEvent()); }
-            );
+            PointerEnterUIEvent event;
+            DispatchEvent(hitNode, SignalId::PointerEnter, event);
         }
     }
 }

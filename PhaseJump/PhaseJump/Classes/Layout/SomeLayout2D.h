@@ -5,7 +5,7 @@
 /*
  RATING: 5 stars
  Simple type
- CODE REVIEW: 7/5/24
+ CODE REVIEW: 9/14/24
  */
 namespace PJ {
     /// Specialization for 2D layouts

@@ -41,5 +41,11 @@ namespace PJ {
 
         void OnDragUpdate(WorldPosition inputPosition) override;
         void OnDragEnd() override;
+
+        // MARK: SomeWorldComponent
+
+        String TypeName() const override {
+            return "DragHandler2D";
+        }
     };
 } // namespace PJ

@@ -6,20 +6,21 @@
 #include "RenderWorldSystem.h"
 #include "SomeCollider2D.h"
 #include "SomeRenderEngine.h"
+#include "WorldNode.h"
 
 using namespace std;
 using namespace PJ;
 
-void ShowBoundsRenderProcessor::Process(RenderSystemModel& systemModel) {
+void ShowBoundsRenderProcessor::Process(CameraRenderModel& cameraModel) {
     auto boundsMaterial = ColorRenderer::MakeMaterial(
         color.IsOpaque() ? RenderOpacityType::Opaque : RenderOpacityType::Blend
     );
-    systemModel.materials.push_back(boundsMaterial);
+    cameraModel.materials.push_back(boundsMaterial);
 
-    systemModel.models.reserve(systemModel.models.size() + systemModel.nodes.size());
+    cameraModel.models.reserve(cameraModel.models.size() + cameraModel.nodes.size());
 
     // FUTURE: this can be optimized
-    for (auto& node : systemModel.nodes) {
+    for (auto& node : cameraModel.nodes) {
         auto& components = node->Components();
         for (auto& component : components) {
             auto ws = As<WorldSizeable>(component.get());
@@ -28,17 +29,18 @@ void ShowBoundsRenderProcessor::Process(RenderSystemModel& systemModel) {
             auto worldSize = ws->WorldSize();
             GUARD_CONTINUE(worldSize)
 
-            ColorRenderer renderer(boundsMaterial, color, *worldSize);
-            renderer.model.SetMeshBuilderFunc([=](RendererModel const& model) {
+            auto renderer = MAKE<ColorRenderer>(boundsMaterial, color, *worldSize);
+            renderer->model.SetBuildMeshFunc([=](RendererModel const& model) {
                 // TODO: mesh.Resize(model.WorldSize());
                 QuadFrameMeshBuilder builder(model.WorldSize(), Vector2(2, 2));
                 Mesh mesh = builder.BuildMesh();
                 return mesh;
             });
+            cameraModel.renderers.push_back(renderer);
 
-            renderer.owner = node;
-            auto debugRenderModels = renderer.MakeRenderModels();
-            AddRange(systemModel.models, debugRenderModels);
+            renderer->owner = node;
+            auto debugRenderModels = renderer->MakeRenderModels();
+            AddRange(cameraModel.models, debugRenderModels);
             break;
         }
     }

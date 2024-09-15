@@ -7,7 +7,7 @@ using namespace std;
 
 namespace TextMeasurerTests {
     Font MakeFont() {
-        Font font;
+        Font font("", 12);
         Font::Glyph ag;
         ag.offset = Vector2Int(-1, 0);
         ag.advanceX = 5;

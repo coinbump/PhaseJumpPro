@@ -1,11 +1,15 @@
 #pragma once
 
+#if DEVELOPMENT
+#include <PhaseJump-Dev/PhaseJump-Dev.h>
+#else
 #include <PhaseJump/PhaseJump.h>
+#endif
 #include "TestGradientsScene.h"
 #include "TestMeshPathScene.h"
 #include "TestTextureScene.h"
 #include "TestSlicedTextureScene.h"
-#include "TestAnimatedTexturesScene.h"
+#include "TestAnimateApp.h"
 #include "TestAudioScene.h"
 #include "TestZOrderScene.h"
 #include "TestEmittersScene.h"
@@ -13,6 +17,7 @@
 #include "TestUIScene.h"
 #include "TestThemeScene.h"
 #include "ExampleLifeScene.h"
+#include "KaijuWorldSystem.h"
 
 using namespace PJ;
 
@@ -24,6 +29,7 @@ public:
 };
 
 void DrawSelectionWindow(WorldNode& node) {
+    // TODO: which is selected?
     auto& components = node.Components();
 
     static char text[1000];
@@ -54,7 +60,36 @@ void DrawSelectionWindow(WorldNode& node) {
     });
 }
 
-void DrawTree(WorldNode* node, String name) {
+struct DeleteNodeCommandCore {
+    SP<WorldNode> node;
+    WorldNode* parent{};
+};
+
+void BuildInspectedNodeWindow(KaijuWorldSystem& system) {
+    GUARD(system.inspectedNode)
+
+    if (!system.isInspectWindowConfigured) {
+        system.isInspectWindowConfigured = true;
+
+        ImGuiIO &io = ImGui::GetIO();
+
+        ImGui::SetNextWindowSize(ImVec2(300, io.DisplaySize.y - 40));
+        ImGui::SetNextWindowPos(ImVec2(io.DisplaySize.x - 320, 20));
+    }
+
+    ImGui::Begin("Inspect", nullptr, 0);
+
+    ImGui::TextColored(ImVec4(1, 1, 0, 1), "Properties");
+
+    ImGui::TextColored(ImVec4(1, 1, 0, 1), "Components");
+    for (auto& component : system.inspectedNode->Components()) {
+        ImGui::TextColored(ImVec4(1, 1, 1, 1), "%s", component->TypeName().c_str());
+    }
+
+    ImGui::End();
+}
+
+void DrawTree(KaijuWorldSystem& system, SP<WorldNode> node, String name) {
     GUARD(node);
 
     // TODO: move this to a system?
@@ -72,6 +107,23 @@ void DrawTree(WorldNode* node, String name) {
             if (ImGui::SmallButton(node->IsEnabled() ? "on" : "off")) {
                 node->ToggleEnable();
             }
+
+            ImGui::SameLine();
+
+            if (ImGui::SmallButton("x")) {
+                DeleteNodeCommandCore commandCore{node, node->Parent()};
+                auto command = MAKE<Command<DeleteNodeCommandCore>>(String("Delete ") + node->name,
+                                                                    commandCore,
+                                                                    [](auto& command) { command.core.node->Destroy(); },
+                                                                    [](auto& command) { command.core.node->UnDestroy(); command.core.parent->Add(command.core.node); } );
+                system.commands.Run(command);
+            }
+
+            ImGui::SameLine();
+
+            if (ImGui::SmallButton("i")) {
+                system.inspectedNode = node;
+            }
         }
 
         Tags nameCounts;
@@ -88,24 +140,24 @@ void DrawTree(WorldNode* node, String name) {
                 name = ss.str();
             }
 
-            DrawTree(childNode.get(), name);
+            DrawTree(system, childNode, name);
         }
         ImGui::TreePop();
     }
 }
 
-class KaijuImGuiRenderProcessor : public RenderProcessor, public SomeKeyUIEventsResponder {
+
+class KaijuImGuiRenderProcessor : public RenderProcessor {
 public:
     using Base = RenderProcessor;
 
+    KaijuWorldSystem& system;
     List<SP<KaijuSceneClass>> sceneClasses;
     bool isWindowConfigured = false;
     bool isToolActive = false;
-    bool isUIVisible = true;
 
-    World& world;
-
-    KaijuImGuiRenderProcessor(World& world) : world(world) {
+    // TODO: re-evaluate all registered render phases, probably don't want to run for each camera
+    KaijuImGuiRenderProcessor(KaijuWorldSystem& system) : Base("", {RenderPhase::PostClear}), system(system) {
         sceneClasses.push_back(MAKE<KaijuSceneClass>("test.texture", "Test Texture", []() { return MAKE<TestTextureScene>(); }));
         sceneClasses.push_back(MAKE<KaijuSceneClass>("test.slicedTexture", "Test Sliced Texture", []() { return MAKE<TestSlicedTextureScene>(); }));
         sceneClasses.push_back(MAKE<KaijuSceneClass>("test.gradients", "Test Gradients", []() { return MAKE<TestGradientsScene>(); }));
@@ -116,42 +168,33 @@ public:
         sceneClasses.push_back(MAKE<KaijuSceneClass>("test.editBezier", "Test Edit Bezier", []() { return MAKE<TestEditBezierScene>(); }));
         sceneClasses.push_back(MAKE<KaijuSceneClass>("test.theme", "Test Theme", []() { return MAKE<TestThemeScene>(); }));
         sceneClasses.push_back(MAKE<KaijuSceneClass>("test.ui", "Test UI", []() { return MAKE<TestUIScene>(); }));
-        sceneClasses.push_back(MAKE<KaijuSceneClass>("example.life", "Life Example", []() { return MAKE<ExampleLifeScene>(); }));
+        sceneClasses.push_back(MAKE<KaijuSceneClass>("app.animate", "Test Animate App", []() { return MAKE<TestAnimateApp>(); }));
+        sceneClasses.push_back(MAKE<KaijuSceneClass>("example.life", "Life Example", []() { return MAKE<ExampleLife::Scene>(); }));
     }
 
     // MARK: RenderProcessor
 
-    // TODO: rethink where RenderInto is getting called
-    void Process(RenderSystemModel& systemModel) override {
-        auto world = &this->world;
+    void Process(String phase) override {
+        auto world = system.World();
         GUARD(world)
 
-        GUARD(isUIVisible)
+        GUARD(system.isUIVisible)
 
-        if (!isWindowConfigured) {
-            isWindowConfigured = true;
+        ImGUIMainMenuBarBuilder menuBuilder;
+        menuBuilder.Build(system.menus);
 
-            ImGui::SetNextWindowSize(ImVec2(300, 500));
+        BuildInspectedNodeWindow(system);
+
+        if (!system.isToolsWindowConfigured) {
+            system.isToolsWindowConfigured = true;
+
+            ImGuiIO &io = ImGui::GetIO();
+
+            ImGui::SetNextWindowSize(ImVec2(300, io.DisplaySize.y - 40));
             ImGui::SetNextWindowPos(ImVec2(20, 20));
         }
 
-        ImGui::Begin("Kaiju", &isToolActive, ImGuiWindowFlags_MenuBar);
-
-//        static bool menu = false;
-
-        if (ImGui::BeginMenuBar())
-        {
-            if (ImGui::BeginMenu("Examples"))
-            {
-                if (ImGui::MenuItem("Do something", "C", false)) {
-                    std::cout << "DO SOMETHING" << std::endl;
-                }
-
-                ImGui::SeparatorText("Mini apps");
-                ImGui::EndMenu();
-            }
-            ImGui::EndMenuBar();
-        }
+        ImGui::Begin("Kaiju", &isToolActive, 0);
 
         ImGui::TextColored(ImVec4(1, 1, 0, 1), "Scenes");
 
@@ -203,6 +246,8 @@ public:
                 if (ImGui::Button(name.c_str())) {
                     auto scene = sceneClass->Make();
                     if (scene) {
+                        system.commands.Clear();
+
                         auto removingSystems = Filter(world->Systems(), [](SP<SomeWorldSystem> system) {
                             return !system->typeTags.contains("editor.vip");
                         });
@@ -225,7 +270,7 @@ public:
 
                 if (ImGui::CollapsingHeader(name)) {
                     for (auto& res : type.second) {
-                        auto resourceId = res.second.id;
+                        auto resourceId = res.second.info.id;
                         ImGui::TextColored(ImVec4(1, 1, 1, 1), "%s, Used: %ld", resourceId.c_str(), res.second.resource.use_count());
 
                         if (String(name) == String("texture")) {
@@ -236,8 +281,8 @@ public:
                             addButtonName += resourceId;
 
                             if (ImGui::SmallButton(addButtonName.c_str())) {
-                                world->AddNode()
-                                    .AddComponent<SpriteRenderer>(SCAST<SomeTexture>(res.second.resource));
+                                world->And()
+                                    .With<SpriteRenderer>(SCAST<SomeTexture>(res.second.resource));
                             }
                         }
                     }
@@ -245,7 +290,19 @@ public:
             }
         }
 
-        DrawTree(world->root.get(), "Root");
+        DrawTree(system, world->root, "Root");
+
+        ImGui::TextColored(ImVec4(1, 1, 0, 1), "Render Engine");
+
+        static bool optimizeStateSwitches = true;
+        auto renderEngine = world->renderContext->renderEngine;
+        ImGui::Checkbox("Optimize State Switches", &optimizeStateSwitches);
+        renderEngine->optimizeStateSwitches = optimizeStateSwitches;
+
+        ImGui::TextColored(ImVec4(1, 1, 0, 1), "Enabled Features");
+        for (auto const& enabledFeature : renderEngine->EnabledFeatures()) {
+            ImGui::TextColored(ImVec4(1, 1, 1, 1), "%s", enabledFeature.c_str());
+        }
 
         if (ImGui::CollapsingHeader("Render Pipeline")) {
             auto renderSystem = world->GetSystem<RenderWorldSystem>();
@@ -314,17 +371,34 @@ public:
             }
         }
 
+        if (ImGui::CollapsingHeader("Command History")) {
+            auto& commands = system.commands.Commands();
+
+            if (ImGui::Button("Undo")) {
+                system.commands.Undo();
+            }
+            ImGui::SameLine();
+            if (ImGui::Button("Redo")) {
+                system.commands.Redo();
+            }
+
+            for (auto& command : commands) {
+                auto name = command->name;
+                GUARD_CONTINUE(!IsEmpty(name));
+
+                switch (command->State()) {
+                    case SomeCommand::StateType::Complete:
+                        ImGui::TextColored(ImVec4(1, 1, 1, 1), "%s", name.c_str());
+                        break;
+                    default:
+                        ImGui::TextColored(ImVec4(0.3, 0.3, 0.3, 1), "%s", name.c_str());
+                        break;
+                }
+            }
+        }
+
         ImGui::EndChild();
 
         ImGui::End();
     }
-
-    // MARK: SomeKeyUIEventsResponder
-
-    void OnKeyDown(KeyDownUIEvent event) override {
-        if (event.keyCode.value == '\t') {
-            isUIVisible = !isUIVisible;
-        }
-    }
 };
-

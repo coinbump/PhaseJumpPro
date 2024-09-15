@@ -6,6 +6,7 @@
 #include "Mesh.h"
 #include "RenderMaterial.h"
 #include "RenderTypes.h"
+#include "SharedVector.h"
 #include "SomeTexture.h"
 #include "UnorderedMap.h"
 #include "Vector3.h"
@@ -36,6 +37,9 @@ namespace PJ {
 
         /// Override material used to render mesh. Some render processors may alter the material
         RenderMaterial* overrideMaterial = nullptr;
+
+        /// Varying values that are interpolated per-vertex
+        SharedVector<RenderColor> vertexColors;
 
     public:
         using This = RenderModel;
@@ -85,9 +89,6 @@ namespace PJ {
         /// Matrix for transform from model-local to world space
         Matrix4x4 matrix;
 
-        /// Varying values that are interpolated per-vertex
-        VectorList<RenderColor> colors;
-
         /// Allows us to pre-emptively resize vectors with default elements
         RenderModel() {}
 
@@ -108,7 +109,7 @@ namespace PJ {
         }
 
         /// Used by IBO to determine vertex offsets
-        VectorList<uint32_t> const& Indices() const {
+        std::span<uint32_t const> Indices() const {
             return mesh.Triangles();
         }
 
@@ -116,12 +117,20 @@ namespace PJ {
             return mesh.UVs();
         };
 
-        VectorList<RenderColor>& Colors() {
-            return colors;
+        VectorList<RenderColor>& ModifiableVertexColors() {
+            return vertexColors.Modifiable();
         }
 
-        VectorList<RenderColor> const& Colors() const {
-            return colors;
+        std::span<RenderColor const> VertexColors() const {
+            return vertexColors.Value();
+        }
+
+        void SetVertexColors(std::span<RenderColor const> value) {
+            vertexColors = value;
+        }
+
+        void SetModifiableVertexColors(VectorList<RenderColor> const& value) {
+            vertexColors = value;
         }
 
         /// Returns true if a render feature is enabled for this operation
@@ -146,7 +155,9 @@ namespace PJ {
             auto& result = *this;
 
             result.mesh += rhs.mesh;
-            AddRange(result.colors, rhs.colors);
+            VectorList<RenderColor> rhsColors;
+            rhsColors.assign(rhs.vertexColors.Value().begin(), rhs.vertexColors.Value().end());
+            AddRange(result.ModifiableVertexColors(), rhsColors);
 
             return result;
         }

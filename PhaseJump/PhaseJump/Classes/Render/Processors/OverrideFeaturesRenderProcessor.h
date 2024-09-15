@@ -14,15 +14,18 @@ namespace PJ {
     /// Useful to enforce Z-ordering or batching
     class OverrideFeaturesRenderProcessor : public RenderProcessor {
     public:
+        using Base = RenderProcessor;
+
         // FUTURE: Create override material processor if needed
         UnorderedMap<String, RenderFeatureState> map;
 
-        OverrideFeaturesRenderProcessor() {
-            this->name = "Override features";
-        }
+        // TODO: re-evaluate all registered render phases, probably don't want to run for each
+        // camera
+        OverrideFeaturesRenderProcessor() :
+            Base("Override features", { RenderPhase::Camera }) {}
 
         // MARK: RenderProcessor
 
-        void Process(RenderSystemModel& systemModel) override;
+        void Process(CameraRenderModel& cameraModel) override;
     };
 } // namespace PJ

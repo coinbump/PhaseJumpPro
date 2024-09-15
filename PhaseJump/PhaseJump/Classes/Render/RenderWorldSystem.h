@@ -8,10 +8,11 @@
 /*
  RATING: 5 stars
  Tested and works
- CODE REVIEW: 8/28/24
+ CODE REVIEW: 8/28/23
  */
 namespace PJ {
     class RenderProcessor;
+    class SomeRenderer;
 
     /// Common ids for render model groups
     namespace RenderModelGroupId {
@@ -25,11 +26,34 @@ namespace PJ {
         VectorList<RenderModel> value;
     };
 
+    /// Manages render phases and notification when phase changes
+    class PhaseRenderModel {
+    public:
+        using This = PhaseRenderModel;
+
+        using OnPhaseChangeFunc = std::function<void(This&, String phase)>;
+
+        OnPhaseChangeFunc onPhaseChangeFunc;
+
+    protected:
+        /// The current render phase
+        String phase;
+
+    public:
+        void SetPhase(String value);
+    };
+
     /// Defines the model for a render pass
     /// The render system sends this to render processors, which can then modify it to
     /// add new draw commands, modify existing commands, filter nodes or cameras, etc.
-    struct RenderSystemModel {
+    class CameraRenderModel {
+    public:
+        using This = CameraRenderModel;
+
+    public:
         using ModelSortFunc = std::function<bool(RenderModel const&, RenderModel const&)>;
+
+        PhaseRenderModel phaseModel;
 
         /// Pointer, not reference for model copies
         SomeRenderContext* renderContext = nullptr;
@@ -52,6 +76,10 @@ namespace PJ {
         /// Temporary materials used by render processors
         /// Example: we can create a processor that shows mesh shape, collider bounds, etc
         VectorList<SP<RenderMaterial>> materials;
+
+        /// Temporary renderers used by render processors
+        /// Because we share memory from the renderer colors, we need to store it somewhere
+        VectorList<SP<SomeRenderer>> renderers;
 
         /// Materials created by render processor that override an existing material
         /// Multiple models might share the same material, this gives us a single source of truth
@@ -93,14 +121,11 @@ namespace PJ {
             return result;
         }
 
-        RenderSystemModel(
-            RenderContextModel& contextModel, SomeCamera* camera, VectorList<RenderModel> models
-        ) :
-            renderContext(contextModel.renderContext),
-            root(contextModel.root),
-            nodes(contextModel.nodes),
-            camera(camera),
-            models(models) {}
+        void SetPhase(String value);
+
+        CameraRenderModel(
+            RenderContextModel& contextModel, SomeCamera& camera, VectorList<RenderModel> models
+        );
     };
 
     class RenderContextModel;
@@ -108,11 +133,17 @@ namespace PJ {
     /// Render pipeline logic for the world. Every world needs a render system
     class RenderWorldSystem : public SomeWorldSystem {
     public:
+        class Model {
+        public:
+            PhaseRenderModel phaseModel;
+            RenderProcessingModel processingModel;
+        };
+
         using Base = SomeWorldSystem;
         using ProcessorList = RenderProcessingModel::ProcessorList;
 
     protected:
-        RenderProcessingModel processingModel;
+        Model model;
 
     public:
         RenderWorldSystem(String name = "Render") :

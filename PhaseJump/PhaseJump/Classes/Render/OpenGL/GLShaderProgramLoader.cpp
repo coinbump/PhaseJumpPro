@@ -34,7 +34,7 @@ std::optional<GLShaderProgram::Info> GLShaderProgramLoader::InfoFromPath(FilePat
     std::ifstream file;
     file.open(path);
     if (!file.is_open()) {
-        PJLog("ERROR. Can't open .shprog file at: %s", path.c_str());
+        PJ::Log("ERROR. Can't open .shprog file at: ", path);
         return std::nullopt;
     }
 
@@ -65,7 +65,7 @@ std::optional<GLShaderProgram::Info> GLShaderProgramLoader::InfoFromPath(FilePat
         result.vertexShaderPath = vertexShaderPath;
         result.fragmentShaderPath = fragmentShaderPath;
     } catch (...) {
-        PJLog("ERROR: Couldn't parse GLShaderProgram JSON");
+        PJ::Log("ERROR: Couldn't parse GLShaderProgram JSON");
         return std::nullopt;
     }
 

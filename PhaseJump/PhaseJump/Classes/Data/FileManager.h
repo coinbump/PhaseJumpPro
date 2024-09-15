@@ -20,7 +20,9 @@ namespace PJ {
         virtual VectorList<FilePath> PathList(FilePath path, bool isRecursive) = 0;
 
         std::future<VectorList<FilePath>> PathListAsync(FilePath path, bool isRecursive) {
-            return std::async([=] { return this->PathList(path, isRecursive); });
+            return std::async([this, path, isRecursive] {
+                return this->PathList(path, isRecursive);
+            });
         }
 
         virtual char PreferredSeparator() const = 0;

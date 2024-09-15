@@ -16,10 +16,12 @@ namespace PJTest {
     class MockRenderContext : public PJ::SomeRenderContext
     {
     public:
+        using Base = PJ::SomeRenderContext;
+
         Vector2 size;
         VectorList<RenderContextModel> renderHistory;
 
-        MockRenderContext(Vector2 size = Vector2(400, 200)) : size(size) {
+        MockRenderContext(Vector2 size = Vector2(400, 200)) : Base(nullptr), size(size) {
         }
 
         // Make context current, for renders

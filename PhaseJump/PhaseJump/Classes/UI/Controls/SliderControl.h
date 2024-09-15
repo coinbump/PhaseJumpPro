@@ -91,6 +91,10 @@ namespace PJ {
 
         // MARK: SomeWorldComponent
 
+        String TypeName() const override {
+            return "SliderControl";
+        }
+
         void Awake() override;
     };
 } // namespace PJ

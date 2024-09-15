@@ -1,44 +1,49 @@
 #pragma once
 
+#if DEVELOPMENT
+#include <PhaseJump-Dev/PhaseJump-Dev.h>
+#else
 #include <PhaseJump/PhaseJump.h>
+#endif
 
 #include "ExampleLifeAgent.h"
 
 using namespace PJ;
 
-class ExampleLifeAgentGroup;
+namespace ExampleLife {
+    class AgentGroup;
 
-/// Runs the simulation and renders it
-class ExampleLifeMatrixRenderer : public SomeRenderer
-{
-public:
-    using Base = SomeRenderer;
+    /// Runs the simulation and renders it
+    class MatrixRenderer : public SomeRenderer
+    {
+    public:
+        using Base = SomeRenderer;
 
-    AgentSystem system;
-    float updateSystemCountdown = 0;
-    SP<ExampleLifeAgentGroup> group;
+        AgentSystem system;
+        float updateSystemCountdown = 0;
+        SP<AgentGroup> group;
 
-    enum class CellState {
-        Dead,
+        enum class CellState {
+            Dead,
 
-        Alive
+            Alive
+        };
+
+        Matrix<CellState> matrix;
+
+    public:
+        MatrixRenderer();
+
+        void Awake() override;
+        void OnUpdate(TimeSlice time) override;
+        void UpdateMatrixForAgent(Agent const& agent);
+
+        void PostStep() {
+            model.SetVertexColorsNeedsBuild();
+        }
+
+        // MARK: SomeWorldComponent
+
+        String TypeName() const override { return "EampleLife-MatrixRenderer"; }
     };
-
-    Matrix<CellState> matrix;
-
-public:
-    ExampleLifeMatrixRenderer();
-
-    void Awake() override;
-    void OnUpdate(TimeSlice time) override;
-    void UpdateMatrixForAgent(ExampleLifeAgent const& agent);
-    ExampleLifeAgent* AgentAt(Vector2Int location);
-
-    // MARK: SomeRenderer
-
-    VectorList<RenderModel> MakeRenderModels() override;
-   
-    // MARK: SomeWorldComponent
-
-    String TypeName() const override { return "ExampleLifeMatrixRenderer"; }
-};
+}

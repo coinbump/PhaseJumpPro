@@ -1,6 +1,10 @@
 #pragma once
 
+#if DEVELOPMENT
+#include <PhaseJump-Dev/PhaseJump-Dev.h>
+#else
 #include <PhaseJump/PhaseJump.h>
+#endif
 
 using namespace PJ;
 
@@ -14,59 +18,62 @@ public:
     }
 
     void LoadInto(WorldNode& root) {
-        root.name = "TestUIScene";
-
-        auto& camera = root.AddComponent<OrthoCamera>();
-        camera.owner->AddComponent<SimpleRaycaster2D>();
-
-        auto& dragGestureNode = root.AddNode("Drag Gesture")
-            .AddCircle(20)
-            .AddCircleCollider(20);
-
-        auto& dragGestureHandler = dragGestureNode
-            .AddComponent<SomeDragGestureHandler2D>();
-
         auto world = root.World();
-
-        auto font = DCAST<Font>(world->loadedResources->map["font"]["ArialBlack-32"].resource);
+        auto font = world->FindFontWithResourceId("ArialBlack-32");
         GUARD(font)
-
-        auto textNode = root.AddNodePtr("Label");
-        auto textRenderer = textNode->AddComponentPtr<TextRenderer>(font, "Delta:", Vector2(400, 400));
-        textNode->SetLocalPosition(Vector3{0, -30, 0});
-
-        dragGestureHandler.onDragGestureUpdateFunc = [=](SomeDragGestureHandler2D::Update update) {
-            switch (update.type) {
-                case SomeDragGestureHandler2D::Update::Type::Start:
-                    std::cout << "Drag start" << std::endl;
-                    break;
-                case SomeDragGestureHandler2D::Update::Type::End:
-                    std::cout << "Drag end" << std::endl;
-                    break;
-                default:
-                    break;
-            }
-
-            std::ostringstream ss;
-            ss << "Delta: " << update.delta.x << ", " << update.delta.y << std::endl;
-            textRenderer->SetText(ss.str());
-            // BUG: textRenderer->SizeToFit();
-        };
-
-        auto& button = root.AddNode()
-            .AddComponent<ButtonControl>();
-
-        auto buttonTexture = DCAST<GLTexture>(root.World()->loadedResources->map["texture"]["example-button-normal"].resource);
+        auto buttonTexture = DCAST<GLTexture>(root.World()->FindTexture("example-button-normal"));
         GUARD(buttonTexture)
-        auto spriteRenderer = button.owner->AddComponentPtr<SpriteRenderer>(buttonTexture);
-        button.owner->AddRectCollider({(float)buttonTexture->Size().x, (float)buttonTexture->Size().y});
-        button.onPressFunc = [](auto&) {
-            std::cout << "Press" << std::endl;
-        };
-        button.owner->SetWorldPosition(Vector3(0, -90, 0));
-        button.SetOnControlUpdateFunc([=](auto& control) {
-            auto& button = *(static_cast<ButtonControl*>(&control));
-            spriteRenderer->SetColor(button.IsPressed() ? Themes::fruit.ThemeColor("blue") : Color::white);
-        });
+
+        QB(root)
+            .Named("TestUIScene")
+            .With<OrthoCamera>()
+            .With<SimpleRaycaster2D>()
+            .And("Drag Gesture")
+            .Circle(20)
+            .CircleCollider(20)
+            .With<SomeDragGestureHandler2D>()
+            .And("label")
+            .With<TextRenderer>(font, "Delta:", Vector2(400, 400))
+            .SetLocalPosition({0, -30, 0})
+            .ModifyLatest<SomeDragGestureHandler2D>([](SomeDragGestureHandler2D& c) {
+                auto childComponents = c.owner->GetComponentsInChildren<TextRenderer>();
+                GUARD(!IsEmpty(childComponents))
+                auto textRenderer = childComponents[0];
+
+                c.onDragGestureUpdateFunc = [=](SomeDragGestureHandler2D::Update update) {
+                    switch (update.type) {
+                        case SomeDragGestureHandler2D::Update::Type::Start:
+                            std::cout << "Drag start" << std::endl;
+                            break;
+                        case SomeDragGestureHandler2D::Update::Type::End:
+                            std::cout << "Drag end" << std::endl;
+                            break;
+                        default:
+                            break;
+                    }
+
+                    std::ostringstream ss;
+                    ss << "Delta: " << update.delta.x << ", " << update.delta.y << std::endl;
+                    textRenderer->SetText(ss.str());
+                    // BUG: textRenderer->SizeToFit();
+                };
+            })
+            .PopToRoot()
+            .And("Button")
+            .With<SpriteRenderer>(buttonTexture)
+            .RectCollider({200, 50})
+            .With<ButtonControl>()
+            .SetWorldPosition({0, -90, 0})
+            .ModifyLatest<ButtonControl>([=](ButtonControl& button) {
+                button.onPressFunc = [](auto&) {
+                    std::cout << "Press" << std::endl;
+                };
+                button.SetWorldSize({200, 50, 0});
+                button.SetOnControlUpdateFunc([](UIControl2D& control) {
+                    auto spriteRenderer = control.owner->TypeComponent<SpriteRenderer>();
+                    GUARD(spriteRenderer)
+                     spriteRenderer->SetColor(((ButtonControl*)&control)->IsPressed() ? Themes::fruit.ThemeColor("blue") : Color::white);
+                });
+            });
     }
 };

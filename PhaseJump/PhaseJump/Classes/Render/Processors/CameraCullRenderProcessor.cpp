@@ -7,17 +7,17 @@
 using namespace std;
 using namespace PJ;
 
-void CameraCullRenderProcessor::Process(RenderSystemModel& systemModel) {
-    GUARD(systemModel.camera)
+void CameraCullRenderProcessor::Process(CameraRenderModel& cameraModel) {
+    GUARD(cameraModel.camera)
 
-    auto beforeCullCount = systemModel.models.size();
+    auto beforeCullCount = cameraModel.models.size();
 
-    RemoveIf(systemModel.models, [&](RenderModel const& model) {
+    RemoveIf(cameraModel.models, [&](RenderModel const& model) {
         Mesh mesh = model.mesh * model.matrix;
-        return systemModel.camera->IsCulled(mesh);
+        return cameraModel.camera->IsCulled(mesh);
     });
 
-    auto afterCullCount = systemModel.models.size();
+    auto afterCullCount = cameraModel.models.size();
     if (beforeCullCount > afterCullCount) {
         cout << "Culled: " << beforeCullCount - afterCullCount << std::endl;
     }

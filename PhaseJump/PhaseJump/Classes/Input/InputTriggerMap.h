@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SomeEvent.h"
+#include "SomeSignal.h"
 #include "TriggerMap.h"
 
 /*
@@ -10,7 +10,7 @@
  */
 namespace PJ {
     /// Event sent when an action event occurs based on user input
-    class InputActionEvent : public SomeEvent {
+    class InputActionEvent : public SomeSignal {
     public:
         String action;
 
@@ -19,11 +19,4 @@ namespace PJ {
     };
 
     using InputTriggerMap = TriggerMap<SomeUIEvent, String>;
-
-    class SomeInputActionEventResponder {
-    public:
-        virtual ~SomeInputActionEventResponder() {}
-
-        virtual void OnInputAction(InputActionEvent const& event) = 0;
-    };
 } // namespace PJ

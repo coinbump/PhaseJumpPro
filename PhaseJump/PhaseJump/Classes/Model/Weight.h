@@ -20,7 +20,7 @@ namespace PJ {
     public:
         using Transform = PJ::SomeTransformer<Weight<Core>>;
 
-        Core core;
+        Core core{};
 
         /// Optional object that dynamically adjusts the weight during
         /// evaluation

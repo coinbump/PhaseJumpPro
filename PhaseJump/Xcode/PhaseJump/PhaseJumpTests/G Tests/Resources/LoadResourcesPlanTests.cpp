@@ -14,9 +14,9 @@ using namespace LoadResourcesPlanTests;
 
 TEST(LoadResourcesPlan, TestRemove) {
     LoadResourcesPlan sut;
-    sut.infoMap["1"]["id1"] = LoadResourceInfo();
-    sut.infoMap["2"]["id2-a"] = LoadResourceInfo();
-    sut.infoMap["2"]["id2-b"] = LoadResourceInfo();
+    sut.infoMap["1"]["id1"] = ResourceInfo();
+    sut.infoMap["2"]["id2-a"] = ResourceInfo();
+    sut.infoMap["2"]["id2-b"] = ResourceInfo();
 
     auto allInfos = sut.AllInfos();
     EXPECT_EQ(3, allInfos.size());

@@ -1,8 +1,8 @@
 #ifndef PJCOLOR32_H
 #define PJCOLOR32_H
 
+#include "Dev.h"
 #include "FloatMath.h"
-#include "Log.h"
 #include <stdint.h>
 
 /*
@@ -113,15 +113,15 @@ namespace PJ {
         }
 
         void LogColorSchema() {
-            PJLog("redMask: %u", ColorSchema.redMask);
-            PJLog("greenMask: %u", ColorSchema.greenMask);
-            PJLog("blueMask: %u", ColorSchema.blueMask);
-            PJLog("alphaMask: %u", ColorSchema.alphaMask);
+            PJ::Log("redMask: %u", ColorSchema.redMask);
+            PJ::Log("greenMask: %u", ColorSchema.greenMask);
+            PJ::Log("blueMask: %u", ColorSchema.blueMask);
+            PJ::Log("alphaMask: %u", ColorSchema.alphaMask);
 
-            PJLog("redShift: %u", ColorSchema.redShift);
-            PJLog("greenShift: %u", ColorSchema.greenShift);
-            PJLog("blueShift:%u", ColorSchema.blueShift);
-            PJLog("alphaShift: %u", ColorSchema.alphaShift);
+            PJ::Log("redShift: ", ColorSchema.redShift);
+            PJ::Log("greenShift: ", ColorSchema.greenShift);
+            PJ::Log("blueShift:", ColorSchema.blueShift);
+            PJ::Log("alphaShift: ", ColorSchema.alphaShift);
         }
     };
 

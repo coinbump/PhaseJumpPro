@@ -1,24 +1,42 @@
-#ifndef PJLINEPATHLAYOUT_H
-#define PJLINEPATHLAYOUT_H
+#pragma once
 
 #include "LinePath.h"
 #include "SomePathLayout.h"
 #include "Vector3.h"
 
-// CODE REVIEW: ?/23
+/*
+ RATING: 5 stars
+ Tested and works
+ CODE REVIEW: 9/14/24
+ */
 namespace PJ {
-    // TODO: rethink layouts using composition
-    /// Distribute objects along a circle path
+    /// Distribute objects along a line path
     class LinePathLayout : public SomePathLayout {
-    public:
+    protected:
         Vector3 start;
         Vector3 end;
 
-        // TODO: SP-audit
+    public:
+        void SetStart(Vector3 value) {
+            GUARD(start != value)
+            start = value;
+            SetLayoutNeedsBuild();
+        }
+
+        void SetEnd(Vector3 value) {
+            GUARD(end != value)
+            end = value;
+            SetLayoutNeedsBuild();
+        }
+
         SP<SomePath> BuildPath() override {
-            return SCAST<SomePath>(MAKE<LinePath>(start, end));
+            return MAKE<LinePath>(start, end);
+        }
+
+        // MARK: SomeWorldComponent
+
+        String TypeName() const override {
+            return "LinePathLayout";
         }
     };
 } // namespace PJ
-
-#endif

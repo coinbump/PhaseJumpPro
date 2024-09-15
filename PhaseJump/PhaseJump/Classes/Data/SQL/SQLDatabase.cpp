@@ -63,7 +63,7 @@ bool SQLDatabase::TryOpen(FilePath filePath, SQLDatabaseOpenType openType, int f
  */
 int SQLDatabase::Prepare(SQLCommand& command) {
     if (command.statement.value.length() == 0) {
-        PJLog("ERROR. Statement is empty");
+        PJ::Log("ERROR. Statement is empty");
         return SQLITE_MISUSE;
     }
 
@@ -71,7 +71,7 @@ int SQLDatabase::Prepare(SQLCommand& command) {
         sqlite3_prepare_v2(db, command.statement.value.c_str(), -1, &command.sqliteStatement, NULL);
 
 #ifdef __SQL_DEBUG__
-    PJLog("SQL. Prepare %s, RESULT: %d", command.statement.value.c_str(), result);
+    PJ::Log("SQL. Prepare ", command.statement.value, " RESULT: ", result);
 #endif
 
     return result;
@@ -84,14 +84,14 @@ int SQLDatabase::Prepare(SQLCommand& command) {
  */
 int SQLDatabase::Step(SQLCommand& command) {
     if (!command.IsPrepared()) {
-        PJLog("ERROR. Statement must be prepared before Step");
+        PJ::Log("ERROR. Statement must be prepared before Step");
         return SQLITE_MISUSE;
     }
 
     int result = sqlite3_step(command.sqliteStatement);
 
 #ifdef __SQL_DEBUG__
-    PJLog("SQL. Step RESULT: %d", result);
+    PJ::Log("SQL. Step RESULT: ", result);
 #endif
 
     return result;

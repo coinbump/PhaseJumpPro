@@ -2,9 +2,9 @@
 #define PJRESOURCEREPOSITORY_H
 
 #include "FilePath.h"
-#include "LoadedResources.h"
 #include "LoadResourcesPlan.h"
 #include "OrderedMap.h"
+#include "ResourceModels.h"
 #include "Result.h"
 #include "SomeLoadResourcesOperation.h"
 #include "StringUtils.h"
@@ -12,10 +12,10 @@
 // CODE REVIEW: ?/23
 namespace PJ {
     class LoadResourcesModel;
-    struct LoadedResource;
-    struct LoadResourceInfo;
+    struct ResourceModel;
+    struct ResourceInfo;
     class SomeFileManager;
-    struct LoadedResources;
+    struct ResourceModels;
 
     /// Interface to an object that loads resources
     class SomeResourceRepository {
@@ -34,21 +34,21 @@ namespace PJ {
         SP<LoadResourcesModel> loadResourcesModel;
 
         /// Destination for the loaded resources
-        SP<LoadedResources> loadedResources;
+        SP<ResourceModels> loadedResources;
 
         /// File manager (for mock injection in unit tests)
         SP<SomeFileManager> fm;
 
         ResourceRepository(
-            SP<LoadResourcesModel> loadResourcesModel, SP<LoadedResources> loadedResources,
+            SP<LoadResourcesModel> loadResourcesModel, SP<ResourceModels> loadedResources,
             SP<SomeFileManager> fm
         ) :
             loadResourcesModel(loadResourcesModel),
             loadedResources(loadedResources),
             fm(fm) {}
 
-        void Load(LoadResourceInfo info);
-        List<SP<SomeLoadResourcesOperation>> LoadOperations(LoadResourceInfo info);
+        void Load(ResourceInfo info);
+        List<SP<SomeLoadResourcesOperation>> LoadOperations(ResourceInfo info);
         List<SP<SomeLoadResourcesOperation>> LoadOperations(LoadResourcesPlan plan);
     };
 } // namespace PJ

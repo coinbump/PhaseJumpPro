@@ -48,17 +48,21 @@ namespace PJ {
     public:
         ButtonControl();
 
-        // MARK: SomePointerUIEventsResponder
-
-        void OnPointerDown(PointerDownUIEvent _event) override;
-        void OnPointerEnter(PointerEnterUIEvent _event) override;
-        void OnPointerExit(PointerExitUIEvent _event) override;
-        void OnPointerUp(PointerUpUIEvent _event) override;
+        void OnPointerDown(PointerDownUIEvent const& _event);
+        void OnPointerEnter(PointerEnterUIEvent const& _event);
+        void OnPointerExit(PointerExitUIEvent const& _event);
+        void OnPointerUp(PointerUpUIEvent const& _event);
 
     protected:
         void Awake() override;
 
         /// Called when the button is pressed
         virtual void OnPress();
+
+        // MARK: SomeWorldComponent
+
+        String TypeName() const override {
+            return "ButtonControl";
+        }
     };
 } // namespace PJ

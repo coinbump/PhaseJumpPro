@@ -21,22 +21,30 @@ namespace PJ {
 
     class SomeRenderer : public WorldComponent<>, public WorldSizeable {
     public:
+        using This = SomeRenderer;
+        using BuildMeshFunc = RendererModel::BuildMeshFunc;
+
         /// Defines model for renderer
         RendererModel model;
 
-        SomeRenderer(Vector3 worldSize) :
-            model(worldSize) {}
+        SomeRenderer(Vector3 worldSize);
 
         /// Create models to send to the render engine for a render
-        virtual VectorList<RenderModel> MakeRenderModels() = 0;
+        virtual VectorList<RenderModel> MakeRenderModels();
+
+        This& SetBuildMeshFunc(BuildMeshFunc buildMeshFunc) {
+            model.SetBuildMeshFunc(buildMeshFunc);
+            return *this;
+        }
 
         /// Override to set render color
-        virtual void SetColor(Color color) {}
+        virtual void SetColor(Color color) {
+            model.SetColor(color);
+        }
 
-        // MARK: Convenience
-
-        VectorList<RenderModel>
-        MakeRenderModels(Mesh const& mesh, VectorList<SomeTexture*> textures);
+        Color GetColor() {
+            return model.Color();
+        }
 
         // MARK: WorldSizeable
 

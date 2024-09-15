@@ -5,36 +5,39 @@
 #include "UISystem.h"
 #include "WorldComponent.h"
 #include "WorldSizeable.h"
+#include <functional>
 #include <optional>
 
 // CODE REVIEW: ?/23
 namespace PJ {
     // TODO: add ResolvedView methods
-    class View2D : public WorldComponent<>,
-                   public SomePointerUIEventsResponder,
-                   public WorldSizeable {
+    class View2D : public WorldComponent<>, public WorldSizeable {
+    public:
+        using OptionalFloat = std::optional<float>;
+        using IntrinsicLengthFunc = std::function<OptionalFloat(View2D&)>;
+        using ProposedLengthFunc = std::function<OptionalFloat(View2D&, Vector2)>;
 
     protected:
-        // ?? Isn't this the same thing as optional worldsize? NO. Because a view might have a value
-        // for width, but not height
-        std::optional<float> intrinsicWidth;
-        std::optional<float> intrinsicHeight;
+        // Views can have independent intrinsic sizes
+        // Example: intrinsicWidth is null, but intrinsicHeight is 10
+        IntrinsicLengthFunc intrinsicWidthFunc;
+        IntrinsicLengthFunc intrinsicHeightFunc;
 
         Rect frame;
 
+        bool needsLayout = true;
+
     public:
-        virtual std::optional<float> IntrinsicHeight() {
-            return std::nullopt;
+        virtual OptionalFloat IntrinsicWidth() {
+            GUARDR(intrinsicWidthFunc, {})
+            return intrinsicWidthFunc(*this);
         }
 
-        std::function<UISystem*()> uiSystemResolver = []() { return UISystem::shared; };
-
-        virtual UISystem* UISystem() const {
-            GUARDR(uiSystemResolver, nullptr)
-            return uiSystemResolver();
+        virtual OptionalFloat IntrinsicHeight() {
+            GUARDR(intrinsicHeightFunc, {})
+            return intrinsicHeightFunc(*this);
         }
 
-        // **************
         // MARK: - Bounds
 
         Rect Frame() const {
@@ -50,7 +53,6 @@ namespace PJ {
             return Frame().size;
         }
 
-        // TODO: get rid of all WorldSize2D??
         void SetWorldSize2D(Vector2 value);
 
         // MARK: WorldSizeable
@@ -63,6 +65,12 @@ namespace PJ {
             SetFrame({ frame.origin, { value.x, value.y } });
         }
 
+        // MARK: SomeWorldComponent
+
+        String TypeName() const override {
+            return "View2D";
+        }
+
     protected:
         virtual void OnFrameChange();
         virtual void UpdateFrameComponents();
@@ -70,33 +78,39 @@ namespace PJ {
     public:
         virtual std::optional<Rect> ParentBounds();
 
-        // ***************
         // MARK: - Layout
 
-        // TODO:
-        View2D* ParentView() const;
+        SP<View2D> ParentView() const;
         SP<View2D> FirstChildView() const;
 
+        /// Called when the view size changes
         virtual void OnViewSizeChange();
 
-        virtual VectorList<SP<View2D>> ChildViews() const {
-            return VectorList<SP<View2D>>();
+        VectorList<SP<View2D>> ChildViews() const;
+
+        ProposedLengthFunc proposeWidthWithoutConstraintsFunc;
+        ProposedLengthFunc proposeWidthWithConstraintsFunc;
+        ProposedLengthFunc proposeHeightWithoutConstraintsFuncs;
+        ProposedLengthFunc proposeHeightWithConstraintsFunc;
+
+        virtual OptionalFloat ProposedWidthWithoutConstraints(Vector2 layoutSize) {
+            GUARDR(proposeWidthWithoutConstraintsFunc, {})
+            return proposeWidthWithoutConstraintsFunc(*this, layoutSize);
         }
 
-        virtual std::optional<float> ProposedWidthWithoutConstraints(Vector2 layoutSize) {
-            return std::nullopt;
+        virtual OptionalFloat ProposedWidthWithConstraints(Vector2 layoutSize) {
+            GUARDR(proposeWidthWithConstraintsFunc, {})
+            return proposeWidthWithConstraintsFunc(*this, layoutSize);
         }
 
-        virtual std::optional<float> ProposedWidthWithConstraints(Vector2 layoutSize) {
-            return std::nullopt;
+        virtual OptionalFloat ProposedHeightWithoutConstraints(Vector2 layoutSize) {
+            GUARDR(proposeHeightWithoutConstraintsFuncs, {})
+            return proposeHeightWithoutConstraintsFuncs(*this, layoutSize);
         }
 
-        virtual std::optional<float> ProposedHeightWithoutConstraints(Vector2 layoutSize) {
-            return std::nullopt;
-        }
-
-        virtual std::optional<float> ProposedHeightWithConstraints(Vector2 layoutSize) {
-            return std::nullopt;
+        virtual OptionalFloat ProposedHeightWithConstraints(Vector2 layoutSize) {
+            GUARDR(proposeHeightWithConstraintsFunc, {})
+            return proposeHeightWithConstraintsFunc(*this, layoutSize);
         }
 
     protected:

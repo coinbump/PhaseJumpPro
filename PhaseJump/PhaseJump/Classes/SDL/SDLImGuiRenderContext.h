@@ -2,6 +2,7 @@
 #define PJSDLIMGUIRENDERCONTEXT_H
 
 #include "Color.h"
+#include "RenderProcessor.h"
 #include "SomeRenderContext.h"
 #include <SDL3/SDL.h>
 
@@ -22,9 +23,11 @@ namespace PJ {
         ImGuiContext* imGuiContext = nullptr;
 
     public:
-        Color clearColor = Color::gray;
+        using Base = SomeRenderContext;
+        using This = SDLImGuiRenderContext;
 
-        SDLImGuiRenderContext() {}
+        SDLImGuiRenderContext(SP<SomeRenderEngine> renderEngine) :
+            Base(renderEngine) {}
 
         virtual ~SDLImGuiRenderContext();
 
@@ -32,10 +35,14 @@ namespace PJ {
 
         SP<SomeGLRenderEngine> _GLRenderEngine() const;
 
+        ImGuiContext* ImGuiContext() const {
+            return imGuiContext;
+        }
+
         // Avoid these (use Configure instead)
         void SetWindow(SDL_Window* window);
         void SetGLContext(SDL_GLContext glContext);
-        void SetImGuiContext(ImGuiContext* imGuiContext);
+        void SetImGuiContext(class ImGuiContext* imGuiContext);
 
         // MARK: - SomeRenderContext
 

@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Mesh.h"
+#include "RenderModel.h"
+#include "RenderTypes.h"
 #include "Tags.h"
 #include "Vector3.h"
 
@@ -15,19 +17,40 @@ namespace PJ {
     /// Standard model for a renderer that renders a mesh
     class RendererModel {
     public:
-        using MeshBuilderFuncType = std::function<Mesh(RendererModel const& model)>;
+        using BuildMeshFunc = std::function<Mesh(RendererModel const& model)>;
+        using BuildColorsFunc =
+            std::function<void(RendererModel const& model, VectorList<RenderColor>&)>;
+        using BuildRenderModelsFunc = std::function<VectorList<RenderModel>(RendererModel& model)>;
 
     protected:
         using MeshType = PJ::Mesh;
+        using ColorType = PJ::Color;
 
         bool meshNeedsBuild = true;
+        bool vertexColorsNeedBuild = true;
+        bool renderModelsNeedBuild = true;
+
+        /// Renderer colors
+        VectorList<ColorType> colors;
+
+        /// Vertex colors (built from colors)
+        VectorList<RenderColor> vertexColors;
 
         /// Mesh used for render
         MeshType mesh;
         Vector3 worldSize;
 
-        /// (Optional). Builds mesh on demand
-        MeshBuilderFuncType meshBuilderFunc;
+        /// Cached render model (updated when renderer changes)
+        VectorList<RenderModel> renderModels;
+
+        /// Builds mesh on demand
+        BuildMeshFunc buildMeshFunc;
+
+        /// Builds vertex colors on demand
+        BuildColorsFunc buildVertexColorsFunc;
+
+        /// Builds render models on demand
+        BuildRenderModelsFunc buildRenderModelsFunc;
 
     public:
         /// (Optional). Allows render model to pass render hints to render processors
@@ -39,27 +62,85 @@ namespace PJ {
         /// (Optional). Material for render
         SP<RenderMaterial> material;
 
-        RendererModel(Vector3 worldSize) :
-            worldSize(worldSize) {}
+        RendererModel(Vector3 worldSize);
 
-        MeshBuilderFuncType MeshBuilderFunc() const {
-            return meshBuilderFunc;
+        void SetBuildMeshFunc(BuildMeshFunc value);
+
+        BuildColorsFunc BuildVertexColorsFunc() const {
+            return buildVertexColorsFunc;
         }
 
-        void SetMeshBuilderFunc(MeshBuilderFuncType value);
+        void SetBuildVertexColorsFunc(BuildColorsFunc value);
+
+        void SetBuildRenderModelsFunc(BuildRenderModelsFunc value) {
+            buildRenderModelsFunc = value;
+            renderModelsNeedBuild = true;
+        }
+
+        // TODO: should this return const&?
+        VectorList<RenderModel>& RenderModels() {
+            if (renderModelsNeedBuild) {
+                renderModelsNeedBuild = false;
+
+                BuildIfNeeded();
+                if (buildRenderModelsFunc) {
+                    renderModels = buildRenderModelsFunc(*this);
+                }
+            }
+
+            return renderModels;
+        }
 
         void BuildIfNeeded() {
-            GUARD(meshNeedsBuild && meshBuilderFunc)
-            meshNeedsBuild = false;
-            mesh = meshBuilderFunc(*this);
+            if (meshNeedsBuild && buildMeshFunc) {
+                meshNeedsBuild = false;
+                mesh = buildMeshFunc(*this);
+            }
+
+            if (vertexColorsNeedBuild && buildVertexColorsFunc) {
+                vertexColorsNeedBuild = false;
+                buildVertexColorsFunc(*this, vertexColors);
+            }
         }
 
-        MeshType& Mesh() {
+        void SetColor(ColorType value) {
+            colors = { value };
+            SetVertexColorsNeedsBuild();
+        }
+
+        ColorType Color() {
+            GUARDR(!IsEmpty(colors), Color::white)
+            return colors[0];
+        }
+
+        // FUTURE: introduce a dependency pattern here for these flags
+        void SetMeshNeedsBuild() {
+            meshNeedsBuild = true;
+            vertexColorsNeedBuild = true;
+            renderModelsNeedBuild = true;
+        }
+
+        void SetVertexColorsNeedsBuild() {
+            vertexColorsNeedBuild = true;
+            renderModelsNeedBuild = true;
+        }
+
+        void SetRenderModelsNeedBuild() {
+            renderModelsNeedBuild = true;
+        }
+
+        void SetColors(VectorList<ColorType> const& value) {
+            colors = value;
+            SetVertexColorsNeedsBuild();
+        }
+
+        VectorList<RenderColor> const& VertexColors() {
             BuildIfNeeded();
-            return mesh;
+            return vertexColors;
         }
 
-        MeshType const& Mesh() const {
+        MeshType const& Mesh() {
+            BuildIfNeeded();
             return mesh;
         }
 

@@ -6,8 +6,9 @@
 /*
  RATING: 5 stars
  Verified
- CODE REVIEW: 9/4/24
+ CODE REVIEW: 9/4/23
  */
+// TODO: should hover gesture be a signal instead of a handler?
 namespace PJ {
     /// An interactive UI object that accepts inputs from the user and produces
     /// events. Example: button, switch, checkbox, etc.

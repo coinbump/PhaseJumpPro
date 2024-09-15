@@ -1,7 +1,7 @@
 #ifndef PRECOMPILEDHEADER_H
 #define PRECOMPILEDHEADER_H
 
-#include "Log.h"
+#include "Dev.h"
 #include "FloatMath.h"
 #include "Base.h"
 #include "StandardCore.h"

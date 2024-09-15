@@ -53,12 +53,12 @@ namespace PJ {
         }
 
         /// Called before Start
-        virtual void CheckedAwake() {
+        void CheckedAwake() {
             life.CheckedAwake([this]() { Awake(); });
         }
 
         /// Called after Awake
-        virtual void CheckedStart() {
+        void CheckedStart() {
             life.CheckedStart([this]() { Start(); });
         }
 

@@ -23,9 +23,10 @@ namespace PJ {
     public:
         using Base = SomeLoadResourcesOperation;
 
+        // TODO: Does it make sense to put this here??
         String textureMagnification = TextureMagnification::Linear;
 
-        SDLLoadGLTextureOperation(LoadResourceInfo info, LoadResourcesModel& loadResourcesModel) :
+        SDLLoadGLTextureOperation(ResourceInfo info, LoadResourcesModel& loadResourcesModel) :
             Base(info, loadResourcesModel) {}
 
         // MARK: SomeLoadResourcesOperation

@@ -1,34 +1,40 @@
 #pragma once
 
+#if DEVELOPMENT
+#include <PhaseJump-Dev/PhaseJump-Dev.h>
+#else
 #include <PhaseJump/PhaseJump.h>
+#endif
 #include "ExampleLifeAgent.h"
 
 using namespace PJ;
 
-class ExampleLifeMatrixRenderer;
+namespace ExampleLife {
+    class MatrixRenderer;
 
-/// Agent group for the life simulation
-class ExampleLifeAgentGroup : public AgentGroup<ExampleLifeAgent>
-{
-public:
-    using Base = AgentGroup<ExampleLifeAgent>;
+    /// Agent group for the life simulation
+    class AgentGroup : public PJ::AgentGroup<Agent>
+    {
+    public:
+        using Base = PJ::AgentGroup<Agent>;
 
-    /// Matrix owner of the agent group
-    ExampleLifeMatrixRenderer* matrixView = nullptr;
+        /// Matrix owner of the agent group
+        MatrixRenderer* matrixView = nullptr;
 
-    ExampleLifeAgentGroup(ExampleLifeMatrixRenderer* matrixView);
+        AgentGroup(MatrixRenderer* matrixView);
 
-    void PostStep() override;
+        void PostStep() override;
 
-    int LiveNeighborsCountFor(ExampleLifeAgent const& agent);
+        int LiveNeighborsCountFor(Agent const& agent);
 
-protected:
-    void UpdateMatrixForAgent(ExampleLifeAgent const& agent);
-};
+    protected:
+        void UpdateMatrixForAgent(Agent const& agent);
+    };
 
-// MARK: ExampleLifeAgents
+    // MARK: ExampleLifeAgents
 
-namespace ExampleLifeAgents {
-    /// Handles simulation step rules
-    extern ExampleLifeAgent::OnStepFunc MakeOnStepFunc();
-};
+    namespace ExampleLifeAgents {
+        /// Handles simulation step rules
+        extern Agent::OnStepFunc MakeOnStepFunc();
+    };
+}

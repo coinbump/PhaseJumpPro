@@ -1,7 +1,7 @@
 #pragma once
 
-#include "SomeEvent.h"
 #include "SomePosition.h"
+#include "SomeSignal.h"
 #include "Tags.h"
 
 /*
@@ -11,7 +11,7 @@
  */
 namespace PJ {
     /// A user input event object
-    class SomeUIEvent : public SomeEvent {
+    class SomeUIEvent : public SomeSignal {
     public:
         /// Metadata for event
         Tags tags;
@@ -64,17 +64,6 @@ namespace PJ {
 
         KeyUpUIEvent(KeyScanCode scanCode, KeyCode keyCode) :
             Base(scanCode, keyCode) {}
-    };
-
-    /// Responds to pointer events
-    class SomeKeyUIEventsResponder {
-    public:
-        virtual ~SomeKeyUIEventsResponder() {}
-
-        // TODO: use const& here?
-        virtual void OnKeyDown(KeyDownUIEvent event) {}
-
-        virtual void OnKeyUpEvent(KeyUpUIEvent event) {}
     };
 
 } // namespace PJ

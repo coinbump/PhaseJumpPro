@@ -3,19 +3,21 @@
 
 using namespace std;
 using namespace PJ;
+using namespace ExampleLife;
 
-ExampleLifeAgentGroup::ExampleLifeAgentGroup(ExampleLifeMatrixRenderer* matrixView) : Base(matrixView->matrix.Count()), matrixView(matrixView)
+ExampleLife::AgentGroup::AgentGroup(MatrixRenderer* matrixView) : Base(matrixView->matrix.Count()), matrixView(matrixView)
 {
-    stepTime = 0.5f;
+    stepTime = 0.1f;
 }
 
-void ExampleLifeAgentGroup::PostStep()
+void ExampleLife::AgentGroup::PostStep()
 {
     Base::PostStep();
-    RunAgentsAction([this](auto& agent) { UpdateMatrixForAgent((ExampleLifeAgent const&)agent); });
+    matrixView->PostStep();
+    RunAgentsAction([this](auto& agent) { UpdateMatrixForAgent((Agent const&)agent); });
 }
 
-int ExampleLifeAgentGroup::LiveNeighborsCountFor(ExampleLifeAgent const& agent) {
+int ExampleLife::AgentGroup::LiveNeighborsCountFor(Agent const& agent) {
     auto result = 0;
 
     for (int x = agent.core.location.x - 1; x <= agent.core.location.x + 1; x++)
@@ -26,7 +28,7 @@ int ExampleLifeAgentGroup::LiveNeighborsCountFor(ExampleLifeAgent const& agent) 
             GUARD_CONTINUE(location != agent.core.location)
             GUARD_CONTINUE(matrixView->matrix.IsValidLocation(location))
 
-            if (matrixView->matrix.CellAt(location) == ExampleLifeMatrixRenderer::CellState::Alive) {
+            if (matrixView->matrix.CellAt(location) == MatrixRenderer::CellState::Alive) {
                 result++;
             }
         }
@@ -35,7 +37,7 @@ int ExampleLifeAgentGroup::LiveNeighborsCountFor(ExampleLifeAgent const& agent) 
     return result;
 }
 
-void ExampleLifeAgentGroup::UpdateMatrixForAgent(ExampleLifeAgent const& agent)
+void ExampleLife::AgentGroup::UpdateMatrixForAgent(Agent const& agent)
 {
     GUARD(matrixView)
     matrixView->UpdateMatrixForAgent(agent);
@@ -43,9 +45,9 @@ void ExampleLifeAgentGroup::UpdateMatrixForAgent(ExampleLifeAgent const& agent)
 
 // MARK: ExampleLifeAgents
 
-ExampleLifeAgent::OnStepFunc ExampleLifeAgents::MakeOnStepFunc() {
+ExampleLife::Agent::OnStepFunc ExampleLifeAgents::MakeOnStepFunc() {
     return [](auto& agent) {
-        auto group = static_cast<ExampleLifeAgentGroup*>(agent.group);
+        auto group = static_cast<AgentGroup*>(agent.group);
         GUARD(group)
 
         auto liveNeighborsCount = group->LiveNeighborsCountFor(agent);

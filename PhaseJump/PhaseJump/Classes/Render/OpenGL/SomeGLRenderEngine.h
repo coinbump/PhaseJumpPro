@@ -40,12 +40,15 @@ namespace PJ {
             uint32_t componentSize;
             GLenum glType;
             bool normalize;
+
+            // TODO: use SharedVector to save on copies
             SP<Data> data;
 
             uint32_t Size() const {
                 return componentSize * componentCount;
             }
 
+            // TODO: use std::span here
             Item(
                 String attributeId, uint32_t componentCount, uint32_t componentSize, GLenum glType,
                 void* data, bool normalize = false
@@ -64,30 +67,31 @@ namespace PJ {
 
         template <class T>
         void
-        Add(String attributeId, CollectionData<T> const& collection, GLenum glType,
+        Add(String attributeId, std::span<T const> collection, GLenum glType,
             bool normalize = false) {
             PJ::Add(
                 items, Item(
-                           attributeId, (uint32_t)collection.ItemCount(), collection.ItemSize(),
-                           glType, collection.Data(), normalize
+                           attributeId, (uint32_t)collection.size(),
+                           (uint32_t)(collection.size_bytes() / collection.size()), glType,
+                           (void*)collection.data(), normalize
                        )
             );
         }
 
-        void Add(String attributeId, VectorList<Vector3> const& components) {
-            Add(attributeId, ToCollectionData(components), GL_FLOAT);
+        void Add(String attributeId, std::span<Vector3 const> components) {
+            Add(attributeId, components, GL_FLOAT);
         }
 
-        void Add(String attributeId, VectorList<Color> const& components) {
-            Add(attributeId, ToCollectionData(components), GL_FLOAT);
+        void Add(String attributeId, std::span<Color const> components) {
+            Add(attributeId, components, GL_FLOAT);
         }
 
-        void Add(String attributeId, VectorList<RGBAColor> const& components) {
-            Add(attributeId, ToCollectionData(components), GL_UNSIGNED_BYTE, true);
+        void Add(String attributeId, std::span<RGBAColor const> components) {
+            Add(attributeId, components, GL_UNSIGNED_BYTE, true);
         }
 
-        void Add(String attributeId, VectorList<Vector2> const& components) {
-            Add(attributeId, ToCollectionData(components), GL_FLOAT);
+        void Add(String attributeId, std::span<Vector2 const> components) {
+            Add(attributeId, components, GL_FLOAT);
         }
     };
 
@@ -102,9 +106,8 @@ namespace PJ {
 
     /**
      Abstracts OpenGL render commands to allow for a subclass to implement
-     actual renders Example: OpenGL vs OpenGLES
+     actual renders. Example: OpenGL and OpenGLES are similar, but slightly different
      */
-    // FUTURE: DeferredGLRenderEngine that supports batching
     class SomeGLRenderEngine : public SomeRenderEngine {
     protected:
         GLRenderState renderState;
@@ -126,7 +129,7 @@ namespace PJ {
         virtual void LoadMatrix() = 0;
         virtual void Use(GLShaderProgram& program) = 0;
         virtual SP<GLVertexBuffer> BuildVertexBuffer(GLVertexBufferPlan const& plan) = 0;
-        virtual SP<GLIndexBuffer> BuildIndexBuffer(VectorList<uint32_t> indices) = 0;
+        virtual SP<GLIndexBuffer> BuildIndexBuffer(std::span<uint32_t const> indices) = 0;
         virtual void BindVertexBuffer(GLuint vbo);
         virtual void BindIndexBuffer(GLuint ibo);
         virtual void BindVertexArray(GLuint vao);
@@ -155,6 +158,22 @@ namespace PJ {
 
         void EnableFeature(String featureId, bool isEnabled) override;
         void SetLineWidth(float lineWidth) override;
+
+        UnorderedSet<String> EnabledFeatures() override {
+            return renderState.enabledFeatures;
+        }
+
+        void ResetForRenderPass() override {
+            renderState.ResetForRenderPass();
+        }
+
+        bool IsContextCleared(uint32_t id) override {
+            return renderState.IsContextCleared(id);
+        }
+
+        void SetIsContextCleared(uint32_t id, bool value) override {
+            renderState.SetIsContextCleared(id, value);
+        }
 
         void EnableOnlyFeatures(OrderedSet<String> features);
 

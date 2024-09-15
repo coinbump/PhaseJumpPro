@@ -131,6 +131,16 @@ std::vector<std::string> PJ::ComponentsSeparatedBy(StringView string, char delim
     return result;
 }
 
+String PJ::Joined(std::initializer_list<String> initializer, String delimiter) {
+    std::ostringstream stream;
+    VectorList<String> collection{ initializer };
+    std::copy(
+        collection.begin(), collection.end(),
+        InfixOStreamIterator<String>(stream, delimiter.c_str())
+    );
+    return stream.str();
+}
+
 // FUTURE: implement unicode support and test
 // std::u32string utf8_to_utf32(const std::string& utf8) {
 //    std::vector<uint32_t> unicode;

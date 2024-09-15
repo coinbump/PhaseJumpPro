@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CollectionUtils.h"
+#include <algorithm>
 #include <iterator>
 #include <unordered_set>
 

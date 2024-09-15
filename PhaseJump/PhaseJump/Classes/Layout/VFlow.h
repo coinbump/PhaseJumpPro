@@ -2,6 +2,7 @@
 
 #include "SomeLayout2D.h"
 #include "Vector2.h"
+#include "WorldNode.h"
 
 /*
  RATING: 5 stars
@@ -18,7 +19,7 @@ namespace PJ {
         VFlow(float spacing = 1.0f) :
             spacing(spacing) {}
 
-        Vector3 Size() const override {
+        Vector3 Size() const {
             GUARDR(owner, Vector3::zero)
 
             return Vector3(0, spacing * (owner->ChildNodes().size() - 1), 0);

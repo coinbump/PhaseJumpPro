@@ -1,5 +1,5 @@
 #include "UISystem.h"
-#include "Log.h"
+#include "Dev.h"
 #include "World.h"
 
 using namespace std;
@@ -19,7 +19,8 @@ void UISystem::Awake() {
     Base::Awake();
 
     if (nullptr != shared) {
-        PJLog("ERROR. Only 1 UISystem supported") return;
+        PJ::Log("ERROR. Only 1 UISystem supported");
+        return;
     }
     shared = this;
 }

@@ -5,7 +5,6 @@
 #include "Updatable.h"
 #include "Updatables.h"
 #include "WorldComponentCores.h"
-#include "WorldNode.h"
 #include <memory>
 
 /*
@@ -14,65 +13,16 @@
  CODE REVIEW: 8/25/24
  */
 namespace PJ {
-    /// Adds convenience methods that operate on WorldNode
-    /// We can't declare these in SomeWorldComponent because it would create a
-    /// circular include between SomeWorldComponent and WorldNode
-    /// (template funcs can't be moved to the .cpp file to avoid this)
+    /// World component with a core
+    /// The core allows us to create components using composition instead of inheritance
+    /// Alternatively, the core can be used to store additional properties and state
     template <class Core = VoidWorldComponentCore>
     class WorldComponent : public SomeWorldComponent {
     public:
         using Base = SomeWorldComponent;
-        using ComponentList = WorldNode::ComponentList;
-        using NodeList = WorldNode::NodeList;
 
         /// Allows us to build component functionality with composition instead of inheritance
-        Core core;
-
-        template <class T>
-        SP<T> TypeComponent() const {
-            GUARDR(owner, nullptr)
-            return owner->TypeComponent<T>();
-        }
-
-        template <class T, class ComponentList>
-        void TypeComponents(ComponentList& result) const {
-            GUARD(owner)
-            owner->TypeComponents<T>(result);
-        }
-
-        template <class T, class ComponentList>
-        void ChildTypeComponents(ComponentList& result) {
-            GUARD(owner)
-            return owner->ChildTypeComponents<T>(result);
-        }
-
-        // Convenience names
-
-        template <class T>
-        SP<T> GetComponent() const {
-            return TypeComponent<T>();
-        }
-
-        template <class T>
-        List<SP<T>> GetComponentsInChildren() const {
-            List<SP<T>> result;
-            GUARDR(owner, result)
-            return owner->GetComponentsInChildren<T>();
-        }
-
-        template <class T>
-        List<SP<T>> GetComponents() const {
-            List<SP<T>> result;
-            GUARDR(owner, result)
-            return owner->GetComponents<T>();
-        }
-
-        // MARK: SomeWorldComponent
-
-        void DestroyOwner(float afterSeconds) override {
-            GUARD(owner)
-            owner->Destroy(afterSeconds);
-        }
+        Core core{};
 
         // MARK: SomeWorldComponent
 

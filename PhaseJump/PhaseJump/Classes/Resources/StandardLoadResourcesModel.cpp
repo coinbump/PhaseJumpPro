@@ -29,32 +29,32 @@ StandardLoadResourcesModel::StandardLoadResourcesModel(LoadType loadType) {
     }
 
     operationRegistry.map["texture"] =
-        MAKE<Factory<SomeLoadResourcesOperation, LoadResourceInfo, LoadResourcesModel&>>(
-            [](LoadResourceInfo info, LoadResourcesModel& loadResourcesModel) {
+        MAKE<Factory<SomeLoadResourcesOperation, ResourceInfo, LoadResourcesModel&>>(
+            [](ResourceInfo info, LoadResourcesModel& loadResourcesModel) {
                 return MAKE<SDLLoadGLTextureOperation>(info, loadResourcesModel);
             }
         );
     operationRegistry.map["rtexPacker.atlas"] =
-        MAKE<Factory<SomeLoadResourcesOperation, LoadResourceInfo, LoadResourcesModel&>>(
-            [](LoadResourceInfo info, LoadResourcesModel& loadResourcesModel) {
+        MAKE<Factory<SomeLoadResourcesOperation, ResourceInfo, LoadResourcesModel&>>(
+            [](ResourceInfo info, LoadResourcesModel& loadResourcesModel) {
                 return MAKE<LoadRTexPackerAtlasOperation>(info, loadResourcesModel);
             }
         );
     operationRegistry.map["texturePacker.atlas"] =
-        MAKE<Factory<SomeLoadResourcesOperation, LoadResourceInfo, LoadResourcesModel&>>(
-            [](LoadResourceInfo info, LoadResourcesModel& loadResourcesModel) {
+        MAKE<Factory<SomeLoadResourcesOperation, ResourceInfo, LoadResourcesModel&>>(
+            [](ResourceInfo info, LoadResourcesModel& loadResourcesModel) {
                 return MAKE<LoadTexturePackerAtlasOperation>(info, loadResourcesModel);
             }
         );
     operationRegistry.map["bitmapFont"] =
-        MAKE<Factory<SomeLoadResourcesOperation, LoadResourceInfo, LoadResourcesModel&>>(
-            [](LoadResourceInfo info, LoadResourcesModel& loadResourcesModel) {
+        MAKE<Factory<SomeLoadResourcesOperation, ResourceInfo, LoadResourcesModel&>>(
+            [](ResourceInfo info, LoadResourcesModel& loadResourcesModel) {
                 return MAKE<LoadBitmapFontOperation>(info, loadResourcesModel);
             }
         );
     operationRegistry.map["rez"] =
-        MAKE<Factory<SomeLoadResourcesOperation, LoadResourceInfo, LoadResourcesModel&>>(
-            [](LoadResourceInfo info, LoadResourcesModel& loadResourcesModel) {
+        MAKE<Factory<SomeLoadResourcesOperation, ResourceInfo, LoadResourcesModel&>>(
+            [](ResourceInfo info, LoadResourcesModel& loadResourcesModel) {
                 return MAKE<LoadRezOperation>(info, loadResourcesModel);
             }
         );

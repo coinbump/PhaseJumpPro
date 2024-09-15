@@ -1,9 +1,9 @@
-#ifndef PJWORLD_H
-#define PJWORLD_H
+#pragma once
 
 #include "EventWorldSystem.h"
-#include "LoadedResources.h"
 #include "OrthoCamera.h"
+#include "Prefab.h"
+#include "ResourceModels.h"
 #include "SomeRenderContext.h"
 #include "SomeUIEventPoller.h"
 #include "Updatable.h"
@@ -19,6 +19,13 @@ namespace PJ {
     class RenderMaterial;
     class SomeTexture;
     class DesignSystem;
+    class Font;
+
+    struct FontSpec {
+        String resourceId;
+        String fontName;
+        float size = 0;
+    };
 
     /// Defines properties and methods for building a UI
     class DesignSystem {
@@ -89,7 +96,7 @@ namespace PJ {
         Tags renderStats;
 
         SP<WorldNode> root = MAKE<WorldNode>("Root");
-        SP<LoadedResources> loadedResources = MAKE<LoadedResources>();
+        SP<ResourceModels> loadedResources = MAKE<ResourceModels>();
         SP<SomeRenderContext> renderContext;
         SP<SomeCamera> camera;
         SP<SomeUIEventPoller> uiEventPoller;
@@ -99,6 +106,9 @@ namespace PJ {
 
         /// Render materials that can be shared between objects
         UnorderedMap<String, SP<RenderMaterial>> renderMaterials;
+
+        /// Prefabs, mapped by id
+        UnorderedMap<String, SP<Prefab>> prefabs;
 
         World();
 
@@ -138,6 +148,11 @@ namespace PJ {
         }
 
         template <typename... Arguments>
+        constexpr WorldNode& And(Arguments... args) {
+            return AddNode(args...);
+        }
+
+        template <typename... Arguments>
         WorldNode& AddNodeAt(Vector3 pos, Arguments... args) {
             SP<WorldNode> result = MAKE<WorldNode>(args...);
             Add(result);
@@ -172,6 +187,15 @@ namespace PJ {
             isPaused = false;
         }
 
+        SP<WorldNode> PrefabMake(String id) {
+            try {
+                auto prefab = prefabs.at(id);
+                return prefab->Make(*this);
+            } catch (...) {
+                return nullptr;
+            }
+        }
+
         void Remove(SP<SomeWorldSystem> system);
         void Remove(VectorList<SP<SomeWorldSystem>> systems);
         void RemoveAllSystems();
@@ -183,10 +207,11 @@ namespace PJ {
 
         // MARK: Quick build
 
-        SP<SomeTexture> Texture(String name);
+        SP<SomeTexture> FindTexture(String id);
+        SP<Font> FindFont(FontSpec spec);
+        SP<Font> FindFontWithSize(float size);
+        SP<Font> FindFontWithResourceId(String id);
     };
 
     LocalPosition ScreenToLocal(SomeWorldComponent& component, ScreenPosition screenPos);
 } // namespace PJ
-
-#endif

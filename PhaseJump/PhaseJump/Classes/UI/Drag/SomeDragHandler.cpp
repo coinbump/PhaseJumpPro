@@ -7,6 +7,13 @@
 using namespace std;
 using namespace PJ;
 
+SomeDragHandler::SomeDragHandler() {
+    signalHandlers[SignalId::PointerDown] = [](auto& component, auto& signal) {
+        auto event = static_cast<PointerDownUIEvent const*>(&signal);
+        static_cast<This*>(&component)->OnPointerDown(*event);
+    };
+}
+
 bool SomeDragHandler::IsDragging() const {
     return state == StateType::Drag;
 }
@@ -41,7 +48,7 @@ void SomeDragHandler::StartDrag(WorldPosition inputPosition) {
     OnDragStart(inputPosition);
 }
 
-void SomeDragHandler::OnPointerDown(PointerDownUIEvent event) {
+void SomeDragHandler::OnPointerDown(PointerDownUIEvent const& event) {
     GUARD(owner)
 
     // Debug.Log("DragHandler2D OnPointerDown at: " +

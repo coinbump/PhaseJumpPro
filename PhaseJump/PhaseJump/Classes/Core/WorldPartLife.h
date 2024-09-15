@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Log.h"
+#include "Dev.h"
 #include "Macros.h"
 
 /*
@@ -45,7 +45,7 @@ namespace PJ {
 
         void CheckedStart(LifeFunc startFunc) {
             if (!IsAwake()) {
-                PJLog("ERROR. Call Awake before Start");
+                PJ::Log("ERROR. Call Awake before Start");
                 return;
             }
 

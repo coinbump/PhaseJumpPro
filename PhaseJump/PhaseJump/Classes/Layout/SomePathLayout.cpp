@@ -1,5 +1,6 @@
 #include "SomePathLayout.h"
 #include "SomePath.h"
+#include "WorldNode.h"
 #include <stdio.h>
 
 using namespace PJ;
@@ -8,7 +9,6 @@ void SomePathLayout::ApplyLayout() {
     GUARD(owner)
 
     auto path = BuildPath();
-    auto owner = this->owner;
 
     auto childCount = owner->ChildCount();
     float normalOffset = childCount > 1 ? 1.0f / (float)(childCount - 1) : 0;
@@ -22,10 +22,8 @@ void SomePathLayout::ApplyLayout() {
             normalPosition = positions[index];
         }
 
-        auto position = path->PositionAt(normalPosition);
-        position += offset;
-
-        childObject->transform.SetLocalPosition(position);
+        auto position = path->PositionAt(normalPosition) + offset;
+        childObject->SetLocalPosition(position);
 
         if (orientToPath) {
             auto prevPosition = normalPosition;
@@ -40,9 +38,9 @@ void SomePathLayout::ApplyLayout() {
             }
 
             auto rotationDegreeAngle =
-                Angle(path->PositionAt(nextPosition) - path->PositionAt(prevPosition)).Degrees();
+                Angle(path->PositionAt(nextPosition) - path->PositionAt(prevPosition));
             rotationDegreeAngle += orientDegreeAngle;
-            childObject->transform.SetRotation(Angle::DegreesAngle(rotationDegreeAngle));
+            childObject->transform.SetRotation(rotationDegreeAngle);
         } else {
             childObject->transform.SetRotation(Angle::DegreesAngle(0));
         }

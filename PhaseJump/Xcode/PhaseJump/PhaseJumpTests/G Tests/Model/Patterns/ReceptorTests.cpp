@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "SomeReceptor.h"
+#include "Receptor.h"
 #include "WorldNode.h"
 #include "Utils.h"
 #include "UnorderedMap.h"
@@ -8,11 +8,11 @@ using namespace PJ;
 using namespace std;
 
 namespace ReceptorTests {
-    class TestReceptor : public SomeReceptor<String> {
+    class TestReceptor : public Receptor<String> {
     public:
         UnorderedMap<String, int> matches;
 
-        void OnSignalMatch(Signal<String> signal) override {
+        void OnSignalMatch(Signal<String> const& signal) override {
             matches[*signal.Keys().begin()] += 1;
         }
     };

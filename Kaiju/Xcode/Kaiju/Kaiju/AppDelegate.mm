@@ -1,5 +1,9 @@
 #import "AppDelegate.h"
-#import <PhaseJump/PhaseJump.h>
+#if DEVELOPMENT
+#include <PhaseJump-Dev/PhaseJump-Dev.h>
+#else
+#include <PhaseJump/PhaseJump.h>
+#endif
 #include "SDLTest.h"
 
 using namespace PJ;
@@ -12,21 +16,36 @@ using namespace PJ;
 @implementation AppDelegate
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
-    // Must specify full path (resources/pj_shaders, not pj/shaders)
-    // Files must have extension
-    NSArray *shaderProgramPaths = [[NSBundle mainBundle] pathsForResourcesOfType:@".shprog" inDirectory:@"resources/pj_shaders"];
+    {
+        // Must specify full path (resources/pj_shaders, not pj/shaders)
+        // Files must have extension
+        NSArray *shaderProgramPaths = [[NSBundle mainBundle] pathsForResourcesOfType:@".shprog" inDirectory:@"resources/pj_shaders"];
 
-    // We can't load programs yet, there is no GL context
-    for (NSString *path in shaderProgramPaths) {
-        GLShaderProgramLoader loader;
-        auto programInfo = loader.InfoFromPath([path UTF8String]);
-        if (programInfo) {
-            Add(GLShaderProgram::Info::registry, programInfo.value());
+        // We can't load programs yet, there is no GL context
+        for (NSString *path in shaderProgramPaths) {
+            GLShaderProgramLoader loader;
+            auto programInfo = loader.InfoFromPath([path UTF8String]);
+            if (programInfo) {
+                Add(GLShaderProgram::Info::registry, programInfo.value());
+            }
+        }
+    }
+    
+    {
+        NSArray *shaderProgramPaths = [[NSBundle mainBundle] pathsForResourcesOfType:@".shprog" inDirectory:@"resources/test/shaders"];
+
+        // We can't load programs yet, there is no GL context
+        for (NSString *path in shaderProgramPaths) {
+            GLShaderProgramLoader loader;
+            auto programInfo = loader.InfoFromPath([path UTF8String]);
+            if (programInfo) {
+                Add(GLShaderProgram::Info::registry, programInfo.value());
+            }
         }
     }
 
     // A simple test of an SDL window
-    SDLFoo();
+    KaijuGo();
     
     SQLDatabase db;
 //

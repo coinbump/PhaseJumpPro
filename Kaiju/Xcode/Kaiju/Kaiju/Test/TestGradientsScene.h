@@ -1,6 +1,10 @@
 #pragma once
 
+#if DEVELOPMENT
+#include <PhaseJump-Dev/PhaseJump-Dev.h>
+#else
 #include <PhaseJump/PhaseJump.h>
+#endif
 
 //namespace PJ {
 //    class Updater : public WorldComponent<> {
@@ -25,44 +29,44 @@ public:
 
         for (int i = 0; i < 1; i++) {
             auto gradientNode = MAKE<WorldNode>("Gradient");
-//            auto gradientRenderer = MAKE<SimpleGradientRenderer>(Color::white, Color::black.WithAlpha(1), Vector2(400, 400));
-            auto gradientRenderer = MAKE<SimpleGradientRenderer>(Color::black, Color::black.WithAlpha(1), Vector2(400, 400));
+            auto gradientRenderer = MAKE<SimpleGradientRenderer>(Color::white, Color::black.WithAlpha(1), Vector2(400, 400));
+//            auto gradientRenderer = MAKE<SimpleGradientRenderer>(Color::black, Color::black.WithAlpha(1), Vector2(400, 400));
 
             // TODO: ArcMeshBuilder, CenterPolyMeshBuilder, EllipseMeshBuilder, QuadMeshBuilder, QuadFrameMeshBuilder, CenterPolyFrameMeshBuilder
 
-            gradientRenderer->model.SetMeshBuilderFunc([](RendererModel const& model) {
-                QuadFrameMeshBuilder meshBuilder(model.WorldSize(), Vector2(20, 20));
-                return meshBuilder.BuildMesh();
-            });
-
-            gradientRenderer->model.SetMeshBuilderFunc([](RendererModel const& model) {
-                EllipseMeshBuilder meshBuilder(model.WorldSize());
-                return meshBuilder.BuildMesh();
-            });
-
-            gradientRenderer->model.SetMeshBuilderFunc([](RendererModel const& model) {
-                CenterPolyMeshBuilder meshBuilder(model.WorldSize(), CenterPolyShape::circle);
-                return meshBuilder.BuildMesh();
-            });
-
-            gradientRenderer->model.SetMeshBuilderFunc([](RendererModel const& model) {
-                QuadMeshBuilder meshBuilder(model.WorldSize());
-                return meshBuilder.BuildMesh();
-            });
-
-            gradientRenderer->model.SetMeshBuilderFunc([](RendererModel const& model) {
-                CenterPolyFrameMeshBuilder meshBuilder(model.WorldSize(), 10, CenterPolyShape::square);
-                return meshBuilder.BuildMesh();
-            });
-
-            gradientRenderer->model.SetMeshBuilderFunc([](RendererModel const& model) {
-                Polygon poly;
-                poly.Add(Vector3(-100, 100, 0));
-                poly.Add(Vector3(100, 100, 0));
-                poly.Add(Vector3(0, -100, 0));
-                PolyFrameMeshBuilder meshBuilder(poly, 10);
-                return meshBuilder.BuildMesh();
-            });
+//            gradientRenderer->model.SetBuildMeshFunc([](RendererModel const& model) {
+//                QuadFrameMeshBuilder meshBuilder(model.WorldSize(), Vector2(20, 20));
+//                return meshBuilder.BuildMesh();
+//            });
+//
+//            gradientRenderer->model.SetBuildMeshFunc([](RendererModel const& model) {
+//                EllipseMeshBuilder meshBuilder(model.WorldSize());
+//                return meshBuilder.BuildMesh();
+//            });
+//
+//            gradientRenderer->model.SetBuildMeshFunc([](RendererModel const& model) {
+//                CenterPolyMeshBuilder meshBuilder(model.WorldSize(), CenterPolyShape::circle);
+//                return meshBuilder.BuildMesh();
+//            });
+//
+//            gradientRenderer->model.SetBuildMeshFunc([](RendererModel const& model) {
+//                QuadMeshBuilder meshBuilder(model.WorldSize());
+//                return meshBuilder.BuildMesh();
+//            });
+//
+//            gradientRenderer->model.SetBuildMeshFunc([](RendererModel const& model) {
+//                CenterPolyFrameMeshBuilder meshBuilder(model.WorldSize(), 10, CenterPolyShape::square);
+//                return meshBuilder.BuildMesh();
+//            });
+//
+//            gradientRenderer->model.SetBuildMeshFunc([](RendererModel const& model) {
+//                Polygon poly;
+//                poly.Add(Vector3(-100, 100, 0));
+//                poly.Add(Vector3(100, 100, 0));
+//                poly.Add(Vector3(0, -100, 0));
+//                PolyFrameMeshBuilder meshBuilder(poly, 10);
+//                return meshBuilder.BuildMesh();
+//            });
 
 
             gradientNode->Add(gradientRenderer);
@@ -90,5 +94,11 @@ public:
             root.Add(gradientNode);
 //            gradientNode->SetLocalScale(Vector3::one * ((float)i / 30.0f) * 3.0f);
         }
+    }
+
+    // MARK: SomeWorldComponent
+
+    String TypeName() const override {
+        return "TestGradientScene";
     }
 };

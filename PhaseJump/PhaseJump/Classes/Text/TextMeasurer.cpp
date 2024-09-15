@@ -89,7 +89,7 @@ TextMetrics TextMeasurer::Measure(
             auto width = fontGlyph.size.x + fontGlyph.offset.x;
             if (line.size.x + width > textSize.x) {
                 if (line.charMetrics.size() == 0) {
-                    PJLog("ERROR. No room to wrap text");
+                    PJ::Log("ERROR. No room to wrap text");
                     return lines;
                 }
 

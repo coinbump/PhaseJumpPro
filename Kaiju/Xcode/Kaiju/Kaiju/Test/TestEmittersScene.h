@@ -1,17 +1,14 @@
 #pragma once
 
+#if DEVELOPMENT
+#include <PhaseJump-Dev/PhaseJump-Dev.h>
+#else
 #include <PhaseJump/PhaseJump.h>
+#endif
 
 using namespace PJ;
 
-class DestroyOnTap : public WorldComponent<>, public SomePointerUIEventsResponder {
-
-    // MARK: SomePointerUIEventsResponder
-    
-    void OnPointerDown(PointerDownUIEvent event) override {
-        GUARD(owner)
-        owner->Destroy();
-    }
+class DestroyOnTap : public WorldComponent<> {
 };
 
 class TestEmittersScene : public Scene {
@@ -40,7 +37,7 @@ public:
         World& world = *root.World();
 
 
-        auto texture = DCAST<GLTexture>(world.loadedResources->map["texture"]["heart-full"].resource);
+        auto texture = DCAST<GLTexture>(world.FindTexture("heart-full"));
         GUARD(texture)
 
         heartMaterial = MAKE<RenderMaterial>();
@@ -48,7 +45,7 @@ public:
         heartMaterial->EnableFeature(RenderFeature::Blend, false);
         heartMaterial->Add(texture);
 
-        auto font = DCAST<Font>(world.loadedResources->map["font"]["ArialBlack-32"].resource);
+        auto font = DCAST<Font>(world.FindFontWithSize(32));
 
         auto node = MAKE<WorldNode>("Emitter");
         Emitter::SpawnFunc spawnFunc = [this, font](Emitter& emitter, EmitModel emit) {
@@ -58,7 +55,7 @@ public:
 
             // Used to test batching even if material isn't shared
 #ifdef ACID_TEST
-            auto texture = DCAST<GLTexture>(owner->World()->loadedResources->map["texture"]["heart-full"].resource);
+            auto texture = DCAST<GLTexture>(owner->World()->Texture("heart-full"));
             auto heartMaterial = MAKE<RenderMaterial>();
             heartMaterial->SetShaderProgram(SomeShaderProgram::registry["texture.uniform"]);
             heartMaterial->EnableFeature(RenderFeature::Blend, false);
@@ -69,8 +66,8 @@ public:
 
             auto countString = MakeString(emitter.owner->ChildCount());
 
-            WorldNode& textNode = node->AddNode("Text " + countString);
-            textNode.AddComponent<TextRenderer>(font, countString, Vector2(400, 400))
+            WorldNode& textNode = node->And("Text " + countString);
+            textNode.With<TextRenderer>(font, countString, Vector2(400, 400))
                 .SetLineAlignFunc(AlignFuncs::center)
                 .SetTextAlignFunc(AlignFuncs::center)
                 .SetTextColor(Color::white)
@@ -82,7 +79,7 @@ public:
 #ifdef DESTROY_ON_TAP
             ComponentTool ct;
             auto collider = MAKE<PolygonCollider2D>();
-            ct.AddComponent(*node, collider);
+            ct.With(*node, collider);
            
             node->Add(MAKE<DestroyOnTap>());
 #endif
@@ -112,5 +109,11 @@ public:
 
         node->Add(emitter);
         root.Add(node);
+    }
+
+    // MARK: SomeWorldComponent
+
+    String TypeName() const override {
+        return "TestEmittersScene";
     }
 };

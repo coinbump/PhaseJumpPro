@@ -5,9 +5,9 @@ using namespace std;
 using namespace PJ;
 
 // TODO: needs unit tests
-void BatchByMaterialRenderProcessor::Process(RenderSystemModel& systemModel) {
+void BatchByMaterialRenderProcessor::Process(CameraRenderModel& cameraModel) {
     // Make sure everything is in world coordinates before we batch
-    for (auto& model : systemModel.models) {
+    for (auto& model : cameraModel.models) {
         model.mesh *= model.matrix;
         model.matrix.LoadIdentity();
     }
@@ -15,8 +15,8 @@ void BatchByMaterialRenderProcessor::Process(RenderSystemModel& systemModel) {
     // Force the z order for an orthographic camera
     // FUTURE: will need a different solution for perspective cameras
     float z = 0;
-    float zStep = 1.0f / systemModel.models.size();
-    std::for_each(systemModel.models.begin(), systemModel.models.end(), [&](RenderModel& model) {
+    float zStep = 1.0f / cameraModel.models.size();
+    std::for_each(cameraModel.models.begin(), cameraModel.models.end(), [&](RenderModel& model) {
         model.z = z;
         z += zStep * Vector3::back.z;
     });
@@ -30,7 +30,7 @@ void BatchByMaterialRenderProcessor::Process(RenderSystemModel& systemModel) {
 
         // Group render models by material
         UnorderedMap<String, VectorList<RenderModel*>> modelsByMaterial;
-        for (auto& renderModel : systemModel.models) {
+        for (auto& renderModel : cameraModel.models) {
             auto modelMaterial = renderModel.Material();
             GUARD_CONTINUE(modelMaterial)
             modelsByMaterial[modelMaterial->PropertyId()].push_back(&renderModel);
@@ -57,13 +57,13 @@ void BatchByMaterialRenderProcessor::Process(RenderSystemModel& systemModel) {
                 // 1 color per vertex
                 colorsCount += model.Vertices().size();
 
-                auto thisColorsCount = model.colors.size();
+                auto thisColorsCount = model.VertexColors().size();
                 auto thisVertexCount = model.Vertices().size();
                 if (thisColorsCount != thisVertexCount) {
-                    PJLog(
-                        "WARNING: colorsCount %d and vertexCount %d don't match",
-                        (int)thisColorsCount, (int)thisVertexCount
-                    )
+                    PJ::Log(
+                        "WARNING: colorsCount ", (int)thisColorsCount, " and vertexCount ",
+                        (int)thisVertexCount, " don't match"
+                    );
                 }
             }
 
@@ -71,12 +71,12 @@ void BatchByMaterialRenderProcessor::Process(RenderSystemModel& systemModel) {
             VectorList<Vector3> vertices;
             vertices.resize(vertexCount);
             renderModel.mesh.SetVertices(vertices);
-            renderModel.mesh.BaseTriangles().resize(trianglesCount);
+            renderModel.mesh.ModifiableTriangles().resize(trianglesCount);
 
             VectorList<Vector2> uvs;
             uvs.resize(uvsCount);
             renderModel.mesh.SetUVs(uvs);
-            renderModel.colors.resize(colorsCount);
+            renderModel.ModifiableVertexColors().resize(colorsCount);
 
             size_t vertexIndex = 0;
             size_t triangleIndex = 0;
@@ -88,7 +88,7 @@ void BatchByMaterialRenderProcessor::Process(RenderSystemModel& systemModel) {
                 auto modelVertexCount = model.Vertices().size();
                 auto modelTriangleCount = model.mesh.Triangles().size();
                 auto modelUVCount = model.UVs().size();
-                auto modelColorCount = model.colors.size();
+                auto modelColorCount = model.VertexColors().size();
 
                 // Force the z order for an orthographic camera
                 // FUTURE: will need a different solution for perspective cameras
@@ -105,18 +105,18 @@ void BatchByMaterialRenderProcessor::Process(RenderSystemModel& systemModel) {
                     model.UVs().cbegin(), modelUVCount, renderModel.mesh.UVs().begin() + uvIndex
                 );
                 std::copy_n(
-                    model.mesh.Triangles().cbegin(), modelTriangleCount,
-                    renderModel.mesh.BaseTriangles().begin() + triangleIndex
+                    model.mesh.Triangles().begin(), modelTriangleCount,
+                    renderModel.mesh.ModifiableTriangles().begin() + triangleIndex
                 );
 
                 // Max: 1 color per vertex
                 std::copy_n(
-                    model.colors.cbegin(), std::min(modelColorCount, modelVertexCount),
-                    renderModel.colors.begin() + colorIndex
+                    model.VertexColors().begin(), std::min(modelColorCount, modelVertexCount),
+                    renderModel.ModifiableVertexColors().begin() + colorIndex
                 );
 
                 for (int i = 0; i < modelTriangleCount; i++) {
-                    renderModel.mesh.BaseTriangles()[triangleIndex + i] += vertexIndex;
+                    renderModel.mesh.ModifiableTriangles()[triangleIndex + i] += vertexIndex;
                 }
 
                 vertexIndex += modelVertexCount;
@@ -130,6 +130,6 @@ void BatchByMaterialRenderProcessor::Process(RenderSystemModel& systemModel) {
             models.push_back(renderModel);
         }
 
-        systemModel.models = models;
+        cameraModel.models = models;
     }
 }

@@ -6,13 +6,13 @@
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 6/8/24
+ CODE REVIEW: 9/14/24
  */
 namespace PJ {
     /// Model that defines a circle path
     class CirclePath : public SomePath {
     public:
-        float radius;
+        float radius = 0;
 
         CirclePath(float radius) :
             radius(radius) {}

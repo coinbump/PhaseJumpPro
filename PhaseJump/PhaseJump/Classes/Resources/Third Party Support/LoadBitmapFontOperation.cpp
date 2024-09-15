@@ -72,7 +72,7 @@ SomeLoadResourcesOperation::Result LoadBitmapFontOperation::LoadResources() {
     std::ifstream file;
     file.open(filePath);
     if (!file.is_open()) {
-        PJLog("ERROR. Can't open file at: %s", info.filePath.c_str());
+        PJ::Log("ERROR. Can't open file at: ", info.filePath);
         return Failure();
     }
 
@@ -106,7 +106,7 @@ SomeLoadResourcesOperation::Result LoadBitmapFontOperation::LoadResources() {
         fullImagePath /= imagePath.c_str();
 
         // No id needed, we're not storing the parent texture in resources
-        LoadResourceInfo loadTextureInfo(fullImagePath, "texture", "");
+        ResourceInfo loadTextureInfo("", fullImagePath, "texture");
         auto loadTextureOperations = loadResourcesModel.MakeLoadOperations(loadTextureInfo);
 
         GUARDR(!IsEmpty(loadTextureOperations), Failure())
@@ -129,7 +129,7 @@ SomeLoadResourcesOperation::Result LoadBitmapFontOperation::LoadResources() {
 
         auto textureAtlas = MAKE<TextureAtlas>();
 
-        auto font = MAKE<Font>();
+        auto font = MAKE<Font>(infoTags.SafeValue<String>("face"), infoTags.SafeValue<int>("size"));
         font->atlas = textureAtlas;
 
         for (auto& sprite : charLines) {
@@ -169,12 +169,12 @@ SomeLoadResourcesOperation::Result LoadBitmapFontOperation::LoadResources() {
             font->metrics.kern.insert_or_assign(kernPair, amount);
         }
 
-        LoadedResource loadedFontResource(filePath, "font", info.id, SCAST<PJ::Base>(font));
+        ResourceModel loadedFontResource(SCAST<PJ::Base>(font), info.id, filePath, "font");
         result.Add(loadedFontResource);
 
         return result;
     } catch (...) {
-        PJLog("ERROR: Couldn't parse rTexPacker JSON");
+        PJ::Log("ERROR: Couldn't parse rTexPacker JSON");
     }
 
     return Failure();

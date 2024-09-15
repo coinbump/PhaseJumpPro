@@ -1,16 +1,22 @@
 #pragma once
 
+#if DEVELOPMENT
+#include <PhaseJump-Dev/PhaseJump-Dev.h>
+#else
 #include <PhaseJump/PhaseJump.h>
+#endif
 
 using namespace PJ;
 
-/// Stores data for the life cell agent
-struct ExampleLifeAgentCore {
-    /// If true, this cell has life init
-    bool isAlive = false;
+namespace ExampleLife {
+    /// Stores data for the life cell agent
+    struct AgentCore {
+        /// If true, this cell has life init
+        bool isAlive = false;
 
-    /// Cell location for agent
-    Vector2Int location;
-};
+        /// Cell location for agent
+        Vector2Int location;
+    };
 
-using ExampleLifeAgent = Agent<ExampleLifeAgentCore>;
+    using Agent = Agent<AgentCore>;
+}

@@ -3,6 +3,7 @@
 #include "Function.h"
 #include "List.h"
 #include "Utils.h"
+#include <algorithm>
 
 /*
  RATING: 5 stars

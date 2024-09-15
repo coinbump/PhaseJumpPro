@@ -70,18 +70,4 @@ namespace PJ {
         PointerExitUIEvent() :
             Base() {}
     };
-
-    /// Responds to pointer events
-    class SomePointerUIEventsResponder {
-    public:
-        virtual ~SomePointerUIEventsResponder() {}
-
-        virtual void OnPointerDown(PointerDownUIEvent event) {}
-
-        virtual void OnPointerEnter(PointerEnterUIEvent event) {}
-
-        virtual void OnPointerExit(PointerExitUIEvent event) {}
-
-        virtual void OnPointerUp(PointerUpUIEvent event) {}
-    };
 } // namespace PJ

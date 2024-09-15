@@ -33,35 +33,35 @@ TEST(Pool, Test)
     auto first = sut.Add();
     EXPECT_NE(nullptr, first);
     EXPECT_EQ(1, sut.ActiveCount());
-    EXPECT_EQ(0, sut.Value()[0].index);
-    EXPECT_TRUE(sut.Value()[0].IsActive());
+    EXPECT_EQ(0, sut.Value()[0]->index);
+    EXPECT_TRUE(sut.Value()[0]->IsActive());
     EXPECT_EQ(0, sut.LastActiveIndex());
     EXPECT_EQ(0, sut.InactiveAvailableCount());
 
     auto second = sut.Add();
     EXPECT_NE(nullptr, second);
     EXPECT_EQ(2, sut.ActiveCount());
-    EXPECT_EQ(1, sut.Value()[1].index);
-    EXPECT_TRUE(sut.Value()[1].IsActive());
+    EXPECT_EQ(1, sut.Value()[1]->index);
+    EXPECT_TRUE(sut.Value()[1]->IsActive());
     EXPECT_EQ(1, sut.LastActiveIndex());
     EXPECT_EQ(2, sut.PoolSize());
 
     sut.Remove(first);
     EXPECT_EQ(1, sut.LastActiveIndex());
     EXPECT_EQ(1, sut.InactiveAvailableCount());
-    EXPECT_EQ(0, sut.Value()[0].index);
-    EXPECT_FALSE(sut.Value()[0].IsActive());
-    EXPECT_EQ(1, sut.Value()[1].index);
-    EXPECT_TRUE(sut.Value()[1].IsActive());
+    EXPECT_EQ(0, sut.Value()[0]->index);
+    EXPECT_FALSE(sut.Value()[0]->IsActive());
+    EXPECT_EQ(1, sut.Value()[1]->index);
+    EXPECT_TRUE(sut.Value()[1]->IsActive());
     EXPECT_FALSE(first->IsActive());
 
     sut.Remove(second);
     EXPECT_EQ(-1, sut.LastActiveIndex());
     EXPECT_EQ(2, sut.InactiveAvailableCount());
-    EXPECT_EQ(0, sut.Value()[0].index);
-    EXPECT_FALSE(sut.Value()[0].IsActive());
-    EXPECT_EQ(1, sut.Value()[1].index);
-    EXPECT_FALSE(sut.Value()[1].IsActive());
+    EXPECT_EQ(0, sut.Value()[0]->index);
+    EXPECT_FALSE(sut.Value()[0]->IsActive());
+    EXPECT_EQ(1, sut.Value()[1]->index);
+    EXPECT_FALSE(sut.Value()[1]->IsActive());
     EXPECT_FALSE(second->IsActive());
 
     auto third = sut.Add();
@@ -99,4 +99,17 @@ TEST(Pool, MaxSize)
     EXPECT_NE(nullptr, sut.Add());
     EXPECT_NE(nullptr, sut.Add());
     EXPECT_EQ(nullptr, sut.Add());
+}
+
+TEST(Pool, At)
+{
+    Pool<TestAgent> sut(2);
+
+    TestAgent* first = sut.Add();
+    EXPECT_NE(nullptr, first);
+    EXPECT_EQ(1, sut.ActiveCount());
+    EXPECT_EQ(first, &sut.at(0));
+
+    EXPECT_ANY_THROW(sut.at(-1));
+    EXPECT_ANY_THROW(sut.at(1));
 }

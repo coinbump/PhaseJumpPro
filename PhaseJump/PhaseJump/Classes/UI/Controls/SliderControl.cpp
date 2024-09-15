@@ -1,5 +1,5 @@
 #include "SliderControl.h"
-#include "Log.h"
+#include "Dev.h"
 #include "SomeDragGestureHandler2D.h"
 #include "SomeRenderer.h"
 
@@ -66,7 +66,7 @@ void SliderControl::Awake() {
         if (!IsEmpty(childNodes)) {
             thumb = *childNodes.begin();
         } else {
-            PJLog("ERROR. SliderControl is missing thumb.");
+            PJ::Log("ERROR. SliderControl is missing thumb.");
             return;
         }
     }

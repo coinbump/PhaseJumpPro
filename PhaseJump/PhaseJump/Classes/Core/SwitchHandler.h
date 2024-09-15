@@ -35,6 +35,12 @@ namespace PJ {
             OnSwitchChange();
         }
 
+        // MARK: SomeWorldComponent
+
+        String TypeName() const override {
+            return "SwitchHandler";
+        }
+
     protected:
         virtual void OnSwitchChange() {
             GUARD(onSwitchChangeFunc)

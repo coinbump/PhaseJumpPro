@@ -116,10 +116,12 @@ namespace PJ {
         String ToString() const;
 
         Vector3& operator[](size_t index) {
+            Assert(index >= 0 && index < value.size());
             return value[index];
         }
 
         Vector3 const& operator[](size_t index) const {
+            Assert(index >= 0 && index < value.size());
             return value[index];
         }
     };

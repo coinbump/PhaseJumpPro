@@ -51,7 +51,7 @@ namespace PJ {
     public:
         using CoreFunc = std::function<Result(Core& core, Arguments... args)>;
 
-        Core core;
+        Core core{};
         CoreFunc coreFunc;
 
         CoreFunction() {}

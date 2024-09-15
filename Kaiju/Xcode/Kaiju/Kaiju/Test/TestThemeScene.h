@@ -1,6 +1,10 @@
 #pragma once
 
+#if DEVELOPMENT
+#include <PhaseJump-Dev/PhaseJump-Dev.h>
+#else
 #include <PhaseJump/PhaseJump.h>
+#endif
 
 using namespace PJ;
 
@@ -10,17 +14,24 @@ public:
     }
 
     void LoadInto(WorldNode& root) {
-        root.name = "TestThemeScene";
+        QB qb(root);
 
-        auto& camera = root.AddComponent<OrthoCamera>();
-        camera.owner->AddComponent<SimpleRaycaster2D>();
+        qb
+            .Named("TestThemeScene")
+            .With<OrthoCamera>()
+            .With<SimpleRaycaster2D>()
+            .And("Layout")
+            .With<HFlow>(50);
 
         for (auto& color : Themes::fruit.Colors()) {
-            root.AddNode("Theme color")
-                .AddCircle(20, color.second);
+            qb
+                .And("Theme color")
+                .Circle(20, color.second)
+                .Pop();
         }
 
-        root.AddComponent<HFlow>(50)
-            .ApplyLayout();
+        qb.ModifyAll<HFlow>([](HFlow& c, auto index) {
+            c.LayoutIfNeeded();
+        });
     }
 };

@@ -24,7 +24,7 @@ namespace PJ {
     struct RenderCommandModel : public SomeRenderCommandModel {
         using Base = SomeRenderCommandModel;
 
-        Core core;
+        Core core{};
 
         RenderCommandModel(String id, Core core = Core()) :
             Base(id),

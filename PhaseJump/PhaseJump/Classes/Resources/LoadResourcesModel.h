@@ -29,7 +29,7 @@ namespace PJ {
         UnorderedMap<String, String> fileExtensionMap;
 
         /// Maps resource type to operation
-        FactoryRegistry<SomeLoadResourcesOperation, LoadResourceInfo, LoadResourcesModel&>
+        FactoryRegistry<SomeLoadResourcesOperation, ResourceInfo, LoadResourcesModel&>
             operationRegistry;
 
     public:
@@ -43,7 +43,7 @@ namespace PJ {
         }
 
         // TODO: should be UP
-        virtual List<SP<SomeLoadResourcesOperation>> MakeLoadOperations(LoadResourceInfo info) {
+        virtual List<SP<SomeLoadResourcesOperation>> MakeLoadOperations(ResourceInfo info) {
             List<SP<SomeLoadResourcesOperation>> result;
 
             // FUTURE: support multiple load operations if needed

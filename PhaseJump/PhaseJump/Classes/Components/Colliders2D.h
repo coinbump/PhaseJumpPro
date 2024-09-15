@@ -18,6 +18,12 @@ namespace PJ {
             poly = value;
             return *this;
         }
+
+        // MARK: SomeWorldComponent
+
+        String TypeName() const override {
+            return "PolygonCollider2D";
+        }
     };
 
     class CircleCollider2D : public SomeCollider2D {
@@ -31,9 +37,22 @@ namespace PJ {
             auto distance = sqrt(position.x * position.x + position.y * position.y);
             return distance <= radius;
         }
+
+        // MARK: SomeWorldComponent
+
+        String TypeName() const override {
+            return "CircleCollider2D";
+        }
     };
 
     class CapsuleCollider2D : public SomeCollider2D {
+    public:
         Vector2 size;
+
+        // MARK: SomeWorldComponent
+
+        String TypeName() const override {
+            return "CapsuleCollider2D";
+        }
     };
 } // namespace PJ

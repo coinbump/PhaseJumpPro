@@ -63,6 +63,11 @@ TEST(StringUtils, Joined)
     EXPECT_EQ("a,c", Joined(values, ","));
 }
 
+TEST(StringUtils, JoinedInitializer)
+{
+    EXPECT_EQ("a,c", Joined({"a", "c"}, ","));
+}
+
 TEST(StringUtils, Suffix_Prefix) {
     String sut("Test");
     EXPECT_TRUE(HasPrefix(sut, "T"));

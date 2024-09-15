@@ -13,15 +13,16 @@ namespace PJ {
     /// Replaces rendered meshes with a mesh shape render
     class ShowMeshRenderProcessor : public RenderProcessor {
     public:
+        using Base = RenderProcessor;
+
         Color color;
 
         ShowMeshRenderProcessor(Color color = Color::blue) :
-            color(color) {
-            this->name = "Show mesh";
-        }
+            Base("Show mesh", { RenderPhase::Camera }),
+            color(color) {}
 
         // MARK: RenderProcessor
 
-        void Process(RenderSystemModel& systemModel) override;
+        void Process(CameraRenderModel& cameraModel) override;
     };
 } // namespace PJ

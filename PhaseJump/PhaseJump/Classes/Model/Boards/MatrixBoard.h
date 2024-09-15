@@ -69,7 +69,7 @@ namespace PJ {
         return Vector2Int(0, 0);
     }
 
-    /// Model for placing pieces inside a matrix
+    /// Model for placing multi-cell pieces inside a matrix
     /// Example: tetrominoes-type game
     /// If all your pieces are single cells, use Matrix directly
     class MatrixBoard {

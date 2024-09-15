@@ -1,8 +1,8 @@
 #include "ResourceRepository.h"
+#include "Dev.h"
 #include "FileManager.h"
 #include "LoadResourcesModel.h"
 #include "LoadResourcesPlan.h"
-#include "Log.h"
 #include "SomeLoadResourcesOperation.h"
 #include <filesystem>
 
@@ -10,7 +10,7 @@ using namespace std;
 using namespace PJ;
 namespace fs = std::filesystem;
 
-void ResourceRepository::Load(LoadResourceInfo info) {
+void ResourceRepository::Load(ResourceInfo info) {
     if (nullptr == loadResourcesModel) {
         return;
     }
@@ -33,12 +33,12 @@ void ResourceRepository::Run(List<SP<SomeLoadResourcesOperation>> const& operati
                 auto successValue = operation->result->SuccessValue();
                 if (successValue) {
                     for (auto& loadedResource : successValue->loadedResources) {
-                        loadedResources->map[loadedResource.type][loadedResource.id] =
+                        loadedResources->map[loadedResource.info.type][loadedResource.info.id] =
                             loadedResource;
 
-                        PJLog(
-                            "Loaded Resource: %s\t Type: %s", loadedResource.id.c_str(),
-                            loadedResource.type.c_str()
+                        PJ::Log(
+                            "Loaded Resource: ", loadedResource.info.id,
+                            " Type: ", loadedResource.info.type
                         );
                     }
 
@@ -48,16 +48,16 @@ void ResourceRepository::Run(List<SP<SomeLoadResourcesOperation>> const& operati
                 break;
             }
         case ResultType::Failure:
-            PJLog("ERROR. Failed to load resource");
+            PJ::Log("ERROR. Failed to load resource");
             break;
         }
     }
 }
 
-List<SP<SomeLoadResourcesOperation>> ResourceRepository::LoadOperations(LoadResourceInfo info) {
+List<SP<SomeLoadResourcesOperation>> ResourceRepository::LoadOperations(ResourceInfo info) {
     auto operations = loadResourcesModel->MakeLoadOperations(info);
     if (IsEmpty(operations)) {
-        PJLog("ERROR. No load operations for type: %s", info.type.c_str());
+        PJ::Log("ERROR. No load operations for type: ", info.type);
         return operations;
     }
 

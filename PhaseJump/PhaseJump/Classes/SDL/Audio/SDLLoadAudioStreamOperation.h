@@ -11,7 +11,7 @@ namespace PJ {
     public:
         using Base = SomeLoadResourcesOperation;
 
-        SDLLoadAudioStreamOperation(LoadResourceInfo info, LoadResourcesModel& loadResourcesModel) :
+        SDLLoadAudioStreamOperation(ResourceInfo info, LoadResourcesModel& loadResourcesModel) :
             Base(info, loadResourcesModel) {}
 
         // MARK: SomeLoadResourcesOperation

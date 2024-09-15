@@ -11,7 +11,7 @@ using namespace FontTests;
 
 TEST(Font, CanDisplay)
 {
-    Font sut;
+    Font sut("", 12);
     sut.glyphs['a'] = Font::Glyph();
     sut.glyphs['1'] = Font::Glyph();
 

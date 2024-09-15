@@ -39,5 +39,11 @@ namespace PJ {
         // MARK: WorldComponent
 
         void Start() override;
+
+        // MARK: SomeWorldComponent
+
+        String TypeName() const override {
+            return "Scene";
+        }
     };
 } // namespace PJ

@@ -45,9 +45,11 @@ void View2D::OnViewSizeChange() {
 }
 
 void View2D::UpdateFrameComponents() {
+    GUARD(owner)
+
     auto frameSize = Frame().size;
 
-    auto worldSizables = GetComponents<WorldSizeable>();
+    auto worldSizables = owner->GetComponents<WorldSizeable>();
     for (auto& worldSizable : worldSizables) {
         worldSizable->SetWorldSize(frameSize);
     }

@@ -2,6 +2,8 @@
 
 #include "Utils.h"
 #include "Vector3.h"
+#include <algorithm>
+#include <type_traits>
 
 /*
  RATING: 5 stars

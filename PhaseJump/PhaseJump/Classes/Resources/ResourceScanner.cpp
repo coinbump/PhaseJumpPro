@@ -1,8 +1,8 @@
 #include "ResourceScanner.h"
+#include "Dev.h"
 #include "FileManager.h"
 #include "LoadResourcesModel.h"
 #include "LoadResourcesPlan.h"
-#include "Log.h"
 #include "SomeLoadResourcesOperation.h"
 #include <filesystem>
 
@@ -34,7 +34,7 @@ LoadResourcesPlan ResourceScanner::ScanAt(FilePath path, bool isRecursive) {
     return result;
 }
 
-std::optional<LoadResourceInfo> ResourceScanner::ScanFile(FilePath path) {
+std::optional<ResourceInfo> ResourceScanner::ScanFile(FilePath path) {
     if (nullptr == fm || nullptr == loadResourcesModel) {
         return std::nullopt;
     }
@@ -44,13 +44,13 @@ std::optional<LoadResourceInfo> ResourceScanner::ScanFile(FilePath path) {
         return std::nullopt;
     }
 
-    LoadResourceInfo result;
+    ResourceInfo result;
 
     auto fileExtension = fm.FileExtension(path, false);
 
     auto type = loadResourcesModel->TypeIdForFileExtension(fileExtension);
     if (std::nullopt == type) {
-        // PJLog("WARNING. Unrecognized resource extension, %s", fileExtension.c_str());
+        // PJ::Log("WARNING. Unrecognized resource extension, %s", fileExtension.c_str());
         return std::nullopt;
     }
 

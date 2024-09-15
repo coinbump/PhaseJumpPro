@@ -24,7 +24,7 @@ namespace PJ {
     struct GLRenderCommand : public SomeGLRenderCommand {
         using RunFunc = std::function<void(Core&, GLRenderEngine&)>;
 
-        Core core;
+        Core core{};
         RunFunc runFunc;
 
         GLRenderCommand(Core core, RunFunc runFunc) :

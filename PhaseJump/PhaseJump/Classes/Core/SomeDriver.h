@@ -32,7 +32,7 @@ namespace PJ {
         using This = Driver<Core>;
         using Base = SomeDriver;
 
-        Core core;
+        Core core{};
 
         Driver(Core core, GoFunc goFunc) :
             Base(goFunc),

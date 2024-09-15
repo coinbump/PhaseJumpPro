@@ -78,5 +78,11 @@ namespace PJ {
         Vector3 ScreenToWorld(Vector2 position) override;
         void PreRender(RenderContextModel const& contextModel) override;
         bool IsCulled(Mesh const& mesh) override;
+
+        // MARK: SomeWorldComponent
+
+        String TypeName() const override {
+            return "OrthoCamera";
+        }
     };
 } // namespace PJ

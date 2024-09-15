@@ -50,47 +50,42 @@ namespace PJ {
         int64_t lastActiveIndex = -1;
         size_t activeCount = 0;
 
-        VectorList<Type> value;
+        VectorList<UP<Type>> value;
         UnorderedSet<size_t> inactiveAvailable;
 
     public:
         /// (Optional). If > 0 indicates the max size for this pool
         size_t maxSize = 0;
 
-        Pool(size_t size, size_t maxSize = 0, Type element = Type()) :
-            value(size, element),
+        Pool(size_t size, size_t maxSize = 0) :
+            value(size),
             maxSize(maxSize) {}
 
         /// Returns the element at the specified index, or throws an exception if it is not
         /// available
         Type const& at(size_t index) const {
             GUARD_THROW(
-                index >= 0 && index <= lastActiveIndex && index < value.size(),
+                index >= 0 && index <= lastActiveIndex && index < value.size() && value[index],
                 std::out_of_range("Invalid pool index")
             )
-            return value[index];
+            return *value[index];
         }
 
         /// Returns the element at the specified index, or throws an exception if it is not
         /// available
         Type& at(size_t index) {
             GUARD_THROW(
-                index >= 0 && index <= lastActiveIndex && index < value.size(),
+                index >= 0 && index <= lastActiveIndex && index < value.size() && value[index],
                 std::out_of_range("Invalid pool index")
             )
-            return value[index];
-        }
-
-        size_t FirstInactiveIndex() const {
-            GUARDR(!IsEmpty(inactiveAvailable), lastActiveIndex)
-            return *inactiveAvailable.begin();
+            return *value[index];
         }
 
         int64_t LastActiveIndex() const {
             return lastActiveIndex;
         }
 
-        VectorList<Type> const& Value() {
+        VectorList<UP<Type>> const& Value() {
             return value;
         }
 
@@ -106,6 +101,7 @@ namespace PJ {
             return inactiveAvailable.size();
         }
 
+        /// Adds item to the pool or reuses it
         Type* Add() {
             auto firstInactiveIndex = this->lastActiveIndex + 1;
 
@@ -126,14 +122,16 @@ namespace PJ {
 
             GUARDR(firstInactiveIndex < value.size(), nullptr)
 
-            auto& result = value[firstInactiveIndex];
-            result.SetIsActive(true);
+            if (nullptr == value[firstInactiveIndex]) {
+                value[firstInactiveIndex] = std::make_unique<Type>();
+            }
+            value[firstInactiveIndex]->SetIsActive(true);
+            value[firstInactiveIndex]->index = firstInactiveIndex;
             activeCount++;
-            result.index = firstInactiveIndex;
 
-            lastActiveIndex = std::max(lastActiveIndex, (int64_t)result.index);
+            lastActiveIndex = std::max(lastActiveIndex, (int64_t)firstInactiveIndex);
 
-            return &result;
+            return value[firstInactiveIndex].get();
         }
 
         void Remove(Type* typeValue) {
@@ -147,9 +145,9 @@ namespace PJ {
 
         void RemoveAt(size_t index) {
             GUARD(index >= 0 && index < value.size())
-            GUARD(value[index].IsActive())
+            GUARD(value[index]->IsActive())
 
-            value[index].SetIsActive(false);
+            value[index]->SetIsActive(false);
             inactiveAvailable.insert(index);
             activeCount--;
 
@@ -158,7 +156,7 @@ namespace PJ {
             // We removed the element for lastActiveIndex, so update it
             int64_t newLastActiveIndex = -1;
             for (int64_t i = index - 1; i >= 0; i--) {
-                if (value[i].IsActive()) {
+                if (value[i]->IsActive()) {
                     newLastActiveIndex = i;
                     break;
                 }

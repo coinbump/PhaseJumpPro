@@ -64,19 +64,82 @@ public:
     }
 };
 
+struct Vector3TempArray {
+public:
+    using This = Vector3TempArray;
+
+    float x = 0;
+    float y = 0;
+    float z = 0;
+
+    constexpr float& operator[](size_t index) {
+        float* indices[3] = { &x, &y, &z };
+        return *indices[index];
+    }
+};
+
+struct Vector3Switch {
+public:
+    using This = Vector3Switch;
+
+    float x = 0;
+    float y = 0;
+    float z = 0;
+
+    constexpr float& operator[](size_t index) {
+        switch (index) {
+        case 0:
+            return x;
+        case 1:
+            return y;
+        default:
+            return z;
+        }
+    }
+};
+
+struct Vector3Ternary {
+public:
+    using This = Vector3Ternary;
+
+    float x = 0;
+    float y = 0;
+    float z = 0;
+
+    constexpr float& operator[](size_t index) {
+        return index == 0 ? x : index == 1 ? y : z;
+    }
+};
+
 void SDLWorld::Run() {
     startTime = SDL_GetTicks();
 
     DevABProfiler profile(
-        "Func for- non constexpr",
+        "Vector[]- switch",
         []() {
-            String value;
-            // ForNoConstexpr(0, 1000, [&]() { value += "a"; });
+            Vector3Switch value;
+            static bool flag = false;
+            auto foo = [](int a, int b) {
+                flag = !flag;
+                return flag ? a * b : a + b;
+            };
+            For(0, 1000, [&]() {
+                value[1] = foo(value[0], value[1]);
+                value[0] = foo(value[1], value[0]);
+            });
         },
-        "Func for",
+        "Vector[]- ternary",
         []() {
-            String value;
-            For(0, 1000, [&]() { value += "a"; });
+            Vector3Ternary value;
+            static bool flag = false;
+            auto foo = [](int a, int b) {
+                flag = !flag;
+                return flag ? a * b : a + b;
+            };
+            For(0, 1000, [&]() {
+                value[1] = foo(value[0], value[1]);
+                value[0] = foo(value[1], value[0]);
+            });
         },
         100'000, [](DevABProfiler::Result result) { std::cout << result.formattedString; }
     );

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SomeEvent.h"
+#include "SomeSignal.h"
 #include "Utils.h"
 #include <memory>
 
@@ -16,6 +16,6 @@ namespace PJ {
         virtual ~SomeListener() {}
 
         // TODO: why is this a pointer? Why not a reference?
-        virtual void OnEvent(SPC<SomeEvent> event) = 0;
+        virtual void OnEvent(SP<SomeSignal> event) = 0;
     };
 } // namespace PJ

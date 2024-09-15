@@ -18,7 +18,7 @@ SomeLoadResourcesOperation::Result LoadRTexPackerAtlasOperation::LoadResources()
     std::ifstream file;
     file.open(filePath);
     if (!file.is_open()) {
-        PJLog("ERROR. Can't open file at: %s", info.filePath.c_str());
+        PJ::Log("ERROR. Can't open file at: ", info.filePath);
         return Failure();
     }
 
@@ -35,7 +35,7 @@ SomeLoadResourcesOperation::Result LoadRTexPackerAtlasOperation::LoadResources()
         fullImagePath /= imagePath.c_str();
 
         // No id needed, we're not storing the parent texture in resources
-        LoadResourceInfo loadTextureInfo(fullImagePath, "texture", "");
+        ResourceInfo loadTextureInfo("", fullImagePath, "texture");
         auto loadTextureOperations = loadResourcesModel.MakeLoadOperations(loadTextureInfo);
 
         GUARDR(!IsEmpty(loadTextureOperations), Failure())
@@ -72,8 +72,8 @@ SomeLoadResourcesOperation::Result LoadRTexPackerAtlasOperation::LoadResources()
             }
 
             if (!model.atlas.isFont) {
-                LoadedResource loadedResource(
-                    filePath, "texture", sprite.nameId, SCAST<PJ::Base>(atlasTexture)
+                ResourceModel loadedResource(
+                    SCAST<PJ::Base>(atlasTexture), sprite.nameId, filePath, "texture"
                 );
                 result.Add(loadedResource);
             }
@@ -81,13 +81,13 @@ SomeLoadResourcesOperation::Result LoadRTexPackerAtlasOperation::LoadResources()
             textureAtlas->Add(atlasTexture);
         }
 
-        LoadedResource loadedAtlasResource(
-            filePath, "texture.atlas", info.id, SCAST<PJ::Base>(textureAtlas)
+        ResourceModel loadedAtlasResource(
+            SCAST<PJ::Base>(textureAtlas), info.id, filePath, "texture.atlas"
         );
         result.Add(loadedAtlasResource);
 
         if (model.atlas.isFont) {
-            auto font = MAKE<Font>();
+            auto font = MAKE<Font>(info.id, model.atlas.fontSize);
             font->atlas = textureAtlas;
 
             for (int i = 0; i < chars.size(); i++) {
@@ -141,13 +141,13 @@ SomeLoadResourcesOperation::Result LoadRTexPackerAtlasOperation::LoadResources()
             font->metrics.descent = descent;
             font->metrics.leading = (ascent + descent) + 5;
 
-            LoadedResource loadedFontResource(filePath, "font", info.id, SCAST<PJ::Base>(font));
+            ResourceModel loadedFontResource(SCAST<PJ::Base>(font), info.id, filePath, "font");
             result.Add(loadedFontResource);
         }
 
         return result;
     } catch (...) {
-        PJLog("ERROR: Couldn't parse rTexPacker JSON");
+        PJ::Log("ERROR: Couldn't parse rTexPacker JSON");
     }
 
     return Failure();

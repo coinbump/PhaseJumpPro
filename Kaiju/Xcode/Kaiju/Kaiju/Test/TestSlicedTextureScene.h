@@ -1,6 +1,10 @@
 #pragma once
 
+#if DEVELOPMENT
+#include <PhaseJump-Dev/PhaseJump-Dev.h>
+#else
 #include <PhaseJump/PhaseJump.h>
+#endif
 
 using namespace PJ;
 
@@ -17,7 +21,7 @@ public:
 
         World& world = *root.World();
         
-        texture = DCAST<GLTexture>(world.loadedResources->map["texture"]["example-button-normal"].resource);
+        texture = DCAST<GLTexture>(world.FindTexture("example-button-normal"));
         GUARD(texture)
 
         auto camera = SCAST<SomeCamera>(MAKE<OrthoCamera>());

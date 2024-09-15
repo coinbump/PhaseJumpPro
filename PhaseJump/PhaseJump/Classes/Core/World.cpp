@@ -1,5 +1,6 @@
 #include "World.h"
 #include "DevProfiler.h"
+#include "Font.h"
 #include "GraphNodeTool.h"
 #include "RenderContextModel.h"
 #include "SomeCamera.h"
@@ -63,10 +64,12 @@ SP<SomeCamera> World::MainCamera() {
         auto worldNode = SCAST<WorldNode>(node);
 
         auto camera = worldNode->GetComponent<SomeCamera>();
-        if (camera) {
-            mainCamera = camera;
-            return mainCamera;
-        }
+
+        // Offscreen cameras don't qualify as the main camera
+        GUARD_CONTINUE(camera && !camera->renderContext)
+
+        mainCamera = camera;
+        return mainCamera;
     }
 
     return nullptr;
@@ -198,7 +201,9 @@ void Update(WorldNode& node, TimeSlice time, WorldNode::NodeList& updateList) {
 
         // TODO: send OnDestroy to children
         // TODO: remove the node
-        PJLog("WARNING. Destroying nodes is currently broken")
+        PJ::Log("WARNING. Destroying nodes is currently broken");
+        GUARD(node.Parent())
+        node.Parent()->Remove(node);
     } else {
         GUARD(node.IsEnabled())
         updateList.push_back(SCAST<WorldNode>(node.shared_from_this()));
@@ -291,11 +296,71 @@ LocalPosition PJ::ScreenToLocal(SomeWorldComponent& component, ScreenPosition sc
     return result;
 }
 
-SP<SomeTexture> World::Texture(String name) {
+SP<SomeTexture> World::FindTexture(String id) {
     try {
         auto& typeMap = loadedResources->map.at("texture");
-        auto result = typeMap.at(name);
+        auto result = typeMap.at(id);
         return DCAST<SomeTexture>(result.resource);
+    } catch (...) {
+        return nullptr;
+    }
+}
+
+SP<Font> World::FindFontWithSize(float size) {
+    FontSpec spec{ .size = size };
+    return FindFont(spec);
+}
+
+SP<Font> World::FindFontWithResourceId(String id) {
+    FontSpec spec{ .resourceId = id };
+    return FindFont(spec);
+}
+
+SP<Font> World::FindFont(FontSpec spec) {
+    try {
+        auto& typeMap = loadedResources->map.at("font");
+        if (spec.resourceId.size() > 0) {
+            auto result = typeMap.at(spec.resourceId);
+            return DCAST<Font>(result.resource);
+        }
+
+        VectorList<SP<Font>> candidates;
+        for (auto const& item : typeMap) {
+            auto font = DCAST<Font>(item.second.resource);
+            GUARD_CONTINUE(font)
+            candidates.push_back(font);
+        }
+
+        GUARDR(!IsEmpty(candidates), nullptr)
+
+        // TODO: need unit test
+        std::sort(
+            candidates.begin(), candidates.end(),
+            [&](SP<Font> const& lhs, SP<Font> const& rhs) {
+                auto Weight = [](FontSpec spec, SP<Font> const& font) {
+                    int result = 0;
+                    if (!IsEmpty(spec.fontName)) {
+                        if (font->name == spec.fontName) {
+                            result++;
+                        }
+                    }
+                    if (spec.size > 0) {
+                        if (font->size == spec.size) {
+                            result += 2;
+                        }
+                    }
+
+                    return result;
+                };
+
+                int leftWeight = Weight(spec, lhs);
+                int rightWeight = Weight(spec, rhs);
+
+                return leftWeight > rightWeight;
+            }
+        );
+
+        return candidates[0];
     } catch (...) {
         return nullptr;
     }

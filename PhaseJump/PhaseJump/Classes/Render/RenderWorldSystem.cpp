@@ -6,6 +6,7 @@
 #include "SomeRenderContext.h"
 #include "SomeRenderEngine.h"
 #include "SomeRenderer.h"
+#include "WorldNode.h"
 
 using namespace std;
 using namespace PJ;
@@ -14,8 +15,18 @@ std::optional<RenderResult> RenderWorldSystem::Render(RenderContextModel& _conte
     auto context = _contextModel.renderContext;
     GUARDR(context, std::nullopt);
 
+    model.phaseModel.onPhaseChangeFunc = [&](auto& phaseModel, auto phase) {
+        model.processingModel.ProcessPhase(phase);
+    };
+
+    context->renderEngine->ResetForRenderPass();
+
+    model.phaseModel.SetPhase(RenderPhase::PrepareBind);
     context->Bind();
+    model.phaseModel.SetPhase(RenderPhase::PostBind);
     context->Clear();
+    context->renderEngine->SetIsContextCleared(context->renderId, true);
+    model.phaseModel.SetPhase(RenderPhase::PostClear);
 
     int drawCount = 0;
 
@@ -62,32 +73,53 @@ std::optional<RenderResult> RenderWorldSystem::Render(RenderContextModel& _conte
 
         RenderContextModel contextModel = _contextModel;
 
-        // The camera can override the render context
-        if (camera->renderContext) {
-            contextModel.renderContext = camera->renderContext.get();
-        }
-        RenderSystemModel systemModel(contextModel, camera, models);
+        CameraRenderModel cameraModel(contextModel, *camera, models);
+        cameraModel.phaseModel.onPhaseChangeFunc = [&](auto& phaseModel, auto phase) {
+            // TODO: prepend "camera." for phase here?
+            // Render pipeline shared by all cameras
+            model.processingModel.ProcessPhase(cameraModel, phase);
 
-        // TODO: contextModel.renderContext->Bind();
+            // Each camera can have its own render pipeline
+            camera->processingModel.ProcessPhase(cameraModel, phase);
+        };
+
+        auto SetPhase = [&](String phase) {
+            model.phaseModel.SetPhase(phase);
+            cameraModel.phaseModel.SetPhase(phase);
+        };
+
+        SetPhase(RenderPhase::PrepareCamera);
+
+        cameraModel.renderContext->Bind();
+
+        if (!context->renderEngine->IsContextCleared(cameraModel.renderContext->renderId)) {
+            cameraModel.renderContext->Clear();
+            context->renderEngine->SetIsContextCleared(cameraModel.renderContext->renderId, true);
+        }
+
         renderEngine->RenderStart(contextModel);
         camera->PreRender(contextModel);
+
+        SetPhase(RenderPhase::Camera);
 
 #ifdef PROFILE
         DevProfiler devProfilerRenderCamera("Render- Camera", [](String value) { cout << value; });
 #endif
 
-        for (auto& processor : processingModel.Processors()) {
-            GUARD_CONTINUE(processor->IsEnabled())
-            processor->Process(systemModel);
-        }
-
         RenderDrawModel drawModel;
-        drawModel.models = systemModel.models;
+        drawModel.models = cameraModel.models;
         drawCount += (int)drawModel.models.size();
+
+        SetPhase(RenderPhase::PrepareCameraDraw);
         renderEngine->RenderDraw(drawModel);
+        SetPhase(RenderPhase::PostCameraDraw);
+
+        SetPhase(RenderPhase::PostCamera);
     }
 
+    model.phaseModel.SetPhase(RenderPhase::PreparePresent);
     context->Present();
+    model.phaseModel.SetPhase(RenderPhase::PostPresent);
 
     RenderResult result;
     result.tags.Insert("draw.count", drawCount);
@@ -95,9 +127,30 @@ std::optional<RenderResult> RenderWorldSystem::Render(RenderContextModel& _conte
 }
 
 void RenderWorldSystem::Add(SP<RenderProcessor> processor) {
-    processingModel.Add(processor);
+    model.processingModel.Add(processor);
 }
 
 RenderWorldSystem::ProcessorList const& RenderWorldSystem::Processors() const {
-    return processingModel.Processors();
+    return model.processingModel.Processors();
+}
+
+CameraRenderModel::CameraRenderModel(
+    RenderContextModel& contextModel, SomeCamera& camera, VectorList<RenderModel> models
+) :
+    renderContext(camera.renderContext ? camera.renderContext.get() : contextModel.renderContext),
+    root(contextModel.root),
+    nodes(contextModel.nodes),
+    camera(&camera),
+    models(models) {}
+
+void CameraRenderModel::SetPhase(String value) {
+    phaseModel.SetPhase(value);
+}
+
+void PhaseRenderModel::SetPhase(String value) {
+    GUARD(phase != value);
+    phase = value;
+
+    GUARD(onPhaseChangeFunc)
+    onPhaseChangeFunc(*this, phase);
 }

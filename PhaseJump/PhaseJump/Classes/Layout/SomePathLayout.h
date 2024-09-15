@@ -6,7 +6,11 @@
 #include "VectorList.h"
 #include <memory>
 
-// CODE REVIEW: ?/23
+/*
+ RATING: 5 stars
+ Tested and works
+ CODE REVIEW: 9/14/24
+ */
 namespace PJ {
     class SomePath;
 
@@ -15,21 +19,24 @@ namespace PJ {
     public:
         using Base = SomeLayout;
 
+        /// Offset applied to each child node when layout is applied
         Vector3 offset;
 
+        /// If true, child nodes are oriented to the direction of the path
         bool orientToPath = true;
-        float orientDegreeAngle = -90.0f;
 
+        /// Angle of rotation for child node from orientation of path
+        Angle orientDegreeAngle = Angle::DegreesAngle(90.0f);
+
+        /// (Optional). Normalized positions for each child node (0-1.0)
+        /// If empty, each child node will be positioned at equal intervals
         VectorList<float> positions;
 
+        /// Called to build the path for this layout
         virtual SP<SomePath> BuildPath() = 0;
 
         // MARK: SomeLayout
 
         void ApplyLayout() override;
-
-        virtual Vector3 Size() const override {
-            return Vector3::zero;
-        };
     };
 } // namespace PJ

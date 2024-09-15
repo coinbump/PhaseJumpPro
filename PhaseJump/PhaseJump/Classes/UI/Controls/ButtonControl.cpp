@@ -1,17 +1,36 @@
 #include "ButtonControl.h"
-#include "SomeStateHandler.h"
 #include "Utils.h"
 
 using namespace std;
 using namespace PJ;
 
-ButtonControl::ButtonControl() {}
+ButtonControl::ButtonControl() {
+    signalHandlers[SignalId::PointerDown] = [](auto& component, auto& signal) {
+        auto event = static_cast<PointerDownUIEvent const*>(&signal);
+        static_cast<This*>(&component)->OnPointerDown(*event);
+    };
+
+    signalHandlers[SignalId::PointerEnter] = [](auto& component, auto& signal) {
+        auto event = static_cast<PointerEnterUIEvent const*>(&signal);
+        static_cast<This*>(&component)->OnPointerEnter(*event);
+    };
+
+    signalHandlers[SignalId::PointerExit] = [](auto& component, auto& signal) {
+        auto event = static_cast<PointerExitUIEvent const*>(&signal);
+        static_cast<This*>(&component)->OnPointerExit(*event);
+    };
+
+    signalHandlers["pointer.up"] = [](auto& component, auto& signal) {
+        auto event = static_cast<PointerUpUIEvent const*>(&signal);
+        static_cast<This*>(&component)->OnPointerUp(*event);
+    };
+}
 
 void ButtonControl::Awake() {
     Base::Awake();
 }
 
-void ButtonControl::OnPointerDown(PointerDownUIEvent _event) {
+void ButtonControl::OnPointerDown(PointerDownUIEvent const& _event) {
     switch (trackType) {
     case TrackType::Immediate:
         OnPress();
@@ -23,17 +42,17 @@ void ButtonControl::OnPointerDown(PointerDownUIEvent _event) {
     }
 }
 
-void ButtonControl::OnPointerEnter(PointerEnterUIEvent _event) {
+void ButtonControl::OnPointerEnter(PointerEnterUIEvent const& _event) {
     GUARD(isTracking)
     SetIsPressed(true);
 }
 
-void ButtonControl::OnPointerExit(PointerExitUIEvent _event) {
+void ButtonControl::OnPointerExit(PointerExitUIEvent const& _event) {
     GUARD(isTracking)
     SetIsPressed(false);
 }
 
-void ButtonControl::OnPointerUp(PointerUpUIEvent _event) {
+void ButtonControl::OnPointerUp(PointerUpUIEvent const& _event) {
     GUARD(isTracking)
     isTracking = false;
 

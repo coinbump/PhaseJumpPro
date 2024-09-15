@@ -14,10 +14,24 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "CD6FEB5129170AE500F674D3"
+               BlueprintIdentifier = "CD1D467C2C9368BA00839F39"
                BuildableName = "Kaiju.app"
                BlueprintName = "Kaiju"
                ReferencedContainer = "container:Kaiju.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "CD6FEB2A2917017A00F674D3"
+               BuildableName = "PhaseJump.framework"
+               BlueprintName = "PhaseJump"
+               ReferencedContainer = "container:../../../PhaseJump/Xcode/PhaseJump/PhaseJump.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -53,7 +67,7 @@
       </Testables>
    </TestAction>
    <LaunchAction
-      buildConfiguration = "Debug"
+      buildConfiguration = "Release"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
@@ -66,7 +80,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "CD6FEB5129170AE500F674D3"
+            BlueprintIdentifier = "CD1D467C2C9368BA00839F39"
             BuildableName = "Kaiju.app"
             BlueprintName = "Kaiju"
             ReferencedContainer = "container:Kaiju.xcodeproj">
@@ -79,16 +93,15 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
+      <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "CD6FEB5129170AE500F674D3"
+            BlueprintIdentifier = "CD1D467C2C9368BA00839F39"
             BuildableName = "Kaiju.app"
             BlueprintName = "Kaiju"
             ReferencedContainer = "container:Kaiju.xcodeproj">
          </BuildableReference>
-      </BuildableProductRunnable>
+      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

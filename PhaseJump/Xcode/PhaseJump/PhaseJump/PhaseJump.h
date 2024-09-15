@@ -1,4 +1,5 @@
 // In this header, you should import all the public headers of your framework using statements like #import <PhaseJump/PublicHeader.h>
+#include <PhaseJump/Agent.h>
 #include <PhaseJump/AgentGroup.h>
 #include <PhaseJump/AgentSystem.h>
 #include <PhaseJump/AnimateHueEffect.h>
@@ -18,6 +19,8 @@
 #include <PhaseJump/Class.h>
 #include <PhaseJump/ColorRenderer.h>
 #include <PhaseJump/Colliders2D.h>
+#include <PhaseJump/Command.h>
+#include <PhaseJump/CommandHistory.h>
 #include <PhaseJump/ComponentTool.h>
 #include <PhaseJump/DepthFirstOrderRenderProcessor.h>
 #include <PhaseJump/DragHandler2D.h>
@@ -27,24 +30,32 @@
 
 #include <PhaseJump/FileManager.h>
 #include <PhaseJump/FilePath.h>
+#include <PhaseJump/FilesProcessor.h>
 #include <PhaseJump/Font.h>
+#include <PhaseJump/Funcs.h>
 
+#include <PhaseJump/GLRenderEngine.h>
 #include <PhaseJump/GLShaderProgram.h>
 #include <PhaseJump/GLShaderProgramLoader.h>
 #include <PhaseJump/GLTexture.h>
 #include <PhaseJump/GLTextureBuffer.h>
 
 #include <PhaseJump/HFlow.h>
+#include <PhaseJump/ImGUIMainMenuBarBuilder.h>
+#include <PhaseJump/ImGuiGLRenderProcessor.h>
+#include <PhaseJump/IncludeAliasFileProcessor.h>
 #include <PhaseJump/Input.h>
 #include <PhaseJump/InputTriggerMap.h>
-#include <PhaseJump/Log.h>
+#include <PhaseJump/Dev.h>
 #include <PhaseJump/Matrix.h>
+#include <PhaseJump/Menu.h>
 #include <PhaseJump/MeshRenderer.h>
 #include <PhaseJump/OrderRenderProcessor.h>
 #include <PhaseJump/OverrideFeaturesRenderProcessor.h>
 
 #include <PhaseJump/PolyFrameMeshBuilder.h>
 #include <PhaseJump/RectPositioner2D.h>
+#include <PhaseJump/QuickBuild.h>
 #include <PhaseJump/RenderFeature.h>
 #include <PhaseJump/RenderMaterial.h>
 #include <PhaseJump/RenderModel.h>
@@ -54,6 +65,8 @@
 #include <PhaseJump/ResourceScanner.h>
 #include <PhaseJump/Macros.h>
 #include <PhaseJump/PointerClickUIEvent.h>
+#include <PhaseJump/Shared.h>
+#include <PhaseJump/SharedVector.h>
 #include <PhaseJump/SQLDatabase.h>
 #include <PhaseJump/SDLAudioStream.h>
 #include <PhaseJump/SDLImGuiUIEventPoller.h>
@@ -67,6 +80,7 @@
 #include <PhaseJump/SDLWorld.h>
 #include <PhaseJump/Scene.h>
 #include <PhaseJump/ScrollBarControl.h>
+#include <PhaseJump/SignalTypes.h>
 #include <PhaseJump/SimpleRaycaster2D.h>
 #include <PhaseJump/SlicedTextureRenderer.h>
 #include <PhaseJump/SliderControl.h>
@@ -74,7 +88,7 @@
 #include <PhaseJump/SomeDragHandler.h>
 #include <PhaseJump/SomePointerUIEvent.h>
 #include <PhaseJump/SomeRenderCommandModel.h>
-#include <PhaseJump/SomeStateHandler.h>
+#include <PhaseJump/SomeRenderEngine.h>
 #include <PhaseJump/SomeUIEvent.h>
 #include <PhaseJump/SpriteRenderer.h>
 #include <PhaseJump/StandardLoadResourcesModel.h>

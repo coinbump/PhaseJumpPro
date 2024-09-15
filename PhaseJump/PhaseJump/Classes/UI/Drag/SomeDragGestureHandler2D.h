@@ -65,5 +65,11 @@ namespace PJ {
 
             OnDragGestureUpdate({ *this, Update::Type::End, vec2Zero, vec2Zero });
         }
+
+        // MARK: SomeWorldComponent
+
+        String TypeName() const override {
+            return "SomeDragGestureHandler2D";
+        }
     };
 } // namespace PJ

@@ -6,18 +6,27 @@
 #include "VectorList.h"
 #include <memory>
 
-// CODE REVIEW: ?/23
+/*
+ RATING: 5 stars
+ Tested and works
+ CODE REVIEW: 9/14/24
+ */
 namespace PJ {
-    // TODO: rethink layouts using composition
-    /// Distribute objects along a circle path
+    /// Distribute objects along a bezier path
     class BezierPathLayout : public SomePathLayout {
-    public:
+    protected:
         VectorList<Vector3> controlPoints;
+
+    public:
+        BezierPathLayout() {}
+
+        BezierPathLayout(VectorList<Vector3> const& controlPoints) :
+            controlPoints(controlPoints) {}
 
         BezierPathLayout& SetControlPoints(VectorList<Vector3> const& value) {
             controlPoints = value;
 
-            ApplyLayout();
+            SetLayoutNeedsBuild();
 
             return *this;
         }
@@ -26,7 +35,7 @@ namespace PJ {
             GUARDR(i >= 0 && i < controlPoints.size(), *this)
             controlPoints[i] = value;
 
-            ApplyLayout();
+            SetLayoutNeedsBuild();
 
             return *this;
         }
@@ -35,6 +44,12 @@ namespace PJ {
 
         SP<SomePath> BuildPath() override {
             return SCAST<SomePath>(MAKE<BezierPath>(controlPoints));
+        }
+
+        // MARK: SomeWorldComponent
+
+        String TypeName() const override {
+            return "BezierPathLayout";
         }
     };
 } // namespace PJ

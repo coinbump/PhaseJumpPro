@@ -1,5 +1,6 @@
 #include "AnimateHueEffect.h"
 #include "SomeRenderer.h"
+#include "WorldNode.h"
 
 using namespace std;
 using namespace PJ;

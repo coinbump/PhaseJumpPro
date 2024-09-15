@@ -3,6 +3,7 @@
 #include "List.h"
 #include "Macros.h"
 #include "Updatable.h"
+#include <algorithm>
 
 /*
  RATING: 5 stars

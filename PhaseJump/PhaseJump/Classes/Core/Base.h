@@ -45,7 +45,7 @@ namespace PJ {
     template <class Core>
     class OwnerBase : public Base {
     public:
-        Core core;
+        Core core{};
 
         OwnerBase() {}
 

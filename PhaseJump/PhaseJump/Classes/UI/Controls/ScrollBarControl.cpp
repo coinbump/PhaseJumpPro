@@ -1,5 +1,5 @@
 #include "ScrollBarControl.h"
-#include "Log.h"
+#include "Dev.h"
 #include "SomeDragGestureHandler2D.h"
 #include "SomeRenderer.h"
 
@@ -25,7 +25,7 @@ void ScrollBarControl::Awake() {
         if (!IsEmpty(childNodes)) {
             thumb = *childNodes.begin();
         } else {
-            PJLog("ERROR. ScrollBarControl is missing thumb.");
+            PJ::Log("ERROR. ScrollBarControl is missing thumb.");
             return;
         }
     }

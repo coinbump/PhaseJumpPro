@@ -25,13 +25,13 @@ namespace PJ {
     struct RenderModelBuilder {
         RenderModel Build(
             SomeRenderer& renderer, Mesh const& mesh, RenderMaterial& material,
-            VectorList<SomeTexture*> const& textures,
+            VectorList<SP<SomeTexture>> const& textures,
             UVTransformFunc uvTransformFunc = UVTransformFuncs::textureCoordinates
         );
 
         RenderModel Build(
             WorldNode* node, Mesh const& mesh, RenderMaterial& material,
-            VectorList<SomeTexture*> const& textures,
+            VectorList<SP<SomeTexture>> const& textures,
             UVTransformFunc uvTransformFunc = UVTransformFuncs::textureCoordinates
         );
         //        RenderModel Build(

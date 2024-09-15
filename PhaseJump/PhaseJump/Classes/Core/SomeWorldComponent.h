@@ -2,6 +2,8 @@
 
 #include "Base.h"
 #include "Macros.h"
+#include "SomeSignal.h"
+#include "UnorderedMap.h"
 #include "Updatable.h"
 #include "Updatables.h"
 #include "WorldNodeTransform.h"
@@ -28,7 +30,6 @@ namespace PJ {
      */
     class SomeWorldComponent : public Base, public Updatable {
     protected:
-        // FUTURE: Enforce this flag (currently unenforced)
         /// If true, the component should receive events
         bool isEnabled = true;
 
@@ -43,6 +44,7 @@ namespace PJ {
     public:
         using This = SomeWorldComponent;
         using NodeTransform = WorldNodeTransform;
+        using SignalFunc = std::function<void(This&, SomeSignal const&)>;
 
         /// Owner node
         /// Node is responsible for setting this to null when the component is removed
@@ -50,6 +52,9 @@ namespace PJ {
 
         /// Add objects that need time updates here: timers, animations, etc.
         Updatables updatables;
+
+        /// Signal handlers. Mapped by signal id
+        UnorderedMap<String, SignalFunc> signalHandlers;
 
         SomeWorldComponent() {}
 
@@ -63,8 +68,6 @@ namespace PJ {
         virtual WorldNode* Node() const {
             return owner;
         }
-
-        virtual void DestroyOwner(float afterSeconds = 0) = 0;
 
         /// Returns the type name of this component for browsers and debugging
         virtual String TypeName() const = 0;

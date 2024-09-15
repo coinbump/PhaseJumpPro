@@ -1,6 +1,5 @@
 #include "gtest/gtest.h"
 
-#include "ReadingCamera.h"
 #include "Colliders2D.h"
 
 using namespace std;

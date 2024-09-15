@@ -1,6 +1,6 @@
 #include "SimpleRaycaster2D.h"
 #include "Colliders2D.h"
-#include "Log.h"
+#include "Dev.h"
 #include "Matrix4x4.h"
 #include "SomeCamera.h"
 #include "Utils.h"
@@ -21,7 +21,7 @@ std::optional<RaycastHit2D> SimpleRaycaster2D::Raycast(Vector2 origin, Vector2 d
 
     auto camera = ownerNode->GetComponent<SomeCamera>();
     if (nullptr == camera) {
-        PJLog("ERROR. Raycaster requires camera.");
+        PJ::Log("ERROR. Raycaster requires camera.");
         return result;
     }
 

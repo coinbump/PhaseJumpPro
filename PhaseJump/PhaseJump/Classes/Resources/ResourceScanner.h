@@ -10,10 +10,10 @@
 // CODE REVIEW: ?/23
 namespace PJ {
     class LoadResourcesModel;
-    struct LoadedResource;
-    struct LoadResourceInfo;
+    struct ResourceModel;
+    struct ResourceInfo;
     class SomeFileManager;
-    struct LoadedResources;
+    struct ResourceModels;
 
     /// Interface to an object that scans for resources and creates a load
     /// resource plan
@@ -40,6 +40,6 @@ namespace PJ {
         // large file lists
         LoadResourcesPlan ScanAt(FilePath path, bool isRecursive) override;
 
-        virtual std::optional<LoadResourceInfo> ScanFile(FilePath path);
+        virtual std::optional<ResourceInfo> ScanFile(FilePath path);
     };
 } // namespace PJ

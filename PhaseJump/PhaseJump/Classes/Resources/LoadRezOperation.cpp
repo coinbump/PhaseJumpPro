@@ -13,7 +13,7 @@ SomeLoadResourcesOperation::Result LoadRezOperation::LoadResources() {
     std::ifstream file;
     file.open(filePath);
     if (!file.is_open()) {
-        PJLog("ERROR. Can't open file at: %s", info.filePath.c_str());
+        PJ::Log("ERROR. Can't open file at: ", info.filePath);
         return Failure();
     }
 
@@ -43,7 +43,7 @@ SomeLoadResourcesOperation::Result LoadRezOperation::LoadResources() {
             fullPath.remove_filename();
             fullPath /= resourcePath;
 
-            LoadResourceInfo loadResourceInfo(fullPath, type, id);
+            ResourceInfo loadResourceInfo(id, fullPath, type);
             auto loadOperations = loadResourcesModel.MakeLoadOperations(loadResourceInfo);
 
             AddRange(result.loadOperations, loadOperations);

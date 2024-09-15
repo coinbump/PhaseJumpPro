@@ -14,8 +14,10 @@
  */
 namespace PJ {
     /// Abstract component for gestures/logic to handle dragging
-    class SomeDragHandler : public WorldComponent<>, public SomePointerUIEventsResponder {
+    class SomeDragHandler : public WorldComponent<> {
     public:
+        using This = SomeDragHandler;
+
         enum class StateType { Default, Drag };
 
         /// (OPTIONAL). If not null, drag the target object when this object is
@@ -41,6 +43,8 @@ namespace PJ {
         WorldPosition dragStartPosition;
 
     public:
+        SomeDragHandler();
+
         virtual void OnDragStart(WorldPosition inputPosition) {}
 
         virtual void OnDragUpdate(WorldPosition inputPosition) = 0;
@@ -48,7 +52,7 @@ namespace PJ {
         bool IsDragging() const;
         virtual void OnDragEnd();
         virtual void StartDrag(WorldPosition inputPosition);
-        void OnPointerDown(PointerDownUIEvent event) override;
+        void OnPointerDown(PointerDownUIEvent const& event);
     };
 } // namespace PJ
 

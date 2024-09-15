@@ -2,6 +2,7 @@
 
 #include "Updatable.h"
 #include "Utils.h"
+#include <algorithm>
 
 // TODO: Unit tests
 namespace PJ {

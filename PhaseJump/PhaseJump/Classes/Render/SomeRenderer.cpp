@@ -7,15 +7,38 @@
 
 using namespace PJ;
 
-VectorList<RenderModel>
-SomeRenderer::MakeRenderModels(Mesh const& mesh, VectorList<SomeTexture*> textures) {
-    VectorList<RenderModel> result;
-    GUARDR(owner, result)
-    GUARDR_LOG(model.material, result, String("ERROR. Missing material"))
+SomeRenderer::SomeRenderer(Vector3 worldSize) :
+    model(worldSize) {
 
-    RenderModelBuilder builder;
-    auto renderModel = builder.Build(*this, mesh, *model.material, textures);
+    model.SetBuildRenderModelsFunc([this](auto& model) {
+        VectorList<SomeTexture*> textures;
+        VectorList<RenderModel> result;
 
-    Add(result, renderModel);
+        auto material = model.material;
+        if (nullptr == material) {
+            PJ::Log("ERROR. Missing material.");
+            return result;
+        }
+
+        auto& materialTextures = material->Textures();
+
+        RenderModelBuilder builder;
+        auto renderModel = builder.Build(*this, model.Mesh(), *material, materialTextures);
+        renderModel.SetVertexColors(std::span<RenderColor const>(model.VertexColors()));
+
+        Add(result, renderModel);
+
+        return result;
+    });
+}
+
+VectorList<RenderModel> SomeRenderer::MakeRenderModels() {
+    auto result = model.RenderModels();
+
+    // Always update the matrix for latest transform
+    for (auto& renderModel : result) {
+        renderModel.matrix = ModelMatrix();
+    }
+
     return result;
 }

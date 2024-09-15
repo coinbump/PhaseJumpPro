@@ -23,7 +23,7 @@ namespace PJ {
     public:
         using Base = SomeAttribute;
 
-        Core core;
+        Core core{};
 
         Attribute(String id, Core core = Core()) :
             Base(id),

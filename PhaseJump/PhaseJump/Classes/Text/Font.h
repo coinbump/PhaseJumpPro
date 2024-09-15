@@ -57,16 +57,20 @@ namespace PJ {
         /// Texture atlas that defines the glyph textures for the font
         SP<TextureAtlas> atlas;
 
+        String name;
+        float size = 0;
+
         /// Map of UTF-8 string to glyph
         UnorderedMap<uint32_t, Glyph> glyphs;
 
         FontMetrics metrics;
 
-        /// Defines offset adjustments for character pairs that appear together
-        // UnorderedMap<KerningPair, int> kerning;
-
         /// Attribute tags. Example: bold, italic, heavy, etc.
         TypeTagSet typeTags;
+
+        Font(String name, float size) :
+            name(name),
+            size(size) {}
 
         int Height() const {
             return metrics.ascent + metrics.descent;

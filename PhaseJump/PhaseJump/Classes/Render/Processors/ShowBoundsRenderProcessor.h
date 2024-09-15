@@ -13,15 +13,18 @@ namespace PJ {
     /// Renders a frame to show bounds
     class ShowBoundsRenderProcessor : public RenderProcessor {
     public:
+        using Base = RenderProcessor;
+
         Color color;
 
+        // TODO: re-evaluate all registered render phases, probably don't want to run for each
+        // camera
         ShowBoundsRenderProcessor(Color color = Color::green) :
-            color(color) {
-            this->name = "Show bounds";
-        }
+            Base("Show bounds", { RenderPhase::Camera }),
+            color(color) {}
 
         // MARK: RenderProcessor
 
-        void Process(RenderSystemModel& systemModel) override;
+        void Process(CameraRenderModel& cameraModel) override;
     };
 } // namespace PJ

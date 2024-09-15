@@ -4,6 +4,7 @@
 #include "SomeGLRenderEngine.h"
 #include "UnorderedMap.h"
 #include <optional>
+#include <type_traits>
 
 /*
  RATING: 4 stars
@@ -40,7 +41,9 @@ namespace PJ {
         void SetLineWidth(float lineWidth) override;
         void EnableFeature(String featureId, bool isEnabled) override;
         void SetViewport(GLint x, GLint y, GLsizei width, GLsizei height) override;
-        void BindFrameBuffer(GLuint fb) override;
+        void BindFrameBuffer(GLuint id) override;
+        void BindTexture2D(GLuint id);
+        void BindRenderBuffer(GLenum target, GLuint id);
         void UniformMatrix4fv(GLint location, const GLfloat* value) override;
 
         void EnableVertexAttributeArray(GLuint location, bool isEnabled) override;
@@ -56,7 +59,7 @@ namespace PJ {
 
         std::optional<GLenum> FeatureIdToGLFeatureId(String featureId);
         SP<GLVertexBuffer> BuildVertexBuffer(GLVertexBufferPlan const& plan) override;
-        SP<GLIndexBuffer> BuildIndexBuffer(VectorList<uint32_t> indices) override;
+        SP<GLIndexBuffer> BuildIndexBuffer(std::span<uint32_t const> indices) override;
         void BindVertexBuffer(GLuint vbo) override;
         void BindIndexBuffer(GLuint ibo) override;
         void BindVertexArray(GLuint vao) override;
@@ -72,6 +75,7 @@ namespace PJ {
 
         void ProjectionMatrixLoadOrthographic(Vector2 size) override;
         void LoadTranslate(Vector3 value) override;
+        SP<SomeRenderContext> MakeTextureBuffer() override;
 
     protected:
         void GoInternal() override;

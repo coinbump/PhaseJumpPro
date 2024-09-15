@@ -1,0 +1,5 @@
+{
+	"id": "chromaticAberrationSimple",
+	"shader.vertex": "vertex+texture",
+	"shader.fragment": "chromaticAberrationSimple"
+}

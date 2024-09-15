@@ -42,9 +42,11 @@ namespace PJ {
             return agents;
         }
 
-        AgentGroup(size_t size = 100, Agent agent = Agent()) :
-            agents(size, 0, agent) {}
+        AgentGroup(size_t size = 100) :
+            agents(size, 0) {}
 
+        /// Adds agent to the pool or reuses it
+        /// Important: don't store pointers to objects inside resizable pools, memory will move
         Agent* Add() {
             auto agent = agents.Add();
             GUARDR(agent, nullptr)
@@ -53,6 +55,7 @@ namespace PJ {
             return agent;
         }
 
+        /// Run a function for all active agents
         void RunAgentsAction(std::function<void(Agent&)> action) {
             for (size_t i = 0; i <= agents.LastActiveIndex(); i++) {
                 try {

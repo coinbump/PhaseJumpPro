@@ -17,7 +17,7 @@ SomeLoadResourcesOperation::Result LoadTexturePackerAtlasOperation::LoadResource
     std::ifstream file;
     file.open(filePath);
     if (!file.is_open()) {
-        PJLog("ERROR. Can't open file at: %s", info.filePath.c_str());
+        PJ::Log("ERROR. Can't open file at: ", info.filePath);
         return Failure();
     }
 
@@ -31,7 +31,7 @@ SomeLoadResourcesOperation::Result LoadTexturePackerAtlasOperation::LoadResource
         fullImagePath.replace_extension("png");
 
         // No id needed, we're not storing the parent texture in resources
-        LoadResourceInfo loadTextureInfo(fullImagePath, "texture", "");
+        ResourceInfo loadTextureInfo("", fullImagePath, "texture");
         auto loadTextureOperations = loadResourcesModel.MakeLoadOperations(loadTextureInfo);
 
         GUARDR(!IsEmpty(loadTextureOperations), Failure())
@@ -83,22 +83,22 @@ SomeLoadResourcesOperation::Result LoadTexturePackerAtlasOperation::LoadResource
                 texture, atlasTextureId, atlasOrigin, atlasSize, trimOrigin, untrimmedSize,
                 alphaMode
             );
-            LoadedResource loadedResource(
-                filePath, "texture", atlasTextureId, SCAST<PJ::Base>(atlasTexture)
+            ResourceModel loadedResource(
+                SCAST<PJ::Base>(atlasTexture), atlasTextureId, filePath, "texture"
             );
             result.Add(loadedResource);
 
             textureAtlas->Add(atlasTexture);
         }
 
-        LoadedResource loadedAtlasResource(
-            filePath, "texture.atlas", info.id, SCAST<PJ::Base>(textureAtlas)
+        ResourceModel loadedAtlasResource(
+            SCAST<PJ::Base>(textureAtlas), info.id, filePath, "texture.atlas"
         );
         result.Add(loadedAtlasResource);
 
         return result;
     } catch (...) {
-        PJLog("ERROR: Couldn't parse rTexPacker JSON");
+        PJ::Log("ERROR: Couldn't parse rTexPacker JSON");
     }
 
     return Failure();

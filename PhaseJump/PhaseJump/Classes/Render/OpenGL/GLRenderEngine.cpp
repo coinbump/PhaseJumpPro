@@ -3,6 +3,7 @@
 #include "GLHeaders.h"
 #include "GLShaderProgram.h"
 #include "GLShaderProgramLoader.h"
+#include "GLTextureBuffer.h"
 #include "GLVertexBuffer.h"
 #include "RenderContextModel.h"
 #include "RenderFeature.h"
@@ -22,7 +23,7 @@ void GLRenderEngine::EnableVertexAttributeArray(GLuint location, bool isEnabled)
     Base::EnableVertexAttributeArray(location, isEnabled);
 
     // NOTE: problem about checking state changes is that the vertex
-    // attrib value might be difficult from program to program.
+    // attrib value might be different from program to program.
     if (isEnabled) {
         glEnableVertexAttribArray(location);
     } else {
@@ -86,11 +87,14 @@ std::optional<GLenum> GLRenderEngine::FeatureIdToGLFeatureId(String featureId) {
 }
 
 void GLRenderEngine::EnableFeature(String featureId, bool isEnabled) {
+    if (optimizeStateSwitches) {
+        GUARD(renderState.IsFeatureEnabled(featureId) != isEnabled);
+    }
     Base::EnableFeature(featureId, isEnabled);
 
     auto glFeatureId = FeatureIdToGLFeatureId(featureId);
     if (!glFeatureId) {
-        PJLog("ERROR. Unsupported feature %s", featureId.c_str());
+        PJ::Log("ERROR. Unsupported feature: ", featureId.c_str());
         return;
     }
 
@@ -107,18 +111,27 @@ void GLRenderEngine::SetLineWidth(float lineWidth) {
     glLineWidth(lineWidth);
 }
 
-void GLRenderEngine::BindFrameBuffer(GLuint fb) {
-    Base::BindFrameBuffer(fb);
+void GLRenderEngine::BindFrameBuffer(GLuint id) {
+    Base::BindFrameBuffer(id);
 
-    glBindFramebuffer(GL_FRAMEBUFFER, fb);
+    glBindFramebuffer(GL_FRAMEBUFFER, id);
+}
+
+void GLRenderEngine::BindTexture2D(GLuint id) {
+    glBindTexture(GL_TEXTURE_2D, id);
+}
+
+void GLRenderEngine::BindRenderBuffer(GLenum target, GLuint id) {
+    glBindRenderbuffer(target, id);
 }
 
 void GLRenderEngine::RunGL(std::function<void()> command, String name) {
     GUARD(command)
     command();
 
+    // TODO: wrap in #if DEBUG
     while (auto error = glGetError()) {
-        PJLog("ERROR: %s: %d", name.c_str(), error);
+        PJ::Log("ERROR: ", name, " id: ", error);
     }
 }
 
@@ -126,7 +139,7 @@ void GLRenderEngine::GoInternal() {
     Base::GoInternal();
 
     const char* gl_version = (const char*)glGetString(GL_VERSION);
-    PJLog("OpenGL Version: %s", gl_version);
+    PJ::Log("OpenGL Version: ", gl_version);
 
     /*
      A VAO (Vertex array object) stores pointers to VBOs (Vertex buffer objects)
@@ -150,25 +163,25 @@ void GLRenderEngine::GoInternal() {
 
     SetBlendMode(GLBlendMode(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
+    featureIdToGLFeatureIdMap[RenderFeature::Blend] = GL_BLEND;
+    featureIdToGLFeatureIdMap[RenderFeature::CullFace] = GL_CULL_FACE;
+    featureIdToGLFeatureIdMap[RenderFeature::Texture2D] = GL_TEXTURE_2D;
+    featureIdToGLFeatureIdMap[RenderFeature::DepthTest] = GL_DEPTH_TEST;
+    featureIdToGLFeatureIdMap[RenderFeature::MultiSample] = GL_MULTISAMPLE;
+
     // https://learnopengl.com/Advanced-OpenGL/Face-culling
     // Our mesh code is shared with Unity, which uses Clockwise vertex ordering
-    glEnable(GL_CULL_FACE);
+    EnableFeature(RenderFeature::CullFace, true);
     glCullFace(GL_BACK);
     glFrontFace(GL_CW);
 
-    // Enable 2D textures
-    glEnable(GL_TEXTURE_2D);
+    EnableFeature(RenderFeature::Texture2D, true);
+    EnableFeature(RenderFeature::DepthTest, true);
 
-    // Enable Z-ordering via depth testing
-    glEnable(GL_DEPTH_TEST);
-
-    // TODO: temp code
-    glEnable(GL_MULTISAMPLE);
+    // TODO: this isn't working, why?
+    EnableFeature(RenderFeature::MultiSample, true);
 
     ScanGLExtensions();
-
-    featureIdToGLFeatureIdMap[RenderFeature::Blend] = GL_BLEND;
-    featureIdToGLFeatureIdMap[RenderFeature::ScissorTest] = GL_SCISSOR_TEST;
 }
 
 void GLRenderEngine::SetBlendMode(GLBlendMode blendMode) {
@@ -221,7 +234,7 @@ SP<GLVertexBuffer> GLRenderEngine::BuildVertexBuffer(GLVertexBufferPlan const& p
     return result;
 }
 
-SP<GLIndexBuffer> GLRenderEngine::BuildIndexBuffer(VectorList<uint32_t> indices) {
+SP<GLIndexBuffer> GLRenderEngine::BuildIndexBuffer(std::span<uint32_t const> indices) {
     GLuint IBO;
     RunGL([&]() { glGenBuffers(1, &IBO); }, "Gen IBO");
     RunGL([&]() { glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO); }, "Bind IBO");
@@ -318,7 +331,7 @@ void GLRenderEngine::RenderProcess(RenderModel const& model) {
     GUARD(modelMaterial)
     auto glProgram = As<GLShaderProgram>(modelMaterial->ShaderProgram().get());
     if (nullptr == glProgram) {
-        PJLog("ERROR. GLShaderProgram required");
+        PJ::Log("ERROR. GLShaderProgram required");
         return;
     }
 
@@ -335,7 +348,7 @@ void GLRenderEngine::RenderProcess(RenderModel const& model) {
     GLVertexBufferPlan vboPlan;
     vboPlan.Add("a_position", vertices);
 
-    auto& modelColors = model.Colors();
+    auto modelColors = model.VertexColors();
 
     // For now we'll take the easy route and use float colors
     // FUTURE: evaluate converting colors to 32 bit single values for efficiency
@@ -372,7 +385,7 @@ void GLRenderEngine::RenderProcess(RenderModel const& model) {
     auto hasTextureCoordAttribute = glProgram->HasVertexAttribute("a_texCoord");
     if (hasTextureCoordAttribute) {
         if (uvs.size() != vertices.size()) {
-            PJLog("ERROR. Trying to render a texture shader with invalid uvs.");
+            PJ::Log("ERROR. UVs size does not match vertices size for render");
             return;
         }
 
@@ -420,10 +433,10 @@ void GLRenderEngine::RenderDraw(RenderDrawModel const& drawModel) {
         }
     );
 
-    glEnable(GL_DEPTH_TEST);
+    EnableFeature(RenderFeature::DepthTest, true);
     RenderDrawPlans(noBlendRenderPlans);
 
-    glDisable(GL_DEPTH_TEST);
+    EnableFeature(RenderFeature::DepthTest, false);
     // TODO: do we need glDepthFunc here?
     RenderDrawPlans(blendRenderPlans);
 
@@ -530,6 +543,8 @@ void GLRenderEngine::RenderDrawPlans(VectorList<SP<GLRenderPlan>> const& renderP
     }
 }
 
+// CODE REVIEWED BELOW:
+
 void GLRenderEngine::ScanGLExtensions() {
     OrderedSet<String> glExtensions;
 
@@ -541,9 +556,13 @@ void GLRenderEngine::ScanGLExtensions() {
         glExtensions.insert(String(extensionId));
     });
 
-    PJLog("****** OPENGL EXTENSIONS ******");
+    PJ::Log("****** OPENGL EXTENSIONS ******");
     for (auto& extension : glExtensions) {
-        PJLog("%s", extension.c_str());
+        PJ::Log(extension);
     }
-    PJLog("******                   ******");
+    PJ::Log("******                   ******");
+}
+
+SP<SomeRenderContext> GLRenderEngine::MakeTextureBuffer() {
+    return MAKE<GLTextureBuffer>(SCAST<GLRenderEngine>(shared_from_this()));
 }

@@ -99,8 +99,9 @@ namespace PJ {
     public:
         using Base = SomePlatformWindow;
 
-        SDLPlatformWindow(Configuration config) :
-            config(config) {}
+        SDLPlatformWindow(Configuration config, SP<SDLWorld> world) :
+            config(config),
+            world(world) {}
 
         virtual ~SDLPlatformWindow() {
             SDL_DestroyWindow(window);

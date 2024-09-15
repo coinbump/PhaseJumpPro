@@ -1,7 +1,10 @@
 #import "ObjCBridge.h"
-#import <PhaseJump/FileProcessor.Utility.h>
-#import <PhaseJump/PhaseJump.h>
-#import <PhaseJump/PhaseJumpDev.h>
+
+#if DEVELOPMENT
+#include <PhaseJump-Dev/PhaseJump-Dev.h>
+#else
+#include <PhaseJump/PhaseJump.h>
+#endif
 
 using namespace PJ;
 using namespace std;

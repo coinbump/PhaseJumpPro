@@ -30,10 +30,6 @@ TEST(Vector3, TestArrayOperator) {
     EXPECT_EQ(4, sut[0]);
     EXPECT_EQ(5, sut[1]);
     EXPECT_EQ(6, sut[2]);
-    EXPECT_EQ(4, sut[3]);
-    EXPECT_EQ(5, sut[4]);
-    EXPECT_EQ(6, sut[5]);
-    EXPECT_EQ(4, sut[-1]);
 }
 
 TEST(Vector3, TestPack) {
@@ -79,10 +75,6 @@ TEST(Vector3Int, TestArrayOperator) {
     EXPECT_EQ(4, sut[0]);
     EXPECT_EQ(5, sut[1]);
     EXPECT_EQ(6, sut[2]);
-    EXPECT_EQ(4, sut[3]);
-    EXPECT_EQ(5, sut[4]);
-    EXPECT_EQ(6, sut[5]);
-    EXPECT_EQ(4, sut[-1]);
 }
 
 TEST(Vector3Int, TestPack) {
@@ -106,4 +98,24 @@ TEST(Vector3, AxisValue) {
     EXPECT_EQ(1, sut.AxisValue(Axis::X));
     EXPECT_EQ(3, sut.AxisValue(Axis::Y));
     EXPECT_EQ(4, sut.AxisValue(Axis::Z));
+}
+
+TEST(Vector3, AccessOutOfRange) {
+    int assertCount = 0;
+    asserter.assertFunc = [&](bool isTrue) {
+        GUARD(!isTrue)
+        assertCount++;
+    };
+
+    Vector3 sut(1, 3, 4);
+
+    EXPECT_EQ(0, assertCount);
+    sut[-1];
+    EXPECT_EQ(1, assertCount);
+    sut[3];
+    EXPECT_EQ(2, assertCount);
+    sut[2];
+    EXPECT_EQ(2, assertCount);
+
+    asserter.assertFunc = {};
 }

@@ -4,7 +4,7 @@
 using namespace std;
 using namespace PJ;
 
-void OverrideFeaturesRenderProcessor::Process(RenderSystemModel& systemModel) {
+void OverrideFeaturesRenderProcessor::Process(CameraRenderModel& cameraModel) {
 // #define LOG
 #ifdef LOG
     for (auto& feature : map) {
@@ -12,7 +12,7 @@ void OverrideFeaturesRenderProcessor::Process(RenderSystemModel& systemModel) {
     }
 #endif
 
-    for (auto& model : systemModel.models) {
+    for (auto& model : cameraModel.models) {
         auto modelMaterial = model.Material();
         GUARD_CONTINUE(modelMaterial)
 
@@ -24,7 +24,7 @@ void OverrideFeaturesRenderProcessor::Process(RenderSystemModel& systemModel) {
                 }
             } catch (...) {}
 
-            auto overrideMaterial = systemModel.MakeOverrideMaterial(model);
+            auto overrideMaterial = cameraModel.MakeOverrideMaterial(model);
             GUARD_CONTINUE(overrideMaterial)
 
             overrideMaterial->EnableFeature(
@@ -32,7 +32,7 @@ void OverrideFeaturesRenderProcessor::Process(RenderSystemModel& systemModel) {
             );
         }
 
-        auto overrideMaterial = systemModel.OverrideMaterial(model);
+        auto overrideMaterial = cameraModel.OverrideMaterial(model);
         if (overrideMaterial) {
             model.SetOverrideMaterial(overrideMaterial.get());
         }

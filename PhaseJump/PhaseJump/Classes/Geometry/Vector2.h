@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Axis.h"
+#include "Dev.h"
 #include "FloatMath.h"
 #include "IntMath.h"
 #include "Macros_Vectors.h"
@@ -31,22 +32,30 @@ namespace PJ {
             x(x),
             y(y) {}
 
-        float& operator[](size_t index) {
-            return (&x)[index >= 0 && index < 2 ? index : index % 2];
+        constexpr float& operator[](size_t index) {
+            Assert(index >= 0 && index < 2);
+
+            /// Don't use &x[index] because struct packing isn't guaranteed
+            float* indices[2] = { &x, &y };
+            return *indices[index];
         }
 
-        float operator[](size_t index) const {
-            return (&x)[index >= 0 && index < 2 ? index : index % 2];
+        constexpr float operator[](size_t index) const {
+            Assert(index >= 0 && index < 2);
+
+            /// Don't use &x[index] because struct packing isn't guaranteed
+            float const* indices[2] = { &x, &y };
+            return *indices[index];
         }
 
-        bool operator==(Vector2 const& rhs) const {
+        constexpr bool operator==(Vector2 const& rhs) const {
             return x == rhs.x && y == rhs.y;
         }
 
         operator Terathon::Vector2D() const;
         operator Terathon::Point2D() const;
 
-        float& AxisValue(Axis2D axis) {
+        constexpr float& AxisValue(Axis2D axis) {
             switch (axis) {
             case Axis2D::X:
                 return x;
@@ -55,7 +64,7 @@ namespace PJ {
             }
         }
 
-        float AxisValue(Axis2D axis) const {
+        constexpr float AxisValue(Axis2D axis) const {
             switch (axis) {
             case Axis2D::X:
                 return x;
@@ -64,7 +73,7 @@ namespace PJ {
             }
         }
 
-        float& AxisValueReverse(Axis2D axis) {
+        constexpr float& AxisValueReverse(Axis2D axis) {
             switch (axis) {
             case Axis2D::X:
                 return y;
@@ -73,7 +82,7 @@ namespace PJ {
             }
         }
 
-        float AxisValueReverse(Axis2D axis) const {
+        constexpr float AxisValueReverse(Axis2D axis) const {
             switch (axis) {
             case Axis2D::X:
                 return y;
@@ -107,13 +116,14 @@ namespace PJ {
     class Vector2Int {
     public:
         using This = Vector2Int;
+        using MathType = int;
 
-        int x = 0;
-        int y = 0;
+        MathType x = 0;
+        MathType y = 0;
 
         constexpr Vector2Int() {}
 
-        constexpr Vector2Int(int x, int y) :
+        constexpr Vector2Int(MathType x, MathType y) :
             x(x),
             y(y) {}
 
@@ -121,19 +131,25 @@ namespace PJ {
         static Vector2Int const one;
         static Vector2Int const three;
 
-        int& operator[](size_t index) {
-            return (&x)[index >= 0 && index < 2 ? index : index % 2];
+        constexpr MathType& operator[](size_t index) {
+            Assert(index >= 0 && index < 2);
+
+            MathType* indices[2] = { &x, &y };
+            return *indices[index];
         }
 
-        int operator[](size_t index) const {
-            return (&x)[index >= 0 && index < 2 ? index : index % 2];
+        constexpr MathType operator[](size_t index) const {
+            Assert(index >= 0 && index < 2);
+
+            MathType const* indices[2] = { &x, &y };
+            return *indices[index];
         }
 
-        bool operator==(Vector2Int const& rhs) const {
+        constexpr bool operator==(Vector2Int const& rhs) const {
             return x == rhs.x && y == rhs.y;
         }
 
-        VECTOR_METHODS(Vector2Int, int, 2);
+        VECTOR_METHODS(Vector2Int, MathType, 2);
 
         String ToString() const {
             std::stringstream stream;
@@ -141,7 +157,7 @@ namespace PJ {
             return stream.str();
         }
 
-        static constexpr This Uniform(int value) {
+        static constexpr This Uniform(MathType value) {
             return Vector2Int(value, value);
         }
     };

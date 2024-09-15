@@ -17,19 +17,19 @@ void Paint(OrderMap& orderMap, WorldNode& node, uint32_t& order) {
     }
 };
 
-void DepthFirstOrderRenderProcessor::Process(RenderSystemModel& systemModel) {
-    GUARD(systemModel.root)
+void DepthFirstOrderRenderProcessor::Process(CameraRenderModel& cameraModel) {
+    GUARD(cameraModel.root)
 
     /// Object render id to order map. For Z-ordering
     OrderMap orderMap;
 
     uint32_t order = 0;
 
-    Paint(orderMap, *systemModel.root, order);
+    Paint(orderMap, *cameraModel.root, order);
 
     /// Paint render models (there will be gaps in order because of nodes in the tree that don't
     /// have a renderer)
-    std::for_each(systemModel.models.begin(), systemModel.models.end(), [&](RenderModel& model) {
+    std::for_each(cameraModel.models.begin(), cameraModel.models.end(), [&](RenderModel& model) {
         try {
             model.order = orderMap.at(model.id);
         } catch (...) {
@@ -37,5 +37,5 @@ void DepthFirstOrderRenderProcessor::Process(RenderSystemModel& systemModel) {
         }
     });
 
-    std::sort(systemModel.models.begin(), systemModel.models.end(), systemModel.modelSortFunc);
+    std::sort(cameraModel.models.begin(), cameraModel.models.end(), cameraModel.modelSortFunc);
 }

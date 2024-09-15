@@ -1,6 +1,5 @@
 #include "gtest/gtest.h"
 
-#include "ReadingCamera.h"
 #include "OrthoCamera.h"
 #include "World.h"
 #include "WorldNode.h"

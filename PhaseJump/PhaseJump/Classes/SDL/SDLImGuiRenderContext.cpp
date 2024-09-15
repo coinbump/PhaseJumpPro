@@ -29,9 +29,22 @@ SDLImGuiRenderContext::~SDLImGuiRenderContext() {
 
 void SDLImGuiRenderContext::Configure(SDL_Window* window) {
     this->window = window;
-    if (nullptr == window) {
-        return;
-    }
+    GUARD(window)
+
+    // For Mac OS:
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+    SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
+
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
+
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
+
+    glContext = SDL_GL_CreateContext(window);
 
     // https://blog.conan.io/2019/06/26/An-introduction-to-the-Dear-ImGui-library.html
     // https://cpp.hotexamples.com/examples/-/-/ImGui_ImplSDL2_NewFrame/cpp-imgui_implsdl2_newframe-function-examples.html
@@ -39,18 +52,8 @@ void SDLImGuiRenderContext::Configure(SDL_Window* window) {
     imGuiContext = ImGui::CreateContext();
     ImGui::StyleColorsDark();
 
-    // For Mac OS:
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-
-    glContext = SDL_GL_CreateContext(window);
     ImGui_ImplSDL3_InitForOpenGL(window, glContext);
     ImGui_ImplOpenGL3_Init(); // ALT: "#version 150");
-
-    SP<GLRenderEngine> glRenderEngine = MAKE<GLRenderEngine>();
-    //    glRenderEngine->colorFormat = ColorFormat::Byte;
-    glRenderEngine->Go();
-
-    this->renderEngine = SCAST<SomeRenderEngine>(glRenderEngine);
 }
 
 SP<SomeGLRenderEngine> SDLImGuiRenderContext::_GLRenderEngine() const {
@@ -65,26 +68,19 @@ void SDLImGuiRenderContext::SetGLContext(SDL_GLContext glContext) {
     this->glContext = glContext;
 }
 
-void SDLImGuiRenderContext::SetImGuiContext(ImGuiContext* imGuiContext) {
+void SDLImGuiRenderContext::SetImGuiContext(class ImGuiContext* imGuiContext) {
     this->imGuiContext = imGuiContext;
 }
 
 void SDLImGuiRenderContext::Bind() {
-    if (nullptr == window || nullptr == imGuiContext) {
-        return;
-    }
+    GUARD(window)
 
-    ImGui::SetCurrentContext(imGuiContext);
-    ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplSDL3_NewFrame();
-    ImGui::NewFrame();
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     auto pixelSize = PixelSize();
 
     // TODO: shouldn't be relying on GL here
     _GLRenderEngine()->SetViewport(0, 0, pixelSize.x, pixelSize.y);
-    glUseProgram(0); // You may want this if using this code in an OpenGL 3+
-                     // context where shaders may be bound
 }
 
 void SDLImGuiRenderContext::Clear() {
@@ -93,16 +89,10 @@ void SDLImGuiRenderContext::Clear() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-#include "EllipseMeshBuilder.h"
-#include "RenderModel.h"
-
 void SDLImGuiRenderContext::Present() {
-    if (nullptr == window) {
-        return;
-    }
+    GUARD(window)
 
-    ImGui::Render();
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     SDL_GL_SwapWindow(window);
 }

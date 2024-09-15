@@ -57,9 +57,9 @@ TEST(Mesh, TestPlusOperator) {
     Add(triangles, 2);
 
     sut1.SetVertices(vertices1);
-    sut1.BaseTriangles() = triangles;
+    sut1.ModifiableTriangles() = triangles;
     sut2.SetVertices(vertices2);
-    sut2.BaseTriangles() = triangles;
+    sut2.ModifiableTriangles() = triangles;
 
     auto sut3 = sut1 + sut2;
 

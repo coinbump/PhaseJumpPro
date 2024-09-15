@@ -55,14 +55,20 @@ namespace PJ {
 
         virtual void OnAcceptDrag(DragItems const& items) {}
 
+        // MARK: SomeWorldComponent
+
+        String TypeName() const override {
+            return "SomeDropTarget";
+        }
+
     protected:
         void Awake() override {
             Base::Awake();
 
 #if DEBUG
-            if (NULL == GetComponent<SomeCollider2D>()) {
-                PJLog("Error. DropTarget requires a collider.");
-            }
+//            if (NULL == GetComponent<SomeCollider2D>()) {
+//                PJ::Log("Error. DropTarget requires a collider.");
+//            }
 #endif
         }
 

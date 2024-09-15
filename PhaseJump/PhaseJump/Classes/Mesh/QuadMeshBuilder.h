@@ -35,7 +35,7 @@ namespace PJ {
             // vector copy But it adds more complexity and edge cases elsewhere. Re-evaluate later
             // result.SetSharedTriangles(&QuadMesh::triangles);
 
-            result.BaseTriangles() = QuadMesh::triangles;
+            result.SetTriangles(Mesh::TrianglesSpan(QuadMesh::triangles));
             result.SetUVs(QuadMesh::uvs);
 
             return result;

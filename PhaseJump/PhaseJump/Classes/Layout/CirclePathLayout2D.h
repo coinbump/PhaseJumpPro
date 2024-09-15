@@ -1,5 +1,4 @@
-#ifndef CIRCLEPATHLAYOUT2D_H
-#define CIRCLEPATHLAYOUT2D_H
+#pragma once
 
 #include "CirclePath.h"
 #include "SomePathLayout.h"
@@ -7,18 +6,32 @@
 #include "WorldSizeable.h"
 #include <memory>
 
-// CODE REVIEW: ?/23
+/*
+ RATING: 5 stars
+ Tested and works
+ CODE REVIEW: 9/14/24
+ */
 namespace PJ {
-    // TODO: rethink layouts using composition
     /// Distribute objects along a circle path
     class CirclePathLayout2D : public SomePathLayout, public WorldSizeable {
-    public:
+    protected:
         float radius = 1.0f;
 
+    public:
         CirclePathLayout2D() {}
 
         CirclePathLayout2D(float radius) :
             radius(radius) {}
+
+        float Radius() const {
+            return radius;
+        }
+
+        void SetRadius(float value) {
+            GUARD(radius != value)
+            radius = value;
+            SetLayoutNeedsBuild();
+        }
 
         // MARK: WorldSizeable
 
@@ -36,10 +49,10 @@ namespace PJ {
             return MAKE<CirclePath>(radius);
         }
 
-        Vector3 Size() const override {
-            return Vector3(radius * 2.0f, radius * 2.0f, 0);
+        // MARK: SomeWorldComponent
+
+        String TypeName() const override {
+            return "CirclePathLayout2D";
         }
     };
 } // namespace PJ
-
-#endif

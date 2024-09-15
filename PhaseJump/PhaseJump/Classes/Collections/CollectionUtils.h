@@ -1,9 +1,9 @@
 #pragma once
 
 #include "InfixOStreamIterator.h"
-#include "SomeDataContainer.h"
 #include "StringUtils.h"
 #include "Utils.h"
+#include <algorithm>
 #include <functional>
 #include <optional>
 #include <sstream>
@@ -15,22 +15,22 @@
  */
 namespace PJ {
     template <class Collection>
-    void RemoveAll(Collection& collection) {
+    constexpr void RemoveAll(Collection& collection) {
         collection.clear();
     }
 
     template <class Collection>
-    Collection::size_type Count(Collection const& collection) {
+    constexpr Collection::size_type Count(Collection const& collection) {
         return collection.size();
     }
 
     template <class Collection>
-    bool IsEmpty(Collection const& collection) {
+    constexpr bool IsEmpty(Collection const& collection) {
         return collection.size() <= 0;
     }
 
     template <class Collection>
-    void Remove(Collection& collection, typename Collection::value_type const& value) {
+    constexpr void Remove(Collection& collection, typename Collection::value_type const& value) {
         auto i = std::find(collection.begin(), collection.end(), value);
         GUARD(i != collection.end())
 
@@ -38,7 +38,7 @@ namespace PJ {
     }
 
     template <class Collection, class UnaryPred>
-    bool RemoveFirstIf(Collection& collection, UnaryPred check) {
+    constexpr bool RemoveFirstIf(Collection& collection, UnaryPred check) {
         GUARDR(check, false)
 
         auto i = std::find_if(collection.begin(), collection.end(), check);
@@ -49,27 +49,28 @@ namespace PJ {
     }
 
     template <class Collection, class UnaryPred>
-    void RemoveIf(Collection& collection, UnaryPred check) {
+    constexpr void RemoveIf(Collection& collection, UnaryPred check) {
         collection.erase(
             std::remove_if(collection.begin(), collection.end(), check), collection.end()
         );
     }
 
     template <class Collection>
-    bool Contains(Collection const& collection, typename Collection::value_type const& value) {
+    constexpr bool
+    Contains(Collection const& collection, typename Collection::value_type const& value) {
         auto findResult = std::find(collection.begin(), collection.end(), value);
         return findResult != collection.end();
     }
 
     template <class Collection, class UnaryPred>
-    bool ContainsWhere(Collection const& collection, UnaryPred check) {
+    constexpr bool ContainsWhere(Collection const& collection, UnaryPred check) {
         GUARDR(check, false)
         auto i = std::find_if(collection.begin(), collection.end(), check);
         return i != collection.end();
     }
 
     template <class Collection>
-    void AddRange(Collection& collection, Collection const& source) {
+    constexpr void AddRange(Collection& collection, Collection const& source) {
         collection.insert(collection.end(), source.begin(), source.end());
     }
 
@@ -83,8 +84,9 @@ namespace PJ {
     //    }
 
     template <class Collection>
-    std::optional<size_t>
-    IndexOf(Collection const& collection, typename Collection::value_type const& item) {
+    std::optional<size_t> constexpr IndexOf(
+        Collection const& collection, typename Collection::value_type const& item
+    ) {
         auto i = std::find(collection.begin(), collection.end(), item);
 
         GUARDR(i != collection.end(), std::nullopt);
@@ -92,7 +94,7 @@ namespace PJ {
     }
 
     template <class Collection, class UnaryPred>
-    Collection::iterator FirstIterator(Collection& collection, UnaryPred check) {
+    constexpr Collection::iterator FirstIterator(Collection& collection, UnaryPred check) {
         auto i = std::find_if(collection.begin(), collection.end(), check);
         GUARDR(i != collection.end(), collection.end())
 
@@ -100,13 +102,14 @@ namespace PJ {
     }
 
     template <class Collection, class UnaryPred>
-    std::optional<typename Collection::value_type> First(Collection& collection, UnaryPred check) {
+    constexpr std::optional<typename Collection::value_type>
+    First(Collection& collection, UnaryPred check) {
         auto i = FirstIterator(collection, check);
         return i != collection.end() ? *i : std::optional<typename Collection::value_type>();
     }
 
     template <class Collection, class UnaryPred>
-    Collection Filter(Collection const& collection, UnaryPred check) {
+    constexpr Collection Filter(Collection const& collection, UnaryPred check) {
         Collection result;
         GUARDR(check, result)
         std::copy_if(begin(collection), end(collection), std::back_inserter(result), check);
@@ -114,7 +117,7 @@ namespace PJ {
     }
 
     template <class Collection>
-    void EraseAt(Collection& collection, std::size_t index) {
+    constexpr void EraseAt(Collection& collection, std::size_t index) {
         if (index < 0 || index >= collection.size()) {
             return;
         }
@@ -123,7 +126,7 @@ namespace PJ {
     }
 
     template <class Collection>
-    void RemoveAt(Collection& collection, std::size_t index) {
+    constexpr void RemoveAt(Collection& collection, std::size_t index) {
         EraseAt(collection, index);
     }
 
@@ -132,6 +135,7 @@ namespace PJ {
 
      Makes some assumptions. That Children() is implemented, and nodes are pointers
      */
+    // TODO: improve with Treeable protocol
     template <class Node, class NodeList>
     void CollectBreadthFirstTree(Node const& fromNode, NodeList& result) {
         result.clear();
@@ -151,25 +155,17 @@ namespace PJ {
     }
 
     template <class Collection>
-    void Append(Collection& collection, typename Collection::value_type value) {
+    constexpr void Append(Collection& collection, typename Collection::value_type value) {
         collection.push_back(value);
     }
 
     template <class Collection>
-    void Add(Collection& collection, typename Collection::value_type value) {
+    constexpr void Add(Collection& collection, typename Collection::value_type value) {
         collection.push_back(value);
     }
 
     template <class Collection>
-    bool IsValidIndex(Collection& collection, size_t index) {
+    constexpr bool IsValidIndex(Collection& collection, size_t index) {
         return index >= 0 && index < collection.size();
-    }
-
-    template <class Collection>
-    CollectionData<typename Collection::value_type> ToCollectionData(Collection& collection) {
-        CollectionData<typename Collection::value_type> result(
-            collection.size(), (void*)collection.data()
-        );
-        return result;
     }
 } // namespace PJ

@@ -10,7 +10,7 @@ namespace PJ {
     public:
         using Base = SomeLoadResourcesOperation;
 
-        LoadRezOperation(LoadResourceInfo info, LoadResourcesModel& loadResourcesModel) :
+        LoadRezOperation(ResourceInfo info, LoadResourcesModel& loadResourcesModel) :
             Base(info, loadResourcesModel) {}
 
         // MARK: SomeLoadResourcesOperation

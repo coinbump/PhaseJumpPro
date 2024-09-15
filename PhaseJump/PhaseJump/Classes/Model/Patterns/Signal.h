@@ -1,7 +1,6 @@
-#ifndef PJSIGNAL_H
-#define PJSIGNAL_H
+#pragma once
 
-#include "SomeEvent.h"
+#include "SomeSignal.h"
 #include "StringUtils.h"
 #include "UnorderedSet.h"
 #include "Utils.h"
@@ -10,7 +9,7 @@
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 7/5/24
+ CODE REVIEW: 9/14/24
  */
 namespace PJ {
     /// A collection of typed-keys
@@ -19,7 +18,7 @@ namespace PJ {
     /// user actions (signals) that can satisfy the request
     template <class Key>
         requires std::equality_comparable<Key>
-    class Signal {
+    class Signal : public SomeSignal {
     protected:
         UnorderedSet<Key> keys;
 
@@ -40,16 +39,4 @@ namespace PJ {
             keys.insert(key);
         }
     };
-
-    /// Event that carries a signal
-    /// Useful for responding to categories of behavior
-    class SignalEvent : public SomeEvent {
-    public:
-        SP<Signal<String>> signal;
-
-        SignalEvent(SP<Signal<String>> signal) :
-            signal(signal) {}
-    };
 } // namespace PJ
-
-#endif

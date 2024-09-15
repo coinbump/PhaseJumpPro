@@ -7,7 +7,7 @@
 /*
  RATING: 5 stars
  Simple type
- CODE REVIEW: 7/6/24
+ CODE REVIEW: 9/14/24
  */
 namespace PJ {
     /// Defines the layout of child world nodes
@@ -16,31 +16,41 @@ namespace PJ {
         using Base = WorldComponent<FuncWorldComponentCore>;
         using This = SomeLayout;
 
+    protected:
+        bool layoutNeedsBuild = true;
+
+        /// Arrange child objects according to the layout
+        virtual void ApplyLayout() = 0;
+
+    public:
         /// If true, layout will be applied automatically
         /// If false, you must apply layout manually
         bool autoApply = true;
 
-        /// Return the bounds-size of the layout
-        virtual Vector3 Size() const = 0;
+        void LayoutIfNeeded() {
+            GUARD(layoutNeedsBuild);
+            layoutNeedsBuild = false;
+            ApplyLayout();
+        }
 
-        /// Arrange child objects according to the layout
-        virtual void ApplyLayout() = 0;
+        void SetLayoutNeedsBuild() {
+            layoutNeedsBuild = true;
+        }
 
     protected:
         void Awake() override {
             Base::Awake();
 
-            auto applyLayoutAction = [](SomeWorldComponent& worldComponent) {
-                auto thisComponent = static_cast<This*>(&worldComponent);
-                if (thisComponent->autoApply) {
-                    thisComponent->ApplyLayout();
-                }
+            auto applyLayoutAction = [](auto& _component) {
+                auto component = static_cast<This*>(&_component);
+                GUARD(component->autoApply)
+                component->LayoutIfNeeded();
             };
 
             core.startFunc = applyLayoutAction;
 
             // FUTURE: add needsLayout flag to layouts so they don't keep rebuilding
-            core.lateUpdateFunc = applyLayoutAction;
+            core.onUpdateFunc = [=](auto& owner, auto timeSlice) { applyLayoutAction(owner); };
         }
     };
 } // namespace PJ

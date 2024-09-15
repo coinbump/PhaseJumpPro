@@ -4,6 +4,7 @@
 #include "FloatMath.h"
 #include "RGBAColor.h"
 #include "StringUtils.h"
+#include <algorithm>
 
 /*
  RATING: 5 stars

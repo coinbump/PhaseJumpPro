@@ -1,5 +1,4 @@
-#ifndef PJINCLUDEALIASFILEPROCESSOR_H
-#define PJINCLUDEALIASFILEPROCESSOR_H
+#pragma once
 
 #include "FilesProcessor.h"
 
@@ -18,5 +17,3 @@ namespace PJ_Dev {
         void Process(FilePath filePath) override;
     };
 } // namespace PJ_Dev
-
-#endif

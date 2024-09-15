@@ -6,42 +6,44 @@
 #include "RenderWorldSystem.h"
 #include "SomeCollider2D.h"
 #include "SomeRenderEngine.h"
+#include "WorldNode.h"
 
 using namespace std;
 using namespace PJ;
 
 void AddOverlay(
-    RenderSystemModel& systemModel, WorldNode* node, SP<RenderMaterial> colliderMaterial,
+    CameraRenderModel& cameraModel, WorldNode* node, SP<RenderMaterial> colliderMaterial,
     Color color, Vector2 overlaySize
 ) {
-    ColorRenderer renderer(colliderMaterial, color, overlaySize);
-    renderer.model.SetMeshBuilderFunc([=](RendererModel const& model) {
+    auto renderer = MAKE<ColorRenderer>(colliderMaterial, color, overlaySize);
+    renderer->model.SetBuildMeshFunc([=](RendererModel const& model) {
         // FUTURE: draw the actual polygon, not just the frame
         QuadFrameMeshBuilder builder(overlaySize, Vector2(3, 3));
         Mesh mesh = builder.BuildMesh();
         return mesh;
     });
+    cameraModel.renderers.push_back(renderer);
 
-    renderer.owner = node;
-    auto debugRenderModels = renderer.MakeRenderModels();
-    AddRange(systemModel.models, debugRenderModels);
+    renderer->owner = node;
+    auto debugRenderModels = renderer->MakeRenderModels();
+    AddRange(cameraModel.models, debugRenderModels);
 }
 
-void ShowCollidersRenderProcessor::Process(RenderSystemModel& systemModel) {
+void ShowCollidersRenderProcessor::Process(CameraRenderModel& cameraModel) {
     auto colliderMaterial = ColorRenderer::MakeMaterial(
         color.IsOpaque() ? RenderOpacityType::Opaque : RenderOpacityType::Blend
     );
-    systemModel.materials.push_back(colliderMaterial);
+    cameraModel.materials.push_back(colliderMaterial);
 
     // FUTURE: this can be optimized
-    for (auto& node : systemModel.nodes) {
+    for (auto& node : cameraModel.nodes) {
         auto colliders = node->GetComponents<SomeCollider2D>();
         for (auto& collider : colliders) {
             auto polyCollider = As<PolygonCollider2D>(collider.get());
 
             if (polyCollider) {
                 Vector2 overlaySize(polyCollider->poly.Width(), polyCollider->poly.Height());
-                AddOverlay(systemModel, node, colliderMaterial, color, overlaySize);
+                AddOverlay(cameraModel, node, colliderMaterial, color, overlaySize);
                 continue;
             }
 
@@ -50,7 +52,7 @@ void ShowCollidersRenderProcessor::Process(RenderSystemModel& systemModel) {
             // FUTURE: support more colliders as needed
             if (circleCollider) {
                 Vector2 overlaySize(circleCollider->radius * 2, circleCollider->radius * 2);
-                AddOverlay(systemModel, node, colliderMaterial, color, overlaySize);
+                AddOverlay(cameraModel, node, colliderMaterial, color, overlaySize);
                 continue;
             }
         }

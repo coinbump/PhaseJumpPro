@@ -28,5 +28,11 @@ namespace PJ {
             auto moveDelta = velocity * time.delta;
             owner->transform.SetLocalPosition(owner->transform.LocalPosition() + moveDelta);
         }
+
+        // MARK: SomeWorldComponent
+
+        String TypeName() const override {
+            return "VelocityKSteering";
+        }
     };
 } // namespace PJ

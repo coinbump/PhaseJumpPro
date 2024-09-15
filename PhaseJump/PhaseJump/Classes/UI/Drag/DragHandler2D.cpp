@@ -25,7 +25,7 @@ void DragHandler2D::OnDragUpdate(WorldPosition inputPosition) {
 
     GUARD(onDragUpdateFunc)
     onDragUpdateFunc(*this);
-    // PJLog("Internal Offset: " + internalOffset.ToString() + " transform: " +
+    // PJ::Log("Internal Offset: " + internalOffset.ToString() + " transform: " +
     // transform.ToString());
 }
 

@@ -1,0 +1,24 @@
+{
+  "configurations" : [
+    {
+      "id" : "D9921611-B5D6-497B-87AA-98DEAFD7A120",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:PhaseJump.xcodeproj",
+        "identifier" : "CD6FEB342917017A00F674D3",
+        "name" : "PhaseJumpTests"
+      }
+    }
+  ],
+  "version" : 1
+}

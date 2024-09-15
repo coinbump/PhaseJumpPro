@@ -19,6 +19,20 @@ namespace PJ {
     using RenderColor = Color;
 #endif
 
+    /// The render processing pipeline is broken up into phases
+    namespace RenderPhase {
+        auto constexpr PrepareBind = "bind.prepare";
+        auto constexpr PostBind = "bind.post";
+        auto constexpr PostClear = "clear.post";
+        auto constexpr Camera = "camera";
+        auto constexpr PreparePresent = "present.prepare";
+        auto constexpr PostPresent = "present.post";
+        auto constexpr PrepareCameraDraw = "camera.draw.prepare";
+        auto constexpr PostCameraDraw = "camera.draw.post";
+        auto constexpr PrepareCamera = "camera.prepare";
+        auto constexpr PostCamera = "camera.post";
+    } // namespace RenderPhase
+
     enum class RenderFeatureState {
         Enable,
 

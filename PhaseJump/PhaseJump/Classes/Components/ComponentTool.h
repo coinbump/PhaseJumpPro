@@ -4,6 +4,7 @@
 #include "Colliders2D.h"
 #include "RenderMaterial.h"
 #include "SpriteRenderer.h"
+#include "WorldNode.h"
 
 // CODE REVIEW: ?/23
 namespace PJ {

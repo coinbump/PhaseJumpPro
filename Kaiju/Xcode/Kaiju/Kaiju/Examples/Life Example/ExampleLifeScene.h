@@ -1,27 +1,30 @@
 #pragma once
 
+#if DEVELOPMENT
+#include <PhaseJump-Dev/PhaseJump-Dev.h>
+#else
+#include <PhaseJump/PhaseJump.h>
+#endif
 #include "ExampleLifeAgent.h"
 #include "ExampleLifeMatrixRenderer.h"
 #include "ExampleLifeAgentGroup.h"
-#include <PhaseJump/PhaseJump.h>
 
 using namespace PJ;
 
-/// "Life" example using the common rules for a basic cellular automata simulation
-class ExampleLifeScene : public Scene {
-public:
-    SP<BezierPathLayout> bezierLayout;
+namespace ExampleLife {
+    /// "Life" example using the common rules for a basic cellular automata simulation
+    class Scene : public PJ::Scene {
+    public:
+        Scene() {
+        }
 
-    ExampleLifeScene() {
-    }
-
-    void LoadInto(WorldNode& root) {
-        root.name = "ExampleLifeScene";
-
-        auto& camera = root.AddComponent<OrthoCamera>();
-        camera.owner->AddComponent<SimpleRaycaster2D>();
-
-        root.AddNode("Life Simulation")
-            .AddComponent<ExampleLifeMatrixRenderer>();
-    }
-};
+        void LoadInto(WorldNode& root) {
+            QB(root)
+                .Named("ExampleLifeScene")
+                .With<OrthoCamera>()
+                .With<SimpleRaycaster2D>()
+                .And("Life Simulation")
+                .With<MatrixRenderer>();
+        }
+    };
+}

@@ -1,9 +1,9 @@
 #pragma once
 
 #include "FilePath.h"
-#include "LoadedResources.h"
-#include "LoadResourceInfo.h"
 #include "OrderedMap.h"
+#include "ResourceInfo.h"
+#include "ResourceModels.h"
 #include "Result.h"
 #include "SomeOperation.h"
 #include "Tags.h"
@@ -26,19 +26,19 @@ namespace PJ {
             // TODO: Should be UP
             using LoadOperationsList = List<SP<SomeLoadResourcesOperation>>;
 
-            VectorList<LoadedResource> loadedResources;
+            VectorList<ResourceModel> loadedResources;
             LoadOperationsList loadOperations;
 
             Success() {}
 
             Success(
-                VectorList<LoadedResource> const& loadedResources,
+                VectorList<ResourceModel> const& loadedResources,
                 List<SP<SomeLoadResourcesOperation>> loadOperations
             ) :
                 loadedResources(loadedResources),
                 loadOperations(loadOperations) {}
 
-            void Add(LoadedResource loadedResource) {
+            void Add(ResourceModel loadedResource) {
                 loadedResources.push_back(loadedResource);
             }
 
@@ -53,20 +53,20 @@ namespace PJ {
 
         // MARK: Input
 
-        LoadResourceInfo const info;
+        ResourceInfo const info;
         LoadResourcesModel& loadResourcesModel;
 
         // MARK: Output
 
         std::optional<Result> result;
 
-        SomeLoadResourcesOperation(LoadResourceInfo info, LoadResourcesModel& loadResourcesModel) :
+        SomeLoadResourcesOperation(ResourceInfo info, LoadResourcesModel& loadResourcesModel) :
             info(info),
             loadResourcesModel(loadResourcesModel) {}
 
         /// Returns loaded resources if the operation was a success
-        VectorList<LoadedResource> LoadedResources() const {
-            VectorList<LoadedResource> result;
+        VectorList<ResourceModel> LoadedResources() const {
+            VectorList<ResourceModel> result;
 
             GUARDR(this->result, result);
             GUARDR(this->result.value().IsSuccess(), result)

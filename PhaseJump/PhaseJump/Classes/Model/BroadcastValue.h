@@ -2,7 +2,7 @@
 //
 // #include "Broadcaster.h"
 // #include "Utils.h"
-// #include "SomeEvent.h"
+// #include "SomeSignal.h"
 // #include "TransformFunc.h"
 // #include <memory>
 //
@@ -17,7 +17,7 @@
 //
 //    /// Sent when a value changes
 //    template <class T>
-//    class ValueChangeEvent : public SomeEvent {
+//    class ValueChangeEvent : public SomeSignal {
 //    public:
 //        using BroadcastValueSharedPtr = SP<BroadcastValue<T>>;
 //        BroadcastValueSharedPtr value;
@@ -70,7 +70,7 @@
 //        /// Convenience function for responding to a value change event
 //        /// Checks if the value change belongs to object and performs the action
 //        /// if it is
-//        void OnValueChange(SPC<SomeEvent> theEvent, std::function<void(T)> action) {
+//        void OnValueChange(SPC<SomeSignal> theEvent, std::function<void(T)> action) {
 //            GUARD(action)
 //
 //            auto eventValueChange = DCAST<ValueChangeEvent<T>>(theEvent);

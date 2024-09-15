@@ -31,7 +31,7 @@ void GLShaderProgram::AttachShaders(
 ) {
     if (nullptr == vertexShader || nullptr == fragmentShader || !vertexShader->isCompiled ||
         !fragmentShader->isCompiled) {
-        PJLog("ERROR. Invalid shaders for program.");
+        PJ::Log("ERROR. Invalid shaders for program.");
         return;
     }
 
@@ -51,7 +51,7 @@ void GLShaderProgram::AttachShaders(
 /// You can either bind your own locations or use the defaults
 void GLShaderProgram::BindAttributeLocation(GLuint index, const GLchar* name) {
     if (0 == glId) {
-        PJLog("ERROR. Create program before binding attribute locations");
+        PJ::Log("ERROR. Create program before binding attribute locations");
         return;
     }
 
@@ -69,13 +69,13 @@ GLint GLShaderProgram::Validate() {
     if (logLength > 0) {
         GLchar* log = (GLchar*)malloc(logLength);
         glGetProgramInfoLog(glId, logLength, &logLength, log);
-        PJLog("Program validate log:\n%s", log);
+        PJ::Log("Program validate log: ", log);
         free(log);
     }
 
     glGetProgramiv(glId, GL_VALIDATE_STATUS, &status);
     if (status == GL_FALSE) {
-        PJLog("Failed to validate program %d", glId);
+        PJ::Log("Failed to validate program ", glId);
     }
 
     return status;
@@ -94,7 +94,7 @@ bool GLShaderProgram::Link() {
     GLint status;
     glGetProgramiv(glId, GL_LINK_STATUS, &status);
     if (GL_FALSE == status) {
-        PJLog("ERROR. Failed to link program %d", glId);
+        PJ::Log("ERROR. Failed to link program ", glId);
         return false;
     } else {
         isLinked = true;
@@ -116,7 +116,7 @@ bool GLShaderProgram::Link() {
         auto location = glGetAttribLocation(glId, name);
         attributeLocations[String(name)] = location;
 
-        PJLog("Attribute #%d Type: %u Name: %s\n Index: %d", location, type, name, location);
+        PJ::Log("Attribute #:", i, " Type: ", type, " Name: ", name, " Loc: ", location);
     }
 
     glGetProgramiv(glId, GL_ACTIVE_UNIFORMS, &count);
@@ -126,7 +126,7 @@ bool GLShaderProgram::Link() {
         auto location = glGetUniformLocation(glId, name);
         uniformLocations[String(name)] = location;
 
-        PJLog("Uniform #%d Type: %u Name: %s\n Index: %d", i, type, name, location);
+        PJ::Log("Uniform #", i, " Type: ", type, " Name: ", name, " Loc: ", location);
     });
 
     return isLinked;

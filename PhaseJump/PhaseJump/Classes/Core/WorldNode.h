@@ -2,14 +2,15 @@
 
 #include "CollectionUtils.h"
 #include "Color.h"
+#include "Dev.h"
 #include "Identifiable.h"
 #include "List.h"
-#include "Log.h"
 #include "SomeWorldComponent.h"
 #include "StandardCore.h"
 #include "Tags.h"
 #include "Utils.h"
 #include "VectorList.h"
+#include "WorldComponent.h"
 #include "WorldNodeTransform.h"
 #include "WorldPartLife.h"
 #include <memory>
@@ -39,10 +40,9 @@ namespace PJ {
     public:
         using Base = PJ::Base;
         using This = WorldNode;
-        using ComponentList = List<SP<SomeWorldComponent>>;
+        using ComponentList = VectorList<SP<SomeWorldComponent>>;
         using NodeTransform = WorldNodeTransform;
-        using NodeList = List<SP<WorldNode>>;
-        using OnDragUpdateFunc = std::function<void(DragHandler2D&)>;
+        using NodeList = VectorList<SP<WorldNode>>;
 
         friend class World;
         friend class IntIdentifiable<WorldNode>;
@@ -88,19 +88,16 @@ namespace PJ {
         virtual ~WorldNode() {}
 
         void Destroy(float countdown = 0);
-
+        void UnDestroy();
         virtual void OnDestroy();
 
         WorldNode* Parent() const;
-
         NodeList const& ChildNodes() const;
         NodeList const& Children() const;
 
-        bool IsAwake() const;
-
-        bool IsStarted() const;
-
         World* World() const;
+        bool IsAwake() const;
+        bool IsStarted() const;
 
         /// Called before Start
         void CheckedAwake();
@@ -109,13 +106,10 @@ namespace PJ {
         void CheckedStart();
 
         bool IsDestroyed() const;
-
         std::size_t ChildCount();
 
         bool IsEnabled() const;
-
         This& Enable(bool value);
-
         void ToggleEnable();
 
         Matrix4x4 ModelMatrix() const;
@@ -127,17 +121,37 @@ namespace PJ {
         void Add(SP<SomeWorldComponent> component);
 
         template <class T, typename... Arguments>
-        T& AddComponent(Arguments... args) {
+        auto& AddComponent(Arguments... args) {
             auto component = MAKE<T>(args...);
             Add(component);
             return *component;
         }
 
         template <class T, typename... Arguments>
-        SP<T> AddComponentPtr(Arguments... args) {
+        constexpr auto& With(Arguments... args) {
+            return AddComponent<T>(args...);
+        }
+
+        template <class T, typename... Arguments>
+        constexpr auto& WithCore(Arguments... args) {
+            return AddComponent<WorldComponent<T>>(args...);
+        }
+
+        template <class T, typename... Arguments>
+        auto AddComponentPtr(Arguments... args) {
             auto component = MAKE<T>(args...);
             Add(component);
             return component;
+        }
+
+        template <class T, typename... Arguments>
+        auto WithPtr(Arguments... args) {
+            return AddComponentPtr<T>(args...);
+        }
+
+        template <class T, typename... Arguments>
+        auto WithCorePtr(Arguments... args) {
+            return AddComponentPtr<WorldComponent<T>>(args...);
         }
 
         void Add(SP<WorldNode> node);
@@ -150,10 +164,20 @@ namespace PJ {
         }
 
         template <typename... Arguments>
+        constexpr WorldNode& And(Arguments... args) {
+            return AddNode(args...);
+        }
+
+        template <typename... Arguments>
         SP<WorldNode> AddNodePtr(Arguments... args) {
             SP<WorldNode> result = MAKE<WorldNode>(args...);
             Add(result);
             return result;
+        }
+
+        template <typename... Arguments>
+        SP<WorldNode> AndPtr(Arguments... args) {
+            return AddNodePtr(args...);
         }
 
         template <typename... Arguments>
@@ -165,11 +189,9 @@ namespace PJ {
         }
 
         void Remove(SP<WorldNode> node);
-
+        void Remove(WorldNode& node);
         void RemoveAllChildren();
-
         void Remove(SP<SomeWorldComponent> component);
-
         void RemoveAllComponents();
 
         template <class T>
@@ -227,16 +249,16 @@ namespace PJ {
         }
 
         template <class T>
-        List<SP<T>> GetComponents() const {
-            List<SP<T>> result;
+        VectorList<SP<T>> GetComponents() const {
+            VectorList<SP<T>> result;
             TypeComponents<T>(result);
 
             return result;
         }
 
         template <class T>
-        List<SP<T>> GetComponentsInChildren() {
-            List<SP<T>> result;
+        VectorList<SP<T>> GetComponentsInChildren() {
+            VectorList<SP<T>> result;
             ChildTypeComponents<T>(result);
             return result;
         }
@@ -258,26 +280,6 @@ namespace PJ {
             transform.SetWorldPosition(position);
             return *this;
         }
-
-        /*
-         Quick build methods can be used for rapid prototyping
-         */
-
-        // MARK: Quick build
-
-        WorldNode& AddCircle(float radius, Color color = Color::gray);
-        WorldNode& AddDrag(OnDragUpdateFunc onDragUpdateFunc);
-        WorldNode& AddSquareCollider(float size);
-        WorldNode& AddRectCollider(Vector2 size);
-        WorldNode& AddCircleCollider(float radius);
-        WorldNode& AddCircleHandle(
-            float radius, Color color = Color::gray, float strokeWidth = 4,
-            Color strokeColor = Color::black
-        );
-        WorldNode& AddCircleHandle(float radius, float strokeWidth = 4, Theme* theme = nullptr);
-        WorldNode& AddSlider(String name, Vector2 worldSize, std::function<void(float)> valueFunc);
-        WorldNode&
-        AddSliderVertical(String name, Vector2 worldSize, std::function<void(float)> valueFunc);
 
         // MARK: Updatable
 

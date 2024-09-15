@@ -35,7 +35,7 @@
 #include "SomeGoal.h"
 #include "GoalEvents.h"
 #include "Signal.h"
-#include "SomeReceptor.h"
+#include "Receptor.h"
 #include "SomeRandom.h"
 #include "FixedRandom.h"
 #include "StandardRandom.h"
@@ -101,7 +101,7 @@ namespace BroadcasterTests {
         int listenCount = 0;
         String lastMessage;
 
-        void OnEvent(SPC<SomeEvent> event) override {
+        void OnEvent(SP<SomeSignal> event) override {
             listenCount++;
 
             auto standardEvent = As<Event<StandardEventCore>>(event.get());

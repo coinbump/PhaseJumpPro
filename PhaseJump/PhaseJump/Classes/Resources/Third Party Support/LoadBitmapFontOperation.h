@@ -8,7 +8,7 @@ namespace PJ {
     public:
         using Base = SomeLoadResourcesOperation;
 
-        LoadBitmapFontOperation(LoadResourceInfo info, LoadResourcesModel& loadResourcesModel) :
+        LoadBitmapFontOperation(ResourceInfo info, LoadResourcesModel& loadResourcesModel) :
             Base(info, loadResourcesModel) {}
 
         // MARK: SomeLoadResourcesOperation

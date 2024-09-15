@@ -1,11 +1,10 @@
-#ifndef PJGLRENDERSTATE_H
-#define PJGLRENDERSTATE_H
+#pragma once
 
 #include "GLBlendMode.h"
 #include "GLHeaders.h"
 #include "OrderedMap.h"
-#include "OrderedSet.h"
 #include "StringUtils.h"
+#include "UnorderedSet.h"
 
 /*
  RATING: 5 stars
@@ -40,8 +39,22 @@ namespace PJ {
         GLuint boundVBO = -1;
         GLuint boundIBO = -1;
 
-        OrderedSet<String> enabledFeatures;
+        UnorderedSet<String> enabledFeatures;
         GLBlendMode blendMode = GLBlendMode::standard;
+
+        UnorderedSet<uint32_t> clearedContexts;
+
+        void ResetForRenderPass() {
+            clearedContexts.clear();
+        }
+
+        bool IsContextCleared(uint32_t id) {
+            return clearedContexts.contains(id);
+        }
+
+        void SetIsContextCleared(uint32_t id, bool value) {
+            AddOrRemove(clearedContexts, id, value);
+        }
 
         /*
          A vertex shader accepts attributes as inputs
@@ -49,12 +62,14 @@ namespace PJ {
          To use these attributes we must enable them explicitly before rendering
          with the sahder
          */
-        OrderedSet<GLuint> activeAttributeLocations;
+        UnorderedSet<GLuint> activeAttributeLocations;
 
         Viewport viewport{ -1, -1, -1, -1 };
 
         float lineWidth = 1;
+
+        bool IsFeatureEnabled(String featureId) {
+            return enabledFeatures.contains(featureId);
+        }
     };
 } // namespace PJ
-
-#endif

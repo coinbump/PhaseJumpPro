@@ -14,11 +14,13 @@ namespace PJ {
     public:
         using Base = View2D;
 
+    protected:
         float padLeading = 0;
         float padTrailing = 0;
         float padTop = 0;
         float padBottom = 0;
 
+    public:
         float PadLeading() const {
             return padLeading;
         }

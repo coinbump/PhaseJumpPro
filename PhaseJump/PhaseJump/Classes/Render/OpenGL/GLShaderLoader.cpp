@@ -14,7 +14,7 @@ bool GLShaderLoader::LoadFromPath(SomeGLShader& shader, FilePath path) {
     } // Shader already loaded
 
     if (0 == shader.glType) {
-        PJLog("ERROR. No shader type defined.");
+        PJ::Log("ERROR. No shader type defined.");
         return 0;
     }
 
@@ -43,7 +43,7 @@ bool GLShaderLoader::LoadFromPath(SomeGLShader& shader, FilePath path) {
         buffer << file.rdbuf();
         shaderString = buffer.str();
     } else {
-        PJLog("ERROR. Can't open shader file at: %s", path.c_str());
+        PJ::Log("ERROR. Can't open shader file at: ", path);
         return false;
     }
 
@@ -59,14 +59,14 @@ bool GLShaderLoader::LoadFromPath(SomeGLShader& shader, FilePath path) {
     if (logLength > 0) {
         GLchar* log = (GLchar*)malloc(logLength);
         glGetShaderInfoLog(glId, logLength, &logLength, log);
-        PJLog("Shader compile log:\n%s", log);
+        PJ::Log("Shader compile log: ", log);
         free(log);
     }
 
     // Check to see if the shader compiled.
     glGetShaderiv(glId, GL_COMPILE_STATUS, &status);
     if (status == GL_FALSE) {
-        PJLog("Failed to compile shader:\n");
+        PJ::Log("Failed to compile shader");
     } else {
         shader.glId = glId;
         shader.isCompiled = true;

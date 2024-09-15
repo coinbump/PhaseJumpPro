@@ -1,6 +1,6 @@
-#ifndef PJVECTOR3_H
-#define PJVECTOR3_H
+#pragma once
 
+#include "Dev.h"
 #include "FloatMath.h"
 #include "IntMath.h"
 #include "Macros_Vectors.h"
@@ -19,10 +19,10 @@ namespace Terathon {
  CODE REVIEW: 7/6/24
  */
 namespace PJ {
-    // TODO: do we need a renderVector3 that has no inheritance?
     class Vector3 {
     public:
         using This = Vector3;
+        using MathType = float;
 
         float x = 0;
         float y = 0;
@@ -50,19 +50,27 @@ namespace PJ {
         static Vector3 const forward;
         static Vector3 const back;
 
-        operator Vector2() const {
+        constexpr operator Vector2() const {
             return Vector2(x, y);
         }
 
-        float& operator[](size_t index) {
-            return (&x)[index >= 0 && index < 3 ? index : index % 3];
+        constexpr MathType& operator[](size_t index) {
+            Assert(index >= 0 && index < 3);
+
+            /// Don't use &x[index] because struct packing isn't guaranteed
+            MathType* indices[3] = { &x, &y, &z };
+            return *indices[index];
         }
 
-        float operator[](size_t index) const {
-            return (&x)[index >= 0 && index < 3 ? index : index % 3];
+        constexpr MathType operator[](size_t index) const {
+            Assert(index >= 0 && index < 3);
+
+            /// Don't use &x[index] because struct packing isn't guaranteed
+            MathType const* indices[3] = { &x, &y, &z };
+            return *indices[index];
         }
 
-        bool operator==(Vector3 const& rhs) const {
+        constexpr bool operator==(Vector3 const& rhs) const {
             return x == rhs.x && y == rhs.y && z == rhs.z;
         }
 
@@ -76,7 +84,7 @@ namespace PJ {
             }
         }
 
-        float& AxisValue(Axis axis) {
+        MathType& AxisValue(Axis axis) {
             switch (axis) {
             case Axis::X:
                 return x;
@@ -87,7 +95,7 @@ namespace PJ {
             }
         }
 
-        float AxisValue(Axis axis) const {
+        MathType AxisValue(Axis axis) const {
             switch (axis) {
             case Axis::X:
                 return x;
@@ -98,7 +106,7 @@ namespace PJ {
             }
         }
 
-        VECTOR_METHODS(Vector3, float, 3);
+        VECTOR_METHODS(Vector3, MathType, 3);
 
         friend std::ostream& operator<<(std::ostream&, Vector3 const& value);
 
@@ -113,6 +121,9 @@ namespace PJ {
 
     class Vector3Int {
     public:
+        using This = Vector3Int;
+        using MathType = int;
+
         int x = 0;
         int y = 0;
         int z = 0;
@@ -124,19 +135,27 @@ namespace PJ {
             y(y),
             z(z) {}
 
-        int& operator[](size_t index) {
-            return (&x)[index >= 0 && index < 3 ? index : index % 3];
+        constexpr MathType& operator[](size_t index) {
+            Assert(index >= 0 && index < 3);
+
+            /// Don't use &x[index] because struct packing isn't guaranteed
+            MathType* indices[3] = { &x, &y, &z };
+            return *indices[index];
         }
 
-        int operator[](size_t index) const {
-            return (&x)[index >= 0 && index < 3 ? index : index % 3];
+        constexpr MathType operator[](size_t index) const {
+            Assert(index >= 0 && index < 3);
+
+            /// Don't use &x[index] because struct packing isn't guaranteed
+            MathType const* indices[3] = { &x, &y, &z };
+            return *indices[index];
         }
 
-        bool operator==(Vector3Int const& rhs) const {
+        constexpr bool operator==(Vector3Int const& rhs) const {
             return x == rhs.x && y == rhs.y && z == rhs.z;
         }
 
-        operator Vector2() const {
+        constexpr operator Vector2() const {
             return Vector2(x, y);
         }
 
@@ -151,5 +170,3 @@ namespace PJ {
     std::ostream& operator<<(std::ostream& os, PJ::Vector3 const& value);
 
 } // namespace PJ
-
-#endif
