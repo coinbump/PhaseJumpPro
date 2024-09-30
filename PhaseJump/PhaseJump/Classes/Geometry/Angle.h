@@ -1,10 +1,9 @@
-#ifndef PJANGLE_H
-#define PJANGLE_H
+#pragma once
 
 #include "FloatMath.h"
 #include "Macros_Operators.h"
+#include "MathUtils.h"
 #include "Vector2.h"
-#include <math.h>
 
 /*
  RATING: 5 stars
@@ -89,7 +88,7 @@ namespace PJ {
             return result;
         }
 
-        /// Returns the closest turn between two angles.
+        /// @return Returns the closest turn between two angles.
         /// EXAMPLE: closest turn between angle 3 and angle 359 is -4, not 356.
         Angle MinAngleTo(Angle angle) const {
             float firstAngle = Degrees();
@@ -124,5 +123,3 @@ namespace PJ {
         static Angle const zero;
     };
 } // namespace PJ
-
-#endif

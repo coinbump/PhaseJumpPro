@@ -1,11 +1,14 @@
 #include "World.h"
+#include "DesignSystem.h"
 #include "DevProfiler.h"
 #include "Font.h"
+#include "Funcs.h"
 #include "GraphNodeTool.h"
 #include "RenderContextModel.h"
 #include "SomeCamera.h"
 #include "SomeRenderEngine.h"
 #include "SomeRenderer.h"
+#include "SomeShaderProgram.h"
 #include <stdio.h>
 
 // #define PROFILE
@@ -15,6 +18,9 @@ using namespace PJ;
 
 World::World() {
     root->world = this;
+
+    // The render limiter has to keep running while the world is paused, or imGui stops working
+    // Wrong: updatables.Add(renderLimiter);
 }
 
 void World::Add(SP<SomeWorldSystem> system) {
@@ -77,9 +83,22 @@ SP<SomeCamera> World::MainCamera() {
 
 void World::GoInternal() {
     Base::GoInternal();
+
+    RateLimiter::Type::OnFireFunc overrideFunc = [this](RateLimiter::Type& limiter) {
+        RenderNow();
+    };
+    Override(renderLimiter->onFireFunc, overrideFunc);
 }
 
 void World::Render() {
+    if (isRenderRateLimited) {
+        renderLimiter->Fire();
+    } else {
+        RenderNow();
+    }
+}
+
+void World::RenderNow() {
     GUARD(renderContext)
 
 #ifdef PROFILE
@@ -195,13 +214,11 @@ Matrix4x4 World::WorldModelMatrix(WorldNode const& node) {
     return modelMatrix;
 }
 
-void Update(WorldNode& node, TimeSlice time, WorldNode::NodeList& updateList) {
+void UpdateWorld(WorldNode& node, TimeSlice time, WorldNode::NodeList& updateList) {
     if (node.IsDestroyed()) {
         node.OnDestroy();
 
         // TODO: send OnDestroy to children
-        // TODO: remove the node
-        PJ::Log("WARNING. Destroying nodes is currently broken");
         GUARD(node.Parent())
         node.Parent()->Remove(node);
     } else {
@@ -219,35 +236,41 @@ void Update(WorldNode& node, TimeSlice time, WorldNode::NodeList& updateList) {
 
         auto childNodes = node.ChildNodes();
         std::for_each(childNodes.begin(), childNodes.end(), [&](SP<WorldNode>& node) {
-            Update(*node, time, updateList);
+            UpdateWorld(*node, time, updateList);
         });
     }
 }
 
-void World::OnUpdate(TimeSlice time) {
+void World::OnUpdate(TimeSlice _time) {
 #ifdef PROFILE
     DevProfiler devProfiler("OnUpdate", [](String value) { cout << value; });
 #endif
 
-    // TODO: is graph being updated twice (when OnUpdate is re-enabled?)
+    // Keep the renderer running even while paused
+    // This allows immediate renders to work (Example: imGUI)
+    renderLimiter->OnUpdate(_time);
 
-    if (!isPaused) {
-        auto iterSystems = systems;
-        for (auto& system : iterSystems) {
-            system->CheckedAwake();
-        }
+    GUARD(!isPaused)
 
-        for (auto& system : iterSystems) {
-            system->CheckedStart();
-        }
+    auto time = _time * timeScale;
 
-        for (auto& system : iterSystems) {
-            system->OnUpdate(time);
-        }
+    updatables.OnUpdate(time);
+
+    auto iterSystems = systems;
+    for (auto& system : iterSystems) {
+        system->CheckedAwake();
+    }
+
+    for (auto& system : iterSystems) {
+        system->CheckedStart();
+    }
+
+    for (auto& system : iterSystems) {
+        system->OnUpdate(time);
     }
 
     updateList.clear();
-    Update(*root, time, updateList);
+    UpdateWorld(*root, time, updateList);
 }
 
 void World::Add(SP<WorldNode> node) {
@@ -272,6 +295,21 @@ void World::SetRenderContext(SP<SomeRenderContext> renderContext) {
 
 using namespace PJ;
 
+WorldPosition PJ::ScreenToWorld(SomeWorldComponent& component, ScreenPosition screenPos) {
+    auto owner = component.owner;
+    GUARDR(owner, {})
+
+    auto world = owner->World();
+    GUARDR(world, {})
+
+    // Get the camera
+    SP<SomeCamera> camera = world->MainCamera();
+    GUARDR(camera, {})
+
+    auto result = camera->ScreenToWorld(screenPos);
+    return result;
+}
+
 LocalPosition PJ::ScreenToLocal(SomeWorldComponent& component, ScreenPosition screenPos) {
     LocalPosition result;
 
@@ -291,7 +329,7 @@ LocalPosition PJ::ScreenToLocal(SomeWorldComponent& component, ScreenPosition sc
     Terathon::Point3D point(worldPosition.x, worldPosition.y, worldPosition.z);
     auto localPosition = Terathon::InverseTransform(worldModelMatrix, point);
 
-    result = LocalPosition(Vector3(localPosition.x, localPosition.y, 0));
+    result = LocalPosition(localPosition.x, localPosition.y, 0);
 
     return result;
 }
@@ -361,6 +399,14 @@ SP<Font> World::FindFont(FontSpec spec) {
         );
 
         return candidates[0];
+    } catch (...) {
+        return nullptr;
+    }
+}
+
+SP<SomeShaderProgram> World::FindShader(String id) {
+    try {
+        return SomeShaderProgram::registry.at(id);
     } catch (...) {
         return nullptr;
     }

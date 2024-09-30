@@ -2,13 +2,19 @@
 
 #include "SomeMouseDevice.h"
 
-// CODE REVIEW: ?/23
+/*
+ RATING: 5 stars
+ Simple type
+ CODE REVIEW: 9/21/24
+ */
 namespace PJ {
     class SDLMouseDevice : public SomeMouseDevice {
     public:
         SDLMouseDevice() {}
 
         virtual ~SDLMouseDevice() {}
+
+        // MARK: SomeMouseDevice
 
         ScreenPosition Position() const override;
 

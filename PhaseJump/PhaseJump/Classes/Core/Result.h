@@ -43,7 +43,7 @@ namespace PJ {
         std::optional<Success> SuccessValue() const {
             try {
                 return std::get<Success>(value);
-            } catch (const std::bad_variant_access& exception) {
+            } catch (...) {
                 return std::optional<Success>();
             }
         }

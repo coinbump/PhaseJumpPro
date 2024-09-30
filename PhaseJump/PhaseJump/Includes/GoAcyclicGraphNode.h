@@ -1,1 +1,1 @@
-#include "../Classes/Graph/GoAcyclicGraphNode.h"
+#include "../Classes/Graph/Go/GoAcyclicGraphNode.h"

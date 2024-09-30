@@ -3,6 +3,60 @@
 using namespace std;
 using namespace PJ;
 
+template <>
+VectorList<MapDirection> PJ::AllCases<MapDirection>() {
+    return { MapDirection::Northwest, MapDirection::North, MapDirection::Northeast,
+             MapDirection::East,      MapDirection::South, MapDirection::Southeast,
+             MapDirection::Southwest, MapDirection::West };
+}
+
+MapDirection PJ::Opposite(MapDirection direction) {
+    switch (direction) {
+    case MapDirection::East:
+        return MapDirection::West;
+    case MapDirection::West:
+        return MapDirection::East;
+    case MapDirection::Northwest:
+        return MapDirection::Southeast;
+    case MapDirection::North:
+        return MapDirection::South;
+    case MapDirection::Northeast:
+        return MapDirection::Southwest;
+    case MapDirection::Southeast:
+        return MapDirection::Northwest;
+    case MapDirection::South:
+        return MapDirection::North;
+    case MapDirection::Southwest:
+        return MapDirection::Northeast;
+    }
+
+    return MapDirection::North;
+}
+
+/// @return Returns offset in matrix space (top-left is 0, 0)
+Vector2Int PJ::MapOffset(MapDirection state) {
+    switch (state) {
+    case MapDirection::Northwest:
+        return Vector2Int(-1, -1);
+    case MapDirection::North:
+        return Vector2Int(0, -1);
+    case MapDirection::Northeast:
+        return Vector2Int(1, -1);
+    case MapDirection::East:
+        return Vector2Int(1, 0);
+    case MapDirection::Southeast:
+        return Vector2Int(1, 1);
+    case MapDirection::South:
+        return Vector2Int(0, 1);
+    case MapDirection::Southwest:
+        return Vector2Int(-1, 1);
+    case MapDirection::West:
+        return Vector2Int(-1, 0);
+    }
+
+    return Vector2Int(0, 0);
+}
+
 MatrixBoard::MatrixBoard(Vector2Int size) :
     matrix(size) {}
 
@@ -43,7 +97,7 @@ VectorList<Vector2Int> MatrixBoard::PieceLocationsAt(Vector2Int origin, MatrixPi
     return result;
 }
 
-bool MatrixBoard::PutPiece(SP<MatrixPiece> piece, Vector2Int origin) {
+bool MatrixBoard::Put(SP<MatrixPiece> piece, Vector2Int origin) {
     GUARDR(piece, false)
     GUARDR(!IsPieceBlockedAt(origin, *piece), false)
     GUARDR(piece->board == nullptr, false)

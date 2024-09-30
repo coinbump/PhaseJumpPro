@@ -3,6 +3,7 @@
 #include "EventWorldSystem.h"
 #include "OrthoCamera.h"
 #include "Prefab.h"
+#include "RateLimiter.h"
 #include "ResourceModels.h"
 #include "SomeRenderContext.h"
 #include "SomeUIEventPoller.h"
@@ -17,65 +18,13 @@ namespace PJ {
     class SomeWorldSystem;
     class SomeCamera;
     class RenderMaterial;
-    class SomeTexture;
-    class DesignSystem;
     class Font;
-
-    struct FontSpec {
-        String resourceId;
-        String fontName;
-        float size = 0;
-    };
-
-    /// Defines properties and methods for building a UI
-    class DesignSystem {
-    protected:
-        /// Maps UI element ids to specific textures
-        UnorderedMap<String, SP<SomeTexture>> elementTextures;
-
-        /// Maps UI element ids to custom properties
-        UnorderedMap<String, Tags> elementTags;
-
-    public:
-        void Add(String element, SP<SomeTexture> texture) {
-            elementTextures.insert_or_assign(element, texture);
-        }
-
-        template <class T>
-        void SetTag(String element, String tagName, T value) {
-            elementTags[element].Add(tagName, value);
-        }
-
-        template <class T>
-        T TagValue(String element, String tagName) const {
-            try {
-                auto& tags = elementTags.at(element);
-                return tags.SafeValue<T>(tagName);
-            } catch (...) {
-                return T();
-            }
-        }
-
-        SP<SomeTexture> Texture(String element) const {
-            try {
-                return elementTextures.at(element);
-            } catch (...) {}
-
-            return nullptr;
-        }
-    };
-
-    /// Builds a UI using only meshes, no textures
-    class MeshDesignSystem {
-        // FUTURE: implement as needed
-    };
-
-    /// Simple, basic design system ("ugly duckling" UI)
-    class DuckDesignSystem {
-        // FUTURE: implement as needed
-    };
+    class DesignSystem;
+    class FontSpec;
+    class SomeShaderProgram;
 
     // TODO: Needs unit tests
+    // TODO: re-evaluate use of multiple inheritance here
     class World : public Base, public Updatable {
     protected:
         using TimePoint = std::chrono::time_point<std::chrono::steady_clock>;
@@ -91,7 +40,13 @@ namespace PJ {
 
         bool isPaused = false;
 
+        /// Rate limits renders
+        SP<RateLimiter::Type> renderLimiter = RateLimiter::Make(1.0f / 240.0f);
+
     public:
+        /// Stores objects that need time updates
+        Updatables updatables;
+
         /// Use to display render stats like fps, render count, etc.
         Tags renderStats;
 
@@ -110,9 +65,23 @@ namespace PJ {
         /// Prefabs, mapped by id
         UnorderedMap<String, SP<Prefab>> prefabs;
 
+        /// If true, render FPS is capped
+        bool isRenderRateLimited = true;
+
+        /// Update time deltas are modified by this value
+        float timeScale = 1;
+
         World();
 
-        /// Returns the first system that matches the type
+        void SetRenderRate(float value) {
+            renderLimiter->core.minDelta = 1.0f / value;
+        }
+
+        void SetIsRenderRateLimited(bool value) {
+            isRenderRateLimited = value;
+        }
+
+        /// @return Returns the first system that matches the type
         template <class Type>
         SP<Type> TypeSystem() {
             auto found =
@@ -135,7 +104,12 @@ namespace PJ {
         virtual Matrix4x4 WorldModelMatrix(WorldNode const& node);
 
         void OnUpdate(TimeSlice time) override;
+
+        /// Rate-limited render
         virtual void Render();
+
+        /// Render immediately
+        virtual void RenderNow();
 
         void Add(SP<WorldNode> node);
         void Add(SP<SomeWorldSystem> system);
@@ -211,7 +185,10 @@ namespace PJ {
         SP<Font> FindFont(FontSpec spec);
         SP<Font> FindFontWithSize(float size);
         SP<Font> FindFontWithResourceId(String id);
+        SP<SomeShaderProgram> FindShader(String id);
     };
 
     LocalPosition ScreenToLocal(SomeWorldComponent& component, ScreenPosition screenPos);
+    WorldPosition ScreenToWorld(SomeWorldComponent& component, ScreenPosition screenPos);
+
 } // namespace PJ

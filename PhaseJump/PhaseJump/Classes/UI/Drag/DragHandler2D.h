@@ -3,32 +3,29 @@
 #include "SomeDragHandler.h"
 
 /*
- RATING: 4 stars
+ RATING: 5 stars
  Tested and works. Needs unit tests
- CODE REVIEW: 5/10/23
+ CODE REVIEW: 9/22/24
  */
 namespace PJ {
-    /// Attach to objects that can be dragged
-    /// REQUIREMENTS:
-    /// - Attach a raycaster to the camera
-    /// - Create an UISystem object
-    /// - Add DragHandler2D to objects you want to be draggable
-    /// - Attach a collider to the draggable object
+    /**
+     Attach to objects that can be dragged
+     Requirements:
+     - Attach a raycaster to the camera
+     - Create an UISystem object
+     - Add DragHandler2D to objects you want to be draggable
+     - Attach a collider to the draggable object
+     */
     class DragHandler2D : public SomeDragHandler {
     public:
         using Base = SomeDragHandler;
+        using This = DragHandler2D;
 
-        using OnDragUpdateFunc = std::function<void(DragHandler2D&)>;
+        using OnDragUpdateFunc = std::function<void(This&)>;
+        using OnDropFunc = std::function<void(This&)>;
 
         OnDragUpdateFunc onDragUpdateFunc;
-
-        /// What to do when the object is dropped
-        enum class DropType {
-            Stay,    // Stay at position where it was dropped
-            SnapBack // Snap back to original position
-        };
-
-        DropType dropType = DropType::Stay;
+        OnDropFunc onDropFunc;
 
         virtual void Drop();
 
@@ -36,6 +33,10 @@ namespace PJ {
             this->onDragUpdateFunc = onDragUpdateFunc;
             return *this;
         }
+
+        /// Sets the behavior for OnDrop to snap back to the original position before the drag
+        /// started
+        void InOnDropSnapBack();
 
         // MARK: SomeDragHandler
 

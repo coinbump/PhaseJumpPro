@@ -17,22 +17,36 @@ namespace PJ {
         using This = SpriteRenderer;
 
     protected:
+        bool flipX = false;
+        bool flipY = false;
+
         /// Material holds the render texture, this is the actual texture object (child texture for
         /// texture atlas)
         SP<SomeTexture> texture;
 
         void Configure();
 
-    public:
-        bool flipX = false;
-        bool flipY = false;
+        SpriteRenderer(Vector3 worldSize);
 
+    public:
         // FUTURE: float pixelsPerUnit = 1.0f;
 
         SpriteRenderer(SP<SomeTexture> texture);
         SpriteRenderer(SP<RenderMaterial> material);
 
         Vector2 Size() const;
+
+        void SetFlipX(bool value) {
+            GUARD(flipX != value)
+            flipX = value;
+            model.SetRenderModelsNeedBuild();
+        }
+
+        void SetFlipY(bool value) {
+            GUARD(flipY != value)
+            flipY = value;
+            model.SetRenderModelsNeedBuild();
+        }
 
         // MARK: SomeWorldComponent
 

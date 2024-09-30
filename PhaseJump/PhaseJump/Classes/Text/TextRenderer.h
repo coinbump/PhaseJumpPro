@@ -19,6 +19,7 @@ namespace PJ {
     class TextRenderer : public SomeRenderer {
     public:
         using Base = SomeRenderer;
+        using This = TextRenderer;
 
         using ModifyColorsFunc =
             std::function<void(TextRenderer const&, VectorList<RenderColor>& colors)>;

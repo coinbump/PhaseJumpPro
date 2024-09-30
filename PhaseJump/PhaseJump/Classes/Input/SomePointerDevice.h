@@ -1,11 +1,14 @@
-#ifndef PJSOMEPOINTERDEVICE_H
-#define PJSOMEPOINTERDEVICE_H
+#pragma once
 
 #include "SomeInputDevice.h"
 #include "SomePointerUIEvent.h"
 #include "SomePosition.h"
 
-// CODE REVIEW: ?/23
+/*
+ RATING: 5 stars
+ Simple protocol
+ CODE REVIEW: 9/22/24
+ */
 namespace PJ {
     /// Some device that sends pointer inputs (mouse, stylus)
     class SomePointerDevice : public SomeInputDevice {
@@ -24,5 +27,3 @@ namespace PJ {
         }
     };
 } // namespace PJ
-
-#endif

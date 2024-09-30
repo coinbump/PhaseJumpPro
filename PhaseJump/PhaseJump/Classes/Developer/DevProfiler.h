@@ -1,6 +1,7 @@
 #pragma once
 
 #include "StringUtils.h"
+#include <chrono>
 
 /*
  RATING: 5 stars
@@ -41,7 +42,7 @@ namespace PJ {
             auto now = std::chrono::steady_clock::now();
             auto duration = now - start;
             double durationInMicroseconds =
-                std::chrono::duration_cast<std::chrono::microseconds>(duration).count();
+                (double)std::chrono::duration_cast<std::chrono::microseconds>(duration).count();
 
             double durationInMilliseconds = 0;
             if (durationInMicroseconds > 0) {

@@ -26,7 +26,7 @@ namespace PJ {
         BezierPathLayout& SetControlPoints(VectorList<Vector3> const& value) {
             controlPoints = value;
 
-            SetLayoutNeedsBuild();
+            SetNeedsLayout();
 
             return *this;
         }
@@ -35,7 +35,7 @@ namespace PJ {
             GUARDR(i >= 0 && i < controlPoints.size(), *this)
             controlPoints[i] = value;
 
-            SetLayoutNeedsBuild();
+            SetNeedsLayout();
 
             return *this;
         }

@@ -1,11 +1,13 @@
 #include "SomeCamera.h"
 #include "SomeDragHandler.h"
-#include "UISystem.h"
+#include "SomeDropTarget.h"
+#include "UIWorldSystem.h"
 
 using namespace std;
 using namespace PJ;
 
-void UISystem::OnDragUpdate() {
+// TODO: move to mouse motion event?
+void UIWorldSystem::OnDragUpdate() {
     if (!IsDragging()) {
         return;
     }
@@ -20,12 +22,8 @@ void UISystem::OnDragUpdate() {
             return;
         }
 
-        auto dragged = dragModel->dragHandler;
-        if (nullptr == dragged) {
-            return;
-        }
-
-        CheckDropTargets();
+        auto dragged = dragModel->DragHandler();
+        GUARD(dragged)
 
         auto inputScreenPosition = mouseDevice->Position();
         auto inputWorldPosition =
@@ -36,101 +34,35 @@ void UISystem::OnDragUpdate() {
     }
 }
 
-void UISystem::OnPointerDown(PointerDownUIEvent const& pointerDownEvent) {
-    if (lockDrag) {
-        switch (dragState) {
-        case DragState::LockDragMouseDown:
-            break;
-        case DragState::LockDragMouseUp:
-            OnDragEnd();
-            return;
-        default:
-            break;
-        }
+void UIWorldSystem::CheckDropTargets(ScreenPosition screenPos) {
+    GUARD(dragModel)
+    // PJ::Log("Drop: Position: " + mouseDevice->position.ToString());
+
+    auto hits = TestLocalHit(screenPos);
+    auto hit = hits.size() > 0 ? &hits[0] : nullptr;
+    SP<WorldNode> hitNode = hit ? hit->node : nullptr;
+    auto activeDropTarget = this->activeDropTarget.lock();
+
+    if (activeDropTarget && hitNode != activeDropTarget) {
+        DragExitUIEvent event;
+        DispatchEvent(activeDropTarget, SignalId::DragExit, event);
     }
 
-    return Base::OnPointerDown(pointerDownEvent);
-}
+    if (hitNode) {
+        activeDropTarget = hitNode;
+        this->activeDropTarget = activeDropTarget;
 
-void UISystem::OnPointerUp(PointerUpUIEvent const& pointerUpEvent) {
-    if (lockDrag) {
-        switch (dragState) {
-        case DragState::LockDragMouseDown:
-            dragState = DragState::LockDragMouseUp;
-            return;
-        case DragState::LockDragMouseUp:
-            break;
-        default:
-            break;
-        }
+        DragEnterUIEvent event(*dragModel);
+        DispatchEvent(activeDropTarget, SignalId::DragEnter, event);
+    } else {
+        activeDropTarget.reset();
     }
-
-    return Base::OnPointerUp(pointerUpEvent);
 }
 
-void UISystem::CheckDropTargets() {
-    // FUTURE: support drop targets (from C#)
-    // Debug.Log("Drop: Position: " + mouseDevice->position.ToString());
-    //    auto worldPosition = mouseDevice->WorldPosition;
-    //    if (null == worldPosition) { return; }
-    //
-    //    auto raycastHits = Physics2D.RaycastAll(worldPosition, Vector2.zero);
-    //    SomeDropTarget hitBehavior = null;
-    //
-    //    //Debug.Log("Drop: RaycastHits: " + raycastHits.ToString());
-    //
-    //    auto dragItems = DraggedItems;
-    //
-    //    foreach (RaycastHit2D raycastHit in raycastHits)
-    //    {
-    //        if (raycastHit.collider.gameObject ==
-    //        dragModel.dragHandler.gameObject)
-    //        {
-    //            continue;
-    //        }
-    //
-    //        if (raycastHit.collider != null)
-    //        {
-    //            hitBehavior =
-    //            raycastHit.collider.gameObject.GetComponent<SomeDropTarget>();
-    //        }
-    //
-    //        if (null != hitBehavior && hitBehavior.CanAcceptDrag(dragItems))
-    //        {
-    //            break;
-    //        }
-    //    }
-    //
-    //    bool isAlreadyIn = false;
-    //    if (null != dropTargetOverObject &&
-    //    dropTargetOverObject.TryGetTarget(out WorldNode dropTargetTarget))
-    //    {
-    //        auto activeDropTarget =
-    //        dropTargetTarget.GetComponent<SomeDropTarget>(); if
-    //        (activeDropTarget != hitBehavior)
-    //        {
-    //            activeDropTarget.OnDragLeave();
-    //        }
-    //        else
-    //        {
-    //            isAlreadyIn = true;
-    //        }
-    //    }
-    //
-    //    if (null == hitBehavior)
-    //    {
-    //        dropTargetOverObject = null;
-    //        return;
-    //    }
-    //
-    //    if (!isAlreadyIn)
-    //    {
-    //        dropTargetOverObject = new WP<WorldNode>(hitBehavior.gameObject);
-    //        hitBehavior.OnDragEnter(dragItems);
-    //    }
-}
+void UIWorldSystem::StartDrag(SP<DragModel> dragModel) {
+    // Don't let hover UI interfere with drag
+    SetActiveHover(nullptr);
 
-void UISystem::StartDrag(SP<DragModel> dragModel) {
     // A mouse button down will start a drag but we don't want that if the drag
     // is locked
     switch (dragState) {
@@ -147,24 +79,22 @@ void UISystem::StartDrag(SP<DragModel> dragModel) {
     dragState = lockDrag ? DragState::LockDragMouseDown : DragState::Drag;
 }
 
-void UISystem::OnDragEnd() {
-    // FUTURE: support drop targets (from C#)
-    //    if (null != dropTargetOverObject &&
-    //    dropTargetOverObject.TryGetTarget(out WorldNode dropTargetTarget))
-    //    {
-    //        auto dropTarget = dropTargetTarget.GetComponent<SomeDropTarget>();
-    //        dropTarget.OnDragLeave();
-    //
-    //        if (dropTarget.CanAcceptDrag(DraggedItems))
-    //        {
-    //            dropTarget.OnAcceptDrag(DraggedItems);
-    //        }
-    //    }
-    //    dropTargetOverObject = null;
+void UIWorldSystem::OnDragEnd() {
+    GUARD(dragModel && dragModel->DragHandler())
 
-    if (dragModel) {
-        dragModel->dragHandler->OnDragEnd();
-        dragModel.reset();
+    // Let the drag handler finish before checking drop targets
+    dragModel->DragHandler()->OnDragEnd();
+
+    auto activeDropTarget = this->activeDropTarget.lock();
+    if (activeDropTarget) {
+        auto dropTarget = activeDropTarget->TypeComponent<SomeDropTarget>();
+        if (dropTarget) {
+            dropTarget->OnDrop(*dragModel);
+            dropTarget->OnDragExit();
+        }
+        this->activeDropTarget.reset();
     }
+
+    dragModel.reset();
     dragState = DragState::Default;
 }

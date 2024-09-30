@@ -28,6 +28,8 @@ namespace PJ {
     /// space
     class SomeCamera : public WorldComponent<>, public SomeCoordinateConverter {
     public:
+        Color clearColor = Color::white;
+
         /// Allows each camera to have its own render pipeline
         /// Add render processors to the render system when you want them to be shared between
         /// cameras

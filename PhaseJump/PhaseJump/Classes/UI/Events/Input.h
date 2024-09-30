@@ -42,7 +42,7 @@ namespace PJ {
             return j->second;
         }
 
-        /// Returns axis value for the first controller
+        /// @return Returns axis value for the first controller
         static float FirstAxisValue(AxisId axisId) {
             for (auto& controllerItem : shared.controllers) {
                 auto& axisValues = controllerItem.second.axisValues;

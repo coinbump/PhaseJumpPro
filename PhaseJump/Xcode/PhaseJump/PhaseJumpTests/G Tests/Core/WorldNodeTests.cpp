@@ -269,6 +269,37 @@ TEST(WorldNode, RemoveAllComponents)
     EXPECT_EQ(nullptr, component2->owner);
 }
 
+TEST(WorldNode, RemoveTypeComponents)
+{
+    auto world = MAKE<World>();
+    auto sut = MAKE<WorldNode>();
+    world->Add(sut);
+
+    auto component = MAKE<TestComponent>();
+    sut->Add(component);
+    auto component2 = MAKE<WorldComponent<>>();
+    sut->Add(component2);
+    EXPECT_EQ(2, sut->Components().size());
+    sut->RemoveType<TestComponent>();
+    EXPECT_EQ(1, sut->Components().size());
+    EXPECT_EQ(nullptr, component->owner);
+    EXPECT_EQ(sut.get(), component2->owner);
+}
+
+TEST(WorldNode, Modify)
+{
+    auto sut = MAKE<WorldNode>();
+    sut->Add(MAKE<TestComponent>());
+    sut->Add(MAKE<WorldComponent<>>());
+
+    int count{};
+    sut->Modify<TestComponent>([&](auto& component) {
+        count++;
+    });
+
+    EXPECT_EQ(1, count);
+}
+
 TEST(WorldNode, TypeComponent)
 {
     auto world = MAKE<World>();
@@ -293,7 +324,7 @@ TEST(WorldNode, TypeComponent2)
     auto component2 = MAKE<TestComponent>();
     sut->Add(component2);
     List<SP<TestComponent>> components;
-    sut->TypeComponents<TestComponent>(components);
+    sut->CollectTypeComponents<TestComponent>(components);
 
     EXPECT_EQ(2, components.size());
     EXPECT_EQ(component, *components.begin());
@@ -347,7 +378,7 @@ TEST(WorldNode, Update)
     EXPECT_EQ(3.0f, component2->updateTime);
 }
 
-TEST(WorldNode, ChildTypeComponents)
+TEST(WorldNode, CollectChildTypeComponents)
 {
     auto world = MAKE<World>();
     auto sut = MAKE<WorldNode>();
@@ -361,9 +392,87 @@ TEST(WorldNode, ChildTypeComponents)
     auto component2 = MAKE<TestComponent>();
     child->Add(component2);
     List<SP<TestComponent>> components;
-    sut->ChildTypeComponents<TestComponent>(components);
+    sut->CollectChildTypeComponents<TestComponent>(components);
 
     EXPECT_EQ(2, components.size());
     EXPECT_EQ(component, *components.begin());
     EXPECT_EQ(component2, *(++components.begin()));
+}
+
+TEST(WorldNode, LocalToWorld)
+{
+    auto world = MAKE<World>();
+    auto sut = MAKE<WorldNode>();
+    world->Add(sut);
+    EXPECT_EQ(world.get(), sut->World());
+
+    auto child = MAKE<WorldNode>();
+    auto child2 = MAKE<WorldNode>();
+    child->Add(child2);
+    sut->Add(child);
+
+    sut->SetLocalPosition({0, 10, 0});
+    child->SetLocalPosition({4, 0, 0});
+    child2->SetLocalPosition({0, 0, 3});
+
+    EXPECT_EQ(Vector3(4, 10, 3), child2->LocalToWorld(Vector3::Uniform(0)));
+}
+
+TEST(WorldNode, LocalToWorldScaled)
+{
+    auto world = MAKE<World>();
+    auto sut = MAKE<WorldNode>();
+    world->Add(sut);
+    EXPECT_EQ(world.get(), sut->World());
+
+    auto child = MAKE<WorldNode>();
+    auto child2 = MAKE<WorldNode>();
+    child->Add(child2);
+    sut->Add(child);
+
+    sut->SetLocalPosition({0, 10, 0});
+    child->SetLocalPosition({4, 0, 0});
+    child->SetScale(Vector3(.5f, .5f, .5f));
+    child2->SetLocalPosition({0, 0, 4});
+
+    EXPECT_EQ(Vector3(4, 10, 2), child2->LocalToWorld(Vector3::Uniform(0)));
+}
+
+TEST(WorldNode, WorldToLocalScaled)
+{
+    auto world = MAKE<World>();
+    auto sut = MAKE<WorldNode>();
+    world->Add(sut);
+    EXPECT_EQ(world.get(), sut->World());
+
+    auto child = MAKE<WorldNode>();
+    auto child2 = MAKE<WorldNode>();
+    child->Add(child2);
+    sut->Add(child);
+
+    sut->SetLocalPosition({0, 10, 0});
+    child->SetLocalPosition({4, 0, 0});
+    child->SetScale(Vector3(.5f, .5f, .5f));
+    child2->SetLocalPosition({0, 0, 4});
+
+    EXPECT_EQ(Vector3(0, 0, 0), child2->WorldToLocal(Vector3(4, 10, 2)));
+}
+
+TEST(WorldNode, OnAddChildNode)
+{
+    auto world = MAKE<World>();
+    auto sut = MAKE<WorldNode>();
+    world->Add(sut);
+
+    int value = 0;
+    auto component = MAKE<WorldComponent<FuncWorldComponentCore>>();
+    component->signalHandlers[SignalId::AddChildNode] = [&](auto& owner, auto& event) {
+        value++;
+    };
+    sut->Add(component);
+
+    EXPECT_EQ(0, value);
+
+    sut->Add(MAKE<WorldNode>());
+    EXPECT_EQ(1, value);
 }

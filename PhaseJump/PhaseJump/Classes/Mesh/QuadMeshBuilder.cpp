@@ -11,7 +11,6 @@
 using namespace std;
 using namespace PJ;
 
-// TODO: should vertices in quad be cartesian oriented? (bottom-left first)? Does it matter?
 VectorList<uint32_t> const QuadMesh::triangles{ 0, 1, 2, 1, 3, 2 };
 
 // It only makes sense to share these if all textures are the same

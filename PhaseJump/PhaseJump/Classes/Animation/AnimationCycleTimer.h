@@ -1,39 +1,45 @@
-#ifndef PJANIMATIONCYCLETIMER_H
-#define PJANIMATIONCYCLETIMER_H
+#pragma once
 
 #include "AnimationCycleTypes.h"
-#include "Model/Time/Timer.h"
 #include "Playable.h"
+#include "Timer.h"
 
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: TODO
+ CODE REVIEW: 9/25/24
  */
 namespace PJ {
     /// Handles animation cycle logic for an animation
-    // TODO: use composition for behavior, not enums
-    class AnimationCycleTimer : Playable {
+    /// Alternatively, ping pong animations can be accomplished by turning a valve on and off
+    class AnimationCycleTimer : public Playable {
     public:
+        using Base = Playable;
         using This = AnimationCycleTimer;
+        using OnCycleFunc = std::function<void(This&)>;
 
     protected:
         Timer timer;
+        Playable* playDriver = &timer;
 
         AnimationCycleType cycleType;
         AnimationCycleState cycleState;
 
     public:
+        /// Called when the timer starts a new animation cycle
+        OnCycleFunc onCycleFunc;
+
         AnimationCycleTimer(float duration, AnimationCycleType cycleType) :
             timer(duration, Runner::RunType::Once),
             cycleType(cycleType),
-            cycleState(AnimationCycleState::Forward) {}
+            cycleState(AnimationCycleState::Forward) {
+            timer.SetOnPlayTimeChangeFunc([this](auto& playable) {
+                GUARD(onPlayTimeChangeFunc);
+                onPlayTimeChangeFunc(*this);
+            });
+        }
 
         virtual ~AnimationCycleTimer() {};
-
-        bool IsFinished() const override {
-            return timer.IsFinished();
-        }
 
         float CycleTime() const {
             return timer.duration;
@@ -65,43 +71,65 @@ namespace PJ {
             cycleType = value;
         }
 
-        void SetProgress(float progress) {
-            switch (cycleState) {
-            case AnimationCycleState::Reverse:
-                timer.SetProgress(1.0f - progress);
-                break;
-            default:
-                timer.SetProgress(progress);
-                break;
-            }
+        bool IsReversed() const {
+            return cycleState == AnimationCycleState::Reverse;
         }
 
+        // MARK: Updatable
+
         void OnUpdate(TimeSlice time) override {
-            if (timer.IsFinished()) {
-                return;
-            }
+            GUARD(!timer.IsFinished())
 
             timer.OnUpdate(time);
 
-            if (timer.IsFinished()) {
-                switch (cycleType) {
-                case AnimationCycleType::Once:
-                    break;
-                case AnimationCycleType::Loop:
-                    timer.Reset();
-                    break;
-                case AnimationCycleType::PingPong:
-                    cycleState = Flip(cycleState);
-                    timer.Reset();
-                    break;
+            GUARD(timer.IsFinished())
+
+            switch (cycleType) {
+            case AnimationCycleType::Once:
+                break;
+            case AnimationCycleType::Loop:
+                timer.Reset();
+
+                if (onCycleFunc) {
+                    onCycleFunc(*this);
                 }
+                break;
+            case AnimationCycleType::PingPong:
+                cycleState = Flip(cycleState);
+                timer.Reset();
+
+                if (onCycleFunc) {
+                    onCycleFunc(*this);
+                }
+                break;
             }
         }
 
         // MARK: - Playable
 
-        bool IsPlaying() const override {
-            return timer.IsPlaying();
+        void Reset() override {
+            Base::Reset();
+            cycleState = AnimationCycleState::Forward;
+        }
+
+        float PlayTime() const override {
+            switch (cycleState) {
+            case AnimationCycleState::Reverse:
+                return Duration() - timer.PlayTime();
+                break;
+            default:
+                return timer.PlayTime();
+            }
+        }
+
+        void SetPlayTime(float value) override {
+            switch (cycleState) {
+            case AnimationCycleState::Reverse:
+                timer.SetPlayTime(Duration() - value);
+                break;
+            default:
+                timer.SetPlayTime(value);
+            }
         }
 
         float Progress() const override {
@@ -113,30 +141,19 @@ namespace PJ {
             }
         }
 
-        float Duration() const override {
-            return timer.Duration();
+        void SetProgress(float value) override {
+            switch (cycleState) {
+            case AnimationCycleState::Reverse:
+                timer.SetProgress(1.0f - value);
+                break;
+            default:
+                timer.SetProgress(value);
+                break;
+            }
         }
 
-        void Play() override {
-            timer.Play();
-        }
-
-        void Pause() override {
-            timer.Pause();
-        }
-
-        void Stop() override {
-            timer.Stop();
-        }
-
-        float PlayTime() const override {
-            return timer.PlayTime();
-        }
-
-        void SetPlayTime(float time) override {
-            timer.SetPlayTime(time);
+        Playable* PlayDriver() const override {
+            return playDriver;
         }
     };
 } // namespace PJ
-
-#endif

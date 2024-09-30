@@ -1,7 +1,6 @@
-#ifndef PJINTTMATH_H
-#define PJINTTMATH_H
+#pragma once
 
-#include <math.h>
+#include "MathUtils.h"
 
 /*
  RATING: 5 stars
@@ -16,5 +15,3 @@ namespace PJ {
     // Convenience names
     using MathInt = IntMath;
 } // namespace PJ
-
-#endif

@@ -58,6 +58,8 @@ namespace PJ {
         void LoadYRadRotation(float radians);
         void LoadZRadRotation(float radians);
 
+        void Inverse();
+
         // FUTURE: void Load3RadRotation(float radians, Vector3 rotate);
 
         operator Terathon::Matrix4D() const;

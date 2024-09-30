@@ -30,7 +30,7 @@ namespace PJ {
         void SetRadius(float value) {
             GUARD(radius != value)
             radius = value;
-            SetLayoutNeedsBuild();
+            SetNeedsLayout();
         }
 
         // MARK: WorldSizeable

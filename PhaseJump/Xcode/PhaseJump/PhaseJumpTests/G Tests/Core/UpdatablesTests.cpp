@@ -124,6 +124,22 @@ TEST(Updatables, MakeDelayFunc)
     EXPECT_EQ(2, delta);
 }
 
+TEST(Updatables, AddDelay)
+{
+    auto updatable = MAKE<TestUpdatable>(100);
+    Updatables sut;
+
+    EXPECT_EQ(0, updatable->time);
+
+    sut.AddDelay(2, updatable);
+
+    sut.OnUpdate({2});
+    EXPECT_EQ(0, updatable->time);
+
+    sut.OnUpdate({1});
+    EXPECT_EQ(1, updatable->time);
+}
+
 TEST(Updatables, MakeDelayFuncFractional)
 {
     float delta = 0;
@@ -151,4 +167,17 @@ TEST(Updatables, MakeSpeedFunc)
 
     sut(TimeSlice(1));
     EXPECT_EQ(2, delta);
+}
+
+TEST(Updatables, AddUpdatableWhileUpdating)
+{
+    Updatables sut;
+
+    sut.AddContinue([&](auto time) {
+        sut.AddContinue([](auto time) {
+        });
+    });
+
+    sut.OnUpdate(TimeSlice(1));
+    EXPECT_EQ(2, sut.Count());
 }

@@ -11,7 +11,7 @@ namespace PJ {
 
     /// Brute force raycaster (slow, but simple)
     class SimpleRaycaster2D : public SomeRaycaster2D {
-        std::optional<RaycastHit2D> Raycast(Vector2 origin, Vector2 direction) override;
+        VectorList<RaycastHit2D> Raycast(Vector2 origin, Vector2 direction) override;
     };
 } // namespace PJ
 

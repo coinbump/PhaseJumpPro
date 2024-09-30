@@ -135,7 +135,7 @@ TEST(Vector2, AxisValue) {
 
 TEST(Vector2, AccessOutOfRange) {
     int assertCount = 0;
-    asserter.assertFunc = [&](bool isTrue) {
+    assertFunc = [&](bool isTrue) {
         GUARD(!isTrue)
         assertCount++;
     };
@@ -150,5 +150,5 @@ TEST(Vector2, AccessOutOfRange) {
     sut[1];
     EXPECT_EQ(2, assertCount);
 
-    asserter.assertFunc = {};
+    assertFunc = {};
 }

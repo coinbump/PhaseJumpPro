@@ -17,19 +17,19 @@ SP<FilesProcessor> filesProcessor;
 // Future: support generic operations with parameters: Swift -> ObjC -> C++ bridge
 - (void)startFilesProcessorWithFilePathsCount:(NSInteger)filePathsCount
 {
-    UP<SomeFileProcessor> fileProcessor = std::make_unique<PJ_Dev::IncludeAliasFileProcessor>();
-    filesProcessor = MAKE<FilesProcessor>(filePathsCount, fileProcessor, FilesProcessor::Settings(FileSearchType::Recursive));
+//    UP<FileProcessor> fileProcessor = std::make_unique<PJ_Dev::IncludeAliasFileProcessor>();
+//    filesProcessor = MAKE<FilesProcessor>(filePathsCount, fileProcessor, FilesProcessor::Settings(FileSearchType::Recursive));
 }
 
 - (void)provideFilePath:(NSString*)filePath
 {
     if (!filesProcessor) { return; }
-    filesProcessor->Provide(FilePath([filePath UTF8String]));
+    filesProcessor->Scan(FilePath([filePath UTF8String]));
 }
 
 - (void)processNextFile {
     if (!filesProcessor) { return; }
-    while (filesProcessor->ProcessNext()) {}
+    while (filesProcessor->ProcessNext() == FinishType::Continue) {}
 }
 
 + (ObjCBridge*)shared

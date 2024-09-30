@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 #include "SomeRandomChoice.h"
-#include "FixedRandom.h"
+#include "MockRandom.h"
 
 #include <memory>
 
@@ -14,7 +14,7 @@ using namespace SomeRandomChoiceTests;
 
 TEST(WeightedRandom, MinMaxInt)
 {
-    FixedRandom fixedRandom;
+    MockRandom fixedRandom;
     Add(fixedRandom.values, 0.0f);
     Add(fixedRandom.values, 0.5f);
     Add(fixedRandom.values, 1.0f);
@@ -27,7 +27,7 @@ TEST(WeightedRandom, MinMaxInt)
 
 TEST(WeightedRandom, MinMaxFloat)
 {
-    FixedRandom fixedRandom;
+    MockRandom fixedRandom;
     Add(fixedRandom.values, 0.0f);
     Add(fixedRandom.values, 0.5f);
     Add(fixedRandom.values, 1.0f);

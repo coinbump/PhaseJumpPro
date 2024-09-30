@@ -1,76 +1,169 @@
 #pragma once
 
+#include "Macros.h"
+#include "PlayStateController.h"
 #include "Updatable.h"
 
 /*
  RATING: 5 stars
  Simple type
- CODE REVIEW: 6/14/24
+ CODE REVIEW: 9/25/24
  */
 namespace PJ {
-    /// A playable timeline-type object
+    /// Objects with a duration, a time state (play time) that can be paused, played, or stopped
+    /// In addition, playables are often linked to a driver that determines their play state
+    /// Example: Internal simple timer determines the time state for an animation cycle timer
     class Playable : public Updatable {
+    public:
+        using Base = Updatable;
+        using This = Playable;
+
+        using OnPlayTimeChangeFunc = std::function<void(This&)>;
+
+    protected:
+        /// Called when the play time changes
+        /// It is the responsibility of the playable to call this func
+        OnPlayTimeChangeFunc onPlayTimeChangeFunc;
+
+        PlayStateController stateController;
+
     public:
         virtual ~Playable() {}
 
+        void SetOnPlayTimeChangeFunc(OnPlayTimeChangeFunc value) {
+            onPlayTimeChangeFunc = value;
+
+            // Synchronize state
+            OnPlayTimeChange();
+        }
+
+        void Drive(std::function<void(Playable&)> func) {
+            auto driver = PlayDriver();
+            GUARD(driver)
+            func(*driver);
+        }
+
+        bool HasDriver() const {
+            return PlayDriver() != nullptr;
+        }
+
+        template <class Type>
+        Type DriveResult(std::function<Type(Playable&)> func) const {
+            auto driver = PlayDriver();
+            GUARDR(driver, Type{})
+            return func(*driver);
+        }
+
+        FinishType GetFinishType() const {
+            return IsFinished() ? FinishType::Finish : FinishType::Continue;
+        }
+
+        virtual void Reset() {
+            if (HasDriver()) {
+                Drive([](auto& driver) { driver.Reset(); });
+            } else {
+                Stop();
+                SetPlayTime(0);
+                SetIsFinished(false);
+            }
+        }
+
+        /// Returns the playable that drives this playable
+        /// Used when another object determines the playable state for this playable object
+        virtual Playable* PlayDriver() const {
+            return nullptr;
+        }
+
         /// Total playable duration
-        virtual float Duration() const = 0;
+        virtual float Duration() const {
+            return DriveResult<float>([](Playable& driver) { return driver.Duration(); });
+        }
+
+        /// Set total playable duration
+        virtual void SetDuration(float value) {
+            Drive([=](auto& driver) { driver.SetDuration(value); });
+        }
 
         /// Normalized progress (0-1.0)
-        virtual float Progress() const = 0;
+        virtual float Progress() const {
+            return DriveResult<float>([](Playable& driver) { return driver.Progress(); });
+        }
+
+        /// Set normalized progress (0-1.0)
+        virtual void SetProgress(float value) {
+            Drive([=](auto& driver) { driver.SetProgress(value); });
+        }
 
         /// Play from current play time
-        virtual void Play() = 0;
+        virtual void Play() {
+            if (HasDriver()) {
+                Drive([](auto& driver) { driver.Play(); });
+            } else {
+                stateController.Play();
+            }
+        }
 
         /// Pause. Play resumes at same position
-        virtual void Pause() = 0;
+        virtual void Pause() {
+            if (HasDriver()) {
+                Drive([](auto& driver) { driver.Pause(); });
+            } else {
+                stateController.Pause();
+            }
+        }
 
         /// Stop. Play resumes at first position
-        virtual void Stop() = 0;
-
-        virtual bool IsPlaying() const = 0;
-
-        virtual float PlayTime() const = 0;
-        virtual void SetPlayTime(float time) = 0;
-    };
-
-    enum class PlayState { Pause, Play, Stop };
-
-    /// Allows us to handle play states with composition
-    class SomePlayStateController {
-    public:
-        virtual ~SomePlayStateController() {}
-
-        virtual void Play() = 0;
-        virtual void Pause() = 0;
-        virtual void Stop() = 0;
-        virtual bool IsPlaying() const = 0;
-    };
-
-    /// A simple 3-state play controller for playable logic
-    class SimplePlayStateController : public SomePlayStateController {
-    public:
-        PlayState playState;
-
-        SimplePlayStateController(PlayState playState = PlayState::Pause) :
-            playState(playState) {}
-
-        virtual ~SimplePlayStateController() {}
-
-        void Play() {
-            playState = PlayState::Play;
+        virtual void Stop() {
+            if (HasDriver()) {
+                Drive([](auto& driver) { driver.Stop(); });
+            } else {
+                stateController.Stop();
+            }
         }
 
-        void Pause() {
-            playState = PlayState::Pause;
+        /// @return Returns true if the playable is paused
+        virtual bool IsPaused() const {
+            if (HasDriver()) {
+                return DriveResult<bool>([](Playable& driver) { return driver.IsPaused(); });
+            } else {
+                return stateController.IsPaused();
+            }
         }
 
-        void Stop() {
-            playState = PlayState::Stop;
+        /// @return Returns true if the playable is playing
+        virtual bool IsPlaying() const {
+            GUARDR(!IsFinished(), false)
+            if (HasDriver()) {
+                return DriveResult<bool>([](Playable& driver) { return driver.IsPlaying(); });
+            } else {
+                return stateController.IsPlaying();
+            }
         }
 
-        bool IsPlaying() const {
-            return playState == PlayState::Play;
+        /// @return Returns the current time value of the playable
+        virtual float PlayTime() const {
+            return DriveResult<float>([](Playable& driver) { return driver.PlayTime(); });
+        }
+
+        /// Sets the current time value of the playable
+        virtual void SetPlayTime(float time) {
+            Drive([=](auto& driver) { driver.SetPlayTime(time); });
+        }
+
+        virtual void OnPlayTimeChange() {
+            GUARD(onPlayTimeChangeFunc);
+            onPlayTimeChangeFunc(*this);
+        }
+
+        // MARK: Updatable
+
+        void OnUpdate(TimeSlice time) override {
+            Drive([=](auto& driver) { driver.OnUpdate(time); });
+        }
+
+        bool IsFinished() const override {
+            GUARDR(!Base::IsFinished(), true);
+            return DriveResult<bool>([](Playable& driver) { return driver.IsFinished(); });
         }
     };
 } // namespace PJ

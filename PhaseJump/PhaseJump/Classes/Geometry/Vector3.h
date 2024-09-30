@@ -35,7 +35,7 @@ namespace PJ {
             y(y),
             z(z) {}
 
-        constexpr Vector3(Vector2 const& value) :
+        constexpr Vector3(Vector2 value) :
             x(value.x),
             y(value.y),
             z(0) {}
@@ -54,7 +54,7 @@ namespace PJ {
             return Vector2(x, y);
         }
 
-        constexpr MathType& operator[](size_t index) {
+        MathType& operator[](size_t index) {
             Assert(index >= 0 && index < 3);
 
             /// Don't use &x[index] because struct packing isn't guaranteed
@@ -62,7 +62,7 @@ namespace PJ {
             return *indices[index];
         }
 
-        constexpr MathType operator[](size_t index) const {
+        MathType operator[](size_t index) const {
             Assert(index >= 0 && index < 3);
 
             /// Don't use &x[index] because struct packing isn't guaranteed
@@ -135,7 +135,7 @@ namespace PJ {
             y(y),
             z(z) {}
 
-        constexpr MathType& operator[](size_t index) {
+        MathType& operator[](size_t index) {
             Assert(index >= 0 && index < 3);
 
             /// Don't use &x[index] because struct packing isn't guaranteed
@@ -143,7 +143,7 @@ namespace PJ {
             return *indices[index];
         }
 
-        constexpr MathType operator[](size_t index) const {
+        MathType operator[](size_t index) const {
             Assert(index >= 0 && index < 3);
 
             /// Don't use &x[index] because struct packing isn't guaranteed
@@ -156,7 +156,7 @@ namespace PJ {
         }
 
         constexpr operator Vector2() const {
-            return Vector2(x, y);
+            return Vector2((float)x, (float)y);
         }
 
         VECTOR_METHODS(Vector3Int, int, 3);
@@ -164,6 +164,7 @@ namespace PJ {
 
     // Convenience names
     using Vec3 = Vector3;
+    using Vec3I = Vector3Int;
 
     // MARK: Stream friend operators
 

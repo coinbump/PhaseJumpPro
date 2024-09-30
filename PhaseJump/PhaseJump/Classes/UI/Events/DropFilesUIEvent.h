@@ -10,6 +10,7 @@
  CODE REVIEW: 7/21/24
  */
 namespace PJ {
+    /// Sent when a user drags files into the app window
     class DropFilesUIEvent : public SomeUIEvent {
     public:
         List<FilePath> filePaths;

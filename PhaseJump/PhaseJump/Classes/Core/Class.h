@@ -27,7 +27,7 @@ namespace PJ {
         /// Description, for browsing
         String description;
 
-        /// Set of string tags that define type properties
+        /// Object attribute types (what kind of object is this?)
         TypeTagSet typeTags;
 
         /// Custom properties

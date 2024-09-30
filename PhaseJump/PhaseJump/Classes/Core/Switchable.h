@@ -6,6 +6,8 @@
  CODE REVIEW: 8/21/24
  */
 namespace PJ {
+    enum class SwitchState { Off, On };
+
     /// Can be turned on or off
     class Switchable {
     public:

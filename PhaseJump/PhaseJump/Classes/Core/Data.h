@@ -28,31 +28,32 @@ namespace PJ {
         }
     };
 
-    /// Some data in memory
+    /// Non templated data for storing in collections
     class SomeData {
     public:
         virtual ~SomeData() {}
 
-        virtual void* Pointer() const = 0;
         virtual size_t Size() const = 0;
     };
 
     /// Data in memory
+    template <class Type = void>
     class Data : public SomeData {
     private:
         /// Disable copy
         Data(Data const&);
 
     protected:
-        void* data = nullptr;
+        Type* data = nullptr;
         size_t size = 0;
-        std::function<void*(size_t size)> allocator;
+        std::function<Type*(size_t size)> allocator;
 
     public:
         using This = Data;
 
         Data(
-            std::function<void*(size_t size)> allocator = [](size_t size) { return malloc(size); }
+            std::function<Type*(size_t size)> allocator = [](size_t size
+                                                          ) { return (Type*)malloc(size); }
         ) :
             allocator(allocator) {}
 
@@ -62,11 +63,11 @@ namespace PJ {
             }
         }
 
-        bool CopyIn(void* data, size_t size) {
+        bool CopyIn(Type* data, size_t size) {
             GUARDR(data != this->data, false)
             GUARDR(data && size > 0, false)
 
-            if (Resize(size) == size) {
+            if (ResizeBytes(size) == size) {
                 memcpy(this->data, data, size);
                 return true;
             }
@@ -84,12 +85,16 @@ namespace PJ {
             return result;
         }
 
-        size_t Resize(size_t size) {
+        void ResizeCount(size_t count) {
+            ResizeBytes(count * sizeof(Type));
+        }
+
+        size_t ResizeBytes(size_t size) {
             GUARDR(allocator, this->size)
             GUARDR(size != this->size, this->size)
 
             if (data) {
-                auto reallocResult = realloc(data, size);
+                Type* reallocResult = (Type*)realloc(data, size);
                 if (reallocResult) {
                     data = reallocResult;
                     this->size = size;
@@ -110,7 +115,7 @@ namespace PJ {
             size = 0;
         }
 
-        void* Pointer() const override {
+        Type* Pointer() const {
             return data;
         }
 
@@ -118,7 +123,11 @@ namespace PJ {
             return size;
         }
 
-        operator void*() const {
+        size_t Count() const {
+            return size / sizeof(Type);
+        }
+
+        operator Type*() const {
             return data;
         }
     };

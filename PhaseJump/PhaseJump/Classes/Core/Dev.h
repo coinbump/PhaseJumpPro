@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Macros.h"
 #include <assert.h>
 #include <functional>
 #include <iostream>
@@ -17,18 +18,8 @@ namespace PJ {
     void Log(Arguments... args) {}
 #endif
 
-    struct Asserter {
-        using AssertFunc = std::function<void(bool isTrue)>;
-        AssertFunc assertFunc;
+    using AssertFunc = std::function<void(bool)>;
+    extern AssertFunc assertFunc;
 
-        void Assert(bool isTrue);
-    };
-
-    extern Asserter asserter;
-
-#ifdef DEBUG
     void Assert(bool isTrue);
-#else
-    void Assert(bool isTrue);
-#endif
 } // namespace PJ

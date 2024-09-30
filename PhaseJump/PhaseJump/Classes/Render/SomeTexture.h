@@ -13,7 +13,7 @@ namespace PJ {
     struct TextureRenderModel {
         uint32_t renderId = 0;
 
-        /// Normalized texture origin (0-1.0) in reading coordinates (top-left is 0, 0)
+        /// Normalized texture origin (0-1.0) in reading coordinates
         Vector2 origin;
 
         /// Normalized texture size (0-1.0)
@@ -48,7 +48,7 @@ namespace PJ {
             return size;
         }
 
-        /// Returns the actual texture object used by the render engine
+        /// @return Returns the actual texture object used by the render engine
         /// In the case of a texture atlas, each child texture will have a link to its original
         /// render texture
         virtual SP<SomeTexture> RenderTexture() {

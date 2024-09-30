@@ -6,12 +6,6 @@ using namespace PJ;
 
 // TODO: needs unit tests
 void BatchByMaterialRenderProcessor::Process(CameraRenderModel& cameraModel) {
-    // Make sure everything is in world coordinates before we batch
-    for (auto& model : cameraModel.models) {
-        model.mesh *= model.matrix;
-        model.matrix.LoadIdentity();
-    }
-
     // Force the z order for an orthographic camera
     // FUTURE: will need a different solution for perspective cameras
     float z = 0;
@@ -42,6 +36,18 @@ void BatchByMaterialRenderProcessor::Process(CameraRenderModel& cameraModel) {
         // Combine render models that have a matching material (doesn't have to be shared)
         for (auto& materialModels : modelsByMaterial) {
             auto& modelsInMaterial = materialModels.second;
+
+            // Optimize: Skip process if we have nothing to batch
+            if (modelsInMaterial.size() == 1) {
+                models.push_back(*modelsInMaterial[0]);
+                continue;
+            }
+
+            // Make sure everything is in world coordinates before we batch
+            for (auto& model : modelsInMaterial) {
+                model->mesh *= model->matrix;
+                model->matrix.LoadIdentity();
+            }
 
             size_t vertexCount = 0;
             size_t trianglesCount = 0;

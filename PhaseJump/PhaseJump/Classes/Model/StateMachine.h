@@ -3,6 +3,7 @@
 #include "Broadcaster.h"
 #include "CyclicGraph.h"
 #include "Dev.h"
+#include "Funcs.h"
 #include "List.h"
 #include "SomeStateMachine.h"
 #include "StandardEventCore.h"
@@ -15,20 +16,6 @@
  CODE REVIEW: 7/6/24
  */
 namespace PJ {
-    template <class StateType>
-    class StateChangeEvent : public Event<StandardEventCore> {
-    public:
-        using Base = Event<StandardEventCore>;
-
-        StateType prevState;
-        StateType state;
-
-        StateChangeEvent(StateType prevState, StateType state, WP<PJ::Base> sentFrom) :
-            Base(StandardEventCore(String(""), sentFrom)),
-            prevState(prevState),
-            state(state) {}
-    };
-
     struct StateMachineEdgeCore {
         using InputList = VectorList<String>;
 
@@ -39,30 +26,50 @@ namespace PJ {
             inputs(inputs) {}
     };
 
+    template <class StateType>
+    using StateGraph = CyclicGraph<CyclicGraphNode<StateMachineEdgeCore, StateType>>;
+
     /// State machine graph. Each node in the graph is a state. Edges are
     /// transitions
     template <class StateType>
-    class StateMachine : public CyclicGraph<CyclicGraphNode<StateMachineEdgeCore, StateType>>,
-                         public SomeStateMachine<StateType> {
+    class StateMachine : public StateGraph<StateType> {
     public:
         using EdgeCore = StateMachineEdgeCore;
         using Node = CyclicGraphNode<EdgeCore, StateType>;
         using Base = CyclicGraph<Node>;
+        using This = StateMachine<StateType>;
         using InputList = VectorList<String>;
-
         using NodeSharedPtr = SP<Node>;
+        using OnStateChangeFunc = std::function<void(This&)>;
 
     protected:
-        StateType state = StateType();
-        StateType prevState = StateType();
+        StateType state{};
+        StateType prevState{};
 
         UnorderedMap<StateType, NodeSharedPtr> stateToNodeMap;
+        OnStateChangeFunc onStateChangeFunc;
 
     public:
         /// If true, state transitions can't occur
         bool isLocked = false;
 
     public:
+        StateMachine(StateType state = {}) :
+            state(state),
+            prevState(state) {}
+
+        void SetOnStateChangeFunc(OnStateChangeFunc value) {
+            onStateChangeFunc = value;
+
+            // Synchronize state
+            GUARD(onStateChangeFunc)
+            onStateChangeFunc(*this);
+        }
+
+        void OverrideOnStateChangeFunc(OnStateChangeFunc value) {
+            SetOnStateChangeFunc(OverrideFunc(onStateChangeFunc, value));
+        }
+
         bool IsLocked() const {
             return isLocked;
         }
@@ -82,8 +89,6 @@ namespace PJ {
         StateType PrevState() const {
             return prevState;
         }
-
-        StateMachine() {}
 
         /// Return a node object for the state (if any)
         NodeSharedPtr NodeForState(StateType state) const {
@@ -110,29 +115,32 @@ namespace PJ {
             return node;
         }
 
-        void OnInput(String input) {
+        std::optional<StateType> NextStateForInput(String input) {
             auto state = this->state;
             auto node = NodeForState(state);
 
-            if (!node) {
-                PJ::Log("ERROR. State has no node in graph");
-                return;
-            }
+            GUARDR_LOG(node, {}, "ERROR. State has no node in graph")
 
-            // Search for a matching input. If we find it, do a state transition
+            // Search for a matching input
             for (auto& edge : node->Edges()) {
                 for (auto& edgeInput : edge->core.inputs) {
                     if (edgeInput == input) {
-                        auto toNode = DCAST<Node>(edge->toNode->Value());
-                        if (!toNode) {
-                            continue;
-                        }
-
-                        SetState(toNode->core);
-                        return;
+                        auto toNode = SCAST<Node>(edge->toNode->Value());
+                        GUARD_CONTINUE(toNode)
+                        return toNode->core;
                     }
                 }
             }
+
+            return {};
+        }
+
+        void Input(String input) {
+            auto nextState = NextStateForInput(input);
+            GUARD(nextState)
+
+            // If there is a transition that takes this input from this state, make the transition
+            SetState(*nextState);
         }
 
         /// Connect two states via inputs, adding them to the graph if necessary
@@ -140,9 +148,8 @@ namespace PJ {
             auto fromNode = AddState(fromState);
             auto toNode = AddState(toState);
 
-            if (nullptr == fromNode || nullptr == toNode) {
-                return;
-            }
+            GUARD(fromNode)
+            GUARD(toNode)
 
             this->AddEdge(fromNode, EdgeCore(inputs), toNode);
         }
@@ -153,22 +160,17 @@ namespace PJ {
 
         void SetState(StateType value) {
             auto newState = value;
-            if (newState == state) {
-                return;
-            }
-            if (isLocked) {
-                return;
-            }
-            if (!CanTransition(newState)) {
-                return;
-            }
+
+            GUARD(newState != state)
+            GUARD(!isLocked)
+            GUARD(CanTransition(newState))
 
             SetStateInternal(newState);
-            OnStateChange(newState);
+            OnStateChange();
         }
 
     protected:
-        /// Sets the state value without broadcasting.
+        /// Sets state value without broadcasting
         virtual void SetStateInternal(StateType newState) {
             prevState = state;
             state = newState;
@@ -182,6 +184,9 @@ namespace PJ {
 
     protected:
         /// Respond to state change
-        virtual void OnStateChange(StateType newState) {}
+        virtual void OnStateChange() {
+            GUARD(onStateChangeFunc)
+            onStateChangeFunc(*this);
+        }
     };
 } // namespace PJ

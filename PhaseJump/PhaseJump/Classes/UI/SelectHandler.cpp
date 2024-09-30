@@ -1,11 +1,11 @@
 #include "SelectHandler.h"
-#include "UISystem.h"
+#include "UIWorldSystem.h"
 
 using namespace std;
 using namespace PJ;
 
 SelectHandler::SelectHandler() {
-    uiSystemResolver = []() { return UISystem::shared; };
+    uiSystemResolver = []() { return UIWorldSystem::shared; };
 }
 
 void SelectHandler::OnSelectChange() {

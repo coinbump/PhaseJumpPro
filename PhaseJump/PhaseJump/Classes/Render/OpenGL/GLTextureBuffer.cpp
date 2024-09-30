@@ -1,4 +1,5 @@
 #include "GLTextureBuffer.h"
+#include "Bitmap.h"
 #include "GLRenderEngine.h"
 #include "GLTexture.h"
 
@@ -57,11 +58,12 @@ void GLTextureBuffer::Build(Vector2Int size) {
 
     auto glRenderEngine = static_cast<GLRenderEngine*>(renderEngine.get());
 
-    glGenFramebuffers(1, &frameBuffer.id);
-    glRenderEngine->BindFrameBuffer(frameBuffer.id);
-    renderId = frameBuffer.id;
+    GLuint frameBufferId{};
+    glGenFramebuffers(1, &frameBufferId);
+    glRenderEngine->BindFrameBuffer(frameBufferId);
+    renderId = frameBufferId;
 
-    GLuint textureId;
+    GLuint textureId{};
     glGenTextures(1, &textureId);
 
     texture = MAKE<GLTexture>("buffer", textureId, size, "");
@@ -77,13 +79,20 @@ void GLTextureBuffer::Build(Vector2Int size) {
     // FUTURE: evaluate advantages of using GL_DRAW_FRAMEBUFFER here
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureId, 0);
 
-    glGenRenderbuffers(1, &depthBuffer.id);
-    glRenderEngine->BindRenderBuffer(GL_RENDERBUFFER, depthBuffer.id);
+    GLuint depthBufferId{};
+    glGenRenderbuffers(1, &depthBufferId);
+    glRenderEngine->BindRenderBuffer(GL_RENDERBUFFER, depthBufferId);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, size.x, size.y);
 
     // FUTURE: evaluate advantages of using GL_DRAW_FRAMEBUFFER here
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthBuffer.id);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthBufferId);
 
     GUARD(CheckFrameBufferStatus())
+    frameBuffer.id = frameBufferId;
+    depthBuffer.id = depthBufferId;
     this->size = size;
+}
+
+bool GLTextureBuffer::IsValid() const {
+    return frameBuffer.id != 0 && size.x > 0 && size.y > 0;
 }

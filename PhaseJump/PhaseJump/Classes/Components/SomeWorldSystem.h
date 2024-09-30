@@ -2,6 +2,7 @@
 
 #include "Base.h"
 #include "List.h"
+#include "Tags.h"
 #include "Updatable.h"
 #include "VectorList.h"
 #include "WorldPartLife.h"
@@ -22,6 +23,7 @@ namespace PJ {
         Tags tags;
     };
 
+    // TODO: re-evaluate use of multiple inheritance here
     /// Exists outside of the world node graph and receives UI events
     class SomeWorldSystem : public Base, public Updatable {
     protected:
@@ -36,7 +38,7 @@ namespace PJ {
     public:
         String name;
 
-        /// Tags that define the object's type
+        /// Object attribute types (what kind of object is this?)
         TypeTagSet typeTags;
 
         SomeWorldSystem(String name = "") :

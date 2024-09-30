@@ -64,7 +64,7 @@ namespace PJ {
             info(info),
             loadResourcesModel(loadResourcesModel) {}
 
-        /// Returns loaded resources if the operation was a success
+        /// @return Returns loaded resources if the operation was a success
         VectorList<ResourceModel> LoadedResources() const {
             VectorList<ResourceModel> result;
 
@@ -79,7 +79,7 @@ namespace PJ {
             return result;
         }
 
-        /// Returns new load operations if the operation was a success
+        /// @return Returns new load operations if the operation was a success
         SomeLoadResourcesOperation::Success::LoadOperationsList LoadOperations() const {
             SomeLoadResourcesOperation::Success::LoadOperationsList result;
 

@@ -10,40 +10,35 @@
 
 using namespace PJ;
 
-namespace ExampleLife {
-    class AgentGroup;
+namespace Example {
+    namespace Life {
+        class AgentGroup;
 
-    /// Runs the simulation and renders it
-    class MatrixRenderer : public SomeRenderer
-    {
-    public:
-        using Base = SomeRenderer;
+        /// Runs the simulation and renders it
+        class MatrixRenderer : public SomeRenderer {
+        public:
+            using Base = SomeRenderer;
 
-        AgentSystem system;
-        float updateSystemCountdown = 0;
-        SP<AgentGroup> group;
+            AgentSystem system;
+            SP<AgentGroup> group;
 
-        enum class CellState {
-            Dead,
+            Matrix<Agent*> matrix;
 
-            Alive
+        public:
+            MatrixRenderer();
+
+            void Awake() override;
+            void OnUpdate(TimeSlice time) override;
+
+            void PostStep() {
+                model.SetVertexColorsNeedsBuild();
+            }
+
+            // MARK: SomeWorldComponent
+
+            String TypeName() const override {
+                return "ExampleLife-MatrixRenderer";
+            }
         };
-
-        Matrix<CellState> matrix;
-
-    public:
-        MatrixRenderer();
-
-        void Awake() override;
-        void OnUpdate(TimeSlice time) override;
-        void UpdateMatrixForAgent(Agent const& agent);
-
-        void PostStep() {
-            model.SetVertexColorsNeedsBuild();
-        }
-
-        // MARK: SomeWorldComponent
-
-        String TypeName() const override { return "EampleLife-MatrixRenderer"; }
-    };
-}
+    } // namespace Life
+} // namespace Example

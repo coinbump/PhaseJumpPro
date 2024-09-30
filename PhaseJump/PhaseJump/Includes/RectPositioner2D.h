@@ -1,0 +1,1 @@
+#include "../Classes/Emitters/RectPositioner2D.h"

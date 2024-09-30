@@ -1,6 +1,7 @@
 #include "SDLLoadGLTextureOperation.h"
 #include "Bitmap.h"
 #include "GLTexture.h"
+#include "SDLSurface.h"
 #include "StringUtils.h"
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_surface.h>
@@ -70,11 +71,22 @@ SomeLoadResourcesOperation::Result SDLLoadGLTextureOperation::LoadResources() {
     BGRABitmap bgraBitmap(Vector2Int(surface->w, surface->h), surface->pixels, surfaceDataSize);
     RGBABitmap rgbaBitmap(Vector2Int(surface->w, surface->h));
 
-    rgbaBitmap.Pixels().clear();
-    std::copy(
-        bgraBitmap.Pixels().begin(), bgraBitmap.Pixels().end(),
-        std::back_inserter(rgbaBitmap.Pixels())
+    std::copy(bgraBitmap.Pixels().begin(), bgraBitmap.Pixels().end(), rgbaBitmap.Pixels().begin());
+
+// #define TEST_MAKE_SURFACE
+#ifdef TEST_MAKE_SURFACE
+    // TODO: temp code
+    auto testSurface = MakeSurface(rgbaBitmap);
+    surfaceDataSize = pixelFormat.PixelSize() * testSurface->surface->w * testSurface->surface->h;
+    RGBABitmap bgraBitmap2(
+        Vector2Int(testSurface->surface->w, testSurface->surface->h), testSurface->surface->pixels,
+        surfaceDataSize
     );
+
+    std::copy(
+        bgraBitmap2.Pixels().begin(), bgraBitmap2.Pixels().end(), rgbaBitmap.Pixels().begin()
+    );
+#endif
 
     // SDL does not load textures premultiplied, so if we want that, we need to
     // apply it Premultiply
@@ -85,6 +97,9 @@ SomeLoadResourcesOperation::Result SDLLoadGLTextureOperation::LoadResources() {
         color.b *= color.a;
         pixel = (RGBAColor)color;
     }
+
+    // OpenGl expects textures to be upside-down
+    // rgbaBitmap.FlipV();
 
     // http://www.sdltutorials.com/sdl-tip-sdl-surface-to-opengl-texture
     GLuint glTexture = 0;

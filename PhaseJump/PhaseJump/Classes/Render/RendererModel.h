@@ -53,9 +53,6 @@ namespace PJ {
         BuildRenderModelsFunc buildRenderModelsFunc;
 
     public:
-        /// (Optional). Allows render model to pass render hints to render processors
-        Tags tags;
-
         /// (Optional). Specifies z layer group for render
         int zIndex = 0;
 
@@ -103,10 +100,8 @@ namespace PJ {
             }
         }
 
-        void SetColor(ColorType value) {
-            colors = { value };
-            SetVertexColorsNeedsBuild();
-        }
+        void SetColor(ColorType value);
+        void SetAlpha(float value);
 
         ColorType Color() {
             GUARDR(!IsEmpty(colors), Color::white)

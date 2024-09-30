@@ -20,11 +20,13 @@ namespace StateMachineTests {
         int test1Count = 0;
         int test2Count = 0;
 
-        void OnStateChange(TestEnum newState) override
+        // MARK: StateMachine
+        
+        void OnStateChange() override
         {
-            Base::OnStateChange(newState);
+            Base::OnStateChange();
 
-            switch (newState) {
+            switch (State()) {
                 case TestEnum::Test1:
                     test1Count++;
                     break;
@@ -74,12 +76,12 @@ TEST(StateMachine, Test_StateMachine_Graph)
 
     EXPECT_EQ(3, sut->nodes.size());
     sut->SetState(TestEnum::Invalid);
-    sut->OnInput("test2");
+    sut->Input("test2");
     EXPECT_EQ(TestEnum::Invalid, sut->State());
 
-    sut->OnInput("test1");
+    sut->Input("test1");
     EXPECT_EQ(TestEnum::Test1, sut->State());
 
-    sut->OnInput("test2");
+    sut->Input("test2");
     EXPECT_EQ(TestEnum::Test2, sut->State());
 }

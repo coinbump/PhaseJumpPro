@@ -102,10 +102,10 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_WINDOWS;_USE_MATH_DEFINES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>../../PhaseJump\Includes;../../../submodules/Terathon-Math-Library;../../../submodules/SDL/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -118,7 +118,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_WINDOWS;_USE_MATH_DEFINES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
@@ -129,6 +129,66 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\PhaseJump\Classes\Animation\EaseFunc.cpp" />
+    <ClCompile Include="..\..\PhaseJump\Classes\Animation\RateFramePlayable.cpp" />
+    <ClCompile Include="..\..\PhaseJump\Classes\Animation\SomeFramePlayable.cpp" />
+    <ClCompile Include="..\..\PhaseJump\Classes\Audio\AudioStreamPlayer.cpp" />
+    <ClCompile Include="..\..\PhaseJump\Classes\Components\ComponentTool.cpp" />
+    <ClCompile Include="..\..\PhaseJump\Classes\Components\OrthoCamera.cpp" />
+    <ClCompile Include="..\..\PhaseJump\Classes\Components\Renderers\AnimatedSpriteRenderer.cpp" />
+    <ClCompile Include="..\..\PhaseJump\Classes\Components\Renderers\ColorRenderer.cpp" />
+    <ClCompile Include="..\..\PhaseJump\Classes\Components\Renderers\MeshRenderer.cpp" />
+    <ClCompile Include="..\..\PhaseJump\Classes\Components\Renderers\SimpleGradientRenderer.cpp" />
+    <ClCompile Include="..\..\PhaseJump\Classes\Components\Renderers\SlicedTextureRenderer.cpp" />
+    <ClCompile Include="..\..\PhaseJump\Classes\Components\Renderers\SpriteRenderer.cpp" />
+    <ClCompile Include="..\..\PhaseJump\Classes\Components\SimpleRaycaster2D.cpp" />
+    <ClCompile Include="..\..\PhaseJump\Classes\Components\SomeCamera.cpp" />
+    <ClCompile Include="..\..\PhaseJump\Classes\Components\SomeRaycaster2D.cpp" />
+    <ClCompile Include="..\..\PhaseJump\Classes\Components\WorldSystem.cpp" />
+    <ClCompile Include="..\..\PhaseJump\Classes\Core\DependencyContainer.cpp" />
+    <ClCompile Include="..\..\PhaseJump\Classes\Core\Dev.cpp" />
+    <ClCompile Include="..\..\PhaseJump\Classes\Core\Enum.cpp" />
+    <ClCompile Include="..\..\PhaseJump\Classes\Core\EnumClass.cpp" />
+    <ClCompile Include="..\..\PhaseJump\Classes\Core\HorizontalAlignment.cpp" />
+    <ClCompile Include="..\..\PhaseJump\Classes\Core\ModelColor.cpp" />
+    <ClCompile Include="..\..\PhaseJump\Classes\Core\PropertyIdBuilder.cpp" />
+    <ClCompile Include="..\..\PhaseJump\Classes\Core\QuickBuild.cpp" />
+    <ClCompile Include="..\..\PhaseJump\Classes\Core\Result.cpp" />
+    <ClCompile Include="..\..\PhaseJump\Classes\Core\RGBAColor.cpp" />
+    <ClCompile Include="..\..\PhaseJump\Classes\Core\Scene.cpp" />
+    <ClCompile Include="..\..\PhaseJump\Classes\Core\SomeAligner.cpp" />
+    <ClCompile Include="..\..\PhaseJump\Classes\Core\SomeResolver.cpp" />
+    <ClCompile Include="..\..\PhaseJump\Classes\Core\SomeUIEventPoller.cpp" />
+    <ClCompile Include="..\..\PhaseJump\Classes\Core\SomeWorldComponent.cpp" />
+    <ClCompile Include="..\..\PhaseJump\Classes\Core\StandardCore.cpp" />
+    <ClCompile Include="..\..\PhaseJump\Classes\Core\StringConvertible.cpp" />
+    <ClCompile Include="..\..\PhaseJump\Classes\Core\StringUtils.cpp" />
+    <ClCompile Include="..\..\PhaseJump\Classes\Core\TransformFunc.cpp" />
+    <ClCompile Include="..\..\PhaseJump\Classes\Core\Updatables.cpp" />
+    <ClCompile Include="..\..\PhaseJump\Classes\Core\Utils.cpp" />
+    <ClCompile Include="..\..\PhaseJump\Classes\Core\VerticalAlignment.cpp" />
+    <ClCompile Include="..\..\PhaseJump\Classes\Core\World.cpp" />
+    <ClCompile Include="..\..\PhaseJump\Classes\Core\WorldComponent.cpp" />
+    <ClCompile Include="..\..\PhaseJump\Classes\Core\WorldNode.cpp" />
+    <ClCompile Include="..\..\PhaseJump\Classes\Core\WorldNodeTransform.cpp" />
+    <ClCompile Include="..\..\PhaseJump\Classes\Data\FileManager.cpp" />
+    <ClCompile Include="..\..\PhaseJump\Classes\Data\SQL\SQLCommand.cpp" />
+    <ClCompile Include="..\..\PhaseJump\Classes\Data\SQL\SQLDatabase.cpp" />
+    <ClCompile Include="..\..\PhaseJump\Classes\Data\SQL\SQLTable.cpp" />
+    <ClCompile Include="..\..\PhaseJump\Classes\Data\SQL\SQLTool.cpp" />
+    <ClCompile Include="..\..\PhaseJump\Classes\Data\SQL\SQLTypes.cpp" />
+    <ClCompile Include="..\..\PhaseJump\Classes\Developer\IncludeAliasFileProcessor.cpp" />
+    <ClCompile Include="..\..\PhaseJump\Classes\Effects\CycleHueEffect.cpp" />
+    <ClCompile Include="..\..\PhaseJump\Classes\Layout\SomePathLayout.cpp" />
+    <ClCompile Include="..\..\PhaseJump\Classes\Model\Boards\MatrixBoard.cpp" />
+    <ClCompile Include="..\..\PhaseJump\Classes\Model\Matrix.cpp" />
+    <ClCompile Include="..\..\PhaseJump\Classes\Model\Random\StandardRandom.cpp" />
+    <ClCompile Include="..\..\PhaseJump\Classes\Model\RateLimiter.cpp" />
+    <ClCompile Include="..\..\PhaseJump\Classes\Model\Time\SomePlayStateController.cpp" />
+    <ClCompile Include="..\..\PhaseJump\Classes\Systems\EventWorldSystem.cpp" />
+    <ClCompile Include="..\..\PhaseJump\Classes\Text\Font.cpp" />
+    <ClCompile Include="..\..\PhaseJump\Classes\Text\TextMeasurer.cpp" />
+    <ClCompile Include="..\..\PhaseJump\Classes\Text\TextRenderer.cpp" />
     <ClCompile Include="Visual Studio.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -142,6 +202,19 @@
     <None Include="PhaseJump" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\PhaseJump\Classes\Animation\AnimationCycleTimer.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Animation\AnimationCycleTypes.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Animation\Animator.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Animation\CycleAnimator.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Animation\EaseFunc.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Animation\EaseTypes.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Animation\Interpolator.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Animation\RateFramePlayable.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Animation\SomeAnimatedValue.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Animation\SomeFramePlayable.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Animation\TimedSequence.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Audio\AudioStreamPlayer.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Audio\SomeAudioStream.h" />
     <ClInclude Include="..\..\PhaseJump\Classes\Collections\CollectionUtils.h" />
     <ClInclude Include="..\..\PhaseJump\Classes\Collections\List.h" />
     <ClInclude Include="..\..\PhaseJump\Classes\Collections\MapUtils.h" />
@@ -150,6 +223,164 @@
     <ClInclude Include="..\..\PhaseJump\Classes\Collections\UnorderedMap.h" />
     <ClInclude Include="..\..\PhaseJump\Classes\Collections\UnorderedSet.h" />
     <ClInclude Include="..\..\PhaseJump\Classes\Collections\VectorList.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Components\Colliders2D.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Components\ComponentTool.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Components\OffscreenBuffer.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Components\OrthoCamera.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Components\Renderers\AnimatedSpriteRenderer.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Components\Renderers\ColorRenderer.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Components\Renderers\MeshRenderer.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Components\Renderers\OffscreenBufferRenderer.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Components\Renderers\SimpleGradientRenderer.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Components\Renderers\SlicedTextureRenderer.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Components\Renderers\SpriteRenderer.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Components\SimpleRaycaster2D.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Components\SomeCamera.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Components\SomeCollider.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Components\SomeCollider2D.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Components\SomeRaycaster.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Components\SomeRaycaster2D.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Components\SomeWorldSystem.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\Data.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\DependencyContainer.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\Dev.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\Enum.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\EnumClass.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\Environment.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\Factory.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\FactoryRegistry.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\FloatMath.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\Funcs.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\Function.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\HorizontalAlignment.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\Identifiable.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\InfixOStreamIterator.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\IntMath.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\Macros.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\Macros_Operators.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\ModelColor.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\ModifierFunc.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\MultiFunction.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\Node2D.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\Pool.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\Prefab.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\PropertyIdBuilder.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\PropertyMirror.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\PropertyWrapper.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\QuickBuild.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\Range.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\Result.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\RGBAColor.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\RigidBody2D.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\Runner.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\Scene.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\Shared.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\SharedVector.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\SomeAligner.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\SomeAttribute.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\SomeBinding.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\SomeDriver.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\SomeNode.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\SomeOperation.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\SomeReference.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\SomeResolver.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\SomeTagClass.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\SomeUIEventPoller.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\SomeWorldComponent.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\StandardCore.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\StateCore.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\StringConvertible.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\StringUtils.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\StrongReference.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\Switchable.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\SwitchHandler.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\TagClassId.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\Tags.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\Transformer.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\TransformFunc.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\TypeClass.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\Types.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\Updatable.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\Updatables.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\Utils.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\Valve.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\VerticalAlignment.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\Void.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\WeakReference.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\World.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\WorldComponent.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\WorldComponentCores.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\WorldNode.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\WorldNodeTransform.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\WorldPartLife.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Data\FileManager.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Data\SQL\Arguments\SQLTableMutateArguments.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Data\SQL\Arguments\SQLTableQueryArguments.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Data\SQL\Arguments\SQLWhereArguments.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Data\SQL\SQLCommand.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Data\SQL\SQLDatabase.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Data\SQL\SQLRowValues.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Data\SQL\SQLStatement.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Data\SQL\SQLTable.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Data\SQL\SQLTableSchema.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Data\SQL\SQLTool.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Data\SQL\SQLTypes.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Data\SQL\SQLValue.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Developer\DevProfiler.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Developer\IncludeAliasFileProcessor.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Effects\CycleHueEffect.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Effects\SomeEffect.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Graph\AcyclicGraphNode.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Graph\CyclicGraph.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Graph\CyclicGraphNode.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Graph\GraphNodeTool.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Graph\SomeGraphNode.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Graph\StandardEdgeCore.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Layout\BezierPathLayout.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Layout\CirclePathLayout2D.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Layout\HFlow.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Layout\LinePathLayout.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Layout\SomeLayout.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Layout\SomeLayout2D.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Layout\SomePathLayout.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Layout\VFlow.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\Boards\MatrixBoard.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\Boards\MatrixPiece.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\Broadcaster.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\BroadcastValue.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\Goals\GoalEvents.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\Goals\SomeGoal.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\Goals\ValueTargetGoal.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\Matrix.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\Patterns\Receptor.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\Patterns\Signal.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\Random\MockRandom.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\Random\SomeRandom.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\Random\SomeRandomChoice.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\Random\StandardRandom.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\RateLimiter.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\SomeBroadcaster.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\SomeLimiter.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\SomeListener.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\SomeSignal.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\SomeStateMachine.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\StandardEventCore.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\StateMachine.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\TimedStateMachine.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\Time\Playable.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\Time\Runner.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\Time\SomePlayStateController.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\Time\TimedPlayable.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\Time\Timer.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\Time\TimeSlice.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\TriggerMap.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\Weight.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\WeightedRandomChoice.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Steering\VelocityKSteering.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Systems\EventWorldSystem.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Text\Font.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Text\TextMeasurer.h" />
+    <ClInclude Include="..\..\PhaseJump\Classes\Text\TextRenderer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

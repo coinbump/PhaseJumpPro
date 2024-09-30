@@ -18,10 +18,259 @@
     <Filter Include="Phase Jump\Types">
       <UniqueIdentifier>{3ffe6e99-23fc-4c61-87f4-7226488e12c3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Phase Jump\Core">
+      <UniqueIdentifier>{b1174481-fe10-4780-ada4-e57c48968e0f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Phase Jump\Model">
+      <UniqueIdentifier>{0a9c8d2c-24c5-46eb-9009-1022718bf60b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Phase Jump\Model\Boards">
+      <UniqueIdentifier>{1d505bea-da40-49d8-97e4-51b2193c8a00}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Phase Jump\Model\Goals">
+      <UniqueIdentifier>{6e88bd38-5d0d-4221-9437-6ddfc18bcefb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Phase Jump\Model\Patterns">
+      <UniqueIdentifier>{b2a5072b-8383-4b49-a925-3f8f1fe67062}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Phase Jump\Model\Random">
+      <UniqueIdentifier>{bedf04a0-4dd2-4ab3-a373-8e1f6f1d58b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Phase Jump\Animation">
+      <UniqueIdentifier>{d40208fe-87a6-48b1-bf1c-73c8fbdb20ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Phase Jump\Components">
+      <UniqueIdentifier>{fde69ef6-4d65-4d71-9def-6cf4ec121452}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Phase Jump\Components\Renderers">
+      <UniqueIdentifier>{7318f8ec-2a61-4b96-b2e3-17f8bcade3b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Phase Jump\Geometry">
+      <UniqueIdentifier>{6028bced-dc8e-43ac-9d63-d12f3e193ab8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Phase Jump\Layout">
+      <UniqueIdentifier>{6e4d1525-afe4-485f-9761-20b4193a8e6b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Phase Jump\Graph">
+      <UniqueIdentifier>{c63751d9-1403-4514-b4db-113e038f6a0b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Phase Jump\Steering">
+      <UniqueIdentifier>{4e98e652-a2bd-4f2c-91d7-1422b3665246}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Phase Jump\Storage">
+      <UniqueIdentifier>{69c024dd-80a6-404c-84cc-dead0d6c1066}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Phase Jump\Systems">
+      <UniqueIdentifier>{5dbfdfb7-50ee-447a-a39c-6283c40db559}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Phase Jump\Text">
+      <UniqueIdentifier>{ff298a73-c8ac-440d-8ea5-571b3b84fcbc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Phase Jump\Audio">
+      <UniqueIdentifier>{12f74a2b-909f-4158-a9b6-24b1d2ac7f39}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Phase Jump\Data">
+      <UniqueIdentifier>{3ae9fbde-ad89-41f4-89c4-8114291e1725}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Phase Jump\Developer">
+      <UniqueIdentifier>{2544a95d-89ba-4b12-ae61-b2c543793ad7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Phase Jump\Effects">
+      <UniqueIdentifier>{bf9e56a9-dd31-49c6-b493-33a8e6ac7e75}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Phase Jump\Data\SQL">
+      <UniqueIdentifier>{d29dbee7-d51b-462e-bdb7-d3953c1cdbcd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Phase Jump\Data\SQL\Arguments">
+      <UniqueIdentifier>{2374d403-ba33-453e-8bd9-05d8b59c9128}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Phase Jump\Model\Time">
+      <UniqueIdentifier>{f733af3d-de3e-4748-91c4-29f9aaa13849}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Visual Studio.cpp">
       <Filter>Phase Jump</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Core\DependencyContainer.cpp">
+      <Filter>Phase Jump\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Core\Dev.cpp">
+      <Filter>Phase Jump\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Core\Enum.cpp">
+      <Filter>Phase Jump\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Core\EnumClass.cpp">
+      <Filter>Phase Jump\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Core\HorizontalAlignment.cpp">
+      <Filter>Phase Jump\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Core\ModelColor.cpp">
+      <Filter>Phase Jump\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Core\PropertyIdBuilder.cpp">
+      <Filter>Phase Jump\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Core\QuickBuild.cpp">
+      <Filter>Phase Jump\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Core\Result.cpp">
+      <Filter>Phase Jump\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Core\RGBAColor.cpp">
+      <Filter>Phase Jump\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Core\Scene.cpp">
+      <Filter>Phase Jump\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Core\SomeAligner.cpp">
+      <Filter>Phase Jump\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Core\SomeResolver.cpp">
+      <Filter>Phase Jump\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Core\SomeUIEventPoller.cpp">
+      <Filter>Phase Jump\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Core\SomeWorldComponent.cpp">
+      <Filter>Phase Jump\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Core\StandardCore.cpp">
+      <Filter>Phase Jump\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Core\StringConvertible.cpp">
+      <Filter>Phase Jump\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Core\StringUtils.cpp">
+      <Filter>Phase Jump\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Core\TransformFunc.cpp">
+      <Filter>Phase Jump\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Core\Updatables.cpp">
+      <Filter>Phase Jump\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Core\Utils.cpp">
+      <Filter>Phase Jump\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Core\VerticalAlignment.cpp">
+      <Filter>Phase Jump\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Core\World.cpp">
+      <Filter>Phase Jump\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Core\WorldComponent.cpp">
+      <Filter>Phase Jump\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Core\WorldNode.cpp">
+      <Filter>Phase Jump\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Core\WorldNodeTransform.cpp">
+      <Filter>Phase Jump\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Model\Matrix.cpp">
+      <Filter>Phase Jump\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Model\RateLimiter.cpp">
+      <Filter>Phase Jump\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Model\Boards\MatrixBoard.cpp">
+      <Filter>Phase Jump\Model\Boards</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Model\Random\StandardRandom.cpp">
+      <Filter>Phase Jump\Model\Random</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Animation\EaseFunc.cpp">
+      <Filter>Phase Jump\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Animation\RateFramePlayable.cpp">
+      <Filter>Phase Jump\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Animation\SomeFramePlayable.cpp">
+      <Filter>Phase Jump\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Components\ComponentTool.cpp">
+      <Filter>Phase Jump\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Components\OrthoCamera.cpp">
+      <Filter>Phase Jump\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Components\SimpleRaycaster2D.cpp">
+      <Filter>Phase Jump\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Components\SomeCamera.cpp">
+      <Filter>Phase Jump\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Components\SomeRaycaster2D.cpp">
+      <Filter>Phase Jump\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Components\WorldSystem.cpp">
+      <Filter>Phase Jump\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Components\Renderers\AnimatedSpriteRenderer.cpp">
+      <Filter>Phase Jump\Components\Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Components\Renderers\ColorRenderer.cpp">
+      <Filter>Phase Jump\Components\Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Components\Renderers\MeshRenderer.cpp">
+      <Filter>Phase Jump\Components\Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Components\Renderers\SimpleGradientRenderer.cpp">
+      <Filter>Phase Jump\Components\Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Components\Renderers\SlicedTextureRenderer.cpp">
+      <Filter>Phase Jump\Components\Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Components\Renderers\SpriteRenderer.cpp">
+      <Filter>Phase Jump\Components\Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Text\Font.cpp">
+      <Filter>Phase Jump\Text</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Text\TextMeasurer.cpp">
+      <Filter>Phase Jump\Text</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Text\TextRenderer.cpp">
+      <Filter>Phase Jump\Text</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Layout\SomePathLayout.cpp">
+      <Filter>Phase Jump\Layout</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Audio\AudioStreamPlayer.cpp">
+      <Filter>Phase Jump\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Data\FileManager.cpp">
+      <Filter>Phase Jump\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Data\SQL\SQLCommand.cpp">
+      <Filter>Phase Jump\Data\SQL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Data\SQL\SQLDatabase.cpp">
+      <Filter>Phase Jump\Data\SQL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Data\SQL\SQLTable.cpp">
+      <Filter>Phase Jump\Data\SQL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Data\SQL\SQLTool.cpp">
+      <Filter>Phase Jump\Data\SQL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Data\SQL\SQLTypes.cpp">
+      <Filter>Phase Jump\Data\SQL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Developer\IncludeAliasFileProcessor.cpp">
+      <Filter>Phase Jump\Developer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Effects\CycleHueEffect.cpp">
+      <Filter>Phase Jump\Effects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Systems\EventWorldSystem.cpp">
+      <Filter>Phase Jump\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Model\Time\SomePlayStateController.cpp">
+      <Filter>Phase Jump\Model\Time</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -64,6 +313,519 @@
     </ClInclude>
     <ClInclude Include="..\..\PhaseJump\Classes\Collections\VectorList.h">
       <Filter>Phase Jump\Collections</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\Data.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\DependencyContainer.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\Dev.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\Enum.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\EnumClass.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\Environment.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\Factory.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\FactoryRegistry.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\FloatMath.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\Funcs.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\Function.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\HorizontalAlignment.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\Identifiable.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\InfixOStreamIterator.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\IntMath.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\Macros.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\Macros_Operators.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\ModelColor.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\ModifierFunc.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\MultiFunction.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\Node2D.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\Pool.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\Prefab.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\PropertyIdBuilder.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\PropertyMirror.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\PropertyWrapper.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\QuickBuild.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\Range.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\Result.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\RGBAColor.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\RigidBody2D.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\Runner.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\Scene.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\Shared.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\SharedVector.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\SomeAligner.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\SomeAttribute.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\SomeBinding.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\SomeDriver.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\SomeNode.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\SomeOperation.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\SomeReference.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\SomeResolver.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\SomeTagClass.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\SomeUIEventPoller.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\SomeWorldComponent.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\StandardCore.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\StateCore.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\StringConvertible.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\StringUtils.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\StrongReference.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\Switchable.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\SwitchHandler.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\TagClassId.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\Tags.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\Transformer.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\TransformFunc.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\TypeClass.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\Types.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\Updatable.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\Updatables.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\Utils.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\Valve.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\VerticalAlignment.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\Void.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\WeakReference.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\World.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\WorldComponent.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\WorldComponentCores.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\WorldNode.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\WorldNodeTransform.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Core\WorldPartLife.h">
+      <Filter>Phase Jump\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\Broadcaster.h">
+      <Filter>Phase Jump\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\BroadcastValue.h">
+      <Filter>Phase Jump\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\Matrix.h">
+      <Filter>Phase Jump\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\RateLimiter.h">
+      <Filter>Phase Jump\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\SomeBroadcaster.h">
+      <Filter>Phase Jump\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\SomeLimiter.h">
+      <Filter>Phase Jump\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\SomeListener.h">
+      <Filter>Phase Jump\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\SomeSignal.h">
+      <Filter>Phase Jump\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\SomeStateMachine.h">
+      <Filter>Phase Jump\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\StandardEventCore.h">
+      <Filter>Phase Jump\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\StateMachine.h">
+      <Filter>Phase Jump\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\TimedStateMachine.h">
+      <Filter>Phase Jump\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\TriggerMap.h">
+      <Filter>Phase Jump\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\Weight.h">
+      <Filter>Phase Jump\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\WeightedRandomChoice.h">
+      <Filter>Phase Jump\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\Boards\MatrixBoard.h">
+      <Filter>Phase Jump\Model\Boards</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\Boards\MatrixPiece.h">
+      <Filter>Phase Jump\Model\Boards</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\Goals\GoalEvents.h">
+      <Filter>Phase Jump\Model\Goals</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\Goals\SomeGoal.h">
+      <Filter>Phase Jump\Model\Goals</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\Goals\ValueTargetGoal.h">
+      <Filter>Phase Jump\Model\Goals</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\Random\MockRandom.h">
+      <Filter>Phase Jump\Model\Random</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\Random\SomeRandom.h">
+      <Filter>Phase Jump\Model\Random</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\Random\SomeRandomChoice.h">
+      <Filter>Phase Jump\Model\Random</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\Random\StandardRandom.h">
+      <Filter>Phase Jump\Model\Random</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\Patterns\Receptor.h">
+      <Filter>Phase Jump\Model\Patterns</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\Patterns\Signal.h">
+      <Filter>Phase Jump\Model\Patterns</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Animation\AnimationCycleTimer.h">
+      <Filter>Phase Jump\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Animation\AnimationCycleTypes.h">
+      <Filter>Phase Jump\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Animation\Animator.h">
+      <Filter>Phase Jump\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Animation\CycleAnimator.h">
+      <Filter>Phase Jump\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Animation\EaseFunc.h">
+      <Filter>Phase Jump\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Animation\EaseTypes.h">
+      <Filter>Phase Jump\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Animation\Interpolator.h">
+      <Filter>Phase Jump\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Animation\RateFramePlayable.h">
+      <Filter>Phase Jump\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Animation\SomeAnimatedValue.h">
+      <Filter>Phase Jump\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Animation\SomeFramePlayable.h">
+      <Filter>Phase Jump\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Animation\TimedSequence.h">
+      <Filter>Phase Jump\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Components\Colliders2D.h">
+      <Filter>Phase Jump\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Components\ComponentTool.h">
+      <Filter>Phase Jump\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Components\OffscreenBuffer.h">
+      <Filter>Phase Jump\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Components\OrthoCamera.h">
+      <Filter>Phase Jump\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Components\SimpleRaycaster2D.h">
+      <Filter>Phase Jump\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Components\SomeCamera.h">
+      <Filter>Phase Jump\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Components\SomeCollider.h">
+      <Filter>Phase Jump\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Components\SomeCollider2D.h">
+      <Filter>Phase Jump\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Components\SomeRaycaster.h">
+      <Filter>Phase Jump\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Components\SomeRaycaster2D.h">
+      <Filter>Phase Jump\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Components\SomeWorldSystem.h">
+      <Filter>Phase Jump\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Components\Renderers\AnimatedSpriteRenderer.h">
+      <Filter>Phase Jump\Components\Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Components\Renderers\ColorRenderer.h">
+      <Filter>Phase Jump\Components\Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Components\Renderers\MeshRenderer.h">
+      <Filter>Phase Jump\Components\Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Components\Renderers\OffscreenBufferRenderer.h">
+      <Filter>Phase Jump\Components\Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Components\Renderers\SimpleGradientRenderer.h">
+      <Filter>Phase Jump\Components\Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Components\Renderers\SlicedTextureRenderer.h">
+      <Filter>Phase Jump\Components\Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Components\Renderers\SpriteRenderer.h">
+      <Filter>Phase Jump\Components\Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Text\Font.h">
+      <Filter>Phase Jump\Text</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Text\TextMeasurer.h">
+      <Filter>Phase Jump\Text</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Text\TextRenderer.h">
+      <Filter>Phase Jump\Text</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Graph\AcyclicGraphNode.h">
+      <Filter>Phase Jump\Graph</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Graph\CyclicGraph.h">
+      <Filter>Phase Jump\Graph</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Graph\CyclicGraphNode.h">
+      <Filter>Phase Jump\Graph</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Graph\GraphNodeTool.h">
+      <Filter>Phase Jump\Graph</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Graph\SomeGraphNode.h">
+      <Filter>Phase Jump\Graph</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Graph\StandardEdgeCore.h">
+      <Filter>Phase Jump\Graph</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Layout\BezierPathLayout.h">
+      <Filter>Phase Jump\Layout</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Layout\CirclePathLayout2D.h">
+      <Filter>Phase Jump\Layout</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Layout\HFlow.h">
+      <Filter>Phase Jump\Layout</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Layout\LinePathLayout.h">
+      <Filter>Phase Jump\Layout</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Layout\SomeLayout.h">
+      <Filter>Phase Jump\Layout</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Layout\SomeLayout2D.h">
+      <Filter>Phase Jump\Layout</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Layout\SomePathLayout.h">
+      <Filter>Phase Jump\Layout</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Layout\VFlow.h">
+      <Filter>Phase Jump\Layout</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Audio\AudioStreamPlayer.h">
+      <Filter>Phase Jump\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Audio\SomeAudioStream.h">
+      <Filter>Phase Jump\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Data\FileManager.h">
+      <Filter>Phase Jump\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Data\SQL\SQLCommand.h">
+      <Filter>Phase Jump\Data\SQL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Data\SQL\SQLDatabase.h">
+      <Filter>Phase Jump\Data\SQL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Data\SQL\SQLRowValues.h">
+      <Filter>Phase Jump\Data\SQL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Data\SQL\SQLStatement.h">
+      <Filter>Phase Jump\Data\SQL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Data\SQL\SQLTable.h">
+      <Filter>Phase Jump\Data\SQL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Data\SQL\SQLTableSchema.h">
+      <Filter>Phase Jump\Data\SQL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Data\SQL\SQLTool.h">
+      <Filter>Phase Jump\Data\SQL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Data\SQL\SQLTypes.h">
+      <Filter>Phase Jump\Data\SQL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Data\SQL\SQLValue.h">
+      <Filter>Phase Jump\Data\SQL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Data\SQL\Arguments\SQLTableMutateArguments.h">
+      <Filter>Phase Jump\Data\SQL\Arguments</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Data\SQL\Arguments\SQLTableQueryArguments.h">
+      <Filter>Phase Jump\Data\SQL\Arguments</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Data\SQL\Arguments\SQLWhereArguments.h">
+      <Filter>Phase Jump\Data\SQL\Arguments</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Developer\DevProfiler.h">
+      <Filter>Phase Jump\Developer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Developer\IncludeAliasFileProcessor.h">
+      <Filter>Phase Jump\Developer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Effects\CycleHueEffect.h">
+      <Filter>Phase Jump\Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Effects\SomeEffect.h">
+      <Filter>Phase Jump\Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Steering\VelocityKSteering.h">
+      <Filter>Phase Jump\Steering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Systems\EventWorldSystem.h">
+      <Filter>Phase Jump\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\Time\Playable.h">
+      <Filter>Phase Jump\Model\Time</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\Time\Runner.h">
+      <Filter>Phase Jump\Model\Time</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\Time\SomePlayStateController.h">
+      <Filter>Phase Jump\Model\Time</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\Time\TimedPlayable.h">
+      <Filter>Phase Jump\Model\Time</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\Time\Timer.h">
+      <Filter>Phase Jump\Model\Time</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\Time\TimeSlice.h">
+      <Filter>Phase Jump\Model\Time</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

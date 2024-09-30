@@ -1,0 +1,1 @@
+#include "../Classes/Components/Renderers/SimpleGradientRenderer.h"

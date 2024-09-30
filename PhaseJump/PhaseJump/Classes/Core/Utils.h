@@ -23,22 +23,30 @@ namespace PJ {
         return dynamic_cast<Dest const*>(source);
     }
 
-    /// Returns true if source type is dest type or a subclass
+    /// @return Returns true if source type is dest type or a subclass
     template <class Dest, class Source>
     bool Is(Source* source) {
         return nullptr != dynamic_cast<Dest*>(source);
     }
 
-    /// Returns true if source type is dest type or a subclass
+    /// @return Returns true if source type is dest type or a subclass
     template <class Dest, class Source>
     bool Is(Source const* source) {
         return nullptr != dynamic_cast<Dest const*>(source);
     }
 
-    /// Returns true if source type is dest type or a subclass
+    /// @return Returns true if source type is dest type or a subclass
     template <class Dest, class Source>
     bool Is(Source const& source) {
         return nullptr != dynamic_cast<Dest const*>(&source);
+    }
+
+    constexpr bool Toggled(bool value) {
+        return !value;
+    }
+
+    constexpr void Toggle(bool& value) {
+        value = !value;
     }
 } // namespace PJ
 

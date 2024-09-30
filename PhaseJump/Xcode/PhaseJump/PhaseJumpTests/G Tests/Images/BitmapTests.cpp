@@ -8,7 +8,7 @@ using namespace PJ;
 TEST(Bitmap, TestDataInit)
 {
     Data data;
-    data.Resize(4);
+    data.ResizeBytes(4);
 
     uint32_t testValue = 0xEF1fAABB;
     *((uint32_t*)data.Pointer()) = testValue;

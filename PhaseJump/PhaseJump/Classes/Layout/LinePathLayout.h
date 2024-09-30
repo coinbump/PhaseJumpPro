@@ -20,13 +20,13 @@ namespace PJ {
         void SetStart(Vector3 value) {
             GUARD(start != value)
             start = value;
-            SetLayoutNeedsBuild();
+            SetNeedsLayout();
         }
 
         void SetEnd(Vector3 value) {
             GUARD(end != value)
             end = value;
-            SetLayoutNeedsBuild();
+            SetNeedsLayout();
         }
 
         SP<SomePath> BuildPath() override {

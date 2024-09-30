@@ -18,6 +18,7 @@ namespace PJ {
     /// Supports a graph with cycles (State machines, story sequences, etc.)
     /// The graph holds on to nodes, and the nodes have weak references to each
     /// other
+    // TODO: re-evaluate use of multiple inheritance here
     template <class Node>
     class CyclicGraph : public Base, public Updatable {
     public:

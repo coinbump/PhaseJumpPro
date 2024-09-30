@@ -9,32 +9,30 @@
 
 using namespace PJ;
 
-namespace ExampleLife {
-    class MatrixRenderer;
+namespace Example {
+    namespace Life {
+        class MatrixRenderer;
 
-    /// Agent group for the life simulation
-    class AgentGroup : public PJ::AgentGroup<Agent>
-    {
-    public:
-        using Base = PJ::AgentGroup<Agent>;
+        /// Agent group for the life simulation
+        class AgentGroup : public PJ::AgentGroup<Agent> {
+        public:
+            using Base = PJ::AgentGroup<Agent>;
 
-        /// Matrix owner of the agent group
-        MatrixRenderer* matrixView = nullptr;
+            /// Matrix owner of the agent group
+            MatrixRenderer* matrixView{};
 
-        AgentGroup(MatrixRenderer* matrixView);
+            AgentGroup(MatrixRenderer* matrixView);
 
-        void PostStep() override;
+            void PostStep() override;
 
-        int LiveNeighborsCountFor(Agent const& agent);
+            int LiveNeighborsCountFor(Agent const& agent);
+        };
 
-    protected:
-        void UpdateMatrixForAgent(Agent const& agent);
-    };
+        // MARK: ExampleLifeAgents
 
-    // MARK: ExampleLifeAgents
-
-    namespace ExampleLifeAgents {
-        /// Handles simulation step rules
-        extern Agent::OnStepFunc MakeOnStepFunc();
-    };
-}
+        namespace LifeAgents {
+            /// Handles simulation step rules
+            extern Agent::OnStepFunc MakeOnStepFunc();
+        }; // namespace LifeAgents
+    } // namespace Life
+} // namespace Example

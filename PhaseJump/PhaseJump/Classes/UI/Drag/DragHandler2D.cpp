@@ -4,16 +4,15 @@ using namespace std;
 using namespace PJ;
 
 void DragHandler2D::Drop() {
-    GUARD(owner)
-    NodeTransform& transform = owner->transform;
+    GUARD(onDropFunc)
+    onDropFunc(*this);
+}
 
-    switch (dropType) {
-    case DropType::Stay:
-        break;
-    case DropType::SnapBack:
-        transform.SetWorldPosition(dragStartPosition);
-        break;
-    }
+void DragHandler2D::InOnDropSnapBack() {
+    onDropFunc = [](auto& dragHandler) {
+        GUARD(dragHandler.owner)
+        dragHandler.owner->transform.SetWorldPosition(dragHandler.dragStartPosition);
+    };
 }
 
 void DragHandler2D::OnDragUpdate(WorldPosition inputPosition) {

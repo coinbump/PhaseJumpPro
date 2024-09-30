@@ -23,12 +23,12 @@ namespace PJ {
         Polygon(std::initializer_list<Vector3> vertices) :
             value(vertices) {}
 
-        /// Returns a square polygon (4 vertices) based on the given size
+        /// @return Returns a square polygon (4 vertices) based on the given size
         static Polygon MakeSquare(float size) {
             return MakeRect(Vector2::Uniform(size));
         }
 
-        /// Returns a rect polygon (4 vertices) based on the given size
+        /// @return Returns a rect polygon (4 vertices) based on the given size
         static Polygon MakeRect(Vector2 size) {
             float halfWidth = size.x / 2.0f;
             float halfHeight = size.y / 2.0f;

@@ -1,4 +1,5 @@
 #include "RendererModel.h"
+#include "RenderFeature.h"
 
 using namespace std;
 using namespace PJ;
@@ -32,4 +33,22 @@ void RendererModel::SetWorldSize(Vector3 value) {
 void RendererModel::SetBuildVertexColorsFunc(BuildColorsFunc value) {
     buildVertexColorsFunc = value;
     SetVertexColorsNeedsBuild();
+}
+
+void RendererModel::SetColor(ColorType value) {
+    colors = { value };
+    SetVertexColorsNeedsBuild();
+
+    GUARD(material)
+    GUARD(IsEmpty(material->Textures()))
+    material->EnableFeature(RenderFeature::Blend, value.a != 1);
+}
+
+void RendererModel::SetAlpha(float value) {
+    std::for_each(colors.begin(), colors.end(), [=](auto& color) { color.a = value; });
+    SetVertexColorsNeedsBuild();
+
+    GUARD(material)
+    GUARD(IsEmpty(material->Textures()))
+    material->EnableFeature(RenderFeature::Blend, value != 1);
 }

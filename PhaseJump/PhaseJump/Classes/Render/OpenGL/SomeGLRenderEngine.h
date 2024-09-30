@@ -42,7 +42,7 @@ namespace PJ {
             bool normalize;
 
             // TODO: use SharedVector to save on copies
-            SP<Data> data;
+            SP<Data<>> data;
 
             uint32_t Size() const {
                 return componentSize * componentCount;
@@ -58,7 +58,7 @@ namespace PJ {
                 componentSize(componentSize),
                 glType(glType),
                 normalize(normalize) {
-                this->data = MAKE<Data>();
+                this->data = MAKE<Data<>>();
                 this->data->CopyIn(data, componentCount * componentSize);
             }
         };
@@ -139,7 +139,7 @@ namespace PJ {
 
         virtual void EnableVertexAttributeArray(GLuint index, bool isEnabled);
         virtual void DisableAllVertexAttributeArrays();
-        virtual void EnableOnlyVertexAttributeArrays(OrderedSet<GLuint> attributeLocations);
+        virtual void EnableOnlyVertexAttributeArrays(UnorderedSet<GLuint> attributeLocations);
 
         virtual void UniformMatrix4fv(GLint location, const GLfloat* value);
 

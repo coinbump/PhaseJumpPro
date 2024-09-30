@@ -96,7 +96,7 @@ namespace PJ {
             return lhs.order < rhs.order;
         };
 
-        /// Returns the override material for this model if one exists
+        /// @return Returns the override material for this model if one exists
         SP<RenderMaterial> OverrideMaterial(RenderModel const& model) {
             // TODO: unit test
             auto i = overrideMaterials.find(model.BaseMaterial());

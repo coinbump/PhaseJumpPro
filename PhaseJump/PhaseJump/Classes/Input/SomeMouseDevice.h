@@ -11,6 +11,8 @@ namespace PJ {
     class SomeMouseDevice : public SomePointerDevice {
     public:
         SomeMouseDevice() {}
+
+        static UP<SomeMouseDevice> current;
     };
 
     // MARL: Convenience

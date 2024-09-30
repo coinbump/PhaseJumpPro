@@ -52,12 +52,12 @@ namespace PJ {
             this->overrideMaterial = material;
         }
 
-        /// Returns the original material, even if there is an override
+        /// @return Returns the original material, even if there is an override
         RenderMaterial* BaseMaterial() const {
             return material;
         }
 
-        /// Returns the override material if it exists, or the original material
+        /// @return Returns the override material if it exists, or the original material
         RenderMaterial* Material() const {
             return overrideMaterial ? overrideMaterial : material;
         }
@@ -81,6 +81,12 @@ namespace PJ {
 
         /// (Optional). Z layer for render, allows object renders to be grouped in layers
         uint32_t zIndex = 0;
+
+        /// (Optional). Allows model to pass render arguments to render processors
+        Tags tags;
+
+        /// (Optional). Allows model to pass render hints to render processors
+        TypeTagSet typeTags;
 
         /// Absolute Z position in world space, derived from render order
         /// Painted on to the model by a render processor for Z-ordering in ortho camera space
@@ -133,7 +139,7 @@ namespace PJ {
             vertexColors = value;
         }
 
-        /// Returns true if a render feature is enabled for this operation
+        /// @return Returns true if a render feature is enabled for this operation
         bool IsFeatureEnabled(String feature) const {
             GUARDR(material, false)
 

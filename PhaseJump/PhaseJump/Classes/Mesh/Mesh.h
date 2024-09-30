@@ -22,6 +22,7 @@ namespace PJ {
     public:
         using This = Mesh;
         using TrianglesSpan = std::span<uint32_t const>;
+        using CalculateBoundsFunc = std::function<Bounds(This&)>;
 
     protected:
         bool needsCalculate = true;
@@ -36,29 +37,8 @@ namespace PJ {
         Bounds bounds;
 
         void CalculateBounds() {
-            bool hasFirst = false;
-            Vector3 minValue;
-            Vector3 maxValue;
-
-            for (auto& v : vertices) {
-                if (!hasFirst) {
-                    hasFirst = true;
-                    minValue = v;
-                    maxValue = v;
-                    continue;
-                }
-
-                minValue = Vector3(
-                    std::min(minValue.x, v.x), std::min(minValue.y, v.y), std::min(minValue.z, v.z)
-                );
-                maxValue = Vector3(
-                    std::max(maxValue.x, v.x), std::max(maxValue.y, v.y), std::max(maxValue.z, v.z)
-                );
-            }
-
-            Vector3 extents = (maxValue - minValue) / 2.0f;
-            Vector3 center = minValue + extents;
-            bounds = Bounds(center, extents);
+            GUARD(calculateBoundsFunc)
+            bounds = calculateBoundsFunc(*this);
         }
 
         void CalculateNormals() {
@@ -68,7 +48,37 @@ namespace PJ {
         VectorList<Vector3> vertices;
 
     public:
-        Mesh() {}
+        CalculateBoundsFunc calculateBoundsFunc;
+
+        Mesh() {
+            calculateBoundsFunc = [](This& mesh) {
+                bool hasFirst = false;
+                Vector3 minValue;
+                Vector3 maxValue;
+
+                for (auto& v : mesh.vertices) {
+                    if (!hasFirst) {
+                        hasFirst = true;
+                        minValue = v;
+                        maxValue = v;
+                        continue;
+                    }
+
+                    minValue = Vector3(
+                        std::min(minValue.x, v.x), std::min(minValue.y, v.y),
+                        std::min(minValue.z, v.z)
+                    );
+                    maxValue = Vector3(
+                        std::max(maxValue.x, v.x), std::max(maxValue.y, v.y),
+                        std::max(maxValue.z, v.z)
+                    );
+                }
+
+                Vector3 extents = (maxValue - minValue) / 2.0f;
+                Vector3 center = minValue + extents;
+                return Bounds(center, extents);
+            };
+        }
 
         /// Using initializer list is faster than copying in the vertices
         Mesh(std::initializer_list<Vector3> const& vertices) :
@@ -78,7 +88,7 @@ namespace PJ {
             needsCalculate = true;
         }
 
-        constexpr Bounds GetBounds() const {
+        Bounds GetBounds() const {
             // This is a cheat, but otherwise we spread non-const everywhere
             const_cast<Mesh*>(this)->CalculateIfNeeded();
             return bounds;

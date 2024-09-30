@@ -2,7 +2,7 @@
 #include <PhaseJump/Agent.h>
 #include <PhaseJump/AgentGroup.h>
 #include <PhaseJump/AgentSystem.h>
-#include <PhaseJump/AnimateHueEffect.h>
+#include <PhaseJump/CycleHueEffect.h>
 #include <PhaseJump/AnimatedSpriteRenderer.h>
 #include <PhaseJump/AudioStreamPlayer.h>
 #include <PhaseJump/AtlasTexture.h>
@@ -10,6 +10,7 @@
 #include <PhaseJump/BatchByMaterialRenderProcessor.h>
 #include <PhaseJump/BezierPath.h>
 #include <PhaseJump/BezierPathLayout.h>
+#include <PhaseJump/BlinkEffect.h>
 #include <PhaseJump/ButtonControl.h>
 #include <PhaseJump/CameraCullRenderProcessor.h>
 #include <PhaseJump/CenterPolyFrameMeshBuilder.h>
@@ -23,6 +24,7 @@
 #include <PhaseJump/CommandHistory.h>
 #include <PhaseJump/ComponentTool.h>
 #include <PhaseJump/DepthFirstOrderRenderProcessor.h>
+#include <PhaseJump/DesignSystem.h>
 #include <PhaseJump/DragHandler2D.h>
 #include <PhaseJump/DropFilesUIEvent.h>
 #include <PhaseJump/EllipseMeshBuilder.h>
@@ -39,15 +41,20 @@
 #include <PhaseJump/GLShaderProgramLoader.h>
 #include <PhaseJump/GLTexture.h>
 #include <PhaseJump/GLTextureBuffer.h>
+#include <PhaseJump/GridMeshBuilder.h>
 
 #include <PhaseJump/HFlow.h>
-#include <PhaseJump/ImGUIMainMenuBarBuilder.h>
+#include <PhaseJump/ImGUIMainMenuBarPainter.h>
 #include <PhaseJump/ImGuiGLRenderProcessor.h>
+#include <PhaseJump/ImGuiPlanPainter.h>
 #include <PhaseJump/IncludeAliasFileProcessor.h>
 #include <PhaseJump/Input.h>
 #include <PhaseJump/InputTriggerMap.h>
 #include <PhaseJump/Dev.h>
 #include <PhaseJump/Matrix.h>
+#include <PhaseJump/MatrixBoard.h>
+#include <PhaseJump/MatrixBoardView.h>
+#include <PhaseJump/MatrixPieceHandler.h>
 #include <PhaseJump/Menu.h>
 #include <PhaseJump/MeshRenderer.h>
 #include <PhaseJump/OrderRenderProcessor.h>
@@ -55,7 +62,9 @@
 
 #include <PhaseJump/PolyFrameMeshBuilder.h>
 #include <PhaseJump/RectPositioner2D.h>
+#include <PhaseJump/QuickAnimate.h>
 #include <PhaseJump/QuickBuild.h>
+#include <PhaseJump/RateFramePlayable.h>
 #include <PhaseJump/RenderFeature.h>
 #include <PhaseJump/RenderMaterial.h>
 #include <PhaseJump/RenderModel.h>
@@ -96,7 +105,9 @@
 #include <PhaseJump/StringUtils.h>
 #include <PhaseJump/Theme.h>
 #include <PhaseJump/TypeClass.h>
-#include <PhaseJump/UISystem.h>
+#include <PhaseJump/UIPlan.h>
+#include <PhaseJump/UIPlanner.h>
+#include <PhaseJump/UIWorldSystem.h>
 #include <PhaseJump/Utils.h>
 #include <PhaseJump/QuadMeshBuilder.h>
 #include <PhaseJump/QuadFrameMeshBuilder.h>
@@ -105,11 +116,14 @@
 #include <PhaseJump/ShowMeshRenderProcessor.h>
 #include <PhaseJump/SimpleGradientRenderer.h>
 #include <PhaseJump/SomeDragGestureHandler2D.h>
+#include <PhaseJump/SomeDropTarget.h>
+#include <PhaseJump/SomeHoverGestureHandler.h>
 #include <PhaseJump/SomeUIEvent.h>
 #include <PhaseJump/StandardCore.h>
 #include <PhaseJump/StandardEmitsBuilder.h>
 #include <PhaseJump/TextureAtlas.h>
 #include <PhaseJump/TextRenderer.h>
+#include <PhaseJump/TrackFramePlayable.h>
 #include <PhaseJump/VelocityKSteering.h>
 #include <PhaseJump/Void.h>
 #include <PhaseJump/VFlow.h>

@@ -22,14 +22,14 @@ namespace PJ {
 
     template <class T>
     String MakeString(T value) {
-        std::ostringstream stream;
+        std::stringstream stream;
         stream << value;
         return stream.str();
     }
 
     template <class... Arguments>
     String MakeString(Arguments&&... args) {
-        std::ostringstream stream;
+        std::stringstream stream;
 
         ([&] { stream << args; }(), ...);
 
@@ -44,34 +44,28 @@ namespace PJ {
     String Uppercased(StringView _string);
 
     bool HasPrefix(StringView _string, StringView searchString);
-
     bool HasSuffix(StringView _string, StringView searchString);
-
     bool StartsWith(StringView _string, StringView searchString);
-
     bool EndsWith(StringView _string, StringView searchString);
 
     String Prefix(StringView s, size_t size);
-
     String Suffix(StringView s, size_t size);
-
     String ReplacingSuffix(StringView _string, StringView search, StringView replace);
 
     std::vector<String> ComponentsSeparatedBy(StringView string, char delimiter);
 
     String U32CharToString(uint32_t _char);
-
     std::u32string ToU32String(StringView utf8);
 
     bool CompareNoCase(StringView lhs, StringView rhs);
 
-    /// Returns true if the string has numbers only (no - or delimiters)
+    /// @return Returns true if the string has numbers only (no - or delimiters)
     bool IsNumbers(StringView _string);
 
-    /// Returns true if the string is a positive or negative numeric integer
+    /// @return Returns true if the string is a positive or negative numeric integer
     bool IsNumericInt(StringView _string);
 
-    /// Returns true if the string is a postive or negative numeric real
+    /// @return Returns true if the string is a postive or negative numeric real
     bool IsNumericReal(StringView _string);
 
     template <typename Inserter>

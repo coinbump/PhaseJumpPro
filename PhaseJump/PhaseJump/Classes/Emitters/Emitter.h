@@ -99,7 +99,7 @@ namespace PJ {
 
         virtual SpawnType Spawn(EmitModel const& emit);
 
-        /// Returns local position for new spawn
+        /// @return Returns local position for new spawn
         virtual Vector3 SpawnPosition(SpawnType spawn);
 
         /// Called when an object is spawned

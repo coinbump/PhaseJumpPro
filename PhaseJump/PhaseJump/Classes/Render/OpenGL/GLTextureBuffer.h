@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Bitmap.h"
 #include "Dev.h"
 #include "GLHeaders.h"
 #include "GLTexture.h"
@@ -16,12 +17,20 @@ namespace PJ {
     struct GLFrameBuffer {
         uint32_t id{};
 
+        GLFrameBuffer() {}
+
+        DELETE_COPY(GLFrameBuffer);
+
         ~GLFrameBuffer();
     };
 
     /// Wraps an OpenGL render buffer and deletes it when it goes out of scope
     struct GLRenderBuffer {
         uint32_t id{};
+
+        GLRenderBuffer() {}
+
+        DELETE_COPY(GLRenderBuffer);
 
         ~GLRenderBuffer();
     };
@@ -57,6 +66,19 @@ namespace PJ {
         SP<SomeTexture> Texture() const override {
             return texture;
         }
+
+        // TODO: this is untested
+        SP<Bitmap<PixelFormat::RGBA8888>> MakeBitmap() {
+            GUARDR(IsValid(), nullptr);
+
+            Data<uint32_t> data;
+            data.ResizeCount(size.x * size.y);
+            glReadPixels(0, 0, size.x, size.y, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, data.Pointer());
+
+            return MAKE<Bitmap<PixelFormat::RGBA8888>>(size, data);
+        }
+
+        bool IsValid() const;
 
         void Build(Vector2Int size) override;
         void Bind() override;

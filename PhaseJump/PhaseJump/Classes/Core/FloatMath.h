@@ -1,7 +1,7 @@
 #pragma once
 
-#define _USE_MATH_DEFINES
-#include <math.h>
+#include "MathUtils.h"
+#include <type_traits>
 
 /*
  RATING: 5 stars
@@ -14,8 +14,8 @@ namespace PJ {
     struct FloatMath {
         using Type = float;
 
-        static constexpr Type DegreesToRadians = M_PI / 180.0;
-        static constexpr Type RadiansToDegrees = 180.0 / M_PI;
+        static constexpr Type DegreesToRadians = (Type)M_PI / (Type)180.0f;
+        static constexpr Type RadiansToDegrees = 180.0f / (Type)M_PI;
 
         template <
             typename Floating,

@@ -26,9 +26,13 @@ namespace PJ {
     protected:
         bool isDone = false;
         SDL_Window* window;
-        uint64_t startTime = 0;
+        uint64_t startTime{};
 
     public:
+        /// Max update time delta value
+        /// Prevents problems if the app hitches or is paused by the debugger
+        float maxTimeDelta = 1.0f / 30.0f;
+
         SDLWorld() {}
 
         SDL_Window* SDL_Window() const {

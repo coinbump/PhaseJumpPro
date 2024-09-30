@@ -322,9 +322,15 @@ Matrix4x4 Matrix4x4::operator*(const Matrix4x4& rhs) const {
 }
 
 Vector3 Matrix4x4::MultiplyPoint(Vector3 point) const {
-    Terathon::Transform3D tsTransform(a(), b(), c(), d(), e(), f(), g(), h(), i(), j(), k(), l());
+    Terathon::Transform3D tsTransform = *this;
     Terathon::Point3D tsPoint(point.x, point.y, point.z);
 
     auto result = tsTransform * tsPoint;
     return Vector3(result.x, result.y, result.z);
+} // Tested
+
+void Matrix4x4::Inverse() {
+    Terathon::Transform3D tsTransform = *this;
+    tsTransform = Terathon::Inverse(tsTransform);
+    *this = tsTransform;
 } // Tested

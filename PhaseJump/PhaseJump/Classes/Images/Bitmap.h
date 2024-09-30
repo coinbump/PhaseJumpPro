@@ -22,11 +22,11 @@ namespace PJ {
         struct RGBA8888 {
             using Pixel = RGBAColor;
 
-            size_t ColorComponentBitSize(ColorComponent component) const {
+            int ColorComponentBitSize(ColorComponent component) const {
                 return 8;
             }
 
-            size_t PixelSize() const {
+            int PixelSize() const {
                 return 4;
             }
         };
@@ -34,11 +34,11 @@ namespace PJ {
         struct BGRA8888 {
             using Pixel = BGRAColor;
 
-            size_t ColorComponentBitSize(ColorComponent component) const {
+            int ColorComponentBitSize(ColorComponent component) const {
                 return 8;
             }
 
-            size_t PixelSize() const {
+            int PixelSize() const {
                 return 4;
             }
         };
@@ -55,6 +55,25 @@ namespace PJ {
         Vector2Int size;
 
     public:
+        Bitmap() {}
+
+        Bitmap(Vector2Int size, void* pixels = nullptr, size_t pixelsDataSize = 0) {
+            GUARD(size.x > 0 && size.y > 0)
+
+            this->size = size;
+            auto pixelCount = size.x * size.y;
+            this->pixels.resize(pixelCount);
+
+            GUARD(pixels && pixelsDataSize > 0)
+            auto totalSize = pixelFormat.PixelSize() * this->pixels.size();
+            memcpy(this->pixels.data(), pixels, std::min(totalSize, pixelsDataSize));
+        }
+
+        Bitmap(Vector2Int size, PJ::Data<uint32_t> const& data) :
+            Bitmap(size, data.Pointer(), data.Size()) {}
+
+        DELETE_COPY(Bitmap)
+
         void FlipV() {
             GUARD(size.x > 0 && size.y > 0)
 
@@ -62,8 +81,8 @@ namespace PJ {
                 auto j = size.y - i - 1;
                 GUARD_BREAK(j > i)
 
-                auto iData = ScanLineData(i);
-                auto jData = ScanLineData(j);
+                std::span<Pixel> iData = ScanLineData(i);
+                std::span<Pixel> jData = ScanLineData(j);
 
                 VectorList<Pixel> swapLine;
                 swapLine.assign(iData.begin(), iData.end());
@@ -105,10 +124,20 @@ namespace PJ {
             return pixels.size() > 0 ? std::span<Pixel>(pixels) : std::span<Pixel>();
         }
 
+        std::span<Pixel const> Data() const {
+            return pixels.size() > 0 ? std::span<Pixel const>(pixels) : std::span<Pixel>();
+        }
+
         std::span<Pixel> ScanLineData(int y) {
             GUARDR(IsValidY(y), std::span<Pixel>());
 
             return std::span<Pixel>(pixels.data() + (size.x * y), size.x);
+        }
+
+        std::span<Pixel const> ScanLineData(int y) const {
+            GUARDR(IsValidY(y), std::span<Pixel>());
+
+            return std::span<Pixel const>(pixels.data() + (size.x * y), size.x);
         }
 
         bool IsValidY(int y) const {
@@ -144,22 +173,6 @@ namespace PJ {
 
         bool HasAlpha() const {
             return true;
-        }
-
-        Bitmap() {}
-
-        Bitmap(Vector2Int size, void* pixels = nullptr, size_t pixelsDataSize = 0) {
-            this->size = size;
-            GUARD(size.x > 0 && size.y > 0)
-
-            auto pixelCount = size.x * size.y;
-            this->pixels.resize(pixelCount);
-
-            GUARD(pixels && pixelsDataSize > 0)
-
-            auto totalSize = pixelFormat.PixelSize() * this->pixels.size();
-
-            memcpy(this->pixels.data(), pixels, std::min(totalSize, pixelsDataSize));
         }
 
         std::span<Pixel> PixelDataAt(Vector2Int loc, size_t count) const {

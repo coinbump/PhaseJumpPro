@@ -6,21 +6,15 @@ using namespace PJ;
 using namespace std;
 
 namespace FilesProcessorTests {
-    class TestFileProcessor: public SomeFileProcessor {
-    public:
-        void Process(FilePath filePath) override {
-        }
-    };
 }
 
 using namespace FilesProcessorTests;
 
 TEST(FilesProcessor, Process) {
-    UP<SomeFileProcessor> fileProcessor = std::make_unique<TestFileProcessor>();
-    FilesProcessor sut(3, fileProcessor, FilesProcessor::Settings(FileSearchType::Directory));
-    sut.Provide(FilePath(""));
-    sut.Provide(FilePath(""));
-    sut.Provide(FilePath(""));
+    FilesProcessor sut({}, FilesProcessor::Settings(FileSearchType::Directory));
+    sut.Scan(FilePath(""));
+    sut.Scan(FilePath(""));
+    sut.Scan(FilePath(""));
 
     EXPECT_EQ(0, sut.Progress());
 

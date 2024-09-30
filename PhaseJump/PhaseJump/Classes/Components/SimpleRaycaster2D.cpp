@@ -11,8 +11,8 @@
 using namespace std;
 using namespace PJ;
 
-std::optional<RaycastHit2D> SimpleRaycaster2D::Raycast(Vector2 origin, Vector2 direction) {
-    std::optional<RaycastHit2D> result;
+VectorList<RaycastHit2D> SimpleRaycaster2D::Raycast(Vector2 origin, Vector2 direction) {
+    VectorList<RaycastHit2D> result;
     GUARDR(owner && owner->World(), result)
 
     auto owner = this->owner;
@@ -58,7 +58,7 @@ std::optional<RaycastHit2D> SimpleRaycaster2D::Raycast(Vector2 origin, Vector2 d
                 if (polygon.TestHit(origin)) {
                     // cout << "Log: Test Poly HIT\n";
 
-                    return std::make_optional<RaycastHit2D>(worldNode);
+                    result.push_back(worldNode);
                 }
                 continue;
             }
@@ -67,7 +67,7 @@ std::optional<RaycastHit2D> SimpleRaycaster2D::Raycast(Vector2 origin, Vector2 d
             auto circleCollider = As<CircleCollider2D>(collider.get());
             if (circleCollider) {
                 if (circleCollider->TestHit(origin - nodeWorldPosition)) {
-                    return std::make_optional<RaycastHit2D>(worldNode);
+                    result.push_back(worldNode);
                 }
             }
         }

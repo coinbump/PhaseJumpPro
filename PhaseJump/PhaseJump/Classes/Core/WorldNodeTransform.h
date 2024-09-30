@@ -6,17 +6,21 @@
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 8/27/24
+ CODE REVIEW: 8/27/23
  */
 namespace PJ {
     class WorldNode;
 
     /// Keeps track of the object's world position as it is modified
-    struct WorldNodeTransform {
+    class WorldNodeTransform {
+    public:
         using SetLocalPosFunc = std::function<void(WorldNodeTransform&, Vector3 localPos)>;
 
-        WorldNode& owner;
+    protected:
         GeoTransform value;
+
+    public:
+        WorldNode& owner;
 
         WorldNodeTransform(WorldNode& owner) :
             owner(owner) {}
@@ -91,10 +95,11 @@ namespace PJ {
 
         Vector3 WorldPosition() const;
 
+        // TODO: what is this func doing and why do we need it?
         void SetWorldPosition(
             Vector3 position,
             SetLocalPosFunc func = [](WorldNodeTransform& transform,
-                                      Vector3 localPos) { transform.value.position = localPos; }
+                                      Vector3 localPos) { transform.SetLocalPosition(localPos); }
         );
 
         /// Set only x,y world positon. Leave z intact

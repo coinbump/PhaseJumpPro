@@ -21,13 +21,19 @@
  CODE REVIEW: 8/18/24
  */
 namespace PJ {
-    class LocalPosition;
     class World;
     class Matrix4x4;
     class OrthoCamera;
     class Theme;
     class DragHandler2D;
     class Cancellable;
+
+    struct AddChildNodeEvent : public SomeSignal {
+        SP<WorldNode> node;
+
+        AddChildNodeEvent(SP<WorldNode> node) :
+            node(node) {}
+    };
 
     /**
      Node in a world graph
@@ -36,6 +42,7 @@ namespace PJ {
 
      Each component provides composable logic for their owner node
      */
+    // TODO: re-evaluate use of multiple inheritance here
     class WorldNode : public Base, public Updatable, public IntIdentifiable<WorldNode> {
     public:
         using Base = PJ::Base;
@@ -74,11 +81,11 @@ namespace PJ {
         /// Core properties
         StandardCore core;
 
-        /// Tags that define the object's type
-        TypeTagSet typeTags;
-
         /// Stores subscriptions to reactive values
         UnorderedSet<SP<Cancellable>> cancellables;
+
+        /// Stores timers and animators
+        Updatables updatables;
 
         WorldNode(String name = "");
 
@@ -88,7 +95,7 @@ namespace PJ {
         virtual ~WorldNode() {}
 
         void Destroy(float countdown = 0);
-        void UnDestroy();
+        void Restore();
         virtual void OnDestroy();
 
         WorldNode* Parent() const;
@@ -195,8 +202,20 @@ namespace PJ {
         void RemoveAllComponents();
 
         template <class T>
+        void RemoveType() {
+            auto iterComponents = components;
+            std::for_each(
+                iterComponents.begin(), iterComponents.end(),
+                [&](SP<SomeWorldComponent>& component) {
+                    if (Is<T>(component.get())) {
+                        Remove(component);
+                    }
+                }
+            );
+        }
+
+        template <class T>
         SP<T> TypeComponent() const {
-            // TODO: use std::find_if (see: TypeSystem)
             for (auto& component : components) {
                 auto typeComponent = DCAST<T>(component);
                 if (typeComponent) {
@@ -208,10 +227,9 @@ namespace PJ {
         }
 
         template <class T, class ComponentList>
-        void TypeComponents(ComponentList& result) const {
+        void CollectTypeComponents(ComponentList& result) const {
             result.clear();
 
-            // TODO: use std:: func
             for (auto& component : components) {
                 auto typeComponent = DCAST<T>(component);
                 if (typeComponent) {
@@ -220,9 +238,25 @@ namespace PJ {
             }
         }
 
+        template <class Component>
+        VectorList<SP<Component>> TypeComponents() const {
+            VectorList<SP<Component>> result;
+            CollectTypeComponents<Component>(result);
+            return result;
+        }
+
+        /// Modify components of this type
+        template <class Component>
+        void Modify(std::function<void(Component&)> func) {
+            auto components = TypeComponents<Component>();
+            std::for_each(components.begin(), components.end(), [&](auto& component) {
+                func(*component);
+            });
+        }
+
         /// Can't be const because of `shared_from_this`
         template <class T, class ComponentList>
-        void ChildTypeComponents(ComponentList& result) {
+        void CollectChildTypeComponents(ComponentList& result) {
             result.clear();
 
             NodeList graph;
@@ -241,6 +275,12 @@ namespace PJ {
             }
         }
 
+        Vector3 LocalToWorld(Vector3 localPos);
+        Vector3 WorldToLocal(Vector3 worldPos);
+
+        float Opacity() const;
+        This& SetOpacity(float value);
+
         // MARK: Convenience
 
         template <class T>
@@ -251,7 +291,7 @@ namespace PJ {
         template <class T>
         VectorList<SP<T>> GetComponents() const {
             VectorList<SP<T>> result;
-            TypeComponents<T>(result);
+            CollectTypeComponents<T>(result);
 
             return result;
         }
@@ -259,7 +299,7 @@ namespace PJ {
         template <class T>
         VectorList<SP<T>> GetComponentsInChildren() {
             VectorList<SP<T>> result;
-            ChildTypeComponents<T>(result);
+            CollectChildTypeComponents<T>(result);
             return result;
         }
 

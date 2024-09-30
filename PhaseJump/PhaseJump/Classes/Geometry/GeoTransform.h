@@ -41,6 +41,14 @@ namespace PJ {
             this->position = position;
         }
 
+        Vector3 Scale() const {
+            return scale;
+        }
+
+        void SetScale(Vector3 value) {
+            this->scale = value;
+        }
+
         void SetRotation(Angle rotation) {
             // TODO: support both z-ordering directions (Geometry::zRotationFactor)
             this->rotation = Vector3(0, 0, -rotation.Degrees());

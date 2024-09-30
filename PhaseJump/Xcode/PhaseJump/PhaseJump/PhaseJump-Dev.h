@@ -2,7 +2,7 @@
 #include <PhaseJump-Dev/Agent.h>
 #include <PhaseJump-Dev/AgentGroup.h>
 #include <PhaseJump-Dev/AgentSystem.h>
-#include <PhaseJump-Dev/AnimateHueEffect.h>
+#include <PhaseJump-Dev/CycleHueEffect.h>
 #include <PhaseJump-Dev/AnimatedSpriteRenderer.h>
 #include <PhaseJump-Dev/AudioStreamPlayer.h>
 #include <PhaseJump-Dev/AtlasTexture.h>
@@ -10,6 +10,7 @@
 #include <PhaseJump-Dev/BatchByMaterialRenderProcessor.h>
 #include <PhaseJump-Dev/BezierPath.h>
 #include <PhaseJump-Dev/BezierPathLayout.h>
+#include <PhaseJump-Dev/BlinkEffect.h>
 #include <PhaseJump-Dev/ButtonControl.h>
 #include <PhaseJump-Dev/CameraCullRenderProcessor.h>
 #include <PhaseJump-Dev/CenterPolyFrameMeshBuilder.h>
@@ -23,6 +24,7 @@
 #include <PhaseJump-Dev/CommandHistory.h>
 #include <PhaseJump-Dev/ComponentTool.h>
 #include <PhaseJump-Dev/DepthFirstOrderRenderProcessor.h>
+#include <PhaseJump-Dev/DesignSystem.h>
 #include <PhaseJump-Dev/DragHandler2D.h>
 #include <PhaseJump-Dev/DropFilesUIEvent.h>
 #include <PhaseJump-Dev/EllipseMeshBuilder.h>
@@ -39,15 +41,20 @@
 #include <PhaseJump-Dev/GLShaderProgramLoader.h>
 #include <PhaseJump-Dev/GLTexture.h>
 #include <PhaseJump-Dev/GLTextureBuffer.h>
+#include <PhaseJump-Dev/GridMeshBuilder.h>
 
 #include <PhaseJump-Dev/HFlow.h>
-#include <PhaseJump-Dev/ImGUIMainMenuBarBuilder.h>
+#include <PhaseJump-Dev/ImGUIMainMenuBarPainter.h>
 #include <PhaseJump-Dev/ImGuiGLRenderProcessor.h>
+#include <PhaseJump-Dev/ImGuiPlanPainter.h>
 #include <PhaseJump-Dev/IncludeAliasFileProcessor.h>
 #include <PhaseJump-Dev/Input.h>
 #include <PhaseJump-Dev/InputTriggerMap.h>
 #include <PhaseJump-Dev/Dev.h>
 #include <PhaseJump-Dev/Matrix.h>
+#include <PhaseJump-Dev/MatrixBoard.h>
+#include <PhaseJump-Dev/MatrixBoardView.h>
+#include <PhaseJump-Dev/MatrixPieceHandler.h>
 #include <PhaseJump-Dev/Menu.h>
 #include <PhaseJump-Dev/MeshRenderer.h>
 #include <PhaseJump-Dev/OrderRenderProcessor.h>
@@ -55,7 +62,9 @@
 
 #include <PhaseJump-Dev/PolyFrameMeshBuilder.h>
 #include <PhaseJump-Dev/RectPositioner2D.h>
+#include <PhaseJump-Dev/QuickAnimate.h>
 #include <PhaseJump-Dev/QuickBuild.h>
+#include <PhaseJump-Dev/RateFramePlayable.h>
 #include <PhaseJump-Dev/RenderFeature.h>
 #include <PhaseJump-Dev/RenderMaterial.h>
 #include <PhaseJump-Dev/RenderModel.h>
@@ -86,6 +95,7 @@
 #include <PhaseJump-Dev/SliderControl.h>
 #include <PhaseJump-Dev/SomeControllerUIEvent.h>
 #include <PhaseJump-Dev/SomeDragHandler.h>
+#include <PhaseJump-Dev/SomeDropTarget.h>
 #include <PhaseJump-Dev/SomePointerUIEvent.h>
 #include <PhaseJump-Dev/SomeRenderCommandModel.h>
 #include <PhaseJump-Dev/SomeRenderEngine.h>
@@ -96,7 +106,9 @@
 #include <PhaseJump-Dev/StringUtils.h>
 #include <PhaseJump-Dev/Theme.h>
 #include <PhaseJump-Dev/TypeClass.h>
-#include <PhaseJump-Dev/UISystem.h>
+#include <PhaseJump-Dev/UIPlan.h>
+#include <PhaseJump-Dev/UIPlanner.h>
+#include <PhaseJump-Dev/UIWorldSystem.h>
 #include <PhaseJump-Dev/Utils.h>
 #include <PhaseJump-Dev/QuadMeshBuilder.h>
 #include <PhaseJump-Dev/QuadFrameMeshBuilder.h>
@@ -105,11 +117,13 @@
 #include <PhaseJump-Dev/ShowMeshRenderProcessor.h>
 #include <PhaseJump-Dev/SimpleGradientRenderer.h>
 #include <PhaseJump-Dev/SomeDragGestureHandler2D.h>
+#include <PhaseJump-Dev/SomeHoverGestureHandler.h>
 #include <PhaseJump-Dev/SomeUIEvent.h>
 #include <PhaseJump-Dev/StandardCore.h>
 #include <PhaseJump-Dev/StandardEmitsBuilder.h>
 #include <PhaseJump-Dev/TextureAtlas.h>
 #include <PhaseJump-Dev/TextRenderer.h>
+#include <PhaseJump-Dev/TrackFramePlayable.h>
 #include <PhaseJump-Dev/VelocityKSteering.h>
 #include <PhaseJump-Dev/Void.h>
 #include <PhaseJump-Dev/VFlow.h>

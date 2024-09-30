@@ -26,9 +26,9 @@ TEST(Tags, Values) {
     sut.Add("2", 2.5f);
     sut.Add("3", String("test"));
 
-    EXPECT_TRUE(sut.ContainsTypeValue<int>("1"));
-    EXPECT_TRUE(sut.ContainsTypeValue<float>("2"));
-    EXPECT_TRUE(sut.ContainsTypeValue<String>("3"));
+    EXPECT_TRUE(sut.TypeContains<int>("1"));
+    EXPECT_TRUE(sut.TypeContains<float>("2"));
+    EXPECT_TRUE(sut.TypeContains<String>("3"));
 
     EXPECT_EQ(1, sut.SafeValue<int>("1"));
     EXPECT_EQ(2.5f, sut.SafeValue<float>("2"));
@@ -70,4 +70,41 @@ TEST(Tags, PlusOperator) {
     EXPECT_EQ(2, sut.Count());
     EXPECT_EQ("one", sut.Value<String>("1"));
     EXPECT_EQ("two", sut.Value<String>("2"));
+}
+
+TEST(Tags, TypeValueAt) {
+    Tags sut;
+    sut.Insert({"1", 1});
+    sut.Insert({"2", 2.5f});
+    sut.Insert({"3", String("test")});
+
+    EXPECT_ANY_THROW(sut.TypeValueAt<float>("1"));
+    EXPECT_ANY_THROW(sut.TypeValueAt<String>("1"));
+    EXPECT_ANY_THROW(sut.TypeValueAt<float>("3"));
+
+    EXPECT_NO_THROW(sut.TypeValueAt<int>("1"));
+    EXPECT_NO_THROW(sut.TypeValueAt<float>("2"));
+    EXPECT_NO_THROW(sut.TypeValueAt<String>("3"));
+
+    EXPECT_EQ(1, sut.TypeValueAt<int>("1"));
+    EXPECT_EQ(2.5f, sut.TypeValueAt<float>("2"));
+    EXPECT_EQ("test", sut.TypeValueAt<String>("3"));
+}
+
+TEST(Tags, TypeValueAtReference) {
+    Tags sut;
+    sut.Insert({"1", 1});
+
+    EXPECT_NO_THROW(sut.TypeValueAt<int>("1"));
+
+    EXPECT_EQ(1, sut.TypeValueAt<int>("1"));
+    sut.TypeValueAt<int>("1") = 2;
+    EXPECT_EQ(2, sut.TypeValueAt<int>("1"));
+}
+
+TEST(Tags, AddIfMissing) {
+    Tags sut;
+    sut.TypeAddIfMissing<String>("test", "hello");
+
+    EXPECT_EQ("hello", sut.SafeValue<String>("test"));
 }

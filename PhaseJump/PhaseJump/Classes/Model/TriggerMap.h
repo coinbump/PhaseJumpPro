@@ -84,7 +84,7 @@ namespace PJ {
             AddAction(action)->filters.push_back(filterFunc);
         }
 
-        /// Returns the first action for this trigger
+        /// @return Returns the first action for this trigger
         std::optional<Action> FirstActionFor(Trigger const& event) {
             for (auto& item : items) {
                 for (auto& filter : item.filters) {
@@ -105,7 +105,7 @@ namespace PJ {
         //            return item.filters;
         //        }
 
-        /// Returns a list of all actions that are activated by this trigger
+        /// @return Returns a list of all actions that are activated by this trigger
         List<Action> ActionsFor(Trigger const& event) {
             List<Action> result;
 

@@ -28,6 +28,8 @@ namespace PJ {
         SomeCommand(String name) :
             name(name) {}
 
+        virtual ~SomeCommand() {}
+
         StateType State() const {
             return stateMachine.State();
         }

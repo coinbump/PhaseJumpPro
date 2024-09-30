@@ -1,12 +1,11 @@
-#ifndef PJSOMEBINDING_H
-#define PJSOMEBINDING_H
+#pragma once
 
 #include <functional>
 
 /*
  RATING: 5 stars
  Simple type
- CODE REVIEW: 6/8/24
+ CODE REVIEW: 9/25/24
  */
 namespace PJ {
     /// Type erasure interface
@@ -16,9 +15,11 @@ namespace PJ {
     template <class T>
     class SomeBinding : public AnyBinding {
     public:
-        virtual T Value() = 0;
-        virtual void SetValue(T const& value) = 0;
+        using This = SomeBinding;
+
+        virtual ~SomeBinding() = default;
+
+        virtual T Value() const = 0;
+        virtual void SetValue(T const& value) const = 0;
     };
 } // namespace PJ
-
-#endif

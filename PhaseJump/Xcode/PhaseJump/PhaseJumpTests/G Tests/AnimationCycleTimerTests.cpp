@@ -9,7 +9,7 @@ namespace AnimationCycleTimerTests {
 
 using namespace AnimationCycleTimerTests;
 
-TEST(AnimationCycleTimer, Test_CycleOnceForward)
+TEST(AnimationCycleTimer, CycleOnceForward)
 {
     AnimationCycleTimer sut(1.0f, AnimationCycleType::Once);
 
@@ -29,7 +29,7 @@ TEST(AnimationCycleTimer, Test_CycleOnceForward)
     EXPECT_EQ(1.0f, sut.Progress());
 }
 
-TEST(AnimationCycleTimer, Test_CycleOnceReverse)
+TEST(AnimationCycleTimer, CycleOnceReverse)
 {
     AnimationCycleTimer sut(1.0f, AnimationCycleType::Once);
     sut.SetCycleState(AnimationCycleState::Reverse);
@@ -51,7 +51,7 @@ TEST(AnimationCycleTimer, Test_CycleOnceReverse)
     EXPECT_EQ(0, sut.Progress());
 }
 
-TEST(AnimationCycleTimer, Test_CycleLoopForward)
+TEST(AnimationCycleTimer, CycleLoopForward)
 {
     AnimationCycleTimer sut(1.0f, AnimationCycleType::Loop);
 
@@ -70,7 +70,7 @@ TEST(AnimationCycleTimer, Test_CycleLoopForward)
     EXPECT_EQ(.3f, sut.Progress());
 }
 
-TEST(AnimationCycleTimer, Test_CycleLoopReverse)
+TEST(AnimationCycleTimer, CycleLoopReverse)
 {
     AnimationCycleTimer sut(1.0f, AnimationCycleType::Loop);
     sut.SetCycleState(AnimationCycleState::Reverse);
@@ -91,7 +91,7 @@ TEST(AnimationCycleTimer, Test_CycleLoopReverse)
     EXPECT_EQ(.7f, sut.Progress());
 }
 
-TEST(AnimationCycleTimer, Test_CyclePingPongForward)
+TEST(AnimationCycleTimer, CyclePingPongForward)
 {
     AnimationCycleTimer sut(1.0f, AnimationCycleType::PingPong);
 
@@ -110,7 +110,7 @@ TEST(AnimationCycleTimer, Test_CyclePingPongForward)
     EXPECT_EQ(.7f, sut.Progress());
 }
 
-TEST(AnimationCycleTimer, Test_CyclePingPongReverse)
+TEST(AnimationCycleTimer, CyclePingPongReverse)
 {
     AnimationCycleTimer sut(1.0f, AnimationCycleType::PingPong);
     sut.SetCycleState(AnimationCycleState::Reverse);
@@ -129,4 +129,86 @@ TEST(AnimationCycleTimer, Test_CyclePingPongReverse)
     sut.OnUpdate(TimeSlice(.3f));
     EXPECT_EQ(AnimationCycleState::Forward, sut.CycleState());
     EXPECT_EQ(.3f, sut.Progress());
+}
+
+TEST(AnimationCycleTimer, SetProgressReverse)
+{
+    AnimationCycleTimer sut(100, AnimationCycleType::PingPong);
+    sut.SetCycleState(AnimationCycleState::Reverse);
+    sut.SetProgress(1.0f);
+
+    EXPECT_EQ(AnimationCycleState::Reverse, sut.CycleState());
+    EXPECT_EQ(1.0f, sut.Progress());
+
+    sut.SetProgress(0.7f);
+    EXPECT_EQ(70, sut.PlayTime());
+}
+
+TEST(AnimationCycleTimer, SetPlayTimeReverse)
+{
+    AnimationCycleTimer sut(100, AnimationCycleType::PingPong);
+    sut.SetCycleState(AnimationCycleState::Reverse);
+    sut.SetProgress(1.0f);
+
+    EXPECT_EQ(AnimationCycleState::Reverse, sut.CycleState());
+    EXPECT_EQ(1.0f, sut.Progress());
+
+    sut.SetPlayTime(70);
+    EXPECT_EQ(0.7f, sut.Progress());
+    EXPECT_EQ(70, sut.PlayTime());
+}
+
+TEST(AnimationCycleTimer, OnPlayTimeChangeFunc)
+{
+    float value{};
+
+    AnimationCycleTimer sut(100, AnimationCycleType::PingPong);
+    sut.SetOnPlayTimeChangeFunc([&](auto& playable) {
+        value += playable.PlayTime();
+    });
+
+    sut.SetPlayTime(30);
+    sut.SetPlayTime(10);
+    sut.SetPlayTime(5);
+
+    EXPECT_EQ(value, 45);
+}
+
+TEST(AnimationCycleTimer, TestIsPlayingAfterPause)
+{
+    AnimationCycleTimer sut(1, AnimationCycleType::PingPong);
+    EXPECT_TRUE(sut.IsPlaying());
+    sut.Pause();
+    EXPECT_FALSE(sut.IsPlaying());
+    EXPECT_TRUE(sut.IsPaused());
+}
+
+TEST(AnimationCycleTimer, TestIsPlayingAfterStop)
+{
+    AnimationCycleTimer sut(1, AnimationCycleType::PingPong);
+    EXPECT_TRUE(sut.IsPlaying());
+    sut.Stop();
+    EXPECT_FALSE(sut.IsPlaying());
+    EXPECT_FALSE(sut.IsPaused());
+}
+
+TEST(AnimationCycleTimer, TestIsPlayingAfterFinish)
+{
+    AnimationCycleTimer sut(1, AnimationCycleType::Once);
+    EXPECT_TRUE(sut.IsPlaying());
+    sut.OnUpdate({2});
+    EXPECT_FALSE(sut.IsPlaying());
+    EXPECT_FALSE(sut.IsPaused());
+}
+
+TEST(AnimationCycleTimer, TestResetAfterReverse)
+{
+    float value{};
+
+    AnimationCycleTimer sut(1, AnimationCycleType::PingPong);
+    sut.OnUpdate({1});
+    EXPECT_TRUE(sut.IsReversed());
+    sut.Reset();
+    EXPECT_EQ(0, sut.PlayTime());
+    EXPECT_FALSE(sut.IsReversed());
 }

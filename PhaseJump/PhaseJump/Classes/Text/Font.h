@@ -76,7 +76,7 @@ namespace PJ {
             return metrics.ascent + metrics.descent;
         }
 
-        /// Returns true if this font can display all the glyphs in the string
+        /// @return Returns true if this font can display all the glyphs in the string
         bool CanDisplay(String value);
 
         virtual ~Font() {}

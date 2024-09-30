@@ -3,6 +3,7 @@
 #include "Dev.h"
 #include "Matrix.h"
 #include "Vector2.h"
+#include "Void.h"
 
 /*
  RATING: 5 stars
@@ -18,21 +19,30 @@ namespace PJ {
     public:
         using Cell = uint8_t;
 
+        friend class MatrixBoard;
+
         // Avoid Matrix<bool> because of C++ specialization
         using MatrixType = PJ::Matrix<Cell>;
 
     protected:
         MatrixType matrix;
 
-    public:
         /// Location of this piece on the board
         Vector2Int origin;
 
+    public:
         /// Board that owns this piece
-        MatrixBoard* board = nullptr;
+        MatrixBoard* board{};
+
+        /// (Optional) Object that owns this piece (besides the board)
+        void* owner{};
 
         MatrixPiece(Vector2Int size) :
             matrix(size) {}
+
+        Vector2Int Origin() const {
+            return origin;
+        }
 
         Vector2Int Size() const {
             return matrix.Size();
@@ -62,14 +72,18 @@ namespace PJ {
             matrix.SetCell(loc, value);
         }
 
-        /// Returns the cell if location is valid. If not, throws an exception
+        /// @return Returns the cell if location is valid. If not, throws an exception
         Cell& CellAt(Vector2Int loc) {
             return matrix.CellAt(loc);
         }
 
-        /// Returns the cell if location is valid. If not, throws an exception
+        /// @return Returns the cell if location is valid. If not, throws an exception
         Cell const& CellAt(Vector2Int loc) const {
             return matrix.CellAt(loc);
+        }
+
+        bool BuildFromShape(String pieceShape) {
+            return BuildFromShape(ComponentsSeparatedBy(pieceShape, '&'));
         }
 
         /// Builds the piece from a list of strings that define its shape

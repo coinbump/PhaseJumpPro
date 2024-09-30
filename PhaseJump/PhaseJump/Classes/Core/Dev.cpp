@@ -1,19 +1,20 @@
 #include "Dev.h"
+#include "Macros.h"
 
 using namespace std;
 using namespace PJ;
 
-void Asserter::Assert(bool isTrue) {
-    GUARD(assertFunc)
-    assertFunc(isTrue);
-}
-
 #ifdef DEBUG
-PJ::Asserter PJ::asserter([](bool isTrue) { assert(isTrue); });
+void AssertImpl(bool isTrue) {
+    assert(isTrue);
+}
 #else
-PJ::Asserter PJ::asserter([](bool isTrue) {});
+void AssertImpl(bool isTrue) {}
 #endif
 
+PJ::AssertFunc PJ::assertFunc = [](bool value) { AssertImpl(value); };
+
 void PJ::Assert(bool isTrue) {
-    asserter.Assert(isTrue);
+    GUARD(assertFunc)
+    assertFunc(isTrue);
 }

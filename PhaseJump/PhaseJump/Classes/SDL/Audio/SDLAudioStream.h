@@ -63,9 +63,13 @@ namespace PJ {
             return 0;
         }
 
+        void SetDuration(float value) override {}
+
         float Progress() const override {
             return 0;
         }
+
+        void SetProgress(float value) override {}
 
         void Pause() override {}
 

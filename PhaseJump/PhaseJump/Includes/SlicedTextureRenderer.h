@@ -1,1 +1,1 @@
-#include "../Classes/Render/Renderers/SlicedTextureRenderer.h"
+#include "../Classes/Components/Renderers/SlicedTextureRenderer.h"

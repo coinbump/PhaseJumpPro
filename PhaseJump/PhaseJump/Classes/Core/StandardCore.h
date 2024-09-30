@@ -28,6 +28,9 @@ namespace PJ {
         /// Custom properties
         Tags tags;
 
+        /// Object attribute types (what kind of object is this?)
+        TypeTagSet typeTags;
+
         StandardCore(ClassPtr _class = nullptr, String classId = "") :
             _class(_class),
             classId(classId) {}

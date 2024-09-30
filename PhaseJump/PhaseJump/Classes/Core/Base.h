@@ -35,7 +35,7 @@ namespace PJ {
             GoInternal();
         }
 
-        /// Returns description for logs
+        /// @return Returns description for logs
         String ToString() const override {
             return "Base";
         }

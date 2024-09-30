@@ -3,8 +3,17 @@
 
 #ifdef _WIN32
 
+// Windows.h must come before GL headers
+// clang-format off
+#include <Windows.h>
 #include <gl/gl.h>
 #include <gl/glu.h>
+
+// Glchar is missing in gl.h
+#ifndef GLchar
+using GLchar = char;
+#endif
+// clang-format on
 
 #else
 

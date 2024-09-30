@@ -1,6 +1,7 @@
 #include "SDLUIEventsBuilder.h"
 #include "DropFilesUIEvent.h"
 #include "FilePath.h"
+#include "OrderedMap.h"
 #include "PointerClickUIEvent.h"
 #include "SomeControllerUIEvent.h"
 #include <iostream>

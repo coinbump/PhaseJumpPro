@@ -1,30 +1,29 @@
 #pragma once
 
-#include "OrderedMap.h"
 #include "StringConvertible.h"
 #include "StringUtils.h"
 #include "UnorderedMap.h"
 #include "UnorderedSet.h"
 #include <any>
 #include <optional>
-#include <set>
 
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 8/15/24
+ CODE REVIEW: 9/29/24
  */
 namespace PJ {
     using Tag = std::any;
 
+    /// Allocator struct uses the default constructor to return a value
     template <class T>
     struct DefaultAllocator {
         T operator()() {
-            return T();
+            return {};
         }
     };
 
-    /// Holds custom attributes (tags) in a dictionary
+    /// Holds custom attributes (tags) in a map
     struct Tags : public StringConvertible {
         using Key = String;
         using MapValue = Tag;
@@ -50,11 +49,24 @@ namespace PJ {
             return Insert({ key, value });
         }
 
-        /// Creates a value if it doesn't exist
+        /// Returns an optional with the value if it exists, or an empty optional if it doesn't
+        /// exist
+        template <class T>
+        std::optional<T> Value(Key key) const {
+            try {
+                MapValue const& mapValue = map.at(key);
+                auto castValue = std::any_cast<T>(mapValue);
+                return castValue;
+            } catch (...) {}
+
+            return std::nullopt;
+        }
+
+        /// Returns a default value if the requested value doesn't exist
         template <class T, class Allocator = DefaultAllocator<T>>
         T SafeValue(Key key, Allocator allocator = Allocator()) const {
             try {
-                auto mapValue = map.at(key);
+                MapValue const& mapValue = map.at(key);
                 auto castValue = std::any_cast<T>(mapValue);
                 return castValue;
             } catch (...) {}
@@ -62,33 +74,31 @@ namespace PJ {
             return allocator();
         }
 
+        /// Returns the value of the specified type, with the specified key
+        /// Throws an exception of the value doesn't exist or is the wrong type
         template <class T>
-        std::optional<T> Value(Key key) const {
-            auto value = map.find(key);
-            if (value != map.end()) {
-                try {
-                    auto castValue = std::any_cast<T>(value->second);
-                    return std::make_optional<T>(castValue);
-                } catch (...) {}
-            }
-
-            return std::nullopt;
+        T& TypeValueAt(Key key) {
+            MapValue& value = map.at(key);
+            return std::any_cast<T&>(value);
         }
 
-        /// Returns true if the value exists, and is of the correct type
+        /// Adds the type value if a tag of this type and id do not exist
         template <class T>
-        bool ContainsTypeValue(Key key) const {
-            auto value = map.find(key);
-            if (value != map.end()) {
-                try {
-                    std::any_cast<T>(value->second);
-                    return true;
-                } catch (...) {}
+        void TypeAddIfMissing(Key const key, T value = {}) {
+            GUARD(!TypeContains<T>(key))
+            Add(key, value);
+        }
 
+        /// @return Returns true if the value exists, and is of the correct type
+        template <class T>
+        bool TypeContains(Key key) const {
+            try {
+                MapValue const& value = map.at(key);
+                std::any_cast<T>(value);
+                return true;
+            } catch (...) {
                 return false;
             }
-
-            return false;
         }
 
         size_t size() const {

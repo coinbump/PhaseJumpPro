@@ -9,13 +9,51 @@
 #include "SomeRenderEngine.h"
 #include "SomeShaderProgram.h"
 #include "TextureAtlas.h"
+#include "UIPlanner.h"
 #include "Utils.h"
 
 using namespace std;
 using namespace PJ;
 
+AnimatedSpriteRenderer::AnimatedSpriteRenderer(Vector3 worldSize) :
+    Base(worldSize) {
+
+    PlanUIFunc planUIFunc = [](auto& component, String context, UIPlanner& planner) {
+        auto renderer = static_cast<This*>(&component);
+
+        planner
+            .InputBool(
+                "Flip X", { [=]() { return renderer->flipX; },
+                            [=](auto& value) { renderer->SetFlipX(value); } }
+            )
+            .InputBool(
+                "Flip Y", { [=]() { return renderer->flipY; },
+                            [=](auto& value) { renderer->SetFlipY(value); } }
+            );
+
+        RateFramePlayable* rateFramePlayable =
+            dynamic_cast<RateFramePlayable*>(renderer->framePlayable.get());
+        if (rateFramePlayable) {
+            VectorList<String> cycleOptions{ "Once", "PingPong", "Loop" };
+            planner
+                .InputFloat(
+                    "Frame rate", { [=]() { return rateFramePlayable->FrameRate(); },
+                                    [=](auto& value) { rateFramePlayable->SetFrameRate(value); } }
+                )
+                .PickerList(
+                    "Animation cycle", cycleOptions,
+                    { [=]() { return (int)rateFramePlayable->CycleType(); },
+                      [=](auto& value) {
+                          rateFramePlayable->SetCycleType((AnimationCycleType)value);
+                      } }
+                );
+        }
+    };
+    Override(this->planUIFunc, planUIFunc);
+}
+
 AnimatedSpriteRenderer::AnimatedSpriteRenderer(TextureList const& textures) :
-    Base(vec2Zero) {
+    AnimatedSpriteRenderer(vec2Zero) {
     std::transform(
         textures.cbegin(), textures.cend(), std::back_inserter(frames),
         [](SP<SomeTexture> texture) { return Frame(texture, vec2Zero); }
@@ -33,7 +71,7 @@ AnimatedSpriteRenderer::AnimatedSpriteRenderer(TextureList const& textures) :
     model.material->SetShaderProgram(program->second);
     model.material->EnableFeature(RenderFeature::Blend, true);
 
-    framePlayable = SCAST<SomeFramePlayable>(MAKE<RateFramePlayable>(textures.size(), 12.0f));
+    framePlayable = std::make_unique<RateFramePlayable>(textures.size(), 12.0f);
 
     if (!IsEmpty(textures)) {
         auto texture = textures[0];
@@ -46,7 +84,7 @@ AnimatedSpriteRenderer::AnimatedSpriteRenderer(TextureList const& textures) :
 }
 
 AnimatedSpriteRenderer::AnimatedSpriteRenderer(TextureAtlas const& atlas) :
-    Base(vec2Zero) {
+    AnimatedSpriteRenderer(vec2Zero) {
     std::transform(
         atlas.Textures().cbegin(), atlas.Textures().cend(), std::back_inserter(frames),
         [](SP<AtlasTexture> texture) {
@@ -77,7 +115,7 @@ AnimatedSpriteRenderer::AnimatedSpriteRenderer(TextureAtlas const& atlas) :
     model.material->EnableFeature(RenderFeature::Blend, true);
 
     auto const& textures = atlas.Textures();
-    framePlayable = SCAST<SomeFramePlayable>(MAKE<RateFramePlayable>(textures.size(), 12.0f));
+    framePlayable = std::make_unique<RateFramePlayable>(textures.size(), 12.0f);
 
     if (!IsEmpty(textures)) {
         auto texture = textures[0];

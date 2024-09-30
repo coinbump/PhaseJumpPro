@@ -3,7 +3,7 @@
 #include "SomeEffect.h"
 #include "SomeResolver.h"
 #include "SomeSignal.h"
-#include "UISystem.h"
+#include "UIWorldSystem.h"
 #include "WorldComponent.h"
 
 // CODE REVIEW: ?/23

@@ -7,6 +7,7 @@
 #include "SomeShaderProgram.h"
 #include "TextMeasurer.h"
 #include "TextureAtlas.h"
+#include "UIPlanner.h"
 
 using namespace std;
 using namespace PJ;
@@ -35,6 +36,16 @@ TextRenderer::TextRenderer(SP<Font> font, String text, Vector2 size) :
         GUARD(this->modifyColorsFunc)
         this->modifyColorsFunc(*this, colors);
     });
+
+    PlanUIFunc planUIFunc = [](auto& component, String context, UIPlanner& planner) {
+        auto renderer = static_cast<This*>(&component);
+
+        planner.InputText(
+            "Text",
+            { [=]() { return renderer->text; }, [=](auto& value) { renderer->SetText(value); } }
+        );
+    };
+    Override(this->planUIFunc, planUIFunc);
 }
 
 void TextRenderer::OnTextChange() {

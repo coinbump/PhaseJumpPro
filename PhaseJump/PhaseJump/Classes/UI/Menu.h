@@ -1,10 +1,15 @@
 #pragma once
 
+#include "StringUtils.h"
+#include "Tags.h"
+#include "UnorderedSet.h"
+
 /*
  RATING: 5 stars
  Tested and works
- CODE REVIEW: 9/14/24
+ CODE REVIEW: 9/14/23
  */
+// TODO: conform these to SomeUIModel so we can add these to UI plan
 namespace PJ {
     using EventModifierType = String;
 
@@ -28,7 +33,7 @@ namespace PJ {
         String value;
         ModifierSet modifiers;
 
-        /// Returns a user-displayable string for the shortcut
+        /// @return Returns a user-displayable string for the shortcut
         String ToString();
     };
 

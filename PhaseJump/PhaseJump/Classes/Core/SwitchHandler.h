@@ -12,27 +12,34 @@ namespace PJ {
     /// Component with a switch
     class SwitchHandler : public WorldComponent<>, public Switchable {
     protected:
-        bool isOn = false;
+        SwitchState state = SwitchState::Off;
 
     public:
         using OnSwitchChangeFunc = std::function<void(SwitchHandler&)>;
 
         OnSwitchChangeFunc onSwitchChangeFunc;
 
-        SwitchHandler() {}
+        SwitchHandler(SwitchState state = SwitchState::Off) :
+            state(state) {}
 
         SwitchHandler(OnSwitchChangeFunc onSwitchChangeFunc) :
             onSwitchChangeFunc(onSwitchChangeFunc) {}
 
-        bool IsOn() const {
-            return isOn;
+        // MARK: Switchable
+
+        bool IsOn() const override {
+            return state == SwitchState::On;
         }
 
-        void SetIsOn(bool value) {
-            GUARD(isOn != value)
+        void SetIsOn(bool value) override {
+            GUARD(IsOn() != value)
 
-            isOn = value;
+            state = value ? SwitchState::On : SwitchState::Off;
             OnSwitchChange();
+        }
+
+        void Toggle() {
+            SetIsOn(!IsOn());
         }
 
         // MARK: SomeWorldComponent
@@ -42,7 +49,9 @@ namespace PJ {
         }
 
     protected:
-        virtual void OnSwitchChange() {
+        // MARK: Switchable
+
+        void OnSwitchChange() override {
             GUARD(onSwitchChangeFunc)
             onSwitchChangeFunc(*this);
         }

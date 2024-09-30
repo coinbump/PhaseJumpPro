@@ -1,6 +1,7 @@
 #pragma once
 
 #include <algorithm>
+#include <functional>
 
 /*
  RATING: 5 stars

@@ -23,7 +23,7 @@ namespace PJ {
 
         /// Pick a child, or the next node in a sequence (optional)
         /// <returns>
-        /// Returns the next node in the sequence
+        /// @return Returns the next node in the sequence
         /// </returns>
         virtual SP<Base> SelectNext() {
             return SP<Base>();

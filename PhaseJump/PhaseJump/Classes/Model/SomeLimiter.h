@@ -1,5 +1,4 @@
-#ifndef PJSOMELIMITER_H
-#define PJSOMELIMITER_H
+#pragma once
 
 #include "Base.h"
 #include "Updatable.h"
@@ -8,7 +7,7 @@
 /*
  RATING: 5 stars
  Simple type
- CODE REVIEW: 6/8/24
+ CODE REVIEW: 9/28/24
  */
 namespace PJ {
     /// Limits whether or not an event can occur
@@ -16,10 +15,12 @@ namespace PJ {
     template <class Core = Void>
     class SomeLimiter : public OwnerBase<Core>, public Updatable {
     public:
-        // TODO: rethink this. Is this actually better?
-        std::function<bool(SomeLimiter&)> canFireFunc;
-        std::function<void(SomeLimiter&)> onFireFunc;
-        std::function<void(SomeLimiter&, TimeSlice)> onUpdateFunc;
+        using This = SomeLimiter<Core>;
+        using CanFireFunc = std::function<bool(This&)>;
+        using OnFireFunc = std::function<void(This&)>;
+
+        CanFireFunc canFireFunc;
+        OnFireFunc onFireFunc;
 
     protected:
         virtual void OnFire() {
@@ -29,26 +30,16 @@ namespace PJ {
 
     public:
         bool Fire() {
-            auto result = CanFire();
-            if (result) {
-                OnFire();
-            }
-            return result;
+            GUARDR(CanFire(), false);
+
+            OnFire();
+            return true;
         }
 
         virtual bool CanFire() {
             GUARDR(canFireFunc, false)
             return canFireFunc(*this);
         }
-
-        // MARK: Updatable
-
-        void OnUpdate(TimeSlice time) override {
-            GUARD(onUpdateFunc)
-            onUpdateFunc(*this, time);
-        }
     };
 
 } // namespace PJ
-
-#endif

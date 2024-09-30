@@ -112,8 +112,6 @@ public:
 };
 
 void SDLWorld::Run() {
-    startTime = SDL_GetTicks();
-
     DevABProfiler profile(
         "Vector[]- switch",
         []() {
@@ -146,31 +144,42 @@ void SDLWorld::Run() {
 
     bool didRender = false;
 
+    startTime = SDL_GetTicks();
+
     while (!isDone) {
-        auto currentTime = SDL_GetTicks();
+        // This doesn't work
+        //        auto displayMode = SDL_GetWindowFullscreenMode(window);
+        //        if (displayMode) {
+        //            SetRenderRate(displayMode->refresh_rate);
+        //            cout << "Render rate: " << displayMode->refresh_rate << std::endl;
+        //        }
+
+        uint64_t currentTime = SDL_GetTicks();
         double deltaTime = (currentTime - startTime) / 1000.0; // Convert to seconds.
 
-        // TODO: revisit the idea of frame caps
-        if (!didRender || deltaTime >= 1.0f / 240.0f) {
-            // Avoid flash before first frame
-            didRender = true;
+        // Avoid flash before first frame
+        didRender = true;
 
-            startTime = currentTime;
+        startTime = currentTime;
 
-            {
+        {
 #ifdef PROFILE
-                DevProfiler devProfiler("SDL-OnUpdate", [](String value) { std::cout << value; });
+            DevProfiler devProfiler("SDL-OnUpdate", [](String value) { std::cout << value; });
 #endif
 
-                OnUpdate(TimeSlice(deltaTime));
+            // Break down large time deltas due to hitching/debugger pause into multiple time steps
+            while (deltaTime > maxTimeDelta) {
+                OnUpdate(TimeSlice(maxTimeDelta));
+                deltaTime -= maxTimeDelta;
             }
+            OnUpdate(TimeSlice(deltaTime));
+        }
 
-            {
+        {
 #ifdef PROFILE
-                DevProfiler devProfiler("SDL-Render", [](String value) { std::cout << value; });
+            DevProfiler devProfiler("SDL-Render", [](String value) { std::cout << value; });
 #endif
-                Render();
-            }
+            Render();
         }
 
         {

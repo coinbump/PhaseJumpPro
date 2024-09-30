@@ -66,7 +66,11 @@ void SomeGLRenderEngine::DisableAllVertexAttributeArrays() {
     }
 }
 
-void SomeGLRenderEngine::EnableOnlyVertexAttributeArrays(OrderedSet<GLuint> attributeLocations) {
+void SomeGLRenderEngine::EnableOnlyVertexAttributeArrays(UnorderedSet<GLuint> attributeLocations) {
+    if (optimizeStateSwitches && renderState.activeAttributeLocations == attributeLocations) {
+        return;
+    }
+
     DisableAllVertexAttributeArrays();
 
     for (auto& location : attributeLocations) {

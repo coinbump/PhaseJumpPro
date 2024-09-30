@@ -16,9 +16,9 @@ namespace PJ {
 
     struct LocalHit {
         LocalPosition localPos;
-        WP<WorldNode> node;
+        SP<WorldNode> node;
 
-        LocalHit(LocalPosition localPos, WP<WorldNode> node) :
+        LocalHit(LocalPosition localPos, SP<WorldNode> node) :
             localPos(localPos),
             node(node) {}
     };
@@ -34,22 +34,13 @@ namespace PJ {
         SP<SomeMultiMap<SomeUIEvent, String>> inputMap = MAKE<InputTriggerMap>();
         std::function<void(EventWorldSystem& system, List<WP<WorldNode>>& nodes)> inputCollectFunc;
 
-    protected:
-        /// Collection of nodes that received a pointer down event so they can receive a pointer up
-        /// event later, even if the pointer is no longer inside their bounds. This is used for
-        /// button tracking
-        UnorderedMap<PointerInputButtonType, VectorList<WP<WorldNode>>> pointerDownNodesMap;
-
-        /// List of nodes that received a pointer enter event so they can receive a pointer leave
-        /// event later
-        List<WP<WorldNode>> pointerEnterNodes;
-
     public:
         EventWorldSystem(String name = "Events");
 
         void ProcessUIEvents(List<SP<SomeUIEvent>> const& uiEvents) override;
 
-        std::optional<LocalHit> TestLocalHit(ScreenPosition screenPosition);
+        // TODO: rename to TestScreenHit? <- but it returns localPosition
+        VectorList<PJ::LocalHit> TestLocalHit(ScreenPosition screenPosition);
 
         virtual void OnDropFiles(DropFilesUIEvent const& event, List<WP<WorldNode>> const& nodes);
         virtual void OnPointerDown(PointerDownUIEvent const& event);

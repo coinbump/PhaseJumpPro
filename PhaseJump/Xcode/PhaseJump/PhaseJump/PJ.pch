@@ -1,0 +1,46 @@
+#ifndef PRECOMPILEDHEADER_H
+#define PRECOMPILEDHEADER_H
+
+#define _USE_MATH_DEFINES
+
+#include "Base.h"
+#include "CollectionUtils.h"
+#include "Dev.h"
+#include "Funcs.h"
+#include "Macros.h"
+#include "Utils.h"
+#include "Void.h"
+#include <algorithm>
+#include <any>
+#include <array>
+#include <atomic>
+#include <chrono>
+#include <cmath>
+#include <filesystem>
+#include <fstream>
+#include <functional>
+#include <future>
+#include <iterator>
+#include <limits>
+#include <math.h>
+#include <map>
+#include <memory>
+#include <mutex>
+#include <numeric>
+#include <optional>
+#include <ostream>
+#include <random>
+#include <set>
+#include <span>
+#include <sqlite3.h>
+#include <sstream>
+#include <stdint.h>
+#include <stdio.h>
+#include <string>
+#include <type_traits>
+#include <utility>
+#include <variant>
+#include <vector>
+#include <iostream>
+
+#endif

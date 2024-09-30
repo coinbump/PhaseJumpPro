@@ -3,6 +3,7 @@
 #include "Dev.h"
 #include "VectorList.h"
 #include <span>
+#include <variant>
 
 /*
  RATING: 5 stars
@@ -47,7 +48,7 @@ namespace PJ {
             //            PJ::Log("COPY triangles");
         }
 
-        /// Returns a span view into the vector
+        /// @return Returns a span view into the vector
         /// Can either be a span a shared vector stored somewhere else or a span for this object's
         /// vector
         constexpr Span Value() const {
@@ -64,12 +65,12 @@ namespace PJ {
             return {};
         }
 
-        /// Returns true if the stored value is inherantly modifiable (not shared)
+        /// @return Returns true if the stored value is inherantly modifiable (not shared)
         constexpr bool IsModifiable() const {
             return isModifiable;
         }
 
-        /// Returns true if the stored value is shared
+        /// @return Returns true if the stored value is shared
         constexpr bool IsShared() const {
             auto span = std::get_if<Span>(&value);
             return nullptr != span && nullptr != span->data();
@@ -105,7 +106,7 @@ namespace PJ {
             return Value();
         }
 
-        /// Returns the span element at index
+        /// @return Returns the span element at index
         /// No range checking is done
         ValueType operator[](size_t index) {
             Assert(index >= 0 && index < Value().size());
@@ -113,7 +114,7 @@ namespace PJ {
             return Value()[index];
         }
 
-        /// Returns the span element at index
+        /// @return Returns the span element at index
         /// Throws an error if index is invalid
         ValueType at(size_t index) {
             return Value().at(index);

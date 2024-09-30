@@ -14,14 +14,20 @@ namespace PJ {
     /// Updates a list of updatables
     class Updatables : public Updatable {
     public:
-        using OnUpdateFunc = std::function<FinishType(TimeSlice)>;
+        /// Used for composed update functions when we don't care about the updatable object
+        using ContinueOnUpdateFunc = std::function<void(TimeSlice)>;
+        using SimpleOnUpdateFunc = std::function<FinishType(TimeSlice)>;
         using UpdatableList = List<SP<Updatable>>;
+
+    protected:
         UpdatableList list;
 
+    public:
         size_t Count() const {
             return list.size();
         }
 
+        /// Adds an updatable that can finish
         void Add(SP<Updatable> value) {
             GUARD(value)
             GUARD(!value->IsFinished())
@@ -30,61 +36,50 @@ namespace PJ {
         }
 
         /// Adds an updatable func that can finish
-        SP<Updatable> Add(OnUpdateFunc onUpdateFunc) {
-            auto result =
-                MAKE<Updatable>([=](auto&, TimeSlice time) { return onUpdateFunc(time); });
-            Add(result);
-
-            return result;
-        }
+        SP<Updatable> Add(SimpleOnUpdateFunc onUpdateFunc);
 
         /// Adds an updatable func that will continue running
-        SP<Updatable> AddContinue(std::function<void(TimeSlice time)> onUpdateFunc) {
-            auto result = MAKE<Updatable>([=](auto&, TimeSlice time) {
-                onUpdateFunc(time);
-                return FinishType::Continue;
-            });
-            Add(result);
-
-            return result;
-        }
+        SP<Updatable> AddContinue(ContinueOnUpdateFunc onUpdateFunc);
 
         /// Adds an updatable func that runs for duration (in seconds)
-        SP<Updatable> AddTimed(float duration, OnUpdateFunc onUpdateFunc);
+        SP<Updatable> AddTimed(float duration, SimpleOnUpdateFunc onUpdateFunc);
 
-        /// Adds an updatable func that starts after delay (in seconds)
-        SP<Updatable> AddDelay(float delay, OnUpdateFunc onUpdateFunc);
+        /// Adds an updatable that will start after delay
+        SP<Updatable> AddDelay(float delay, SP<Updatable> value);
+
+        /**
+         @brief Adds an updatable func that starts after delay (in seconds)
+
+         @param delay Delay before sending update events to the func
+         @returns
+         An updatable that is used to receive update events for the func
+         */
+        SP<Updatable> AddDelay(float delay, SimpleOnUpdateFunc onUpdateFunc);
 
         /// Adds an updatable func that runs at  the specified speed (default is 1)
-        SP<Updatable> AddSpeed(float speed, OnUpdateFunc onUpdateFunc);
+        SP<Updatable> AddSpeed(float speed, SimpleOnUpdateFunc onUpdateFunc);
+
+        void Remove(SP<Updatable> value) {
+            list.remove(value);
+        }
 
         // MARK: Updatable
 
-        void OnUpdate(TimeSlice time) override {
-            UpdatableList freshList;
-
-            auto iter = list;
-            std::for_each(iter.begin(), iter.end(), [&](SP<Updatable> u) {
-                GUARD(!u->IsFinished())
-
-                u->OnUpdate(time);
-                GUARD(!u->IsFinished())
-
-                freshList.push_back(u);
-            });
-
-            list = freshList;
-        }
+        /// Run updates for all updatables in the list
+        void OnUpdate(TimeSlice time) override;
 
         // MARK: Funcs
 
         /// Make an updatable func that runs for duration (in seconds)
-        static OnUpdateFunc MakeTimedFunc(float duration, OnUpdateFunc onUpdateFunc);
+        static SimpleOnUpdateFunc MakeTimedFunc(float duration, SimpleOnUpdateFunc onUpdateFunc);
 
         /// Make an updatable func that starts after delay (in seconds)
-        static OnUpdateFunc MakeDelayFunc(float delay, OnUpdateFunc onUpdateFunc);
+        static SimpleOnUpdateFunc MakeDelayFunc(float delay, SimpleOnUpdateFunc onUpdateFunc);
 
         /// Make an updatable func that runs at  the specified speed (default is 1)
-        static OnUpdateFunc MakeSpeedFunc(float speed, OnUpdateFunc onUpdateFunc);
+        static SimpleOnUpdateFunc MakeSpeedFunc(float speed, SimpleOnUpdateFunc onUpdateFunc);
+
+        /// Make an updatable func that starts after delay (in seconds)
+        SimpleOnUpdateFunc MakeDelayFunc(float delay, SP<Updatable> updatable);
     };
 } // namespace PJ

@@ -47,7 +47,7 @@ namespace PJ {
         TimerDriver(float duration, Runner::RunType runType, GoFunc goFunc) :
             Base(Timer(duration, runType), goFunc) {
 
-            core.onFinishFunc = [this](TimedPlayable& timedPlayable) {
+            core.onFinishFunc = [this](TimerPlayable& timedPlayable) {
                 GUARD(this->goFunc);
                 this->goFunc();
             };

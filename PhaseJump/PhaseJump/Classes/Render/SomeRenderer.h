@@ -37,9 +37,12 @@ namespace PJ {
             return *this;
         }
 
-        /// Override to set render color
-        virtual void SetColor(Color color) {
+        void SetColor(Color color) {
             model.SetColor(color);
+        }
+
+        void SetAlpha(float value) {
+            model.SetAlpha(value);
         }
 
         Color GetColor() {

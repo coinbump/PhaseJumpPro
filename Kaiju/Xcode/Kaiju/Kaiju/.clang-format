@@ -1,0 +1,62 @@
+---
+# We'll use defaults from the LLVM style, but with 4 columns indentation.
+# BasedOnStyle: Google
+
+---
+Language: Cpp
+AccessModifierOffset: -4
+AlignAfterOpenBracket: BlockIndent
+AlignArrayOfStructures: None
+AlignEscapedNewlines: Left
+AllowShortBlocksOnASingleLine: Empty
+#AllowShortCaseExpressionOnASingleLine: Never
+#AllowShortCaseLabelsOnASingleLine: Never
+#AllowShortEnumsOnASingleLine: Never
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortIfStatementsOnASingleLine: Never
+#AllowShortLambdasOnASingleLine: Never
+#AllowShortLoopsOnASingleLine: Never
+BreakBeforeBraces: Attach
+BreakConstructorInitializers: AfterColon
+# Don't use. This option confuses the Xcode editor
+#BreakInheritanceList: AfterComma
+AlwaysBreakTemplateDeclarations: Yes
+ColumnLimit: 100
+ContinuationIndentWidth: 4
+Cpp11BracedListStyle: false
+#EmptyLineAfterAccessModifier: false
+EmptyLineBeforeAccessModifier: LogicalBlock
+FixNamespaceComments: true
+IncludeBlocks: Merge
+IndentCaseBlocks: true
+IndentCaseLabels: false
+IndentWidth: 4
+InsertNewlineAtEOF: true
+NamespaceIndentation: All
+DerivePointerAlignment: false
+PackConstructorInitializers: Never
+PointerAlignment: Left
+#QualifierOrder: [static, const]
+ReferenceAlignment: Left
+SeparateDefinitionBlocks: Always
+SortIncludes: CaseInsensitive
+SortUsingDeclarations: Never
+SpaceAfterCStyleCast: false
+SpaceAfterLogicalNot: false
+SpaceAfterTemplateKeyword: true
+SpaceBeforeAssignmentOperators: true
+SpaceBeforeCaseColon: false
+SpaceBeforeCpp11BracedList: false
+SpaceBeforeCtorInitializerColon: true
+SpaceBeforeInheritanceColon: true
+SpaceBeforeParens: ControlStatements
+SpaceBeforeRangeBasedForLoopColon: true
+SpaceBeforeSquareBrackets: false
+SpaceInEmptyBlock: false
+SpacesInAngles: Never
+SpacesInContainerLiterals: false
+#SpacesInLineCommentPrefix
+AttributeMacros: [SPECIALIZE_IS_BASE_OF, SPECIALIZE_IS_SAME]
+#	Minimum = 1
+#	Maximum = -1
+UseTab: Never

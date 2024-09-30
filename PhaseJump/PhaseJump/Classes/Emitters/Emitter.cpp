@@ -123,7 +123,7 @@ Emitter::SpawnType Emitter::Spawn(EmitModel const& emit) {
     return newSpawn;
 }
 
-/// Returns local position for new spawn
+/// @return Returns local position for new spawn
 Vector3 Emitter::SpawnPosition(SpawnType spawn) {
     GUARDR(positionFunc, Vector3::zero)
     return positionFunc(*random);

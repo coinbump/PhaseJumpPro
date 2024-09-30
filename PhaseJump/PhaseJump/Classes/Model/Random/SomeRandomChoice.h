@@ -1,7 +1,7 @@
 #pragma once
 
+#include "MathUtils.h"
 #include "SomeRandom.h"
-#include <math.h>
 
 /*
  RATING: 5 stars
@@ -12,7 +12,7 @@ namespace PJ {
 
     // TODO: replace with funcs, func creator
 
-    /// Returns a random choice of the specified type
+    /// Generates a random choice of the specified type
     template <class Type>
     class SomeRandomChoice {
     public:
@@ -43,7 +43,7 @@ namespace PJ {
     using MinMaxIntRandomChoice = MinMaxRandomChoice<int>;
     using MinMaxFloatRandomChoice = MinMaxRandomChoice<float>;
 
-    /// Returns value based on variance values
+    /// Generates value based on variance values
     class VaryIntRandomChoice : public SomeRandomChoice<int> {
     public:
         int value;
@@ -59,7 +59,7 @@ namespace PJ {
         }
     };
 
-    /// Returns value based on variance values
+    /// Generates value based on variance values
     class VaryFloatRandomChoice : public SomeRandomChoice<float> {
     public:
         float value;

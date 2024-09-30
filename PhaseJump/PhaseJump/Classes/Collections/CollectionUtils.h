@@ -94,11 +94,17 @@ namespace PJ {
     }
 
     template <class Collection, class UnaryPred>
-    constexpr Collection::iterator FirstIterator(Collection& collection, UnaryPred check) {
+    constexpr typename Collection::iterator FirstIterator(Collection& collection, UnaryPred check) {
         auto i = std::find_if(collection.begin(), collection.end(), check);
         GUARDR(i != collection.end(), collection.end())
 
         return i;
+    }
+
+    template <class Collection>
+    constexpr typename Collection::value_type First(Collection& collection) {
+        typename Collection::value_type defaultResult{};
+        return !IsEmpty(collection) ? *collection.begin() : defaultResult;
     }
 
     template <class Collection, class UnaryPred>

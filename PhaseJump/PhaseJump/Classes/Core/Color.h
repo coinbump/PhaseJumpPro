@@ -49,28 +49,28 @@ namespace PJ {
             return a >= 1.0f;
         }
 
-        /// Returns this color with a modified color value
+        /// @return Returns this color with a modified color value
         constexpr This WithRed(float value, bool clamp = true) const {
             This result = *this;
             result.r = clamp ? std::clamp(value, 0.0f, 1.0f) : value;
             return result;
         }
 
-        /// Returns this color with a modified color value
+        /// @return Returns this color with a modified color value
         constexpr This WithGreen(float value, bool clamp = true) const {
             This result = *this;
             result.g = clamp ? std::clamp(value, 0.0f, 1.0f) : value;
             return result;
         }
 
-        /// Returns this color with a modified color value
+        /// @return Returns this color with a modified color value
         constexpr This WithBlue(float value, bool clamp = true) const {
             This result = *this;
             result.b = clamp ? std::clamp(value, 0.0f, 1.0f) : value;
             return result;
         }
 
-        /// Returns this color with a modified alpha value
+        /// @return Returns this color with a modified alpha value
         constexpr This WithAlpha(float value, bool clamp = true) const {
             This result = *this;
             result.a = clamp ? std::clamp(value, 0.0f, 1.0f) : value;

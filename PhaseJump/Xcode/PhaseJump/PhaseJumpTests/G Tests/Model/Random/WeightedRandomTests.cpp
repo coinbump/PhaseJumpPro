@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 #include "Model/WeightedRandomChoice.h"
-#include "FixedRandom.h"
+#include "MockRandom.h"
 
 #include <memory>
 

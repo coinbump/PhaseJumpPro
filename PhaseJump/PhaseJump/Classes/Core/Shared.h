@@ -40,7 +40,7 @@ namespace PJ {
             value(typeValue),
             isModifiable(true) {}
 
-        /// Returns a ptr to the type value
+        /// @return Returns a ptr to the type value
         /// Can either be a ptr a shared typeValue stored somewhere else or a ptr for this object's
         /// typeValue
         constexpr Ptr Value() const {
@@ -57,12 +57,12 @@ namespace PJ {
             return nullptr;
         }
 
-        /// Returns true if the stored value is inherantly modifiable (not shared)
+        /// @return Returns true if the stored value is inherantly modifiable (not shared)
         constexpr bool IsModifiable() const {
             return isModifiable;
         }
 
-        /// Returns true if the stored value is shared
+        /// @return Returns true if the stored value is shared
         constexpr bool IsShared() const {
             auto ptr = std::get_if<Ptr>(&value);
             return nullptr != ptr;

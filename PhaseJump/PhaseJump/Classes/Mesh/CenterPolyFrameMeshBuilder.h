@@ -62,7 +62,6 @@ namespace PJ {
                 vi++;
             }
 
-            auto firstVi = vi;
             Vector3 prevVertex = Vector3::zero;
             bool hasPrevVertex = false;
             size_t index = 0;

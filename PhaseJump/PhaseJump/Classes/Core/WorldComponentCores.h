@@ -3,6 +3,7 @@
 #include "MultiFunction.h"
 #include "SomePosition.h"
 #include "SomeWorldComponent.h"
+#include "StandardCore.h"
 #include "Updatable.h"
 #include <memory>
 
@@ -17,7 +18,7 @@ namespace PJ {
     class WorldComponent;
 
     /// No-op component core
-    class VoidWorldComponentCore {
+    class VoidWorldComponentCore : public StandardCore {
     public:
         using Owner = WorldComponent<VoidWorldComponentCore>;
 
@@ -35,7 +36,7 @@ namespace PJ {
     };
 
     /// Component core that uses function
-    class FuncWorldComponentCore {
+    class FuncWorldComponentCore : public StandardCore {
     public:
         using Owner = WorldComponent<FuncWorldComponentCore>;
         using VoidFunc = std::function<void(Owner&)>;
@@ -71,8 +72,8 @@ namespace PJ {
         }
     };
 
-    /// Componet core that uses MultiFunction
-    class MultiFuncWorldComponentCore {
+    /// Component core that uses MultiFunction
+    class MultiFuncWorldComponentCore : public StandardCore {
     public:
         using Owner = WorldComponent<MultiFuncWorldComponentCore>;
         using VoidMultiFunc = MultiFunction<void(Owner&)>;

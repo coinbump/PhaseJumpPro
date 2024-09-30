@@ -39,7 +39,7 @@ namespace PJ {
             return commands.size();
         }
 
-        /// Returns the command at the specified index. Throws an error if index is invalud
+        /// @return Returns the command at the specified index. Throws an error if index is invalud
         SomeCommand& At(size_t index) {
             GUARD_THROW(
                 index >= 0 && index < commands.size(), std::out_of_range("Invalid command index")

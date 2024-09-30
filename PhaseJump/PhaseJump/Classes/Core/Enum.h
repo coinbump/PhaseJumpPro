@@ -14,16 +14,15 @@
 namespace PJ {
     /// Uses EnumClass to map enum <-> String/name for serialization and display
     template <typename EnumType>
-    class Enum : public Base {
+    class Enum : public OwnerBase<StandardCore> {
     public:
         using EnumClassType = EnumClass<EnumType>;
 
-        StandardCore core;
-
         EnumType value = EnumType();
 
-        Enum(SP<EnumClassType> _class) :
-            core(_class) {}
+        Enum(SP<EnumClassType> _class) {
+            core.SetClass(_class);
+        }
 
         virtual ~Enum() {}
 

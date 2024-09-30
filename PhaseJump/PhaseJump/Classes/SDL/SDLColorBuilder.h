@@ -11,6 +11,7 @@
  */
 namespace PJ {
     struct SDLColorBuilder {
+        // TODO: probably doesn't need to be in a builder
         SDL_Color Transform(RGBAColor color32) const {
             SDL_Color result;
             result.r = color32.r();

@@ -7,14 +7,33 @@
 #include "RenderModelBuilder.h"
 #include "SomeRenderEngine.h"
 #include "SomeShaderProgram.h"
+#include "UIPlanner.h"
 #include "Utils.h"
 
 using namespace std;
 using namespace PJ;
 
+SpriteRenderer::SpriteRenderer(Vector3 worldSize) :
+    Base(worldSize) {
+    PlanUIFunc planUIFunc = [](auto& component, String context, UIPlanner& planner) {
+        auto renderer = static_cast<This*>(&component);
+
+        planner
+            .InputBool(
+                "Flip X", { [=]() { return renderer->flipX; },
+                            [=](auto& value) { renderer->SetFlipX(value); } }
+            )
+            .InputBool(
+                "Flip Y", { [=]() { return renderer->flipY; },
+                            [=](auto& value) { renderer->SetFlipY(value); } }
+            );
+    };
+    Override(this->planUIFunc, planUIFunc);
+}
+
 SpriteRenderer::SpriteRenderer(SP<SomeTexture> texture) :
-    Base(texture ? Vector3(texture->size.x, texture->size.y, 0) : Vector3::zero),
-    texture(texture) {
+    SpriteRenderer(texture ? Vector3(texture->size.x, texture->size.y, 0) : Vector3::zero) {
+    this->texture = texture;
     model.material = MAKE<RenderMaterial>();
     GUARD(texture);
 
@@ -35,7 +54,7 @@ SpriteRenderer::SpriteRenderer(SP<SomeTexture> texture) :
 }
 
 SpriteRenderer::SpriteRenderer(SP<RenderMaterial> material) :
-    Base(vec2Zero) {
+    SpriteRenderer(vec2Zero) {
     model.material = material;
     GUARD(material)
 

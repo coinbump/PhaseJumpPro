@@ -1,11 +1,14 @@
-#ifndef PJSOMEEVENTPOLLER_H
-#define PJSOMEEVENTPOLLER_H
+#pragma once
 
 #include "List.h"
 #include "Utils.h"
 #include <memory>
 
-// CODE REVIEW: ?/23
+/*
+ RATING: 5 stars
+ Simple protocol
+ CODE REVIEW: 9/22/24
+ */
 namespace PJ {
     class SomeUIEvent;
 
@@ -32,5 +35,3 @@ namespace PJ {
         virtual Result PollUIEvents() = 0;
     };
 } // namespace PJ
-
-#endif

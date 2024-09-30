@@ -1,1 +1,1 @@
-#include "../Classes/Render/Renderers/SpriteRenderer.h"
+#include "../Classes/Components/Renderers/SpriteRenderer.h"

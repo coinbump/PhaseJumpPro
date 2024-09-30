@@ -1,8 +1,8 @@
-#ifndef PJFILESPROCESSOR_H
-#define PJFILESPROCESSOR_H
+#pragma once
 
 #include "FilePath.h"
 #include "SomeProcessor.h"
+#include "Updatable.h"
 #include "Utils.h"
 #include "VectorList.h"
 #include <filesystem>
@@ -13,25 +13,46 @@ namespace fs = std::filesystem;
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 7/6/24
+ CODE REVIEW: 9/19/24
  */
 namespace PJ {
-    /// Process a single file
-    class SomeFileProcessor : public SomeProcessor<FilePath> {
+    /// Processes a single file
+    class FileProcessor : public SomeProcessor<FilePath> {
     public:
-        SomeFileProcessor() :
-            SomeProcessor<FilePath>(1) {}
+        using ProcessFileFunc = std::function<void(FilePath)>;
 
-        virtual ~SomeFileProcessor() {}
+        ProcessFileFunc processFileFunc;
 
-        virtual void Process(FilePath path) = 0;
+        FileProcessor() :
+            SomeProcessor<FilePath>() {}
+
+        virtual ~FileProcessor() {}
+
+        virtual void Process(FilePath path) {
+            GUARD(processFileFunc)
+            processFileFunc(path);
+        }
+
+        // MARK: SomeProcessor
+
+        size_t InputCount() const override {
+            return 1;
+        }
+
+        size_t ProcessedCount() const override {
+            return 0;
+        }
     };
 
     enum class FileSearchType { Directory, Recursive };
 
-    /// Process a list of file paths (Example: rename files)
+    /// Processes a list of file paths (Example: rename files)
     class FilesProcessor : public SomeProcessor<VectorList<FilePath>> {
     public:
+        using Base = SomeProcessor<VectorList<FilePath>>;
+        using This = FilesProcessor;
+        using ProcessFileFunc = std::function<void(FilePath)>;
+
         struct Settings {
             FileSearchType fileSearchType;
 
@@ -40,15 +61,14 @@ namespace PJ {
         };
 
     protected:
-        UP<SomeFileProcessor> fileProcessor;
         Settings settings;
+        size_t processedCount{};
 
     public:
-        using Base = SomeProcessor<VectorList<FilePath>>;
+        ProcessFileFunc processFileFunc;
 
-        FilesProcessor(Int filesCount, UP<SomeFileProcessor>& fileProcessor, Settings settings) :
-            Base(filesCount),
-            fileProcessor(std::move(fileProcessor)),
+        FilesProcessor(ProcessFileFunc processFileFunc, Settings settings) :
+            processFileFunc(processFileFunc),
             settings(settings) {}
 
         virtual ~FilesProcessor() {}
@@ -57,43 +77,52 @@ namespace PJ {
             return settings.fileSearchType == FileSearchType::Recursive;
         }
 
-        virtual void Provide(FilePath path) {
+        int64_t UnfinishedCount() const {
+            return input.size() - processedCount;
+        }
+
+        virtual void Scan(FilePath path) {
             if (fs::is_directory(path)) {
                 if (IsRecursive()) {
                     for (auto& path : fs::recursive_directory_iterator{ path }) {
-                        ProvideFile(path);
+                        AddFile(path);
                     }
                 } else {
                     for (auto& path : fs::directory_iterator{ path }) {
-                        ProvideFile(path);
+                        AddFile(path);
                     }
                 }
             } else {
-                ProvideFile(path);
+                AddFile(path);
             }
         }
 
-        virtual void ProvideFile(FilePath path) {
+        virtual void AddFile(FilePath path) {
             Add(input, path);
-            inputCount = std::max((Int)input.size(), inputCount);
         }
 
         virtual void Process(FilePath path) {
-            if (!fileProcessor) {
-                return;
-            }
-            fileProcessor->Process(path);
+            GUARD(processFileFunc)
+            processFileFunc(path);
         }
 
-        virtual bool ProcessNext() {
-            if (processedInputCount >= 0 && processedInputCount < input.size()) {
-                Process(input[processedInputCount]);
-                processedInputCount++;
+        virtual FinishType ProcessNext() {
+            if (processedCount >= 0 && processedCount < input.size()) {
+                Process(input[processedCount]);
+                processedCount++;
             }
 
-            return processedInputCount < input.size();
+            return processedCount < input.size() ? FinishType::Continue : FinishType::Finish;
+        }
+
+        // MARK: SomeProcessor
+
+        virtual size_t InputCount() const {
+            return input.size();
+        }
+
+        virtual size_t ProcessedCount() const {
+            return processedCount;
         }
     };
 } // namespace PJ
-
-#endif

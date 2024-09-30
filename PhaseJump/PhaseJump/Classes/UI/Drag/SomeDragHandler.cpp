@@ -37,11 +37,8 @@ void SomeDragHandler::StartDrag(WorldPosition inputPosition) {
     dragStartInputPosition = inputPosition;
 
     auto uiSystem = UISystem();
-    if (nullptr == uiSystem) {
-        return;
-    }
+    GUARD(uiSystem)
 
-    // TODO: do we need shared_from_this here?
     auto dragModel = MAKE<DragModel>(SCAST<SomeDragHandler>(shared_from_this()));
     uiSystem->StartDrag(dragModel);
 
@@ -54,9 +51,6 @@ void SomeDragHandler::OnPointerDown(PointerDownUIEvent const& event) {
     // Debug.Log("DragHandler2D OnPointerDown at: " +
     // eventData.pressPosition.ToString());
 
-    auto inputLocalPosition = ScreenToLocal(*this, event.screenPos);
-    GUARD(Node()->World());
-    auto worldModelMatrix = Node()->World()->WorldModelMatrix(*owner);
-    auto inputWorldPosition = worldModelMatrix.MultiplyPoint(inputLocalPosition);
+    auto inputWorldPosition = ScreenToWorld(*this, event.screenPos);
     StartDrag(inputWorldPosition);
 }

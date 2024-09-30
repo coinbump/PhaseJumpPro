@@ -4,6 +4,7 @@
 #include "RenderModel.h"
 #include "RenderModelBuilder.h"
 #include "SomeRenderEngine.h"
+#include "UIPlanner.h"
 
 using namespace PJ;
 
@@ -30,6 +31,17 @@ SomeRenderer::SomeRenderer(Vector3 worldSize) :
 
         return result;
     });
+
+    PlanUIFunc planUIFunc = [](auto& component, String context, UIPlanner& planner) {
+        auto renderer = static_cast<SomeRenderer*>(&component);
+        auto& model = renderer->model;
+
+        planner.InputColor(
+            "Color",
+            { [&]() { return model.Color(); }, [&](auto& value) { model.SetColor(value); } }
+        );
+    };
+    Override(this->planUIFunc, planUIFunc);
 }
 
 VectorList<RenderModel> SomeRenderer::MakeRenderModels() {

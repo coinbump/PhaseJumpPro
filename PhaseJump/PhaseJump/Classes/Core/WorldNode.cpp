@@ -1,10 +1,13 @@
 #include "WorldNode.h"
 #include "Color.h"
+#include "SomeRenderer.h"
 #include "World.h"
 #include <TSMatrix4D.h>
 
 using namespace std;
 using namespace PJ;
+
+using This = WorldNode;
 
 WorldNode::WorldNode(String name) :
     transform(*this),
@@ -20,7 +23,7 @@ void WorldNode::Destroy(float countdown) {
     destroyCountdown = countdown;
 }
 
-void WorldNode::UnDestroy() {
+void WorldNode::Restore() {
     destroyCountdown = 0;
     isDestroyed = false;
 }
@@ -100,11 +103,7 @@ void WorldNode::Add(SP<SomeWorldComponent> component) {
 
 void WorldNode::Add(SP<WorldNode> node) {
     GUARD(node)
-
-    if (nullptr != node->Parent()) {
-        PJ::Log("ERROR. Can't add a previously parented node");
-        return;
-    }
+    GUARD_LOG(nullptr == node->Parent(), "ERROR. Can't add a previously parented node")
 
     PJ::Add(children, node);
     node->parent = this;
@@ -112,9 +111,17 @@ void WorldNode::Add(SP<WorldNode> node) {
     NodeList subgraph;
     CollectBreadthFirstTree(node, subgraph);
 
-    // Set the world. Lifecycle events occur in world update
+    // Set the world. Lifecycle events (Start, Awake) occur in world update
     for (auto& subNode : subgraph) {
         subNode->world = world;
+    }
+
+    AddChildNodeEvent addChildNodeEvent(node);
+
+    // Let components know there is a new child node
+    // Some components need this information (Example: layouts)
+    for (auto& component : components) {
+        component->Signal(SignalId::AddChildNode, addChildNodeEvent);
     }
 }
 
@@ -242,4 +249,40 @@ void WorldNode::OnUpdate(TimeSlice time) {
         }
         component->OnUpdate(time);
     }
+
+    updatables.OnUpdate(time);
+}
+
+Vector3 WorldNode::LocalToWorld(Vector3 localPos) {
+    GUARDR(world, localPos)
+
+    auto localToWorldMatrix = world->WorldModelMatrix(*this);
+    auto result = localToWorldMatrix.MultiplyPoint(localPos);
+
+    return result;
+}
+
+Vector3 WorldNode::WorldToLocal(Vector3 worldPos) {
+    GUARDR(world, worldPos)
+
+    auto localToWorldMatrix = world->WorldModelMatrix(*this);
+    localToWorldMatrix.Inverse();
+
+    auto result = localToWorldMatrix.MultiplyPoint(worldPos);
+    return result;
+}
+
+float WorldNode::Opacity() const {
+    auto renderer = TypeComponent<SomeRenderer>();
+    GUARDR(renderer, 1.0f)
+
+    return renderer->GetColor().a;
+}
+
+This& WorldNode::SetOpacity(float value) {
+    auto renderer = TypeComponent<SomeRenderer>();
+    GUARDR(renderer, *this)
+
+    renderer->SetAlpha(value);
+    return *this;
 }

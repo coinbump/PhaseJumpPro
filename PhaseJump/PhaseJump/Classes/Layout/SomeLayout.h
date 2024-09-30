@@ -33,7 +33,7 @@ namespace PJ {
             ApplyLayout();
         }
 
-        void SetLayoutNeedsBuild() {
+        void SetNeedsLayout() {
             layoutNeedsBuild = true;
         }
 
@@ -51,6 +51,11 @@ namespace PJ {
 
             // FUTURE: add needsLayout flag to layouts so they don't keep rebuilding
             core.onUpdateFunc = [=](auto& owner, auto timeSlice) { applyLayoutAction(owner); };
+
+            signalHandlers[SignalId::AddChildNode] = [](auto& owner, auto& event) {
+                auto component = static_cast<This*>(&owner);
+                component->SetNeedsLayout();
+            };
         }
     };
 } // namespace PJ

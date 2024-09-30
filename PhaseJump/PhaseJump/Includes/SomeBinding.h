@@ -1,1 +1,1 @@
-#include "../Classes/Types/SomeBinding.h"
+#include "../Classes/Core/SomeBinding.h"

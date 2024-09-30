@@ -1,24 +1,21 @@
 #pragma once
 
-#define _USE_MATH_DEFINES
-
 /*
  RATING: 5 stars
  Simple type
- CODE REVIEW: 7/13/24
+ CODE REVIEW: 9/21/24
  */
 namespace PJ {
     /// For editors to pick from list of types
-    enum class EaseType {
-        Linear,
-
-        InSquared,
-        InCubed,
-        OutSquared,
-        OutCubed,
-        OutElastic,
-        InBack,
-        OutBack,
-        InOutBack
-    };
+    namespace EaseType {
+        auto constexpr Linear = "linear";
+        auto constexpr InSquared = "in.squared";
+        auto constexpr InCubed = "in.cubed";
+        auto constexpr OutSquared = "out.squared";
+        auto constexpr OutCubed = "out.cubed";
+        auto constexpr OutElastic = "out.elastic";
+        auto constexpr InBack = "inBack";
+        auto constexpr OutBack = "outBack";
+        auto constexpr InOutBack = "inOutBack";
+    }; // namespace EaseType
 } // namespace PJ

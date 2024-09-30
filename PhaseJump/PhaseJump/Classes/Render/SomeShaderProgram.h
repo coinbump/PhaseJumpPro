@@ -9,6 +9,7 @@
  CODE REVIEW: 8/8/24
  */
 namespace PJ {
+    // TODO: rename to SomeShader?
     class SomeShaderProgram {
     public:
         String id;

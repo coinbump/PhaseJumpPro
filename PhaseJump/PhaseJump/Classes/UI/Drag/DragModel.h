@@ -1,26 +1,29 @@
-#ifndef PJDRAGMODEL_H
-#define PJDRAGMODEL_H
+#pragma once
 
 #include "Utils.h"
 
 /*
  RATING: 5 stars
  Simple type
- CODE REVIEW: 5/9/23
+ CODE REVIEW: 9/22/24
  */
 namespace PJ {
     class SomeDragHandler;
 
-    /// Information on initiating a drag
+    /// Information needed for a drag gesture
     class DragModel {
     public:
-        // We don't expect the dragged object to be destroyed during the drag
-        // if you want to destroy it, cancel the drag first
-        SP<SomeDragHandler> dragHandler;
+        using DragHandlerList = VectorList<SP<SomeDragHandler>>;
 
-        DragModel(SP<SomeDragHandler> dragHandler) :
-            dragHandler(dragHandler) {}
+        // FUTURE: support item providers for on demand data
+        DragHandlerList dragHandlers;
+
+        DragModel(SP<SomeDragHandler> dragHandler) {
+            dragHandlers.push_back(dragHandler);
+        }
+
+        SP<SomeDragHandler> DragHandler() const {
+            return First(dragHandlers);
+        }
     };
 } // namespace PJ
-
-#endif

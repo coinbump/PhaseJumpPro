@@ -1,0 +1,1 @@
+#include "../Classes/Resources/Third Party Support/LoadRTexPackerAtlasOperation.h"

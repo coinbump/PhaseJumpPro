@@ -1,24 +1,22 @@
-#ifndef PJANIMATIONCYCLETYPE_H_
-#define PJANIMATIONCYCLETYPE_H_
+#pragma once
 
 /*
  RATING: 5 stars
  Simple types
- CODE REVIEW: TODO
+ CODE REVIEW: 9/25/24
  */
 namespace PJ {
     /// Specifies how an animation should cycle when it reaches the end of its
     /// timer duration
-    // TODO: use composition for behavior, not enums
     enum class AnimationCycleType {
-        // Use fixed enum values for serialization
-        // Cycle once
+        // Uses fixed enum values for serialization
+        /// Cycle once
         Once = 0,
 
-        // Cycle once, then in reverse
+        /// Cycle once, then in reverse
         PingPong = 1,
 
-        // Cycle once, then start over
+        /// Cycle once, then start over
         Loop = 2
     };
 
@@ -42,5 +40,3 @@ namespace PJ {
         return AnimationCycleState::Forward;
     }
 } // namespace PJ
-
-#endif

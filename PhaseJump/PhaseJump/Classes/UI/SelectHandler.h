@@ -11,7 +11,7 @@
  CODE REVIEW: 6/18/23
  */
 namespace PJ {
-    class UISystem;
+    class UIWorldSystem;
 
     /// Handles selection state behavior (Example: Marquee select objects UI)
     class SelectHandler : public WorldComponent<> {
@@ -31,9 +31,9 @@ namespace PJ {
             return isSelectable;
         }
 
-        std::function<UISystem*()> uiSystemResolver;
+        std::function<UIWorldSystem*()> uiSystemResolver;
 
-        virtual UISystem* UISystem() const {
+        virtual UIWorldSystem* UISystem() const {
             GUARDR(uiSystemResolver, nullptr)
             return uiSystemResolver();
         }

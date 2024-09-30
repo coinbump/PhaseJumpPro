@@ -2,7 +2,7 @@
 
 #include "Matrix4x4.h"
 #include "StringUtils.h"
-#include <cmath>
+#include "MathUtils.h"
 #include <TSMatrix4D.h>
 
 using namespace std;

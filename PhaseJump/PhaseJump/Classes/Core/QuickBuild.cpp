@@ -1,13 +1,23 @@
 #include "QuickBuild.h"
 #include "Colliders2D.h"
 #include "ColorRenderer.h"
+#include "CycleHueEffect.h"
+#include "DesignSystem.h"
 #include "DragHandler2D.h"
+#include "DropFilesUIEvent.h"
 #include "EllipseMeshBuilder.h"
+#include "Funcs.h"
+#include "GridMeshBuilder.h"
 #include "Matrix4x4.h"
 #include "OrthoCamera.h"
+#include "QuadFrameMeshBuilder.h"
+#include "QuickAnimate.h"
+#include "RenderFeature.h"
+#include "SimpleRaycaster2D.h"
 #include "SlicedTextureRenderer.h"
 #include "SliderControl.h"
 #include "SomeCollider2D.h"
+#include "SomeHoverGestureHandler.h"
 #include "SpriteRenderer.h"
 #include "Theme.h"
 #include "World.h"
@@ -15,7 +25,23 @@
 using namespace std;
 using namespace PJ;
 
-QuickBuild& QuickBuild::Circle(float radius, Color color) {
+using This = QuickBuild::This;
+
+This& QuickBuild::Repeat(int count, std::function<void(This&)> func) {
+    PJ::Repeat(count, [&]() { func(*this); });
+
+    return *this;
+}
+
+This& QuickBuild::OrthoStandard(Color clearColor) {
+    With<OrthoCamera>().With<SimpleRaycaster2D>().ModifyLatest<OrthoCamera>([=](auto& camera) {
+        camera.clearColor = clearColor;
+    });
+
+    return *this;
+}
+
+This& QuickBuild::Circle(float radius, Color color) {
     auto component = &Node()
                           .AddComponent<ColorRenderer>(color, Vector2(radius * 2, radius * 2))
                           .SetBuildMeshFunc([](RendererModel const& model) {
@@ -26,7 +52,35 @@ QuickBuild& QuickBuild::Circle(float radius, Color color) {
     return *this;
 }
 
-QuickBuild& QuickBuild::Drag(OnDragUpdateFunc onDragUpdateFunc) {
+This& QuickBuild::RectFrame(Vector2 size, Color color, float strokeWidth) {
+    auto component =
+        &Node()
+             .AddComponent<ColorRenderer>(color, size)
+             .SetBuildMeshFunc([=](RendererModel const& model) {
+                 return QuadFrameMeshBuilder(model.WorldSize(), { strokeWidth, strokeWidth })
+                     .BuildMesh();
+             });
+
+    components.push_back(component);
+    return *this;
+}
+
+This& QuickBuild::SquareFrame(float size, Color color, float strokeWidth) {
+    return RectFrame({ size, size }, color, strokeWidth);
+}
+
+This& QuickBuild::Grid(Vector2 worldSize, Vec2I gridSize, Color color, float strokeWidth) {
+    auto component = &Node()
+                          .AddComponent<ColorRenderer>(color, worldSize)
+                          .SetBuildMeshFunc([=](RendererModel const& model) {
+                              return GridMeshBuilder(worldSize, gridSize, strokeWidth).BuildMesh();
+                          });
+
+    components.push_back(component);
+    return *this;
+}
+
+This& QuickBuild::Drag(OnDragUpdateFunc onDragUpdateFunc) {
     auto component = &Node().AddComponent<DragHandler2D>().SetOnDragUpdateFunc(onDragUpdateFunc);
 
     components.push_back(component);
@@ -45,7 +99,28 @@ QuickBuild& QuickBuild::Drag(OnDragUpdateFunc onDragUpdateFunc) {
     return *this;
 }
 
-QuickBuild& QuickBuild::SquareCollider(float size) {
+This& QuickBuild::DragSnapBack(OnDragUpdateFunc onDragUpdateFunc) {
+    Drag(onDragUpdateFunc).ModifyLatest<DragHandler2D>([](auto& dragHandler) {
+        dragHandler.InOnDropSnapBack();
+    });
+
+    return *this;
+}
+
+This& QuickBuild::OnDropFiles(OnDropFilesFunc onDropFilesFunc) {
+    With<WorldComponent<>>("Drop files")
+        .ModifyLatestAny([onDropFilesFunc](SomeWorldComponent& component) {
+            component.signalHandlers[SignalId::DropFiles] =
+                [onDropFilesFunc](auto& component, auto& signal) {
+                    auto& dropFilesUIEvent = *(static_cast<DropFilesUIEvent const*>(&signal));
+                    onDropFilesFunc({ component, dropFilesUIEvent });
+                };
+        });
+
+    return *this;
+}
+
+This& QuickBuild::SquareCollider(float size) {
     auto& polyC = Node().AddComponent<PolygonCollider2D>();
     polyC.poly = Polygon::MakeSquare(size);
 
@@ -53,7 +128,7 @@ QuickBuild& QuickBuild::SquareCollider(float size) {
     return *this;
 }
 
-QuickBuild& QuickBuild::RectCollider(Vector2 size) {
+This& QuickBuild::RectCollider(Vector2 size) {
     auto& polyC = Node().AddComponent<PolygonCollider2D>();
     polyC.poly = Polygon::MakeRect(size);
 
@@ -61,7 +136,7 @@ QuickBuild& QuickBuild::RectCollider(Vector2 size) {
     return *this;
 }
 
-QuickBuild& QuickBuild::CircleCollider(float radius) {
+This& QuickBuild::CircleCollider(float radius) {
     auto component = &Node().AddComponent<CircleCollider2D>(radius);
 
     components.push_back(component);
@@ -90,9 +165,7 @@ void QuickBuild::AddSlider(
     sliderControl.SetEndCapSize(endCapSize).SetFrame(Rect({ 0, 0 }, worldSize));
     auto& thumbNode = sliderNode.AddNode("Slider thumb");
 
-    thumbNode.AddComponent<PolygonCollider2D>().SetPoly(
-        Polygon::MakeRect(Vector2(thumbTexture->size.x, thumbTexture->size.y))
-    );
+    thumbNode.AddComponent<PolygonCollider2D>().SetPoly(Polygon::MakeRect(thumbTexture->size));
 
     thumbNode.AddComponent<SpriteRenderer>(thumbTexture);
 
@@ -103,8 +176,7 @@ void QuickBuild::AddSlider(
     }
 }
 
-QuickBuild&
-QuickBuild::Slider(String name, Vector2 worldSize, std::function<void(float)> valueFunc) {
+This& QuickBuild::Slider(String name, Vector2 worldSize, std::function<void(float)> valueFunc) {
     if (worldSize.y > worldSize.x) {
         return SliderVertical(name, worldSize, valueFunc);
     }
@@ -128,8 +200,9 @@ QuickBuild::Slider(String name, Vector2 worldSize, std::function<void(float)> va
     return *this;
 }
 
-QuickBuild&
-QuickBuild::SliderVertical(String name, Vector2 worldSize, std::function<void(float)> valueFunc) {
+This& QuickBuild::SliderVertical(
+    String name, Vector2 worldSize, std::function<void(float)> valueFunc
+) {
     auto world = Node().World();
     GUARDR(world, *this)
 
@@ -150,7 +223,7 @@ QuickBuild::SliderVertical(String name, Vector2 worldSize, std::function<void(fl
     return *this;
 }
 
-QuickBuild& QuickBuild::AndPrefab(String id) {
+This& QuickBuild::AndPrefab(String id) {
     auto world = Node().World();
     GUARDR(world, *this)
 
@@ -163,6 +236,203 @@ QuickBuild& QuickBuild::AndPrefab(String id) {
     return *this;
 }
 
-/*
- FUTURE: Quick Build options:
- */
+// MARK: - Animate
+
+This& QuickBuild::SetAnimateDuration(float value) {
+    AnimateState().duration = value;
+    return *this;
+}
+
+This& QuickBuild::SetAnimateEase(EaseFunc value) {
+    AnimateState().easeFunc = value;
+    return *this;
+}
+
+This& QuickBuild::SetAnimateDelay(float value) {
+    AnimateState().delay = value;
+    return *this;
+}
+
+This& QuickBuild::SetValveDurations(float turnOnDuration, float turnOffDuration) {
+    AnimateState().valveTurnOnDuration = turnOnDuration;
+    AnimateState().valveTurnOffDuration = turnOffDuration;
+
+    return *this;
+}
+
+This& QuickBuild::HoverScaleTo(float endValue) {
+    float startValue = Node().transform.Scale().x;
+
+    return With<ValveHoverGestureHandler>(
+               AnimateState().valveTurnOnDuration, AnimateState().valveTurnOffDuration
+    )
+        .ModifyLatest<ValveHoverGestureHandler>([=](auto& handler) {
+            // Match the interpolation curve in both directions
+            auto binding = QA::MakeUniformScaleBinding(
+                *handler.owner, startValue, endValue, EaseFuncs::outSquared
+            );
+            auto reverseBinding = QA::MakeUniformScaleBinding(
+                *handler.owner, endValue, startValue, EaseFuncs::outSquared
+            );
+
+            handler.valve->SetOnValveUpdateFunc([=](auto& valve) {
+                switch (valve.State()) {
+                case Valve::StateType::TurnOff:
+                    reverseBinding(1.0f - valve.Value());
+                    break;
+                default:
+                    binding(valve.Value());
+                    break;
+                }
+            });
+        });
+}
+
+This& QuickBuild::HoverScaleToPingPong(float endValue) {
+    auto& animateState = AnimateState();
+
+    HoverScaleTo(endValue).ModifyLatest<ValveHoverGestureHandler>([&](auto& handler) {
+        ValveHoverGestureHandler* handlerPtr = &handler;
+        Valve::OnValveUpdateFunc overrideFunc = [=](auto& valve) {
+            if (handlerPtr->IsHovering()) {
+                switch (valve.State()) {
+                case Valve::StateType::Off:
+                    valve.TurnOn(animateState.valveTurnOnDuration);
+                    break;
+                case Valve::StateType::On:
+                    valve.TurnOff(animateState.valveTurnOffDuration);
+                    break;
+                default:
+                    break;
+                }
+            }
+        };
+
+        handlerPtr->valve->SetOnValveUpdateFunc(
+            OverrideFunc(handlerPtr->valve->GetOnValveUpdateFunc(), overrideFunc)
+        );
+    });
+
+    return *this;
+}
+
+This& QuickBuild::AnimateMove(Vector3 startValue, Vector3 endValue) {
+    return AnimateStartEnd<Vector3>(
+        startValue, endValue, QA::PositionMaker(AnimateState().duration, AnimateState().easeFunc)
+    );
+}
+
+/// Add a position animation with a start value
+This& QuickBuild::MoveIn(Vector3 startValue) {
+    return AnimateMove(startValue, Node().transform.LocalPosition());
+}
+
+/// Add a position animation with an end value
+This& QuickBuild::MoveTo(Vector3 endValue) {
+    return AnimateMove(Node().transform.LocalPosition(), endValue);
+}
+
+This& QuickBuild::AnimateScale(float startValue, float endValue) {
+    return AnimateStartEnd<float>(
+        startValue, endValue,
+        QA::UniformScaleMaker(AnimateState().duration, AnimateState().easeFunc)
+    );
+}
+
+This& QuickBuild::ScaleIn(float startValue) {
+    return AnimateScale(startValue, 1);
+}
+
+This& QuickBuild::ScaleTo(float endValue) {
+    return AnimateScale(Node().transform.Scale().x, endValue);
+}
+
+This& QuickBuild::ScaleToPingPong(float endValue) {
+    // TODO: Need reverse ease func
+    MakeAnimatorFunc<float, WorldNode&> maker = QA::UniformScaleMaker(
+        AnimateState().duration, AnimateState().easeFunc, AnimationCycleType::PingPong
+    );
+
+    return AnimateCycle(Node().transform.Scale().x, endValue, maker);
+}
+
+This& QuickBuild::AnimateRotate(Angle startValue, Angle endValue) {
+    return AnimateStartEnd<float>(
+        startValue.Degrees(), endValue.Degrees(),
+        QA::RotateMaker(AnimateState().duration, AnimateState().easeFunc)
+    );
+}
+
+This& QuickBuild::RotateTo(Angle endValue) {
+    return AnimateRotate(Angle::DegreesAngle(-Node().transform.Rotation().z), endValue);
+}
+
+This& QuickBuild::RotateToPingPong(Angle endValue) {
+    // TODO: Need reverse ease func
+    MakeAnimatorFunc<float, WorldNode&> maker = QA::RotateMaker(
+        AnimateState().duration, AnimateState().easeFunc, AnimationCycleType::PingPong
+    );
+
+    return AnimateCycle(-Node().transform.Rotation().z, endValue.Degrees(), maker);
+}
+
+This& QuickBuild::RotateIn(Angle startValue) {
+    return AnimateRotate(startValue, Angle::DegreesAngle(0));
+}
+
+This& QuickBuild::RotateContinue(Angle value) {
+    auto& node = Node();
+
+    node.updatables.AddContinue([=, &node](auto time) {
+        Angle angle = Angle::DegreesAngle(-node.transform.Rotation().z);
+        auto deltaDegrees = value.Degrees() * time.delta;
+        node.transform.SetRotation(Angle::DegreesAngle(angle.Degrees() + deltaDegrees));
+    });
+
+    return *this;
+}
+
+This& QuickBuild::CycleHueEffect(float cycleTime) {
+    Node().With<PJ::CycleHueEffect>(SwitchState::On, cycleTime);
+
+    return *this;
+}
+
+This& QuickBuild::AnimateOpacity(float startValue, float endValue) {
+    return AnimateStartEnd<float>(
+        startValue, endValue, QA::OpacityMaker(AnimateState().duration, AnimateState().easeFunc)
+    );
+}
+
+This& QuickBuild::OpacityIn(float startValue) {
+    return AnimateOpacity(startValue, 1);
+}
+
+This& QuickBuild::OpacityOut() {
+    return AnimateOpacity(Node().Opacity(), 0);
+}
+
+This& QuickBuild::OpacityTo(float endValue) {
+    return AnimateOpacity(Node().Opacity(), endValue);
+}
+
+This& QuickBuild::Destroy(float time) {
+    Node().Destroy(time);
+    return *this;
+}
+
+This& QuickBuild::DestroyAfterAnimate() {
+    return Destroy(AnimateState().duration);
+}
+
+This& QuickBuild::PushAnimateSettings() {
+    animateStates.push_back(AnimateState());
+    return *this;
+}
+
+This& QuickBuild::PopAnimateSettings() {
+    if (animateStates.size() > 1) {
+        animateStates.erase(animateStates.begin() + (animateStates.size() - 1));
+    }
+    return *this;
+}

@@ -30,68 +30,38 @@ EventWorldSystem::EventWorldSystem(String name) :
         );
     }) {}
 
-std::optional<PJ::LocalHit> EventWorldSystem::TestLocalHit(ScreenPosition screenPosition) {
-    GUARDR(world, std::nullopt)
+VectorList<PJ::LocalHit> EventWorldSystem::TestLocalHit(ScreenPosition screenPosition) {
+    GUARDR(world, {})
 
     // Get the camera
     SP<SomeCamera> camera = world->MainCamera();
-    GUARDR(camera, std::nullopt)
+    GUARDR(camera, {})
 
     // Get the raycaster
     auto raycaster = camera->owner->GetComponent<SomeRaycaster2D>();
-    GUARDR(raycaster, std::nullopt)
+    GUARDR(raycaster, {})
 
     auto worldPosition = camera->ScreenToWorld(screenPosition);
     // cout << "Log: Test: " << worldPosition.ToString() << std::endl;
 
-    auto hit = raycaster->Raycast(worldPosition, vec2Zero);
-    if (!hit) {
-        return std::nullopt;
+    auto hits = raycaster->Raycast(worldPosition, vec2Zero);
+
+    VectorList<PJ::LocalHit> result;
+    for (auto& hit : hits) {
+        auto worldHitPosition = camera->ScreenToWorld(screenPosition);
+        auto worldModelMatrix = world->WorldModelMatrix(*hit.node);
+        Terathon::Point3D point(worldHitPosition.x, worldHitPosition.y, worldHitPosition.z);
+        auto localHitPosition = Terathon::InverseTransform(worldModelMatrix, point);
+
+        LocalPosition localPosition(Vector3(localHitPosition.x, localHitPosition.y, 0));
+        result.push_back(PJ::LocalHit(localPosition, hit.node));
     }
-
-    auto worldHitPosition = camera->ScreenToWorld(screenPosition);
-    auto worldModelMatrix = world->WorldModelMatrix(*hit->node);
-    Terathon::Point3D point(worldHitPosition.x, worldHitPosition.y, worldHitPosition.z);
-    auto localHitPosition = Terathon::InverseTransform(worldModelMatrix, point);
-
-    LocalPosition localPosition(Vector3(localHitPosition.x, localHitPosition.y, 0));
-    return make_optional(PJ::LocalHit(localPosition, hit->node));
+    return result;
 }
 
-void EventWorldSystem::OnPointerDown(PointerDownUIEvent const& pointerDownEvent) {
-    // cout << "Log: OnPointerDown\n";
+void EventWorldSystem::OnPointerDown(PointerDownUIEvent const& pointerDownEvent) {}
 
-    auto screenPos = pointerDownEvent.screenPos;
-    auto hit = TestLocalHit(pointerDownEvent.screenPos);
-    GUARD(hit)
-    GUARD(!hit->node.expired())
-
-    // cout << "Log: HIT: OnPointerDown\n";
-
-    // Send mouse down event to node components
-    auto localPointerDownEvent = PointerDownUIEvent(screenPos, pointerDownEvent.button);
-    auto hitNode = hit->node.lock();
-    DispatchEvent(hitNode, SignalId::PointerDown, localPointerDownEvent);
-
-    pointerDownNodesMap[pointerDownEvent.button].clear();
-    Add(pointerDownNodesMap[pointerDownEvent.button], hitNode);
-}
-
-void EventWorldSystem::OnPointerUp(PointerUpUIEvent const& pointerUpEvent) {
-    auto iterNodes = pointerDownNodesMap[pointerUpEvent.button];
-    for (auto& node : iterNodes) {
-        if (node.expired()) {
-            continue;
-        }
-
-        auto _node = node.lock();
-
-        // Send event to node components
-        // TODO: Currently we aren't sending the local position
-        auto localPointerUpEvent = PointerUpUIEvent(pointerUpEvent.button);
-        DispatchEvent(_node, SignalId::PointerUp, localPointerUpEvent);
-    }
-}
+void EventWorldSystem::OnPointerUp(PointerUpUIEvent const& pointerUpEvent) {}
 
 void EventWorldSystem::ProcessUIEvents(List<SP<SomeUIEvent>> const& uiEvents) {
     SomeWorldSystem::ProcessUIEvents(uiEvents);
@@ -181,52 +151,4 @@ void EventWorldSystem::OnInputAction(
     }
 }
 
-void EventWorldSystem::OnMouseMotion(PointerMoveUIEvent const& event) {
-    // This only supports a single object for enter/exit pointer
-    // FUTURE: support multiple if needed
-    auto hit = TestLocalHit(event.screenPos);
-    if (!hit) {
-        // Nothing was hit, send pointer exit events
-        for (auto& node : pointerEnterNodes) {
-            GUARD_CONTINUE(!node.expired())
-
-            // cout << "Log: Pointer Exit: " <<
-            // pointerMotionEvent->position.ToString() << std::endl;
-
-            auto _node = node.lock();
-            PointerExitUIEvent event;
-            DispatchEvent(_node, SignalId::PointerExit, event);
-        }
-        pointerEnterNodes.clear();
-    } else {
-        // We hit something, send pointer exit events for the others and pointer enter for this
-        auto hitNode = hit.value().node.lock();
-
-        bool isHitInPointerEnterNodes = false;
-        for (auto& node : pointerEnterNodes) {
-            if (node.expired()) {
-                continue;
-            }
-
-            auto _node = node.lock();
-            if (_node == hitNode) {
-                isHitInPointerEnterNodes = true;
-                continue;
-            }
-
-            // cout << "Log: Pointer Exit: " <<
-            // pointerMotionEvent->position.ToString() << std::endl;
-            PointerExitUIEvent event;
-            DispatchEvent(_node, SignalId::PointerExit, event);
-        }
-        pointerEnterNodes.clear();
-
-        Add(pointerEnterNodes, hitNode);
-
-        // The hit node already received a pointer enter event
-        if (!isHitInPointerEnterNodes) {
-            PointerEnterUIEvent event;
-            DispatchEvent(hitNode, SignalId::PointerEnter, event);
-        }
-    }
-}
+void EventWorldSystem::OnMouseMotion(PointerMoveUIEvent const& event) {}

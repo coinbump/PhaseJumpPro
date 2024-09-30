@@ -1,1 +1,1 @@
-#include "../Classes/Interface/SliderControl.h"
+#include "../Classes/UI/Controls/SliderControl.h"

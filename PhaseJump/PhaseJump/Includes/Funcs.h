@@ -1,0 +1,1 @@
+#include "../Classes/Core/Funcs.h"

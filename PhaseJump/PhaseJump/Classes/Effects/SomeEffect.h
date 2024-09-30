@@ -13,10 +13,11 @@ namespace PJ {
     public:
         using Base = SwitchHandler;
 
-        void OnSwitchChange() override {
-            Base::OnSwitchChange();
-
-            UpdateEffectProperties();
+        SomeEffect(SwitchState state = SwitchState::Off) :
+            Base(state) {
+            onSwitchChangeFunc = [](auto& handler) {
+                static_cast<SomeEffect*>(&handler)->UpdateEffectProperties();
+            };
         }
 
         // Override to update the effect properties when the effect state

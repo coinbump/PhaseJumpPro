@@ -16,6 +16,9 @@ namespace PJ {
     template <class T>
     class Binding : public SomeBinding<T> {
     public:
+        using Base = SomeBinding<T>;
+        using This = Binding;
+
         using GetFunc = std::function<T()>;
         using SetFunc = SetBindingFunc<T>;
 
@@ -26,14 +29,23 @@ namespace PJ {
             getFunc(getFunc),
             setFunc(setFunc) {}
 
-        T Value() override {
+        T Value() const override {
             GUARDR(getFunc, T())
             return getFunc();
         }
 
-        void SetValue(T const& value) override {
+        void SetValue(T const& value) const override {
             GUARD(setFunc)
             setFunc(value);
+        }
+
+        operator T() const {
+            return Value();
+        }
+
+        This const& operator=(T const& value) const {
+            SetValue(value);
+            return *this;
         }
     };
 } // namespace PJ

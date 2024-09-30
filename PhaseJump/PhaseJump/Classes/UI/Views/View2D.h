@@ -2,7 +2,7 @@
 
 #include "PointerClickUIEvent.h"
 #include "Rect.h"
-#include "UISystem.h"
+#include "UIWorldSystem.h"
 #include "WorldComponent.h"
 #include "WorldSizeable.h"
 #include <functional>
@@ -45,6 +45,10 @@ namespace PJ {
         }
 
         View2D& SetFrame(Rect const& value);
+
+        void SetFrameSize(Vector2 value) {
+            SetFrame({ frame.origin, { value.x, value.y } });
+        }
 
         /// Local bounds (origin is always zero)
         Rect Bounds() const;
@@ -111,6 +115,23 @@ namespace PJ {
         virtual OptionalFloat ProposedHeightWithConstraints(Vector2 layoutSize) {
             GUARDR(proposeHeightWithConstraintsFunc, {})
             return proposeHeightWithConstraintsFunc(*this, layoutSize);
+        }
+
+        Vector3 TopLeftWorldPosition() {
+            Vector3 worldPos = LocalToWorld(Vector3::zero);
+
+            Vector3 topLeft(
+                worldPos.x + (WorldSize()->x / 2.0f) * vecLeft,
+                worldPos.y + (WorldSize()->y / 2.0f) * vecUp, worldPos.z
+            );
+            return topLeft;
+        }
+
+        bool IsViewPositionInside(Vector3 viewPosition) {
+            GUARDR(viewPosition.x >= 0 && viewPosition.y >= 0, false)
+            GUARDR(viewPosition.x < frame.size.x && viewPosition.y < frame.size.y, false)
+
+            return true;
         }
 
     protected:

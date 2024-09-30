@@ -91,8 +91,10 @@ TEST(Timer, UpdateFuncs) {
     float value = 0;
     auto timer = Timer(1.0f, Runner::RunType::Once);
 
-    timer.onUpdateFunc = [&](TimedPlayable& timedPlayable, TimeSlice time) {
+    timer.onUpdateFunc = [&](Updatable& _, TimeSlice time) {
         value += time.delta;
+
+        return FinishType::Continue;
     };
 
     timer.OnUpdate(TimeSlice(.3f));
@@ -107,8 +109,10 @@ TEST(Timer, UpdateFuncsWhenPaused) {
     float value = 0;
     auto timer = Timer(1.0f, Runner::RunType::Once);
 
-    timer.onUpdateFunc = [&](TimedPlayable& timedPlayable, TimeSlice time) {
+    timer.onUpdateFunc = [&](Updatable& _, TimeSlice time) {
         value += time.delta;
+
+        return FinishType::Continue;
     };
 
     timer.Pause();

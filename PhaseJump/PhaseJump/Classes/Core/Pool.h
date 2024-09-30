@@ -61,7 +61,7 @@ namespace PJ {
             value(size),
             maxSize(maxSize) {}
 
-        /// Returns the element at the specified index, or throws an exception if it is not
+        /// @return Returns the element at the specified index, or throws an exception if it is not
         /// available
         Type const& at(size_t index) const {
             GUARD_THROW(
@@ -71,7 +71,7 @@ namespace PJ {
             return *value[index];
         }
 
-        /// Returns the element at the specified index, or throws an exception if it is not
+        /// @return Returns the element at the specified index, or throws an exception if it is not
         /// available
         Type& at(size_t index) {
             GUARD_THROW(

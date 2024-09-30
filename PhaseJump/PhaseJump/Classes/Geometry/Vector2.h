@@ -32,7 +32,7 @@ namespace PJ {
             x(x),
             y(y) {}
 
-        constexpr float& operator[](size_t index) {
+        float& operator[](size_t index) {
             Assert(index >= 0 && index < 2);
 
             /// Don't use &x[index] because struct packing isn't guaranteed
@@ -40,7 +40,7 @@ namespace PJ {
             return *indices[index];
         }
 
-        constexpr float operator[](size_t index) const {
+        float operator[](size_t index) const {
             Assert(index >= 0 && index < 2);
 
             /// Don't use &x[index] because struct packing isn't guaranteed
@@ -131,14 +131,14 @@ namespace PJ {
         static Vector2Int const one;
         static Vector2Int const three;
 
-        constexpr MathType& operator[](size_t index) {
+        MathType& operator[](size_t index) {
             Assert(index >= 0 && index < 2);
 
             MathType* indices[2] = { &x, &y };
             return *indices[index];
         }
 
-        constexpr MathType operator[](size_t index) const {
+        MathType operator[](size_t index) const {
             Assert(index >= 0 && index < 2);
 
             MathType const* indices[2] = { &x, &y };
@@ -147,6 +147,10 @@ namespace PJ {
 
         constexpr bool operator==(Vector2Int const& rhs) const {
             return x == rhs.x && y == rhs.y;
+        }
+
+        constexpr operator Vector2() const {
+            return Vector2((float)x, (float)y);
         }
 
         VECTOR_METHODS(Vector2Int, MathType, 2);
@@ -165,6 +169,7 @@ namespace PJ {
     // Convenience names
     using Vec2 = Vector2;
     using Vec2I = Vector2Int;
+    using Vec2i = Vector2Int;
 
     // FUTURE: support alternate coordinate systems if needed
     constexpr float vecLeft = -1;

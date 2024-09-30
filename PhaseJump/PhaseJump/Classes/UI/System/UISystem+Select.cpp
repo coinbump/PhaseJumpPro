@@ -1,10 +1,10 @@
 #include "SelectHandler.h"
-#include "UISystem.h"
+#include "UIWorldSystem.h"
 
 using namespace std;
 using namespace PJ;
 
-void UISystem::SetSelection(OrderedSet<SP<SelectHandler>> const& value) {
+void UIWorldSystem::SetSelection(OrderedSet<SP<SelectHandler>> const& value) {
     auto removedSelectHandlers = selection - value;
 
     for (auto& selectHandler : removedSelectHandlers) {
@@ -18,7 +18,7 @@ void UISystem::SetSelection(OrderedSet<SP<SelectHandler>> const& value) {
     selection = value;
 }
 
-void UISystem::UpdateSelectionFor(SP<SelectHandler> selectHandler) {
+void UIWorldSystem::UpdateSelectionFor(SP<SelectHandler> selectHandler) {
     if (selectHandler->IsSelected()) {
         selection.insert(selectHandler);
     } else {

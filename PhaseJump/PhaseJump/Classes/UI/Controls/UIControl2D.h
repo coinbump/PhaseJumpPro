@@ -1,14 +1,12 @@
 #pragma once
 
-#include "SomeHoverGestureHandler.h"
 #include "View2D.h"
 
 /*
  RATING: 5 stars
- Verified
- CODE REVIEW: 9/4/23
+ Tested and works
+ CODE REVIEW: 9/22/24
  */
-// TODO: should hover gesture be a signal instead of a handler?
 namespace PJ {
     /// An interactive UI object that accepts inputs from the user and produces
     /// events. Example: button, switch, checkbox, etc.
@@ -20,41 +18,14 @@ namespace PJ {
         using OnControlUpdateFunc = std::function<void(This&)>;
 
     protected:
-        class HoverGestureHandler : public SomeHoverGestureHandler {
-        public:
-            WP<UIControl2D> target;
-
-            HoverGestureHandler(WP<UIControl2D> target) :
-                target(target) {}
-
-            void SetIsHovering(bool value) override {
-                GUARD(!target.expired())
-                target.lock()->isHovering = value;
-            }
-
-            // MARK: SomeWorldComponent
-
-            String TypeName() const override {
-                return "UIControl2D- HoverGestureHandler";
-            }
-        };
-
         /// Called when the control's state changes
         OnControlUpdateFunc onControlUpdateFunc;
-
-        bool isHovering = false;
 
     public:
         void SetOnControlUpdateFunc(OnControlUpdateFunc value) {
             onControlUpdateFunc = value;
             GUARD(onControlUpdateFunc)
             onControlUpdateFunc(*this);
-        }
-
-        void SetIsHovering(bool value) {
-            GUARD(isHovering != value)
-            isHovering = value;
-            OnStateChange();
         }
 
         // MARK: SomeWorldComponent

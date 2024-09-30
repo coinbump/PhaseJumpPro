@@ -29,6 +29,6 @@ TEST(SomePosition, ScreenPosition)
 {
     ScreenPosition sut;
     EXPECT_EQ(Vector2(0, 0), sut);
-    sut.SetPosition(Vector3(1, 1, 1));
+    sut = Vector3(1, 1, 1);
     EXPECT_EQ(Vector2(1, 1), sut);
 }

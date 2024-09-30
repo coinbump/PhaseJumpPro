@@ -33,28 +33,28 @@ namespace PJ {
         /// Emit properties
         Tags tags;
 
-        /// Returns start velocity for spawn
+        /// @return Returns start velocity for spawn
         std::optional<Vector3> StartVelocity() const {
             return tags.Value<Vector3>(EmitModelTag::StartVelocity);
         }
 
-        /// Returns end velocity for spawn
+        /// @return Returns end velocity for spawn
         std::optional<Vector3> EndVelocity() const {
             auto result = tags.Value<Vector3>(EmitModelTag::EndVelocity);
             return result.has_value() ? result : StartVelocity();
         }
 
-        /// Returns offset from emitter position for spawn
+        /// @return Returns offset from emitter position for spawn
         std::optional<Vector3> SpawnOffset() const {
             return tags.Value<Vector3>(EmitModelTag::Offset);
         }
 
-        /// Returns delay before creating spawn from emit model (if > 0)
+        /// @return Returns delay before creating spawn from emit model (if > 0)
         std::optional<float> SpawnDelay() const {
             return tags.Value<float>(EmitModelTag::Delay);
         }
 
-        /// Returns life duration of spawn (if > 0)
+        /// @return Returns life duration of spawn (if > 0)
         std::optional<float> Duration() const {
             return tags.Value<float>(EmitModelTag::Duration);
         }

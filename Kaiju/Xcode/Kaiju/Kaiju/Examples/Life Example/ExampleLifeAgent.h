@@ -8,15 +8,21 @@
 
 using namespace PJ;
 
-namespace ExampleLife {
-    /// Stores data for the life cell agent
-    struct AgentCore {
-        /// If true, this cell has life init
-        bool isAlive = false;
+namespace Example {
+    namespace Life {
+        /// Stores data for the life cell agent
+        struct AgentCore {
+            /// If true, this cell has life init
+            bool isAlive = false;
 
-        /// Cell location for agent
-        Vector2Int location;
-    };
+            /// Step logic is based on current states, don't update state until system step is
+            /// finished
+            bool nextIsAlive = false;
 
-    using Agent = Agent<AgentCore>;
-}
+            /// Cell location for agent
+            Vector2Int location;
+        };
+
+        using Agent = Agent<AgentCore>;
+    } // namespace Life
+} // namespace Example

@@ -2,6 +2,7 @@
 
 #include "Macros.h"
 #include "TimeSlice.h"
+#include <functional>
 
 /*
  RATING: 5 stars
@@ -19,12 +20,28 @@ namespace PJ {
         Finish
     };
 
+    /// Protocol-only version of updatable, with no stored properties
+    class SomeUpdatable {
+    public:
+        virtual ~SomeUpdatable() {}
+
+        /// Handle time update event
+        virtual void OnUpdate(TimeSlice time) = 0;
+
+        /// Allows for cleanup of old updatables
+        virtual bool IsFinished() const = 0;
+    };
+
     /// An object that can receive time update events and can finish
-    class Updatable {
+    class Updatable : public SomeUpdatable {
     protected:
         /// If true, this updatable is finished running and will be removed from any collections it
         /// belongs to
         bool isFinished = false;
+
+        void SetIsFinished(bool value) {
+            isFinished = value;
+        }
 
     public:
         using This = Updatable;
@@ -39,6 +56,11 @@ namespace PJ {
             onUpdateFunc(onUpdateFunc) {}
 
         virtual ~Updatable() {}
+
+        FinishType Update(TimeSlice time) {
+            OnUpdate(time);
+            return isFinished ? FinishType::Finish : FinishType::Continue;
+        }
 
         /// Called for each time delta event
         virtual void OnUpdate(TimeSlice time) {

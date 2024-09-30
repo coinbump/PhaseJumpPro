@@ -1,59 +1,58 @@
-#ifndef PJSOMEDROPTARGET_H
-#define PJSOMEDROPTARGET_H
+#pragma once
 
-#include "DragItems.h"
+#include "DragModel.h"
 #include "SomeCollider2D.h"
 #include "SomeEffect.h"
 #include "WorldComponent.h"
 
 /*
- RATING: 5 stars
- Direct port
  CODE REVIEW: 6/18/23
  */
 namespace PJ {
     /// Target that can accept drag items
-    /// Requres that the object have a collider attached for raycast checks
+    /// Requirement: node must have a collider for hit-testing
     class SomeDropTarget : public WorldComponent<> {
     public:
-        using Base = WorldComponent;
+        using Base = WorldComponent<>;
+        using This = SomeDropTarget;
 
-        SP<SomeEffect> acceptDragEffect;
+        using CanAcceptDragFunc = std::function<bool(This&, DragModel const&)>;
+        using OnStateChangeFunc = std::function<void(This&)>;
+        using OnDropFunc = std::function<void(This&, DragModel const&)>;
 
-        enum class StateType { NotOver, DragOverAccept, DragOverReject };
+        enum class StateType {
+            /// Default state
+            Default,
+
+            /// A drag is over this drop target and can be dropped here
+            DragAccept,
+
+            /// A drag is over this drop target, but can't be dropped here
+            DragReject
+        };
+
+        // FUTURE: rethink how effects are triggered by drop states
+
+        CanAcceptDragFunc canAcceptDragFunc;
+        OnStateChangeFunc onStateChangeFunc;
+        OnDropFunc onDropFunc;
 
     protected:
-        StateType state = StateType::NotOver;
+        StateType state = StateType::Default;
 
     public:
+        SomeDropTarget();
+
         StateType State() const {
             return state;
         }
 
-        void SetState(StateType value) {
-            if (state == value) {
-                return;
-            }
-            state = value;
-            OnStateChange();
-        }
+        void SetState(StateType value);
 
-        virtual bool CanAcceptDrag(DragItems const& items) {
-            // Debug.Log("CanAcceptDrag");
-            return true;
-        }
-
-        virtual void OnDragEnter(DragItems const& items) {
-            // Debug.Log("OnDragEnter");
-            SetState(CanAcceptDrag(items) ? StateType::DragOverAccept : StateType::DragOverReject);
-        }
-
-        virtual void OnDragLeave() {
-            // Debug.Log("OnDragLeave");
-            SetState(StateType::NotOver);
-        }
-
-        virtual void OnAcceptDrag(DragItems const& items) {}
+        virtual bool CanAcceptDrag(DragModel const& dragModel);
+        virtual void OnDragEnter(DragModel const& dragModel);
+        virtual void OnDragExit();
+        virtual void OnDrop(DragModel const& dragModel);
 
         // MARK: SomeWorldComponent
 
@@ -62,26 +61,10 @@ namespace PJ {
         }
 
     protected:
-        void Awake() override {
-            Base::Awake();
+        virtual void OnStateChange();
 
-#if DEBUG
-//            if (NULL == GetComponent<SomeCollider2D>()) {
-//                PJ::Log("Error. DropTarget requires a collider.");
-//            }
-#endif
-        }
+        // MARK: SomeWorldComponent
 
-        void UpdateAcceptDragEffect() {
-            if (acceptDragEffect) {
-                acceptDragEffect->SetIsOn(State() == StateType::DragOverAccept);
-            }
-        }
-
-        virtual void OnStateChange() {
-            UpdateAcceptDragEffect();
-        }
+        void Awake() override;
     };
 } // namespace PJ
-
-#endif

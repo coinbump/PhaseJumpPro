@@ -2,8 +2,6 @@
 
 #include "SomePosition.h"
 #include "SomeWorldComponent.h"
-#include "Updatable.h"
-#include "Updatables.h"
 #include "WorldComponentCores.h"
 #include <memory>
 
@@ -23,6 +21,9 @@ namespace PJ {
 
         /// Allows us to build component functionality with composition instead of inheritance
         Core core{};
+
+        WorldComponent(String name = "") :
+            Base(name) {}
 
         // MARK: SomeWorldComponent
 

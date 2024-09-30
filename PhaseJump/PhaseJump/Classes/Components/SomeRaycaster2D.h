@@ -3,6 +3,7 @@
 
 #include "SomeRaycaster.h"
 
+// : /23
 namespace PJ {
     struct RaycastHit2D {
         // TODO: WP?
@@ -15,7 +16,7 @@ namespace PJ {
     /// Handles 2D Raycast tests
     class SomeRaycaster2D : public SomeRaycaster {
     public:
-        virtual std::optional<RaycastHit2D> Raycast(Vector2 origin, Vector2 direction) = 0;
+        virtual VectorList<RaycastHit2D> Raycast(Vector2 origin, Vector2 direction) = 0;
     };
 } // namespace PJ
 

@@ -3,8 +3,8 @@
 #include "Base.h"
 #include "Macros.h"
 #include "SomeSignal.h"
+#include "UIPlan.h"
 #include "UnorderedMap.h"
-#include "Updatable.h"
 #include "Updatables.h"
 #include "WorldNodeTransform.h"
 #include "WorldPartLife.h"
@@ -19,6 +19,8 @@ namespace PJ {
     class World;
     class WorldNode;
     class Matrix4x4;
+    class UIPlan;
+    class UIPlanner;
 
     /**
      Interface for a world component
@@ -28,7 +30,7 @@ namespace PJ {
      Each component extends the functionality of the owner node with custom behavior.
      A component receives the same lifecycle events as its owner
      */
-    class SomeWorldComponent : public Base, public Updatable {
+    class SomeWorldComponent : public Base, public SomeUpdatable {
     protected:
         /// If true, the component should receive events
         bool isEnabled = true;
@@ -45,18 +47,25 @@ namespace PJ {
         using This = SomeWorldComponent;
         using NodeTransform = WorldNodeTransform;
         using SignalFunc = std::function<void(This&, SomeSignal const&)>;
+        using PlanUIFunc = std::function<void(This&, String context, UIPlanner&)>;
+
+        String name;
 
         /// Owner node
         /// Node is responsible for setting this to null when the component is removed
         WorldNode* owner = nullptr;
 
-        /// Add objects that need time updates here: timers, animations, etc.
+        /// Stores objects that need time events
         Updatables updatables;
 
         /// Signal handlers. Mapped by signal id
         UnorderedMap<String, SignalFunc> signalHandlers;
 
-        SomeWorldComponent() {}
+        /// (Optional). Func to make UI plan for custom UI in editor
+        PlanUIFunc planUIFunc;
+
+        SomeWorldComponent(String name = "") :
+            name(name) {}
 
         // Prevent accidental copies
         DELETE_COPY(SomeWorldComponent)
@@ -65,14 +74,31 @@ namespace PJ {
             return isEnabled;
         }
 
+        void SetIsEnabled(bool value) {
+            isEnabled = value;
+        }
+
+        void Enable() {
+            SetIsEnabled(true);
+        }
+
         virtual WorldNode* Node() const {
             return owner;
         }
 
-        /// Returns the type name of this component for browsers and debugging
+        String Name() const {
+            return name.size() > 0 ? name : TypeName();
+        }
+
+        /// @return Returns the type name of this component for browsers and debugging
         virtual String TypeName() const = 0;
 
+        void Signal(String id, SomeSignal const& signal);
+
         Matrix4x4 ModelMatrix() const;
+
+        Vector3 LocalToWorld(Vector3 worldPos);
+        Vector3 WorldToLocal(Vector3 localPos);
 
         // MARK: Lifecycle events
 
@@ -96,11 +122,21 @@ namespace PJ {
         /// Called when node is destroyed
         virtual void OnDestroy() {}
 
-        // MARK: Updatable
+        // MARK: SomeUpdatable
 
         /// Called in game loop for time delta update events
         void OnUpdate(TimeSlice time) override {
             updatables.OnUpdate(time);
         }
+
+        bool IsFinished() const override {
+            return false;
+        }
+
+        /// (Optional). Produce a UI plan to add custom UI when inspecting this component
+        /// WARNING. Apple clang C++ compiler breaks `dynamic_cast` if this function is virtual
+        /// and enable testability is off.
+        /// Enable Testability must be on for `dynamic_cast` to work, until Apple fixes the bug
+        UP<UIPlan> MakeUIPlan(String context);
     };
 } // namespace PJ

@@ -1,13 +1,12 @@
-#ifndef PJSOMEKEYFRAME_H
-#define PJSOMEKEYFRAME_H
+#pragma once
 
-#include "SomeKeyframeInterpolatorFactory.h"
+#include "Tags.h"
 #include <memory>
 
 /*
  RATING: 5 stars
  Simple type
- CODE REVIEW: 8/25/24
+ CODE REVIEW: 9/21/24
  */
 namespace PJ {
     /// Keyframe at a specific point in time
@@ -15,10 +14,14 @@ namespace PJ {
     public:
         using MathType = float;
 
+        /// (Optional). Custom properties
+        Tags tags;
+
+        /// (Optional). Object attribute types (what kind of object is this?)
+        TypeTagSet typeTags;
+
         virtual ~SomeKeyframe() {}
 
-        MathType time = MathType();
+        MathType time{};
     };
 } // namespace PJ
-
-#endif

@@ -59,7 +59,7 @@ namespace PJ {
             return size;
         }
 
-        /// Returns true if the matrix is in a valid state
+        /// @return Returns true if the matrix is in a valid state
         bool IsValid() const {
             return size.x > 0 && size.y > 0 && cells.size() == size.x * size.y;
         }
@@ -135,7 +135,7 @@ namespace PJ {
             }
         }
 
-        /// Returns true if the matrix location is valid for this matrix
+        /// @return Returns true if the matrix location is valid for this matrix
         bool IsValidLocation(Vector2Int loc) const {
             return (loc.x >= 0 && loc.x < Width() && loc.y >= 0 && loc.y < Height());
         }
@@ -150,7 +150,7 @@ namespace PJ {
             return index;
         }
 
-        /// Returns the cell if location is valid. If not, throws an exception
+        /// @return Returns the cell if location is valid. If not, throws an exception
         Cell& CellAt(Vector2Int loc) {
             auto index = LocToIndex(loc);
             GUARD_THROW(index, std::out_of_range("Invalid cell loc"))
@@ -158,7 +158,7 @@ namespace PJ {
             return cells[*index];
         }
 
-        /// Returns the cell if location is valid. If not, throws an exception
+        /// @return Returns the cell if location is valid. If not, throws an exception
         Cell const& CellAt(Vector2Int loc) const {
             auto index = LocToIndex(loc);
             GUARD_THROW(index, std::out_of_range("Invalid cell loc"))

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "RGBAColor.h"
+#include "StringUtils.h"
 
 /*
  RATING: 5 stars

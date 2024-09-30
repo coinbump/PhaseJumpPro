@@ -1,16 +1,15 @@
-#ifndef PJSOMEDRAGHANDLER_H
-#define PJSOMEDRAGHANDLER_H
+#pragma once
 
 #include "DragModel.h"
 #include "SomePosition.h"
 #include "SomeUIEvent.h"
-#include "UISystem.h"
+#include "UIWorldSystem.h"
 #include "WorldComponent.h"
 
 /*
- RATING: 4 stars
+ RATING: 5 stars
  Tested and works. Needs unit tests
- CODE REVIEW: 5/10/23
+ CODE REVIEW: 9/22/24
  */
 namespace PJ {
     /// Abstract component for gestures/logic to handle dragging
@@ -20,15 +19,15 @@ namespace PJ {
 
         enum class StateType { Default, Drag };
 
-        /// (OPTIONAL). If not null, drag the target object when this object is
+        /// (Optional). If not null, drag the target object when this object is
         /// tapped Useful if the object with the collider has its own transform
         /// modifier which interferes with the drag or wants to be used as a
         /// drag handle for something else.
         WP<SomeDragHandler> dragTarget;
 
-        std::function<UISystem*()> uiSystemResolver = []() { return UISystem::shared; };
+        std::function<UIWorldSystem*()> uiSystemResolver = []() { return UIWorldSystem::shared; };
 
-        virtual UISystem* UISystem() const {
+        virtual UIWorldSystem* UISystem() const {
             GUARDR(uiSystemResolver, nullptr)
             return uiSystemResolver();
         }
@@ -42,18 +41,18 @@ namespace PJ {
         /// Position where this object's transform was when the drag started
         WorldPosition dragStartPosition;
 
+        void OnPointerDown(PointerDownUIEvent const& event);
+
     public:
         SomeDragHandler();
 
+        bool IsDragging() const;
+
         virtual void OnDragStart(WorldPosition inputPosition) {}
 
-        virtual void OnDragUpdate(WorldPosition inputPosition) = 0;
+        virtual void OnDragUpdate(WorldPosition inputPosition) {}
 
-        bool IsDragging() const;
         virtual void OnDragEnd();
         virtual void StartDrag(WorldPosition inputPosition);
-        void OnPointerDown(PointerDownUIEvent const& event);
     };
 } // namespace PJ
-
-#endif

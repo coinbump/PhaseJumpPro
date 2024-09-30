@@ -1,24 +1,23 @@
-#ifndef PJTIMER_H_
-#define PJTIMER_H_
+#pragma once
 
 #include "StringUtils.h"
-#include "TimedPlayable.h"
+#include "TimerPlayable.h"
 #include <algorithm>
 
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 7/7/24
+ CODE REVIEW: 9/25/24
  */
 namespace PJ {
-    /// Keeps track of time for N seconds duration, and then triggers OnFinish
-    class Timer : public TimedPlayable {
+    /// Runs for N seconds, then triggers OnFinish
+    class Timer : public TimerPlayable {
     protected:
         /// Time state
         float state = 0;
 
     public:
-        using Base = TimedPlayable;
+        using Base = TimerPlayable;
 
         Timer(float duration, RunType runType) :
             Base(duration, runType) {}
@@ -32,12 +31,15 @@ namespace PJ {
         }
 
         void SetState(float value) {
+            GUARD(state != value)
             state = std::clamp(value, 0.0f, duration);
             runner.SetIsFinished(state >= duration);
+
+            OnPlayTimeChange();
         }
 
         void OnReset() override {
-            TimedPlayable::OnReset();
+            TimerPlayable::OnReset();
 
             SetState(0);
         }
@@ -56,7 +58,7 @@ namespace PJ {
             SetState(time);
         }
 
-        void SetProgress(float progress) {
+        void SetProgress(float progress) override {
             progress = std::clamp(progress, 0.0f, 1.0f);
             SetState(progress * duration);
         }
@@ -81,5 +83,3 @@ namespace PJ {
         }
     };
 } // namespace PJ
-
-#endif

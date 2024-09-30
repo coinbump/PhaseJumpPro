@@ -1,1 +1,1 @@
-#include "../Classes/Types/VerticalAlignment.h"
+#include "../Classes/Core/VerticalAlignment.h"

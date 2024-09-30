@@ -13,7 +13,7 @@ TEST(MatrixBoard, Test)
 {
     MatrixBoard sut({3, 3});
     auto lPiece = MAKE<MatrixPiece>(Vector2Int(3, 2));
-    lPiece->BuildFromShape({"***", "__*"});
+    lPiece->BuildFromShape("***&__*");
 
     auto squarePiece = MAKE<MatrixPiece>(Vector2Int(2, 2));
     squarePiece->Fill();
@@ -22,11 +22,11 @@ TEST(MatrixBoard, Test)
     EXPECT_EQ(true, squarePiece->CellAt(Vector2Int(0, 1)));
     EXPECT_EQ(true, squarePiece->CellAt(Vector2Int(1, 1)));
 
-    EXPECT_EQ(true, sut.PutPiece(lPiece, Vector2Int(0, 0)));
-    EXPECT_EQ(false, sut.PutPiece(squarePiece, Vector2Int(0, 0)));
-    EXPECT_EQ(false, sut.PutPiece(squarePiece, Vector2Int(1, 0)));
-    EXPECT_EQ(false, sut.PutPiece(squarePiece, Vector2Int(1, 1)));
-    EXPECT_EQ(true, sut.PutPiece(squarePiece, Vector2Int(0, 1)));
+    EXPECT_EQ(true, sut.Put(lPiece, Vector2Int(0, 0)));
+    EXPECT_EQ(false, sut.Put(squarePiece, Vector2Int(0, 0)));
+    EXPECT_EQ(false, sut.Put(squarePiece, Vector2Int(1, 0)));
+    EXPECT_EQ(false, sut.Put(squarePiece, Vector2Int(1, 1)));
+    EXPECT_EQ(true, sut.Put(squarePiece, Vector2Int(0, 1)));
 
     EXPECT_EQ(lPiece, sut.PieceAt(Vector2Int(0, 0)));
     EXPECT_EQ(lPiece, sut.PieceAt(Vector2Int(1, 0)));
@@ -38,8 +38,8 @@ TEST(MatrixBoard, Test)
     EXPECT_EQ(squarePiece, sut.PieceAt(Vector2Int(0, 2)));
     EXPECT_EQ(squarePiece, sut.PieceAt(Vector2Int(1, 2)));
 
-    EXPECT_EQ(Vector2Int(0, 1), squarePiece->origin);
-    EXPECT_EQ(Vector2Int(0, 0), lPiece->origin);
+    EXPECT_EQ(Vector2Int(0, 1), squarePiece->Origin());
+    EXPECT_EQ(Vector2Int(0, 0), lPiece->Origin());
 
     EXPECT_EQ(Vector2Int(0, 0), sut.CellAt(Vector2Int(0, 0)).pieceLoc);
     EXPECT_EQ(Vector2Int(1, 0), sut.CellAt(Vector2Int(1, 0)).pieceLoc);

@@ -6,6 +6,7 @@
 #include "SomeRenderContext.h"
 #include "SomeRenderEngine.h"
 #include "SomeRenderer.h"
+#include "World.h"
 #include "WorldNode.h"
 
 using namespace std;
@@ -13,7 +14,7 @@ using namespace PJ;
 
 std::optional<RenderResult> RenderWorldSystem::Render(RenderContextModel& _contextModel) {
     auto context = _contextModel.renderContext;
-    GUARDR(context, std::nullopt);
+    GUARDR(context && world, std::nullopt);
 
     model.phaseModel.onPhaseChangeFunc = [&](auto& phaseModel, auto phase) {
         model.processingModel.ProcessPhase(phase);
@@ -21,10 +22,17 @@ std::optional<RenderResult> RenderWorldSystem::Render(RenderContextModel& _conte
 
     context->renderEngine->ResetForRenderPass();
 
+    auto mainCamera = world->MainCamera();
+
     model.phaseModel.SetPhase(RenderPhase::PrepareBind);
     context->Bind();
     model.phaseModel.SetPhase(RenderPhase::PostBind);
+
+    if (mainCamera) {
+        context->clearColor = mainCamera->clearColor;
+    }
     context->Clear();
+
     context->renderEngine->SetIsContextCleared(context->renderId, true);
     model.phaseModel.SetPhase(RenderPhase::PostClear);
 
@@ -47,8 +55,10 @@ std::optional<RenderResult> RenderWorldSystem::Render(RenderContextModel& _conte
         // FUTURE: can this be done on parallel threads?
         for (auto& node : _contextModel.nodes) {
             List<SP<SomeRenderer>> renderers;
-            node->TypeComponents<SomeRenderer>(renderers);
+            node->CollectTypeComponents<SomeRenderer>(renderers);
             for (auto& renderer : renderers) {
+                GUARD_CONTINUE(renderer->IsEnabled())
+
                 /// Most renderers produce render models, for a list of draw calls to be sent to the
                 /// GPU by the graphics engine
                 auto thisRenderModels = renderer->MakeRenderModels();

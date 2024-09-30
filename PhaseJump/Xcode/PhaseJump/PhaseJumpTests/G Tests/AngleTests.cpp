@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
 #include "Angle.h"
 #include <memory>
-#include <math.h>
+#include "MathUtils.h"
 
 using namespace PJ;
 using namespace std;

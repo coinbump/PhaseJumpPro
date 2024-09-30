@@ -125,8 +125,8 @@ bool PJ::HasSuffix(StringView _string, StringView searchString) {
     return _string.substr(_string.size() - searchString.size()) == searchString;
 }
 
-std::vector<std::string> PJ::ComponentsSeparatedBy(StringView string, char delimiter) {
-    std::vector<std::string> result;
+VectorList<String> PJ::ComponentsSeparatedBy(StringView string, char delimiter) {
+    VectorList<String> result;
     Split(String(string), delimiter, [&](String s) { result.push_back(s); });
     return result;
 }

@@ -31,6 +31,6 @@ namespace PJ {
 
         using Type = SomeLimiter<Core>;
 
-        SP<Type> Make();
+        SP<Type> Make(float minDelta);
     } // namespace RateLimiter
 } // namespace PJ

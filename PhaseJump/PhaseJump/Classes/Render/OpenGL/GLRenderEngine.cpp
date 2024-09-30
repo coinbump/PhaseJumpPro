@@ -58,7 +58,7 @@ void GLRenderEngine::Use(GLShaderProgram& program) {
        Windows. Windows OpenGL requires that only the correct arrays are enabled
        for the shader.
      */
-    OrderedSet<GLuint> activeAttributeLocations;
+    UnorderedSet<GLuint> activeAttributeLocations;
     for (auto& keyValue : program.attributeLocations) {
         auto location = keyValue.second;
         activeAttributeLocations.insert(location);

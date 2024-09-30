@@ -1,16 +1,23 @@
-#ifndef PJSTDNORMALRANDOM_H
-#define PJSTDNORMALRANDOM_H
+#pragma once
 
 #include "SomeRandom.h"
 #include <random>
 
-// CODE REVIEW: ?/23
+/*
+ RATING: 5 stars
+ Simple type
+ CODE REVIEW: 9/19/24
+ */
 namespace PJ {
-    // TODO: evaluate different random number generators and seeds
+    /// The default random number generator
+    /// This references a global static generator, so it's ok to make copies
     class StandardRandom : public SomeRandom {
     public:
+        // FUTURE: evaluate different random number generators and seeds
+
+        // MARK: SomeRandom
+
         float Value() override;
+        int IntValue(int start, int end) override;
     };
 } // namespace PJ
-
-#endif

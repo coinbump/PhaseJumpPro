@@ -35,18 +35,32 @@ namespace PJ {
     protected:
         int frame = 0;
         float position = 0;
+        bool flipX = false;
+        bool flipY = false;
 
         VectorList<Frame> frames;
 
+        AnimatedSpriteRenderer(Vector3 worldSize);
+
     public:
-        bool flipX = false;
-        bool flipY = false;
-        SP<SomeFramePlayable> framePlayable;
+        UP<SomeFramePlayable> framePlayable;
 
         AnimatedSpriteRenderer(TextureList const& textures);
         AnimatedSpriteRenderer(TextureAtlas const& atlas);
 
         Vector2 Size() const;
+
+        void SetFlipX(bool value) {
+            GUARD(flipX != value)
+            flipX = value;
+            model.SetRenderModelsNeedBuild();
+        }
+
+        void SetFlipY(bool value) {
+            GUARD(flipY != value)
+            flipY = value;
+            model.SetRenderModelsNeedBuild();
+        }
 
         // MARK: SomeWorldComponent
 
