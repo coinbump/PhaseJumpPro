@@ -3,10 +3,11 @@
 using namespace std;
 using namespace PJ;
 
-ImGuiPlanPainter::ImGuiPlanPainter() {
+ImGuiPlanPainter::ImGuiPlanPainter(ImGuiStorage& storage) :
+    storage(storage) {
     auto constexpr storageId = "imGui.storage";
 
-    drawFuncs[UIModelId::InputFloat] = [](auto& _model) {
+    drawFuncs[UIModelId::InputFloat] = [](auto& _model, auto& _storage) {
         auto ptr = dynamic_cast<ValueUIModel<float>*>(&_model);
         GUARD(ptr)
         auto& model = *ptr;
@@ -18,7 +19,7 @@ ImGuiPlanPainter::ImGuiPlanPainter() {
         }
     };
 
-    drawFuncs[UIModelId::InputColor] = [](auto& _model) {
+    drawFuncs[UIModelId::InputColor] = [](auto& _model, auto& _storage) {
         auto ptr = dynamic_cast<ValueUIModel<Color>*>(&_model);
         GUARD(ptr)
         auto& model = *ptr;
@@ -29,7 +30,7 @@ ImGuiPlanPainter::ImGuiPlanPainter() {
         }
     };
 
-    drawFuncs[UIModelId::InputBool] = [](auto& _model) {
+    drawFuncs[UIModelId::InputBool] = [](auto& _model, auto& _storage) {
         auto ptr = dynamic_cast<ValueUIModel<bool>*>(&_model);
         GUARD(ptr)
         auto& model = *ptr;
@@ -40,7 +41,7 @@ ImGuiPlanPainter::ImGuiPlanPainter() {
         }
     };
 
-    drawFuncs[UIModelId::InputText] = [](auto& _model) {
+    drawFuncs[UIModelId::InputText] = [this](auto& _model, auto& _storage) {
         auto ptr = dynamic_cast<ValueUIModel<String>*>(&_model);
         GUARD(ptr)
         auto& model = *ptr;
@@ -50,8 +51,9 @@ ImGuiPlanPainter::ImGuiPlanPainter() {
         using Storage = std::array<char, characterLimit>;
 
         try {
-            model.tags.TypeAddIfMissing<Storage>(storageId);
-            Storage& storage = model.tags.TypeValueAt<Storage>(storageId);
+            Tags& storageTags = _storage.map[ptr];
+            storageTags.TypeAddIfMissing<Storage>(storageId);
+            Storage& storage = storageTags.TypeValueAt<Storage>(storageId);
 
             String modelValue = model.core.binding;
             std::copy(modelValue.begin(), modelValue.end(), storage.begin());
@@ -64,12 +66,10 @@ ImGuiPlanPainter::ImGuiPlanPainter() {
         } catch (...) {}
     };
 
-    drawFuncs[UIModelId::PickerList] = [](auto& _model) {
+    drawFuncs[UIModelId::PickerList] = [](auto& _model, auto& _storage) {
         auto ptr = dynamic_cast<UIModel<ValueOptionsUICore>*>(&_model);
         GUARD(ptr)
         auto& model = *ptr;
-
-        using Storage = int;
 
         auto& options = model.core.options;
 
@@ -80,7 +80,7 @@ ImGuiPlanPainter::ImGuiPlanPainter() {
         );
 
         try {
-            Storage& storage = model.core.value;
+            auto& storage = model.core.value;
             storage = model.core.binding;
 
             if (ImGui::Combo(
@@ -99,7 +99,7 @@ void ImGuiPlanPainter::Draw(UIPlan& plan) {
         try {
             auto drawFunc = drawFuncs.at(model->classId);
             GUARD_CONTINUE(drawFunc)
-            drawFunc(*model.get());
+            drawFunc(*model.get(), storage);
         } catch (...) {}
     }
 }

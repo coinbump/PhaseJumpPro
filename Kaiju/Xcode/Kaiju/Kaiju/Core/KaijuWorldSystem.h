@@ -14,7 +14,8 @@ public:
 
     CommandHistory commands;
     SP<WorldNode> inspectedNode;
-    UnorderedMap<uint64_t, UP<UIPlan>> inspectUIPlans;
+    UnorderedMap<SomeWorldComponent*, UP<UIPlan>> inspectUIPlans;
+    ImGuiPlanPainter::ImGuiStorage inspectStorage;
     float inspectPosX{};
     float inspectPosY{};
     float inspectPosZ{};

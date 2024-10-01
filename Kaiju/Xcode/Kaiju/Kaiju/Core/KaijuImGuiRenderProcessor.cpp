@@ -59,41 +59,41 @@ void DrawInspectedNodeWindow(KaijuWorldSystem& system) {
     // FUTURE: ImGuiBindings::InputFloat(system.inspectPosX, ImGUiBindings::MakePositionXBinding())
 
     // TODO: not great to have the plan leave memory??
-    UIPlan uiPlan;
-    UIPlanner planner(uiPlan);
-
-    planner.InputFloat(
-        "X", Binding<float>(
-                 [&]() { return node.transform.LocalPosition().x; },
-                 [&](auto& value) {
-                     auto localPos = node.transform.LocalPosition();
-                     localPos.AxisValue(Axis::X) = value;
-                     node.transform.SetLocalPosition(localPos);
-                 }
-             )
-    );
-    planner.InputFloat(
-        "Y", Binding<float>(
-                 [&]() { return node.transform.LocalPosition().y; },
-                 [&](auto& value) {
-                     auto localPos = node.transform.LocalPosition();
-                     localPos.AxisValue(Axis::Y) = value;
-                     node.transform.SetLocalPosition(localPos);
-                 }
-             )
-    );
-    planner.InputFloat(
-        "Z", Binding<float>(
-                 [&]() { return node.transform.LocalPosition().z; },
-                 [&](auto& value) {
-                     auto localPos = node.transform.LocalPosition();
-                     localPos.AxisValue(Axis::Z) = value;
-                     node.transform.SetLocalPosition(localPos);
-                 }
-             )
-    );
-
-    ImGuiPlanPainter().Draw(uiPlan);
+    //    UIPlan uiPlan;
+    //    UIPlanner planner(uiPlan);
+    //
+    //    planner.InputFloat(
+    //        "X", Binding<float>(
+    //                 [&]() { return node.transform.LocalPosition().x; },
+    //                 [&](auto& value) {
+    //                     auto localPos = node.transform.LocalPosition();
+    //                     localPos.AxisValue(Axis::X) = value;
+    //                     node.transform.SetLocalPosition(localPos);
+    //                 }
+    //             )
+    //    );
+    //    planner.InputFloat(
+    //        "Y", Binding<float>(
+    //                 [&]() { return node.transform.LocalPosition().y; },
+    //                 [&](auto& value) {
+    //                     auto localPos = node.transform.LocalPosition();
+    //                     localPos.AxisValue(Axis::Y) = value;
+    //                     node.transform.SetLocalPosition(localPos);
+    //                 }
+    //             )
+    //    );
+    //    planner.InputFloat(
+    //        "Z", Binding<float>(
+    //                 [&]() { return node.transform.LocalPosition().z; },
+    //                 [&](auto& value) {
+    //                     auto localPos = node.transform.LocalPosition();
+    //                     localPos.AxisValue(Axis::Z) = value;
+    //                     node.transform.SetLocalPosition(localPos);
+    //                 }
+    //             )
+    //    );
+    //
+    //    ImGuiPlanPainter().Draw(uiPlan);
 
     system.inspectRotation = -node.transform.Rotation().z;
     if (ImGui::SliderFloat("Rotation", &system.inspectRotation, 0, 360.0f)) {
@@ -108,7 +108,7 @@ void DrawInspectedNodeWindow(KaijuWorldSystem& system) {
     ImGui::TextColored(ImVec4(1, 1, 0, 1), "Components");
     for (auto& component : system.inspectedNode->Components()) {
 
-        uint64_t id = (uint64_t)component.get();
+        SomeWorldComponent* id = component.get();
 
         //        GUARD(typeName.size() > 0)
         try {
@@ -116,7 +116,7 @@ void DrawInspectedNodeWindow(KaijuWorldSystem& system) {
             if (ImGui::CollapsingHeader(
                     component->Name().c_str(), ImGuiTreeNodeFlags_DefaultOpen
                 )) {
-                ImGuiPlanPainter().Draw(*uiPlan.get());
+                ImGuiPlanPainter(system.inspectStorage).Draw(*uiPlan.get());
             }
         } catch (...) {
             ImGui::TextColored(ImVec4(1, 1, 1, 1), "%s", component->Name().c_str());
@@ -171,11 +171,12 @@ void DrawTree(KaijuWorldSystem& system, SP<WorldNode> node, String name) {
         if (ImGui::SmallButton("i")) {
             system.inspectedNode = node;
             system.inspectUIPlans.clear();
+            system.inspectStorage = {};
 
             for (auto& component : node->Components()) {
                 auto plan = component->MakeUIPlan("inspect");
                 if (plan) {
-                    uint64_t id = (uint64_t)component.get();
+                    SomeWorldComponent* id = component.get();
                     system.inspectUIPlans[id] = std::move(plan);
                 }
             }
