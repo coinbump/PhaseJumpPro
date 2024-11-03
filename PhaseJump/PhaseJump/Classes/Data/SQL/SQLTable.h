@@ -37,17 +37,17 @@ namespace PJ {
         enum class SetValueType { Update, Insert };
 
         String name;
-        SQLDatabaseSharedPtr db;
+        SQLDatabase* db{};
 
         String Name() const {
             return name;
         }
 
-        SQLDatabaseSharedPtr DB() const {
+        SQLDatabase* DB() const {
             return db;
         }
 
-        SQLTable(String name, SQLDatabaseSharedPtr db);
+        SQLTable(String name, SQLDatabase* db);
 
         VectorList<SQLRowValues> RowValuesList(SQLTableQueryArguments query);
 

@@ -19,10 +19,10 @@ namespace PJ {
             audioStream->Play();
         }
 
+        // MARK: SomeWorldComponent
+
         String TypeName() const {
             return "AudioStreamPlayer";
         }
-
-        WORLD_COMPONENT_SUPPORT_VOID(AudioStreamPlayer)
     };
 } // namespace PJ

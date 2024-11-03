@@ -6,31 +6,32 @@
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 2/18/23
+ CODE REVIEW: 11/2/24
  */
 namespace PJ {
-
-    // TODO: replace with funcs, func creator
-
     /// Generates a random choice of the specified type
-    template <class Type>
+    /// Alternative: compose random choice funcs instead
+    template <class Choice>
     class SomeRandomChoice {
     public:
-        virtual Type Choose(SomeRandom& random) = 0;
+        virtual ~SomeRandomChoice() {}
+
+        // TODO: should this return optional (see: WeightedRandomChoice)
+        virtual Choice Choose(SomeRandom& random) = 0;
     };
 
-    template <class Type>
-        requires std::integral<Type> || std::floating_point<Type>
-    class MinMaxRandomChoice : public SomeRandomChoice<Type> {
+    template <class Choice>
+        requires std::integral<Choice> || std::floating_point<Choice>
+    class MinMaxRandomChoice : public SomeRandomChoice<Choice> {
     public:
-        Type min;
-        Type max;
+        Choice min;
+        Choice max;
 
-        MinMaxRandomChoice(Type min, Type max) :
+        MinMaxRandomChoice(Choice min, Choice max) :
             min(min),
             max(max) {}
 
-        Type Choose(SomeRandom& random) override {
+        Choice Choose(SomeRandom& random) override {
             return min + ((max - min) * random.Value());
         }
     };

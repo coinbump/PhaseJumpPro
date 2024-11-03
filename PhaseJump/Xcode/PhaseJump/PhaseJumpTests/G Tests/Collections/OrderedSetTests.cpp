@@ -6,7 +6,7 @@
 using namespace std;
 using namespace PJ;
 
-TEST(OrderedSet, erase) {
+TEST(OrderedSet, Contains) {
     OrderedSet<String> sut;
 
     sut.insert("test");

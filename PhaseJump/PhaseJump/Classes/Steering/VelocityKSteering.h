@@ -8,10 +8,11 @@
  CODE REVIEW: 8/14/24
  */
 namespace PJ {
-    /// Kinematic steering that moves an object at a specific velocity
+    /// Kinematic steering. Moves node at a specific velocity
     class VelocityKSteering : public WorldComponent<> {
     public:
         using Base = WorldComponent<>;
+        using This = VelocityKSteering;
 
         Vector3 velocity;
 

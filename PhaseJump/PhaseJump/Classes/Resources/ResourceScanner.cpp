@@ -10,7 +10,7 @@ using namespace std;
 using namespace PJ;
 namespace fs = std::filesystem;
 
-LoadResourcesPlan ResourceScanner::ScanAt(FilePath path, bool isRecursive) {
+LoadResourcesPlan ResourceScanner::ScanAt(FilePath path, FileSearchType searchType) {
     LoadResourcesPlan result;
 
     if (nullptr == fm || nullptr == loadResourcesModel) {
@@ -19,7 +19,7 @@ LoadResourcesPlan ResourceScanner::ScanAt(FilePath path, bool isRecursive) {
     auto& fm = (*this->fm);
 
     // This doesn't do anything meaningful, but it's a first test of async code
-    auto pathsFuture = fm.PathListAsync(path, isRecursive);
+    auto pathsFuture = fm.PathListAsync(path, searchType);
     pathsFuture.wait();
     auto paths = pathsFuture.get();
 

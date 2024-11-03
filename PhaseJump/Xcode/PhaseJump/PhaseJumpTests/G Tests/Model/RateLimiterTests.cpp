@@ -12,11 +12,11 @@ using namespace RateLimiterTests;
 
 TEST(RateLimiter, OnFire)
 {
-    auto sut = RateLimiter::Make(3);
+    auto sut = MAKE<RateLimiter>(3);
     auto value = MAKE<int>(0);
 
     auto baseOnFireFunc = sut->onFireFunc;
-    sut->onFireFunc = [=](SomeLimiter<RateLimiter::Core>& owner) {
+    sut->onFireFunc = [=](auto& owner) {
         baseOnFireFunc(owner);
         *value += 1;
     };
@@ -42,10 +42,10 @@ TEST(RateLimiter, OnFire)
 
 TEST(RateLimiter, OverrideOnFire)
 {
-    auto sut = RateLimiter::Make(3);
+    auto sut = MAKE<RateLimiter>(3);
     auto value = MAKE<int>(0);
 
-    RateLimiter::Type::OnFireFunc overrideFunc = [=](SomeLimiter<RateLimiter::Core>& owner) {
+    SomeLimiter::OnFireFunc overrideFunc = [=](auto& owner) {
         *value += 1;
     };
 

@@ -7,7 +7,7 @@ using namespace std;
 using namespace PJ;
 
 TEST(SQLDatabase, Tests) {
-    auto db = MAKE<SQLDatabase>();
+    auto db = NEW<SQLDatabase>();
 
     EXPECT_NO_THROW({
         db->TryOpen("", SQLDatabaseOpenType::InMemory, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE);
@@ -18,7 +18,7 @@ TEST(SQLDatabase, Tests) {
     EXPECT_TRUE(db->CreateTable("bank", "(game INTEGER, paid INTEGER)")) << "Couldn't create bank table";
     EXPECT_TRUE(db->TableExists("bank")) << "Table bank missing";
 
-    auto bankTable = MAKE<SQLTable>("bank", db);
+    auto bankTable = NEW<SQLTable>("bank", db.get());
 
     EXPECT_FALSE(bankTable->ColumnExists("missing"));
 
@@ -34,7 +34,7 @@ TEST(SQLDatabase, Tests) {
     EXPECT_TRUE(bankTable->ColumnExists("new_col")) << "Column new_col missing";
 
     EXPECT_TRUE(db->CreateTable("test", "(test_column INTEGER)"));
-    auto testTable = MAKE<SQLTable>("test", db);
+    auto testTable = NEW<SQLTable>("test", db.get());
 
     db->BeginTransaction();
     EXPECT_TRUE(db->IsInTransaction());

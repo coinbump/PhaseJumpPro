@@ -61,7 +61,7 @@ namespace PJ {
 
         // MARK: WorldSizeable
 
-        std::optional<Vector3> WorldSize() const override {
+        Vector3 WorldSize() const override {
             return frame.size;
         }
 
@@ -121,8 +121,8 @@ namespace PJ {
             Vector3 worldPos = LocalToWorld(Vector3::zero);
 
             Vector3 topLeft(
-                worldPos.x + (WorldSize()->x / 2.0f) * vecLeft,
-                worldPos.y + (WorldSize()->y / 2.0f) * vecUp, worldPos.z
+                worldPos.x + (WorldSize().x / 2.0f) * vecLeft,
+                worldPos.y + (WorldSize().y / 2.0f) * vecUp, worldPos.z
             );
             return topLeft;
         }

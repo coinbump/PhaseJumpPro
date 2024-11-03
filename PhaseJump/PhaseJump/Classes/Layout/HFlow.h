@@ -23,6 +23,12 @@ namespace PJ {
             return Vector3(spacing * (owner->ChildNodes().size() - 1), 0, 0);
         }
 
+        // MARK: SomeWorldComponent
+
+        virtual String TypeName() const override {
+            return "HFlow";
+        }
+
     protected:
         // MARK: SomeLayout
 

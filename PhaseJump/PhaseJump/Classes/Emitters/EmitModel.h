@@ -8,19 +8,21 @@
 /*
  RATING: 5 stars
  Simple type
- CODE REVIEW: 8/13/23
+ CODE REVIEW: 10/13/24
  */
 namespace PJ {
     /// Tag names for common emit model properties
     namespace EmitModelTag {
         auto constexpr StartVelocity = "velocity.start";
         auto constexpr EndVelocity = "velocity.end";
+        auto constexpr StartDirectionVelocity = "velocity.dir.start";
+        auto constexpr EndDirectionVelocity = "velocity.dir.end";
         auto constexpr StartColor = "color.start";
         auto constexpr EndColor = "color.end";
         auto constexpr Offset = "offset";
         auto constexpr Delay = "delay";
         auto constexpr Duration = "duration";
-        auto constexpr Angle2D = "angle";
+        auto constexpr Angle = "angle";
     } // namespace EmitModelTag
 
     /**
@@ -44,13 +46,24 @@ namespace PJ {
             return result.has_value() ? result : StartVelocity();
         }
 
+        /// @return Returns start directional velocity for spawn
+        std::optional<float> StartDirectionVelocity() const {
+            return tags.Value<float>(EmitModelTag::StartDirectionVelocity);
+        }
+
+        /// @return Returns end directional velocity for spawn
+        std::optional<float> EndDirectionVelocity() const {
+            auto result = tags.Value<float>(EmitModelTag::EndDirectionVelocity);
+            return result.has_value() ? result : StartDirectionVelocity();
+        }
+
         /// @return Returns offset from emitter position for spawn
-        std::optional<Vector3> SpawnOffset() const {
+        std::optional<Vector3> Offset() const {
             return tags.Value<Vector3>(EmitModelTag::Offset);
         }
 
         /// @return Returns delay before creating spawn from emit model (if > 0)
-        std::optional<float> SpawnDelay() const {
+        std::optional<float> Delay() const {
             return tags.Value<float>(EmitModelTag::Delay);
         }
 
@@ -68,11 +81,11 @@ namespace PJ {
         /// Used by emitter to track delay progress
         float delay = 0;
 
-        // MARK: Updatable
-
         DelayedEmitModel(EmitModel model, float delay) :
             model(model),
             delay(delay) {}
+
+        // MARK: Updatable
 
         void OnUpdate(TimeSlice time) override {
             GUARD(delay > 0)

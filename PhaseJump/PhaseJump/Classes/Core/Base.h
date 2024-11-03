@@ -1,5 +1,6 @@
 #pragma once
 
+#include "DiagnoseModel.h"
 #include "StringConvertible.h"
 #include "Utils.h"
 #include <memory>
@@ -23,6 +24,9 @@ namespace PJ {
         virtual void GoInternal() {}
 
     public:
+        /// Used to enable extra logging for this object
+        DiagnoseModel _diagnose;
+
         using RootBaseType = Base;
 
         virtual ~Base() {}
@@ -39,17 +43,5 @@ namespace PJ {
         String ToString() const override {
             return "Base";
         }
-    };
-
-    /// Base that composes a core
-    template <class Core>
-    class OwnerBase : public Base {
-    public:
-        Core core{};
-
-        OwnerBase() {}
-
-        OwnerBase(Core core) :
-            core(core) {}
     };
 } // namespace PJ

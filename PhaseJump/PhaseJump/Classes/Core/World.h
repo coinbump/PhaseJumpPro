@@ -24,7 +24,7 @@ namespace PJ {
     class SomeShaderProgram;
 
     // TODO: Needs unit tests
-    // TODO: re-evaluate use of multiple inheritance here
+    // TODO: re-evaluate use of multiple inheritance here (doesn't need Updatable)
     class World : public Base, public Updatable {
     protected:
         using TimePoint = std::chrono::time_point<std::chrono::steady_clock>;
@@ -41,7 +41,7 @@ namespace PJ {
         bool isPaused = false;
 
         /// Rate limits renders
-        SP<RateLimiter::Type> renderLimiter = RateLimiter::Make(1.0f / 240.0f);
+        RateLimiter renderLimiter{ 1.0f / 240.0f };
 
     public:
         /// Stores objects that need time updates
@@ -54,6 +54,8 @@ namespace PJ {
         SP<ResourceModels> loadedResources = MAKE<ResourceModels>();
         SP<SomeRenderContext> renderContext;
         SP<SomeCamera> camera;
+
+        // TODO: UP here
         SP<SomeUIEventPoller> uiEventPoller;
 
         /// (Optional). Design system for quick build UI
@@ -74,7 +76,7 @@ namespace PJ {
         World();
 
         void SetRenderRate(float value) {
-            renderLimiter->core.minDelta = 1.0f / value;
+            renderLimiter.core.rate = 1.0f / value;
         }
 
         void SetIsRenderRateLimited(bool value) {
@@ -161,27 +163,27 @@ namespace PJ {
             isPaused = false;
         }
 
-        SP<WorldNode> PrefabMake(String id) {
+        void LoadPrefab(String id, WorldNode& node) {
+            GUARD_LOG(node.World() == this, "ERROR. Node must be parented before LoadPrefab")
+
             try {
                 auto prefab = prefabs.at(id);
-                return prefab->Make(*this);
-            } catch (...) {
-                return nullptr;
-            }
+                prefab->LoadInto(node);
+            } catch (...) {}
         }
 
-        void Remove(SP<SomeWorldSystem> system);
+        void Remove(SomeWorldSystem& system);
         void Remove(VectorList<SP<SomeWorldSystem>> systems);
         void RemoveAllSystems();
         void RemoveAllNodes();
 
         void SetRenderContext(SP<SomeRenderContext> renderContext);
 
-        virtual void ProcessUIEvents(List<SP<SomeUIEvent>> const& uiEvents);
-
-        // MARK: Quick build
+        virtual void ProcessUIEvents(UIEventList const& uiEvents);
 
         SP<SomeTexture> FindTexture(String id);
+        UnorderedSet<SP<SomeTexture>> FindTextures(UnorderedSet<String> const& textureIds);
+        VectorList<SP<SomeTexture>> FindTextureList(VectorList<String> const& textureIds);
         SP<Font> FindFont(FontSpec spec);
         SP<Font> FindFontWithSize(float size);
         SP<Font> FindFontWithResourceId(String id);

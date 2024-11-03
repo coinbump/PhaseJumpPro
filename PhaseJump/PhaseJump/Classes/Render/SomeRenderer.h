@@ -29,6 +29,9 @@ namespace PJ {
 
         SomeRenderer(Vector3 worldSize);
 
+        /// Override to reset internal renderer states
+        virtual void Reset() {}
+
         /// Create models to send to the render engine for a render
         virtual VectorList<RenderModel> MakeRenderModels();
 
@@ -49,9 +52,14 @@ namespace PJ {
             return model.Color();
         }
 
+        /// Some renderers have a limited time span (animations)
+        virtual bool IsRenderFinished() const {
+            return false;
+        }
+
         // MARK: WorldSizeable
 
-        std::optional<Vector3> WorldSize() const override {
+        Vector3 WorldSize() const override {
             return model.WorldSize();
         }
 

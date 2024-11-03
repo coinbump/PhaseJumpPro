@@ -9,6 +9,7 @@
 #include "Vector2.h"
 #include "Vector3.h"
 #include "VectorList.h"
+#include <algorithm>
 #include <span>
 
 /*
@@ -56,7 +57,7 @@ namespace PJ {
                 Vector3 minValue;
                 Vector3 maxValue;
 
-                for (auto& v : mesh.vertices) {
+                for (Vector3 const& v : mesh.vertices) {
                     if (!hasFirst) {
                         hasFirst = true;
                         minValue = v;

@@ -1,21 +1,19 @@
 #pragma once
 
-#include "SomeSignal.h"
-#include "Utils.h"
-#include <memory>
-
 /*
  RATING: 5 stars
  Simple protocol
- CODE REVIEW: 7/5/23
+ CODE REVIEW: 10/6/24
  */
 namespace PJ {
+    class SomeSignal;
+
     /// Receives events from broadcasters
     class SomeListener {
     public:
         virtual ~SomeListener() {}
 
-        // TODO: why is this a pointer? Why not a reference?
-        virtual void OnEvent(SP<SomeSignal> event) = 0;
+        /// Called when a signal is sent to this object
+        virtual void OnSignal(SomeSignal& signal) = 0;
     };
 } // namespace PJ

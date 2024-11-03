@@ -1,6 +1,7 @@
 #ifndef PJNODE2D_H
 #define PJNODE2D_H
 
+#include "RigidBody2D.h"
 #include "SomeNode.h"
 
 // CODE REVIEW: ?/23

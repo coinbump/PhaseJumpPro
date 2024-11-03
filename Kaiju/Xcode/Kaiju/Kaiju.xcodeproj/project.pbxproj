@@ -7,31 +7,36 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		CD1D467E2C9368BA00839F39 /* SwiftTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD2A601A2B39EAFC000B801B /* SwiftTest.swift */; };
 		CD1D467F2C9368BA00839F39 /* ExampleLifeAgentGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDDB6F7E2C8E56150073D3A2 /* ExampleLifeAgentGroup.cpp */; };
 		CD1D46802C9368BA00839F39 /* FilesProcessorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD5FB81B291E130D004F2FB4 /* FilesProcessorView.swift */; };
 		CD1D46812C9368BA00839F39 /* ViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD6FEB5929170AE500F674D3 /* ViewController.mm */; };
-		CD1D46822C9368BA00839F39 /* SDLTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD420AE82959FE6900C5D3E1 /* SDLTest.cpp */; };
+		CD1D46822C9368BA00839F39 /* SDLKaiju.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD420AE82959FE6900C5D3E1 /* SDLKaiju.cpp */; };
 		CD1D46832C9368BA00839F39 /* AppDelegateBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDF0FB7729EE11DA00B9EF1F /* AppDelegateBridge.swift */; };
 		CD1D46842C9368BA00839F39 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6FEB6029170AE600F674D3 /* main.m */; };
 		CD1D46852C9368BA00839F39 /* SwiftBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD5FB81D291E13D5004F2FB4 /* SwiftBridge.swift */; };
 		CD1D46862C9368BA00839F39 /* ObjCBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD5FB83129200602004F2FB4 /* ObjCBridge.mm */; };
 		CD1D46872C9368BA00839F39 /* ExampleLifeMatrixRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDDB6F7C2C8E51710073D3A2 /* ExampleLifeMatrixRenderer.cpp */; };
 		CD1D46882C9368BA00839F39 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD6FEB5629170AE500F674D3 /* AppDelegate.mm */; };
-		CD1D468A2C9368BA00839F39 /* SDL3_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDD71CF62BFC3DBE00BA868A /* SDL3_image.framework */; };
 		CD1D468B2C9368BA00839F39 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD376CBC29E797D900DC7950 /* OpenGL.framework */; };
-		CD1D468C2C9368BA00839F39 /* SDL3.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDD71CF52BFC3DBE00BA868A /* SDL3.framework */; };
 		CD1D468F2C9368BA00839F39 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CD6FEB5B29170AE600F674D3 /* Assets.xcassets */; };
 		CD1D46902C9368BA00839F39 /* resources in Resources */ = {isa = PBXBuildFile; fileRef = CD420AA72957F3CE00C5D3E1 /* resources */; };
 		CD1D46912C9368BA00839F39 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD6FEB5D29170AE600F674D3 /* Main.storyboard */; };
-		CD1D46932C9368BA00839F39 /* SDL3.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CDD71CF52BFC3DBE00BA868A /* SDL3.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		CD1D46952C9368BA00839F39 /* SDL3_image.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CDD71CF62BFC3DBE00BA868A /* SDL3_image.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CD1D46A22C93F5CB00839F39 /* PhaseJump.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD1D46A12C93F5CB00839F39 /* PhaseJump.framework */; };
 		CD1D46A32C93F5CB00839F39 /* PhaseJump.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CD1D46A12C93F5CB00839F39 /* PhaseJump.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CD2A601B2B39EAFC000B801B /* SwiftTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD2A601A2B39EAFC000B801B /* SwiftTest.swift */; };
+		CD372FB52CC6F7C700D79CA5 /* KaijuWorldSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD372FB42CC6F7C700D79CA5 /* KaijuWorldSystem.cpp */; };
+		CD372FB62CC6F7C700D79CA5 /* KaijuWorldSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD372FB42CC6F7C700D79CA5 /* KaijuWorldSystem.cpp */; };
 		CD376CBD29E797DA00DC7950 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD376CBC29E797D900DC7950 /* OpenGL.framework */; };
 		CD420AA82957F3CE00C5D3E1 /* resources in Resources */ = {isa = PBXBuildFile; fileRef = CD420AA72957F3CE00C5D3E1 /* resources */; };
-		CD420AE92959FE6900C5D3E1 /* SDLTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD420AE82959FE6900C5D3E1 /* SDLTest.cpp */; };
+		CD420AE92959FE6900C5D3E1 /* SDLKaiju.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD420AE82959FE6900C5D3E1 /* SDLKaiju.cpp */; };
+		CD5E59592CC4DA4D0071BA96 /* SDL3_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD5E59582CC4DA4D0071BA96 /* SDL3_image.framework */; };
+		CD5E595A2CC4DA4D0071BA96 /* SDL3_image.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CD5E59582CC4DA4D0071BA96 /* SDL3_image.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		CD5E595C2CC4DA7F0071BA96 /* SDL3.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD5E595B2CC4DA7F0071BA96 /* SDL3.framework */; };
+		CD5E595D2CC4DA7F0071BA96 /* SDL3.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CD5E595B2CC4DA7F0071BA96 /* SDL3.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		CD5E595E2CC4DAAE0071BA96 /* SDL3_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD5E59582CC4DA4D0071BA96 /* SDL3_image.framework */; };
+		CD5E595F2CC4DAAE0071BA96 /* SDL3_image.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CD5E59582CC4DA4D0071BA96 /* SDL3_image.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		CD5E59602CC4DAAE0071BA96 /* SDL3.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD5E595B2CC4DA7F0071BA96 /* SDL3.framework */; };
+		CD5E59612CC4DAAE0071BA96 /* SDL3.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CD5E595B2CC4DA7F0071BA96 /* SDL3.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CD5FB81C291E130D004F2FB4 /* FilesProcessorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD5FB81B291E130D004F2FB4 /* FilesProcessorView.swift */; };
 		CD5FB81E291E13D5004F2FB4 /* SwiftBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD5FB81D291E13D5004F2FB4 /* SwiftBridge.swift */; };
 		CD5FB83229200602004F2FB4 /* ObjCBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD5FB83129200602004F2FB4 /* ObjCBridge.mm */; };
@@ -51,12 +56,9 @@
 		CD815EFC2C9FE11000FBB665 /* ExampleCheckersBoardView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD815EFA2C9FE11000FBB665 /* ExampleCheckersBoardView.cpp */; };
 		CD815F042CA371AF00FBB665 /* KaijuImGuiRenderProcessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD815F032CA371AF00FBB665 /* KaijuImGuiRenderProcessor.cpp */; };
 		CD815F052CA371AF00FBB665 /* KaijuImGuiRenderProcessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD815F032CA371AF00FBB665 /* KaijuImGuiRenderProcessor.cpp */; };
+		CD815FC82CABA0FF00FBB665 /* SwiftTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD2A601A2B39EAFC000B801B /* SwiftTest.swift */; };
 		CDBF348A2C975AA700159636 /* PhaseJump-Dev.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDBF34892C975AA700159636 /* PhaseJump-Dev.framework */; };
 		CDBF348B2C975AA700159636 /* PhaseJump-Dev.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CDBF34892C975AA700159636 /* PhaseJump-Dev.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		CDD71CF72BFC3DBE00BA868A /* SDL3.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDD71CF52BFC3DBE00BA868A /* SDL3.framework */; };
-		CDD71CF82BFC3DBE00BA868A /* SDL3.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CDD71CF52BFC3DBE00BA868A /* SDL3.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		CDD71CF92BFC3DBE00BA868A /* SDL3_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDD71CF62BFC3DBE00BA868A /* SDL3_image.framework */; };
-		CDD71CFA2BFC3DBE00BA868A /* SDL3_image.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CDD71CF62BFC3DBE00BA868A /* SDL3_image.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CDDB6F7D2C8E51710073D3A2 /* ExampleLifeMatrixRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDDB6F7C2C8E51710073D3A2 /* ExampleLifeMatrixRenderer.cpp */; };
 		CDDB6F7F2C8E56150073D3A2 /* ExampleLifeAgentGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDDB6F7E2C8E56150073D3A2 /* ExampleLifeAgentGroup.cpp */; };
 		CDEC25F22C9BD94F00FF14A2 /* ExampleMatrixBoardViewAnimationScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDEC25F12C9BD94F00FF14A2 /* ExampleMatrixBoardViewAnimationScene.cpp */; };
@@ -94,9 +96,9 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				CDD71CF82BFC3DBE00BA868A /* SDL3.framework in Embed Frameworks */,
+				CD5E595F2CC4DAAE0071BA96 /* SDL3_image.framework in Embed Frameworks */,
+				CD5E59612CC4DAAE0071BA96 /* SDL3.framework in Embed Frameworks */,
 				CDBF348B2C975AA700159636 /* PhaseJump-Dev.framework in Embed Frameworks */,
-				CDD71CFA2BFC3DBE00BA868A /* SDL3_image.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -107,8 +109,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				CD1D46932C9368BA00839F39 /* SDL3.framework in Embed Frameworks */,
-				CD1D46952C9368BA00839F39 /* SDL3_image.framework in Embed Frameworks */,
+				CD5E595A2CC4DA4D0071BA96 /* SDL3_image.framework in Embed Frameworks */,
+				CD5E595D2CC4DA7F0071BA96 /* SDL3.framework in Embed Frameworks */,
 				CD1D46A32C93F5CB00839F39 /* PhaseJump.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -130,10 +132,14 @@
 		CD21C6CD2C8908E0004EE116 /* TestThemeScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestThemeScene.h; sourceTree = "<group>"; };
 		CD21C6CE2C891993004EE116 /* TestUIScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestUIScene.h; sourceTree = "<group>"; };
 		CD2A601A2B39EAFC000B801B /* SwiftTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftTest.swift; sourceTree = "<group>"; };
+		CD372FB42CC6F7C700D79CA5 /* KaijuWorldSystem.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = KaijuWorldSystem.cpp; sourceTree = "<group>"; };
+		CD372FBC2CC8037400D79CA5 /* SDKIncludes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDKIncludes.h; sourceTree = "<group>"; };
 		CD376CBC29E797D900DC7950 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		CD420AA72957F3CE00C5D3E1 /* resources */ = {isa = PBXFileReference; lastKnownFileType = folder; path = resources; sourceTree = "<group>"; };
-		CD420AE72959FE6900C5D3E1 /* SDLTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDLTest.h; sourceTree = "<group>"; };
-		CD420AE82959FE6900C5D3E1 /* SDLTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SDLTest.cpp; sourceTree = "<group>"; };
+		CD420AE72959FE6900C5D3E1 /* SDLKaiju.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDLKaiju.h; sourceTree = "<group>"; };
+		CD420AE82959FE6900C5D3E1 /* SDLKaiju.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SDLKaiju.cpp; sourceTree = "<group>"; };
+		CD5E59582CC4DA4D0071BA96 /* SDL3_image.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL3_image.framework; path = ../../../../../../../../Library/Frameworks/SDL3_image.framework; sourceTree = "<group>"; };
+		CD5E595B2CC4DA7F0071BA96 /* SDL3.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL3.framework; path = ../../../../../../../../Library/Frameworks/SDL3.framework; sourceTree = "<group>"; };
 		CD5FB81A291E130D004F2FB4 /* Kaiju-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Kaiju-Bridging-Header.h"; sourceTree = "<group>"; };
 		CD5FB81B291E130D004F2FB4 /* FilesProcessorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilesProcessorView.swift; sourceTree = "<group>"; };
 		CD5FB81D291E13D5004F2FB4 /* SwiftBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftBridge.swift; sourceTree = "<group>"; };
@@ -161,6 +167,8 @@
 		CD815EF92C9FE11000FBB665 /* ExampleCheckersBoardView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExampleCheckersBoardView.h; sourceTree = "<group>"; };
 		CD815EFA2C9FE11000FBB665 /* ExampleCheckersBoardView.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ExampleCheckersBoardView.cpp; sourceTree = "<group>"; };
 		CD815F032CA371AF00FBB665 /* KaijuImGuiRenderProcessor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = KaijuImGuiRenderProcessor.cpp; sourceTree = "<group>"; };
+		CD815FF22CB24B1D00FBB665 /* TestSteeringScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestSteeringScene.h; sourceTree = "<group>"; };
+		CD815FF92CB2E29200FBB665 /* TestBulletsScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestBulletsScene.h; sourceTree = "<group>"; };
 		CD837E4D2A00AFCF00467542 /* TestTextureScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestTextureScene.h; sourceTree = "<group>"; };
 		CD86A73929F0C1540015BFCE /* TestSlicedTextureScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestSlicedTextureScene.h; sourceTree = "<group>"; };
 		CDBF34892C975AA700159636 /* PhaseJump-Dev.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = "PhaseJump-Dev.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -192,10 +200,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CD5E595C2CC4DA7F0071BA96 /* SDL3.framework in Frameworks */,
 				CD1D46A22C93F5CB00839F39 /* PhaseJump.framework in Frameworks */,
-				CD1D468A2C9368BA00839F39 /* SDL3_image.framework in Frameworks */,
 				CD1D468B2C9368BA00839F39 /* OpenGL.framework in Frameworks */,
-				CD1D468C2C9368BA00839F39 /* SDL3.framework in Frameworks */,
+				CD5E59592CC4DA4D0071BA96 /* SDL3_image.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -203,10 +211,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CD5E59602CC4DAAE0071BA96 /* SDL3.framework in Frameworks */,
 				CDBF348A2C975AA700159636 /* PhaseJump-Dev.framework in Frameworks */,
-				CDD71CF92BFC3DBE00BA868A /* SDL3_image.framework in Frameworks */,
 				CD376CBD29E797DA00DC7950 /* OpenGL.framework in Frameworks */,
-				CDD71CF72BFC3DBE00BA868A /* SDL3.framework in Frameworks */,
+				CD5E595E2CC4DAAE0071BA96 /* SDL3_image.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -230,6 +238,8 @@
 		CD0A8489291CBF630074CA4F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CD5E595B2CC4DA7F0071BA96 /* SDL3.framework */,
+				CD5E59582CC4DA4D0071BA96 /* SDL3_image.framework */,
 				CDBF34892C975AA700159636 /* PhaseJump-Dev.framework */,
 				CD1D46A72C93F90700839F39 /* PhaseJump.framework */,
 				CD1D46A12C93F5CB00839F39 /* PhaseJump.framework */,
@@ -240,6 +250,18 @@
 				CD0A848A291CBF630074CA4F /* PhaseJump.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		CD372FBB2CC8034700D79CA5 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				CD815F062CA371C600FBB665 /* Core */,
+				CDDB6F742C8E37660073D3A2 /* Examples */,
+				CDF0FB8029EF941700B9EF1F /* Scenes */,
+				CDF0FB8129EF941D00B9EF1F /* Test Scenes */,
+				CD5FB84029204DD2004F2FB4 /* Views */,
+			);
+			path = Classes;
 			sourceTree = "<group>";
 		};
 		CD5FB84029204DD2004F2FB4 /* Views */ = {
@@ -276,13 +298,9 @@
 		CD6FEB5429170AE500F674D3 /* Kaiju */ = {
 			isa = PBXGroup;
 			children = (
-				CD815F062CA371C600FBB665 /* Core */,
-				CDDB6F742C8E37660073D3A2 /* Examples */,
-				CDF0FB8029EF941700B9EF1F /* Scenes */,
-				CDF0FB8129EF941D00B9EF1F /* Test Scenes */,
-				CD420AE82959FE6900C5D3E1 /* SDLTest.cpp */,
-				CD420AE72959FE6900C5D3E1 /* SDLTest.h */,
-				CD5FB84029204DD2004F2FB4 /* Views */,
+				CD372FBB2CC8034700D79CA5 /* Classes */,
+				CD420AE82959FE6900C5D3E1 /* SDLKaiju.cpp */,
+				CD420AE72959FE6900C5D3E1 /* SDLKaiju.h */,
 				CD6FEB5529170AE500F674D3 /* AppDelegate.h */,
 				CD6FEB5629170AE500F674D3 /* AppDelegate.mm */,
 				CD6FEB5829170AE500F674D3 /* ViewController.h */,
@@ -321,8 +339,10 @@
 			isa = PBXGroup;
 			children = (
 				CD08CF0A2C44830100BF159A /* KaijuImGuiRenderProcessor.h */,
-				CD0643E02C9637860011483E /* KaijuWorldSystem.h */,
 				CD815F032CA371AF00FBB665 /* KaijuImGuiRenderProcessor.cpp */,
+				CD0643E02C9637860011483E /* KaijuWorldSystem.h */,
+				CD372FB42CC6F7C700D79CA5 /* KaijuWorldSystem.cpp */,
+				CD372FBC2CC8037400D79CA5 /* SDKIncludes.h */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -409,6 +429,8 @@
 				CD21C6CD2C8908E0004EE116 /* TestThemeScene.h */,
 				CD21C6CE2C891993004EE116 /* TestUIScene.h */,
 				CD21C6892C855770004EE116 /* TestZOrderScene.h */,
+				CD815FF22CB24B1D00FBB665 /* TestSteeringScene.h */,
+				CD815FF92CB2E29200FBB665 /* TestBulletsScene.h */,
 			);
 			path = "Test Scenes";
 			sourceTree = "<group>";
@@ -615,7 +637,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CD1D467E2C9368BA00839F39 /* SwiftTest.swift in Sources */,
 				CD815EF72C9FE10A00FBB665 /* ExampleCheckersPiecesView.cpp in Sources */,
 				CDEC261C2C9F1A2400FF14A2 /* ExampleCheckersMatrixRenderer.cpp in Sources */,
 				CD1D467F2C9368BA00839F39 /* ExampleLifeAgentGroup.cpp in Sources */,
@@ -624,11 +645,13 @@
 				CD1D46812C9368BA00839F39 /* ViewController.mm in Sources */,
 				CDEC26162C9E7E4400FF14A2 /* ExampleCheckersScene.cpp in Sources */,
 				CD815EFB2C9FE11000FBB665 /* ExampleCheckersBoardView.cpp in Sources */,
-				CD1D46822C9368BA00839F39 /* SDLTest.cpp in Sources */,
+				CD1D46822C9368BA00839F39 /* SDLKaiju.cpp in Sources */,
+				CD815FC82CABA0FF00FBB665 /* SwiftTest.swift in Sources */,
 				CD1D46832C9368BA00839F39 /* AppDelegateBridge.swift in Sources */,
 				CD1D46842C9368BA00839F39 /* main.m in Sources */,
 				CD815EE52C9F769000FBB665 /* ExampleMineSweeperScene.cpp in Sources */,
 				CD1D46852C9368BA00839F39 /* SwiftBridge.swift in Sources */,
+				CD372FB62CC6F7C700D79CA5 /* KaijuWorldSystem.cpp in Sources */,
 				CD1D46862C9368BA00839F39 /* ObjCBridge.mm in Sources */,
 				CD815F042CA371AF00FBB665 /* KaijuImGuiRenderProcessor.cpp in Sources */,
 				CD1D46872C9368BA00839F39 /* ExampleLifeMatrixRenderer.cpp in Sources */,
@@ -650,11 +673,12 @@
 				CD6FEB5A29170AE500F674D3 /* ViewController.mm in Sources */,
 				CDEC26152C9E7E4400FF14A2 /* ExampleCheckersScene.cpp in Sources */,
 				CD815EFC2C9FE11000FBB665 /* ExampleCheckersBoardView.cpp in Sources */,
-				CD420AE92959FE6900C5D3E1 /* SDLTest.cpp in Sources */,
+				CD420AE92959FE6900C5D3E1 /* SDLKaiju.cpp in Sources */,
 				CDF0FB7829EE11DA00B9EF1F /* AppDelegateBridge.swift in Sources */,
 				CD6FEB6129170AE600F674D3 /* main.m in Sources */,
 				CD815EE42C9F769000FBB665 /* ExampleMineSweeperScene.cpp in Sources */,
 				CD5FB81E291E13D5004F2FB4 /* SwiftBridge.swift in Sources */,
+				CD372FB52CC6F7C700D79CA5 /* KaijuWorldSystem.cpp in Sources */,
 				CD5FB83229200602004F2FB4 /* ObjCBridge.mm in Sources */,
 				CD815F052CA371AF00FBB665 /* KaijuImGuiRenderProcessor.cpp in Sources */,
 				CDDB6F7D2C8E51710073D3A2 /* ExampleLifeMatrixRenderer.cpp in Sources */,
@@ -720,7 +744,13 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = SUX6D55KV3;
 				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_TESTABILITY = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+				);
 				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -756,7 +786,13 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = SUX6D55KV3;
 				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_TESTABILITY = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+				);
 				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -819,7 +855,6 @@
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
-					"VERBOSE=1",
 					"DEBUG=1",
 					GL_SILENCE_DEPRECATION,
 				);
@@ -905,10 +940,15 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = SUX6D55KV3;
 				ENABLE_HARDENED_RUNTIME = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEVELOPMENT=1",
 					"$(inherited)",
 				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -944,10 +984,15 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = SUX6D55KV3;
 				ENABLE_HARDENED_RUNTIME = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEVELOPMENT=1",
 					"$(inherited)",
 				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
 				GENERATE_INFOPLIST_FILE = YES;

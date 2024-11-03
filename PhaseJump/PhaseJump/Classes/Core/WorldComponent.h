@@ -2,7 +2,8 @@
 
 #include "SomePosition.h"
 #include "SomeWorldComponent.h"
-#include "WorldComponentCores.h"
+#include "StandardCore.h"
+#include "Void.h"
 #include <memory>
 
 /*
@@ -12,9 +13,7 @@
  */
 namespace PJ {
     /// World component with a core
-    /// The core allows us to create components using composition instead of inheritance
-    /// Alternatively, the core can be used to store additional properties and state
-    template <class Core = VoidWorldComponentCore>
+    template <class Core = StandardCore>
     class WorldComponent : public SomeWorldComponent {
     public:
         using Base = SomeWorldComponent;
@@ -25,40 +24,12 @@ namespace PJ {
         WorldComponent(String name = "") :
             Base(name) {}
 
+        // FUTURE: virtual void UpdateFromSerializedProperties(bool forceUpdate) {}
+
         // MARK: SomeWorldComponent
 
         String TypeName() const override {
-            return core.TypeName();
+            return "WorldComponent";
         }
-
-        void Awake() override {
-            core.Awake(*this);
-        }
-
-        void Start() override {
-            core.Start(*this);
-        }
-
-        void LateUpdate() override {
-            core.LateUpdate(*this);
-        }
-
-        // MARK: Updatable
-
-        void OnUpdate(TimeSlice time) override {
-            Base::OnUpdate(time);
-
-            core.OnUpdate(*this, time);
-        }
-
-        // FUTURE: virtual void UpdateFromSerializedProperties(bool forceUpdate) {}
     };
 } // namespace PJ
-
-/// Adds world component support to an object with no-op methods
-#define WORLD_COMPONENT_SUPPORT_VOID(Type)   \
-    using Component = WorldComponent<Type>;  \
-    void Awake(Component& component) {}      \
-    void Start(Component& component) {}      \
-    void LateUpdate(Component& component) {} \
-    void OnUpdate(Component& component, TimeSlice time) {}

@@ -14,7 +14,7 @@ int Font::Glyph::Height() const {
     //    auto atlasTexture = As<AtlasTexture>(texture.get());
     //    GUARDR(atlasTexture, texture->size.y);
     //
-    //    return atlasTexture->trueSize.y;
+    //    return atlasTexture->untrimmedSize.y;
 }
 
 bool Font::CanDisplay(String text) {

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "FilePath.h"
+#include "FileTypes.h"
 #include "LoadResourcesPlan.h"
 #include "OrderedMap.h"
 #include "Result.h"
@@ -21,7 +22,7 @@ namespace PJ {
     public:
         virtual ~SomeResourceScanner() {}
 
-        virtual LoadResourcesPlan ScanAt(FilePath path, bool isRecursive) = 0;
+        virtual LoadResourcesPlan ScanAt(FilePath path, FileSearchType searchType) = 0;
     };
 
     class ResourceScanner : public SomeResourceScanner {
@@ -29,6 +30,7 @@ namespace PJ {
         /// Defines how we're scanning/loading resources
         SP<LoadResourcesModel> loadResourcesModel;
 
+        // TODO: why do we need SP here?
         /// File manager (for mock injection in unit tests)
         SP<SomeFileManager> fm;
 
@@ -38,7 +40,7 @@ namespace PJ {
 
         // Important: always use this with threads or you will hang the app for
         // large file lists
-        LoadResourcesPlan ScanAt(FilePath path, bool isRecursive) override;
+        LoadResourcesPlan ScanAt(FilePath path, FileSearchType searchType) override;
 
         virtual std::optional<ResourceInfo> ScanFile(FilePath path);
     };

@@ -1,15 +1,13 @@
-#ifndef PJSPACERVIEW_H
-#define PJSPACERVIEW_H
+#pragma once
 
 #include "View2D.h"
 
-// CODE REVIEW: ?/23
+/*
+ RATING: 5 stars
+ Simple type
+ CODE REVIEW: 10/6/24
+ */
 namespace PJ {
     /// View with no intrinsic size used for spacing views in layouts
-public
-
-    // TODO: add ResolvedView methods
     class SpacerView : public View2D {}
 } // namespace PJ
-
-#endif

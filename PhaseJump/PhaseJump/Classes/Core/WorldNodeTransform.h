@@ -29,7 +29,11 @@ namespace PJ {
             owner(owner),
             value(transform) {}
 
-        operator GeoTransform() const {
+        GeoTransform& Value() {
+            return value;
+        }
+
+        GeoTransform const& Value() const {
             return value;
         }
 
@@ -39,6 +43,26 @@ namespace PJ {
 
         void SetLocalPosition(Vector3 position) {
             value.SetPosition(position);
+        }
+
+        float PositionAxisValue(Axis axis) const {
+            return value.PositionAxisValue(axis);
+        }
+
+        void SetAxisPosition(Axis axis, Vector3 value) {
+            this->value.SetAxisPosition(axis, value.AxisValue(axis));
+        }
+
+        void SetAxisPosition(Axis axis, float value) {
+            this->value.SetAxisPosition(axis, value);
+        }
+
+        void SetAxisScale(Axis axis, Vector3 value) {
+            this->value.SetAxisScale(axis, value.AxisValue(axis));
+        }
+
+        void SetAxisScale(Axis axis, float value) {
+            this->value.SetAxisScale(axis, value);
         }
 
         // MARK: Scale
@@ -104,5 +128,13 @@ namespace PJ {
 
         /// Set only x,y world positon. Leave z intact
         void SetWorldPositionXY(Vector3 position);
+
+        Angle Rotation2D() const {
+            return value.Rotation2D();
+        }
+
+        void SetRotation2D(Angle angle) {
+            value.SetRotation2D(angle);
+        }
     };
 } // namespace PJ

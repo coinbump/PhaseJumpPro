@@ -2,6 +2,7 @@
 
 #include "Binding.h"
 #include "Tags.h"
+#include "TreeNode.h"
 #include "VectorList.h"
 
 /*
@@ -15,36 +16,48 @@ namespace PJ {
     /// Class ids for UI models in a UI plan
     namespace UIModelId {
         auto constexpr InputFloat = "input.float";
-        auto constexpr InputColor = "input.color";
         auto constexpr InputBool = "input.bool";
         auto constexpr InputInt = "input.int";
         auto constexpr InputText = "input.text";
         auto constexpr PickerList = "picker.list";
+        auto constexpr PickerColor = "picker.color";
     } // namespace UIModelId
 
     /// An item in a UI plan, used to build UIs
-    class SomeUIModel {
+    class SomeUIModel : public Treeable<SomeUIModel> {
     public:
         using This = SomeUIModel;
+        using TreeNode = TreeNode<This, UP<This>>;
+
+        /// Child models for hierarchical UI
+        TreeNode tree;
 
         /// Class id for the type of UI item this represents
         /// Example: "button", "slider", etc.
         String classId;
 
-        /// Label to show to the user
-        String label;
+        /// Name to show to the user (if UI component has a name label)
+        String name;
 
         /// Custom properties
         Tags tags;
 
-        /// Child models for hierarchical UI
-        VectorList<UP<SomeUIModel>> children;
-
         SomeUIModel(String classId, String label) :
+            tree(*this),
             classId(classId),
-            label(label) {}
+            name(label) {}
 
         virtual ~SomeUIModel() {}
+
+        // MARK: Treeable
+
+        This* Parent() const override {
+            return tree.Parent();
+        }
+
+        void SetParent(This* value) override {
+            tree.SetParent(value);
+        }
     };
 
     /**

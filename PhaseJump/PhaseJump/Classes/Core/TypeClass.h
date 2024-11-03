@@ -7,37 +7,36 @@
 /*
  RATING: 5 stars
  Simple type
- CODE REVIEW: 7/12/24
+ CODE REVIEW: 10/21/24
  */
 namespace PJ {
     /// Provides a default factory object to create objects of the related type
-    template <class Type, class Core = StandardClassCore>
+    template <class Type, class Core = StandardClassCore, typename... Arguments>
     class TypeClass : public Class<Core, typename Type::RootBaseType>,
-                      public SomeSomeFactoryProvider<typename Type::RootBaseType> {
+                      public SomeFactory<typename Type::RootBaseType> {
     public:
         /// Type must define a root base type
         using BaseType = Type::RootBaseType;
         using Base = Class<Core, BaseType>;
-        using NewType = SP<Type>;
-        using Factory = Factory<Type>;
-        using FactoryFunc = std::function<SP<Type>()>;
+        using FactoryFunc = std::function<SP<Type>(Arguments... args)>;
 
         /// Factory to produce an object of this class type
-        UP<Factory> factory;
+        FactoryFunc factoryFunc;
 
-        TypeClass(String id, FactoryFunc allocator) :
+        TypeClass(String id, FactoryFunc factoryFunc) :
             Base(id),
-            factory(std::make_unique<Factory>(allocator)) {}
+            factoryFunc(factoryFunc) {}
 
-        SP<Type> Make() {
-            GUARDR(factory, nullptr)
-            return factory->New();
+        SP<Type> Make(Arguments... args) {
+            GUARDR(factoryFunc, nullptr)
+            return factoryFunc(args...);
         }
 
         // MARK: SomeSomeFactoryProvider
 
-        void Provide(SomeFactory<BaseType>*& result) override {
-            result = factory.get();
+        SP<BaseType> NewBase(Arguments... args) override {
+            GUARDR(factoryFunc, {})
+            return factoryFunc(args...);
         }
     };
 } // namespace PJ

@@ -11,62 +11,97 @@ using namespace TimeTrackTests;
 
 TEST(TimeTrack, AddReplace)
 {
-    TimeTrack<float, EaseKeyframe<float>> sut(10);
+    TimeTrack<float> sut({.duration = 10});
+
     auto i1 = sut.AddAt(1);
-    EXPECT_EQ(i1, sut.Keyframes().begin());
+    EXPECT_EQ(i1, (sut.Keyframes().begin())->get());
     EXPECT_EQ(1, sut.Keyframes().size());
 
     auto i2 = sut.AddAt(1);
-    EXPECT_EQ(i2, sut.Keyframes().begin());
+    EXPECT_EQ(i2, (sut.Keyframes().begin())->get());
     EXPECT_EQ(1, sut.Keyframes().size());
     EXPECT_EQ(i2->time, 1);
 }
 
+TEST(TimeTrack, AddModelWithTime)
+{
+    TimeTrack<float> sut({.duration = 10});
+
+    auto i1 = sut.AddAt(1);
+    EXPECT_EQ(i1, (sut.Keyframes().begin())->get());
+    EXPECT_EQ(1, sut.Keyframes().size());
+
+    KeyframeModel<float> model{.value = 10, .time = 3};
+    auto i2 = sut.Add(model);
+    EXPECT_EQ(i2, (sut.Keyframes()[sut.Keyframes().size() - 1]).get());
+    EXPECT_EQ(2, sut.Keyframes().size());
+    EXPECT_EQ(i2->time, 3);
+}
+
+TEST(TimeTrack, AddModelWithDeltaTime)
+{
+    TimeTrack<float> sut({.duration = 10});
+
+    auto i1 = sut.AddAt(1);
+    EXPECT_EQ(i1, (sut.Keyframes().begin())->get());
+    EXPECT_EQ(1, sut.Keyframes().size());
+
+    KeyframeModel<float> model{.value = 10, .deltaTime = 3};
+    auto i2 = sut.Add(model);
+    EXPECT_EQ(i2, (sut.Keyframes()[sut.Keyframes().size() - 1]).get());
+    EXPECT_EQ(2, sut.Keyframes().size());
+    EXPECT_EQ(i2->time, 4);
+}
+
 TEST(TimeTrack, AddBefore)
 {
-    TimeTrack<float, EaseKeyframe<float>> sut(10);
+    TimeTrack<float> sut({.duration = 10});
+
     auto i1 = sut.AddAt(1);
-    EXPECT_EQ(i1, sut.Keyframes().begin());
+    EXPECT_EQ(i1, (sut.Keyframes().begin())->get());
     EXPECT_EQ(1, sut.Keyframes().size());
 
     auto i2 = sut.AddAt(0.1f);
-    EXPECT_EQ(i2, sut.Keyframes().begin());
+    EXPECT_EQ(i2, (sut.Keyframes().begin())->get());
     EXPECT_EQ(2, sut.Keyframes().size());
     EXPECT_EQ(i2->time, 0.1f);
 }
 
 TEST(TimeTrack, AddAfter)
 {
-    TimeTrack<float, EaseKeyframe<float>> sut(10);
+    TimeTrack<float> sut({.duration = 10});
+
     auto i1 = sut.AddAt(0);
-    EXPECT_EQ(i1, sut.Keyframes().begin());
+    EXPECT_EQ(i1, (sut.Keyframes().begin())->get());
     EXPECT_EQ(1, sut.Keyframes().size());
 
     auto i2 = sut.AddAt(0.3f);
-    EXPECT_EQ(i2, sut.Keyframes().begin() + 1);
+    EXPECT_EQ(i2, (sut.Keyframes().begin() + 1)->get());
     EXPECT_EQ(2, sut.Keyframes().size());
     EXPECT_EQ(i2->time, 0.3f);
 }
 
 TEST(TimeTrack, AddBetween)
 {
-    TimeTrack<float, EaseKeyframe<float>> sut(10);
+    TimeTrack<float> sut({.duration = 10});
+
     auto i1 = sut.AddAt(0);
-    EXPECT_EQ(i1, sut.Keyframes().begin());
+    EXPECT_EQ(i1, (sut.Keyframes().begin())->get());
     EXPECT_EQ(1, sut.Keyframes().size());
 
     auto i2 = sut.AddAt(1);
     EXPECT_EQ(2, sut.Keyframes().size());
-    EXPECT_EQ(i2, sut.Keyframes().begin() + 1);
+    EXPECT_EQ(i2, (sut.Keyframes().begin() + 1)->get());
 
     auto i3 = sut.AddAt(0.5f);
     EXPECT_EQ(3, sut.Keyframes().size());
-    EXPECT_EQ(i3, sut.Keyframes().begin() + 1);
+    EXPECT_EQ(i3, (sut.Keyframes().begin() + 1)->get());
 }
 
 TEST(TimeTrack, RemoveFirst)
 {
-    TimeTrack<float, EaseKeyframe<float>> sut(10);
+    TimeTrack<float> sut({.duration = 10});
+
     sut.AddAt(0);
     sut.AddAt(1);
     sut.AddAt(0.5f);
@@ -74,13 +109,14 @@ TEST(TimeTrack, RemoveFirst)
 
     sut.RemoveAt(0);
     ASSERT_EQ(2, sut.Keyframes().size());
-    EXPECT_EQ(0.5f, sut.Keyframes()[0].time);
-    EXPECT_EQ(1, sut.Keyframes()[1].time);
+    EXPECT_EQ(0.5f, sut.Keyframes()[0]->time);
+    EXPECT_EQ(1, sut.Keyframes()[1]->time);
 }
 
 TEST(TimeTrack, RemoveMiddle)
 {
-    TimeTrack<float, EaseKeyframe<float>> sut(10);
+    TimeTrack<float> sut({.duration = 10});
+
     sut.AddAt(0);
     sut.AddAt(1);
     sut.AddAt(0.5f);
@@ -88,13 +124,14 @@ TEST(TimeTrack, RemoveMiddle)
 
     sut.RemoveAt(0.5f);
     ASSERT_EQ(2, sut.Keyframes().size());
-    EXPECT_EQ(0, sut.Keyframes()[0].time);
-    EXPECT_EQ(1, sut.Keyframes()[1].time);
+    EXPECT_EQ(0, sut.Keyframes()[0]->time);
+    EXPECT_EQ(1, sut.Keyframes()[1]->time);
 }
 
 TEST(TimeTrack, RemoveFinal)
 {
-    TimeTrack<float, EaseKeyframe<float>> sut(10);
+    TimeTrack<float> sut({.duration = 10});
+
     sut.AddAt(0);
     sut.AddAt(1);
     sut.AddAt(0.5f);
@@ -102,13 +139,14 @@ TEST(TimeTrack, RemoveFinal)
 
     sut.RemoveAt(1);
     ASSERT_EQ(2, sut.Keyframes().size());
-    EXPECT_EQ(0, sut.Keyframes()[0].time);
-    EXPECT_EQ(0.5f, sut.Keyframes()[1].time);
+    EXPECT_EQ(0, sut.Keyframes()[0]->time);
+    EXPECT_EQ(0.5f, sut.Keyframes()[1]->time);
 }
 
 TEST(TimeTrack, KeyframeAt)
 {
-    TimeTrack<float, EaseKeyframe<float>> sut(10);
+    TimeTrack<float> sut({.duration = 10});
+
     sut.AddAt(0);
     sut.AddAt(1);
     sut.AddAt(0.5f);
@@ -120,7 +158,8 @@ TEST(TimeTrack, KeyframeAt)
 
 TEST(TimeTrack, KeyframeAtOrAfter)
 {
-    TimeTrack<float, EaseKeyframe<float>> sut(10);
+    TimeTrack<float> sut({.duration = 10});
+
     sut.AddAt(0);
     sut.AddAt(1);
     sut.AddAt(0.5f);
@@ -133,7 +172,12 @@ TEST(TimeTrack, KeyframeAtOrAfter)
 
 TEST(TimeTrack, KeyframeBefore)
 {
-    TimeTrack<float, EaseKeyframe<float>> sut(10);
+    TimeTrack<float> sut({.duration = 10});
+    sut.makeKeyframeFunc = [](auto& track) {
+        UP<ValueKeyframe<float>> result = NEW<Keyframe<float>>();
+        return result;
+    };
+
     sut.AddAt(0.2f);
     sut.AddAt(1);
     sut.AddAt(0.5f);
@@ -146,7 +190,12 @@ TEST(TimeTrack, KeyframeBefore)
 
 TEST(TimeTrack, OnUpdateNoEase)
 {
-    TimeTrack<float, EaseKeyframe<float>> sut(10);
+    TimeTrack<float> sut({.duration = 10});
+    sut.makeKeyframeFunc = [](auto& track) {
+        UP<ValueKeyframe<float>> result = NEW<Keyframe<float>>();
+        return result;
+    };
+
     sut.AddAt(0)->value = 10;
     sut.AddAt(10)->value = 20;
 
@@ -162,11 +211,16 @@ TEST(TimeTrack, OnUpdateNoEase)
 
 TEST(TimeTrack, OnUpdateInEase)
 {
-    TimeTrack<float, EaseKeyframe<float>> sut(10);
+    TimeTrack<float> sut({.duration = 10});
+    sut.makeKeyframeFunc = [](auto& track) {
+        UP<ValueKeyframe<float>> result = NEW<Keyframe<float>>();
+        return result;
+    };
+
     sut.AddAt(0)->value = 10;
-    auto i2 = sut.AddAt(10);
+    auto i2 = static_cast<Keyframe<float>*>(sut.AddAt(10));
     i2->value = 20;
-    i2->core.inEaseFunc = [](auto value) { return value * value; };
+    i2->inEaseFunc = [](auto value) { return value * value; };
 
     float testValue{};
     sut.setBindingFunc = [&](float value) { testValue = value; };
@@ -180,10 +234,15 @@ TEST(TimeTrack, OnUpdateInEase)
 
 TEST(TimeTrack, OnUpdateOutEase)
 {
-    TimeTrack<float, EaseKeyframe<float>> sut(10);
-    auto i1 = sut.AddAt(0);
+    TimeTrack<float> sut({.duration = 10});
+    sut.makeKeyframeFunc = [](auto& track) {
+        UP<ValueKeyframe<float>> result = NEW<Keyframe<float>>();
+        return result;
+    };
+
+    auto i1 = static_cast<Keyframe<float>*>(sut.AddAt(0));
     i1->value = 10;
-    i1->core.outEaseFunc = [](auto value) { return value * value; };
+    i1->outEaseFunc = [](auto value) { return value * value; };
     auto i2 = sut.AddAt(10);
     i2->value = 20;
 
@@ -199,7 +258,7 @@ TEST(TimeTrack, OnUpdateOutEase)
 
 TEST(TimeTrack, OnUpdateDiscrete)
 {
-    TimeTrack<float, Keyframe<float>> sut(10, AnimationCycleType::Once, TimeTrackValueType::Discrete);
+    TimeTrack<float> sut({ .duration = 10, .cycleType = AnimationCycleType::Once, .keyedTimeType = KeyedTimeType::Discrete});
     sut.AddAt(2)->value = 10;
     sut.AddAt(10)->value = 20;
 
@@ -217,4 +276,62 @@ TEST(TimeTrack, OnUpdateDiscrete)
 
     sut.OnUpdate({1});
     EXPECT_EQ(20, testValue);
+}
+
+TEST(TimeTrack, ValueAt)
+{
+    TimeTrack<float> sut({ .duration = 10, .cycleType = AnimationCycleType::Once, .keyedTimeType = KeyedTimeType::Discrete});
+    sut.AddAt(2)->value = 10;
+    sut.AddAt(10)->value = 20;
+
+    EXPECT_EQ(10, sut.ValueAt(2));
+    EXPECT_EQ(20, sut.ValueAt(10));
+}
+
+TEST(TimeTrack, PingPong)
+{
+    TimeTrack<float> sut({ .duration = 3, .cycleType = AnimationCycleType::PingPong });
+    sut.makeKeyframeFunc = [](auto& track) {
+        UP<ValueKeyframe<float>> result = NEW<Keyframe<float>>();
+        return result;
+    };
+
+    sut.AddAt(0)->value = 2;
+    sut.AddAt(1)->value = 3;
+    sut.AddAt(2)->value = 2;
+    sut.AddAt(3)->value = 1;
+
+    float testValue{};
+    sut.setBindingFunc = [&](float value) { testValue = value; };
+
+    sut.OnUpdate({1});
+    EXPECT_EQ(3, testValue);
+
+    sut.OnUpdate({1});
+    EXPECT_EQ(2, testValue);
+
+    sut.OnUpdate({1});
+    EXPECT_EQ(1, testValue);
+
+    EXPECT_TRUE(sut.IsReversed());
+
+    sut.OnUpdate({0.5f});
+    EXPECT_EQ(1.5f, testValue);
+
+    sut.OnUpdate({0.5f});
+    EXPECT_EQ(2, testValue);
+
+    sut.OnUpdate({0.5f});
+    EXPECT_EQ(2.5f, testValue);
+
+    sut.OnUpdate({0.5f});
+    EXPECT_EQ(3.0f, testValue);
+
+    sut.OnUpdate({0.5f});
+    EXPECT_EQ(2.5f, testValue);
+
+    sut.OnUpdate({0.5f});
+    EXPECT_EQ(2, testValue);
+
+    EXPECT_FALSE(sut.IsReversed());
 }

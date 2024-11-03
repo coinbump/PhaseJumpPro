@@ -5,22 +5,22 @@ using namespace std;
 using namespace PJ;
 
 ButtonControl::ButtonControl() {
-    signalHandlers[SignalId::PointerDown] = [](auto& component, auto& signal) {
+    signalFuncs[SignalId::PointerDown] = [](auto& component, auto& signal) {
         auto event = static_cast<PointerDownUIEvent const*>(&signal);
         static_cast<This*>(&component)->OnPointerDown(*event);
     };
 
-    signalHandlers[SignalId::PointerEnter] = [](auto& component, auto& signal) {
+    signalFuncs[SignalId::PointerEnter] = [](auto& component, auto& signal) {
         auto event = static_cast<PointerEnterUIEvent const*>(&signal);
         static_cast<This*>(&component)->OnPointerEnter(*event);
     };
 
-    signalHandlers[SignalId::PointerExit] = [](auto& component, auto& signal) {
+    signalFuncs[SignalId::PointerExit] = [](auto& component, auto& signal) {
         auto event = static_cast<PointerExitUIEvent const*>(&signal);
         static_cast<This*>(&component)->OnPointerExit(*event);
     };
 
-    signalHandlers["pointer.up"] = [](auto& component, auto& signal) {
+    signalFuncs[SignalId::PointerUp] = [](auto& component, auto& signal) {
         auto event = static_cast<PointerUpUIEvent const*>(&signal);
         static_cast<This*>(&component)->OnPointerUp(*event);
     };

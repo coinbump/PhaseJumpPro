@@ -15,7 +15,7 @@ namespace ClassRegistryTests {
     public:
         int value = 1;
 
-        TestClass() : TypeClass<TestType>("id", [] () -> SP<TestType> { return MAKE<TestType>(); }) {
+        TestClass() : TypeClass<TestType>("test", [] () -> SP<TestType> { return MAKE<TestType>(); }) {
         }
     };
 }
@@ -23,10 +23,10 @@ namespace ClassRegistryTests {
 using namespace ClassRegistryTests;
 
 TEST(ClassRegistry, NewType) {
-    SP<TestClass> testClass = MAKE<TestClass>();
+    UP<SomeClass<Base>> testClass = NEW<TestClass>();
 
     ClassRegistry sut;
-    sut.map["test"] = testClass;
+    sut.Add(testClass);
 
     SP<TestType> object = sut.NewType<TestType>("test");
 
@@ -34,10 +34,10 @@ TEST(ClassRegistry, NewType) {
 }
 
 TEST(ClassRegistry, NewBase) {
-    SP<TestClass> testClass = MAKE<TestClass>();
+    UP<SomeClass<Base>> testClass = NEW<TestClass>();
 
     ClassRegistry sut;
-    sut.map["test"] = testClass;
+    sut.Add(testClass);
 
     auto object = sut.NewBase("test");
 

@@ -12,7 +12,7 @@ void MatrixPieceHandler::SetAnimator(SP<Updatable> value) {
     GUARD(owner)
 
     if (animator) {
-        owner->updatables.Remove(animator);
+        owner->updatables.Remove(*animator);
     }
     animator = value;
     owner->updatables.Add(animator);

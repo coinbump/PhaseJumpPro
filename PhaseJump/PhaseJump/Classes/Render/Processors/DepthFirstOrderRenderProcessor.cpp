@@ -8,7 +8,7 @@ using namespace PJ;
 using OrderMap = UnorderedMap<String, uint32_t>;
 
 void Paint(OrderMap& orderMap, WorldNode& node, uint32_t& order) {
-    auto nodeId = MakeString(node.IntId());
+    auto nodeId = MakeString((uint64_t)&node);
     orderMap.insert_or_assign(nodeId, order);
     order++;
 

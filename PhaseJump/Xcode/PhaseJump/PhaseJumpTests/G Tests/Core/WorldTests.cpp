@@ -11,7 +11,7 @@ using namespace PJ;
 using namespace PJTest;
 
 TEST(World, TestNodePositionsAtRoot) {
-    SP<World> world = MAKE<World>();
+    UP<World> world = NEW<World>();
 
     auto node = MAKE<WorldNode>();
     world->Add(node);
@@ -26,7 +26,7 @@ TEST(World, TestNodePositionsAtRoot) {
 }
 
 TEST(World, TestNodePositionsAsChild) {
-    SP<World> world = MAKE<World>();
+    UP<World> world = NEW<World>();
 
     auto node = MAKE<WorldNode>();
     auto parentNode = MAKE<WorldNode>();

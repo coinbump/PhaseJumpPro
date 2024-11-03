@@ -87,6 +87,69 @@
     <Filter Include="Phase Jump\Model\Time">
       <UniqueIdentifier>{f733af3d-de3e-4748-91c4-29f9aaa13849}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Phase Jump\Geometry\Paths">
+      <UniqueIdentifier>{028519f3-a61f-41ec-84eb-6b7dbc8885a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Phase Jump\Emitters">
+      <UniqueIdentifier>{f0ea247a-6d26-4a93-bdef-45d9b8124803}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Phase Jump\UI">
+      <UniqueIdentifier>{a51ba266-a49a-462c-995e-91297e2b0dfc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Phase Jump\UI\Controls">
+      <UniqueIdentifier>{47dc09dc-3e31-449e-8dfa-80904bb39bc9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Phase Jump\UI\Drag">
+      <UniqueIdentifier>{8537a8cc-d8d6-4067-9c5e-ef2389612ada}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Phase Jump\UI\Events">
+      <UniqueIdentifier>{b1a090f1-2b0e-4d7c-a13d-c0d90522b5a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Phase Jump\UI\Layout Views">
+      <UniqueIdentifier>{0eb1047d-ec4b-4033-bce7-2232e17c7b1c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Phase Jump\UI\System">
+      <UniqueIdentifier>{56011e82-99b1-4641-b084-dac36846073c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Phase Jump\UI\Views">
+      <UniqueIdentifier>{20cbafbd-bce8-4eeb-82d9-2f4c011c7dd7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Phase Jump\Storage\Local">
+      <UniqueIdentifier>{b3bc0d5a-f6c6-4607-a1d8-3bc404cef63f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Phase Jump\Sims">
+      <UniqueIdentifier>{bac24137-96af-40a6-8495-c0968980f29f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Phase Jump\Resources">
+      <UniqueIdentifier>{b9f5f542-2d09-47fb-bb0c-a578bc162e76}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Phase Jump\Resources\Third Party Support">
+      <UniqueIdentifier>{231e1f83-4667-4bcb-83bc-d2c72739565a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Phase Jump\Render">
+      <UniqueIdentifier>{00ad9154-8a76-4ac6-90b7-d84e918c1af5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Phase Jump\Processors">
+      <UniqueIdentifier>{38636d07-d4e1-4703-bc9c-6ad3b7ef1684}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Phase Jump\Render\Processors">
+      <UniqueIdentifier>{81f2ca2a-08c1-47a6-8076-de136ae184e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Phase Jump\Render\OpenGL">
+      <UniqueIdentifier>{bbb67936-f99d-40f7-9034-f2ef6b58fc77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Phase Jump\Model\Reactive">
+      <UniqueIdentifier>{d775947b-4ae7-42ad-ad6c-c34ba05036d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Phase Jump\Mesh">
+      <UniqueIdentifier>{fe513bee-bab6-41ce-8282-1b66558bd620}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Phase Jump\Math">
+      <UniqueIdentifier>{d8d7f542-ef00-497d-a903-1c88a62d7e32}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Phase Jump\Input">
+      <UniqueIdentifier>{124ed074-23f0-452d-bb38-e93be934466c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Visual Studio.cpp">
@@ -271,6 +334,309 @@
     </ClCompile>
     <ClCompile Include="..\..\PhaseJump\Classes\Model\Time\SomePlayStateController.cpp">
       <Filter>Phase Jump\Model\Time</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Geometry\Angle.cpp">
+      <Filter>Phase Jump\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Geometry\Bounds.cpp">
+      <Filter>Phase Jump\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Geometry\GeoTransform.cpp">
+      <Filter>Phase Jump\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Geometry\Polygon.cpp">
+      <Filter>Phase Jump\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Geometry\Rect.cpp">
+      <Filter>Phase Jump\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Geometry\Vector2.cpp">
+      <Filter>Phase Jump\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Geometry\Vector3.cpp">
+      <Filter>Phase Jump\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Geometry\Vector4.cpp">
+      <Filter>Phase Jump\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Geometry\ZQuad.cpp">
+      <Filter>Phase Jump\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Emitters\CirclePositioner2D.cpp">
+      <Filter>Phase Jump\Emitters</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Emitters\Emitter.cpp">
+      <Filter>Phase Jump\Emitters</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Emitters\RectPositioner2D.cpp">
+      <Filter>Phase Jump\Emitters</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Emitters\StandardEmitsBuilder.cpp">
+      <Filter>Phase Jump\Emitters</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\UI\FocusHandler.cpp">
+      <Filter>Phase Jump\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\UI\Menu.cpp">
+      <Filter>Phase Jump\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\UI\SelectHandler.cpp">
+      <Filter>Phase Jump\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\UI\SomeHoverGestureHandler.cpp">
+      <Filter>Phase Jump\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\UI\Theme.cpp">
+      <Filter>Phase Jump\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\UI\UIPlan.cpp">
+      <Filter>Phase Jump\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\UI\UIPlanner.cpp">
+      <Filter>Phase Jump\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\UI\Controls\ButtonControl.cpp">
+      <Filter>Phase Jump\UI\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\UI\Controls\ScrollBarControl.cpp">
+      <Filter>Phase Jump\UI\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\UI\Controls\SliderControl.cpp">
+      <Filter>Phase Jump\UI\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\UI\Controls\ToggleButtonControl.cpp">
+      <Filter>Phase Jump\UI\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\UI\Controls\UIControl2D.cpp">
+      <Filter>Phase Jump\UI\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\UI\Drag\DragHandler2D.cpp">
+      <Filter>Phase Jump\UI\Drag</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\UI\Drag\DragModel.cpp">
+      <Filter>Phase Jump\UI\Drag</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\UI\Drag\SomeDragGestureHandler2D.cpp">
+      <Filter>Phase Jump\UI\Drag</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\UI\Drag\SomeDragHandler.cpp">
+      <Filter>Phase Jump\UI\Drag</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\UI\Drag\SomeDropTarget.cpp">
+      <Filter>Phase Jump\UI\Drag</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\UI\Events\Input.cpp">
+      <Filter>Phase Jump\UI\Events</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\UI\Events\SomeControllerUIEvent.cpp">
+      <Filter>Phase Jump\UI\Events</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\UI\Events\SomeUIEvent.cpp">
+      <Filter>Phase Jump\UI\Events</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\UI\Layout Views\HStack.cpp">
+      <Filter>Phase Jump\UI\Layout Views</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\UI\Layout Views\PadView.cpp">
+      <Filter>Phase Jump\UI\Layout Views</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\UI\Layout Views\VStack.cpp">
+      <Filter>Phase Jump\UI\Layout Views</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\UI\Layout Views\ZStack.cpp">
+      <Filter>Phase Jump\UI\Layout Views</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\UI\Views\MatrixBoardView.cpp">
+      <Filter>Phase Jump\UI\Views</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\UI\Views\MatrixPieceHandler.cpp">
+      <Filter>Phase Jump\UI\Views</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\UI\Views\View2D.cpp">
+      <Filter>Phase Jump\UI\Views</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\UI\Views\View2D+Bounds.cpp">
+      <Filter>Phase Jump\UI\Views</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\UI\System\UISystem+Drag.cpp">
+      <Filter>Phase Jump\UI\System</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\UI\System\UISystem+Select.cpp">
+      <Filter>Phase Jump\UI\System</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\UI\System\UIWorldSystem.cpp">
+      <Filter>Phase Jump\UI\System</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Sims\AgentGroup.cpp">
+      <Filter>Phase Jump\Sims</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Resources\LoadResourceInfo.cpp">
+      <Filter>Phase Jump\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Resources\LoadResourcesModel.cpp">
+      <Filter>Phase Jump\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Resources\LoadResourcesPlan.cpp">
+      <Filter>Phase Jump\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Resources\LoadRezOperation.cpp">
+      <Filter>Phase Jump\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Resources\ResourceRepository.cpp">
+      <Filter>Phase Jump\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Resources\ResourceScanner.cpp">
+      <Filter>Phase Jump\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Resources\ResourceTypeEnum.cpp">
+      <Filter>Phase Jump\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Resources\SomeLoadResourcesOperation.cpp">
+      <Filter>Phase Jump\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Resources\StandardLoadResourcesModel.cpp">
+      <Filter>Phase Jump\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Resources\Third Party Support\LoadBitmapFontOperation.cpp">
+      <Filter>Phase Jump\Resources\Third Party Support</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Resources\Third Party Support\LoadRTexPackerAtlasOperation.cpp">
+      <Filter>Phase Jump\Resources\Third Party Support</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Resources\Third Party Support\LoadTexturePackerAtlasOperation.cpp">
+      <Filter>Phase Jump\Resources\Third Party Support</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Render\RendererModel.cpp">
+      <Filter>Phase Jump\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Render\RenderMaterial.cpp">
+      <Filter>Phase Jump\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Render\RenderModel.cpp">
+      <Filter>Phase Jump\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Render\RenderModelBuilder.cpp">
+      <Filter>Phase Jump\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Render\RenderProcessingModel.cpp">
+      <Filter>Phase Jump\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Render\RenderProcessor.cpp">
+      <Filter>Phase Jump\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Render\RenderTypes.cpp">
+      <Filter>Phase Jump\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Render\RenderWorldSystem.cpp">
+      <Filter>Phase Jump\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Render\SomeRenderCommandModel.cpp">
+      <Filter>Phase Jump\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Render\SomeRenderContext.cpp">
+      <Filter>Phase Jump\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Render\SomeRenderEngine.cpp">
+      <Filter>Phase Jump\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Render\SomeRenderer.cpp">
+      <Filter>Phase Jump\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Render\SomeShaderProgram.cpp">
+      <Filter>Phase Jump\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Render\OpenGL\GLBlendMode.cpp">
+      <Filter>Phase Jump\Render\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Render\OpenGL\GLRenderEngine.cpp">
+      <Filter>Phase Jump\Render\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Render\OpenGL\GLShaderLoader.cpp">
+      <Filter>Phase Jump\Render\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Render\OpenGL\GLShaderProgram.cpp">
+      <Filter>Phase Jump\Render\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Render\OpenGL\GLShaderProgramLoader.cpp">
+      <Filter>Phase Jump\Render\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Render\OpenGL\GLTexture.cpp">
+      <Filter>Phase Jump\Render\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Render\OpenGL\GLTextureBuffer.cpp">
+      <Filter>Phase Jump\Render\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Render\OpenGL\SomeGLRenderCommand.cpp">
+      <Filter>Phase Jump\Render\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Render\OpenGL\SomeGLRenderEngine.cpp">
+      <Filter>Phase Jump\Render\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Render\OpenGL\SomeGLShader.cpp">
+      <Filter>Phase Jump\Render\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Render\Processors\BatchByMaterialRenderProcessor.cpp">
+      <Filter>Phase Jump\Render\Processors</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Render\Processors\CameraCullRenderProcessor.cpp">
+      <Filter>Phase Jump\Render\Processors</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Render\Processors\DepthFirstOrderRenderProcessor.cpp">
+      <Filter>Phase Jump\Render\Processors</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Render\Processors\OrderRenderProcessor.cpp">
+      <Filter>Phase Jump\Render\Processors</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Render\Processors\OverrideFeaturesRenderProcessor.cpp">
+      <Filter>Phase Jump\Render\Processors</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Render\Processors\ShowBoundsRenderProcessor.cpp">
+      <Filter>Phase Jump\Render\Processors</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Render\Processors\ShowCollidersRenderProcessor.cpp">
+      <Filter>Phase Jump\Render\Processors</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Render\Processors\ShowMeshRenderProcessor.cpp">
+      <Filter>Phase Jump\Render\Processors</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Mesh\ArcMeshBuilder.cpp">
+      <Filter>Phase Jump\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Mesh\CenterPolyBuilder.cpp">
+      <Filter>Phase Jump\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Mesh\CenterPolyFrameMeshBuilder.cpp">
+      <Filter>Phase Jump\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Mesh\GridMeshBuilder.cpp">
+      <Filter>Phase Jump\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Mesh\Mesh.cpp">
+      <Filter>Phase Jump\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Mesh\PolyFrameMeshBuilder.cpp">
+      <Filter>Phase Jump\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Mesh\QuadFrameMeshBuilder.cpp">
+      <Filter>Phase Jump\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Mesh\QuadMeshBuilder.cpp">
+      <Filter>Phase Jump\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Mesh\SomeMeshBuilder.cpp">
+      <Filter>Phase Jump\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Mesh\TiledMeshBuilder.cpp">
+      <Filter>Phase Jump\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Math\Matrix4x4.cpp">
+      <Filter>Phase Jump\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Input\SomeMouseDevice.cpp">
+      <Filter>Phase Jump\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PhaseJump\Classes\Input\SomePointerDevice.cpp">
+      <Filter>Phase Jump\Input</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -826,6 +1192,444 @@
     </ClInclude>
     <ClInclude Include="..\..\PhaseJump\Classes\Model\Time\TimeSlice.h">
       <Filter>Phase Jump\Model\Time</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Geometry\Angle.h">
+      <Filter>Phase Jump\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Geometry\Axis.h">
+      <Filter>Phase Jump\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Geometry\Bounds.h">
+      <Filter>Phase Jump\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Geometry\GeoTransform.h">
+      <Filter>Phase Jump\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Geometry\Macros_Vectors.h">
+      <Filter>Phase Jump\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Geometry\Polygon.h">
+      <Filter>Phase Jump\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Geometry\Rect.h">
+      <Filter>Phase Jump\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Geometry\SomePosition.h">
+      <Filter>Phase Jump\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Geometry\Vector2.h">
+      <Filter>Phase Jump\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Geometry\Vector3.h">
+      <Filter>Phase Jump\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Geometry\Vector4.h">
+      <Filter>Phase Jump\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Geometry\VertexList.h">
+      <Filter>Phase Jump\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Geometry\WorldSizeable.h">
+      <Filter>Phase Jump\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Geometry\ZQuad.h">
+      <Filter>Phase Jump\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Geometry\Paths\BezierPath.h">
+      <Filter>Phase Jump\Geometry\Paths</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Geometry\Paths\CirclePath.h">
+      <Filter>Phase Jump\Geometry\Paths</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Geometry\Paths\LinePath.h">
+      <Filter>Phase Jump\Geometry\Paths</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Geometry\Paths\SomePath.h">
+      <Filter>Phase Jump\Geometry\Paths</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Emitters\CirclePositioner2D.h">
+      <Filter>Phase Jump\Emitters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Emitters\EmitModel.h">
+      <Filter>Phase Jump\Emitters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Emitters\Emitter.h">
+      <Filter>Phase Jump\Emitters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Emitters\EmitterTypes.h">
+      <Filter>Phase Jump\Emitters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Emitters\RectPositioner2D.h">
+      <Filter>Phase Jump\Emitters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Emitters\SomeProducer.h">
+      <Filter>Phase Jump\Emitters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Emitters\StandardEmitModel.h">
+      <Filter>Phase Jump\Emitters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Emitters\StandardEmitsBuilder.h">
+      <Filter>Phase Jump\Emitters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\UI\FocusHandler.h">
+      <Filter>Phase Jump\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\UI\Menu.h">
+      <Filter>Phase Jump\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\UI\SelectHandler.h">
+      <Filter>Phase Jump\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\UI\SomeHoverGestureHandler.h">
+      <Filter>Phase Jump\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\UI\SomePlatformWindow.h">
+      <Filter>Phase Jump\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\UI\Theme.h">
+      <Filter>Phase Jump\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\UI\UILayer.h">
+      <Filter>Phase Jump\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\UI\UIPlan.h">
+      <Filter>Phase Jump\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\UI\UIPlanner.h">
+      <Filter>Phase Jump\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\UI\Controls\ButtonControl.h">
+      <Filter>Phase Jump\UI\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\UI\Controls\ScrollBarControl.h">
+      <Filter>Phase Jump\UI\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\UI\Controls\SliderControl.h">
+      <Filter>Phase Jump\UI\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\UI\Controls\ToggleButtonControl.h">
+      <Filter>Phase Jump\UI\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\UI\Controls\UIControl2D.h">
+      <Filter>Phase Jump\UI\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\UI\Drag\DragHandler2D.h">
+      <Filter>Phase Jump\UI\Drag</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\UI\Drag\DragModel.h">
+      <Filter>Phase Jump\UI\Drag</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\UI\Drag\SomeDragGestureHandler2D.h">
+      <Filter>Phase Jump\UI\Drag</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\UI\Drag\SomeDragHandler.h">
+      <Filter>Phase Jump\UI\Drag</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\UI\Drag\SomeDropTarget.h">
+      <Filter>Phase Jump\UI\Drag</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\UI\Events\DropFilesUIEvent.h">
+      <Filter>Phase Jump\UI\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\UI\Events\Input.h">
+      <Filter>Phase Jump\UI\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\UI\Events\PointerClickUIEvent.h">
+      <Filter>Phase Jump\UI\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\UI\Events\SomeControllerUIEvent.h">
+      <Filter>Phase Jump\UI\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\UI\Events\SomePointerUIEvent.h">
+      <Filter>Phase Jump\UI\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\UI\Events\SomeUIEvent.h">
+      <Filter>Phase Jump\UI\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\UI\Layout Views\GridViewItem.h">
+      <Filter>Phase Jump\UI\Layout Views</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\UI\Layout Views\HStack.h">
+      <Filter>Phase Jump\UI\Layout Views</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\UI\Layout Views\PadView.h">
+      <Filter>Phase Jump\UI\Layout Views</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\UI\Layout Views\VStack.h">
+      <Filter>Phase Jump\UI\Layout Views</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\UI\Layout Views\ZStack.h">
+      <Filter>Phase Jump\UI\Layout Views</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\UI\Views\MatrixBoardView.h">
+      <Filter>Phase Jump\UI\Views</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\UI\Views\MatrixPieceHandler.h">
+      <Filter>Phase Jump\UI\Views</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\UI\Views\SpacerView.h">
+      <Filter>Phase Jump\UI\Views</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\UI\Views\View2D.h">
+      <Filter>Phase Jump\UI\Views</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\UI\System\UIWorldSystem.h">
+      <Filter>Phase Jump\UI\System</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Storage\Local\FilePath.h">
+      <Filter>Phase Jump\Storage\Local</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Sims\Agent.h">
+      <Filter>Phase Jump\Sims</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Sims\AgentGroup.h">
+      <Filter>Phase Jump\Sims</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Sims\AgentSystem.h">
+      <Filter>Phase Jump\Sims</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Resources\LoadResourcesModel.h">
+      <Filter>Phase Jump\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Resources\LoadResourcesPlan.h">
+      <Filter>Phase Jump\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Resources\LoadRezOperation.h">
+      <Filter>Phase Jump\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Resources\ResourceInfo.h">
+      <Filter>Phase Jump\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Resources\ResourceModels.h">
+      <Filter>Phase Jump\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Resources\ResourceRepository.h">
+      <Filter>Phase Jump\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Resources\ResourceScanner.h">
+      <Filter>Phase Jump\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Resources\ResourceTypeEnum.h">
+      <Filter>Phase Jump\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Resources\SomeLoadResourcesOperation.h">
+      <Filter>Phase Jump\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Resources\StandardLoadResourcesModel.h">
+      <Filter>Phase Jump\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Resources\Third Party Support\LoadBitmapFontOperation.h">
+      <Filter>Phase Jump\Resources\Third Party Support</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Resources\Third Party Support\LoadRTexPackerAtlasOperation.h">
+      <Filter>Phase Jump\Resources\Third Party Support</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Resources\Third Party Support\LoadTexturePackerAtlasOperation.h">
+      <Filter>Phase Jump\Resources\Third Party Support</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Resources\Third Party Support\RTexPackerAtlasModel.h">
+      <Filter>Phase Jump\Resources\Third Party Support</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Resources\Third Party Support\RTextPackerAtlasModelBuilder.h">
+      <Filter>Phase Jump\Resources\Third Party Support</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Processors\FileProcessor.Utility.h">
+      <Filter>Phase Jump\Processors</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Processors\FilesProcessor.h">
+      <Filter>Phase Jump\Processors</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Processors\SomeProcessor.h">
+      <Filter>Phase Jump\Processors</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Render\AtlasTexture.h">
+      <Filter>Phase Jump\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Render\RenderContextModel.h">
+      <Filter>Phase Jump\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Render\RendererModel.h">
+      <Filter>Phase Jump\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Render\RenderFeature.h">
+      <Filter>Phase Jump\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Render\RenderMaterial.h">
+      <Filter>Phase Jump\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Render\RenderModel.h">
+      <Filter>Phase Jump\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Render\RenderModelBuilder.h">
+      <Filter>Phase Jump\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Render\RenderProcessingModel.h">
+      <Filter>Phase Jump\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Render\RenderProcessor.h">
+      <Filter>Phase Jump\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Render\RenderTypes.h">
+      <Filter>Phase Jump\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Render\RenderWorldSystem.h">
+      <Filter>Phase Jump\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Render\SomeRenderCommandModel.h">
+      <Filter>Phase Jump\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Render\SomeRenderContext.h">
+      <Filter>Phase Jump\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Render\SomeRenderEngine.h">
+      <Filter>Phase Jump\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Render\SomeRenderer.h">
+      <Filter>Phase Jump\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Render\SomeShaderProgram.h">
+      <Filter>Phase Jump\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Render\SomeTexture.h">
+      <Filter>Phase Jump\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Render\TextureAtlas.h">
+      <Filter>Phase Jump\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Render\UVRect.h">
+      <Filter>Phase Jump\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Render\OpenGL\GLBlendMode.h">
+      <Filter>Phase Jump\Render\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Render\OpenGL\GLHeaders.h">
+      <Filter>Phase Jump\Render\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Render\OpenGL\GLRenderEngine.h">
+      <Filter>Phase Jump\Render\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Render\OpenGL\GLRenderState.h">
+      <Filter>Phase Jump\Render\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Render\OpenGL\GLShaderLoader.h">
+      <Filter>Phase Jump\Render\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Render\OpenGL\GLShaderProgram.h">
+      <Filter>Phase Jump\Render\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Render\OpenGL\GLShaderProgramLoader.h">
+      <Filter>Phase Jump\Render\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Render\OpenGL\GLTexture.h">
+      <Filter>Phase Jump\Render\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Render\OpenGL\GLTextureBuffer.h">
+      <Filter>Phase Jump\Render\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Render\OpenGL\GLVertexBuffer.h">
+      <Filter>Phase Jump\Render\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Render\OpenGL\SomeGLRenderCommand.h">
+      <Filter>Phase Jump\Render\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Render\OpenGL\SomeGLRenderEngine.h">
+      <Filter>Phase Jump\Render\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Render\OpenGL\SomeGLShader.h">
+      <Filter>Phase Jump\Render\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Render\Processors\BatchByMaterialRenderProcessor.h">
+      <Filter>Phase Jump\Render\Processors</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Render\Processors\CameraCullRenderProcessor.h">
+      <Filter>Phase Jump\Render\Processors</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Render\Processors\DepthFirstOrderRenderProcessor.h">
+      <Filter>Phase Jump\Render\Processors</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Render\Processors\OrderRenderProcessor.h">
+      <Filter>Phase Jump\Render\Processors</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Render\Processors\OverrideFeaturesRenderProcessor.h">
+      <Filter>Phase Jump\Render\Processors</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Render\Processors\ShowBoundsRenderProcessor.h">
+      <Filter>Phase Jump\Render\Processors</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Render\Processors\ShowCollidersRenderProcessor.h">
+      <Filter>Phase Jump\Render\Processors</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Render\Processors\ShowMeshRenderProcessor.h">
+      <Filter>Phase Jump\Render\Processors</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\Reactive\PublishedValue.h">
+      <Filter>Phase Jump\Model\Reactive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\Reactive\SomeCancellable.h">
+      <Filter>Phase Jump\Model\Reactive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\Reactive\SomeSimplePublisher.h">
+      <Filter>Phase Jump\Model\Reactive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\Reactive\SomeSimpleSubject.h">
+      <Filter>Phase Jump\Model\Reactive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Model\Reactive\SomeSimpleSubscription.h">
+      <Filter>Phase Jump\Model\Reactive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Mesh\ArcMeshBuilder.h">
+      <Filter>Phase Jump\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Mesh\CenterPolyBuilder.h">
+      <Filter>Phase Jump\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Mesh\CenterPolyFrameMeshBuilder.h">
+      <Filter>Phase Jump\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Mesh\CenterPolyMeshBuilder.h">
+      <Filter>Phase Jump\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Mesh\EllipseMeshBuilder.h">
+      <Filter>Phase Jump\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Mesh\GridMeshBuilder.h">
+      <Filter>Phase Jump\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Mesh\Mesh.h">
+      <Filter>Phase Jump\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Mesh\PlaneMeshBuilder.h">
+      <Filter>Phase Jump\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Mesh\PolyFrameMeshBuilder.h">
+      <Filter>Phase Jump\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Mesh\QuadFrameMeshBuilder.h">
+      <Filter>Phase Jump\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Mesh\QuadMeshBuilder.h">
+      <Filter>Phase Jump\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Mesh\SomeMeshBuilder.h">
+      <Filter>Phase Jump\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Mesh\TiledMeshBuilder.h">
+      <Filter>Phase Jump\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Math\Matrix4x4.h">
+      <Filter>Phase Jump\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Input\InputTriggerMap.h">
+      <Filter>Phase Jump\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Input\SomeInputDevice.h">
+      <Filter>Phase Jump\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Input\SomeMouseDevice.h">
+      <Filter>Phase Jump\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PhaseJump\Classes\Input\SomePointerDevice.h">
+      <Filter>Phase Jump\Input</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

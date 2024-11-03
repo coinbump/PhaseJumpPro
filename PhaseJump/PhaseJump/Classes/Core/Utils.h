@@ -75,6 +75,20 @@ SP<T> LOCK(WP<T> const& value) {
 
 /// MARK: - Shared Pointer cast convenience
 
+// WARNING: This produces the warning: stack nearly exhausted; compilation time may suffer, and
+// crashes due to stack overflow are likely
+// template <class Type, typename... Args>
+// auto NEW(Args&&... args) -> decltype(NEW<Type>(std::forward<Args>(args)...)) {
+//    return NEW<Type>(std::forward<Args>(args)...);
+//}
+
+template <class _Tp, class... _Args>
+inline _LIBCPP_HIDE_FROM_ABI _LIBCPP_CONSTEXPR_SINCE_CXX23
+    typename std::__unique_if<_Tp>::__unique_single
+    NEW(_Args&&... __args) {
+    return std::unique_ptr<_Tp>(new _Tp(std::forward<_Args>(__args)...));
+}
+
 #ifdef _WIN32
 
 template <class _Tp, class _Up>

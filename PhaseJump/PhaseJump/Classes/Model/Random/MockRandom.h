@@ -10,7 +10,7 @@
  CODE REVIEW: 9/19/24
  */
 namespace PJ {
-    /// @return Returns a fixed set of random values (for testing, debugging)
+    /// Returns a fixed set of random values (for testing, debugging)
     class MockRandom : public SomeRandom {
     public:
         using T = float;

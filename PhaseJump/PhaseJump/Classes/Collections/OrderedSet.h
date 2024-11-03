@@ -1,7 +1,7 @@
-#ifndef PJSET_H
-#define PJSET_H
+#pragma once
 
-#include "CollectionUtils.h"
+#include "Macros.h"
+#include <algorithm>
 #include <set>
 
 /*
@@ -50,11 +50,9 @@ namespace PJ {
         OrderedSet<Type> result;
 
         std::set_difference(
-            lhs.begin(), lhs.end(), rhs.begin(), rhs.end(), std::inserter(result, result.end())
+            lhs.begin(), lhs.end(), rhs.begin(), rhs.end(), std::inserter(result, result.begin())
         );
 
         return result;
     }
 } // namespace PJ
-
-#endif

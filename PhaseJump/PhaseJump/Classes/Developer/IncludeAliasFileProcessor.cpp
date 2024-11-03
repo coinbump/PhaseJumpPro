@@ -1,5 +1,5 @@
 #include "IncludeAliasFileProcessor.h"
-#include "FileManager.h"
+#include "SDLFileManager.h"
 #include "StringUtils.h"
 #include <fstream>
 #include <iostream>
@@ -9,7 +9,7 @@ using namespace PJ;
 using namespace PJ_Dev;
 
 void IncludeAliasFileProcessor::Process(FilePath filePath) {
-    FileManager fm;
+    SDLFileManager fm;
     auto extension = fm.FileExtension(filePath, false);
     if ("h" == extension) {
         String pathString = filePath.string();

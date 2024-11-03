@@ -91,35 +91,25 @@ namespace PJ {
             return textures;
         }
 
-        /// Add the texture's render texture to the material
-        void Add(SP<SomeTexture> texture) {
+        /// Set the texture if one exists, or add it if missing (only used for single-texture
+        /// materials)
+        void SetTexture(SP<SomeTexture> texture) {
             GUARD(texture)
 
-            auto renderTexture = texture->RenderTexture();
-            GUARD(renderTexture)
+            if (textures.size() == 1 && textures[0] == texture) {
+                return;
+            }
 
-            // Material tracks the actual texture being used for renders,
-            // not the child texture object (used in texture atlas)
-            // Renderers should store the child texture separately from the material
-            PJ::Add(textures, renderTexture);
-
+            textures = { texture };
             OnChange();
         }
 
-        /// Set the texture if one exists, or add it if missing (only used for single-texture
-        /// materials)
-        void Set(SP<SomeTexture> texture) {
+        /// Add the texture's render texture to the material
+        void Add(SP<SomeTexture> texture) {
             GUARD(texture)
+            PJ::Add(textures, texture);
 
-            if (IsEmpty(textures)) {
-                Add(texture);
-            } else {
-                auto renderTexture = texture->RenderTexture();
-                GUARD(renderTexture)
-
-                textures[0] = renderTexture;
-                OnChange();
-            }
+            OnChange();
         }
 
         void EnableFeature(String feature, bool isEnabled) {

@@ -2,6 +2,7 @@
 
 #include "AnimationCycleTimer.h"
 #include "Binding.h"
+#include "DiagnoseModel.h"
 #include "InterpolateFunc.h"
 #include "Keyframe.h"
 #include "Updatable.h"
@@ -16,27 +17,42 @@
 namespace PJ {
     class Playable;
 
-    /// Defines the default behavior of the time track
-    enum TimeTrackValueType {
-        /// Key frame values are interpolated
-        Interpolate,
+    /// Model for building a keyframe
+    template <class Type>
+    struct KeyframeModel {
+        Type value{};
 
-        /// Each key frame value is a distinct value
-        /// Example: frame id in an animation
-        Discrete
+        /// Fallback if optionals are not defined. The absolute position of the keyframe
+        float time{};
+
+        /// If specified, the relative postion of the new keyframe after the final keyframe
+        std::optional<float> deltaTime;
+    };
+
+    /// Time track protocl
+    class SomeTimeTrack : public Playable {
+    public:
+        using Base = Playable;
+        using This = SomeTimeTrack;
+
+        String id;
+
+        SomeTimeTrack(String id) :
+            id(id) {}
     };
 
     /// Contains keyframes that determine values, and a binding func that binds those values
     /// to an animation
-    template <class Type, class Keyframe = PJ::Keyframe<Type>>
-    class TimeTrack : public Playable {
+    template <class Type>
+    class TimeTrack : public SomeTimeTrack {
     public:
-        using Base = Playable;
+        using Base = SomeTimeTrack;
         using This = TimeTrack;
         using MathType = float;
-        using ValueType = TimeTrackValueType;
+        using Keyframe = PJ::ValueKeyframe<Type>;
+        using KeyframeList = VectorList<UP<Keyframe>>;
 
-        using KeyframeList = VectorList<Keyframe>;
+        using MakeKeyframeFunc = std::function<UP<Keyframe>(This&)>;
         using MakeEaseFuncFunc = std::function<EaseFunc(This&, Keyframe& start, Keyframe& end)>;
 
     protected:
@@ -44,9 +60,13 @@ namespace PJ {
         KeyframeList keyframes;
 
         AnimationCycleTimer timer;
-        Playable* playDriver = &timer;
+        Playable* controller = &timer;
 
     public:
+        /// Used to enable extra logging for this object
+        // TODO: TEMP CODE, DO NOT KEEP
+        DiagnoseModel _diagnose{ true };
+
         /// Applies the timeline's current value via binding
         /// Example: set uniform scale based on timeline float value
         SetBindingFunc<Type> setBindingFunc;
@@ -54,32 +74,39 @@ namespace PJ {
         /// Makes an ease func based on the current keyframe values
         MakeEaseFuncFunc makeEaseFuncFunc;
 
-        TimeTrack(
-            float duration, AnimationCycleType cycleType = AnimationCycleType::Once,
-            ValueType valueType = ValueType::Interpolate
-        ) :
-            timer(duration, cycleType) {
+        MakeKeyframeFunc makeKeyframeFunc = [](auto& track) {
+            UP<Keyframe> result = NEW<Keyframe>();
+            return result;
+        };
+
+        struct Config {
+            String id;
+            float duration = 1.0f;
+            AnimationCycleType cycleType = AnimationCycleType::Once;
+            KeyedTimeType keyedTimeType = KeyedTimeType::Interpolate;
+        };
+
+        TimeTrack(Config const& config) :
+            Base(config.id),
+            timer(config.duration, config.cycleType) {
             timer.SetOnPlayTimeChangeFunc([this](auto& playable) { OnPlayTimeChange(); });
 
-            switch (valueType) {
-            case ValueType::Interpolate:
+            switch (config.keyedTimeType) {
+            case KeyedTimeType::Interpolate:
                 makeEaseFuncFunc = [](This& timeline, Keyframe& start, Keyframe& end) {
-                    auto startEaseKF = dynamic_cast<EaseKeyframe<Type>*>(&start);
-                    auto endEaseKF = dynamic_cast<EaseKeyframe<Type>*>(&end);
-                    GUARDR(startEaseKF && endEaseKF, EaseFuncs::linear)
-
-                    if (startEaseKF->core.outEaseFunc && !endEaseKF->core.inEaseFunc) {
-                        return startEaseKF->core.outEaseFunc;
-                    } else if (!startEaseKF->core.outEaseFunc && endEaseKF->core.inEaseFunc) {
-                        return endEaseKF->core.inEaseFunc;
-                    } else if (startEaseKF->core.outEaseFunc && endEaseKF->core.inEaseFunc) {
-                        return endEaseKF->core.inEaseFunc;
+                    if (start.outEaseFunc && !end.inEaseFunc) {
+                        return start.outEaseFunc;
+                    } else if (!start.outEaseFunc && end.inEaseFunc) {
+                        return end.inEaseFunc;
+                    } else if (start.outEaseFunc && end.inEaseFunc) {
+                        // FUTURE: should we combine both ease funcs together?
+                        return end.inEaseFunc;
                     }
 
                     return EaseFuncs::linear;
                 };
                 break;
-            case ValueType::Discrete:
+            case KeyedTimeType::Discrete:
                 break;
             }
         }
@@ -90,41 +117,68 @@ namespace PJ {
             return keyframes;
         }
 
-        KeyframeList::iterator Add(Keyframe kf, MathType time) {
-            kf.time = time;
+        bool IsReversed() const {
+            return timer.IsReversed();
+        }
+
+        Keyframe* Add(UP<Keyframe>& kf, MathType time) {
+            kf->time = time;
 
             for (int i = 0; i < keyframes.size(); i++) {
                 auto& value = keyframes[i];
-                if (value.time == kf.time) {
-                    value = kf;
-                    return keyframes.begin() + i;
+                if (value->time == kf->time) {
+                    value = std::move(kf);
+                    return value.get();
                 }
 
-                if (value.time > kf.time) {
-                    keyframes.insert(keyframes.begin() + i, kf);
-                    return keyframes.begin() + i;
+                if (value->time > kf->time) {
+                    keyframes.insert(keyframes.begin() + i, std::move(kf));
+                    return keyframes[i].get();
                 }
             }
 
-            keyframes.push_back(kf);
-            return keyframes.begin() + (keyframes.size() - 1);
+            keyframes.push_back(std::move(kf));
+            return keyframes[keyframes.size() - 1].get();
         }
 
-        KeyframeList::iterator AddAt(MathType time) {
-            return Add({}, time);
+        /// Adds a keyframe based on the keyframe model
+        /// @returns Returns the new keyframe
+        Keyframe* Add(KeyframeModel<Type> const& model) {
+            UP<Keyframe> kf = makeKeyframeFunc(*this);
+            kf->value = model.value;
+
+            float time = model.time;
+            if (model.deltaTime) {
+                time = *model.deltaTime;
+                if (!IsEmpty(keyframes)) {
+                    auto& lastKeyframe = keyframes[keyframes.size() - 1];
+                    time += lastKeyframe->time;
+                }
+            }
+
+            return Add(kf, time);
         }
 
+        /// Adds a keyframe at the specified time
+        /// @returns Returns the new keyframe
+        Keyframe* AddAt(MathType time) {
+            UP<Keyframe> kf = makeKeyframeFunc(*this);
+            return Add(kf, time);
+        }
+
+        /// Removes any keyframe at the specified time
         void RemoveAt(MathType time) {
             auto i = FindAt(time);
             GUARD(i != keyframes.end());
             keyframes.erase(i);
         }
 
-        KeyframeList::iterator FindAt(MathType time) {
+        /// @return Returns an iterator for a keyframe at the specified time
+        auto FindAt(MathType time) const {
             // FUTURE: subdivide search to optimize if needed
             for (auto i = keyframes.begin(); i < keyframes.end(); i++) {
                 auto& value = *i;
-                if (value.time == time) {
+                if (value->time == time) {
                     return i;
                 }
             }
@@ -132,11 +186,12 @@ namespace PJ {
             return keyframes.end();
         };
 
-        KeyframeList::reverse_iterator FindBefore(MathType time) {
+        /// @return Returns an iterator for a keyframe before the specified time
+        auto FindBefore(MathType time) const {
             // FUTURE: subdivide search to optimize if needed
             for (auto i = keyframes.rbegin(); i != keyframes.rend(); i++) {
                 auto& value = *i;
-                if (value.time < time) {
+                if (value->time < time) {
                     return i;
                 }
             }
@@ -144,11 +199,12 @@ namespace PJ {
             return keyframes.rend();
         }
 
-        KeyframeList::reverse_iterator FindAtOrBefore(MathType time) {
+        /// @return Returns an iterator for a keyframe at or before the specified time
+        auto FindAtOrBefore(MathType time) const {
             // FUTURE: subdivide search to optimize if needed
             for (auto i = keyframes.rbegin(); i != keyframes.rend(); i++) {
                 auto& value = *i;
-                if (value.time <= time) {
+                if (value->time <= time) {
                     return i;
                 }
             }
@@ -156,11 +212,12 @@ namespace PJ {
             return keyframes.rend();
         }
 
-        KeyframeList::iterator FindAtOrAfter(MathType time) {
+        /// @return Returns an iterator for a keyframe at or after the specified time
+        auto FindAtOrAfter(MathType time) const {
             // FUTURE: subdivide search to optimize if needed
             for (auto i = keyframes.begin(); i < keyframes.end(); i++) {
                 auto& value = *i;
-                if (value.time >= time) {
+                if (value->time >= time) {
                     return i;
                 }
             }
@@ -168,28 +225,48 @@ namespace PJ {
             return keyframes.end();
         }
 
-        Keyframe* KeyframeAt(MathType time) {
+        Keyframe* KeyframeAt(MathType time) const {
             auto i = FindAt(time);
             GUARDR(i != keyframes.end(), nullptr);
-            return &(*i);
+            return (*i).get();
         }
 
-        Keyframe* KeyframeAtOrAfter(MathType time) {
+        /// @return Returns the first keyframe at or after the specified time
+        Keyframe* KeyframeAtOrAfter(MathType time) const {
             auto i = FindAtOrAfter(time);
             GUARDR(i != keyframes.end(), nullptr);
-            return &(*i);
+            return (*i).get();
         }
 
-        Keyframe* KeyframeBefore(MathType time) {
+        Keyframe* KeyframeBefore(MathType time) const {
             auto i = FindBefore(time);
             GUARDR(i != keyframes.rend(), nullptr);
-            return &(*i);
+            return (*i).get();
         }
 
-        Keyframe* KeyframeAtOrBefore(MathType time) {
+        Keyframe* KeyframeAtOrBefore(MathType time) const {
             auto i = FindAtOrBefore(time);
             GUARDR(i != keyframes.rend(), nullptr);
-            return &(*i);
+            return (*i).get();
+        }
+
+        Type ValueAt(MathType time) const {
+            auto keyframe = KeyframeAt(time);
+            GUARDR(keyframe, {})
+
+            return keyframe->Value();
+        }
+
+        Type Value() const {
+            return ValueAt(PlayTime());
+        }
+
+        AnimationCycleType CycleType() const {
+            return timer.CycleType();
+        }
+
+        void SetCycleType(AnimationCycleType cycleType) {
+            timer.SetCycleType(cycleType);
         }
 
         // MARK: Playable
@@ -197,8 +274,13 @@ namespace PJ {
         void OnPlayTimeChange() override {
             Base::OnPlayTimeChange();
 
+            PJ::LogIf(_diagnose, "Log: SomeTimeTrack: Play time: ", MakeString(PlayTime()));
+
             GUARD(setBindingFunc)
-            float position = PlayDriver()->PlayTime();
+            float position = Controller()->PlayTime();
+            PJ::LogIf(
+                _diagnose, "Log: SomeTimeTrack: Controller Play time: ", MakeString(position)
+            );
 
             if (makeEaseFuncFunc) {
                 Type startValue{};
@@ -228,6 +310,7 @@ namespace PJ {
 
                     easeFunc = makeEaseFuncFunc(*this, *kfStart, *kfEnd);
                 } else {
+                    PJ::LogIf(_diagnose, "Log: SomeTimeTrack: No Keyframes");
                     // No keyframes, nothing to animate
                     return;
                 }
@@ -237,19 +320,26 @@ namespace PJ {
                 );
                 Type value = interpolatorFunc(progress);
 
+                PJ::LogIf(
+                    _diagnose, "Log: SomeTimeTrack: Set Binding Interpolate: ", MakeString(value)
+                );
                 setBindingFunc(value);
             } else {
                 auto kfStart = KeyframeAtOrBefore(position);
 
                 // Discrete keyframes use the value before the current time position
                 if (kfStart) {
+                    PJ::LogIf(
+                        _diagnose,
+                        "Log: SomeTimeTrack: Set Binding Discrete: ", MakeString(kfStart->value)
+                    );
                     setBindingFunc(kfStart->value);
                 }
             }
         }
 
-        Playable* PlayDriver() const override {
-            return playDriver;
+        Playable* Controller() const override {
+            return controller;
         }
     };
 } // namespace PJ

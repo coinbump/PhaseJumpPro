@@ -22,9 +22,6 @@ namespace PJ {
         /// Add float input field to UI
         This& InputFloat(String label, Binding<float> binding);
 
-        /// Add color input field to UI
-        This& InputColor(String label, Binding<Color> binding);
-
         /// Add bool input field to UI
         This& InputBool(String label, Binding<bool> binding);
 
@@ -33,5 +30,8 @@ namespace PJ {
 
         /// Add list picker to UI
         This& PickerList(String label, VectorList<String> choices, Binding<int> binding);
+
+        /// Add color picker field to UI
+        This& PickerColor(String label, Binding<Color> binding);
     };
 } // namespace PJ

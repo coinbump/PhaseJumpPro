@@ -6,60 +6,46 @@
 /*
  RATING: 5 stars
  Tested and works
- CODE REVIEW: 8/10/24
+ CODE REVIEW: 10/31/24
  */
 namespace PJ {
+    class TextureAtlas;
+
     /// GPU texture that references only part of its parent texture (used for texture atlas, fonts)
     class AtlasTexture : public SomeTexture {
     public:
         using Base = SomeTexture;
+        using This = AtlasTexture;
 
-        SP<SomeTexture> parent;
+        enum class Orientation {
+            /// Texture uses original orientation
+            Default,
 
-        /// Texture origin in reading coordinates (top-left is 0, 0)
-        Vector2Int origin;
+            /// Texture is rotated 90 degrees
+            Rotated
+        };
 
-        /// Distance of trim from top-left of original image
-        Vector2Int trimOrigin;
+        TextureAtlas* parent{};
 
-        /// Original texture size before trim
-        Vector2Int trueSize;
+        /// Properties to configure this type
+        struct Config {
+            Base::Config base;
 
-        AtlasTexture(
-            SP<SomeTexture> parent, String id, Vector2Int origin, Vector2Int size,
-            Vector2Int trimOrigin, Vector2Int trueSize, String alphaMode
-        ) :
-            Base(id, 0, size, alphaMode),
-            parent(parent),
-            origin(origin),
-            trimOrigin(trimOrigin),
-            trueSize(trueSize) {}
+            TextureAtlas* parent{};
 
-        std::optional<TextureRenderModel> MakeRenderModel() const override {
-            GUARDR(parent, Base::MakeRenderModel())
-            GUARDR(parent->size.x > 0 && parent->size.y > 0, Base::MakeRenderModel())
+            // FUTURE: not yet supported
+            Orientation orientation = Orientation::Default;
+        };
 
-            float normalOriginX = (float)origin.x / (float)parent->size.x;
-            float normalOriginY = (float)origin.y / (float)parent->size.y;
-            Vector2 normalOrigin(normalOriginX, normalOriginY);
+        AtlasTexture(Config const& config);
 
-            float normalSizeX = (float)size.x / (float)parent->size.x;
-            float normalSizeY = (float)size.y / (float)parent->size.y;
-            Vector2 normalSize(normalSizeX, normalSizeY);
-
-            return TextureRenderModel(RenderId(), normalOrigin, normalSize);
+        SomeTexture* ParentTexture() const {
+            return RenderTexture();
         }
 
         // MARK: SomeTexture
 
-        SP<SomeTexture> RenderTexture() override {
-            GUARDR(parent, Base::RenderTexture())
-            return parent;
-        }
-
-        uint32_t RenderId() const override {
-            GUARDR(parent, 0)
-            return parent->RenderId();
-        }
+        SomeTexture* RenderTexture() const override;
+        uint32_t RenderId() const override;
     };
 } // namespace PJ

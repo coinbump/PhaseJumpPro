@@ -5,22 +5,22 @@
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 9/25/24
+ CODE REVIEW: 10/5/24
  */
 namespace PJ {
+    enum class RunType {
+        /// Run one time
+        Once,
+
+        /// Repeats (restarts after finish)
+        Repeat
+    };
+
     /// Manages logic for running an updatable that when it finishes, either repeats or finishes
     class Runner {
     public:
         using OnResetFunc = std::function<void(Runner&)>;
         using OnFinishFunc = std::function<void(Runner&)>;
-
-        enum class RunType {
-            /// Run one time
-            Once,
-
-            /// Repeats (restarts after finish)
-            Repeat
-        };
 
         RunType runType;
 

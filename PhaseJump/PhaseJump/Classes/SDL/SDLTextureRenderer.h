@@ -3,8 +3,8 @@
 
 #include "RenderContextModel.h"
 #include "SDLColorBuilder.h"
+#include "SDLGLRenderContext.h"
 #include "SDLLoadSDLTextureOperation.h"
-#include "SDLRenderContext.h"
 #include "SomeRenderer.h"
 #include <memory>
 #include <SDL3/SDL_render.h>

@@ -9,7 +9,7 @@ using namespace PJ;
 namespace SlicedTextureRendererTests {
     class MockTexture : public SomeTexture {
     public:
-        MockTexture() : SomeTexture("", 1, Vector2Int(50, 50), TextureAlphaMode::PremultiplyAlpha) {
+        MockTexture() : SomeTexture({.renderId = 1, .size = Vector2Int(50, 50), .alphaMode = TextureAlphaMode::PremultiplyAlpha}) {
         }
     };
 }

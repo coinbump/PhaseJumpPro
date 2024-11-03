@@ -15,7 +15,7 @@ namespace RunnerTests {
         int finishCount = 0;
         int resetCount = 0;
 
-        TestRunner(Runner::RunType runType) : Base(runType)
+        TestRunner(RunType runType) : Base(runType)
         {
             onFinishFunc = [](auto& runner) { static_cast<TestRunner*>(&runner)->finishCount++; };
             onResetFunc = [](auto& runner) { static_cast<TestRunner*>(&runner)->resetCount++; };
@@ -26,7 +26,7 @@ namespace RunnerTests {
 using namespace RunnerTests;
 
 TEST(Runner, RunOnce) {
-    auto sut = TestRunner(Runner::RunType::Once);
+    auto sut = TestRunner(RunType::Once);
     EXPECT_FALSE(sut.IsFinished());
     sut.SetIsFinished(false);
     EXPECT_FALSE(sut.IsFinished());
@@ -41,7 +41,7 @@ TEST(Runner, RunOnce) {
 }
 
 TEST(Runner, Repeat) {
-    auto sut = TestRunner(Runner::RunType::Repeat);
+    auto sut = TestRunner(RunType::Repeat);
     EXPECT_FALSE(sut.IsFinished());
     sut.SetIsFinished(false);
     EXPECT_FALSE(sut.IsFinished());

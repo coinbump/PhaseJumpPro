@@ -25,7 +25,7 @@ PointerInputButtonType PointerInputButtonFromSDLButton(Uint8 sdlButton) {
     return inputButton;
 }
 
-void OnControllerButtonDown(String controllerId, int button, List<SP<SomeUIEvent>>& result) {
+void OnControllerButtonDown(String controllerId, int button, UIEventList& result) {
     OrderedMap<int, String> map = {
         { SDL_GAMEPAD_BUTTON_SOUTH, ControllerButtonId::South },
         { SDL_GAMEPAD_BUTTON_EAST, ControllerButtonId::East },
@@ -42,8 +42,8 @@ void OnControllerButtonDown(String controllerId, int button, List<SP<SomeUIEvent
     result.push_back(SCAST<SomeUIEvent>(event));
 }
 
-List<SP<SomeUIEvent>> SDLUIEventsBuilder::BuildUIEvents(SDLEventList const& events) {
-    List<SP<SomeUIEvent>> result;
+UIEventList SDLUIEventsBuilder::BuildUIEvents(SDLEventList const& events) {
+    UIEventList result;
 
     List<SP<DropFilesUIEvent>> dropFileEvents;
 
@@ -113,9 +113,41 @@ List<SP<SomeUIEvent>> SDLUIEventsBuilder::BuildUIEvents(SDLEventList const& even
             {
                 KeyScanCode scanCode(sdlEvent.key.scancode);
                 KeyCode keyCode(sdlEvent.key.key);
-                // FUTURE: SDL_Keymod mod;
+                KeyModifiers keyModifiers;
 
-                auto event = MAKE<KeyDownUIEvent>(scanCode, keyCode);
+                keyModifiers.AddIf(
+                    KeyModifier::ShiftLeft, (sdlEvent.key.mod & SDL_KMOD_LSHIFT) != 0
+                );
+                keyModifiers.AddIf(
+                    KeyModifier::ShiftRight, (sdlEvent.key.mod & SDL_KMOD_RSHIFT) != 0
+                );
+                keyModifiers.AddIf(KeyModifier::Shift, (sdlEvent.key.mod & SDL_KMOD_SHIFT) != 0);
+                keyModifiers.AddIf(
+                    KeyModifier::ControlLeft, (sdlEvent.key.mod & SDL_KMOD_LCTRL) != 0
+                );
+                keyModifiers.AddIf(
+                    KeyModifier::ControlRight, (sdlEvent.key.mod & SDL_KMOD_RCTRL) != 0
+                );
+                keyModifiers.AddIf(KeyModifier::Control, (sdlEvent.key.mod & SDL_KMOD_CTRL) != 0);
+                keyModifiers.AddIf(KeyModifier::AltLeft, (sdlEvent.key.mod & SDL_KMOD_LALT) != 0);
+                keyModifiers.AddIf(KeyModifier::AltRight, (sdlEvent.key.mod & SDL_KMOD_RALT) != 0);
+                keyModifiers.AddIf(KeyModifier::Alt, (sdlEvent.key.mod & SDL_KMOD_ALT) != 0);
+                keyModifiers.AddIf(KeyModifier::GUILeft, (sdlEvent.key.mod & SDL_KMOD_LGUI) != 0);
+                keyModifiers.AddIf(KeyModifier::GUIRight, (sdlEvent.key.mod & SDL_KMOD_RGUI) != 0);
+                keyModifiers.AddIf(KeyModifier::GUI, (sdlEvent.key.mod & SDL_KMOD_GUI) != 0);
+                keyModifiers.AddIf(KeyModifier::NumLock, (sdlEvent.key.mod & SDL_KMOD_NUM) != 0);
+                keyModifiers.AddIf(KeyModifier::CapsLock, (sdlEvent.key.mod & SDL_KMOD_CAPS) != 0);
+                keyModifiers.AddIf(
+                    KeyModifier::ScrollLock, (sdlEvent.key.mod & SDL_KMOD_SCROLL) != 0
+                );
+
+#ifdef _WIN32
+                keyModifiers.AddIf(KeyModifier::Shortcut, (sdlEvent.key.mod & SDL_KMOD_CTRL) != 0);
+#else
+                keyModifiers.AddIf(KeyModifier::Shortcut, (sdlEvent.key.mod & SDL_KMOD_GUI) != 0);
+#endif
+
+                auto event = MAKE<KeyDownUIEvent>(scanCode, keyCode, keyModifiers);
                 result.push_back(SCAST<SomeUIEvent>(event));
                 break;
             }

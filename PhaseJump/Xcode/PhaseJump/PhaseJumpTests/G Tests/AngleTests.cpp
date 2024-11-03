@@ -67,7 +67,7 @@ TEST(Angle, ToVector2)
     EXPECT_NEAR(adjOpp.y, .5 * vecUp, .01);
 }
 
-TEST(Angle, FromVector2)
+TEST(Angle, InitVector2)
 {
     const float near = .001f;
 
@@ -112,4 +112,19 @@ TEST(Angle, FromVector2)
     distance.y = 10 * vecUp;
     angle = Angle(distance);
     EXPECT_NEAR(315, angle.Degrees(), near);
+}
+
+TEST(Angle, MinusOperator)
+{
+    auto sut = Angle::DegreesAngle(360);
+    sut = -sut;
+    EXPECT_EQ(-360.0f, sut.Degrees());
+}
+
+TEST(Angle, MinAngleTo)
+{
+    auto sut = Angle::DegreesAngle(360);
+    auto sut2 = Angle::DegreesAngle(2);
+    EXPECT_EQ(2.0f, sut.MinAngleTo(sut2).Degrees());
+    EXPECT_EQ(-2.0f, sut2.MinAngleTo(sut).Degrees());
 }

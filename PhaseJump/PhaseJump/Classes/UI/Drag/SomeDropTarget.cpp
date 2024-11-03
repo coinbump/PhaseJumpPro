@@ -5,12 +5,12 @@ using namespace std;
 using namespace PJ;
 
 SomeDropTarget::SomeDropTarget() {
-    signalHandlers[SignalId::DragEnter] = [](auto& owner, auto& signal) {
+    signalFuncs[SignalId::DragEnter] = [](auto& owner, auto& signal) {
         auto& event = *(static_cast<DragEnterUIEvent const*>(&signal));
         static_cast<This*>(&owner)->OnDragEnter(event.dragModel);
     };
 
-    signalHandlers[SignalId::DragExit] = [](auto& owner, auto& signal) {
+    signalFuncs[SignalId::DragExit] = [](auto& owner, auto& signal) {
         static_cast<This*>(&owner)->OnDragExit();
     };
 }
@@ -45,11 +45,11 @@ void SomeDropTarget::OnDrop(DragModel const& dragModel) {
 void SomeDropTarget::Awake() {
     Base::Awake();
 
-#ifdef VERBOSE
-    if (nullptr == TypeComponent<SomeCollider2D>()) {
-        PJ::Log("ERROR. DropTarget requires a collider.");
+    if (IsLogVerbose()) {
+        if (nullptr == owner->TypeComponent<SomeCollider2D>()) {
+            PJ::Log("ERROR. DropTarget requires a collider.");
+        }
     }
-#endif
 
     OnStateChange();
 }

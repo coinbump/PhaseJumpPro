@@ -71,7 +71,7 @@ namespace PJ {
             if (!selectEffect) {
                 return;
             }
-            selectEffect->SetIsOn(IsSelected());
+            selectEffect->Enable(IsSelected());
         }
 
         virtual void OnSelectChange();

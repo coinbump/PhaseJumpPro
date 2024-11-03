@@ -7,62 +7,70 @@
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 8/17/24
+ CODE REVIEW: 10/22/24
  */
 namespace PJ {
     /**
-     Builds a property id string. Useful with complex objects that don't change often, but are
-     compared often. Instead of comparing every object property, you can compare 2 property id
-     strings.
+     Builds a property id string that is also valid JSON
+     Used to map or compare complex objects using a single string
 
-     Example: "name:"Ted";values:[1,2,3,4,]"
+     Example: {"keyCode":122,"modifiers":["shortcut"]}
      */
     class PropertyIdBuilder {
     protected:
+        enum class QuoteType {
+            Default,
+
+            Quote,
+
+            None
+        };
+
         std::ostringstream ss;
         bool hasValues = false;
 
         void AddName(String name, String symbol) {
             if (hasValues) {
-                ss << ";";
+                ss << ",";
             }
             hasValues = true;
 
-            if (name.size() > 0) {
-                ss << name << ":" << symbol;
-            } else {
-                ss << symbol;
-            }
+            ss << "\"" << name << "\"" << symbol;
         }
 
     public:
-        PropertyIdBuilder& Add(String name, String value) {
-            AddName(name, "");
-            ss << '"' << value << '"';
-            return *this;
-        }
-
-        PropertyIdBuilder& Add(String name, int value) {
-            AddName(name, "");
+        template <class Type>
+        PropertyIdBuilder& AddValue(Type value) {
             ss << value;
             return *this;
         }
 
-        PropertyIdBuilder& Add(String name, float value) {
-            AddName(name, "");
-            ss << value;
+        template <>
+        PropertyIdBuilder& AddValue<String>(String value);
+
+        template <>
+        PropertyIdBuilder& AddValue<const char*>(const char* value);
+
+        template <class Type>
+        PropertyIdBuilder& Add(String name, Type value) {
+            AddName(name, ":");
+            AddValue(value);
             return *this;
         }
 
         template <class Collection>
-        PropertyIdBuilder& AddCollection(String name, Collection const& items) {
+        PropertyIdBuilder& AddCollection(String name, Collection const& _items) {
+            VectorList<typename Collection::value_type> items(_items.begin(), _items.end());
             GUARDR(!IsEmpty(items), *this)
 
-            AddName(name, "[");
+            AddName(name, ":[");
 
-            for (auto const& item : items) {
-                // Leave final trailing comma for simplicity (not all collections have operator[]
-                ss << item << ",";
+            for (size_t i = 0; i < items.size(); i++) {
+                auto& item = items[i];
+                AddValue(item);
+                if (i < items.size() - 1) {
+                    ss << ",";
+                }
             }
 
             ss << "]";
@@ -74,20 +82,43 @@ namespace PJ {
         PropertyIdBuilder& AddMap(String name, Map const& map) {
             GUARDR(!IsEmpty(map), *this)
 
-            AddName(name, "{");
-
-            for (auto const& keyValue : map) {
-                // Leave final trailing comma
-                ss << "{" << keyValue.first << "," << keyValue.second << "},";
-            }
-
-            ss << "}";
+            PropertyIdBuilder inner;
+            inner.AddMapInner(name, map);
+            AddName(name, ":" + inner.Result());
 
             return *this;
         }
 
         String Result() const {
+            std::stringstream ss;
+
+            ss << "{";
+            ss << this->ss.str();
+            ss << "}";
+
             return ss.str();
+        }
+
+    protected:
+        template <class Map>
+        PropertyIdBuilder& AddMapInner(String name, Map const& map) {
+            GUARDR(!IsEmpty(map), *this)
+
+            VectorList<typename Map::key_type> keys;
+
+            for (auto& keyValue : map) {
+                keys.push_back(keyValue.first);
+            }
+
+            for (size_t i = 0; i < keys.size(); i++) {
+                auto key = keys[i];
+
+                try {
+                    Add(key, map.at(key));
+                } catch (...) {}
+            }
+
+            return *this;
         }
     };
 } // namespace PJ

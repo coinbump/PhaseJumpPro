@@ -37,6 +37,7 @@ namespace PJ {
         Factory(std::function<SP<Type>(Arguments... args)> allocator) :
             allocator(allocator) {}
 
+        // TODO: SP-audit (Make vs New)
         SP<Type> New(Arguments... args) {
             GUARDR(allocator, SP<Type>())
             return allocator(args...);
@@ -65,13 +66,6 @@ namespace PJ {
         virtual ~SomeProvider() {}
 
         virtual void Provide(Result& result) = 0;
-    };
-
-    /// Interface for an object that provides a factory
-    template <class BaseType>
-    class SomeSomeFactoryProvider : public SomeProvider<void, SomeFactory<BaseType>*> {
-    public:
-        virtual ~SomeSomeFactoryProvider() {}
     };
 
 } // namespace PJ

@@ -11,9 +11,9 @@
  */
 namespace PJ {
     /// Defines the layout of child world nodes
-    class SomeLayout : public WorldComponent<FuncWorldComponentCore> {
+    class SomeLayout : public WorldComponent<> {
     public:
-        using Base = WorldComponent<FuncWorldComponentCore>;
+        using Base = WorldComponent<>;
         using This = SomeLayout;
 
     protected:
@@ -38,24 +38,6 @@ namespace PJ {
         }
 
     protected:
-        void Awake() override {
-            Base::Awake();
-
-            auto applyLayoutAction = [](auto& _component) {
-                auto component = static_cast<This*>(&_component);
-                GUARD(component->autoApply)
-                component->LayoutIfNeeded();
-            };
-
-            core.startFunc = applyLayoutAction;
-
-            // FUTURE: add needsLayout flag to layouts so they don't keep rebuilding
-            core.onUpdateFunc = [=](auto& owner, auto timeSlice) { applyLayoutAction(owner); };
-
-            signalHandlers[SignalId::AddChildNode] = [](auto& owner, auto& event) {
-                auto component = static_cast<This*>(&owner);
-                component->SetNeedsLayout();
-            };
-        }
+        void Awake() override;
     };
 } // namespace PJ

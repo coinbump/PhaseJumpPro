@@ -2,6 +2,7 @@
 
 #include "SomeLoadResourcesOperation.h"
 
+// /23
 namespace PJ {
     /// Load a texture atlas .fnt file created by Bitmap Font Generator
     class LoadBitmapFontOperation : public SomeLoadResourcesOperation {

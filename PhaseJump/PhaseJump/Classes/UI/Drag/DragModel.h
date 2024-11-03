@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Utils.h"
+#include "VectorList.h"
 
 /*
  RATING: 5 stars
@@ -23,7 +24,7 @@ namespace PJ {
         }
 
         SP<SomeDragHandler> DragHandler() const {
-            return First(dragHandlers);
+            return SafeFirst(dragHandlers);
         }
     };
 } // namespace PJ

@@ -13,19 +13,6 @@
 namespace PJ {
     using EventModifierType = String;
 
-    /// Standard modifier ids for events
-    namespace EventModifier {
-        auto constexpr Control = "ctrl";
-
-        /// Command key on Mac, Control key on Windows
-        auto constexpr CommandControl = "cmdCtrl";
-
-        /// Option key on Mac, Alt key on Windows
-        auto constexpr OptionAlt = "optAlt";
-
-        auto constexpr Shift = "shift";
-    } // namespace EventModifier
-
     /// Defines a keyboard shortcut with a key command and modifiers
     struct KeyboardShortcut {
         using ModifierSet = UnorderedSet<EventModifierType>;
@@ -108,6 +95,7 @@ namespace PJ {
     class Menu {
     public:
         using This = Menu;
+        // TODO: use UP here
         using MenuItemList = VectorList<SP<SomeMenuItem>>;
 
         /// User displayed title

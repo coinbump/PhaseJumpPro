@@ -15,8 +15,8 @@ namespace DefaultValueTests {
         int valueHasDefault = 1;
         int valueNoDefault;
 
-        SP<Foo> pointerDefault = MAKE<Foo>();
-        SP<Foo> pointerNoDefault;
+        UP<Foo> pointerDefault = NEW<Foo>();
+        UP<Foo> pointerNoDefault;
 
         void foo() {}
     };
@@ -25,8 +25,8 @@ namespace DefaultValueTests {
     public:
         int valueHasDefault = 1;
         int valueNoDefault;
-        SP<Foo> pointerDefault = MAKE<Foo>();
-        SP<Foo> pointerNoDefault;
+        UP<Foo> pointerDefault = NEW<Foo>();
+        UP<Foo> pointerNoDefault;
 
         // Class must have constructor, constructor must be defined outside of class
         // or tests will fail

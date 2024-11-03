@@ -72,9 +72,6 @@ namespace PJ {
         /// Mesh to be rendered
         Mesh mesh;
 
-        /// Render model for textures (used to specify texture coordinates for texture atlas)
-        VectorList<TextureRenderModel> textureModels;
-
         /// (Optional) Relative render order
         /// Painted on to the model by a render processor
         uint32_t order = 0;
@@ -132,11 +129,11 @@ namespace PJ {
         }
 
         void SetVertexColors(std::span<RenderColor const> value) {
-            vertexColors = value;
+            vertexColors = { value };
         }
 
         void SetModifiableVertexColors(VectorList<RenderColor> const& value) {
-            vertexColors = value;
+            vertexColors = { value };
         }
 
         /// @return Returns true if a render feature is enabled for this operation

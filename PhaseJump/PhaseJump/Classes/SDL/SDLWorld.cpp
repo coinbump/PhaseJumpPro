@@ -4,12 +4,13 @@
 using namespace std;
 using namespace PJ;
 
+// FUTURE: evaluate putting this on a separate thread
 void SDLWorld::MainLoop() {
     auto result = uiEventPoller->PollUIEvents();
 
     ProcessUIEvents(result.uiEvents);
 
-    isDone = result.status == SomeUIEventPoller::Status::Done;
+    isFinished = result.state == SomeUIEventPoller::StateType::Finished;
 }
 
 VectorList<uint32_t> const triangles{ 0, 1, 2, 1, 3, 2 };
@@ -111,7 +112,9 @@ public:
     }
 };
 
-void SDLWorld::Run() {
+void SDLWorld::GoInternal() {
+    Base::GoInternal();
+
     DevABProfiler profile(
         "Vector[]- switch",
         []() {
@@ -146,7 +149,7 @@ void SDLWorld::Run() {
 
     startTime = SDL_GetTicks();
 
-    while (!isDone) {
+    while (!isFinished) {
         // This doesn't work
         //        auto displayMode = SDL_GetWindowFullscreenMode(window);
         //        if (displayMode) {

@@ -1,1 +1,1 @@
-#include "QuickAnimate.h"
+#include "AnimateFuncs.h"

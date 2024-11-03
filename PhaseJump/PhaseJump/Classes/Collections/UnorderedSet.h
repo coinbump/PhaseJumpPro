@@ -1,6 +1,5 @@
 #pragma once
 
-#include "CollectionUtils.h"
 #include <algorithm>
 #include <iterator>
 #include <unordered_set>
@@ -32,14 +31,14 @@ namespace PJ {
         }
     }
 
-    // TODO: template <class Set, class Type> + requires
     template <class Type>
     UnorderedSet<Type> operator-(UnorderedSet<Type> const& lhs, UnorderedSet<Type> const& rhs) {
-        UnorderedSet<Type> result;
+        UnorderedSet<Type> result = lhs;
 
-        std::set_difference(
-            lhs.begin(), lhs.end(), rhs.begin(), rhs.end(), std::inserter(result, result.end())
-        );
+        /// Can't use `std::set_difference`, it only works with ordered collections
+        for (auto const& rightItem : rhs) {
+            result.erase(rightItem);
+        }
 
         return result;
     }

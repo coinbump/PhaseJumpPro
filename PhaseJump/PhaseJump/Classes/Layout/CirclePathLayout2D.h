@@ -35,7 +35,7 @@ namespace PJ {
 
         // MARK: WorldSizeable
 
-        std::optional<Vector3> WorldSize() const override {
+        Vector3 WorldSize() const override {
             return Vector3(radius * 2.0f, radius * 2.0f, 0);
         }
 

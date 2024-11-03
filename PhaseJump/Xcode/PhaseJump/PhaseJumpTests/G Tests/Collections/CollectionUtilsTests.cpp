@@ -2,6 +2,7 @@
 
 #include "VectorList.h"
 #include "StringUtils.h"
+#include "UnorderedSet.h"
 
 using namespace std;
 using namespace PJ;
@@ -53,6 +54,13 @@ TEST(CollectionUtils, RemoveIf) {
     EXPECT_EQ(10, *i);
 }
 
+TEST(CollectionUtils, Compact) {
+    int value = 10;
+    VectorList<int*> sut{ &value, nullptr, nullptr, &value };
+    Compact(sut);
+    EXPECT_EQ(2, sut.size());
+}
+
 TEST(CollectionUtils, FirstIterator) {
     VectorList<int> sut{ 1, 3, 5, 10 };
 
@@ -65,17 +73,17 @@ TEST(CollectionUtils, FirstIteratorInvalid) {
     EXPECT_EQ(3, *(FirstIterator(sut, [](int value) { return value == 3; })));
 }
 
-TEST(CollectionUtils, First) {
+TEST(CollectionUtils, SafeFirst) {
     VectorList<int> sut{ 1, 3, 5, 10 };
 
-    auto first = First(sut, [](int value) { return value > 1; });
+    auto first = FirstIf(sut, [](int value) { return value > 1; });
     EXPECT_EQ(std::make_optional<int>(3), first);
 }
 
 TEST(CollectionUtils, FirstInvalid) {
     VectorList<int> sut{ 1, 3, 5, 10 };
 
-    auto firstInvalid = First(sut, [](int value) { return value > 11; });
+    auto firstInvalid = FirstIf(sut, [](int value) { return value > 11; });
     EXPECT_EQ(std::nullopt, firstInvalid);
 }
 
@@ -117,6 +125,14 @@ TEST(CollectionUtils, IndexOf) {
     EXPECT_FALSE(IndexOf(sut, 20));
 }
 
+TEST(CollectionUtils, IndexOfIf) {
+    VectorList<int> sut{ 1, 3, 5 };
+
+    EXPECT_EQ(0, IndexOfIf(sut, [](auto& item) { return item > 0; }).value());
+    EXPECT_EQ(2, IndexOfIf(sut, [](auto& item) { return item > 3; }).value());
+    EXPECT_FALSE(IndexOf(sut, 20));
+}
+
 TEST(CollectionUtils, Filter) {
     VectorList<int> sut{ 1, 2, 3, 4 };
 
@@ -128,6 +144,64 @@ TEST(CollectionUtils, Filter) {
 
     i++;
     EXPECT_EQ(2, *i);
+}
+
+TEST(CollectionUtils, FilterSetUnordered) {
+    UnorderedSet<int> sut;
+    sut.insert(1);
+    sut.insert(2);
+    sut.insert(3);
+    sut.insert(4);
+
+    auto values = Filter(sut, [](int value) { return value < 3; });
+    EXPECT_EQ(2, values.size());
+
+    EXPECT_TRUE(sut.contains(1));
+    EXPECT_TRUE(sut.contains(2));
+}
+
+TEST(CollectionUtils, FilterSetOrdered) {
+    OrderedSet<int> sut;
+    sut.insert(1);
+    sut.insert(2);
+    sut.insert(3);
+    sut.insert(4);
+
+    auto values = Filter(sut, [](int value) { return value < 3; });
+    EXPECT_EQ(2, values.size());
+
+    EXPECT_TRUE(sut.contains(1));
+    EXPECT_TRUE(sut.contains(2));
+}
+
+TEST(CollectionUtils, Map) {
+    VectorList<int> sut{ 1, 2, 3 };
+
+    auto values = Map<String>(sut, [](int value) { return MakeString(value); });
+    EXPECT_EQ(3, values.size());
+
+    VectorList<String> expectedValues{ "1", "2", "3" };
+    EXPECT_EQ(expectedValues, values);
+}
+
+TEST(CollectionUtils, MapSetUnordered) {
+    UnorderedSet<int> sut{ 1, 2, 3 };
+
+    auto values = Map<String>(sut, [](int value) { return MakeString(value); });
+    EXPECT_EQ(3, values.size());
+
+    UnorderedSet<String> expectedValues{ "1", "2", "3" };
+    EXPECT_EQ(expectedValues, values);
+}
+
+TEST(CollectionUtils, MapSetOrdered) {
+    OrderedSet<int> sut{ 1, 2, 3 };
+
+    auto values = Map<String>(sut, [](int value) { return MakeString(value); });
+    EXPECT_EQ(3, values.size());
+
+    OrderedSet<String> expectedValues{ "1", "2", "3" };
+    EXPECT_EQ(expectedValues, values);
 }
 
 TEST(CollectionUtils, RemoveAt) {

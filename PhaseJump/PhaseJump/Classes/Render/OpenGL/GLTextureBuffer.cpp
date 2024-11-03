@@ -66,7 +66,8 @@ void GLTextureBuffer::Build(Vector2Int size) {
     GLuint textureId{};
     glGenTextures(1, &textureId);
 
-    texture = MAKE<GLTexture>("buffer", textureId, size, "");
+    // TODO: this works, but is it the correct solution?
+    texture = MAKE<GLTexture>("buffer", textureId, size, Vector2(0, 1), Vector2(1, -1), "");
 
     glRenderEngine->BindTexture2D(textureId);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);

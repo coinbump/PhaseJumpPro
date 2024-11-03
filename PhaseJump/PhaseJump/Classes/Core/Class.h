@@ -15,6 +15,11 @@ namespace PJ {
     template <class BaseType = Base>
     class SomeClass {
     public:
+        String id;
+
+        SomeClass(String id) :
+            id(id) {}
+
         virtual ~SomeClass() {}
     };
 
@@ -39,12 +44,12 @@ namespace PJ {
     /// composition of the class Example: 3 cards share the same
     /// "JokerCardClass" object
     template <class Core = StandardClassCore, class BaseType = Base>
-    class Class : public OwnerBase<Core>, public SomeClass<BaseType> {
+    class Class : public Base, public SomeClass<BaseType> {
     public:
-        String id;
+        Core core{};
 
         Class(String id) :
-            id(id) {}
+            SomeClass<BaseType>(id) {}
 
         virtual ~Class() {}
     };

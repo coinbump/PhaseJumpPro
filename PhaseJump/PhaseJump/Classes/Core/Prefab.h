@@ -1,24 +1,29 @@
 #pragma once
 
+#include <functional>
+
+// /23
 namespace PJ {
+    class WorldNode;
+
     /// A prefab is a node factory. We can use prefabs to quickly build scenes
     class Prefab {
     public:
-        using MakeFunc = std::function<SP<WorldNode>(World&)>;
+        using LoadFunc = std::function<void(WorldNode&)>;
 
         String id;
-        MakeFunc makeFunc;
+        LoadFunc loadFunc;
 
         Prefab() {}
 
-        Prefab(MakeFunc makeFunc) :
-            makeFunc(makeFunc) {}
+        Prefab(LoadFunc loadFunc) :
+            loadFunc(loadFunc) {}
 
         virtual ~Prefab() {}
 
-        virtual SP<WorldNode> Make(World& world) {
-            GUARDR(makeFunc, nullptr)
-            return makeFunc(world);
+        virtual void LoadInto(WorldNode& node) {
+            GUARD(loadFunc)
+            loadFunc(node);
         }
     };
 } // namespace PJ

@@ -160,7 +160,7 @@ namespace PJ {
 
         // MARK: WorldSizeable
 
-        std::optional<Vector3> WorldSize() const override {
+        Vector3 WorldSize() const override {
             auto size = Size();
             return Vector3(size.x, size.y, 0);
         }

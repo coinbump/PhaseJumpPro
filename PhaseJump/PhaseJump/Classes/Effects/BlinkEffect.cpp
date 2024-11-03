@@ -8,7 +8,7 @@ using namespace PJ;
 BlinkEffect::BlinkEffect(
     AnimationCycleType cycleType, VectorList<float> offKeys, VectorList<float> onKeys
 ) :
-    timeTrack(0, cycleType, TimeTrackValueType::Discrete) {
+    timeTrack({ .duration = 0, .cycleType = cycleType, .keyedTimeType = KeyedTimeType::Discrete }) {
     float duration{};
 
     for (auto& time : offKeys) {
@@ -24,17 +24,17 @@ BlinkEffect::BlinkEffect(
 
     timeTrack.setBindingFunc = [this](auto& value) {
         GUARD(owner)
-        owner->Modify<SomeRenderer>([=](auto& renderer) { renderer.SetIsEnabled(value); });
+        owner->Modify<SomeRenderer>([=](auto& renderer) { renderer.Enable(value); });
     };
 
-    onSwitchChangeFunc = [](auto& handler) {
+    onEnabledChangeFunc = [](auto& handler) {
         auto& effect = *(static_cast<This*>(&handler));
 
-        if (handler.IsOn()) {
+        if (handler.IsEnabled()) {
             effect.timeTrack.Reset();
         } else {
             // Turn renderers back on when effect is off
-            effect.owner->Modify<SomeRenderer>([](auto& renderer) { renderer.SetIsEnabled(true); });
+            effect.owner->Modify<SomeRenderer>([](auto& renderer) { renderer.Enable(true); });
         }
     };
 

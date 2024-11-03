@@ -16,6 +16,15 @@
  CODE REVIEW: 7/6/24
  */
 namespace PJ {
+    /// Specifies how published values broadcast after set
+    enum PublishValueCondition {
+        /// Publish value when it changes
+        OnChange,
+
+        /// Always publish a value when it is set, even if the value doesn't change
+        Always
+    };
+
     struct StateMachineEdgeCore {
         using InputList = VectorList<String>;
 
@@ -54,6 +63,9 @@ namespace PJ {
         bool isLocked = false;
 
     public:
+        /// Map of input to StateType for transitions from any state
+        UnorderedMap<String, StateType> anyStateTransitions;
+
         StateMachine(StateType state = {}) :
             state(state),
             prevState(state) {}
@@ -101,7 +113,7 @@ namespace PJ {
         }
 
         /// Add a state and a node in the graph
-        NodeSharedPtr AddState(StateType state) {
+        NodeSharedPtr Add(StateType state) {
             auto node = NodeForState(state);
             if (node) {
                 return node;
@@ -116,6 +128,11 @@ namespace PJ {
         }
 
         std::optional<StateType> NextStateForInput(String input) {
+            // Allow a transition from any state for this input
+            try {
+                return anyStateTransitions.at(input);
+            } catch (...) {}
+
             auto state = this->state;
             auto node = NodeForState(state);
 
@@ -145,8 +162,8 @@ namespace PJ {
 
         /// Connect two states via inputs, adding them to the graph if necessary
         void ConnectStates(StateType fromState, InputList inputs, StateType toState) {
-            auto fromNode = AddState(fromState);
-            auto toNode = AddState(toState);
+            auto fromNode = Add(fromState);
+            auto toNode = Add(toState);
 
             GUARD(fromNode)
             GUARD(toNode)
@@ -154,14 +171,34 @@ namespace PJ {
             this->AddEdge(fromNode, EdgeCore(inputs), toNode);
         }
 
+        /// Add an input-driven transition between two states
+        void AddTransition(StateType fromState, String input, StateType toState) {
+            auto fromNode = Add(fromState);
+            auto toNode = Add(toState);
+
+            GUARD(fromNode)
+            GUARD(toNode)
+
+            this->AddEdge(fromNode, EdgeCore({ input }), toNode);
+        }
+
         StateType State() const {
             return state;
         }
 
-        void SetState(StateType value) {
+        void SetState(
+            StateType value, PublishValueCondition condition = PublishValueCondition::OnChange
+        ) {
             auto newState = value;
 
-            GUARD(newState != state)
+            switch (condition) {
+            case PublishValueCondition::OnChange:
+                GUARD(newState != state)
+                break;
+            default:
+                break;
+            }
+
             GUARD(!isLocked)
             GUARD(CanTransition(newState))
 
@@ -180,6 +217,12 @@ namespace PJ {
         /// Return true if we can transition to the new state
         virtual bool CanTransition(StateType newState) {
             return true;
+        }
+
+        /// Forces the on state change call to run
+        /// Used to update state-related properties that have recently changed
+        void ForceOnStateChange() {
+            OnStateChange();
         }
 
     protected:

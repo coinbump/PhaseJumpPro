@@ -18,6 +18,9 @@ namespace PJ {
         bool isEnabled = true;
 
     public:
+        /// The system that owns this processor, if any
+        RenderWorldSystem* system{};
+
         /// Called for system render phases
         using ProcessFunc = std::function<void(String phase)>;
 

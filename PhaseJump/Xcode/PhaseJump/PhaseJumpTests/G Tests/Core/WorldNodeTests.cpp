@@ -26,12 +26,6 @@ namespace WorldNodeTests {
 
 using namespace WorldNodeTests;
 
-TEST(WorldNode, Id)
-{
-    SP<WorldNode> sut = MAKE<WorldNode>("name");
-    EXPECT_EQ((uint64_t)sut.get(), sut->IntId());
-}
-
 TEST(WorldNode, Toggles)
 {
     WorldNode sut("name");
@@ -189,7 +183,7 @@ TEST(WorldNode, RemoveNode)
     EXPECT_EQ(sut.get(), child->Parent());
     EXPECT_EQ(1, sut->ChildCount());
 
-    sut->Remove(child);
+    sut->Remove(*child);
     EXPECT_EQ(nullptr, child->World());
     EXPECT_EQ(nullptr, child->Parent());
     EXPECT_EQ(0, sut->ChildCount());
@@ -207,7 +201,7 @@ TEST(WorldNode, RemoveNode_Deep)
     child->Add(child2);
 
     sut->Add(child);
-    sut->Remove(child);
+    sut->Remove(*child);
     EXPECT_EQ(nullptr, child->World());
     EXPECT_EQ(nullptr, child->Parent());
     EXPECT_EQ(0, sut->ChildCount());
@@ -247,7 +241,7 @@ TEST(WorldNode, RemoveComponent)
     sut->Add(component);
     EXPECT_EQ(1, sut->Components().size());
     EXPECT_EQ(sut.get(), component->owner);
-    sut->Remove(component);
+    sut->Remove(*component);
     EXPECT_EQ(0, sut->Components().size());
     EXPECT_EQ(nullptr, component->owner);
 }
@@ -465,8 +459,8 @@ TEST(WorldNode, OnAddChildNode)
     world->Add(sut);
 
     int value = 0;
-    auto component = MAKE<WorldComponent<FuncWorldComponentCore>>();
-    component->signalHandlers[SignalId::AddChildNode] = [&](auto& owner, auto& event) {
+    auto component = MAKE<WorldComponent<StandardCore>>();
+    component->signalFuncs[SignalId::AddChildNode] = [&](auto& owner, auto& event) {
         value++;
     };
     sut->Add(component);
@@ -475,4 +469,26 @@ TEST(WorldNode, OnAddChildNode)
 
     sut->Add(MAKE<WorldNode>());
     EXPECT_EQ(1, value);
+}
+
+TEST(WorldNode, Contains)
+{
+    auto sut = MAKE<WorldNode>();
+    auto component = MAKE<WorldComponent<>>();
+    auto component2 = MAKE<WorldComponent<>>();
+    sut->Add(component);
+
+    EXPECT_TRUE(sut->Contains(*component));
+    EXPECT_FALSE(sut->Contains(*component2));
+}
+
+TEST(WorldNode, EnableType_IsTypeEnabled)
+{
+    auto sut = MAKE<WorldNode>();
+    auto component = MAKE<TestComponent>();
+    sut->Add(component);
+
+    EXPECT_TRUE(sut->IsTypeEnabled<TestComponent>());
+    sut->EnableType<TestComponent>(false);
+    EXPECT_FALSE(sut->IsTypeEnabled<TestComponent>());
 }

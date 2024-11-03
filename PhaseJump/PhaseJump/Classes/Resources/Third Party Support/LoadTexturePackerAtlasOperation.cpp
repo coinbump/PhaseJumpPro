@@ -51,7 +51,8 @@ SomeLoadResourcesOperation::Result LoadTexturePackerAtlasOperation::LoadResource
 
         Success result;
 
-        auto textureAtlas = MAKE<TextureAtlas>();
+        auto textureAtlas = MAKE<TextureAtlas>(texture);
+        GUARDR(texture->size.x > 0 && texture->size.y > 0, Failure());
 
         for (auto& frame : frames) {
             String fileName = frame["filename"];
@@ -67,6 +68,8 @@ SomeLoadResourcesOperation::Result LoadTexturePackerAtlasOperation::LoadResource
             int sourceWidth = sourceSize["w"];
             int sourceHeight = sourceSize["h"];
 
+            bool isRotated = frame["rotated"];
+
             auto spriteSourceSize = frame["spriteSourceSize"];
             int trimRecX = spriteSourceSize["x"];
             int trimRecY = spriteSourceSize["y"];
@@ -79,10 +82,43 @@ SomeLoadResourcesOperation::Result LoadTexturePackerAtlasOperation::LoadResource
             Vector2Int trimOrigin(trimRecX, trimRecY);
             Vector2Int untrimmedSize(sourceWidth, sourceHeight);
             String alphaMode = texture->alphaMode;
-            auto atlasTexture = MAKE<AtlasTexture>(
-                texture, atlasTextureId, atlasOrigin, atlasSize, trimOrigin, untrimmedSize,
-                alphaMode
-            );
+
+            auto origin = atlasOrigin;
+            auto size = atlasSize;
+            float normalOriginX = (float)origin.x / (float)texture->size.x;
+            float normalOriginY = (float)origin.y / (float)texture->size.y;
+            float normalSizeX = (float)size.x / (float)texture->size.x;
+            float normalSizeY = (float)size.y / (float)texture->size.y;
+
+            AtlasTexture::Orientation orientation =
+                isRotated ? AtlasTexture::Orientation::Rotated : AtlasTexture::Orientation::Default;
+            // TODO: add rotated support (not yet supported)
+            //            switch (orientation) {
+            //            case AtlasTexture::Orientation::Default:
+            //                break;
+            //            case AtlasTexture::Orientation::Rotated:
+            //                // Texture packer stores rotated textures with the unrotated size and
+            //                frame, so
+            //                // adjust
+            //                normalSizeX = (float)size.x / (float)texture->size.y;
+            //                normalSizeY = (float)size.y / (float)texture->size.x;
+            //                //                std::swap(size.x, size.y);
+            //                //                std::swap(untrimmedSize.x, untrimmedSize.y);
+            //                break;
+            //            }
+
+            AtlasTexture::Config config{ .base = { .id = atlasTextureId,
+                                                   .origin = origin,
+                                                   .size = size,
+                                                   .trimOrigin = trimOrigin,
+                                                   .untrimmedSize = untrimmedSize,
+                                                   .alphaMode = alphaMode,
+                                                   .normalOrigin = { normalOriginX, normalOriginY },
+                                                   .normalSize = { normalSizeX, normalSizeY } },
+                                         .parent = textureAtlas.get(),
+                                         .orientation = orientation };
+            auto atlasTexture = MAKE<AtlasTexture>(config);
+
             ResourceModel loadedResource(
                 SCAST<PJ::Base>(atlasTexture), atlasTextureId, filePath, "texture"
             );

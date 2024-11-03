@@ -7,16 +7,12 @@ using namespace std;
 using namespace PJ;
 namespace fs = std::filesystem;
 
-bool FileManager::IsDirectory(FilePath filePath) const {
+bool FileManager::IsDirectory(FilePath filePath) {
     std::error_code errorCode;
     return filesystem::is_directory(filePath, errorCode);
 }
 
-String FileManager::PathSeparatorString() const {
-    return MakeString(filesystem::path::preferred_separator);
-}
-
-String FileManager::FileExtension(FilePath filePath, bool withDot) const {
+String FileManager::FileExtension(FilePath filePath, bool withDot) {
     auto result = String(filePath.extension().string());
 
     if (!withDot) {
@@ -26,18 +22,18 @@ String FileManager::FileExtension(FilePath filePath, bool withDot) const {
     return result;
 }
 
-String FileManager::FileName(FilePath filePath, bool includeExtension) const {
+String FileManager::FileName(FilePath filePath, bool includeExtension) {
     return includeExtension ? String(filePath.filename().string())
                             : String(filePath.stem().string());
 }
 
-void FileManager::CreateDirectories(FilePath filePath) const {
-    filesystem::create_directories(filePath);
+void FileManager::CreateDirectories(FilePath filePath) {
+    std::error_code errorCode;
+    filesystem::create_directories(filePath, errorCode);
 }
 
-// Important: always use this with threads or you will hang the app for large
-// lists
-VectorList<FilePath> FileManager::PathList(FilePath path, bool isRecursive) {
+VectorList<FilePath> FileManager::PathList(FilePath path, FileSearchType searchType) {
+    // Careful: avoid using this for large file lists on the main thread
     VectorList<FilePath> result;
 
     if (!IsDirectory(path)) {
@@ -45,7 +41,7 @@ VectorList<FilePath> FileManager::PathList(FilePath path, bool isRecursive) {
         return result;
     }
 
-    if (isRecursive) {
+    if (searchType == FileSearchType::Recursive) {
         for (auto& path : fs::recursive_directory_iterator{ path }) {
             Add(result, path);
         }

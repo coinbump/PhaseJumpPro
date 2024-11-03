@@ -28,12 +28,12 @@ TEST(UnorderedMap, ContainsKeyWhere) {
 
     using Pair = pair<std::string, int>;
 
-    auto value = MapContainsWhere<Map, int>(sut, [](int value) -> bool { return value == 1; });
+    auto value = MapContainsIf<Map, int>(sut, [](int value) -> bool { return value == 1; });
     EXPECT_TRUE(value);
 
-    value = MapContainsWhere<Map, int>(sut, [](int value) -> bool { return value == 100; });
+    value = MapContainsIf<Map, int>(sut, [](int value) -> bool { return value == 100; });
     EXPECT_TRUE(value);
 
-    value = MapContainsWhere<Map, int>(sut, [](int value) -> bool { return value == 90; });
+    value = MapContainsIf<Map, int>(sut, [](int value) -> bool { return value == 90; });
     EXPECT_FALSE(value);
 }

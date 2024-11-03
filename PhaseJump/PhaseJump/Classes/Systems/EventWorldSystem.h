@@ -1,6 +1,6 @@
 #pragma once
 
-#include "InputTriggerMap.h"
+#include "InputMap.h"
 #include "List.h"
 #include "OrderedMap.h"
 #include "PointerClickUIEvent.h"
@@ -9,11 +9,16 @@
 #include "WorldNode.h"
 #include <memory>
 
-// CODE REVIEW: ?/23
+/*
+ RATING: 4 stars
+ Tested and works. Needs unit tests
+ CODE REVIEW: 10/6/24
+ */
 namespace PJ {
     class WorldNode;
     class DropFilesUIEvent;
 
+    /// A node hit with the local position hit inside the node
     struct LocalHit {
         LocalPosition localPos;
         SP<WorldNode> node;
@@ -23,44 +28,42 @@ namespace PJ {
             node(node) {}
     };
 
-    /// Has logic needed for standard UI behavior (button tracking, pointer exit, etc.)
+    /// Dispatches UI events to the appropriate node
+    /// If you're thinking about using this, you probably want UIWorldSystem instead
     class EventWorldSystem : public SomeWorldSystem {
     public:
         using Base = SomeWorldSystem;
-        using ControllerId = String;
+        using This = EventWorldSystem;
+        using EventNodeList = VectorList<WP<WorldNode>>;
 
     public:
         /// Maps UI events to input events
-        SP<SomeMultiMap<SomeUIEvent, String>> inputMap = MAKE<InputTriggerMap>();
-        std::function<void(EventWorldSystem& system, List<WP<WorldNode>>& nodes)> inputCollectFunc;
+        UP<InputMap> inputMap = NEW<InputMap>();
+
+        /// Collects the list of nodes to dispatch events to
+        std::function<void(EventWorldSystem& system, EventNodeList& nodes)> collectEventNodesFunc;
 
     public:
         EventWorldSystem(String name = "Events");
 
-        void ProcessUIEvents(List<SP<SomeUIEvent>> const& uiEvents) override;
+        /// Tests for nodes hit at this screen position and returns a list of hits
+        /// Requires a raycaster and a camera
+        virtual VectorList<PJ::LocalHit> TestScreenHit(ScreenPosition screenPosition);
 
-        // TODO: rename to TestScreenHit? <- but it returns localPosition
-        VectorList<PJ::LocalHit> TestLocalHit(ScreenPosition screenPosition);
-
-        virtual void OnDropFiles(DropFilesUIEvent const& event, List<WP<WorldNode>> const& nodes);
+        virtual void OnDropFiles(DropFilesUIEvent const& event, EventNodeList const& nodes);
         virtual void OnPointerDown(PointerDownUIEvent const& event);
         virtual void OnPointerUp(PointerUpUIEvent const& event);
-        virtual void OnMouseMotion(PointerMoveUIEvent const& event);
-        virtual void OnKeyDown(KeyDownUIEvent const& event, List<WP<WorldNode>> const& nodes);
-        virtual void OnInputAction(InputActionEvent const& event, List<WP<WorldNode>> const& nodes);
+        virtual void OnPointerMove(PointerMoveUIEvent const& event);
+        virtual void OnKeyDown(KeyDownUIEvent const& event, EventNodeList const& nodes);
+        virtual void
+        OnInputAction(SomeUIEvent const& event, String action, EventNodeList const& nodes);
+
+        // MARK: SomeWorldSystem
+
+        void ProcessUIEvents(UIEventList const& uiEvents) override;
 
     protected:
-        void DispatchEvent(SP<WorldNode> node, String signalId, SomeSignal const& signal) {
-            GUARD(node && node->IsEnabled());
-
-            auto iterComponents = node->Components();
-            std::for_each(iterComponents.begin(), iterComponents.end(), [&](auto& component) {
-                GUARD(component->IsEnabled())
-                try {
-                    auto i = component->signalHandlers.at(signalId);
-                    i(*component, signal);
-                } catch (...) {}
-            });
-        }
+        void DispatchEvent(String signalId, SomeSignal const& signal, EventNodeList const& nodes);
+        void DispatchEvent(SP<WorldNode> node, String signalId, SomeSignal const& signal);
     };
 } // namespace PJ

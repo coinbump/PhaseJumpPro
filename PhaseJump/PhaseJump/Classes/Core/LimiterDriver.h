@@ -1,0 +1,39 @@
+#pragma once
+
+#include "Funcs.h"
+#include "SomeDriver.h"
+#include "SomeLimiter.h"
+
+/*
+ RATING: 5 stars
+ TODO: needs rethink + tests
+ CODE REVIEW: 10/5/23
+ */
+namespace PJ {
+    /// Continuously sends fire events, which are limited by the limiter
+    /// Fire events that are not limited drive an action
+    /// Example: cannon that continuously fires every N seconds in shump game
+    class LimiterDriver : public SomeDriver {
+    public:
+        using This = LimiterDriver;
+        using Base = SomeDriver;
+
+        UP<SomeLimiter> limiter;
+
+        LimiterDriver(UP<SomeLimiter>& _limiter, ActionFunc action) :
+            Base(action),
+            limiter(std::move(_limiter)) {
+            GUARD(limiter)
+
+            SomeLimiter::OnFireFunc onFireFunc = [action](auto& limiter) { action(); };
+            Override(limiter->onFireFunc, onFireFunc);
+
+            onUpdateFunc = [this](auto& updatable, auto time) {
+                limiter->OnUpdate(time);
+                limiter->Fire();
+
+                return FinishType::Continue;
+            };
+        }
+    };
+} // namespace PJ

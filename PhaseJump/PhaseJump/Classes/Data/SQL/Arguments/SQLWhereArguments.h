@@ -1,5 +1,4 @@
-#ifndef SQLWHEREARGUMENTS_H
-#define SQLWHEREARGUMENTS_H
+#pragma once
 
 #include "StringUtils.h"
 
@@ -19,5 +18,3 @@ namespace PJ {
             value(value) {}
     };
 } // namespace PJ
-
-#endif

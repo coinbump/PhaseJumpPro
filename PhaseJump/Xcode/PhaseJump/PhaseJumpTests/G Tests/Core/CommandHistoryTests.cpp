@@ -5,8 +5,8 @@ using namespace PJ;
 using namespace std;
 
 namespace CommandHistoryTests {
-    SP<Command<int>> MakeCommand(String name) {
-        return MAKE<Command<int>>(name, [](auto& command) { command.core++; }, [](auto& command) { command.core--; });
+    UP<SomeCommand> MakeCommand(String name) {
+        return NEW<Command<int>>(name, [](auto& command) { command.core++; }, [](auto& command) { command.core--; });
     }
 }
 
@@ -42,10 +42,12 @@ TEST(CommandHistory, UndoRedo)
     CommandHistory sut(2);
 
     EXPECT_EQ(-1, sut.ActiveCommandIndex());
-    auto commandA = MakeCommand("a");
-    auto commandB = MakeCommand("b");
-    sut.Run(commandA);
-    sut.Run(commandB);
+    auto _commandA = MakeCommand("a");
+    auto _commandB = MakeCommand("b");
+    auto commandA = static_cast<Command<int>*>(_commandA.get());
+    auto commandB = static_cast<Command<int>*>(_commandB.get());
+    sut.Run(_commandA);
+    sut.Run(_commandB);
 
     EXPECT_EQ(1, commandA->core);
     EXPECT_EQ(1, commandB->core);
@@ -74,11 +76,14 @@ TEST(CommandHistory, UndoThenRun)
     CommandHistory sut(2);
 
     EXPECT_EQ(-1, sut.ActiveCommandIndex());
-    auto commandA = MakeCommand("a");
-    auto commandB = MakeCommand("b");
-    auto commandC = MakeCommand("c");
-    sut.Run(commandA);
-    sut.Run(commandB);
+    auto _commandA = MakeCommand("a");
+    auto _commandB = MakeCommand("b");
+    auto _commandC = MakeCommand("c");
+    auto commandA = static_cast<Command<int>*>(_commandA.get());
+    auto commandB = static_cast<Command<int>*>(_commandB.get());
+    auto commandC = static_cast<Command<int>*>(_commandC.get());
+    sut.Run(_commandA);
+    sut.Run(_commandB);
 
     EXPECT_EQ(1, commandA->core);
     EXPECT_EQ(1, commandB->core);
@@ -86,7 +91,7 @@ TEST(CommandHistory, UndoThenRun)
     sut.Undo();
     EXPECT_EQ(0, sut.ActiveCommandIndex());
 
-    sut.Run(commandC);
+    sut.Run(_commandC);
     EXPECT_EQ(1, sut.ActiveCommandIndex());
 
     EXPECT_EQ("a", sut.At(0).name);
@@ -102,19 +107,19 @@ TEST(CommandHistory, Helpers)
     CommandHistory sut(2);
 
     EXPECT_EQ(-1, sut.ActiveCommandIndex());
-    auto commandA = MakeCommand("a");
-    auto commandB = MakeCommand("b");
-    auto commandC = MakeCommand("c");
+    auto _commandA = MakeCommand("a");
+    auto _commandB = MakeCommand("b");
+    auto _commandC = MakeCommand("c");
 
     EXPECT_FALSE(sut.CanUndo());
     EXPECT_FALSE(sut.CanRedo());
 
-    sut.Run(commandA);
+    sut.Run(_commandA);
     EXPECT_EQ("a", sut.UndoCommandName());
     EXPECT_TRUE(sut.CanUndo());
     EXPECT_FALSE(sut.CanRedo());
 
-    sut.Run(commandB);
+    sut.Run(_commandB);
     EXPECT_EQ("b", sut.UndoCommandName());
     EXPECT_TRUE(sut.CanUndo());
     EXPECT_FALSE(sut.CanRedo());
@@ -124,7 +129,7 @@ TEST(CommandHistory, Helpers)
     EXPECT_EQ("a", sut.UndoCommandName());
     EXPECT_EQ("b", sut.RedoCommandName());
 
-    sut.Run(commandC);
+    sut.Run(_commandC);
     EXPECT_EQ(1, sut.ActiveCommandIndex());
     EXPECT_EQ("c", sut.UndoCommandName());
     EXPECT_EQ("", sut.RedoCommandName());

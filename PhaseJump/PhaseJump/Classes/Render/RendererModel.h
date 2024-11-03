@@ -110,6 +110,7 @@ namespace PJ {
 
         // FUTURE: introduce a dependency pattern here for these flags
         void SetMeshNeedsBuild() {
+            SetRenderModelsNeedBuild();
             meshNeedsBuild = true;
             vertexColorsNeedBuild = true;
             renderModelsNeedBuild = true;

@@ -20,9 +20,8 @@
 namespace PJ {
     /// Use to build trees, graphs, state machines, etc.
     template <class EdgeCore = StandardEdgeCore, class Core = Void>
-    class SomeGraphNode : public OwnerBase<Core>, public Updatable {
+    class SomeGraphNode : public Base, public Updatable {
     public:
-        using Base = OwnerBase<Core>;
         using This = SomeGraphNode<EdgeCore, Core>;
         using Node = This;
         using NodeWeakPtr = WP<Node>;
@@ -51,6 +50,7 @@ namespace PJ {
         using EdgeList = VectorList<EdgeSharedPtr>;
 
         String id;
+        Core core{};
 
         virtual ~SomeGraphNode() {}
 
@@ -88,7 +88,7 @@ namespace PJ {
         SomeGraphNode() {}
 
         SomeGraphNode(Core core) :
-            Base(core) {}
+            core(core) {}
 
         virtual NodeSharedPtr AddEdge(NodeSharedPtr toNode, EdgeCore model = EdgeCore()) = 0;
 

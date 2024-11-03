@@ -1,10 +1,13 @@
 #pragma once
 
+#include "AnimatedSpriteRenderer.h"
 #include "AnimationCycleTypes.h"
 #include "Animator.h"
+#include "CharacterController.h"
 #include "Color.h"
 #include "DragHandler2D.h"
 #include "EaseFunc.h"
+#include "SimpleAnimationController.h"
 #include "WorldNode.h"
 
 /*
@@ -16,6 +19,18 @@
 namespace PJ {
     class DesignSystem;
     class SomeTexture;
+
+    /// Model to build a state transition
+    struct StateTransitionModel {
+        /// Source state for transition. If not defined, transition will be added for any state
+        std::optional<String> state;
+
+        /// Input that activates the transition
+        String input;
+
+        /// Destination state for input
+        String toState;
+    };
 
     /// Convenience methods for adding common components
     /// Use to quickly build scenes for rapid prototyping
@@ -40,6 +55,12 @@ namespace PJ {
         VectorList<SomeWorldComponent*> components;
         VectorList<AnimateStateModel> animateStates{ {} };
 
+        /// Rate for frame animations (FPS)
+        float frameRate = 24;
+
+        /// Cycle type for frame animations
+        AnimationCycleType cycleType = AnimationCycleType::Loop;
+
         AnimateStateModel& AnimateState() {
             Assert(!IsEmpty(animateStates));
             return animateStates[animateStates.size() - 1];
@@ -53,15 +74,25 @@ namespace PJ {
 
         This& SliderVertical(String name, Vector2 worldSize, std::function<void(float)> valueFunc);
 
-        WorldNode& Node() {
-            return nodes[nodes.size() - 1];
-        }
-
     public:
         VectorList<std::reference_wrapper<WorldNode>> nodes;
 
         QuickBuild(WorldNode& node) {
             nodes.push_back(node);
+        }
+
+        WorldNode& Node() const {
+            return nodes[nodes.size() - 1];
+        }
+
+        SP<WorldNode> NodeShared() const {
+            return SCAST<WorldNode>(Node().shared_from_this());
+        }
+
+        /// Modify all components of this type
+        This& ModifyNode(std::function<void(WorldNode& node)> func) {
+            func(Node());
+            return *this;
         }
 
         /// Modify all components of this type
@@ -111,6 +142,14 @@ namespace PJ {
         /// Add standard orthographic camera and associated components
         This& OrthoStandard(Color clearColor = Color::white);
 
+        /// Add texture render component
+        This& Texture(String id);
+
+        /// Add sprite render component
+        This& Sprite(String id) {
+            return Texture(id);
+        }
+
         /// Add circle render component
         This& Circle(float radius, Color color = Color::gray);
 
@@ -151,6 +190,24 @@ namespace PJ {
             return *this;
         }
 
+        /// Sets uniform scale for the current node
+        This& SetUniformScale(float value) {
+            Node().transform.SetScale({ value, value, value });
+            return *this;
+        }
+
+        /// Sets uniform scale for the current node
+        This& SetUniformScale2D(float value) {
+            Node().transform.SetScale({ value, value, 1 });
+            return *this;
+        }
+
+        /// Sets uniform scale for the current node
+        This& SetScale(Vector3 value) {
+            Node().transform.SetScale(value);
+            return *this;
+        }
+
         /// Move the current node in local coordinates
         This& SetLocalPosition(Vector3 position) {
             Node().SetLocalPosition(position);
@@ -168,10 +225,13 @@ namespace PJ {
             return *this;
         }
 
-        constexpr This& Pop() {
-            // Can't pop the first node
-            GUARDR(nodes.size() > 1, *this)
-            nodes.erase(nodes.begin() + (nodes.size() - 1));
+        constexpr This& Pop(int count = 1) {
+            while (count > 0) {
+                // Can't pop the first node
+                GUARDR(nodes.size() > 1, *this)
+                nodes.erase(nodes.begin() + (nodes.size() - 1));
+                count--;
+            }
             return *this;
         }
 
@@ -222,6 +282,34 @@ namespace PJ {
             return *this;
         }
 
+        template <class T, typename... Arguments>
+        constexpr This& WithIfNeeded(Arguments... args) {
+            bool wasNeeded{};
+            auto& component = Node().AddComponentIfNeededWasNeeded<T>(wasNeeded);
+
+            if (wasNeeded) {
+                components.push_back(&component);
+            }
+            return *this;
+        }
+
+        template <class T, typename... Arguments>
+        constexpr This& WithId(String id, Arguments... args) {
+            auto& component = Node().AddComponent<T>(args...);
+            component.id = id;
+            components.push_back(&component);
+            return *this;
+        }
+
+        /// Adds a component that performs an action when enabled
+        This& WithOnEnable(String id, std::function<void(WorldComponent<>&)> func);
+
+        template <class Type>
+        constexpr This& RemoveType() {
+            Node().RemoveType<Type>();
+            return *this;
+        }
+
         This& With(SP<SomeWorldComponent> component) {
             GUARDR(component, *this)
             Node().Add(component);
@@ -239,17 +327,65 @@ namespace PJ {
 
         // MARK: - Animate
 
-        /// Add cycle hue effect
-        This& CycleHueEffect(float cycleTime = 1);
+        /// Adds a behavior tree node builder func for a character controller state
+        This& CharacterStateBehavior(String state, CharacterController::BuildBehaviorFunc func);
 
-        /// Set the animate duration for subsequent animations
+        /// Sets the character state in the character controller, if one exists
+        This& SetCharacterState(String value);
+
+        /// Adds cycle hue effect
+        This& CycleHueEffect(
+            String id = {}, SwitchState switchState = SwitchState::On, float cycleTime = 1
+        );
+
+        /// Sets the animate duration for subsequent animations
         This& SetAnimateDuration(float value);
 
-        /// Set the animate ease func for subsequent animations
+        /// Sets the animate ease func for subsequent animations
         This& SetAnimateEase(EaseFunc value);
 
-        /// Set the animate delay for subsequent animations
+        /// Sets the animate delay for subsequent animations
         This& SetAnimateDelay(float value);
+
+        /// Sets the frame rate for upcoming frame animations
+        This& SetFrameRate(float value) {
+            frameRate = value;
+            return *this;
+        }
+
+        /// Sets the animation cycle type for upcoming frame animations
+        This& SetCycleType(AnimationCycleType value) {
+            cycleType = value;
+            return *this;
+        }
+
+        /// Add a sprite animation based on the texture names
+        This& AnimateSprite(VectorList<String> const& textureNames);
+
+        /// Set the animation state in the animation controller, if one exists
+        This& SetAnimationState(String value);
+
+        /// Set the build renderer func for this animation state in the animation controller
+        This& AnimationStateRenderer(
+            String state, SimpleAnimationController::BuildRendererFunc buildRendererFunc
+        );
+
+        /// Add an animated texture renderer builder func for this animation state based on the
+        /// keyframe models
+        This& AnimationStateFrames(
+            String state, VectorList<AnimatedSpriteRenderer::KeyframeModel> const& models
+        );
+        /// Add state transitions for the current animation controller
+        This& AnimationStateTransitions(VectorList<StateTransitionModel> const& transitions);
+
+        /// Send an input to the animation controller
+        This& AnimationInput(String value);
+
+        /// Set the components state to enable/disable specific components
+        This& SetComponentsState(String value);
+
+        /// Set the func for this components state in the components controller
+        This& ComponentsState(String state, UnorderedSet<String> const& ids);
 
         /// Set valve turn on/off durations
         This& SetValveDurations(float turnOnDuration, float turnOffDuration);
@@ -313,19 +449,19 @@ namespace PJ {
 
         // MARK: Rotate animations
 
-        /// Add rotate animation with start and end values
+        /// Add rotate animation in 2D space with start and end values
         This& AnimateRotate(Angle startValue, Angle endValue);
 
-        /// Add rotate animation from start value to 1
+        /// Add rotate animation in 2D space from start value to 1
         This& RotateIn(Angle startValue);
 
-        /// Add rotate animation from current to end value
+        /// Add rotate animation in 2D space from current to end value
         This& RotateTo(Angle endValue);
 
-        /// Add continuous rotate animation (in angles per second)
+        /// Add continuous rotate animation in 2D space (angles per second)
         This& RotateContinue(Angle value);
 
-        /// Rotate to an end value and continue in an animation cycle
+        /// Rotate to an end value in 2D space and continue in an animation cycle
         This& RotateToPingPong(Angle endValue);
 
         // MARK: Alpha animations
@@ -342,6 +478,14 @@ namespace PJ {
 
         /// Add opacity animation from current to end value
         This& OpacityTo(float endValue);
+
+        /// Rotate left in 2D space at the specified speed
+        This& TurnLeft(Angle speed) {
+            return TurnRight(-speed);
+        }
+
+        /// Rotate right in 2D space at the specified speed
+        This& TurnRight(Angle speed);
 
         /// Destroy the current node in N seconds
         This& Destroy(float time);

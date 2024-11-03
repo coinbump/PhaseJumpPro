@@ -13,7 +13,7 @@ namespace PJ {
     /// and allows for undo-redo through command history
     class CommandHistory {
     public:
-        using CommandList = VectorList<SP<SomeCommand>>;
+        using CommandList = VectorList<UP<SomeCommand>>;
 
     protected:
         CommandList commands;
@@ -53,7 +53,11 @@ namespace PJ {
         }
 
         /// Runs the command and adds it to the command list
-        void Run(SP<SomeCommand> command) {
+        void Run(UP<SomeCommand>& command) {
+            Run(std::move(command));
+        }
+
+        void Run(UP<SomeCommand>&& command) {
             GUARD(command)
             GUARD(maxSize > 0)
 
@@ -67,9 +71,10 @@ namespace PJ {
 
             /// We can't add here because we might be in the middle of the command history
             commands.resize(activeCommandIndex + 1);
-            commands[activeCommandIndex] = command;
+            auto commandPtr = command.get();
+            commands[activeCommandIndex] = std::move(command);
 
-            command->Run();
+            commandPtr->Run();
         }
 
         String UndoCommandName() {

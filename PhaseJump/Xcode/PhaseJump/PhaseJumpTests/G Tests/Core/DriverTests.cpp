@@ -14,7 +14,7 @@ using namespace SomeDriverTests;
 TEST(TimerDriver, RunOnce)
 {
     int i = 0;
-    TimerDriver driver(3, Runner::RunType::Once, [&]() {
+    TimerDriver driver(3, RunType::Once, [&]() {
         i++;
     });
     EXPECT_EQ(0, i);
@@ -31,7 +31,7 @@ TEST(TimerDriver, RunOnce)
 TEST(TimerDriver, RunRepeat)
 {
     int i = 0;
-    TimerDriver driver(1, Runner::RunType::Repeat, [&]() {
+    TimerDriver driver(1, RunType::Repeat, [&]() {
         i++;
     });
     EXPECT_EQ(0, i);

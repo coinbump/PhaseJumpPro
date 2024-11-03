@@ -15,11 +15,12 @@ namespace PJ {
     template <class Key, class Type>
     using OrderedMap = std::map<Key, Type>;
 
+    // TODO: re-evaluate this. Use CollectionUtils instead?
     template <
         class Map, class Type,
         std::enable_if_t<std::is_same<std::map<typename Map::key_type, Type>, Map>::value>* =
             nullptr>
-    bool MapContainsWhere(Map const& map, std::function<bool(Type const&)> check) {
+    bool MapContainsIf(Map const& map, std::function<bool(Type const&)> check) {
         GUARDR(check, false)
 
         for (auto& pair : map) {

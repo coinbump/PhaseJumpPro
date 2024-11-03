@@ -128,8 +128,9 @@ SomeLoadResourcesOperation::Result SDLLoadGLTextureOperation::LoadResources() {
         id = components[0];
     }
 
-    auto texture =
-        MAKE<GLTexture>(id, glTexture, Vector2Int(width, height), TextureAlphaMode::Standard);
+    auto texture = MAKE<GLTexture>(
+        id, glTexture, Vector2Int(width, height), vec2Zero, vec2One, TextureAlphaMode::Standard
+    );
     texture->SomeTexture::SetTextureMagnification(textureMagnification);
 
     ResourceModel loadedResource(SCAST<PJ::Base>(texture), info.id, info.filePath, info.type);

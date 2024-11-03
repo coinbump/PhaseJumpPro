@@ -1,10 +1,6 @@
 #import "AppDelegate.h"
-#if DEVELOPMENT
-#include <PhaseJump-Dev/PhaseJump-Dev.h>
-#else
-#include <PhaseJump/PhaseJump.h>
-#endif
-#include "SDLTest.h"
+#include "SDKIncludes.h"
+#include "SDLKaiju.h"
 
 using namespace PJ;
 
@@ -16,6 +12,7 @@ using namespace PJ;
 @implementation AppDelegate
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
+    // TODO: rethink how shaders are stored and loaded
     {
         // Must specify full path (resources/pj_shaders, not pj/shaders)
         // Files must have extension

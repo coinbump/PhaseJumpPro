@@ -1,5 +1,4 @@
-#ifndef SQLTABLEQUERYARGUMENTS_H
-#define SQLTABLEQUERYARGUMENTS_H
+#pragma once
 
 #include "SQLWhereArguments.h"
 #include "VectorList.h"
@@ -33,5 +32,3 @@ namespace PJ {
             where(where) {}
     };
 } // namespace PJ
-
-#endif

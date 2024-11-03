@@ -12,11 +12,10 @@ namespace PJ {
     class RenderMaterial;
     class Matrix4x4;
     class SomeTexture;
-    class TextureRenderModel;
     class WorldNode;
     class SomeRenderer;
 
-    using UVTransformFunc = std::function<void(TextureRenderModel, VectorList<Vector2>& uvs)>;
+    using UVTransformFunc = std::function<void(SomeTexture&, VectorList<Vector2>& uvs)>;
 
     namespace UVTransformFuncs {
         extern UVTransformFunc textureCoordinates;

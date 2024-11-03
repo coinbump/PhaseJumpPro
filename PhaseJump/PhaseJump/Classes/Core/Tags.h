@@ -6,6 +6,7 @@
 #include "UnorderedSet.h"
 #include <any>
 #include <optional>
+#include <utility>
 
 /*
  RATING: 5 stars
@@ -49,6 +50,8 @@ namespace PJ {
             return Insert({ key, value });
         }
 
+        // TODO: why not return a reference to the value, like TypeValueAt does? Why are they
+        // different?
         /// Returns an optional with the value if it exists, or an empty optional if it doesn't
         /// exist
         template <class T>
@@ -84,7 +87,7 @@ namespace PJ {
 
         /// Adds the type value if a tag of this type and id do not exist
         template <class T>
-        void TypeAddIfMissing(Key const key, T value = {}) {
+        void TypeAddIfNeeded(Key const key, T value = {}) {
             GUARD(!TypeContains<T>(key))
             Add(key, value);
         }
@@ -156,4 +159,23 @@ namespace PJ {
     /// A set of type tag strings
     /// Example: "enemy", "ghost" tags for an arcade game
     using TypeTagSet = UnorderedSet<String>;
+
+    /// Backing storage for a collection of objects
+    template <class Key>
+    class Storage {
+    public:
+        UnorderedMap<Key, Tags> map;
+
+        template <class Type>
+        Type& ValueStorage(Key key, String valueKey) {
+            if (!map.contains(key)) {
+                map.insert_or_assign(key, Tags());
+            }
+
+            Tags& tags = map[key];
+            tags.TypeAddIfNeeded<Type>(valueKey, {});
+
+            return tags.TypeValueAt<Type>(valueKey);
+        }
+    };
 } // namespace PJ

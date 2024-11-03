@@ -1,5 +1,6 @@
 #pragma once
 
+#include "AnimationCycleTypes.h"
 #include "Playable.h"
 
 /*
@@ -15,11 +16,15 @@ namespace PJ {
 
         virtual ~SomeFramePlayable() {}
 
-        virtual int Frame() const = 0;
-
         int FrameForUpdate(TimeSlice time) {
             OnUpdate(time);
             return Frame();
         }
+
+        virtual int Frame() const = 0;
+        virtual float FrameRate() const = 0;
+        virtual void SetFrameRate(float value) = 0;
+        virtual AnimationCycleType CycleType() const = 0;
+        virtual void SetCycleType(AnimationCycleType cycleType) = 0;
     };
 } // namespace PJ

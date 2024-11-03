@@ -13,7 +13,7 @@
 
 /*
  RATING: 4 stars
- Tested and works. Needs unit tests
+ Tested and works
  CODE REVIEW: 8/16/24
  */
 namespace PJ {
@@ -31,11 +31,13 @@ namespace PJ {
         using Base = WorldComponent<>;
         using This = Emitter;
         using SpawnType = SP<WorldNode>;
-
+        using SpawnList = VectorList<SpawnType>;
         using EmitList = VectorList<EmitModel>;
-        using BuildEmitsFunc = std::function<EmitList(This& emitter)>;
-        using SpawnFunc = std::function<std::optional<SpawnType>(This& emitter, EmitModel emit)>;
+
+        using EmitFunc = std::function<EmitList(This&)>;
+        using SpawnFunc = std::function<SpawnList(This&, EmitModel)>;
         using OnSpawnFunc = std::function<void(SpawnType)>;
+        using PositionFunc = std::function<Vector3(This&)>;
 
         /// (Optional) Parent object to spawn new objects into
         /// If this is null, spawned objects are created as children of the emitter's world node
@@ -47,11 +49,11 @@ namespace PJ {
         /// Sent when an object is spawned
         OnSpawnFunc onSpawnFunc;
 
-        // FUTURE: support resolver if needed
+        /// Determines random number logic for this emitter
         SP<SomeRandom> random = MAKE<StandardRandom>();
 
         /// Builds emit models for emitted objects
-        BuildEmitsFunc buildEmitsFunc = [](This& emitter) {
+        EmitFunc emitFunc = [](This& emitter) {
             EmitList result;
             result.push_back(EmitModel());
             return result;
@@ -60,11 +62,11 @@ namespace PJ {
         /// Spawns objects based on emit models
         SpawnFunc spawnFunc = [](This& emitter, EmitModel emit) {
             PJ::Log("ERROR. Must implement a spawn func");
-            return std::nullopt;
+            return SpawnList{};
         };
 
         /// Determines position for spawned object
-        PositionFunc positionFunc = [](SomeRandom& random) { return Vector3::zero; };
+        PositionFunc positionFunc = [](This& emitter) { return Vector3::zero; };
 
     protected:
         using WeakNodeSet = WeakOrderedSet<WP<WorldNode>>;
@@ -75,10 +77,11 @@ namespace PJ {
         /// Emits that have been built, but are delayed
         List<DelayedEmitModel> delayedEmits;
 
-        /// Driver for building emits
-        UP<SomeDriver> fireDriver;
-
     public:
+        /// Driver for building emits
+        UP<SomeDriver> driver;
+
+        Emitter();
         Emitter(SpawnFunc spawnFunc, float fireTime);
         Emitter(SpawnFunc spawnFunc, UP<SomeDriver>& fireDriver);
 
@@ -95,15 +98,17 @@ namespace PJ {
     protected:
         virtual List<SpawnType> EmitWithEmits(EmitList emits);
 
-        virtual SpawnType MakeSpawn(EmitModel const& emit);
-
-        virtual SpawnType Spawn(EmitModel const& emit);
+        virtual SpawnList MakeSpawns(EmitModel const& emit);
+        virtual SpawnList Spawn(EmitModel const& emit);
 
         /// @return Returns local position for new spawn
         virtual Vector3 SpawnPosition(SpawnType spawn);
 
         /// Called when an object is spawned
-        virtual void OnSpawn(SpawnType spawn) {}
+        virtual void OnSpawn(SpawnType spawn) {
+            GUARD(onSpawnFunc)
+            onSpawnFunc(spawn);
+        }
 
         /// Called when objects are emitted
         virtual void OnEmit(EmitList const& spawns) {}

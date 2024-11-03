@@ -118,7 +118,7 @@ namespace PJ {
 
         VectorList<SP<GLRenderPlan>> renderPlans;
 
-        ColorFormat colorFormat = ColorFormat::Float;
+        ColorFormat colorFormat = ColorFormat::Byte;
 
         SomeGLRenderEngine();
 

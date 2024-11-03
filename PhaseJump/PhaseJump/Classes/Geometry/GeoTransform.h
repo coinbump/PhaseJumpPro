@@ -15,6 +15,7 @@ namespace PJ {
         // support
         Vector3 rotation;
         Vector3 scale;
+        Vector3 offset;
 
         GeoTransform(
             Vector3 position = Vector3::zero, Vector3 rotation = Vector3::zero,
@@ -33,12 +34,40 @@ namespace PJ {
             return position;
         }
 
-        void SetLocalPosition(Vector3 position) {
-            this->position = position;
+        Angle Rotation2D() const {
+            return Angle::DegreesAngle(-rotation.z);
         }
 
-        void SetPosition(Vector3 position) {
-            this->position = position;
+        void SetRotation2D(Angle angle) {
+            rotation.z = -angle.Degrees();
+        }
+
+        void SetLocalPosition(Vector3 value) {
+            position = value;
+        }
+
+        float PositionAxisValue(Axis axis) const {
+            return position.AxisValue(axis);
+        }
+
+        void SetAxisPosition(Axis axis, Vector3 value) {
+            SetAxisPosition(axis, value.AxisValue(axis));
+        }
+
+        void SetAxisPosition(Axis axis, float value) {
+            position.AxisValue(axis) = value;
+        }
+
+        void SetAxisScale(Axis axis, Vector3 value) {
+            SetAxisScale(axis, value.AxisValue(axis));
+        }
+
+        void SetAxisScale(Axis axis, float value) {
+            scale.AxisValue(axis) = value;
+        }
+
+        void SetPosition(Vector3 value) {
+            position = value;
         }
 
         Vector3 Scale() const {

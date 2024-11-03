@@ -8,7 +8,7 @@ using namespace std;
 using namespace PJ;
 
 SomeDragHandler::SomeDragHandler() {
-    signalHandlers[SignalId::PointerDown] = [](auto& component, auto& signal) {
+    signalFuncs[SignalId::PointerDown] = [](auto& component, auto& signal) {
         auto event = static_cast<PointerDownUIEvent const*>(&signal);
         static_cast<This*>(&component)->OnPointerDown(*event);
     };

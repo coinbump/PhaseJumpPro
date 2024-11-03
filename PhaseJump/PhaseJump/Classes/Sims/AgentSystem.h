@@ -2,6 +2,7 @@
 
 #include "AgentGroup.h"
 #include "Macros.h"
+#include "Utils.h"
 #include "VectorList.h"
 
 /*

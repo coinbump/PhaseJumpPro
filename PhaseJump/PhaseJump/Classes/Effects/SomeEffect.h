@@ -1,27 +1,23 @@
 #pragma once
 
-#include "SwitchHandler.h"
+#include "Switchable.h"
+#include "WorldComponent.h"
 
 /*
  RATING: 5 stars
  Simple type
- CODE REVIEW: 9/7/24
+ CODE REVIEW: 11/2/24
  */
 namespace PJ {
-    /// A effect is applied when activated
-    class SomeEffect : public SwitchHandler {
+    /// A effect is applied when enabled
+    /// Used as a type filter when enabling/disabling components (Example: EnableEffectsById)
+    class SomeEffect : public WorldComponent<> {
     public:
-        using Base = SwitchHandler;
+        using Base = WorldComponent<>;
+        using This = SomeEffect;
 
-        SomeEffect(SwitchState state = SwitchState::Off) :
-            Base(state) {
-            onSwitchChangeFunc = [](auto& handler) {
-                static_cast<SomeEffect*>(&handler)->UpdateEffectProperties();
-            };
+        SomeEffect(SwitchState state = SwitchState::Off) {
+            Enable(state == SwitchState::On);
         }
-
-        // Override to update the effect properties when the effect state
-        // changes
-        virtual void UpdateEffectProperties() {}
     };
 } // namespace PJ

@@ -16,12 +16,12 @@ namespace PJ {
     class SomeDriver : public Updatable {
     public:
         using This = SomeDriver;
-        using GoFunc = std::function<void()>;
+        using ActionFunc = std::function<void()>;
 
-        GoFunc goFunc;
+        ActionFunc action;
 
-        SomeDriver(GoFunc goFunc) :
-            goFunc(goFunc) {}
+        SomeDriver(ActionFunc action) :
+            action(action) {}
     };
 
     /// Used to drive events. Example: emit something after N seconds
@@ -34,8 +34,8 @@ namespace PJ {
 
         Core core{};
 
-        Driver(Core core, GoFunc goFunc) :
-            Base(goFunc),
+        Driver(Core core, ActionFunc action) :
+            Base(action),
             core(core) {}
     };
 
@@ -44,13 +44,21 @@ namespace PJ {
     public:
         using Base = Driver<Timer>;
 
-        TimerDriver(float duration, Runner::RunType runType, GoFunc goFunc) :
-            Base(Timer(duration, runType), goFunc) {
+        TimerDriver(float duration, RunType runType, ActionFunc action) :
+            Base(Timer(duration, runType), action) {
 
-            core.onFinishFunc = [this](TimerPlayable& timedPlayable) {
-                GUARD(this->goFunc);
-                this->goFunc();
+            core.onFinishFunc = [this](auto& timedPlayable) {
+                GUARD(this->action);
+                this->action();
             };
+        }
+
+        float Duration() const {
+            return core.Duration();
+        }
+
+        void SetDuration(float value) {
+            core.SetDuration(value);
         }
 
         // MARK: Updatable

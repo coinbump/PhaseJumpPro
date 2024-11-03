@@ -1,6 +1,7 @@
 #pragma once
 
 #include "List.h"
+#include "SomeUIEvent.h"
 #include "VectorList.h"
 #include <memory>
 #include <SDL3/SDL.h>
@@ -9,9 +10,11 @@
 namespace PJ {
     class SomeUIEvent;
 
+    // TODO: vecotrList?
     using SDLEventList = List<SDL_Event>;
 
     struct SDLUIEventsBuilder {
-        List<SP<SomeUIEvent>> BuildUIEvents(SDLEventList const& events);
+        // TODO: Use UP here?
+        UIEventList BuildUIEvents(SDLEventList const& events);
     };
 } // namespace PJ

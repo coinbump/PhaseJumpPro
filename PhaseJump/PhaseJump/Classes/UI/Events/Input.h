@@ -1,6 +1,6 @@
 #pragma once
 
-#include "InputTriggerMap.h"
+#include "InputMap.h"
 #include "SomeControllerUIEvent.h"
 #include "UnorderedMap.h"
 #include "Vector3.h"

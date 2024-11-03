@@ -1,5 +1,8 @@
 #pragma once
 
+#include "StringUtils.h"
+#include "Utils.h"
+
 /*
  RATING: 5 stars
  Simple type

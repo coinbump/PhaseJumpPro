@@ -59,8 +59,8 @@ namespace PJ {
         /// Adds an updatable func that runs at  the specified speed (default is 1)
         SP<Updatable> AddSpeed(float speed, SimpleOnUpdateFunc onUpdateFunc);
 
-        void Remove(SP<Updatable> value) {
-            list.remove(value);
+        void Remove(Updatable& value) {
+            RemoveFirstIf(list, [&](auto& i) { return i.get() == &value; });
         }
 
         // MARK: Updatable

@@ -1,5 +1,4 @@
-#ifndef SQLTABLETYPEMUTATEARGUMENTS_H
-#define SQLTABLETYPEMUTATEARGUMENTS_H
+#pragma once
 
 #include "SQLWhereArguments.h"
 
@@ -30,5 +29,3 @@ namespace PJ {
             value(value) {}
     };
 } // namespace PJ
-
-#endif

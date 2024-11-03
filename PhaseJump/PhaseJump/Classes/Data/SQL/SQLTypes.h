@@ -1,5 +1,4 @@
-#ifndef SQLTYPES_H
-#define SQLTYPES_H
+#pragma once
 
 #include "StringUtils.h"
 
@@ -26,5 +25,3 @@ namespace PJ {
         TemporaryOnDisk
     };
 } // namespace PJ
-
-#endif

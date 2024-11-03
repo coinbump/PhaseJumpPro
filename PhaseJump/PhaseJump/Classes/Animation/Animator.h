@@ -58,7 +58,7 @@ namespace PJ {
                     binding(curveValue);
                 }
 
-                return animator.timer.IsFinished() ? FinishType::Finish : FinishType::Continue;
+                return animator.timer.GetFinishType();
             };
         }
 

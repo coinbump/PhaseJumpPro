@@ -10,12 +10,11 @@
  CODE REVIEW: 9/28/24
  */
 namespace PJ {
-    /// Limits whether or not an event can occur
-    /// Owner must send OnUpdate events for timers to work
-    template <class Core = Void>
-    class SomeLimiter : public OwnerBase<Core>, public Updatable {
+    /// Limits action by a canFireFunc
+    /// Owner must send update events for timers to work
+    class SomeLimiter : public Updatable {
     public:
-        using This = SomeLimiter<Core>;
+        using This = SomeLimiter;
         using CanFireFunc = std::function<bool(This&)>;
         using OnFireFunc = std::function<void(This&)>;
 
@@ -29,17 +28,22 @@ namespace PJ {
         }
 
     public:
-        bool Fire() {
-            GUARDR(CanFire(), false);
-
-            OnFire();
-            return true;
-        }
-
         virtual bool CanFire() {
             GUARDR(canFireFunc, false)
             return canFireFunc(*this);
         }
+
+        virtual void Fire() {
+            GUARD(CanFire());
+
+            OnFire();
+        }
     };
 
+    /// Limiter with a core
+    template <class Core = Void>
+    class Limiter : public SomeLimiter {
+    public:
+        Core core{};
+    };
 } // namespace PJ

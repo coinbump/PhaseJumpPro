@@ -2,29 +2,24 @@
 
 #include "Color.h"
 #include "imgui.h"
+#include "SomeImGuiPainter.h"
+#include "Tags.h"
 #include "UIPlan.h"
 #include "UnorderedMap.h"
 
+// /23
 namespace PJ {
-    /// Backing storage for imGui painter
-    template <class Key>
-    class ImGuiStorage {
-    public:
-        UnorderedMap<Key, Tags> map;
-    };
-
     /// Paints a UI plan into imGui
-    class ImGuiPlanPainter {
+    class ImGuiPlanPainter : public SomeImGuiPainter {
     public:
-        using ImGuiStorage = PJ::ImGuiStorage<SomeUIModel*>;
-        ImGuiStorage& storage;
+        using Storage = PJ::Storage<String>;
+        using DrawModelFunc = std::function<void(This&, SomeUIModel&)>;
 
-        using DrawFunc = std::function<void(SomeUIModel&, ImGuiStorage&)>;
+        UIPlan& plan;
+        Storage& storage;
 
-        UnorderedMap<String, DrawFunc> drawFuncs;
+        UnorderedMap<String, DrawModelFunc> drawModelFuncs;
 
-        ImGuiPlanPainter(ImGuiStorage& storage);
-
-        void Draw(UIPlan& plan);
+        ImGuiPlanPainter(UIPlan& plan, Storage& storage);
     };
 } // namespace PJ

@@ -1,6 +1,8 @@
 #include "AnimatedSpriteRenderer.h"
+#include "CollectionUtils.h"
+#include "FramePlayable.h"
+#include "Funcs.h"
 #include "QuadMeshBuilder.h"
-#include "RateFramePlayable.h"
 #include "RenderContextModel.h"
 #include "RenderFeature.h"
 #include "RenderMaterial.h"
@@ -11,12 +13,48 @@
 #include "TextureAtlas.h"
 #include "UIPlanner.h"
 #include "Utils.h"
+#include "World.h"
 
 using namespace std;
 using namespace PJ;
 
-AnimatedSpriteRenderer::AnimatedSpriteRenderer(Vector3 worldSize) :
+UnorderedSet<SP<SomeTexture>>
+FindTextures(World& world, VectorList<AnimatedSpriteRenderer::KeyframeModel> const& models) {
+    VectorList<String> textureIds =
+        Map<String>(models, [](auto& model) { return model.textureId; });
+    textureIds = Filter(textureIds, [](auto& textureId) { return textureId.length() > 0; });
+
+    UnorderedSet<String> textureIdSet(textureIds.begin(), textureIds.end());
+    return world.FindTextures(textureIdSet);
+}
+
+void AnimatedSpriteRenderer::SetTextures(VectorList<SP<SomeTexture>> const& textures) {
+    frames.clear();
+
+    std::transform(
+        textures.cbegin(), textures.cend(), std::back_inserter(frames),
+        [](SP<SomeTexture> texture) {
+            Vector2 size(texture->size.x, texture->size.y);
+            Vector2 untrimmedSize(texture->UntrimmedSize().x, texture->UntrimmedSize().y);
+            Vector2 trimOrigin(texture->TrimOrigin().x, texture->TrimOrigin().y);
+
+            Vector2 truePosition(untrimmedSize.x / 2.0f * vecLeft, untrimmedSize.y / 2.0f * vecUp);
+            Vector2 actualPosition(size.x / 2.0f * vecLeft, size.y / 2.0f * vecUp);
+            Vector2 truePositionWithTrim = Vector2(
+                truePosition.x + trimOrigin.x * vecRight, truePosition.y + trimOrigin.y * vecDown
+            );
+
+            return Frame(texture, truePositionWithTrim - actualPosition);
+        }
+    );
+}
+
+AnimatedSpriteRenderer::AnimatedSpriteRenderer(
+    Vector3 worldSize, float frameRate, AnimationCycleType cycleType
+) :
     Base(worldSize) {
+
+    framePlayable = NEW<FramePlayable>(0, frameRate, cycleType);
 
     PlanUIFunc planUIFunc = [](auto& component, String context, UIPlanner& planner) {
         auto renderer = static_cast<This*>(&component);
@@ -31,8 +69,8 @@ AnimatedSpriteRenderer::AnimatedSpriteRenderer(Vector3 worldSize) :
                             [=](auto& value) { renderer->SetFlipY(value); } }
             );
 
-        RateFramePlayable* rateFramePlayable =
-            dynamic_cast<RateFramePlayable*>(renderer->framePlayable.get());
+        FramePlayable* rateFramePlayable =
+            dynamic_cast<FramePlayable*>(renderer->framePlayable.get());
         if (rateFramePlayable) {
             VectorList<String> cycleOptions{ "Once", "PingPong", "Loop" };
             planner
@@ -49,15 +87,16 @@ AnimatedSpriteRenderer::AnimatedSpriteRenderer(Vector3 worldSize) :
                 );
         }
     };
-    Override(this->planUIFunc, planUIFunc);
+    Override(planUIFuncs[UIContextId::Inspector], planUIFunc);
+
+    Configure();
 }
 
-AnimatedSpriteRenderer::AnimatedSpriteRenderer(TextureList const& textures) :
-    AnimatedSpriteRenderer(vec2Zero) {
-    std::transform(
-        textures.cbegin(), textures.cend(), std::back_inserter(frames),
-        [](SP<SomeTexture> texture) { return Frame(texture, vec2Zero); }
-    );
+AnimatedSpriteRenderer::AnimatedSpriteRenderer(
+    TextureList const& textures, float frameRate, AnimationCycleType cycleType
+) :
+    AnimatedSpriteRenderer(vec2Zero, frameRate, cycleType) {
+    SetTextures(textures);
 
     model.SetBuildMeshFunc([](auto& model) {
         QuadMeshBuilder builder(model.WorldSize());
@@ -71,36 +110,19 @@ AnimatedSpriteRenderer::AnimatedSpriteRenderer(TextureList const& textures) :
     model.material->SetShaderProgram(program->second);
     model.material->EnableFeature(RenderFeature::Blend, true);
 
-    framePlayable = std::make_unique<RateFramePlayable>(textures.size(), 12.0f);
+    framePlayable = NEW<FramePlayable>(textures.size(), frameRate, cycleType);
+    SetCycleType(cycleType);
 
-    if (!IsEmpty(textures)) {
-        auto texture = textures[0];
-
-        // This only works if we're using a texture atlas
-        // FUTURE: support separate image animations if needed
-        model.material->Add(texture);
-        model.SetWorldSize(Vector2((float)texture->size.x, (float)texture->size.y));
-    }
+    // Synchronize states
+    OnFrameChange();
 }
 
-AnimatedSpriteRenderer::AnimatedSpriteRenderer(TextureAtlas const& atlas) :
-    AnimatedSpriteRenderer(vec2Zero) {
-    std::transform(
-        atlas.Textures().cbegin(), atlas.Textures().cend(), std::back_inserter(frames),
-        [](SP<AtlasTexture> texture) {
-            Vector2 size(texture->size.x, texture->size.y);
-            Vector2 trueSize(texture->trueSize.x, texture->trueSize.y);
-            Vector2 trimOrigin(texture->trimOrigin.x, texture->trimOrigin.y);
-
-            Vector2 truePosition(trueSize.x / 2.0f * vecLeft, trueSize.y / 2.0f * vecUp);
-            Vector2 actualPosition(size.x / 2.0f * vecLeft, size.y / 2.0f * vecUp);
-            Vector2 truePositionWithTrim = Vector2(
-                truePosition.x + trimOrigin.x * vecRight, truePosition.y + trimOrigin.y * vecDown
-            );
-
-            return Frame(texture, truePositionWithTrim - actualPosition);
-        }
-    );
+AnimatedSpriteRenderer::AnimatedSpriteRenderer(
+    TextureAtlas const& atlas, float frameRate, AnimationCycleType cycleType
+) :
+    AnimatedSpriteRenderer(vec2Zero, frameRate, cycleType) {
+    VectorList<SP<SomeTexture>> someTextures(atlas.Textures().begin(), atlas.Textures().end());
+    SetTextures(someTextures);
 
     model.material = MAKE<RenderMaterial>();
 
@@ -115,64 +137,85 @@ AnimatedSpriteRenderer::AnimatedSpriteRenderer(TextureAtlas const& atlas) :
     model.material->EnableFeature(RenderFeature::Blend, true);
 
     auto const& textures = atlas.Textures();
-    framePlayable = std::make_unique<RateFramePlayable>(textures.size(), 12.0f);
+    framePlayable = NEW<FramePlayable>(textures.size(), frameRate, cycleType);
+    SetCycleType(cycleType);
 
-    if (!IsEmpty(textures)) {
-        auto texture = textures[0];
+    // Synchronize states
+    OnFrameChange();
+}
 
-        // This only works if we're using a texture atlas
-        // FUTURE: support separate image animations if needed
-        model.material->Add(texture);
-        model.SetWorldSize(Vector2((float)texture->size.x, (float)texture->size.y));
+AnimatedSpriteRenderer::AnimatedSpriteRenderer(
+    VectorList<KeyframeModel> const& models, float frameRate, AnimationCycleType cycleType
+) :
+    AnimatedSpriteRenderer(TextureList{}, frameRate, cycleType) {
+
+    // Keyframes require textures, so wait until Awake when we have a world
+    keyframeModels = models;
+}
+
+void AnimatedSpriteRenderer::Awake() {
+    if (!IsEmpty(keyframeModels)) {
+        SetFrames(keyframeModels);
+        keyframeModels.clear();
     }
 }
 
-// TODO: use build func and setNeedsBuild when frame changes
-VectorList<RenderModel> AnimatedSpriteRenderer::MakeRenderModels() {
-    VectorList<RenderModel> result;
+void AnimatedSpriteRenderer::Configure() {
+    model.SetBuildRenderModelsFunc([this](auto& model) {
+        VectorList<RenderModel> result;
 
-    auto material = model.material;
-    if (nullptr == material) {
-        PJ::Log("ERROR. Missing material.");
-        return result;
-    }
+        auto material = model.material;
+        if (nullptr == material) {
+            PJ::Log("ERROR. Missing material.");
+            return result;
+        }
 
-    GUARDR(owner, result)
-    GUARDR(frame >= 0 && frame < frames.size(), result)
-    auto frameModel = frames[frame];
+        GUARDR(owner, result)
+        GUARDR(frame >= 0 && frame < frames.size(), result)
+        auto frameModel = frames[frame];
 
-    auto& frameTexture = frameModel.texture;
-    GUARDR(frameTexture, result)
+        auto& frameTexture = frameModel.texture;
+        GUARDR(frameTexture, result)
 
-    Mesh mesh = model.Mesh();
-    auto offset = frameModel.offset;
-    if (flipX) {
-        offset.x = -offset.x;
-    }
-    if (flipY) {
-        offset.y = -offset.y;
-    }
-
-    mesh.OffsetBy(offset);
-
-    std::transform(mesh.UVs().cbegin(), mesh.UVs().cend(), mesh.UVs().begin(), [this](Vector2 uv) {
+        Mesh mesh = model.Mesh();
+        auto offset = frameModel.offset;
         if (flipX) {
-            uv.x = 1.0f - uv.x;
+            offset.x = -offset.x;
         }
-
         if (flipY) {
-            uv.y = 1.0f - uv.y;
+            offset.y = -offset.y;
         }
-        return uv;
+
+        mesh.OffsetBy(offset);
+
+        std::transform(
+            mesh.UVs().cbegin(), mesh.UVs().cend(), mesh.UVs().begin(),
+            [this](Vector2 uv) {
+                if (flipX) {
+                    uv.x = 1.0f - uv.x;
+                }
+
+                if (flipY) {
+                    uv.y = 1.0f - uv.y;
+                }
+                return uv;
+            }
+        );
+
+        RenderModelBuilder builder;
+        VectorList<SP<SomeTexture>> textures{ frameModel.texture };
+        auto renderModel = builder.Build(*this, mesh, *material, textures);
+        renderModel.SetVertexColors(std::span<RenderColor const>(model.VertexColors()));
+
+        result.push_back(renderModel);
+        return result;
     });
+}
 
-    RenderModelBuilder builder;
-    VectorList<SP<SomeTexture>> textures{ frameModel.texture };
-    auto renderModel = builder.Build(*this, mesh, *material, textures);
-    renderModel.SetVertexColors(std::span<RenderColor const>(model.VertexColors()));
+void AnimatedSpriteRenderer::Reset() {
+    Base::Reset();
 
-    result.push_back(renderModel);
-    return result;
+    SetFrame(0);
 }
 
 Vector2 AnimatedSpriteRenderer::Size() const {
@@ -186,21 +229,91 @@ Vector2 AnimatedSpriteRenderer::Size() const {
 void AnimatedSpriteRenderer::OnUpdate(TimeSlice time) {
     Base::OnUpdate(time);
 
-    if (IsEmpty(frames)) {
-        return;
-    }
+    GUARD(!IsEmpty(frames))
     GUARD(framePlayable)
 
-    int oldFrame = frame;
     framePlayable->OnUpdate(time);
-    frame = framePlayable->Frame();
+    auto frame = framePlayable->Frame();
 
-    if (oldFrame == frame) {
-        return;
-    }
+    SetFrame(frame);
+}
 
+void AnimatedSpriteRenderer::SetFrame(int value) {
+    GUARD(frame != value)
+    GUARD(value >= 0 && value < frames.size())
+
+    frame = value;
+    OnFrameChange();
+}
+
+void AnimatedSpriteRenderer::OnFrameChange() {
     GUARD(frame >= 0 && frame < frames.size())
     auto frameModel = frames[frame];
 
+    auto& frameTexture = frameModel.texture;
+    GUARD(frameTexture)
+
+    model.material->SetTexture(frameTexture);
     model.SetWorldSize(Size());
+    model.SetRenderModelsNeedBuild();
+
+    PJ::LogIf(_diagnose, "Frame Change: ", MakeString(frame), " texture: ", frameTexture->id);
+}
+
+void AnimatedSpriteRenderer::SetFrames(VectorList<KeyframeModel> models) {
+    GUARD_LOG(owner && owner->World(), "ERROR. Need world for SetFrames to find textures")
+
+    auto frameRate = framePlayable->FrameRate();
+    GUARD_LOG(frameRate > 0, "ERROR. Frame rate not defined")
+
+    auto textures = FindTextures(*owner->World(), models);
+    VectorList<SP<SomeTexture>> textureList(textures.begin(), textures.end());
+    SetTextures(textureList);
+
+    TimeTrack<int>::Config config{ .id = "frame.playable",
+                                   .duration = 0,
+                                   .cycleType = CycleType(),
+                                   .keyedTimeType = KeyedTimeType::Discrete };
+    auto track = NEW<TimeTrack<int>>(config);
+
+    float frameTime = 1.0f / frameRate;
+
+    float time = 0;
+    bool isFirst = true;
+    for (auto& model : models) {
+        if (model.deltaTime) {
+            time += *model.deltaTime;
+        } else if (model.deltaFrame) {
+            time += *model.deltaFrame * frameTime;
+        } else if (!isFirst) {
+            time += frameTime;
+        }
+
+        isFirst = false;
+
+        String textureId = model.textureId;
+        auto frame = FrameForTextureId(textureId);
+        GUARD_CONTINUE(frame)
+
+        track->AddAt(time)->SetValue(*frame);
+    }
+
+    // Hold final frame based on frame rate
+    track->SetDuration(time + frameTime);
+
+    framePlayable = NEW<FramePlayable>(track);
+
+    // Synchronize states
+    OnFrameChange();
+}
+
+std::optional<int> AnimatedSpriteRenderer::FrameForTextureId(String textureId) const {
+    for (size_t i = 0; i < frames.size(); i++) {
+        auto& frame = frames[i];
+        GUARD_CONTINUE(frame.texture->id == textureId)
+
+        return (int)i;
+    }
+
+    return {};
 }

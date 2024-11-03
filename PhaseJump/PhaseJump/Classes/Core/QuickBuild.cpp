@@ -1,18 +1,23 @@
 #include "QuickBuild.h"
+#include "AnimatedSpriteRenderer.h"
+#include "AnimateFuncs.h"
 #include "Colliders2D.h"
 #include "ColorRenderer.h"
+#include "ComponentsController.h"
 #include "CycleHueEffect.h"
 #include "DesignSystem.h"
 #include "DragHandler2D.h"
 #include "DropFilesUIEvent.h"
 #include "EllipseMeshBuilder.h"
+#include "FramePlayable.h"
 #include "Funcs.h"
 #include "GridMeshBuilder.h"
 #include "Matrix4x4.h"
 #include "OrthoCamera.h"
 #include "QuadFrameMeshBuilder.h"
-#include "QuickAnimate.h"
 #include "RenderFeature.h"
+#include "RotateKSteering2D.h"
+#include "SimpleAnimationController.h"
 #include "SimpleRaycaster2D.h"
 #include "SlicedTextureRenderer.h"
 #include "SliderControl.h"
@@ -26,6 +31,19 @@ using namespace std;
 using namespace PJ;
 
 using This = QuickBuild::This;
+
+This& QuickBuild::WithOnEnable(String id, std::function<void(WorldComponent<>&)> func) {
+    return With<WorldComponent<>>().ModifyLatestAny([=](auto& component) {
+        // Disabled by default, so enable func runs
+        component.Enable(false);
+
+        component.id = id;
+        component.onEnabledChangeFunc = [=](SomeWorldComponent& component) {
+            GUARD(component.IsEnabled())
+            func(*(static_cast<WorldComponent<>*>(&component)));
+        };
+    });
+}
 
 This& QuickBuild::Repeat(int count, std::function<void(This&)> func) {
     PJ::Repeat(count, [&]() { func(*this); });
@@ -41,28 +59,26 @@ This& QuickBuild::OrthoStandard(Color clearColor) {
     return *this;
 }
 
-This& QuickBuild::Circle(float radius, Color color) {
-    auto component = &Node()
-                          .AddComponent<ColorRenderer>(color, Vector2(radius * 2, radius * 2))
-                          .SetBuildMeshFunc([](RendererModel const& model) {
-                              return EllipseMeshBuilder(model.WorldSize()).BuildMesh();
-                          });
+This& QuickBuild::Texture(String id) {
+    return With<SpriteRenderer>(Node().World()->FindTexture(id));
+}
 
-    components.push_back(component);
-    return *this;
+This& QuickBuild::Circle(float radius, Color color) {
+    return With<ColorRenderer>(color, Vector2(radius * 2, radius * 2))
+        .ModifyLatest<ColorRenderer>([](auto& renderer) {
+            renderer.SetBuildMeshFunc([](RendererModel const& model) {
+                return EllipseMeshBuilder(model.WorldSize()).BuildMesh();
+            });
+        });
 }
 
 This& QuickBuild::RectFrame(Vector2 size, Color color, float strokeWidth) {
-    auto component =
-        &Node()
-             .AddComponent<ColorRenderer>(color, size)
-             .SetBuildMeshFunc([=](RendererModel const& model) {
-                 return QuadFrameMeshBuilder(model.WorldSize(), { strokeWidth, strokeWidth })
-                     .BuildMesh();
-             });
-
-    components.push_back(component);
-    return *this;
+    return With<ColorRenderer>(color, size).ModifyLatest<ColorRenderer>([=](auto& renderer) {
+        renderer.SetBuildMeshFunc([=](RendererModel const& model) {
+            return QuadFrameMeshBuilder(model.WorldSize(), { strokeWidth, strokeWidth })
+                .BuildMesh();
+        });
+    });
 }
 
 This& QuickBuild::SquareFrame(float size, Color color, float strokeWidth) {
@@ -70,14 +86,11 @@ This& QuickBuild::SquareFrame(float size, Color color, float strokeWidth) {
 }
 
 This& QuickBuild::Grid(Vector2 worldSize, Vec2I gridSize, Color color, float strokeWidth) {
-    auto component = &Node()
-                          .AddComponent<ColorRenderer>(color, worldSize)
-                          .SetBuildMeshFunc([=](RendererModel const& model) {
-                              return GridMeshBuilder(worldSize, gridSize, strokeWidth).BuildMesh();
-                          });
-
-    components.push_back(component);
-    return *this;
+    return With<ColorRenderer>(color, worldSize).ModifyLatest<ColorRenderer>([=](auto& renderer) {
+        renderer.SetBuildMeshFunc([=](RendererModel const& model) {
+            return GridMeshBuilder(worldSize, gridSize, strokeWidth).BuildMesh();
+        });
+    });
 }
 
 This& QuickBuild::Drag(OnDragUpdateFunc onDragUpdateFunc) {
@@ -90,9 +103,7 @@ This& QuickBuild::Drag(OnDragUpdateFunc onDragUpdateFunc) {
         auto worldSizeable = Node().TypeComponent<WorldSizeable>();
         if (worldSizeable) {
             auto worldSize = worldSizeable->WorldSize();
-            if (worldSize) {
-                return RectCollider((Vector2)*worldSize);
-            }
+            return RectCollider((Vector2)worldSize);
         }
     }
 
@@ -110,7 +121,7 @@ This& QuickBuild::DragSnapBack(OnDragUpdateFunc onDragUpdateFunc) {
 This& QuickBuild::OnDropFiles(OnDropFilesFunc onDropFilesFunc) {
     With<WorldComponent<>>("Drop files")
         .ModifyLatestAny([onDropFilesFunc](SomeWorldComponent& component) {
-            component.signalHandlers[SignalId::DropFiles] =
+            component.signalFuncs[SignalId::DropFiles] =
                 [onDropFilesFunc](auto& component, auto& signal) {
                     auto& dropFilesUIEvent = *(static_cast<DropFilesUIEvent const*>(&signal));
                     onDropFilesFunc({ component, dropFilesUIEvent });
@@ -121,26 +132,19 @@ This& QuickBuild::OnDropFiles(OnDropFilesFunc onDropFilesFunc) {
 }
 
 This& QuickBuild::SquareCollider(float size) {
-    auto& polyC = Node().AddComponent<PolygonCollider2D>();
-    polyC.poly = Polygon::MakeSquare(size);
-
-    components.push_back(&polyC);
-    return *this;
+    return With<PolygonCollider2D>().ModifyLatest<PolygonCollider2D>([=](auto& collider) {
+        collider.poly = Polygon::MakeSquare(size);
+    });
 }
 
 This& QuickBuild::RectCollider(Vector2 size) {
-    auto& polyC = Node().AddComponent<PolygonCollider2D>();
-    polyC.poly = Polygon::MakeRect(size);
-
-    components.push_back(&polyC);
-    return *this;
+    return With<PolygonCollider2D>().ModifyLatest<PolygonCollider2D>([=](auto& collider) {
+        collider.poly = Polygon::MakeRect(size);
+    });
 }
 
 This& QuickBuild::CircleCollider(float radius) {
-    auto component = &Node().AddComponent<CircleCollider2D>(radius);
-
-    components.push_back(component);
-    return *this;
+    return With<CircleCollider2D>(radius);
 }
 
 void QuickBuild::AddSlider(
@@ -227,10 +231,10 @@ This& QuickBuild::AndPrefab(String id) {
     auto world = Node().World();
     GUARDR(world, *this)
 
-    auto prefabNode = world->PrefabMake(id);
-    GUARDR(prefabNode, *this)
+    auto prefabNode = MAKE<WorldNode>();
 
     Node().Add(prefabNode);
+    world->LoadPrefab(id, *prefabNode);
     Push(*prefabNode);
 
     return *this;
@@ -268,10 +272,10 @@ This& QuickBuild::HoverScaleTo(float endValue) {
     )
         .ModifyLatest<ValveHoverGestureHandler>([=](auto& handler) {
             // Match the interpolation curve in both directions
-            auto binding = QA::MakeUniformScaleBinding(
+            auto binding = AnimateFuncs::MakeUniformScaleBinding(
                 *handler.owner, startValue, endValue, EaseFuncs::outSquared
             );
-            auto reverseBinding = QA::MakeUniformScaleBinding(
+            auto reverseBinding = AnimateFuncs::MakeUniformScaleBinding(
                 *handler.owner, endValue, startValue, EaseFuncs::outSquared
             );
 
@@ -318,7 +322,8 @@ This& QuickBuild::HoverScaleToPingPong(float endValue) {
 
 This& QuickBuild::AnimateMove(Vector3 startValue, Vector3 endValue) {
     return AnimateStartEnd<Vector3>(
-        startValue, endValue, QA::PositionMaker(AnimateState().duration, AnimateState().easeFunc)
+        startValue, endValue,
+        AnimateFuncs::PositionMaker(AnimateState().duration, AnimateState().easeFunc)
     );
 }
 
@@ -335,7 +340,7 @@ This& QuickBuild::MoveTo(Vector3 endValue) {
 This& QuickBuild::AnimateScale(float startValue, float endValue) {
     return AnimateStartEnd<float>(
         startValue, endValue,
-        QA::UniformScaleMaker(AnimateState().duration, AnimateState().easeFunc)
+        AnimateFuncs::UniformScaleMaker(AnimateState().duration, AnimateState().easeFunc)
     );
 }
 
@@ -349,7 +354,7 @@ This& QuickBuild::ScaleTo(float endValue) {
 
 This& QuickBuild::ScaleToPingPong(float endValue) {
     // TODO: Need reverse ease func
-    MakeAnimatorFunc<float, WorldNode&> maker = QA::UniformScaleMaker(
+    MakeAnimatorFunc<float, WorldNode&> maker = AnimateFuncs::UniformScaleMaker(
         AnimateState().duration, AnimateState().easeFunc, AnimationCycleType::PingPong
     );
 
@@ -359,7 +364,7 @@ This& QuickBuild::ScaleToPingPong(float endValue) {
 This& QuickBuild::AnimateRotate(Angle startValue, Angle endValue) {
     return AnimateStartEnd<float>(
         startValue.Degrees(), endValue.Degrees(),
-        QA::RotateMaker(AnimateState().duration, AnimateState().easeFunc)
+        AnimateFuncs::RotateMaker(AnimateState().duration, AnimateState().easeFunc)
     );
 }
 
@@ -369,7 +374,7 @@ This& QuickBuild::RotateTo(Angle endValue) {
 
 This& QuickBuild::RotateToPingPong(Angle endValue) {
     // TODO: Need reverse ease func
-    MakeAnimatorFunc<float, WorldNode&> maker = QA::RotateMaker(
+    MakeAnimatorFunc<float, WorldNode&> maker = AnimateFuncs::RotateMaker(
         AnimateState().duration, AnimateState().easeFunc, AnimationCycleType::PingPong
     );
 
@@ -392,15 +397,14 @@ This& QuickBuild::RotateContinue(Angle value) {
     return *this;
 }
 
-This& QuickBuild::CycleHueEffect(float cycleTime) {
-    Node().With<PJ::CycleHueEffect>(SwitchState::On, cycleTime);
-
-    return *this;
+This& QuickBuild::CycleHueEffect(String id, SwitchState switchState, float cycleTime) {
+    return WithId<PJ::CycleHueEffect>(id, switchState, cycleTime);
 }
 
 This& QuickBuild::AnimateOpacity(float startValue, float endValue) {
     return AnimateStartEnd<float>(
-        startValue, endValue, QA::OpacityMaker(AnimateState().duration, AnimateState().easeFunc)
+        startValue, endValue,
+        AnimateFuncs::OpacityMaker(AnimateState().duration, AnimateState().easeFunc)
     );
 }
 
@@ -414,6 +418,12 @@ This& QuickBuild::OpacityOut() {
 
 This& QuickBuild::OpacityTo(float endValue) {
     return AnimateOpacity(Node().Opacity(), endValue);
+}
+
+This& QuickBuild::TurnRight(Angle speed) {
+    return With<RotateKSteering2D>(speed).ModifyLatest<RotateKSteering2D>([=](auto& component) {
+        component.TurnRight(speed);
+    });
 }
 
 This& QuickBuild::Destroy(float time) {
@@ -434,5 +444,108 @@ This& QuickBuild::PopAnimateSettings() {
     if (animateStates.size() > 1) {
         animateStates.erase(animateStates.begin() + (animateStates.size() - 1));
     }
+    return *this;
+}
+
+This& QuickBuild::AnimateSprite(VectorList<String> const& textureNames) {
+    using KeyframeModel = AnimatedSpriteRenderer::KeyframeModel;
+
+    VectorList<KeyframeModel> keyframeModels =
+        Map<KeyframeModel>(textureNames, [](auto& textureName) {
+            return KeyframeModel{ .textureId = textureName };
+        });
+    RemoveType<AnimatedSpriteRenderer>().With<AnimatedSpriteRenderer>(
+        keyframeModels, frameRate, cycleType
+    );
+
+    return *this;
+}
+
+This& QuickBuild::SetAnimationState(String value) {
+    auto simpleAnimationController = Node().TypeComponent<SimpleAnimationController>();
+    GUARDR_LOG(simpleAnimationController, *this, "ERROR. Missing animation controller");
+
+    simpleAnimationController->SetState(value);
+
+    return *this;
+}
+
+This& QuickBuild::CharacterStateBehavior(
+    String state, CharacterController::BuildBehaviorFunc func
+) {
+    return WithIfNeeded<CharacterController>().ModifyLatest<CharacterController>(
+        [&](auto& controller) { controller.AddBuildBehaviorFunc(state, func); }
+    );
+}
+
+This& QuickBuild::SetCharacterState(String value) {
+    auto characterController = Node().TypeComponent<CharacterController>();
+    GUARDR_LOG(characterController, *this, "ERROR. Missing character controller");
+
+    characterController->states.SetState(value);
+
+    return *this;
+}
+
+This& QuickBuild::AnimationStateRenderer(
+    String state, SimpleAnimationController::BuildRendererFunc buildRendererFunc
+) {
+    auto simpleAnimationController = Node().TypeComponent<SimpleAnimationController>();
+    GUARDR_LOG(simpleAnimationController, *this, "ERROR. Missing animation controller");
+
+    simpleAnimationController->Add(state, buildRendererFunc);
+
+    return *this;
+}
+
+This& QuickBuild::AnimationStateFrames(
+    String state, VectorList<AnimatedSpriteRenderer::KeyframeModel> const& models
+) {
+    auto frameRate = this->frameRate;
+    auto cycleType = this->cycleType;
+    SimpleAnimationController::BuildRendererFunc buildRendererFunc = [=](auto& controller) {
+        auto result = MAKE<AnimatedSpriteRenderer>(models, frameRate, cycleType);
+        return result;
+    };
+    return AnimationStateRenderer(state, buildRendererFunc);
+}
+
+This& QuickBuild::SetComponentsState(String value) {
+    auto componentsController = Node().TypeComponent<ComponentsController>();
+    GUARDR_LOG(componentsController, *this, "ERROR. Missing components controller");
+
+    componentsController->states.SetState(value);
+    return *this;
+}
+
+This& QuickBuild::ComponentsState(String state, UnorderedSet<String> const& ids) {
+    return WithIfNeeded<ComponentsController>().ModifyLatest<ComponentsController>(
+        [&](auto& controller) { controller.AddEnableComponentsById(state, ids); }
+    );
+}
+
+This& QuickBuild::AnimationStateTransitions(VectorList<StateTransitionModel> const& transitions) {
+    auto simpleAnimationController = Node().TypeComponent<SimpleAnimationController>();
+    GUARDR_LOG(simpleAnimationController, *this, "ERROR. Missing animation controller");
+
+    auto& states = simpleAnimationController->states;
+
+    for (auto& transition : transitions) {
+        if (transition.state) {
+            states.AddTransition(*transition.state, transition.input, transition.toState);
+        } else {
+            states.anyStateTransitions[transition.input] = transition.toState;
+        }
+    }
+
+    return *this;
+}
+
+This& QuickBuild::AnimationInput(String value) {
+    auto simpleAnimationController = Node().TypeComponent<SimpleAnimationController>();
+    GUARDR_LOG(simpleAnimationController, *this, "ERROR. Missing animation controller");
+
+    simpleAnimationController->states.Input(value);
+
     return *this;
 }

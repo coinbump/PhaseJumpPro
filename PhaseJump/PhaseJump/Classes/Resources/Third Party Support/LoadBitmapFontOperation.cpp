@@ -127,7 +127,7 @@ SomeLoadResourcesOperation::Result LoadBitmapFontOperation::LoadResources() {
 
         Success result;
 
-        auto textureAtlas = MAKE<TextureAtlas>();
+        auto textureAtlas = MAKE<TextureAtlas>(texture);
 
         auto font = MAKE<Font>(infoTags.SafeValue<String>("face"), infoTags.SafeValue<int>("size"));
         font->atlas = textureAtlas;
@@ -139,9 +139,23 @@ SomeLoadResourcesOperation::Result LoadBitmapFontOperation::LoadResources() {
             Vector2Int size(sprite.SafeValue<int>("width"), sprite.SafeValue<int>("height"));
             Vector2Int pos(sprite.SafeValue<int>("x"), sprite.SafeValue<int>("y"));
             int id = sprite.SafeValue<int>("id");
-            auto atlasTexture = MAKE<AtlasTexture>(
-                texture, MakeString(id), pos, size, Vector2Int::zero, size, alphaMode
-            );
+
+            auto origin = pos;
+            float normalOriginX = (float)origin.x / (float)texture->size.x;
+            float normalOriginY = (float)origin.y / (float)texture->size.y;
+            float normalSizeX = (float)size.x / (float)texture->size.x;
+            float normalSizeY = (float)size.y / (float)texture->size.y;
+
+            AtlasTexture::Config config{ .base = { .id = MakeString(id),
+                                                   .origin = origin,
+                                                   .size = size,
+                                                   .trimOrigin = Vector2Int::zero,
+                                                   .untrimmedSize = size,
+                                                   .normalOrigin = { normalOriginX, normalOriginY },
+                                                   .normalSize = { normalSizeX, normalSizeY },
+                                                   .alphaMode = alphaMode },
+                                         .parent = textureAtlas.get() };
+            auto atlasTexture = MAKE<AtlasTexture>(config);
 
             textureAtlas->Add(atlasTexture);
 

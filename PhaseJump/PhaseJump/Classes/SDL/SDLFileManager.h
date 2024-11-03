@@ -1,13 +1,22 @@
 #pragma once
+
 #include "FileManager.h"
 #include "StringUtils.h"
 #include <SDL3/SDL_filesystem.h>
 
-// CODE REVIEW: ?/23
+/*
+ RATING: 5 stars
+ Simple type
+ CODE REVIEW: 10/6/24
+ */
 namespace PJ {
-    class SDLFileManager {
-        String PersistentDataPath(String companyName, String applicationName) const {
-            return String(SDL_GetPrefPath(companyName.c_str(), applicationName.c_str()));
+    /// Provides file manager functionality via SDL
+    class SDLFileManager : public FileManager {
+    public:
+        // MARK: SomeFileManager
+
+        FilePath PersistentDataPath(String companyName, String applicationName) override {
+            return SDL_GetPrefPath(companyName.c_str(), applicationName.c_str());
         }
     };
 } // namespace PJ

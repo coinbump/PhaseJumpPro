@@ -43,16 +43,16 @@ void World::RemoveAllSystems() {
     Remove(systems);
 }
 
-void World::Remove(SP<SomeWorldSystem> system) {
-    GUARD(system->World() == this)
+void World::Remove(SomeWorldSystem& system) {
+    GUARD(system.World() == this)
 
-    system->SetWorld(nullptr);
-    PJ::Remove(systems, system);
+    system.SetWorld(nullptr);
+    RemoveFirstIf(systems, [&](auto& i) { return i.get() == &system; });
 }
 
 void World::Remove(VectorList<SP<SomeWorldSystem>> systems) {
     for (auto& system : systems) {
-        Remove(system);
+        Remove(*system);
     }
 }
 
@@ -84,15 +84,17 @@ SP<SomeCamera> World::MainCamera() {
 void World::GoInternal() {
     Base::GoInternal();
 
-    RateLimiter::Type::OnFireFunc overrideFunc = [this](RateLimiter::Type& limiter) {
-        RenderNow();
-    };
-    Override(renderLimiter->onFireFunc, overrideFunc);
+#ifdef DEBUG
+    std::cout << "PHASE JUMP IS DEBUG";
+#endif
+
+    SomeLimiter::OnFireFunc overrideFunc = [this](auto& limiter) { RenderNow(); };
+    Override(renderLimiter.onFireFunc, overrideFunc);
 }
 
 void World::Render() {
     if (isRenderRateLimited) {
-        renderLimiter->Fire();
+        renderLimiter.Fire();
     } else {
         RenderNow();
     }
@@ -151,17 +153,17 @@ void World::RenderNow() {
         auto result = system->Render(contextModel);
 
         if (result) {
-            drawCount += result->tags.SafeValue<int>("draw.count");
+            drawCount += result->tags.SafeValue<int>(RenderStatId::DrawCount);
         }
     }
 
-    renderStats.Insert("draw.count", drawCount);
-    renderStats.Insert("node.count", (int)contextModel.nodes.size());
+    renderStats.Insert(RenderStatId::DrawCount, drawCount);
+    renderStats.Insert(RenderStatId::NodeCount, (int)contextModel.nodes.size());
 
     renderFrameCount++;
 }
 
-void World::ProcessUIEvents(List<SP<SomeUIEvent>> const& uiEvents) {
+void World::ProcessUIEvents(UIEventList const& uiEvents) {
     GUARD(!IsEmpty(uiEvents))
 
 #ifdef PROFILE
@@ -176,7 +178,7 @@ void World::ProcessUIEvents(List<SP<SomeUIEvent>> const& uiEvents) {
 
 Matrix4x4 World::LocalModelMatrix(WorldNode const& node) {
     Matrix4x4 translateMatrix, scaleMatrix, rotationMatrix;
-    translateMatrix.LoadTranslate(node.transform.LocalPosition());
+    translateMatrix.LoadTranslate(node.transform.LocalPosition() + node.transform.Value().offset);
     scaleMatrix.LoadScale(node.transform.Scale());
 
     // This is 2D rotation only
@@ -248,7 +250,7 @@ void World::OnUpdate(TimeSlice _time) {
 
     // Keep the renderer running even while paused
     // This allows immediate renders to work (Example: imGUI)
-    renderLimiter->OnUpdate(_time);
+    renderLimiter.OnUpdate(_time);
 
     GUARD(!isPaused)
 
@@ -342,6 +344,31 @@ SP<SomeTexture> World::FindTexture(String id) {
     } catch (...) {
         return nullptr;
     }
+}
+
+UnorderedSet<SP<SomeTexture>> World::FindTextures(UnorderedSet<String> const& textureIds) {
+    VectorList<SP<SomeTexture>> result;
+
+    std::transform(
+        textureIds.begin(), textureIds.end(), std::inserter(result, result.begin()),
+        [&](auto& id) { return FindTexture(id); }
+    );
+    Compact(result);
+
+    UnorderedSet<SP<SomeTexture>> _result(result.begin(), result.end());
+    return _result;
+}
+
+VectorList<SP<SomeTexture>> World::FindTextureList(VectorList<String> const& textureIds) {
+    VectorList<SP<SomeTexture>> result;
+
+    std::transform(
+        textureIds.begin(), textureIds.end(), std::inserter(result, result.begin()),
+        [&](auto& id) { return FindTexture(id); }
+    );
+    Compact(result);
+
+    return result;
 }
 
 SP<Font> World::FindFontWithSize(float size) {

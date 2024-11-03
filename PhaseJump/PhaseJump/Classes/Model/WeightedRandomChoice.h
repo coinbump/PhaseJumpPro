@@ -1,84 +1,65 @@
-#ifndef PJWEIGHTEDRANDOM_H
-#define PJWEIGHTEDRANDOM_H
+#pragma once
 
-#include "List.h"
 #include "SomeRandom.h"
+#include "SomeRandomChoice.h"
+#include "VectorList.h"
 #include "Weight.h"
 #include <memory>
 
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 8/3/24
- PORTED TO: C++, C#
+ CODE REVIEW: 11/2/24
  */
 namespace PJ {
     /// Each choice has a weight that affects its random probability
     /// Useful for cases where we want randomness, but prefer certain outcomes
-    template <class Value>
+    template <class Choice>
     class WeightedRandomChoice {
     protected:
-        using WeightList = List<Weight<Value>>;
+        using Weight = SomeWeight<Choice>;
+        using WeightList = VectorList<UP<Weight>>;
+
         WeightList choices;
 
     public:
-        using Weight = Weight<Value>;
-
         WeightedRandomChoice() {}
 
-        void Add(Weight weight) {
-            choices.push_back(weight);
+        void Add(UP<Weight>& weight) {
+            choices.push_back(std::move(weight));
         }
 
-        Value Choose(SomeRandom& random) {
-            auto weight = ChooseWeight(random);
-            return weight ? weight.value().value : Value();
+        std::optional<Choice> Choose(SomeRandom& random) {
+            return ChooseAt(random.Value());
         }
 
-        std::optional<Weight> ChooseWeight(SomeRandom& random) {
-            float factor = random.Value();
-            auto result = ChooseWeightAt(factor);
-            return result;
-        }
-
-        std::optional<Weight> ChooseWeightAt(float factor) {
-            WeightList adjustedWeights;
+        std::optional<Choice> ChooseAt(float factor) {
+            VectorList<PJ::Weight<Choice>> evaluateWeights;
 
             float totalWeight = 0;
             for (auto& wr : choices) {
-                auto adjustedWeight = wr.Value();
-                if (wr.adjust) {
-                    adjustedWeight = wr.adjust->Transform(wr).Value();
-                }
+                float weight = wr->Value();
+                PJ::Add(evaluateWeights, PJ::Weight(weight, wr->choice));
 
-                PJ::Add(adjustedWeights, Weight(adjustedWeight, wr.core));
-
-                totalWeight += adjustedWeight;
+                totalWeight += weight;
             }
 
-            // No viable choices
-            if (totalWeight == 0) {
-                return std::nullopt;
-            }
+            GUARDR(totalWeight > 0, {})
 
             float random = totalWeight * factor;
 
             float curWeight = 0;
-            for (auto& wr : adjustedWeights) {
+            for (auto& wr : evaluateWeights) {
                 float weight = wr.Value();
-                if (weight <= 0) {
-                    continue; // Ignore this, invalid
-                }
+                GUARD_CONTINUE(weight > 0)
 
                 curWeight += weight;
                 if (random <= curWeight) {
-                    return wr;
+                    return wr.choice;
                 }
             }
 
-            return std::nullopt;
+            return {};
         }
     };
 } // namespace PJ
-
-#endif

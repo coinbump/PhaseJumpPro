@@ -28,7 +28,7 @@ SpriteRenderer::SpriteRenderer(Vector3 worldSize) :
                             [=](auto& value) { renderer->SetFlipY(value); } }
             );
     };
-    Override(this->planUIFunc, planUIFunc);
+    Override(planUIFuncs[UIContextId::Inspector], planUIFunc);
 }
 
 SpriteRenderer::SpriteRenderer(SP<SomeTexture> texture) :

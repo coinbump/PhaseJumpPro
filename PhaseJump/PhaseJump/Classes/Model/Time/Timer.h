@@ -7,7 +7,7 @@
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 9/25/24
+ CODE REVIEW: 10/5/24
  */
 namespace PJ {
     /// Runs for N seconds, then triggers OnFinish
@@ -78,7 +78,6 @@ namespace PJ {
             // We can't break down large deltas because events will get compressed
             // Example: an event happens every 3 seconds, we get a 9 second delta,
             // they should be 3 seconds apart but are 0 seconds apart instead
-            // Need a different mechanism to support fast forward in sims
             SetState(state + delta);
         }
     };

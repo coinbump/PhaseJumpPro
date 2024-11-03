@@ -18,16 +18,18 @@ using namespace PJ;
 //     auto m_worldId = b2CreateWorld(&worldDef);
 // }
 
+using SpawnList = PJ::Emitter::SpawnList;
+
+Emitter::Emitter() {}
+
 Emitter::Emitter(SpawnFunc spawnFunc, float fireTime) :
     spawnFunc(spawnFunc) {
-    fireDriver = std::make_unique<TimerDriver>(fireTime, Runner::RunType::Repeat, [this]() {
-        this->Fire();
-    });
+    driver = NEW<TimerDriver>(fireTime, RunType::Repeat, [this]() { this->Fire(); });
 }
 
 Emitter::Emitter(SpawnFunc spawnFunc, UP<SomeDriver>& fireDriver) :
     spawnFunc(spawnFunc),
-    fireDriver(std::move(fireDriver)) {}
+    driver(std::move(fireDriver)) {}
 
 void Emitter::OnUpdate(TimeSlice time) {
     Base::OnUpdate(time);
@@ -46,8 +48,8 @@ void Emitter::OnUpdate(TimeSlice time) {
     delayedEmits = unfinishedEmits;
     EmitWithEmits(finishedEmits);
 
-    GUARD(fireDriver);
-    fireDriver->OnUpdate(time);
+    GUARD(driver);
+    driver->OnUpdate(time);
 }
 
 bool Emitter::CanSpawn() {
@@ -59,9 +61,9 @@ bool Emitter::CanSpawn() {
 
 Emitter::EmitList Emitter::Fire() {
     EmitList result;
-    GUARDR(buildEmitsFunc, result)
+    GUARDR(emitFunc, result)
 
-    result = buildEmitsFunc(*this);
+    result = emitFunc(*this);
     EmitWithEmits(result);
     OnEmit(result);
 
@@ -72,59 +74,52 @@ List<Emitter::SpawnType> Emitter::EmitWithEmits(EmitList emits) {
     List<Emitter::SpawnType> result;
 
     for (auto& emit : emits) {
-        auto spawnDelay = emit.SpawnDelay();
+        auto spawnDelay = emit.Delay();
         if (spawnDelay && *spawnDelay > 0) {
             Add(delayedEmits, DelayedEmitModel(emit, *spawnDelay));
             continue;
         }
 
-        auto spawn = Spawn(emit);
-        GUARD_CONTINUE(spawn)
-
-        Add(result, spawn);
+        auto spawns = Spawn(emit);
+        for (auto& spawn : spawns) {
+            Add(result, spawn);
+        }
     }
 
     return result;
 }
 
-Emitter::SpawnType Emitter::MakeSpawn(EmitModel const& emit) {
-    GUARDR(spawnFunc, nullptr)
-
-    auto spawn = spawnFunc(*this, emit);
-    GUARDR(spawn, nullptr)
-
-    return *spawn;
+SpawnList Emitter::MakeSpawns(EmitModel const& emit) {
+    GUARDR(spawnFunc, {})
+    return spawnFunc(*this, emit);
 }
 
-Emitter::SpawnType Emitter::Spawn(EmitModel const& emit) {
-    GUARDR(CanSpawn(), nullptr)
+SpawnList Emitter::Spawn(EmitModel const& emit) {
+    GUARDR(CanSpawn(), {})
 
-    SpawnType newSpawn = MakeSpawn(emit);
-    GUARDR(newSpawn, nullptr)
+    auto spawns = MakeSpawns(emit);
+    for (auto& newSpawn : spawns) {
+        auto spawnPosition = SpawnPosition(newSpawn);
 
-    auto spawnPosition = SpawnPosition(newSpawn);
+        WorldNode* spawnParent =
+            !this->spawnParent.expired() ? this->spawnParent.lock().get() : owner;
+        GUARDR(spawnParent, {})
 
-    WorldNode* spawnParent = !this->spawnParent.expired() ? this->spawnParent.lock().get() : owner;
-    GUARDR(spawnParent, nullptr)
+        spawnParent->Add(newSpawn);
+        newSpawn->transform.SetLocalPosition(spawnPosition);
 
-    spawnParent->Add(newSpawn);
-    newSpawn->transform.SetLocalPosition(spawnPosition);
+        if (maxAlive > 0) {
+            emits.insert(newSpawn);
+        }
 
-    if (maxAlive > 0) {
-        emits.insert(newSpawn);
+        OnSpawn(newSpawn);
     }
 
-    OnSpawn(newSpawn);
-
-    if (onSpawnFunc) {
-        onSpawnFunc(newSpawn);
-    }
-
-    return newSpawn;
+    return spawns;
 }
 
 /// @return Returns local position for new spawn
 Vector3 Emitter::SpawnPosition(SpawnType spawn) {
     GUARDR(positionFunc, Vector3::zero)
-    return positionFunc(*random);
+    return positionFunc(*this);
 }

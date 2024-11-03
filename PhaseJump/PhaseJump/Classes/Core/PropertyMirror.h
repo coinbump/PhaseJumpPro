@@ -7,8 +7,9 @@
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 8/31/24
+ CODE REVIEW: 8/31/23
  */
+// TODO: see mirror improvements made in scrap code
 namespace PJ {
     /// Added to objects via mirror macros to allow reflection
     /// Example: visual inspector to edit properties

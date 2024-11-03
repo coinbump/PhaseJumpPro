@@ -11,6 +11,7 @@ using This = WorldNode;
 
 WorldNode::WorldNode(String name) :
     transform(*this),
+    tree(*this),
     name(name) {}
 
 void WorldNode::Destroy(float countdown) {
@@ -34,16 +35,8 @@ void WorldNode::OnDestroy() {
     }
 }
 
-WorldNode* WorldNode::Parent() const {
-    return parent;
-}
-
 WorldNode::NodeList const& WorldNode::ChildNodes() const {
-    return children;
-}
-
-WorldNode::NodeList const& WorldNode::Children() const {
-    return children;
+    return Children();
 }
 
 bool WorldNode::IsAwake() const {
@@ -59,7 +52,7 @@ bool WorldNode::IsDestroyed() const {
 }
 
 std::size_t WorldNode::ChildCount() {
-    return children.size();
+    return tree.ChildCount();
 }
 
 bool WorldNode::IsEnabled() const {
@@ -102,11 +95,14 @@ void WorldNode::Add(SP<SomeWorldComponent> component) {
 }
 
 void WorldNode::Add(SP<WorldNode> node) {
+    Insert(node, tree.ChildCount());
+}
+
+void WorldNode::Insert(SP<WorldNode> node, size_t index) {
     GUARD(node)
     GUARD_LOG(nullptr == node->Parent(), "ERROR. Can't add a previously parented node")
 
-    PJ::Add(children, node);
-    node->parent = this;
+    tree.Insert(node, index);
 
     NodeList subgraph;
     CollectBreadthFirstTree(node, subgraph);
@@ -116,20 +112,19 @@ void WorldNode::Add(SP<WorldNode> node) {
         subNode->world = world;
     }
 
-    AddChildNodeEvent addChildNodeEvent(node);
+    AddChildNodeEvent childNodeEvent(node);
 
     // Let components know there is a new child node
-    // Some components need this information (Example: layouts)
+    // Some components need this information (layouts)
     for (auto& component : components) {
-        component->Signal(SignalId::AddChildNode, addChildNodeEvent);
+        component->Signal(SignalId::AddChildNode, childNodeEvent);
     }
 }
 
+// TODO: SP-audit
 void WorldNode::Remove(SP<WorldNode> node) {
     GUARD(node)
     GUARD_LOG(node->Parent() == this, "ERROR. Can't remove un-parented node")
-
-    node->parent = nullptr;
 
     NodeList subgraph;
     CollectBreadthFirstTree(node, subgraph);
@@ -137,7 +132,15 @@ void WorldNode::Remove(SP<WorldNode> node) {
         subNode->world = nullptr;
     }
 
-    PJ::Remove(children, node);
+    tree.Remove(*node);
+
+    RemoveChildNodeEvent childNodeEvent(node);
+
+    // Let components know we removed a child node
+    // Some components need this information (layouts)
+    for (auto& component : components) {
+        component->Signal(SignalId::RemoveChildNode, childNodeEvent);
+    }
 }
 
 void WorldNode::Remove(WorldNode& node) {
@@ -146,24 +149,20 @@ void WorldNode::Remove(WorldNode& node) {
 }
 
 void WorldNode::RemoveAllChildren() {
-    for (auto& child : children) {
-        child->parent = nullptr;
-
+    for (auto& child : tree.Children()) {
         NodeList subgraph;
         CollectBreadthFirstTree(child, subgraph);
         for (auto& subNode : subgraph) {
             subNode->world = nullptr;
         }
     }
-    children.clear();
+    tree.RemoveAllChildren(true);
 }
 
-void WorldNode::Remove(SP<SomeWorldComponent> component) {
-    GUARD(component)
+void WorldNode::Remove(SomeWorldComponent& component) {
+    component.owner = nullptr;
 
-    component->owner = nullptr;
-
-    PJ::Remove(components, component);
+    RemoveFirstIf(components, [&](auto& componentPtr) { return componentPtr.get() == &component; });
 }
 
 void WorldNode::RemoveAllComponents() {
@@ -221,6 +220,9 @@ void WorldNode::CheckedAwake() {
     life.CheckedAwake([this]() {
         auto iterComponents = components;
         for (auto& component : iterComponents) {
+            // Skip components that were removed by another component in this loop
+            GUARD_CONTINUE(component->owner)
+
             component->CheckedAwake();
         }
     });
@@ -230,6 +232,9 @@ void WorldNode::CheckedStart() {
     life.CheckedStart([this]() {
         auto iterComponents = components;
         for (auto& component : iterComponents) {
+            // Skip components that were removed by another component in this loop
+            GUARD_CONTINUE(component->owner)
+
             component->CheckedStart();
         }
     });
@@ -243,10 +248,13 @@ void WorldNode::OnUpdate(TimeSlice time) {
         }
     }
 
-    for (auto const& component : components) {
-        if (!component->IsEnabled()) {
-            continue;
-        }
+    // Avoid iterate mutation error
+    auto iterComponents = components;
+    for (auto const& component : iterComponents) {
+        // Skip components that were removed by another component in this loop
+        GUARD_CONTINUE(component->owner)
+        GUARD_CONTINUE(component->IsEnabled())
+
         component->OnUpdate(time);
     }
 
@@ -285,4 +293,10 @@ This& WorldNode::SetOpacity(float value) {
 
     renderer->SetAlpha(value);
     return *this;
+}
+
+bool WorldNode::Contains(SomeWorldComponent& value) {
+    return std::find_if(components.begin(), components.end(), [&](auto& component) {
+               return component.get() == &value;
+           }) != components.end();
 }

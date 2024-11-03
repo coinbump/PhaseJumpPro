@@ -1,37 +1,41 @@
 #pragma once
 
-#include "List.h"
+#include "SomeUIEvent.h"
 #include "Utils.h"
 #include <memory>
 
 /*
  RATING: 5 stars
  Simple protocol
- CODE REVIEW: 9/22/24
+ CODE REVIEW: 10/20/24
  */
 namespace PJ {
     class SomeUIEvent;
 
-    /// Some world systems use event polling (SDL)
+    /// Some world systems use event polling (Example: SDL)
     class SomeUIEventPoller {
     public:
-        enum class Status {
-            Running,
+        enum class StateType {
+            /// Poller is actively running
+            Run,
 
-            Done
+            /// Poller is finished running
+            Finished
         };
 
+        /// Result returned by polling method
         struct Result {
-            Status status;
-            List<SP<SomeUIEvent>> uiEvents;
+            StateType state;
+            UIEventList uiEvents;
 
-            Result(Status status, List<SP<SomeUIEvent>> uiEvents) :
-                status(status),
+            Result(StateType state, UIEventList const& uiEvents) :
+                state(state),
                 uiEvents(uiEvents) {}
         };
 
         virtual ~SomeUIEventPoller() {}
 
+        /// Override to poll UI events for this event loop
         virtual Result PollUIEvents() = 0;
     };
 } // namespace PJ

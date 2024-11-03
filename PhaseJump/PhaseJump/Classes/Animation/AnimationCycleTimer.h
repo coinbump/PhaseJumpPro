@@ -20,7 +20,7 @@ namespace PJ {
 
     protected:
         Timer timer;
-        Playable* playDriver = &timer;
+        Playable* controller = &timer;
 
         AnimationCycleType cycleType;
         AnimationCycleState cycleState;
@@ -29,15 +29,7 @@ namespace PJ {
         /// Called when the timer starts a new animation cycle
         OnCycleFunc onCycleFunc;
 
-        AnimationCycleTimer(float duration, AnimationCycleType cycleType) :
-            timer(duration, Runner::RunType::Once),
-            cycleType(cycleType),
-            cycleState(AnimationCycleState::Forward) {
-            timer.SetOnPlayTimeChangeFunc([this](auto& playable) {
-                GUARD(onPlayTimeChangeFunc);
-                onPlayTimeChangeFunc(*this);
-            });
-        }
+        AnimationCycleTimer(float duration, AnimationCycleType cycleType);
 
         virtual ~AnimationCycleTimer() {};
 
@@ -77,83 +69,18 @@ namespace PJ {
 
         // MARK: Updatable
 
-        void OnUpdate(TimeSlice time) override {
-            GUARD(!timer.IsFinished())
-
-            timer.OnUpdate(time);
-
-            GUARD(timer.IsFinished())
-
-            switch (cycleType) {
-            case AnimationCycleType::Once:
-                break;
-            case AnimationCycleType::Loop:
-                timer.Reset();
-
-                if (onCycleFunc) {
-                    onCycleFunc(*this);
-                }
-                break;
-            case AnimationCycleType::PingPong:
-                cycleState = Flip(cycleState);
-                timer.Reset();
-
-                if (onCycleFunc) {
-                    onCycleFunc(*this);
-                }
-                break;
-            }
-        }
+        void OnUpdate(TimeSlice time) override;
 
         // MARK: - Playable
 
-        void Reset() override {
-            Base::Reset();
-            cycleState = AnimationCycleState::Forward;
-        }
+        void Reset() override;
+        float PlayTime() const override;
+        void SetPlayTime(float value) override;
+        float Progress() const override;
+        void SetProgress(float value) override;
 
-        float PlayTime() const override {
-            switch (cycleState) {
-            case AnimationCycleState::Reverse:
-                return Duration() - timer.PlayTime();
-                break;
-            default:
-                return timer.PlayTime();
-            }
-        }
-
-        void SetPlayTime(float value) override {
-            switch (cycleState) {
-            case AnimationCycleState::Reverse:
-                timer.SetPlayTime(Duration() - value);
-                break;
-            default:
-                timer.SetPlayTime(value);
-            }
-        }
-
-        float Progress() const override {
-            switch (cycleState) {
-            case AnimationCycleState::Reverse:
-                return 1.0f - timer.Progress();
-            default:
-                return timer.Progress();
-            }
-        }
-
-        void SetProgress(float value) override {
-            switch (cycleState) {
-            case AnimationCycleState::Reverse:
-                timer.SetProgress(1.0f - value);
-                break;
-            default:
-                timer.SetProgress(value);
-                break;
-            }
-        }
-
-        Playable* PlayDriver() const override {
-            return playDriver;
+        Playable* Controller() const override {
+            return controller;
         }
     };
 } // namespace PJ

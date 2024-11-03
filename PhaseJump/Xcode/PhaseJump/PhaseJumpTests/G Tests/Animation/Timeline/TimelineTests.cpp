@@ -12,12 +12,18 @@ using namespace TimelineTests;
 
 TEST(Timeline, OnPlayTimeChangeWhenTimelineDrives)
 {
-    using TimeTrack = PJ::TimeTrack<float, EaseKeyframe<float>>;
+    using TimeTrack = PJ::TimeTrack<float>;
 
-    Timeline sut(10, AnimationCycleType::Once, Timeline::PlayType::TimelineDrives);
+    Timeline::Config config{
+        .duration = 10,
+        .cycleType = AnimationCycleType::Once
+    };
+    Timeline sut(config);
+
     EXPECT_EQ(10, sut.Duration());
-    UP<Playable> track1 = std::make_unique<TimeTrack>(10);
-    UP<Playable> track2 = std::make_unique<TimeTrack>(10);
+    TimeTrack::Config trackConfig{.duration = 10};
+    UP<SomeTimeTrack> track1 = NEW<TimeTrack>(trackConfig);
+    UP<SomeTimeTrack> track2 = NEW<TimeTrack>(trackConfig);
 
     TimeTrack* track1Ptr = static_cast<TimeTrack*>(track1.get());
     TimeTrack* track2Ptr = static_cast<TimeTrack*>(track2.get());
@@ -42,44 +48,135 @@ TEST(Timeline, OnPlayTimeChangeWhenTimelineDrives)
     EXPECT_EQ(value2, 150);
 }
 
-TEST(Timeline, OnUpdateWhenTracksDrive)
+TEST(Timeline, PingPong)
 {
-    using TimeTrack = PJ::TimeTrack<float, EaseKeyframe<float>>;
+    Timeline::Config config{
+        .duration = 3,
+        .cycleType = AnimationCycleType::PingPong
+    };
+    Timeline sut(config);
 
-    Timeline sut(10, AnimationCycleType::Once, Timeline::PlayType::TimelineDrives);
-    EXPECT_EQ(10, sut.Duration());
-    UP<Playable> track1 = std::make_unique<TimeTrack>(10, AnimationCycleType::Once);
-    UP<Playable> track2 = std::make_unique<TimeTrack>(10, AnimationCycleType::Once);
+    sut.AddKeyframe<float>("test", 0, {.keyframeConfig = {.value = 2}});
+    sut.AddKeyframe<float>("test", 1, {.keyframeConfig = {.value = 3}});
+    sut.AddKeyframe<float>("test", 2, {.keyframeConfig = {.value = 2}});
+    sut.AddKeyframe<float>("test", 3, {.keyframeConfig = {.value = 1}});
 
-    TimeTrack* track1Ptr = static_cast<TimeTrack*>(track1.get());
-    TimeTrack* track2Ptr = static_cast<TimeTrack*>(track2.get());
+    float testValue{};
+    auto& track = *(static_cast<TimeTrack<float>*>(sut.Tracks()[0].get()));
+    track.setBindingFunc = [&](float value) { testValue = value; };
 
-    sut.Add(track1);
-    sut.Add(track2);
+    sut.OnUpdate({1});
+    EXPECT_EQ(3, testValue);
 
-    ASSERT_EQ(2, sut.Tracks().size());
+    sut.OnUpdate({1});
+    EXPECT_EQ(2, testValue);
 
-    track1Ptr->AddAt(0)->value = 10;
-    track1Ptr->AddAt(10)->value = 20;
-    track2Ptr->AddAt(0)->value = 100;
-    track2Ptr->AddAt(10)->value = 200;
+    sut.OnUpdate({1});
+    EXPECT_EQ(1, testValue);
 
-    float value1{};
-    float value2{};
-    track1Ptr->setBindingFunc = [&](auto& value) { value1 = value; };
-    track2Ptr->setBindingFunc = [&](auto& value) { value2 = value; };
+    // Reverse happens here
 
-    sut.OnUpdate({5});
-    EXPECT_EQ(15, value1);
-    EXPECT_EQ(150, value2);
-    EXPECT_FALSE(track1Ptr->IsFinished());
-    EXPECT_FALSE(track2Ptr->IsFinished());
-    EXPECT_FALSE(sut.IsFinished());
+    sut.OnUpdate({0.5f});
+    EXPECT_EQ(1.5f, testValue);
 
-    sut.OnUpdate({5});
-    EXPECT_EQ(20, value1);
-    EXPECT_EQ(200, value2);
-    EXPECT_TRUE(track1Ptr->IsFinished());
-    EXPECT_TRUE(track2Ptr->IsFinished());
-    EXPECT_TRUE(sut.IsFinished());
+    sut.OnUpdate({0.5f});
+    EXPECT_EQ(2, testValue);
+
+    sut.OnUpdate({0.5f});
+    EXPECT_EQ(2.5f, testValue);
+
+    sut.OnUpdate({0.5f});
+    EXPECT_EQ(3.0f, testValue);
+
+    sut.OnUpdate({0.5f});
+    EXPECT_EQ(2.5f, testValue);
+
+    sut.OnUpdate({0.5f});
+    EXPECT_EQ(2, testValue);
+
+    // Reverse happens here
+}
+
+TEST(Timeline, AddKeyframe)
+{
+    Timeline::Config config{
+        .duration = 10,
+        .cycleType = AnimationCycleType::Once
+    };
+    Timeline sut(config);
+    sut.AddKeyframe<float>("value", 0, 3);
+    sut.AddKeyframe<float>("value", 1, 4);
+
+    auto _track = sut.FindTrack("value");
+    ASSERT_NE(nullptr, _track);
+
+    auto track = dynamic_cast<TimeTrack<float>*>(_track);
+    ASSERT_NE(nullptr, _track);
+
+    EXPECT_EQ(3, track->ValueAt(0));
+    EXPECT_EQ(4, track->ValueAt(1));
+}
+
+TEST(Timeline, SetTrackBindingWithTimeTypeDiscrete)
+{
+    Timeline::Config config{
+        .duration = 10,
+        .cycleType = AnimationCycleType::Once,
+    };
+    Timeline sut(config);
+
+    TimelineKeyframeConfig<float> kfConfig{
+        .keyframeConfig = {.value = 0},
+        .timeType = KeyedTimeType::Discrete
+    };
+    sut.AddKeyframe<float>("value", 0, kfConfig);
+    sut.AddKeyframe<float>("value", 10, 10);
+
+    float value = -1;
+    sut.SetTrackBinding<float>("value", [&](auto _value) {
+        value = _value;
+    });
+
+    EXPECT_EQ(0, value);
+
+    auto track = sut.FindTrack("value");
+    ASSERT_NE(nullptr, track);
+
+    track->SetPlayTime(5);
+    EXPECT_EQ(0, value);
+
+    track->SetPlayTime(10);
+    EXPECT_EQ(10, value);
+}
+
+TEST(Timeline, SetTrackBindingWithTimeTypeInterpolate)
+{
+    Timeline::Config config{
+        .duration = 10,
+        .cycleType = AnimationCycleType::Once
+    };
+    Timeline sut(config);
+
+    TimelineKeyframeConfig<float> kfConfig{
+        .keyframeConfig = {.value = 0},
+        .timeType = KeyedTimeType::Interpolate
+    };
+    sut.AddKeyframe<float>("value", 0, kfConfig);
+    sut.AddKeyframe<float>("value", 10, 10);
+
+    float value = -1;
+    sut.SetTrackBinding<float>("value", [&](auto _value) {
+        value = _value;
+    });
+
+    EXPECT_EQ(0, value);
+
+    auto track = sut.FindTrack("value");
+    ASSERT_NE(nullptr, track);
+
+    track->SetPlayTime(5);
+    EXPECT_EQ(5, value);
+
+    track->SetPlayTime(10);
+    EXPECT_EQ(10, value);
 }

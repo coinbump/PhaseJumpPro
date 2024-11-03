@@ -33,19 +33,22 @@ Vector3 SomeWorldComponent::WorldToLocal(Vector3 worldPos) {
 }
 
 void SomeWorldComponent::Signal(String id, SomeSignal const& signal) {
-    auto i = signalHandlers.find(id);
-    if (i != signalHandlers.end()) {
+    auto i = signalFuncs.find(id);
+    if (i != signalFuncs.end()) {
         i->second(*this, signal);
     }
 }
 
 UP<UIPlan> SomeWorldComponent::MakeUIPlan(String context) {
-    GUARDR(planUIFunc, {})
+    try {
+        auto& planUIFunc = planUIFuncs.at(context);
+        auto result = NEW<UIPlan>();
 
-    auto result = std::make_unique<UIPlan>();
+        UIPlanner planner(*result.get());
+        planUIFunc(*this, context, planner);
 
-    UIPlanner planner(*result.get());
-    planUIFunc(*this, context, planner);
-
-    return result;
+        return result;
+    } catch (...) {
+        return {};
+    }
 }

@@ -8,6 +8,7 @@
 #include "SomeWorldComponent.h"
 #include "StandardCore.h"
 #include "Tags.h"
+#include "TreeNode.h"
 #include "Utils.h"
 #include "VectorList.h"
 #include "WorldComponent.h"
@@ -35,6 +36,13 @@ namespace PJ {
             node(node) {}
     };
 
+    struct RemoveChildNodeEvent : public SomeSignal {
+        SP<WorldNode> node;
+
+        RemoveChildNodeEvent(SP<WorldNode> node) :
+            node(node) {}
+    };
+
     /**
      Node in a world graph
      Each context/window has its own world, with a world graph
@@ -43,7 +51,7 @@ namespace PJ {
      Each component provides composable logic for their owner node
      */
     // TODO: re-evaluate use of multiple inheritance here
-    class WorldNode : public Base, public Updatable, public IntIdentifiable<WorldNode> {
+    class WorldNode : public Base, public Treeable<WorldNode> {
     public:
         using Base = PJ::Base;
         using This = WorldNode;
@@ -52,7 +60,6 @@ namespace PJ {
         using NodeList = VectorList<SP<WorldNode>>;
 
         friend class World;
-        friend class IntIdentifiable<WorldNode>;
 
     protected:
         ComponentList components;
@@ -61,8 +68,8 @@ namespace PJ {
         bool isEnabled = true;
 
         WorldPartLife life;
-        WorldNode* parent = nullptr;
-        NodeList children;
+        // TODO: SP-Audit
+        TreeNode<This, SP<This>> tree;
 
         uint64_t IntIdImpl() const {
             return (uint64_t)this;
@@ -98,9 +105,11 @@ namespace PJ {
         void Restore();
         virtual void OnDestroy();
 
-        WorldNode* Parent() const;
         NodeList const& ChildNodes() const;
-        NodeList const& Children() const;
+
+        NodeList const& Children() const {
+            return tree.Children();
+        }
 
         World* World() const;
         bool IsAwake() const;
@@ -134,9 +143,41 @@ namespace PJ {
             return *component;
         }
 
+        // TODO: unit test
+        template <class T, typename... Arguments>
+        auto& AddComponentIfNeeded(Arguments... args) {
+            auto existingComponent = TypeComponent<T>();
+            GUARDR(nullptr == existingComponent, *existingComponent)
+
+            auto component = MAKE<T>(args...);
+            Add(component);
+            return *component;
+        }
+
+        // TODO: unit test
+        template <class T, typename... Arguments>
+        auto& AddComponentIfNeededWasNeeded(bool& wasNeeded, Arguments... args) {
+            auto existingComponent = TypeComponent<T>();
+            wasNeeded = false;
+            GUARDR(nullptr == existingComponent, *existingComponent)
+
+            wasNeeded = true;
+
+            auto component = MAKE<T>(args...);
+            Add(component);
+            return *component;
+        }
+
         template <class T, typename... Arguments>
         constexpr auto& With(Arguments... args) {
             return AddComponent<T>(args...);
+        }
+
+        template <class T, typename... Arguments>
+        constexpr auto& WithId(String id, Arguments... args) {
+            auto& result = AddComponent<T>(args...);
+            result.id = id;
+            return result;
         }
 
         template <class T, typename... Arguments>
@@ -162,6 +203,7 @@ namespace PJ {
         }
 
         void Add(SP<WorldNode> node);
+        void Insert(SP<WorldNode> node, size_t index);
 
         template <typename... Arguments>
         WorldNode& AddNode(Arguments... args) {
@@ -195,10 +237,9 @@ namespace PJ {
             return *result;
         }
 
-        void Remove(SP<WorldNode> node);
         void Remove(WorldNode& node);
         void RemoveAllChildren();
-        void Remove(SP<SomeWorldComponent> component);
+        void Remove(SomeWorldComponent& component);
         void RemoveAllComponents();
 
         template <class T>
@@ -208,7 +249,7 @@ namespace PJ {
                 iterComponents.begin(), iterComponents.end(),
                 [&](SP<SomeWorldComponent>& component) {
                     if (Is<T>(component.get())) {
-                        Remove(component);
+                        Remove(*component);
                     }
                 }
             );
@@ -224,6 +265,23 @@ namespace PJ {
             }
 
             return nullptr;
+        }
+
+        template <class Component>
+        bool IsTypeEnabled() const {
+            auto i = FirstIf(components, [](auto& component) {
+                return Is<Component>(component.get()) && component->IsEnabled();
+            });
+            return i.has_value();
+        }
+
+        template <class Component>
+        This& EnableType(bool value) {
+            for (auto& component : components) {
+                GUARD_CONTINUE(Is<Component>(component.get()))
+                component->Enable(value);
+            }
+            return *this;
         }
 
         template <class T, class ComponentList>
@@ -281,6 +339,8 @@ namespace PJ {
         float Opacity() const;
         This& SetOpacity(float value);
 
+        bool Contains(SomeWorldComponent& value);
+
         // MARK: Convenience
 
         template <class T>
@@ -321,8 +381,19 @@ namespace PJ {
             return *this;
         }
 
-        // MARK: Updatable
+        virtual void OnUpdate(TimeSlice time);
 
-        void OnUpdate(TimeSlice time) override;
+        // MARK: Treeable
+
+        WorldNode* Parent() const override {
+            return tree.Parent();
+        }
+
+        void SetParent(WorldNode* value) override {
+            tree.SetParent(value);
+        }
+
+    protected:
+        void Remove(SP<WorldNode> node);
     };
 } // namespace PJ

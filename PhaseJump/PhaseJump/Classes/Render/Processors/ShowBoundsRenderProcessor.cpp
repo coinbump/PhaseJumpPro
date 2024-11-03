@@ -27,9 +27,8 @@ void ShowBoundsRenderProcessor::Process(CameraRenderModel& cameraModel) {
             GUARD_CONTINUE(ws)
 
             auto worldSize = ws->WorldSize();
-            GUARD_CONTINUE(worldSize)
 
-            auto renderer = MAKE<ColorRenderer>(boundsMaterial, color, *worldSize);
+            auto renderer = MAKE<ColorRenderer>(boundsMaterial, color, worldSize);
             renderer->model.SetBuildMeshFunc([=](RendererModel const& model) {
                 // TODO: mesh.Resize(model.WorldSize());
                 QuadFrameMeshBuilder builder(model.WorldSize(), Vector2(2, 2));

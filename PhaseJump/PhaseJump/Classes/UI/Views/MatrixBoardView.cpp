@@ -7,7 +7,7 @@ MatrixBoardView::MatrixBoardView(Vector2 worldSize, Vector2Int matrixSize) :
     board(matrixSize) {
     SetFrameSize(worldSize);
 
-    signalHandlers[SignalId::AddChildNode] = [](auto& owner, auto& signal) {
+    signalFuncs[SignalId::AddChildNode] = [](auto& owner, auto& signal) {
         auto& event = *(static_cast<AddChildNodeEvent const*>(&signal));
 
         auto handler = event.node->TypeComponent<MatrixPieceHandler>();
@@ -54,9 +54,8 @@ Vector2 MatrixBoardView::CellSize() const {
     GUARDR(board.IsValid(), vec2Zero)
 
     auto worldSize = WorldSize();
-    GUARDR(worldSize, vec2Zero);
 
-    auto worldSize2 = (Vector2)(*worldSize);
+    auto worldSize2 = (Vector2)(worldSize);
     return worldSize2 / (Vector2(board.Size().x, board.Size().y));
 }
 
@@ -123,9 +122,9 @@ Vector3 MatrixBoardView::NodeLocalPosition(MatrixPieceHandler const& handler) {
 
 Vector3 MatrixBoardView::LocationToLocalPosition(Vector2Int loc) {
     auto x =
-        (WorldSize()->x / 2.0f) * vecLeft + (CellSize().x / 2.0f + loc.x * CellSize().x) * vecRight;
+        (WorldSize().x / 2.0f) * vecLeft + (CellSize().x / 2.0f + loc.x * CellSize().x) * vecRight;
     auto y =
-        (WorldSize()->y / 2.0f) * vecUp + (CellSize().y / 2.0f + loc.y * CellSize().y) * vecDown;
+        (WorldSize().y / 2.0f) * vecUp + (CellSize().y / 2.0f + loc.y * CellSize().y) * vecDown;
 
     return Vector3(x, y, 0);
 }

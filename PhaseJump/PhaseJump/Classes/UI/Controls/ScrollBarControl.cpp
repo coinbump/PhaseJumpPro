@@ -97,9 +97,7 @@ Vector2 ScrollBarControl::RendererSize(WorldNode& target) const {
     GUARDR(renderer, {})
 
     auto size = renderer->WorldSize();
-    GUARDR(size, {})
-
-    return *size;
+    return size;
 }
 
 void ScrollBarControl::OnDragThumbStart(WorldNode& thumb, Vector2 inputPosition) {

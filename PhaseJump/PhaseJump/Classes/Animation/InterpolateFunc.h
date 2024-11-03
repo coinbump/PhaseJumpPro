@@ -8,7 +8,7 @@
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 9/21/24
+ CODE REVIEW: 10/5/24
  */
 namespace PJ {
     /// Function that returns a value between [start, end] based on progress
@@ -17,16 +17,23 @@ namespace PJ {
     using InterpolateFunc = std::function<T(float progress)>;
 
     namespace InterpolateFuncs {
+        /**
+         @return Returns the standard func for interpolating between start and end values
+
+         If you want to create your own interpolate func Make specializations you can use C++
+         template specialization
+
+         Example:
+         template <>
+         InterpolateFunc<String>Make(String start, String end);
+         */
         template <class T>
         InterpolateFunc<T> Make(T start, T end) {
             return [=](float progress) { return start + (end - start) * progress; };
         }
 
-        // Example of how to create specialization for custom properties
-        // template <>
-        // InterpolateFunc<String>Make(String start, String end);
-
-        /// Aggregates ease func along with value interpolator
+        /// @return Returns an interpolation func that applies an ease curve to the progress
+        /// parameter
         template <class T>
         InterpolateFunc<T> MakeEase(InterpolateFunc<T> func, EaseFunc ease = EaseFuncs::linear) {
             return [=](float progress) {
@@ -35,6 +42,7 @@ namespace PJ {
             };
         }
 
+        /// @return Returns an interpolation func that interpolates in reverse (from end to start)
         template <class T>
         InterpolateFunc<T> MakeReverse(InterpolateFunc<T> func) {
             return [=](float progress) {
@@ -43,6 +51,8 @@ namespace PJ {
             };
         }
 
+        /// @return Returns a set binding func that takes a progress value, calls the interpolator,
+        /// and sets the value via the binding
         template <class T>
         SetBindingFunc<T> MakeBinding(InterpolateFunc<T> func, SetBindingFunc<T> binding) {
             return [=](float progress) {
@@ -50,19 +60,5 @@ namespace PJ {
                 binding(func(progress));
             };
         }
-
-        //        template <class Type>
-        //        using MakeInterpolateWithEaseFunc = std::function<InterpolateFunc<Type>(Type
-        //        start, Type end, EaseFunc)>;
-        //
-        //        /// Generates an interpolate maker func of this type
-        //        /// Allows for interpolated types that can't use InterpolateFuncs::Make (Example:
-        //        text animation) template <class Type> static MakeInterpolateWithEaseFunc<Type>
-        //        InterpolateWithEaseMaker() {
-        //            return [=](Type start, Type end, EaseFunc easeFunc) {
-        //                return InterpolateFuncs::MakeEase(InterpolateFuncs::Make(start, end),
-        //                easeFunc);
-        //            };
-        //        }
     } // namespace InterpolateFuncs
 } // namespace PJ

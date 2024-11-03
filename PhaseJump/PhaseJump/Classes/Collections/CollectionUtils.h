@@ -1,8 +1,11 @@
 #pragma once
 
 #include "InfixOStreamIterator.h"
+#include "OrderedSet.h"
 #include "StringUtils.h"
+#include "UnorderedSet.h"
 #include "Utils.h"
+#include "VectorList.h"
 #include <algorithm>
 #include <functional>
 #include <optional>
@@ -11,24 +14,28 @@
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 8/7/24
+ CODE REVIEW: 10/31/24
  */
 namespace PJ {
+    /// Removes all elements from the collection
     template <class Collection>
     constexpr void RemoveAll(Collection& collection) {
         collection.clear();
     }
 
+    /// @return Returns the number of elements in the collection
     template <class Collection>
     constexpr Collection::size_type Count(Collection const& collection) {
         return collection.size();
     }
 
+    /// @return Returns true if the collection is empty
     template <class Collection>
     constexpr bool IsEmpty(Collection const& collection) {
         return collection.size() <= 0;
     }
 
+    /// Removes the first element that matches the specified value
     template <class Collection>
     constexpr void Remove(Collection& collection, typename Collection::value_type const& value) {
         auto i = std::find(collection.begin(), collection.end(), value);
@@ -37,17 +44,16 @@ namespace PJ {
         collection.erase(i);
     }
 
+    /// Removes the first element for which the check returns true
     template <class Collection, class UnaryPred>
-    constexpr bool RemoveFirstIf(Collection& collection, UnaryPred check) {
-        GUARDR(check, false)
-
+    constexpr void RemoveFirstIf(Collection& collection, UnaryPred check) {
         auto i = std::find_if(collection.begin(), collection.end(), check);
-        GUARDR(i != collection.end(), false)
+        GUARD(i != collection.end())
 
         collection.erase(i);
-        return true;
     }
 
+    /// Removes all elements for which the check returns true
     template <class Collection, class UnaryPred>
     constexpr void RemoveIf(Collection& collection, UnaryPred check) {
         collection.erase(
@@ -55,6 +61,13 @@ namespace PJ {
         );
     }
 
+    /// Removes all null items from the collection
+    template <class Collection>
+    constexpr void Compact(Collection& collection) {
+        RemoveIf(collection, [](auto& item) { return nullptr == item; });
+    }
+
+    /// @return Returns true if the collection contains the specified value
     template <class Collection>
     constexpr bool
     Contains(Collection const& collection, typename Collection::value_type const& value) {
@@ -62,75 +75,155 @@ namespace PJ {
         return findResult != collection.end();
     }
 
+    /// @return Returns true if the collection contains a value where check returns true
     template <class Collection, class UnaryPred>
-    constexpr bool ContainsWhere(Collection const& collection, UnaryPred check) {
+    constexpr bool ContainsIf(Collection const& collection, UnaryPred check) {
         GUARDR(check, false)
         auto i = std::find_if(collection.begin(), collection.end(), check);
         return i != collection.end();
     }
 
+    /// Adds one collection to another
     template <class Collection>
     constexpr void AddRange(Collection& collection, Collection const& source) {
         collection.insert(collection.end(), source.begin(), source.end());
     }
 
-    //    template <class Collection,
-    //        class _Type = Collection,
-    //        std::enable_if_t<std::is_same<_Type, std::vector<typename
-    //        Collection::value_type>>::value>* = nullptr>
-    //    void AddRange(Collection& collection, Collection const& source) {
-    //        collection.reserve(collection.size() + source.size());
-    //        collection.insert(collection.end(), source.begin(), source.end());
-    //    }
-
+    /// @return Returns the index of the matching item in the collection, if any
     template <class Collection>
     std::optional<size_t> constexpr IndexOf(
         Collection const& collection, typename Collection::value_type const& item
     ) {
         auto i = std::find(collection.begin(), collection.end(), item);
 
-        GUARDR(i != collection.end(), std::nullopt);
-        return std::make_optional(std::distance(collection.begin(), i));
+        GUARDR(i != collection.end(), {});
+        return std::distance(collection.begin(), i);
     }
 
+    /// @return Returns the index of the item that where check returns true
+    template <class Collection, class Predicate>
+    std::optional<size_t> constexpr IndexOfIf(Collection const& collection, Predicate check) {
+        auto i = std::find_if(collection.begin(), collection.end(), [&](auto& item) {
+            return check(item);
+        });
+
+        GUARDR(i != collection.end(), std::nullopt);
+        return std::distance(collection.begin(), i);
+    }
+
+    /// @return Returns the iterator for the first item that matches the check
+    template <class Collection, class UnaryPred>
+    constexpr typename Collection::const_iterator
+    FirstIterator(Collection const& collection, UnaryPred check) {
+        return std::find_if(collection.cbegin(), collection.cend(), check);
+    }
+
+    /// @return Returns the iterator for the first item that matches the check
     template <class Collection, class UnaryPred>
     constexpr typename Collection::iterator FirstIterator(Collection& collection, UnaryPred check) {
-        auto i = std::find_if(collection.begin(), collection.end(), check);
-        GUARDR(i != collection.end(), collection.end())
-
-        return i;
+        return std::find_if(collection.begin(), collection.end(), check);
     }
 
+    /// @return Returns the first item in the collection, if any
     template <class Collection>
-    constexpr typename Collection::value_type First(Collection& collection) {
+    constexpr typename Collection::value_type SafeFirst(Collection& collection) {
         typename Collection::value_type defaultResult{};
         return !IsEmpty(collection) ? *collection.begin() : defaultResult;
     }
 
+    /// @return Returns the first item that matches the check
     template <class Collection, class UnaryPred>
     constexpr std::optional<typename Collection::value_type>
-    First(Collection& collection, UnaryPred check) {
+    FirstIf(Collection const& collection, UnaryPred check) {
         auto i = FirstIterator(collection, check);
         return i != collection.end() ? *i : std::optional<typename Collection::value_type>();
     }
 
+    /// @return Returns the first item that matches the check
+    template <class Collection, class UnaryPred>
+    constexpr std::optional<typename Collection::value_type>
+    FirstIf(Collection& collection, UnaryPred check) {
+        auto i = FirstIterator(collection, check);
+        return i != collection.end() ? *i : std::optional<typename Collection::value_type>();
+    }
+
+    /// Filters items from the collection. If check returns true, the item is kept
+    /// @return Returns the filtered collection
     template <class Collection, class UnaryPred>
     constexpr Collection Filter(Collection const& collection, UnaryPred check) {
         Collection result;
-        GUARDR(check, result)
         std::copy_if(begin(collection), end(collection), std::back_inserter(result), check);
         return result;
     }
 
+    /// Filters items from the collection. If check returns true, the item is kept
+    /// @return Returns the filtered collection
+    template <class Type, class UnaryPred>
+    constexpr UnorderedSet<Type> Filter(UnorderedSet<Type> const& collection, UnaryPred check) {
+        UnorderedSet<Type> result;
+        std::copy_if(
+            begin(collection), end(collection), std::inserter(result, result.begin()), check
+        );
+        return result;
+    }
+
+    /// Filters items from the collection. If check returns true, the item is kept
+    /// @return Returns the filtered collection
+    template <class Type, class UnaryPred>
+    constexpr OrderedSet<Type> Filter(OrderedSet<Type> const& collection, UnaryPred check) {
+        OrderedSet<Type> result;
+        std::copy_if(
+            begin(collection), end(collection), std::inserter(result, result.begin()), check
+        );
+        return result;
+    }
+
+    // MARK: Map
+
+    /// Maps a collection of one type to a collection of a different type
+    template <class ResultType, class Type, class Converter>
+    constexpr VectorList<ResultType> Map(VectorList<Type> const& collection, Converter convert) {
+        VectorList<ResultType> result;
+        std::transform(begin(collection), end(collection), std::back_inserter(result), convert);
+        return result;
+    }
+
+    /// Maps a collection of one type to a collection of a different type
+    template <class ResultType, class Type, class Converter>
+    constexpr UnorderedSet<ResultType>
+    Map(UnorderedSet<Type> const& collection, Converter convert) {
+        UnorderedSet<ResultType> result;
+        std::transform(
+            begin(collection), end(collection), std::inserter(result, result.begin()), convert
+        );
+        return result;
+    }
+
+    /// Maps a collection of one type to a collection of a different type
+    template <class ResultType, class Type, class Converter>
+    constexpr OrderedSet<ResultType> Map(OrderedSet<Type> const& collection, Converter convert) {
+        OrderedSet<ResultType> result;
+        std::transform(
+            begin(collection), end(collection), std::inserter(result, result.begin()), convert
+        );
+        return result;
+    }
+
+    /// @return Returns true if the index is valid for the collection
+    template <class Collection>
+    constexpr bool IsValidIndex(Collection& collection, size_t index) {
+        return index >= 0 && index < collection.size();
+    }
+
+    /// MARK: Erase/Remove
+    /// Removes the item at the specified index from the collection
     template <class Collection>
     constexpr void EraseAt(Collection& collection, std::size_t index) {
-        if (index < 0 || index >= collection.size()) {
-            return;
-        }
-
+        GUARD(IsValidIndex(collection, index))
         collection.erase(collection.begin() + index);
     }
 
+    /// Removes the item at the specified index from the collection
     template <class Collection>
     constexpr void RemoveAt(Collection& collection, std::size_t index) {
         EraseAt(collection, index);
@@ -160,18 +253,15 @@ namespace PJ {
         collectFunc(result, fromNode);
     }
 
+    /// Appends the item to the collection
     template <class Collection>
     constexpr void Append(Collection& collection, typename Collection::value_type value) {
         collection.push_back(value);
     }
 
+    /// Appends the item to the collection
     template <class Collection>
     constexpr void Add(Collection& collection, typename Collection::value_type value) {
         collection.push_back(value);
-    }
-
-    template <class Collection>
-    constexpr bool IsValidIndex(Collection& collection, size_t index) {
-        return index >= 0 && index < collection.size();
     }
 } // namespace PJ

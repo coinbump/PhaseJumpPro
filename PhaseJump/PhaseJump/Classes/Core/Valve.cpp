@@ -66,7 +66,7 @@ void Valve::TurnOn(float duration) {
     auto value = Value();
 
     SetState(StateType::TurnOn);
-    timer = MAKE<Timer>(duration, Runner::RunType::Once);
+    timer = MAKE<Timer>(duration, RunType::Once);
     timer->SetProgress(value);
 }
 
@@ -87,7 +87,7 @@ void Valve::TurnOff(float duration) {
     auto value = Value();
 
     SetState(StateType::TurnOff);
-    timer = MAKE<Timer>(duration, Runner::RunType::Once);
+    timer = MAKE<Timer>(duration, RunType::Once);
     timer->SetProgress(1.0f - value);
 }
 

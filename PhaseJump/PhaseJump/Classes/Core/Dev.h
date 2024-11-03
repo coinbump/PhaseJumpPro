@@ -1,22 +1,40 @@
 #pragma once
 
 #include "Macros.h"
+#include "StringUtils.h"
 #include <assert.h>
 #include <functional>
 #include <iostream>
 #include <stdio.h>
 
+// /23
 namespace PJ {
-#ifdef VERBOSE
+    /// Specifies how much "noise" logging should make
+    namespace LogLevel {
+        /// No logging at all
+        auto constexpr Quiet = "quiet";
+
+        /// Log everything
+        auto constexpr Verbose = "verbose";
+    } // namespace LogLevel
+
+    extern String logLevel;
+
+    bool IsLogVerbose();
+
     template <class... Arguments>
     void Log(Arguments... args) {
-        ([&] { std::cout << args; }(), ...);
-        std::cout << std::endl;
+        if (logLevel == LogLevel::Verbose) {
+            ([&] { std::cout << args; }(), ...);
+            std::cout << std::endl;
+        }
     }
-#else
+
     template <class... Arguments>
-    void Log(Arguments... args) {}
-#endif
+    void LogIf(bool check, Arguments... args) {
+        GUARD(check)
+        Log(args...);
+    }
 
     using AssertFunc = std::function<void(bool)>;
     extern AssertFunc assertFunc;

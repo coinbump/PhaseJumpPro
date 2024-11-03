@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Color.h"
 #include "RGBAColor.h"
 #include "StringUtils.h"
 
@@ -14,7 +15,7 @@ namespace PJ {
 #define PJ_RENDER_32
 
     // Allows us to save memory if needed for render buffer colors
-#if defined(PJ_RENDER_32)
+#ifdef PJ_RENDER_32
     using RenderColor = Color32;
 #else
     using RenderColor = Color;
@@ -40,13 +41,13 @@ namespace PJ {
         Disable
     };
 
+    std::ostream& operator<<(std::ostream& os, RenderFeatureState const& value);
+
     enum class RenderOpacityType {
         Opaque,
 
         Blend
     };
-
-    std::ostream& operator<<(std::ostream& os, RenderFeatureState const& value);
 
     using TextureAlphaModeType = String;
 
@@ -68,4 +69,10 @@ namespace PJ {
         auto constexpr Clamp = "clamp";
         auto constexpr Repeat = "repeat";
     }; // namespace TextureWrap
+
+    /// Common ids for render stat tags
+    namespace RenderStatId {
+        auto constexpr DrawCount = "draw.count";
+        auto constexpr NodeCount = "node.count";
+    } // namespace RenderStatId
 } // namespace PJ

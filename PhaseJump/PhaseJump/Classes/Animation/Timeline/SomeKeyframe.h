@@ -22,6 +22,7 @@ namespace PJ {
 
         virtual ~SomeKeyframe() {}
 
+        /// The position of this keyframe in time space
         MathType time{};
     };
 } // namespace PJ

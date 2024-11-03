@@ -11,16 +11,25 @@
 #include <memory>
 
 /*
- RATING: 5 stars
- Simple type
+ RATING: 4 stars
+ Needs unit tests
  CODE REVIEW: 8/12/24
  */
 namespace PJ {
+    // TODO: needs unit tests
     class World;
     class WorldNode;
     class Matrix4x4;
     class UIPlan;
     class UIPlanner;
+
+    namespace UIContextId {
+        /// UI shown in the editor (always visible)
+        auto constexpr Editor = "editor";
+
+        /// UI shown in the inspector UI
+        auto constexpr Inspector = "inspector";
+    }; // namespace UIContextId
 
     /**
      Interface for a world component
@@ -30,39 +39,46 @@ namespace PJ {
      Each component extends the functionality of the owner node with custom behavior.
      A component receives the same lifecycle events as its owner
      */
-    class SomeWorldComponent : public Base, public SomeUpdatable {
-    protected:
-        /// If true, the component should receive events
-        bool isEnabled = true;
-
-        WorldPartLife life;
-
-        /// Called before Start by CheckedAwake
-        virtual void Awake() {}
-
-        /// Called after Awake by CheckedStart
-        virtual void Start() {}
-
+    class SomeWorldComponent : public Base {
     public:
         using This = SomeWorldComponent;
         using NodeTransform = WorldNodeTransform;
+        using Func = std::function<void(This&)>;
         using SignalFunc = std::function<void(This&, SomeSignal const&)>;
         using PlanUIFunc = std::function<void(This&, String context, UIPlanner&)>;
+        using TargetFunc = std::function<WorldNode*(This&)>;
 
+        /// Unique identifier
+        String id;
+
+        /// User facing name for display
         String name;
 
         /// Owner node
         /// Node is responsible for setting this to null when the component is removed
-        WorldNode* owner = nullptr;
+        WorldNode* owner{};
+
+        /// Stores func for component updates
+        Updatable updatable;
 
         /// Stores objects that need time events
         Updatables updatables;
 
         /// Signal handlers. Mapped by signal id
-        UnorderedMap<String, SignalFunc> signalHandlers;
+        UnorderedMap<String, SignalFunc> signalFuncs;
 
         /// (Optional). Func to make UI plan for custom UI in editor
-        PlanUIFunc planUIFunc;
+        UnorderedMap<String, PlanUIFunc> planUIFuncs;
+
+        Func awakeFunc;
+        Func startFunc;
+        Func lateUpdateFunc;
+
+        /// Returns the target for this component
+        TargetFunc targetFunc;
+
+        /// Called when the componet's enabled state changes
+        Func onEnabledChangeFunc;
 
         SomeWorldComponent(String name = "") :
             name(name) {}
@@ -74,12 +90,12 @@ namespace PJ {
             return isEnabled;
         }
 
-        void SetIsEnabled(bool value) {
+        void Enable(bool value) {
+            GUARD(isEnabled != value)
             isEnabled = value;
-        }
 
-        void Enable() {
-            SetIsEnabled(true);
+            GUARD(onEnabledChangeFunc)
+            onEnabledChangeFunc(*this);
         }
 
         virtual WorldNode* Node() const {
@@ -117,26 +133,46 @@ namespace PJ {
         void CheckedStart();
 
         /// Called after OnUpdate
-        virtual void LateUpdate() {}
+        virtual void LateUpdate() {
+            GUARD(lateUpdateFunc)
+            lateUpdateFunc(*this);
+        }
 
         /// Called when node is destroyed
         virtual void OnDestroy() {}
 
-        // MARK: SomeUpdatable
-
         /// Called in game loop for time delta update events
-        void OnUpdate(TimeSlice time) override {
+        virtual void OnUpdate(TimeSlice time) {
+            updatable.OnUpdate(time);
             updatables.OnUpdate(time);
         }
 
-        bool IsFinished() const override {
-            return false;
+        /// @return Returns the target node that this component operates on
+        /// In a multi-component system, this will usually be the component's owner
+        /// In a single-component per node system (Godot), this could be the owner's parent node
+        virtual WorldNode* Target() {
+            GUARDR(targetFunc, owner)
+            return targetFunc(*this);
         }
 
-        /// (Optional). Produce a UI plan to add custom UI when inspecting this component
-        /// WARNING. Apple clang C++ compiler breaks `dynamic_cast` if this function is virtual
-        /// and enable testability is off.
-        /// Enable Testability must be on for `dynamic_cast` to work, until Apple fixes the bug
-        UP<UIPlan> MakeUIPlan(String context);
+        virtual UP<UIPlan> MakeUIPlan(String context);
+
+    protected:
+        /// If true, the component should receive events
+        bool isEnabled = true;
+
+        WorldPartLife life;
+
+        /// Called before Start by CheckedAwake
+        virtual void Awake() {
+            GUARD(awakeFunc)
+            awakeFunc(*this);
+        }
+
+        /// Called after Awake by CheckedStart
+        virtual void Start() {
+            GUARD(startFunc)
+            startFunc(*this);
+        }
     };
 } // namespace PJ

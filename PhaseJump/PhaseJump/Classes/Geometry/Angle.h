@@ -8,7 +8,7 @@
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 7/6/24
+ CODE REVIEW: 10/13/24
  */
 namespace PJ {
     struct Angle {
@@ -118,6 +118,12 @@ namespace PJ {
 
         operator Vector2() const {
             return ToVector2();
+        }
+
+        Angle operator-() const {
+            Angle result = *this;
+            result.value = -result.value;
+            return result;
         }
 
         static Angle const zero;

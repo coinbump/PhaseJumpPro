@@ -1,6 +1,5 @@
 #pragma once
 
-#include "CollectionUtils.h"
 #include <list>
 
 /*

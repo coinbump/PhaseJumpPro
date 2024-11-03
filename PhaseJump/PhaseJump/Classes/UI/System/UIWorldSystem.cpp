@@ -12,7 +12,7 @@ SP<SomeCamera> UIWorldSystem::Camera() const {
     return World()->MainCamera();
 }
 
-void UIWorldSystem::ProcessUIEvents(List<SP<SomeUIEvent>> const& uiEvents) {
+void UIWorldSystem::ProcessUIEvents(UIEventList const& uiEvents) {
     Base::ProcessUIEvents(uiEvents);
 }
 
@@ -36,7 +36,7 @@ void UIWorldSystem::UpdateActiveHover(VectorList<PJ::LocalHit> hits) {
     for (auto& hit : hits) {
         for (auto& component : hit.node->Components()) {
             try {
-                auto handler = component->signalHandlers.at(SignalId::Hover);
+                auto handler = component->signalFuncs.at(SignalId::Hover);
                 SetActiveHover(hit.node);
                 return;
             } catch (...) {}
@@ -51,7 +51,7 @@ void UIWorldSystem::SetActiveHover(SP<WorldNode> value) {
     auto updateHover = [](WorldNode& node, bool isHovering) {
         for (auto& component : node.Components()) {
             try {
-                auto handler = component->signalHandlers.at(SignalId::Hover);
+                auto handler = component->signalFuncs.at(SignalId::Hover);
                 HoverUIEvent event{ isHovering };
                 handler(*component, event);
             } catch (...) {}
@@ -74,8 +74,8 @@ SP<WorldNode> UIWorldSystem::ActiveHover() {
     return activeHover.lock();
 }
 
-void UIWorldSystem::OnMouseMotion(PointerMoveUIEvent const& event) {
-    Base::OnMouseMotion(event);
+void UIWorldSystem::OnPointerMove(PointerMoveUIEvent const& event) {
+    Base::OnPointerMove(event);
 
     if (IsDragging()) {
         CheckDropTargets(event.screenPos);
@@ -84,7 +84,7 @@ void UIWorldSystem::OnMouseMotion(PointerMoveUIEvent const& event) {
 
     // This only supports a single object for enter/exit pointer
     // FUTURE: support multiple if needed
-    auto hits = TestLocalHit(event.screenPos);
+    auto hits = TestScreenHit(event.screenPos);
     auto hit = hits.size() > 0 ? &hits[0] : nullptr;
     if (!hit) {
         SetActiveHover(nullptr);
@@ -154,7 +154,7 @@ void UIWorldSystem::OnPointerDown(PointerDownUIEvent const& pointerDownEvent) {
     // cout << "Log: OnPointerDown\n";
 
     auto screenPos = pointerDownEvent.screenPos;
-    auto hits = TestLocalHit(pointerDownEvent.screenPos);
+    auto hits = TestScreenHit(pointerDownEvent.screenPos);
     for (auto& hit : hits) {
         // TODO: only send pointer event to the topmost hit that also supports pointer down signals
         // cout << "Log: HIT: OnPointerDown\n";

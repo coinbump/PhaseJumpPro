@@ -1,9 +1,7 @@
-#ifndef PJSDLWORLD_H
-#define PJSDLWORLD_H
+#pragma once
 
 #include "DevProfiler.h"
 #include "PlaneMeshBuilder.h"
-#include "SDLEventPoller.h"
 #include "SDLTextureRenderer.h"
 #include "SomeMeshBuilder.h"
 #include "SomeRenderer.h"
@@ -18,14 +16,20 @@
 
 // CODE REVIEW: ?/23
 namespace PJ {
-    // TODO: this should really be a system shouldn't it? SDLWorldDriverSystem?
+    /// A world with a SDL main loop
     class SDLWorld : public World {
     public:
         using Base = World;
+        using This = SDLWorld;
 
     protected:
-        bool isDone = false;
-        SDL_Window* window;
+        /// Becomes true when the app is finished polling events
+        bool isFinished{};
+
+        /// SDL window parent for this world (window owns the world)
+        SDL_Window* window{};
+
+        /// Start time value for main loop time delta calculation
         uint64_t startTime{};
 
     public:
@@ -35,24 +39,20 @@ namespace PJ {
 
         SDLWorld() {}
 
-        SDL_Window* SDL_Window() const {
+        SDL_Window* SDLWindow() const {
             return window;
         }
 
-        virtual void Configure(struct SDL_Window* window, SP<SomeRenderContext> renderContext) {
+        virtual void Configure(SDL_Window* window, SP<SomeRenderContext> renderContext) {
             this->window = window;
             this->renderContext = renderContext;
         }
 
-        void Run();
-
     protected:
-        void GoInternal() override {
-            Base::GoInternal();
-        }
-
         void MainLoop();
+
+        // MARK: World
+
+        void GoInternal() override;
     };
 } // namespace PJ
-
-#endif

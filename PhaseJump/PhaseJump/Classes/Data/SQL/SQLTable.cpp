@@ -9,7 +9,7 @@
 using namespace std;
 using namespace PJ;
 
-SQLTable::SQLTable(String name, SQLDatabaseSharedPtr db) :
+SQLTable::SQLTable(String name, SQLDatabase* db) :
     name(name),
     db(db) {}
 
@@ -63,6 +63,7 @@ VectorList<SP<Tags>> ColumnValues(VectorList<String> columnNames) {
 
 VectorList<SQLRowValues> SQLTable::RowValuesList(SQLTableQueryArguments query) {
     VectorList<SQLRowValues> result;
+    GUARDR(db, result)
 
     auto statement = BuildStatement(SQLTableQueryArguments(query.columnNames, query.where));
     SQLCommand command(statement);
@@ -118,6 +119,7 @@ VectorList<SQLRowValues> SQLTable::RowValuesList(SQLTableQueryArguments query) {
  */
 VectorList<int> SQLTable::IntValues(SQLTableQueryArguments query) {
     VectorList<int> result;
+    GUARDR(db, result)
 
     auto statement = BuildStatement(SQLTableQueryArguments(query.columnNames, query.where));
     SQLCommand command(statement);
@@ -145,6 +147,7 @@ int SQLTable::IntValue(SQLTableQueryArguments query, int defaultValue) {
 
 VectorList<float> SQLTable::FloatValues(SQLTableQueryArguments query) {
     VectorList<float> result;
+    GUARDR(db, result)
 
     auto statement = BuildStatement(SQLTableQueryArguments(query.columnNames, query.where));
     SQLCommand command(statement);
@@ -172,6 +175,7 @@ float SQLTable::FloatValue(SQLTableQueryArguments query, float defaultValue) {
 
 VectorList<String> SQLTable::StringValues(SQLTableQueryArguments query) {
     VectorList<String> result;
+    GUARDR(db, result)
 
     auto statement = BuildStatement(SQLTableQueryArguments(query.columnNames, query.where));
     SQLCommand command(statement);
@@ -199,6 +203,8 @@ String SQLTable::StringValue(SQLTableQueryArguments query, String defaultValue) 
 }
 
 void SQLTable::InsertRow() {
+    GUARD(db)
+
     SQLStatement statement("INSERT INTO ");
     statement.AppendIdentifier(name);
     statement.AppendString(" DEFAULT VALUES");
@@ -211,6 +217,8 @@ void SQLTable::InsertRow() {
 }
 
 void SQLTable::DeleteRow(String whereColumn, String whereMatch) {
+    GUARD(db)
+
     SQLStatement statement("DELETE FROM ");
     statement.AppendIdentifier(name);
     statement.AppendString(" WHERE ");
@@ -227,6 +235,8 @@ void SQLTable::DeleteRow(String whereColumn, String whereMatch) {
 
 /// Deletes the entire table
 void SQLTable::Drop() {
+    GUARD(db)
+
     SQLStatement statement("DROP TABLE ");
     statement.AppendIdentifier(name);
 
@@ -238,6 +248,8 @@ void SQLTable::Drop() {
 }
 
 bool SQLTable::CellExists(SQLTableQueryArguments query) {
+    GUARDR(db, false)
+
     if (!query.where) {
         PJ::Log("ERROR. CellExists requires where clause.");
         return false;
@@ -270,6 +282,8 @@ bool SQLTable::CellExists(SQLTableQueryArguments query) {
 }
 
 void SQLTable::Run(SQLStatement statement) {
+    GUARD(db)
+
     SQLCommand command(statement);
 
     if (SQLITE_OK == db->Prepare(command)) {
@@ -278,6 +292,8 @@ void SQLTable::Run(SQLStatement statement) {
 }
 
 bool SQLTable::AddColumn(String colName, String params) {
+    GUARDR(db, false)
+
     auto tableName = name;
 
     // EXAMPLE: ALTER TABLE "Persons" ADD "DateOfBirth" date
@@ -307,6 +323,8 @@ bool SQLTable::AddColumn(String colName, String params) {
  http://www.sqlite.org/pragma.html#pragma_table_info
  */
 bool SQLTable::ColumnExists(String columnName) {
+    GUARDR(db, false)
+
     auto tableName = name;
 
     SQLStatement statement("PRAGMA table_info(");
@@ -343,6 +361,7 @@ bool SQLTable::ColumnExists(String columnName) {
 OrderedSet<String> SQLTable::UniqueStrings(String columnName) {
     auto tableName = name;
     OrderedSet<String> result;
+    GUARDR(db, result)
 
     SQLStatement statement("SELECT ");
     statement.AppendIdentifier(columnName);
@@ -368,6 +387,8 @@ OrderedSet<String> SQLTable::UniqueStrings(String columnName) {
 }
 
 void SQLTable::SetValue(SQLTableMutateArguments mutation, SetValueType type) {
+    GUARD(db)
+
     // Modify existing values
     // EXAMPLE: UPDATE table_name SET column1=value, column2=value2,... WHERE
     // some_column=some_value

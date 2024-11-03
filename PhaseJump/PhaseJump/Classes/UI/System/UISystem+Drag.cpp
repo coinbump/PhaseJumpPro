@@ -38,7 +38,7 @@ void UIWorldSystem::CheckDropTargets(ScreenPosition screenPos) {
     GUARD(dragModel)
     // PJ::Log("Drop: Position: " + mouseDevice->position.ToString());
 
-    auto hits = TestLocalHit(screenPos);
+    auto hits = TestScreenHit(screenPos);
     auto hit = hits.size() > 0 ? &hits[0] : nullptr;
     SP<WorldNode> hitNode = hit ? hit->node : nullptr;
     auto activeDropTarget = this->activeDropTarget.lock();

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "FilePath.h"
+#include "FileTypes.h"
 #include "SomeProcessor.h"
 #include "Updatable.h"
 #include "Utils.h"
@@ -43,8 +44,6 @@ namespace PJ {
             return 0;
         }
     };
-
-    enum class FileSearchType { Directory, Recursive };
 
     /// Processes a list of file paths (Example: rename files)
     class FilesProcessor : public SomeProcessor<VectorList<FilePath>> {

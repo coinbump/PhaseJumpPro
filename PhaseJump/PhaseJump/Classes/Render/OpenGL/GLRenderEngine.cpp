@@ -469,10 +469,10 @@ void GLRenderEngine::RenderDrawPlans(VectorList<SP<GLRenderPlan>> const& renderP
 
         Use(*glProgram);
 
-        for (auto& texture : model.textureModels) {
+        for (auto& texture : model.Material()->Textures()) {
             // ? glActiveTexture is causing VBO errors. Investigate
             //        glActiveTexture(GL_TEXTURE0 + i);
-            glBindTexture(GL_TEXTURE_2D, texture.renderId);
+            glBindTexture(GL_TEXTURE_2D, texture->RenderId());
         }
         //    glActiveTexture(0);
 

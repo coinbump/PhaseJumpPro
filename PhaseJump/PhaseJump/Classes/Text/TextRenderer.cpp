@@ -22,7 +22,8 @@ TextRenderer::TextRenderer(SP<Font> font, String text, Vector2 size) :
 
     model.material = MAKE<RenderMaterial>();
     auto program = SomeShaderProgram::registry["texture.vary"];
-    model.material->Add(font->atlas->Textures()[0]);
+    model.material->Add(font->atlas->texture);
+
     model.material->SetShaderProgram(program);
     model.material->EnableFeature(RenderFeature::Blend, true);
 
@@ -45,7 +46,7 @@ TextRenderer::TextRenderer(SP<Font> font, String text, Vector2 size) :
             { [=]() { return renderer->text; }, [=](auto& value) { renderer->SetText(value); } }
         );
     };
-    Override(this->planUIFunc, planUIFunc);
+    Override(planUIFuncs[UIContextId::Inspector], planUIFunc);
 }
 
 void TextRenderer::OnTextChange() {
@@ -105,9 +106,6 @@ Mesh TextRenderer::BuildMesh() {
 
             auto quadMesh = qm.BuildMesh();
 
-            auto textureModel = atlasTexture->MakeRenderModel();
-            GUARD_CONTINUE(textureModel)
-
             quadMesh.OffsetBy(
                 Vector2((qm.worldSize.x / 2.0f) * vecRight, (qm.worldSize.y / 2.0f) * vecDown)
             );
@@ -117,7 +115,7 @@ Mesh TextRenderer::BuildMesh() {
                 (size.y / 2.0f) * vecUp + (viewPos.y + fontGlyph.offset.y) * vecDown
             ));
 
-            UVTransformFuncs::textureCoordinates(*textureModel, quadMesh.UVs());
+            UVTransformFuncs::textureCoordinates(*atlasTexture, quadMesh.UVs());
 
             RenderChar renderChar;
             renderChar.sourceIndex = sourceIndex;

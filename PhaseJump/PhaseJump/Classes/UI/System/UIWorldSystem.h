@@ -45,7 +45,7 @@ namespace PJ {
 
         virtual SP<SomeCamera> Camera() const;
 
-        void ProcessUIEvents(List<SP<SomeUIEvent>> const& uiEvents) override;
+        void ProcessUIEvents(UIEventList const& uiEvents) override;
 
         SP<WorldNode> ActiveHover();
         void SetActiveHover(SP<WorldNode> component);
@@ -100,7 +100,7 @@ namespace PJ {
 
         // MARK: EventWorldSystem
 
-        void OnMouseMotion(PointerMoveUIEvent const& event) override;
+        void OnPointerMove(PointerMoveUIEvent const& event) override;
         void OnPointerUp(PointerUpUIEvent const& pointerUpEvent) override;
         void OnPointerDown(PointerDownUIEvent const& pointerDownEvent) override;
 

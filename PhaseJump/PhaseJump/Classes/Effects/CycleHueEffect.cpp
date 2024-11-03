@@ -8,31 +8,34 @@ using namespace PJ;
 void CycleHueEffect::Awake() {
     Base::Awake();
 
-    GUARD(owner);
-    renderer = owner->GetComponent<SomeRenderer>();
+    UpdateEffect();
 }
 
 void CycleHueEffect::OnUpdate(TimeSlice time) {
     Base::OnUpdate(time);
 
-    GUARD(IsOn());
+    GUARD(IsEnabled());
 
     auto newHue = hue;
     newHue += time.delta / cycleTime;
     newHue = fmod(newHue, 1.0f);
 
     hue = newHue;
-    UpdateEffectProperties();
+    UpdateEffect();
 }
 
-void CycleHueEffect::UpdateEffectProperties() {
-    GUARD(IsOn());
+void CycleHueEffect::UpdateEffect() {
+    GUARD(IsEnabled());
+
+    auto target = Target();
+    GUARD(target)
+
+    auto renderer = target->GetComponent<SomeRenderer>();
+    GUARD(renderer)
 
     ModelColor hsv;
     hsv.value = HSVColor(hue, saturation, value, 1.0f);
     ModelColor rgb = hsv.ToRGB();
 
-    auto lock = LOCK(renderer);
-    GUARD(lock)
-    lock->SetColor((Color)rgb);
+    renderer->SetColor((Color)rgb);
 }

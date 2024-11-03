@@ -1,5 +1,6 @@
 #include "Menu.h"
 #include "List.h"
+#include "SomeUIEvent.h"
 
 using namespace std;
 using namespace PJ;
@@ -12,21 +13,21 @@ String KeyboardShortcut::ToString() {
     String modifierString;
     List<String> modifierStrings;
     std::for_each(modifiers.begin(), modifiers.end(), [&](auto& modifier) {
-        if (modifier == EventModifier::CommandControl) {
+        if (modifier == KeyModifier::Shortcut) {
 #ifdef _WIN32
             modifierStrings.push_back("Ctrl");
 #else
             modifierStrings.push_back("Cmd");
 #endif
-        } else if (modifier == EventModifier::Control) {
+        } else if (modifier == KeyModifier::Control) {
             modifierStrings.push_back("Ctrl");
-        } else if (modifier == EventModifier::OptionAlt) {
+        } else if (modifier == KeyModifier::Alt) {
 #ifdef _WIN32
             modifierStrings.push_back("Alt");
 #else
             modifierStrings.push_back("Opt");
 #endif
-        } else if (modifier == EventModifier::Shift) {
+        } else if (modifier == KeyModifier::Shift) {
             modifierStrings.push_back("Shift");
         }
     });

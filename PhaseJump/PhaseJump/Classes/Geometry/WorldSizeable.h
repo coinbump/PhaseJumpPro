@@ -13,11 +13,10 @@ namespace PJ {
     public:
         virtual ~WorldSizeable() {}
 
-        // TODO: why is this optional? Doesn't everything have a size?
-        virtual std::optional<Vector3> WorldSize() const {
-            return std::nullopt;
-        }
+        /// @return Returns the size of this object in world coordinates
+        virtual Vector3 WorldSize() const = 0;
 
+        /// Sets the size of this object in world coordinates
         virtual void SetWorldSize(Vector3 value) = 0;
     };
 } // namespace PJ

@@ -9,11 +9,11 @@
 using namespace std;
 using namespace PJ;
 
-PJ::UVTransformFunc UVTransformFuncs::textureCoordinates = [](TextureRenderModel textureModel,
+PJ::UVTransformFunc UVTransformFuncs::textureCoordinates = [](SomeTexture& texture,
                                                               VectorList<Vector2>& uvs) {
     std::transform(uvs.begin(), uvs.end(), uvs.begin(), [=](Vector2 uv) {
-        uv *= textureModel.size;
-        uv += textureModel.origin;
+        uv *= texture.NormalSize();
+        uv += texture.NormalOrigin();
         return uv;
     });
 };
@@ -33,22 +33,12 @@ RenderModel RenderModelBuilder::Build(
 ) {
     RenderModel renderModel(&material);
     renderModel.name = node ? node->name : "";
-    renderModel.id = node ? MakeString(node->IntId()) : "";
+    renderModel.id = node ? MakeString((uint64_t)node) : "";
     renderModel.mesh = mesh;
     renderModel.matrix = node ? node->ModelMatrix() : renderModel.matrix;
 
-    for (auto& texture : textures) {
-        GUARD_CONTINUE(texture)
-
-        auto textureRenderModel = texture->MakeRenderModel();
-        GUARD_CONTINUE(textureRenderModel)
-
-        Add(renderModel.textureModels, *textureRenderModel);
-    }
-
     if (!IsEmpty(textures) && uvTransformFunc) {
-        auto& textureModel = renderModel.textureModels[0];
-        uvTransformFunc(textureModel, renderModel.mesh.UVs());
+        uvTransformFunc(*textures[0], renderModel.mesh.UVs());
     }
 
     return renderModel;

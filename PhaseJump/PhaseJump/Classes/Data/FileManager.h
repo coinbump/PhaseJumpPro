@@ -1,7 +1,7 @@
-#ifndef FILEMANAGER_H
-#define FILEMANAGER_H
+#pragma once
 
 #include "FilePath.h"
+#include "FileTypes.h"
 #include "StandardCore.h"
 #include "VectorList.h"
 #include <filesystem>
@@ -10,57 +10,52 @@
 
 // CODE REVIEW: ?/23
 namespace PJ {
+    /// Interface to an object that manages files
     class SomeFileManager : public Base {
     public:
-        virtual bool IsDirectory(FilePath path) const = 0;
+        /// @return Returns true if the file at the specified path is a directory/folder
+        virtual bool IsDirectory(FilePath path) = 0;
 
-        virtual String FileExtension(FilePath path, bool withDot) const = 0;
-        virtual String FileName(FilePath path, bool includeExtension) const = 0;
+        /// @return Returns the file extension for a file path with or without the dot
+        virtual String FileExtension(FilePath path, bool withDot) = 0;
 
-        virtual VectorList<FilePath> PathList(FilePath path, bool isRecursive) = 0;
+        /// @return Returns the file name for a path with or without the file extension
+        virtual String FileName(FilePath path, bool includeExtension) = 0;
 
-        std::future<VectorList<FilePath>> PathListAsync(FilePath path, bool isRecursive) {
-            return std::async([this, path, isRecursive] {
-                return this->PathList(path, isRecursive);
-            });
-        }
+        /// @return Returns a list of file paths starting from the specified folder file path
+        virtual VectorList<FilePath> PathList(FilePath path, FileSearchType searchType) = 0;
 
+        /// @return Returns the preferred path separator character
         virtual char PreferredSeparator() const = 0;
-    };
 
-    /// Mock file manager for unit tests
-    class MockFileManager : SomeFileManager {
-        VectorList<FilePath> pathList;
-
-        VectorList<FilePath> PathList(FilePath path, bool isRecursive) override {
-            return pathList;
+        /// (Experimental). Not sure how std::async benefits us yet
+        std::future<VectorList<FilePath>> PathListAsync(FilePath path, FileSearchType searchType) {
+            return std::async([=, this] { return PathList(path, searchType); });
         }
+
+        /// Create directories at path (folder is created at the final path segment)
+        virtual void CreateDirectories(FilePath path) = 0;
+
+        /// @return Returns the path to store persistent user data like preferences, save files,
+        /// etc.
+        virtual FilePath PersistentDataPath(String companyName, String applicationName) = 0;
     };
+
+    // MARK: - FileManager
 
     /// Platform independent file manager
     class FileManager : public SomeFileManager {
     public:
-        virtual bool IsDirectory(FilePath path) const override;
+        // MARK: SomeFileManager
 
-        String PathSeparatorString() const;
-
-        char PathSeparatorChar() const {
-            return std::filesystem::path::preferred_separator;
-        }
-
-        String FileExtension(FilePath path, bool withDot) const override;
-        String FileName(FilePath path, bool includeExtension) const override;
-
-        /// Create directories at path (folder is created at the final path
-        /// segment)
-        void CreateDirectories(FilePath path) const;
-
-        VectorList<FilePath> PathList(FilePath path, bool isRecursive) override;
+        void CreateDirectories(FilePath path) override;
+        bool IsDirectory(FilePath path) override;
+        String FileExtension(FilePath path, bool withDot) override;
+        String FileName(FilePath path, bool includeExtension) override;
+        VectorList<FilePath> PathList(FilePath path, FileSearchType searchType) override;
 
         char PreferredSeparator() const override {
             return std::filesystem::path::preferred_separator;
         }
     };
 } // namespace PJ
-
-#endif

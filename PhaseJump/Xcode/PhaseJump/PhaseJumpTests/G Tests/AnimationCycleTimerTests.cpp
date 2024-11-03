@@ -203,8 +203,6 @@ TEST(AnimationCycleTimer, TestIsPlayingAfterFinish)
 
 TEST(AnimationCycleTimer, TestResetAfterReverse)
 {
-    float value{};
-
     AnimationCycleTimer sut(1, AnimationCycleType::PingPong);
     sut.OnUpdate({1});
     EXPECT_TRUE(sut.IsReversed());

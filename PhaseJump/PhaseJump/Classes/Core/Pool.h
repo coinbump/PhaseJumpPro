@@ -1,7 +1,10 @@
 #pragma once
 
+#include "Macros.h"
 #include "UnorderedSet.h"
+#include "Utils.h"
 #include "VectorList.h"
+#include <functional>
 
 /*
  RATING: 5 stars
@@ -123,7 +126,7 @@ namespace PJ {
             GUARDR(firstInactiveIndex < value.size(), nullptr)
 
             if (nullptr == value[firstInactiveIndex]) {
-                value[firstInactiveIndex] = std::make_unique<Type>();
+                value[firstInactiveIndex] = NEW<Type>();
             }
             value[firstInactiveIndex]->SetIsActive(true);
             value[firstInactiveIndex]->index = firstInactiveIndex;

@@ -36,12 +36,12 @@ SomeRenderer::SomeRenderer(Vector3 worldSize) :
         auto renderer = static_cast<SomeRenderer*>(&component);
         auto& model = renderer->model;
 
-        planner.InputColor(
+        planner.PickerColor(
             "Color",
             { [&]() { return model.Color(); }, [&](auto& value) { model.SetColor(value); } }
         );
     };
-    Override(this->planUIFunc, planUIFunc);
+    Override(planUIFuncs[UIContextId::Inspector], planUIFunc);
 }
 
 VectorList<RenderModel> SomeRenderer::MakeRenderModels() {

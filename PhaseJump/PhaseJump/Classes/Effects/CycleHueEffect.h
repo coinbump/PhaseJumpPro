@@ -33,10 +33,9 @@ namespace PJ {
         /// Normalized HSV value (0-1)
         float value = 1;
 
-        /// The target renderer to animate (defaults to first sibling renderer)
-        WP<SomeRenderer> renderer;
+    protected:
+        void UpdateEffect();
 
-    public:
         // MARK: SomeWorldComponent
 
         void Awake() override;
@@ -44,9 +43,5 @@ namespace PJ {
         // MARK: Updatable
 
         void OnUpdate(TimeSlice time) override;
-
-        // MARK: SomeEffect
-
-        void UpdateEffectProperties() override;
     };
 } // namespace PJ

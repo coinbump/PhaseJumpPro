@@ -18,7 +18,8 @@ using namespace PJ;
 
 EventWorldSystem::EventWorldSystem(String name) :
     Base(name),
-    inputCollectFunc([](EventWorldSystem& system, List<WP<WorldNode>>& nodes) {
+    collectEventNodesFunc([](EventWorldSystem& system, EventNodeList& nodes) {
+        nodes.clear();
         GUARD(system.world && system.world->root)
 
         WorldNode::NodeList graph;
@@ -30,16 +31,14 @@ EventWorldSystem::EventWorldSystem(String name) :
         );
     }) {}
 
-VectorList<PJ::LocalHit> EventWorldSystem::TestLocalHit(ScreenPosition screenPosition) {
+VectorList<PJ::LocalHit> EventWorldSystem::TestScreenHit(ScreenPosition screenPosition) {
     GUARDR(world, {})
 
-    // Get the camera
     SP<SomeCamera> camera = world->MainCamera();
-    GUARDR(camera, {})
+    GUARDR_LOG(camera, {}, "ERROR: Camera required for TestScreenHit")
 
-    // Get the raycaster
     auto raycaster = camera->owner->GetComponent<SomeRaycaster2D>();
-    GUARDR(raycaster, {})
+    GUARDR_LOG(raycaster, {}, "ERROR: Raycaster required for TestScreenHit")
 
     auto worldPosition = camera->ScreenToWorld(screenPosition);
     // cout << "Log: Test: " << worldPosition.ToString() << std::endl;
@@ -63,21 +62,22 @@ void EventWorldSystem::OnPointerDown(PointerDownUIEvent const& pointerDownEvent)
 
 void EventWorldSystem::OnPointerUp(PointerUpUIEvent const& pointerUpEvent) {}
 
-void EventWorldSystem::ProcessUIEvents(List<SP<SomeUIEvent>> const& uiEvents) {
+void EventWorldSystem::ProcessUIEvents(UIEventList const& uiEvents) {
     SomeWorldSystem::ProcessUIEvents(uiEvents);
 
     GUARD(world && world->root)
 
-    List<WP<WorldNode>> inputNodes;
+    EventNodeList eventNodes;
+    if (collectEventNodesFunc) {
+        collectEventNodesFunc(*this, eventNodes);
+    }
 
     // Raycast and send pointer events directly to the node they hit
     for (auto& event : uiEvents) {
         if (inputMap) {
-            auto firstAction = inputMap->FirstOutputFor(*event);
-            if (firstAction && inputCollectFunc) {
-                inputCollectFunc(*this, inputNodes);
-                InputActionEvent event(firstAction.value());
-                OnInputAction(event, inputNodes);
+            auto firstAction = inputMap->map.FirstOutputFor(*event);
+            if (firstAction) {
+                OnInputAction(*event, firstAction.value(), eventNodes);
             }
         }
 
@@ -101,54 +101,71 @@ void EventWorldSystem::ProcessUIEvents(List<SP<SomeUIEvent>> const& uiEvents) {
 
         auto pointerMotionEvent = DCAST<PointerMoveUIEvent>(event);
         if (pointerMotionEvent) {
-            OnMouseMotion(*pointerMotionEvent);
+            OnPointerMove(*pointerMotionEvent);
             continue;
         }
 
         auto keyDownEvent = DCAST<KeyDownUIEvent>(event);
-        if (keyDownEvent && inputCollectFunc) {
-            inputCollectFunc(*this, inputNodes);
-            OnKeyDown(*keyDownEvent, inputNodes);
+        if (keyDownEvent && collectEventNodesFunc) {
+            OnKeyDown(*keyDownEvent, eventNodes);
             continue;
         }
 
         auto dropFilesEvent = DCAST<DropFilesUIEvent>(event);
         if (dropFilesEvent) {
-            inputCollectFunc(*this, inputNodes);
-            OnDropFiles(*dropFilesEvent, inputNodes);
+            OnDropFiles(*dropFilesEvent, eventNodes);
+            continue;
         }
     }
 }
 
-void EventWorldSystem::OnDropFiles(
-    DropFilesUIEvent const& event, List<WP<WorldNode>> const& nodes
+void EventWorldSystem::DispatchEvent(
+    String signalId, SomeSignal const& signal, EventNodeList const& nodes
 ) {
-    for (auto& node : nodes) {
-        GUARD_CONTINUE(!node.expired())
-        auto _node = node.lock();
+    GUARD(world)
 
-        DispatchEvent(_node, SignalId::DropFiles, event);
+    for (auto& node : nodes) {
+        DispatchEvent(node.lock(), signalId, signal);
+    }
+
+    for (auto& system : world->Systems()) {
+        // FUTURE: GUARD(system->IsEnabled())
+        try {
+            auto signalFunc = system->signalFuncs.at(signalId);
+            signalFunc(*system, signal);
+        } catch (...) {}
     }
 }
 
-void EventWorldSystem::OnKeyDown(KeyDownUIEvent const& event, List<WP<WorldNode>> const& nodes) {
-    for (auto& node : nodes) {
-        GUARD_CONTINUE(!node.expired())
-        auto _node = node.lock();
+void EventWorldSystem::OnDropFiles(DropFilesUIEvent const& event, EventNodeList const& nodes) {
+    DispatchEvent(SignalId::DropFiles, event, nodes);
+}
 
-        DispatchEvent(_node, SignalId::KeyDown, event);
-    }
+void EventWorldSystem::OnKeyDown(KeyDownUIEvent const& event, EventNodeList const& nodes) {
+    DispatchEvent(SignalId::KeyDown, event, nodes);
 }
 
 void EventWorldSystem::OnInputAction(
-    InputActionEvent const& event, List<WP<WorldNode>> const& nodes
+    SomeUIEvent const& event, String action, EventNodeList const& nodes
 ) {
-    for (auto& node : nodes) {
-        GUARD_CONTINUE(!node.expired())
-        auto _node = node.lock();
-
-        DispatchEvent(_node, SignalId::InputAction, event);
-    }
+    // Inputs are dispatched by id. Example: "input.button.north"
+    auto actionSignalId = "input." + action;
+    DispatchEvent(actionSignalId, event, nodes);
 }
 
-void EventWorldSystem::OnMouseMotion(PointerMoveUIEvent const& event) {}
+void EventWorldSystem::OnPointerMove(PointerMoveUIEvent const& event) {}
+
+void EventWorldSystem::DispatchEvent(
+    SP<WorldNode> node, String signalId, SomeSignal const& signal
+) {
+    GUARD(node && node->IsEnabled());
+
+    auto iterComponents = node->Components();
+    std::for_each(iterComponents.begin(), iterComponents.end(), [&](auto& component) {
+        GUARD(component->IsEnabled())
+        try {
+            auto i = component->signalFuncs.at(signalId);
+            i(*component, signal);
+        } catch (...) {}
+    });
+}

@@ -2,6 +2,7 @@
 
 #include "AtlasTexture.h"
 #include "Base.h"
+#include "UnorderedMap.h"
 #include "VectorList.h"
 
 /*
@@ -20,6 +21,11 @@ namespace PJ {
         UnorderedMap<String, SP<AtlasTexture>> textureMap;
 
     public:
+        SP<SomeTexture> texture;
+
+        TextureAtlas(SP<SomeTexture> texture) :
+            texture(texture) {}
+
         /// Converts texture collection type
         VectorList<SP<SomeTexture>> SomeTextures() {
             VectorList<SP<SomeTexture>> result;
@@ -50,8 +56,8 @@ namespace PJ {
             Vector2Int result = Vector2Int::zero;
 
             std::for_each(textures.begin(), textures.end(), [&](SP<AtlasTexture>& texture) {
-                result.x = std::max(result.x, texture->trueSize.x);
-                result.y = std::max(result.y, texture->trueSize.y);
+                result.x = std::max(result.x, texture->untrimmedSize.x);
+                result.y = std::max(result.y, texture->untrimmedSize.y);
             });
 
             return result;

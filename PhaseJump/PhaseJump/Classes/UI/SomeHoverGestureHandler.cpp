@@ -4,7 +4,7 @@ using namespace std;
 using namespace PJ;
 
 SomeHoverGestureHandler::SomeHoverGestureHandler() {
-    signalHandlers[SignalId::Hover] = [](auto& owner, auto& signal) {
+    signalFuncs[SignalId::Hover] = [](auto& owner, auto& signal) {
         auto event = static_cast<HoverUIEvent const*>(&signal);
         static_cast<This*>(&owner)->SetIsHovering(event->isHovering);
     };

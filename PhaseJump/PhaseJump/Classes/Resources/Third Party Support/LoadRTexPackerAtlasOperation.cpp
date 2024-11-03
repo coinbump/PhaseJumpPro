@@ -55,16 +55,30 @@ SomeLoadResourcesOperation::Result LoadRTexPackerAtlasOperation::LoadResources()
 
         Success result;
 
-        auto textureAtlas = MAKE<TextureAtlas>();
+        auto textureAtlas = MAKE<TextureAtlas>(texture);
         VectorList<RTexPackerAtlasModel::Char> chars;
         VectorList<SP<AtlasTexture>> charTextures;
 
         for (auto& sprite : model.sprites) {
             String alphaMode = texture->alphaMode;
-            auto atlasTexture = MAKE<AtlasTexture>(
-                texture, sprite.nameId, sprite.position, sprite.trimSize, sprite.trimOrigin,
-                sprite.sourceSize, alphaMode
-            );
+
+            auto origin = sprite.position;
+            auto size = sprite.trimSize;
+            float normalOriginX = (float)origin.x / (float)texture->size.x;
+            float normalOriginY = (float)origin.y / (float)texture->size.y;
+            float normalSizeX = (float)size.x / (float)texture->size.x;
+            float normalSizeY = (float)size.y / (float)texture->size.y;
+
+            AtlasTexture::Config config{ .base = { .id = sprite.nameId,
+                                                   .origin = origin,
+                                                   .size = size,
+                                                   .trimOrigin = sprite.trimOrigin,
+                                                   .untrimmedSize = sprite.sourceSize,
+                                                   .normalOrigin = { normalOriginX, normalOriginY },
+                                                   .normalSize = { normalSizeX, normalSizeY },
+                                                   .alphaMode = alphaMode },
+                                         .parent = textureAtlas.get() };
+            auto atlasTexture = MAKE<AtlasTexture>(config);
 
             if (sprite._char) {
                 chars.push_back(*sprite._char);

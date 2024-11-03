@@ -3,29 +3,23 @@
 
 using namespace PJ;
 
-SDLPlatformWindow::Configuration const SDLPlatformWindow::Configuration::native(
-    Vector2Int(100, 100), 0, RendererType::WindowAndRenderer
-);
-SDLPlatformWindow::Configuration const SDLPlatformWindow::Configuration::openGL(
-    Vector2Int(100, 100), SDL_WINDOW_OPENGL, RendererType::Window
-);
-
-void SDLPlatformWindow::GoInternal() {
-    Base::GoInternal();
-
+void SDLPlatformWindow::Configure(Config& config) {
     switch (config.rendererType) {
     // Create window and renderer (easy mode)
-    case Configuration::RendererType::WindowAndRenderer:
-        if (SDL_CreateWindowAndRenderer("", config.size.x, config.size.y, 0, &window, &renderer) <
-            0) {
+    case Config::RendererType::WindowAndRenderer:
+        if (!SDL_CreateWindowAndRenderer(
+                config.title.c_str(), config.size.x, config.size.y, 0, &window, &renderer
+            )) {
             std::cout << "ERROR: Can't create SDL Window.";
             return;
         }
         break;
     // Create window with a custom render context (Example: OpenGL context).
     // Requires custom rendering
-    case Configuration::RendererType::Window:
-        window = SDL_CreateWindow("Phase Jump", config.size.x, config.size.y, config.windowFlags);
+    case Config::RendererType::Window:
+        window = SDL_CreateWindow(
+            config.title.c_str(), config.size.x, config.size.y, config.windowFlags
+        );
 
         if (nullptr == window) {
             std::cout << "ERROR: Can't create SDL Window.";
@@ -37,7 +31,5 @@ void SDLPlatformWindow::GoInternal() {
     GUARD(world)
     world->Configure(window, nullptr);
 
-    // world->Configure(window, MAKE<SDLRenderContext>(renderer));
-
-    // IMPORTANT: Call world->Go after you've built your scene
+    // Important: Call world->Go after you've built your scene
 }

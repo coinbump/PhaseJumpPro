@@ -132,12 +132,13 @@ std::optional<RenderResult> RenderWorldSystem::Render(RenderContextModel& _conte
     model.phaseModel.SetPhase(RenderPhase::PostPresent);
 
     RenderResult result;
-    result.tags.Insert("draw.count", drawCount);
+    result.tags.Insert(RenderStatId::DrawCount, drawCount);
     return result;
 }
 
 void RenderWorldSystem::Add(SP<RenderProcessor> processor) {
     model.processingModel.Add(processor);
+    processor->system = this;
 }
 
 RenderWorldSystem::ProcessorList const& RenderWorldSystem::Processors() const {

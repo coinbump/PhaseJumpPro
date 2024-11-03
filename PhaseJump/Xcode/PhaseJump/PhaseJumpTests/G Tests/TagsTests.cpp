@@ -104,7 +104,17 @@ TEST(Tags, TypeValueAtReference) {
 
 TEST(Tags, AddIfMissing) {
     Tags sut;
-    sut.TypeAddIfMissing<String>("test", "hello");
+    sut.TypeAddIfNeeded<String>("test", "hello");
 
     EXPECT_EQ("hello", sut.SafeValue<String>("test"));
+}
+
+TEST(Storage, Test) {
+    Storage<String> sut;
+
+    auto& storage = sut.ValueStorage<int>("parent", "child");
+    storage = 10;
+
+    ASSERT_NO_THROW(sut.map.at("parent").SafeValue<int>("child"));
+    EXPECT_EQ(10, sut.map.at("parent").SafeValue<int>("child"));
 }

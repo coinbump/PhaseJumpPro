@@ -18,7 +18,7 @@ namespace PJ {
         SDL_Texture* texture = nullptr;
 
         SDLTexture(SDL_Texture* texture, Vector2Int size) :
-            Base("", 0, size, TextureAlphaMode::Standard),
+            Base({ .size = size }),
             texture(texture) {}
 
         virtual ~SDLTexture() {

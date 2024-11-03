@@ -14,12 +14,15 @@
 namespace PJ {
     /// Uses EnumClass to map enum <-> String/name for serialization and display
     template <typename EnumType>
-    class Enum : public OwnerBase<StandardCore> {
+    class Enum : public Base {
     public:
+        StandardCore core;
+
         using EnumClassType = EnumClass<EnumType>;
 
         EnumType value = EnumType();
 
+        // TODO: SP-Audit
         Enum(SP<EnumClassType> _class) {
             core.SetClass(_class);
         }

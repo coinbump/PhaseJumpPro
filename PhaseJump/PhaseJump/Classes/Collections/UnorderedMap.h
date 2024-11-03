@@ -14,11 +14,12 @@ namespace PJ {
     template <class Key, class Type>
     using UnorderedMap = std::unordered_map<Key, Type>;
 
+    // TODO: re-evaluate this. Use CollectionUtils instead?
     template <
         class Map, class Type,
         std::enable_if_t<
             std::is_same<std::unordered_map<typename Map::key_type, Type>, Map>::value>* = nullptr>
-    bool MapContainsWhere(Map const& map, std::function<bool(Type const&)> check) {
+    bool MapContainsIf(Map const& map, std::function<bool(Type const&)> check) {
         GUARDR(check, false)
 
         for (auto& pair : map) {

@@ -138,9 +138,7 @@ Vector2 SliderControl::RendererSize(WorldNode& target) const {
     GUARDR(renderer, {})
 
     auto size = renderer->WorldSize();
-    GUARDR(size, {})
-
-    return *size;
+    return size;
 }
 
 void SliderControl::OnDragThumbStart(WorldNode& thumb, Vector2 inputPosition) {

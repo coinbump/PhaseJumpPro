@@ -14,7 +14,7 @@ namespace TimerTests {
 
         int finishedCount = 0;
 
-        TestTimer(float duration, Runner::RunType runType) : Base(duration, runType)
+        TestTimer(float duration, RunType runType) : Base(duration, runType)
         {
         }
 
@@ -30,7 +30,7 @@ namespace TimerTests {
 using namespace TimerTests;
 
 TEST(Timer, RunOnce) {
-    auto timer = Timer(1.0f, Runner::RunType::Once);
+    auto timer = Timer(1.0f, RunType::Once);
     timer.OnUpdate(TimeSlice(.3f));
     EXPECT_EQ(.3f, timer.State());
     EXPECT_EQ(.3f, timer.Progress());
@@ -51,7 +51,7 @@ TEST(Timer, RunOnce) {
 }
 
 TEST(Timer, Repeat) {
-    auto timer = TestTimer(1.0f, Runner::RunType::Repeat);
+    auto timer = TestTimer(1.0f, RunType::Repeat);
     timer.OnUpdate(TimeSlice(.3f));
     EXPECT_EQ(0.3f, timer.State());
     EXPECT_EQ(0.3f, timer.Progress());
@@ -75,7 +75,7 @@ TEST(Timer, Repeat) {
 }
 
 TEST(Timer, Stop) {
-    auto timer = Timer(1.0f, Runner::RunType::Once);
+    auto timer = Timer(1.0f, RunType::Once);
     timer.OnUpdate(TimeSlice(.3f));
     EXPECT_EQ(.3f, timer.State());
     EXPECT_EQ(.3f, timer.Progress());
@@ -89,7 +89,7 @@ TEST(Timer, Stop) {
 
 TEST(Timer, UpdateFuncs) {
     float value = 0;
-    auto timer = Timer(1.0f, Runner::RunType::Once);
+    auto timer = Timer(1.0f, RunType::Once);
 
     timer.onUpdateFunc = [&](Updatable& _, TimeSlice time) {
         value += time.delta;
@@ -107,7 +107,7 @@ TEST(Timer, UpdateFuncs) {
 
 TEST(Timer, UpdateFuncsWhenPaused) {
     float value = 0;
-    auto timer = Timer(1.0f, Runner::RunType::Once);
+    auto timer = Timer(1.0f, RunType::Once);
 
     timer.onUpdateFunc = [&](Updatable& _, TimeSlice time) {
         value += time.delta;

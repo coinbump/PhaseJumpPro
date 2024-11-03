@@ -18,8 +18,16 @@ namespace PJ {
     public:
         using Base = SomeTexture;
 
-        GLTexture(String id, GLuint glId, Vector2Int size, String alphaMode) :
-            Base(id, glId, size, alphaMode) {}
+        GLTexture(
+            String id, GLuint glId, Vector2Int size, Vector2 normalOrigin, Vector2 normalSize,
+            String alphaMode
+        ) :
+            Base({ .id = id,
+                   .renderId = glId,
+                   .size = size,
+                   .normalOrigin = normalOrigin,
+                   .normalSize = normalSize,
+                   .alphaMode = alphaMode }) {}
 
         virtual ~GLTexture() {
             if (renderId > 0) {

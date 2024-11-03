@@ -1,5 +1,4 @@
-#ifndef PJBROADCASTER_H
-#define PJBROADCASTER_H
+#pragma once
 
 #include "SomeBroadcaster.h"
 #include "SomeListener.h"
@@ -9,63 +8,32 @@
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 7/5/23
+ CODE REVIEW: 10/6/24
  */
 namespace PJ {
     /// Broadcaster sends messages to listeners.
     class Broadcaster : public SomeBroadcaster {
     public:
-        // TODO: why WP?
-        using ListenerWeakPtr = WP<SomeListener>;
-        using ListenerList = VectorList<ListenerWeakPtr>;
-        using EventSharedPtr = SP<SomeSignal>;
-        using EventPtr = EventSharedPtr const&;
+        using Base = SomeBroadcaster;
+        using This = Broadcaster;
+        using ListenerList = VectorList<WP<SomeListener>>;
 
+    protected:
         ListenerList listeners;
 
-        Broadcaster() {}
-
-        void RemoveListener(ListenerWeakPtr listener) override {
-            for (auto i = listeners.begin(); i != listeners.end(); i++) {
-                auto _listener = *i;
-                if (_listener.expired()) {
-                    continue;
-                }
-
-                if (_listener.lock() == listener.lock()) {
-                    listeners.erase(i);
-                    return;
-                }
-            }
-        }
-
-        void AddListener(ListenerWeakPtr listener) override {
-            if (listener.expired()) {
-                return;
-            }
-            Add(listeners, listener);
-        }
-
+    public:
         void Clear() {
             listeners.clear();
         }
 
-        void Broadcast(EventPtr event) {
-            ListenerList activeListeners;
-
-            // TODO: potential to crash
-            for (auto& listener : listeners) {
-                if (listener.expired()) {
-                    continue;
-                }
-                Add(activeListeners, listener);
-
-                listener.lock()->OnEvent(event);
-            }
-
-            listeners = activeListeners;
+        size_t Count() const {
+            return listeners.size();
         }
+
+        // MARK: SomeBroadcaster
+
+        void Remove(WP<SomeListener> listener) override;
+        void Add(WP<SomeListener> listener) override;
+        void Broadcast(SomeSignal& signal) override;
     };
 } // namespace PJ
-
-#endif

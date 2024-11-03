@@ -42,46 +42,86 @@ namespace StateMachineTests {
 
 using namespace StateMachineTests;
 
-TEST(StateMachine, Test_StateMachine)
+TEST(StateMachine, Test)
 {
-    auto sut = MAKE<TestStateMachine>();
-    sut->SetState(TestEnum::Test2);
-    EXPECT_EQ(1, sut->test2Count);
-    sut->SetIsLocked(true);
+    TestStateMachine sut;
+    sut.SetState(TestEnum::Test2);
+    EXPECT_EQ(1, sut.test2Count);
+    sut.SetIsLocked(true);
 
-    sut->SetState(TestEnum::Test1);
-    EXPECT_EQ(0, sut->test1Count);
-    sut->SetIsLocked(false);
-    sut->SetState(TestEnum::Test1);
-    EXPECT_EQ(1, sut->test1Count);
+    sut.SetState(TestEnum::Test1);
+    EXPECT_EQ(0, sut.test1Count);
+    sut.SetIsLocked(false);
+    sut.SetState(TestEnum::Test1);
+    EXPECT_EQ(1, sut.test1Count);
 
-    sut->SetState(TestEnum::Test2);
-    EXPECT_EQ(TestEnum::Test1, sut->PrevState());
+    sut.SetState(TestEnum::Test2);
+    EXPECT_EQ(TestEnum::Test1, sut.PrevState());
 }
 
-TEST(StateMachine, Test_StateMachine_Graph)
+TEST(StateMachine, AnyStateTransition)
 {
-    auto sut = MAKE<TestStateMachine>();
-    auto invalidNode = sut->AddState(TestEnum::Invalid);
-    EXPECT_EQ(invalidNode, sut->NodeForState(TestEnum::Invalid));
-    EXPECT_EQ(1, sut->nodes.size());
+    TestStateMachine sut;
+    sut.SetState(TestEnum::Test2);
+    EXPECT_EQ(0, sut.test1Count);
+    EXPECT_EQ(1, sut.test2Count);
+
+    sut.anyStateTransitions.insert_or_assign("next", TestEnum::Test1);
+    sut.Input("next");
+    EXPECT_EQ(1, sut.test1Count);
+    EXPECT_EQ(1, sut.test2Count);
+
+    sut.anyStateTransitions.insert_or_assign("next", TestEnum::Test2);
+    sut.Input("next");
+    EXPECT_EQ(1, sut.test1Count);
+    EXPECT_EQ(2, sut.test2Count);
+}
+
+TEST(StateMachine, Graph)
+{
+    TestStateMachine sut;
+    auto invalidNode = sut.Add(TestEnum::Invalid);
+    EXPECT_EQ(invalidNode, sut.NodeForState(TestEnum::Invalid));
+    EXPECT_EQ(1, sut.nodes.size());
 
     VectorList<String> inputs1;
     inputs1.push_back("test1");
-    sut->ConnectStates(TestEnum::Invalid, inputs1, TestEnum::Test1);
+    sut.ConnectStates(TestEnum::Invalid, inputs1, TestEnum::Test1);
 
     VectorList<String> inputs2;
     inputs2.push_back("test2");
-    sut->ConnectStates(TestEnum::Test1, inputs2, TestEnum::Test2);
+    sut.ConnectStates(TestEnum::Test1, inputs2, TestEnum::Test2);
 
-    EXPECT_EQ(3, sut->nodes.size());
-    sut->SetState(TestEnum::Invalid);
-    sut->Input("test2");
-    EXPECT_EQ(TestEnum::Invalid, sut->State());
+    EXPECT_EQ(3, sut.nodes.size());
+    sut.SetState(TestEnum::Invalid);
+    sut.Input("test2");
+    EXPECT_EQ(TestEnum::Invalid, sut.State());
 
-    sut->Input("test1");
-    EXPECT_EQ(TestEnum::Test1, sut->State());
+    sut.Input("test1");
+    EXPECT_EQ(TestEnum::Test1, sut.State());
 
-    sut->Input("test2");
-    EXPECT_EQ(TestEnum::Test2, sut->State());
+    sut.Input("test2");
+    EXPECT_EQ(TestEnum::Test2, sut.State());
+}
+
+TEST(StateMachine, AddTransition)
+{
+    TestStateMachine sut;
+    auto invalidNode = sut.Add(TestEnum::Invalid);
+    EXPECT_EQ(invalidNode, sut.NodeForState(TestEnum::Invalid));
+    EXPECT_EQ(1, sut.nodes.size());
+
+    sut.AddTransition(TestEnum::Invalid, "test1", TestEnum::Test1);
+    sut.AddTransition(TestEnum::Test1, "test2", TestEnum::Test2);
+
+    EXPECT_EQ(3, sut.nodes.size());
+    sut.SetState(TestEnum::Invalid);
+    sut.Input("test2");
+    EXPECT_EQ(TestEnum::Invalid, sut.State());
+
+    sut.Input("test1");
+    EXPECT_EQ(TestEnum::Test1, sut.State());
+
+    sut.Input("test2");
+    EXPECT_EQ(TestEnum::Test2, sut.State());
 }
