@@ -128,9 +128,8 @@ This& QuickTimeline::Shake2D(int count, float maxDistance) {
     for (int i = 0; i < count; i++) {
         float xDelta = random.Delta(maxDistance);
         float yDelta = random.Delta(maxDistance);
-        float zDelta = random.Delta(maxDistance);
 
-        keys.push_back({ xDelta, yDelta, zDelta });
+        keys.push_back({ xDelta, yDelta, 0 });
     }
 
     return Offset(keys, KeyedTimeType::Discrete);

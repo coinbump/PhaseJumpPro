@@ -1,14 +1,10 @@
 #include "View2D.h"
+#include "WorldNode.h"
 #include "WorldSizeable.h"
 
 using namespace PJ;
 using namespace std;
 
-/*
- RATING: 5 stars
- Simple funcs
- CODE REVIEW: 9/7/24
- */
 View2D& View2D::SetFrame(Rect const& value) {
     GUARDR(frame != value, *this)
     bool didFrameSizeChange = frame.size != value.size;
@@ -24,12 +20,8 @@ View2D& View2D::SetFrame(Rect const& value) {
 
 Rect View2D::Bounds() const {
     auto result = Frame();
-    result.origin = vec2Zero;
+    result.origin = {};
     return result;
-}
-
-void View2D::Awake() {
-    UpdateFrameComponents();
 }
 
 void View2D::SetWorldSize2D(Vector2 value) {
@@ -38,7 +30,9 @@ void View2D::SetWorldSize2D(Vector2 value) {
     SetFrame(newFrame);
 }
 
-void View2D::OnFrameChange() {}
+void View2D::OnFrameChange() {
+    SetNeedsLayout();
+}
 
 void View2D::OnViewSizeChange() {
     UpdateFrameComponents();
@@ -49,7 +43,12 @@ void View2D::UpdateFrameComponents() {
 
     auto frameSize = Frame().size;
 
-    auto worldSizables = owner->GetComponents<WorldSizeable>();
+    // Update all other components attached to this node to match the view size
+    // Keeps meshes, layouts, etc. in sync with view
+    VectorList<WorldSizeable*> worldSizables;
+    owner->CollectTypeComponents<WorldSizeable>(worldSizables, [this](auto& component) {
+        return &component != this;
+    });
     for (auto& worldSizable : worldSizables) {
         worldSizable->SetWorldSize(frameSize);
     }
@@ -57,7 +56,7 @@ void View2D::UpdateFrameComponents() {
 
 std::optional<Rect> View2D::ParentBounds() {
     auto parent = ParentView();
-    GUARDR(parent, std::nullopt)
+    GUARDR(parent, {})
 
     return parent->Bounds();
 }

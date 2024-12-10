@@ -15,16 +15,10 @@ namespace PJ {
         Vector2 origin;
         Vector2 size;
 
-        constexpr UVRect() {}
-
-        constexpr UVRect(Vector2 origin, Vector2 size) :
-            origin(origin),
-            size(size) {}
-
         bool operator==(UVRect const& rhs) const {
             return this->origin == rhs.origin && this->size == rhs.size;
         }
     };
 
-    static constexpr UVRect uvRectOne{ { 0, 0 }, { 1, 1 } };
+    static constexpr UVRect uvRectOne{ .origin = { 0, 0 }, .size = { 1, 1 } };
 } // namespace PJ

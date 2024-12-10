@@ -34,6 +34,10 @@ namespace PJ {
 
         virtual ~Tags() {}
 
+        void Remove(Key key) {
+            map.erase(key);
+        }
+
         std::pair<Map::iterator, bool> Insert(Map::value_type&& __x) {
             return map.insert_or_assign(__x.first, __x.second);
         }
@@ -42,12 +46,17 @@ namespace PJ {
             return map.insert_or_assign(__x.first, __x.second);
         }
 
-        std::pair<Map::iterator, bool> Insert(Key const key, MapValue value) {
-            return map.insert_or_assign(key, value);
+        std::pair<Map::iterator, bool> Set(Key const key, MapValue value) {
+            return Insert({ key, value });
         }
 
-        std::pair<Map::iterator, bool> Add(Key const key, MapValue value) {
-            return Insert({ key, value });
+        template <class Type>
+        void SetOrRemove(Key const key, std::optional<Type> value) {
+            if (value) {
+                Set(key, *value);
+            } else {
+                Remove(key);
+            }
         }
 
         // TODO: why not return a reference to the value, like TypeValueAt does? Why are they
@@ -77,19 +86,25 @@ namespace PJ {
             return allocator();
         }
 
+        /// Returns a default value if the requested value doesn't exist
+        template <class Type>
+        Type DefaultingValue(Key key, Type defaultValue = {}) const {
+            return SafeValue<Type>(key, [&]() { return defaultValue; });
+        }
+
         /// Returns the value of the specified type, with the specified key
         /// Throws an exception of the value doesn't exist or is the wrong type
         template <class T>
-        T& TypeValueAt(Key key) {
-            MapValue& value = map.at(key);
-            return std::any_cast<T&>(value);
+        T At(Key key) const {
+            MapValue const& value = map.at(key);
+            return std::any_cast<T>(value);
         }
 
         /// Adds the type value if a tag of this type and id do not exist
         template <class T>
         void TypeAddIfNeeded(Key const key, T value = {}) {
             GUARD(!TypeContains<T>(key))
-            Add(key, value);
+            Set(key, value);
         }
 
         /// @return Returns true if the value exists, and is of the correct type
@@ -122,7 +137,7 @@ namespace PJ {
             auto& result = *this;
 
             for (auto& r : rhs.map) {
-                this->Add(r.first, r.second);
+                this->Set(r.first, r.second);
             }
 
             return result;
@@ -160,22 +175,37 @@ namespace PJ {
     /// Example: "enemy", "ghost" tags for an arcade game
     using TypeTagSet = UnorderedSet<String>;
 
-    /// Backing storage for a collection of objects
-    template <class Key>
+    /// Aggregates tags separately for multiple objects
+    template <class Key = String>
     class Storage {
     public:
         UnorderedMap<Key, Tags> map;
 
+        /// Sets a tag value
         template <class Type>
-        Type& ValueStorage(Key key, String valueKey) {
-            if (!map.contains(key)) {
-                map.insert_or_assign(key, Tags());
+        void Set(Key key, String tagName, Type value) {
+            map[key].Set(tagName, value);
+        }
+
+        /// @return Returns a tag value
+        template <class Type>
+        Type Value(Key key, String tagName, Type defaultValue = {}) const {
+            try {
+                auto& tags = map.at(key);
+                return tags.template DefaultingValue<Type>(tagName, defaultValue);
+            } catch (...) {
+                return defaultValue;
             }
+        }
 
-            Tags& tags = map[key];
-            tags.TypeAddIfNeeded<Type>(valueKey, {});
+        /// @return Returns value if it exists
+        /// @throws Throws error if value doesn't exist
+        template <class Type>
+        Type At(Key key, String tagName) const {
+            auto i = map.find(key);
+            GUARD_THROW(i != map.end(), std::invalid_argument("Invalid element id"))
 
-            return tags.TypeValueAt<Type>(valueKey);
+            return i->second.template At<Type>(tagName);
         }
     };
 } // namespace PJ

@@ -19,13 +19,13 @@ namespace PJ {
             spacing(spacing) {}
 
         Vector3 Size() const {
-            GUARDR(owner, Vector3::zero)
+            GUARDR(owner, {})
             return Vector3(spacing * (owner->ChildNodes().size() - 1), 0, 0);
         }
 
         // MARK: SomeWorldComponent
 
-        virtual String TypeName() const override {
+        String TypeName() const override {
             return "HFlow";
         }
 

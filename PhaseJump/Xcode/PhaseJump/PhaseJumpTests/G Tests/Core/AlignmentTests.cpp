@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "Alignment.h"
+#include "Alignment2D.h"
 
 using namespace PJ;
 using namespace std;
@@ -13,19 +13,19 @@ TEST(Alignment, HorizontalCenter)
 {
     auto sut = HorizontalAlignment::center;
 
-    EXPECT_EQ(5, sut.aligner(20, 10));
+    EXPECT_EQ(5, sut(20, 10));
 }
 
 TEST(Alignment, HorizontalLeading)
 {
     auto sut = HorizontalAlignment::leading;
 
-    EXPECT_EQ(0, sut.aligner(20, 5));
+    EXPECT_EQ(0, sut(20, 5));
 }
 
 TEST(Alignment, HorizontalTrailing)
 {
     auto sut = HorizontalAlignment::trailing;
 
-    EXPECT_EQ(15, sut.aligner(20, 5));
+    EXPECT_EQ(15, sut(20, 5));
 }

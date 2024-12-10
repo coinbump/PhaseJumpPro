@@ -12,9 +12,7 @@ using namespace std;
 using namespace PJ;
 
 void ShowBoundsRenderProcessor::Process(CameraRenderModel& cameraModel) {
-    auto boundsMaterial = ColorRenderer::MakeMaterial(
-        color.IsOpaque() ? RenderOpacityType::Opaque : RenderOpacityType::Blend
-    );
+    auto boundsMaterial = ColorRenderer::MakeMaterial(RenderOpacityTypeFor(color));
     cameraModel.materials.push_back(boundsMaterial);
 
     cameraModel.models.reserve(cameraModel.models.size() + cameraModel.nodes.size());
@@ -28,7 +26,8 @@ void ShowBoundsRenderProcessor::Process(CameraRenderModel& cameraModel) {
 
             auto worldSize = ws->WorldSize();
 
-            auto renderer = MAKE<ColorRenderer>(boundsMaterial, color, worldSize);
+            auto renderer = MAKE<ColorRenderer>(ColorRenderer::Config{
+                .material = boundsMaterial, .color = color, .worldSize = worldSize });
             renderer->model.SetBuildMeshFunc([=](RendererModel const& model) {
                 // TODO: mesh.Resize(model.WorldSize());
                 QuadFrameMeshBuilder builder(model.WorldSize(), Vector2(2, 2));
@@ -38,7 +37,7 @@ void ShowBoundsRenderProcessor::Process(CameraRenderModel& cameraModel) {
             cameraModel.renderers.push_back(renderer);
 
             renderer->owner = node;
-            auto debugRenderModels = renderer->MakeRenderModels();
+            auto debugRenderModels = renderer->RenderModels();
             AddRange(cameraModel.models, debugRenderModels);
             break;
         }

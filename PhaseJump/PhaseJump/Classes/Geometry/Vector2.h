@@ -16,15 +16,16 @@ namespace Terathon {
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 7/6/24
+ CODE REVIEW: 11/29/24
  */
 namespace PJ {
+    /// 2-component vector with float values
     struct Vector2 {
     public:
         using This = Vector2;
 
-        float x = 0;
-        float y = 0;
+        float x{};
+        float y{};
 
         constexpr Vector2() {}
 
@@ -35,7 +36,7 @@ namespace PJ {
         float& operator[](size_t index) {
             Assert(index >= 0 && index < 2);
 
-            /// Don't use &x[index] because struct packing isn't guaranteed
+            // Don't use &x[index] because struct packing isn't guaranteed
             float* indices[2] = { &x, &y };
             return *indices[index];
         }
@@ -73,7 +74,7 @@ namespace PJ {
             }
         }
 
-        constexpr float& AxisValueReverse(Axis2D axis) {
+        constexpr float& AxisValueOrthogonal(Axis2D axis) {
             switch (axis) {
             case Axis2D::X:
                 return y;
@@ -82,7 +83,7 @@ namespace PJ {
             }
         }
 
-        constexpr float AxisValueReverse(Axis2D axis) const {
+        constexpr float AxisValueOrthogonal(Axis2D axis) const {
             switch (axis) {
             case Axis2D::X:
                 return y;
@@ -101,25 +102,37 @@ namespace PJ {
         VECTOR_METHODS(Vector2, float, 2);
 
         static constexpr This Uniform(float value) {
-            return Vector2(value, value);
+            return { value, value };
         }
+
+        This operator-() const {
+            return { -x, -y };
+        }
+
+        friend std::ostream& operator<<(std::ostream&, This const& value);
 
         // MARK: StringConvertible
 
-        String ToString() const {
-            std::stringstream stream;
-            stream << "{" << x << ", " << y << "}";
-            return stream.str();
-        }
+        String ToString() const;
+
+        static Vector2 const left;
+        static Vector2 const right;
+        static Vector2 const up;
+        static Vector2 const down;
+        static Vector2 const upLeft;
+        static Vector2 const downRight;
+        static Vector2 const one;
+        static Vector2 const max;
     };
 
+    /// 2-component vector with int values
     class Vector2Int {
     public:
         using This = Vector2Int;
         using MathType = int;
 
-        MathType x = 0;
-        MathType y = 0;
+        MathType x{};
+        MathType y{};
 
         constexpr Vector2Int() {}
 
@@ -155,15 +168,19 @@ namespace PJ {
 
         VECTOR_METHODS(Vector2Int, MathType, 2);
 
-        String ToString() const {
-            std::stringstream stream;
-            stream << "{" << x << ", " << y << "}";
-            return stream.str();
+        static constexpr This Uniform(MathType value) {
+            return { value, value };
         }
 
-        static constexpr This Uniform(MathType value) {
-            return Vector2Int(value, value);
+        This operator-() const {
+            return { -x, -y };
         }
+
+        friend std::ostream& operator<<(std::ostream&, This const& value);
+
+        // MARK: StringConvertible
+
+        String ToString() const;
     };
 
     // Convenience names
@@ -177,10 +194,9 @@ namespace PJ {
     constexpr float vecUp = 1;
     constexpr float vecDown = -1;
 
-    constexpr Vector2 vec2Left{ vecLeft, 0 };
-    constexpr Vector2 vec2Right{ vecRight, 0 };
-    constexpr Vector2 vec2Up{ 0, vecUp };
-    constexpr Vector2 vec2Down{ 0, vecDown };
-    constexpr Vector2 vec2Zero{ 0, 0 };
-    constexpr Vector2 vec2One{ 1, 1 };
+    // MARK: Stream friend operators
+
+    std::ostream& operator<<(std::ostream& os, PJ::Vector2 const& value);
+    std::ostream& operator<<(std::ostream& os, PJ::Vector2Int const& value);
+
 } // namespace PJ

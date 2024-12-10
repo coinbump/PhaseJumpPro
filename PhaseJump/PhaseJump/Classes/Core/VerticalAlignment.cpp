@@ -2,17 +2,18 @@
 
 using namespace PJ;
 
-const VerticalAlignment VerticalAlignment::top(AlignFuncs::left);
-const VerticalAlignment VerticalAlignment::center(AlignFuncs::center);
-const VerticalAlignment VerticalAlignment::bottom(AlignFuncs::right);
+const AlignFunc VerticalAlignment::top(AlignFuncs::left);
+const AlignFunc VerticalAlignment::center(AlignFuncs::center);
+const AlignFunc VerticalAlignment::bottom(AlignFuncs::right);
 
-VerticalAlignment VerticalAlignment::Builder::VerticalAlignmentFrom(VerticalAlignmentType type) {
-    switch (type) {
-    case VerticalAlignmentType::Top:
-        return VerticalAlignment::top;
-    case VerticalAlignmentType::Bottom:
-        return VerticalAlignment::bottom;
-    default:
-        return VerticalAlignment::center;
-    }
-}
+// FUTURE: add if needed
+// VerticalAlignment VerticalAlignment::Builder::VerticalAlignmentFrom(VerticalAlignmentType type) {
+//    switch (type) {
+//    case VerticalAlignmentType::Top:
+//        return VerticalAlignment::top;
+//    case VerticalAlignmentType::Bottom:
+//        return VerticalAlignment::bottom;
+//    default:
+//        return VerticalAlignment::center;
+//    }
+//}

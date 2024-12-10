@@ -1,6 +1,7 @@
 #pragma once
 
 #include "UIPlan.h"
+#include "UITypes.h"
 
 /*
  RATING: 5 stars
@@ -19,6 +20,12 @@ namespace PJ {
         UIPlanner(UIPlan& plan) :
             plan(plan) {}
 
+        /// Add button with action to UI
+        This& Button(String label, std::function<void()> func);
+
+        /// Add text to UI
+        This& Text(String label, std::function<String()> valueFunc);
+
         /// Add float input field to UI
         This& InputFloat(String label, Binding<float> binding);
 
@@ -27,6 +34,9 @@ namespace PJ {
 
         /// Add text input field to UI
         This& InputText(String label, Binding<String> binding);
+
+        /// Add single selection list UI
+        This& ListSelect(String label, VectorList<String> choices, Binding<int> binding);
 
         /// Add list picker to UI
         This& PickerList(String label, VectorList<String> choices, Binding<int> binding);

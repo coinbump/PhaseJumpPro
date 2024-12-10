@@ -35,7 +35,7 @@ void BoardView::Build() {
                 .SquareCollider(CellSize().x)
                 .SquareFrame(CellSize().x, Color::white, 2)
                 .ModifyLatest<SomeDropTarget>([=](SomeDropTarget& target) {
-                    SP<SomeRenderer> renderer = target.owner->TypeComponent<SomeRenderer>();
+                    SomeRenderer* renderer = target.owner->TypeComponent<SomeRenderer>();
                     GUARD(renderer)
 
                     target.canAcceptDragFunc = [=](SomeDropTarget& target, auto& dragModel) {

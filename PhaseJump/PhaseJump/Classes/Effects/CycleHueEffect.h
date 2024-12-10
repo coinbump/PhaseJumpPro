@@ -1,7 +1,8 @@
 #pragma once
 
 #include "ModelColor.h"
-#include "SomeEffect.h"
+#include "Switchable.h"
+#include "WorldComponent.h"
 
 /*
  RATING: 5 stars
@@ -12,14 +13,15 @@ namespace PJ {
     class SomeRenderer;
 
     /// Animates the material's render color across the range of hues
-    class CycleHueEffect : public SomeEffect {
+    class CycleHueEffect : public WorldComponent<> {
     public:
-        using Base = SomeEffect;
+        using Base = WorldComponent<>;
         using This = CycleHueEffect;
 
         CycleHueEffect(SwitchState state = SwitchState::Off, float cycleTime = 1) :
-            Base(state),
-            cycleTime(cycleTime) {}
+            cycleTime(cycleTime) {
+            Enable(state == SwitchState::On);
+        }
 
         /// Time for a full cyle across all hues
         float cycleTime = 1;

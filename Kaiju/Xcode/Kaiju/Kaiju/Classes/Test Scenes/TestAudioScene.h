@@ -119,12 +119,12 @@ public:
     }
 };
 
-/// Test scene for sliced SlicedTextureRenderer
+/// Test scene for sliced Slice9TextureRenderer
 class TestAudioScene : public Scene {
 public:
     TestAudioScene() {}
 
-    void LoadInto(WorldNode& root) {
+    void LoadInto(WorldNode& root) override {
         root.name = "TestAudioScene";
 
         WorldNode& cameraNode = root.And("Camera");

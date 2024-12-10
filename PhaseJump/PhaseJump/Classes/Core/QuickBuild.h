@@ -7,12 +7,17 @@
 #include "Color.h"
 #include "DragHandler2D.h"
 #include "EaseFunc.h"
+#include "Font.h"
+#include "LayoutInsets.h"
 #include "SimpleAnimationController.h"
+#include "SomeAligner.h"
+#include "Switchable.h"
+#include "ViewBuilder.h"
 #include "WorldNode.h"
 
 /*
  RATING: 5 stars
- Simple type
+ Tested and works
  CODE REVIEW: 9/9/24
  */
 // TODO: needs unit tests
@@ -34,12 +39,21 @@ namespace PJ {
 
     /// Convenience methods for adding common components
     /// Use to quickly build scenes for rapid prototyping
-    struct QuickBuild {
+    class QuickBuild {
     public:
         using This = QuickBuild;
         using OnDragUpdateFunc = std::function<void(DragHandler2D&)>;
         using OnDropFilesFunc =
             std::function<void(std::tuple<SomeWorldComponent&, DropFilesUIEvent const&>)>;
+
+        struct SliderConfig {
+            Axis2D axis = Axis2D::X;
+            Binding<float> valueBinding;
+            Vector2 worldSize;
+
+            /// Orthogonal size of the slider track perpendicular to the primary axis
+            float trackOrthogonal = 10;
+        };
 
     protected:
         /// Stores animation setting states so we can push and pop to previous states
@@ -68,11 +82,10 @@ namespace PJ {
 
         void AddSlider(
             World& world, WorldNode& parent, DesignSystem& designSystem,
-            SP<SomeTexture> trackTexture, SP<SomeTexture> thumbTexture, String name,
-            Vector2 worldSize, Axis2D axis, std::function<void(float)> valueFunc
+            SP<SomeTexture> trackTexture, SP<SomeTexture> thumbTexture, SliderConfig config
         );
 
-        This& SliderVertical(String name, Vector2 worldSize, std::function<void(float)> valueFunc);
+        This& SliderVertical(SliderConfig config);
 
     public:
         VectorList<std::reference_wrapper<WorldNode>> nodes;
@@ -91,6 +104,8 @@ namespace PJ {
 
         /// Modify all components of this type
         This& ModifyNode(std::function<void(WorldNode& node)> func) {
+            GUARDR(func, *this)
+
             func(Node());
             return *this;
         }
@@ -98,6 +113,8 @@ namespace PJ {
         /// Modify all components of this type
         template <class T>
         This& ModifyAll(std::function<void(T& component, size_t index)> func) {
+            GUARDR(func, *this)
+
             size_t index = 0;
 
             std::for_each(components.cbegin(), components.cend(), [&](auto component) {
@@ -114,6 +131,8 @@ namespace PJ {
         /// Modify the last created component of this type
         template <class T>
         This& ModifyLatest(std::function<void(T& component)> func) {
+            GUARDR(func, *this)
+
             for (auto i = components.crbegin(); i != components.crend(); i++) {
                 auto concrete = dynamic_cast<T*>(*i);
                 GUARD_CONTINUE(concrete)
@@ -127,6 +146,8 @@ namespace PJ {
 
         /// Modify the last created component of any type
         This& ModifyLatestAny(std::function<void(SomeWorldComponent& component)> func) {
+            GUARDR(func, *this)
+
             for (auto i = components.crbegin(); i != components.crend(); i++) {
                 func(**i);
                 break;
@@ -153,8 +174,16 @@ namespace PJ {
         /// Add circle render component
         This& Circle(float radius, Color color = Color::gray);
 
-        /// Add rect frame render component
+        /// Adds rect render component
+        This& Rect(Vector2 size, Color color);
+
+        /// Adds rect frame render component
         This& RectFrame(Vector2 size, Color color = Color::black, float strokeWidth = 2);
+
+        /// Adds rect render component
+        This& Square(float size, Color color) {
+            return Rect({ size, size }, color);
+        }
 
         /// Add square frame render component
         This& SquareFrame(float size, Color color = Color::black, float strokeWidth = 2);
@@ -182,13 +211,18 @@ namespace PJ {
         This& CircleCollider(float radius);
 
         /// Add a slider control and thumb
-        This& Slider(String name, Vector2 worldSize, std::function<void(float)> valueFunc);
+        This& Slider(SliderConfig config);
 
         /// Rename the current node
         This& Named(String name) {
             Node().name = name;
             return *this;
         }
+
+        /// Starts a build view chain using view builders
+        /// Each view is given a view builder via the build func and can build the hierarchy using
+        /// additional view builders
+        This& RootView(Vector2 size, ViewBuilder::BuildViewFunc buildFunc);
 
         /// Sets uniform scale for the current node
         This& SetUniformScale(float value) {
@@ -231,6 +265,14 @@ namespace PJ {
                 GUARDR(nodes.size() > 1, *this)
                 nodes.erase(nodes.begin() + (nodes.size() - 1));
                 count--;
+            }
+            return *this;
+        }
+
+        constexpr This& PopToName(String name) {
+            while (nodes.size() > 1) {
+                GUARDR(Node().name != name, *this)
+                Pop();
             }
             return *this;
         }
@@ -479,13 +521,8 @@ namespace PJ {
         /// Add opacity animation from current to end value
         This& OpacityTo(float endValue);
 
-        /// Rotate left in 2D space at the specified speed
-        This& TurnLeft(Angle speed) {
-            return TurnRight(-speed);
-        }
-
-        /// Rotate right in 2D space at the specified speed
-        This& TurnRight(Angle speed);
+        /// Rotate in 2D space at the specified angles per second speed
+        This& Turn(Angle speed);
 
         /// Destroy the current node in N seconds
         This& Destroy(float time);

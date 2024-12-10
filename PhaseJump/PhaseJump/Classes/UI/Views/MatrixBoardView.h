@@ -118,15 +118,7 @@ namespace PJ {
         }
 
     protected:
-        void PutChildPieces() {
-            /// Put pieces defined by piece handlers on the board
-            for (auto& child : owner->Children()) {
-                auto handler = child->TypeComponent<MatrixPieceHandler>();
-                GUARD_CONTINUE(handler)
-
-                Put(*handler, handler->startOrigin);
-            }
-        }
+        void PutChildPieces();
 
         // MARK: SomeWorldComponent
 

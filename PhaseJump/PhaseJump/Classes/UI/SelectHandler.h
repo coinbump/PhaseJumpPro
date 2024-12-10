@@ -1,7 +1,6 @@
 #ifndef PJSELECTHANDLER_H
 #define PJSELECTHANDLER_H
 
-#include "SomeEffect.h"
 #include "SomeResolver.h"
 #include "WorldComponent.h"
 
@@ -23,7 +22,7 @@ namespace PJ {
         bool isSelectable = true;
 
     public:
-        SP<SomeEffect> selectEffect;
+        SP<SomeWorldComponent> selectEffect;
 
         SelectHandler();
 

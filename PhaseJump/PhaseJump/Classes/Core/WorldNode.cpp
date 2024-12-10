@@ -94,6 +94,19 @@ void WorldNode::Add(SP<SomeWorldComponent> component) {
     }
 }
 
+// Keep for testing single component ECS system for compatibility with Godot
+// #define PJ_ECS_SINGLE_COMPONENT
+
+void WorldNode::AddAssociate(SP<SomeWorldComponent> component) {
+#ifdef PJ_ECS_SINGLE_COMPONENT
+    auto child = MAKE<WorldNode>();
+    Add(child);
+    child->Add(component);
+#else
+    Add(component);
+#endif
+}
+
 void WorldNode::Add(SP<WorldNode> node) {
     Insert(node, tree.ChildCount());
 }
@@ -104,8 +117,8 @@ void WorldNode::Insert(SP<WorldNode> node, size_t index) {
 
     tree.Insert(node, index);
 
-    NodeList subgraph;
-    CollectBreadthFirstTree(node, subgraph);
+    VectorList<WorldNode*> subgraph;
+    CollectBreadthFirstTree(node.get(), subgraph);
 
     // Set the world. Lifecycle events (Start, Awake) occur in world update
     for (auto& subNode : subgraph) {
@@ -126,8 +139,8 @@ void WorldNode::Remove(SP<WorldNode> node) {
     GUARD(node)
     GUARD_LOG(node->Parent() == this, "ERROR. Can't remove un-parented node")
 
-    NodeList subgraph;
-    CollectBreadthFirstTree(node, subgraph);
+    VectorList<WorldNode*> subgraph;
+    CollectBreadthFirstTree(node.get(), subgraph);
     for (auto& subNode : subgraph) {
         subNode->world = nullptr;
     }
@@ -150,8 +163,8 @@ void WorldNode::Remove(WorldNode& node) {
 
 void WorldNode::RemoveAllChildren() {
     for (auto& child : tree.Children()) {
-        NodeList subgraph;
-        CollectBreadthFirstTree(child, subgraph);
+        VectorList<WorldNode*> subgraph;
+        CollectBreadthFirstTree(child.get(), subgraph);
         for (auto& subNode : subgraph) {
             subNode->world = nullptr;
         }
@@ -202,14 +215,6 @@ WorldNode& WorldNode::SetScale2D(Vector2 value) {
 
 WorldNode& WorldNode::SetScale2D(float value) {
     return SetScale(Vector3(value, value, 1.0f));
-}
-
-Vector3 WorldNode::LocalScale() const {
-    return Scale();
-}
-
-WorldNode& WorldNode::SetLocalScale(Vector3 value) {
-    return SetScale(value);
 }
 
 World* WorldNode::World() const {
@@ -299,4 +304,13 @@ bool WorldNode::Contains(SomeWorldComponent& value) {
     return std::find_if(components.begin(), components.end(), [&](auto& component) {
                return component.get() == &value;
            }) != components.end();
+}
+
+void WorldNode::Signal(String signalId, SomeSignal const& signal) {
+    for (auto& component : Components()) {
+        try {
+            auto handler = component->signalFuncs.at(signalId);
+            handler(*component, signal);
+        } catch (...) {}
+    }
 }

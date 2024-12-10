@@ -1,5 +1,4 @@
-#ifndef PJHORIZONTALALIGNMENT_H
-#define PJHORIZONTALALIGNMENT_H
+#pragma once
 
 #include "SomeAligner.h"
 #include "Utils.h"
@@ -12,16 +11,9 @@
  */
 namespace PJ {
     /// Horizontal alignment in a horizontal flow
-    struct HorizontalAlignment {
-        AlignFunc aligner;
-
-        HorizontalAlignment(AlignFunc aligner) :
-            aligner(aligner) {}
-
-        static const HorizontalAlignment leading;
-        static const HorizontalAlignment center;
-        static const HorizontalAlignment trailing;
-    };
+    namespace HorizontalAlignment {
+        extern const AlignFunc leading;
+        extern const AlignFunc center;
+        extern const AlignFunc trailing;
+    }; // namespace HorizontalAlignment
 } // namespace PJ
-
-#endif

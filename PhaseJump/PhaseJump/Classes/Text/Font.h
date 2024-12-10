@@ -15,6 +15,12 @@ namespace PJ {
     class TextureAtlas;
     class SomeTexture;
 
+    struct FontSpec {
+        String resourceId;
+        String fontName;
+        float size = 0;
+    };
+
     struct FontMetrics {
         using KernPair = std::pair<uint32_t, uint32_t>;
 

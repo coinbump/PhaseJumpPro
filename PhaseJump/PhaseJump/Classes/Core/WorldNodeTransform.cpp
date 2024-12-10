@@ -9,7 +9,7 @@ using namespace std;
 using namespace PJ;
 
 Vector3 WorldNodeTransform::WorldPosition() const {
-    auto result = value.position;
+    auto result = geo.position;
 
     auto world = owner.World();
     GUARDR(world, result)
@@ -38,11 +38,11 @@ void WorldNodeTransform::SetWorldPosition(Vector3 position, SetLocalPosFunc func
         return;
     }
 
-    value.position = position;
+    geo.position = position;
 }
 
 void WorldNodeTransform::SetWorldPositionXY(Vector3 position) {
     SetWorldPosition(position, [](WorldNodeTransform& transform, Vector3 localPos) {
-        transform.value.position = Vector3(localPos.x, localPos.y, transform.value.position.z);
+        transform.geo.position = Vector3(localPos.x, localPos.y, transform.geo.position.z);
     });
 }

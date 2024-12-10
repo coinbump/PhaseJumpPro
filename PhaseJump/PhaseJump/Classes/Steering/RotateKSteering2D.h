@@ -23,7 +23,7 @@ namespace PJ {
             turnSpeed = -value;
         }
 
-        void TurnRight(Angle value) {
+        void Turn(Angle value) {
             turnSpeed = value;
         }
 
@@ -33,7 +33,7 @@ namespace PJ {
 
         // MARK: SomeWorldComponent
 
-        virtual String TypeName() const override {
+        String TypeName() const override {
             return "RotateKSteering2D";
         }
     };

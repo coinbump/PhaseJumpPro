@@ -19,13 +19,25 @@ namespace PJ {
             return *this;
         }
 
+        // MARK: SomeCollider2D
+
+        bool TestHit(Vector2 position) override {
+            return poly.TestHit(position);
+        }
+
         // MARK: SomeWorldComponent
 
         String TypeName() const override {
             return "PolygonCollider2D";
         }
+
+        // MARK: WorldSizeable
+
+        Vector3 WorldSize() const override;
+        void SetWorldSize(Vector3 value) override;
     };
 
+    // 2D circle collider
     class CircleCollider2D : public SomeCollider2D {
     public:
         float radius = 1;
@@ -33,7 +45,9 @@ namespace PJ {
         CircleCollider2D(float radius) :
             radius(radius) {}
 
-        bool TestHit(Vector2 position) {
+        // MARK: SomeCollider2D
+
+        bool TestHit(Vector2 position) override {
             auto distance = sqrt(position.x * position.x + position.y * position.y);
             return distance <= radius;
         }
@@ -43,16 +57,22 @@ namespace PJ {
         String TypeName() const override {
             return "CircleCollider2D";
         }
+
+        // MARK: WorldSizeable
+
+        Vector3 WorldSize() const override;
+        void SetWorldSize(Vector3 value) override;
     };
 
-    class CapsuleCollider2D : public SomeCollider2D {
-    public:
-        Vector2 size;
-
-        // MARK: SomeWorldComponent
-
-        String TypeName() const override {
-            return "CapsuleCollider2D";
-        }
-    };
+    // FUTURE:
+    //    class CapsuleCollider2D : public SomeCollider2D {
+    //    public:
+    //        Vector2 size;
+    //
+    //        // MARK: SomeWorldComponent
+    //
+    //        String TypeName() const override {
+    //            return "CapsuleCollider2D";
+    //        }
+    //    };
 } // namespace PJ

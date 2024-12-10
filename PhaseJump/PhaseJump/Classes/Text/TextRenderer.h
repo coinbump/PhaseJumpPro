@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Font.h"
 #include "RenderTypes.h"
 #include "SomeAligner.h"
 #include "SomeRenderer.h"
@@ -34,9 +35,6 @@ namespace PJ {
         };
 
     protected:
-        /// Text area size. Text will be wrapped/clipped inside this
-        Vector2 size;
-
         /// Font for text render
         SP<Font> font;
 
@@ -64,16 +62,22 @@ namespace PJ {
         virtual void OnTextChange();
 
     public:
+        struct Config {
+            SP<Font> font;
+            String text;
+            Vector2 worldSize;
+        };
+
         /// Optional. Sets the max # of characters to be rendered, for reveal-type animations
         // FUTURE: std::optional<size_t> revealCount;
 
-        TextRenderer(SP<Font> font, String text, Vector2 size);
+        TextRenderer(Config config);
 
-        Vector2 Size() const {
-            return size;
+        SP<Font> GetFont() const {
+            return font;
         }
 
-        TextRenderer& SizeToFit();
+        TextRenderer& SizeToFit(Vector2 proposal);
 
         /// Builds the mesh and metrics if needed
         Mesh BuildMesh();
@@ -113,6 +117,10 @@ namespace PJ {
             return *this;
         }
 
+        LineClip GetLineClip() const {
+            return lineClip;
+        }
+
         TextRenderer& SetLineClip(LineClip value) {
             GUARDR(lineClip != value, *this)
             lineClip = value;
@@ -120,10 +128,12 @@ namespace PJ {
             return *this;
         }
 
+        Vector2 Size() const {
+            return WorldSize();
+        }
+
         TextRenderer& SetSize(Vector2 value) {
-            GUARDR(size != value, *this)
-            size = value;
-            OnTextChange();
+            SetWorldSize(value);
             return *this;
         }
 
@@ -144,6 +154,10 @@ namespace PJ {
             return *this;
         }
 
+        // MARK: SomeRenderer
+
+        Vector2 CalculateSize(Vector2 proposal) override;
+
         // MARK: SomeWorldComponent
 
         String TypeName() const override {
@@ -156,17 +170,6 @@ namespace PJ {
             Base::Awake();
 
             OnTextChange();
-        }
-
-        // MARK: WorldSizeable
-
-        Vector3 WorldSize() const override {
-            auto size = Size();
-            return Vector3(size.x, size.y, 0);
-        }
-
-        void SetWorldSize(Vector3 value) override {
-            SetSize(value);
         }
     };
 } // namespace PJ

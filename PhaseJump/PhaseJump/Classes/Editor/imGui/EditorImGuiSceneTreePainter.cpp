@@ -35,23 +35,14 @@ void EditorImGuiSceneTreePainter::DrawSceneTree(
         ImGui::SameLine();
 
         if (ImGui::SmallButton("i")) {
-            system.inspectNodeModel = NEW<EditorWorldSystem::InspectNodeModel>(&node);
-
-            for (auto& component : node.Components()) {
-                auto plan = component->MakeUIPlan(UIContextId::Inspector);
-                if (plan) {
-                    SomeWorldComponent* id = component.get();
-                    system.inspectNodeModel->componentUIPlans.insert_or_assign(id, std::move(plan));
-                }
-            }
+            system.inspectNodeModel =
+                NEW<EditorWorldSystem::InspectNodeModel>(SCAST<WorldNode>(node.shared_from_this()));
 
             if (onInspectFunc) {
                 onInspectFunc(node);
             }
 
-            auto& isInspectorWindowVisibleStorage =
-                system.imGuiStorage.ValueStorage<bool>("window.inspector", "isVisible");
-            isInspectorWindowVisibleStorage = true;
+            system.storage.Set<bool>("window.inspector", "isVisible", true);
         }
 
         Tags nameCounts;
@@ -60,7 +51,7 @@ void EditorImGuiSceneTreePainter::DrawSceneTree(
             String name = childNode->name.size() > 0 ? childNode->name : "???";
 
             auto nameCount = nameCounts.SafeValue<int>(name);
-            nameCounts.Insert(name, nameCount + 1);
+            nameCounts.Set(name, nameCount + 1);
 
             if (nameCount > 0) {
                 std::ostringstream ss;

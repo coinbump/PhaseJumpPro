@@ -8,7 +8,7 @@ class TestSteeringScene : public Scene {
 public:
     TestSteeringScene() {}
 
-    void LoadInto(WorldNode& root) {
+    void LoadInto(WorldNode& root) override {
         root.name = "TestSteeringScene";
 
         StandardRandom random;

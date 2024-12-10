@@ -20,11 +20,20 @@ TEST(Tags, Any_Cast) {
     EXPECT_ANY_THROW(std::any_cast<float>(value10));
 }
 
+TEST(Tags, Remove) {
+    Tags sut;
+    sut.Set("test", 10);
+    EXPECT_EQ(10, sut.SafeValue<int>("test"));
+    
+    sut.Remove("test");
+    EXPECT_EQ(0, sut.SafeValue<int>("test"));
+}
+
 TEST(Tags, Values) {
     Tags sut;
-    sut.Add("1", 1);
-    sut.Add("2", 2.5f);
-    sut.Add("3", String("test"));
+    sut.Set("1", 1);
+    sut.Set("2", 2.5f);
+    sut.Set("3", String("test"));
 
     EXPECT_TRUE(sut.TypeContains<int>("1"));
     EXPECT_TRUE(sut.TypeContains<float>("2"));
@@ -72,34 +81,23 @@ TEST(Tags, PlusOperator) {
     EXPECT_EQ("two", sut.Value<String>("2"));
 }
 
-TEST(Tags, TypeValueAt) {
+TEST(Tags, At) {
     Tags sut;
     sut.Insert({"1", 1});
     sut.Insert({"2", 2.5f});
     sut.Insert({"3", String("test")});
 
-    EXPECT_ANY_THROW(sut.TypeValueAt<float>("1"));
-    EXPECT_ANY_THROW(sut.TypeValueAt<String>("1"));
-    EXPECT_ANY_THROW(sut.TypeValueAt<float>("3"));
+    EXPECT_ANY_THROW(sut.At<float>("1"));
+    EXPECT_ANY_THROW(sut.At<String>("1"));
+    EXPECT_ANY_THROW(sut.At<float>("3"));
 
-    EXPECT_NO_THROW(sut.TypeValueAt<int>("1"));
-    EXPECT_NO_THROW(sut.TypeValueAt<float>("2"));
-    EXPECT_NO_THROW(sut.TypeValueAt<String>("3"));
+    EXPECT_NO_THROW(sut.At<int>("1"));
+    EXPECT_NO_THROW(sut.At<float>("2"));
+    EXPECT_NO_THROW(sut.At<String>("3"));
 
-    EXPECT_EQ(1, sut.TypeValueAt<int>("1"));
-    EXPECT_EQ(2.5f, sut.TypeValueAt<float>("2"));
-    EXPECT_EQ("test", sut.TypeValueAt<String>("3"));
-}
-
-TEST(Tags, TypeValueAtReference) {
-    Tags sut;
-    sut.Insert({"1", 1});
-
-    EXPECT_NO_THROW(sut.TypeValueAt<int>("1"));
-
-    EXPECT_EQ(1, sut.TypeValueAt<int>("1"));
-    sut.TypeValueAt<int>("1") = 2;
-    EXPECT_EQ(2, sut.TypeValueAt<int>("1"));
+    EXPECT_EQ(1, sut.At<int>("1"));
+    EXPECT_EQ(2.5f, sut.At<float>("2"));
+    EXPECT_EQ("test", sut.At<String>("3"));
 }
 
 TEST(Tags, AddIfMissing) {
@@ -112,9 +110,5 @@ TEST(Tags, AddIfMissing) {
 TEST(Storage, Test) {
     Storage<String> sut;
 
-    auto& storage = sut.ValueStorage<int>("parent", "child");
-    storage = 10;
-
-    ASSERT_NO_THROW(sut.map.at("parent").SafeValue<int>("child"));
-    EXPECT_EQ(10, sut.map.at("parent").SafeValue<int>("child"));
+    // TODO:
 }

@@ -54,17 +54,21 @@ std::optional<RenderResult> RenderWorldSystem::Render(RenderContextModel& _conte
 
         // FUTURE: can this be done on parallel threads?
         for (auto& node : _contextModel.nodes) {
-            List<SP<SomeRenderer>> renderers;
+            List<SomeRenderer*> renderers;
+            node->Signal(SignalId::RenderPrepare, Event{});
             node->CollectTypeComponents<SomeRenderer>(renderers);
             for (auto& renderer : renderers) {
                 GUARD_CONTINUE(renderer->IsEnabled())
 
                 /// Most renderers produce render models, for a list of draw calls to be sent to the
                 /// GPU by the graphics engine
-                auto thisRenderModels = renderer->MakeRenderModels();
+                auto thisRenderModels = renderer->RenderModels();
                 auto thisRenderModelCount = thisRenderModels.size();
 
                 GUARD_CONTINUE(thisRenderModelCount > 0)
+
+                // Don't add junk models, it can break the render
+                GUARD_CONTINUE(thisRenderModels[0].IsValid())
 
                 AddRange(models, thisRenderModels);
             }
@@ -132,7 +136,7 @@ std::optional<RenderResult> RenderWorldSystem::Render(RenderContextModel& _conte
     model.phaseModel.SetPhase(RenderPhase::PostPresent);
 
     RenderResult result;
-    result.tags.Insert(RenderStatId::DrawCount, drawCount);
+    result.tags.Set(RenderStatId::DrawCount, drawCount);
     return result;
 }
 

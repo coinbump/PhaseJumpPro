@@ -37,6 +37,7 @@ namespace PJ {
 
         ScrollBarControl(Axis2D axis = Axis2D::X);
 
+        // TODO: support ValueBinding
         PublishedValue<float>& Value();
 
         auto& SetEndCapSize(float value) {

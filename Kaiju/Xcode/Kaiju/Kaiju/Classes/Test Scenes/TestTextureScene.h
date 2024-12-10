@@ -6,23 +6,6 @@
 using namespace std;
 using namespace PJ;
 
-// class TestStateHandler : public SomeStateHandler<ButtonControl::StateType> {
-//     using StateType = ButtonControlStateType;
-//
-//     void OnStateChange(StateType state) override {
-//         GUARD(owner)
-//
-//         switch (state) {
-//             case StateType::Press:
-//                 owner->transform.SetScale(Vector2::Uniform(3.0f));
-//                 break;
-//             default:
-//                 owner->transform.SetScale(Vector2::Uniform(1.0f));
-//                 break;
-//         }
-//     }
-// };
-
 namespace PJ {}
 
 #if FALSE
@@ -123,15 +106,14 @@ public:
                 if (textureAtlas && !IsEmpty(textureAtlas->Textures())) {
                     WorldNode& textNode = world.And();
                     textNode
-                        .With<TextRenderer>(
-                            font,
-                            "This is a test of centered text\nAnd then we have more text on the "
-                            "next line",
-                            Vector2(400, 400)
-                        )
+                        .With<TextRenderer>(TextRenderer::Config{
+                            .font = font,
+                            .text = "This is a test of centered text\nAnd then we have more text "
+                                    "on the next line",
+                            .worldSize = { 400, 400 } })
                         .SetLineAlignFunc(AlignFuncs::center)
                         .SetTextColor(Color::blue)
-                        .SizeToFit();
+                        .SizeToFit({ 400, 400 });
                     textNode.transform.SetLocalPosition(Vector3(-100 + 20 * i, -100 + 20 * i, 0));
                     textNode.With<CycleHueEffect>().Enable(true);
 
@@ -212,24 +194,25 @@ public:
 
 #endif
             QB(root)
-                .Slider(
-                    "My slider", { 500, 33 },
-                    [](float value) {
-                        // Receive slider value here
-                        std::cout << "Slider: " << value << std::endl;
-                    }
+                .And("Horizontal Slider")
+                .Slider({ .worldSize = { 500, 33 } }
+                        //                    [](float value) {
+                        //                        // Receive slider value here
+                        //                        std::cout << "Slider: " << value << std::endl;
+                        //                    }
                 )
-                .SetLocalPosition({ 0, -200, 0 });
+                .SetLocalPosition({ -200, -200, 0 });
 
             QB(root)
+                .And("Vertical Slider")
                 .Slider(
-                    "Vertical slider", { 33, 500 },
-                    [](float value) {
-                        // Receive slider value here
-                        std::cout << "VerticalSlider: " << value << std::endl;
-                    }
+                    { .worldSize = { 33, 500 }, .axis = Axis2D::Y }
+                    //                    [](float value) {
+                    //                        // Receive slider value here
+                    //                        std::cout << "VerticalSlider: " << value << std::endl;
+                    //                    }
                 )
-                .SetLocalPosition({ -300, 000, 0 });
+                .SetLocalPosition({ -200, -200, 0 });
         }
 #endif
 
@@ -304,7 +287,7 @@ public:
             auto maxTextureTrueSize = textureAtlas->MaxTextureTrueSize();
 //            auto frameRenderer = MAKE<SimpleGradientRenderer>(Color::red, Color::blue, Vector2(maxTextureTrueSize.x, maxTextureTrueSize.y));
 
-            auto frameRenderer = MAKE<ColorRenderer>(Color::red, Vector2(maxTextureTrueSize.x, maxTextureTrueSize.y));
+           auto frameRenderer = MAKE<ColorRenderer>(ColorRenderer::Config{.color = Color::red, .worldSize = Vector2(maxTextureTrueSize.x, maxTextureTrueSize.y)});
 
             frameRenderer->model.SetBuildMeshFunc([](RendererModel const& model) {
                 QuadFrameMeshBuilder meshBuilder(model.WorldSize(), Vector2(3, 3));

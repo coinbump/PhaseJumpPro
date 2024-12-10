@@ -3,7 +3,7 @@
 /*
  RATING: 5 stars
  Simple protocol
- CODE REVIEW: 8/25/24
+ CODE REVIEW: 12/1/24
  */
 namespace PJ {
     template <class StateType>

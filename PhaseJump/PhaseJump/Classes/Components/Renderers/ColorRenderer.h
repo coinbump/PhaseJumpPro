@@ -73,8 +73,17 @@ namespace PJ {
         using Base = SomeRenderer;
         using This = ColorRenderer;
 
+        struct Config {
+            Color color;
+            Vector2 worldSize;
+            SP<RenderMaterial> material;
+        };
+
+        ColorRenderer(Config config);
         ColorRenderer(Color color, Vector2 worldSize);
-        ColorRenderer(SP<RenderMaterial> material, Color color, Vector2 worldSize);
+
+        /// Disable dynamic blend mode changes
+        void EnableBlend(bool isFeatureEnabled);
 
         static SP<RenderMaterial> MakeMaterial(RenderOpacityType opacityType);
 

@@ -78,7 +78,10 @@ namespace PJ {
         SP<SomeRenderContext> MakeTextureBuffer() override;
 
     protected:
-        void GoInternal() override;
+        // MARK: Base
+
+        void OnGo() override;
+
         void ScanGLExtensions();
     };
 } // namespace PJ

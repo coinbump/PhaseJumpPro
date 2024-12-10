@@ -6,6 +6,23 @@
 using namespace std;
 using namespace PJ;
 
+RenderMaterial::RenderMaterial(Config config) {
+    if (config.texture) {
+        SetTexture(config.texture);
+    }
+
+    if (!IsEmpty(config.shaderId)) {
+        auto shaderProgram = SomeShaderProgram::registry.find(config.shaderId);
+        GUARD_LOG(
+            shaderProgram != SomeShaderProgram::registry.end(),
+            String("ERROR. Missing shader: ") + config.shaderId
+        )
+        SetShaderProgram(shaderProgram->second);
+    }
+
+    SetFeatureStates(config.features);
+}
+
 bool RenderMaterial::operator==(RenderMaterial const& rhs) const {
     GUARDR(textures.size() == rhs.textures.size(), false)
     GUARDR(

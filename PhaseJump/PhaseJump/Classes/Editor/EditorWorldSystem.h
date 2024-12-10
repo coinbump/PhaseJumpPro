@@ -21,25 +21,11 @@ namespace PJ {
         /// Model for node inspection
         struct InspectNodeModel {
             /// The currently inspected node, if any
-            WorldNode* node{};
+            WP<WorldNode> node;
 
-            /// UI plans for components inside the inspected node
-            UnorderedMap<SomeWorldComponent*, UP<UIPlan>> componentUIPlans;
-
-            /// imGui storage for UI plans
-            ImGuiPlanPainter::Storage imGuiStorage;
-
-            /// Keep inspected components in memory, because ImGui needs them to render the latest
-            /// pass and the world node might remove them
-            WorldNode::ComponentList components;
-
-            InspectNodeModel(WorldNode* node) :
+            InspectNodeModel(SP<WorldNode> node) :
                 node(node) {
                 GUARD(node)
-
-                // TODO: this fixes the character controllers crash, but doesn't
-                // update the inspector when new components are added
-                components = node->Components();
             }
         };
 
@@ -68,8 +54,7 @@ namespace PJ {
         /// UI plan for the current scene
         UP<UIPlan> sceneUIPlan;
 
-        /// imGui storage for UI plans
-        ImGuiPlanPainter::Storage imGuiStorage;
+        PJ::Storage<String> storage;
 
         // MARK:  Actions
 

@@ -98,6 +98,10 @@ namespace PJ {
         RenderModel(RenderMaterial* material) :
             material(material) {}
 
+        bool IsValid() const {
+            return mesh.Vertices().size() > 0;
+        }
+
         VectorList<Vector3> const& Vertices() const {
             return mesh.Vertices();
         }

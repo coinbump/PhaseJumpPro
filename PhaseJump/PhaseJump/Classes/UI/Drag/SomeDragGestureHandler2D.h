@@ -51,7 +51,7 @@ namespace PJ {
         // MARK: SomeDragHandler
 
         void OnDragStart(WorldPosition inputPosition) override {
-            OnDragGestureUpdate({ *this, Update::Type::Start, inputPosition, vec2Zero });
+            OnDragGestureUpdate({ *this, Update::Type::Start, inputPosition, {} });
         }
 
         void OnDragUpdate(WorldPosition inputPosition) override {
@@ -63,7 +63,7 @@ namespace PJ {
         void OnDragEnd() override {
             Base::OnDragEnd();
 
-            OnDragGestureUpdate({ *this, Update::Type::End, vec2Zero, vec2Zero });
+            OnDragGestureUpdate({ *this, Update::Type::End, {}, {} });
         }
 
         // MARK: SomeWorldComponent

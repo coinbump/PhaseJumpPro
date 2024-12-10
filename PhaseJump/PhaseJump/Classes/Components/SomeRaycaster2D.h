@@ -1,15 +1,13 @@
-#ifndef PJSOMERAYCASTER2D_H
-#define PJSOMERAYCASTER2D_H
+#pragma once
 
 #include "SomeRaycaster.h"
 
 // : /23
 namespace PJ {
     struct RaycastHit2D {
-        // TODO: WP?
-        SP<WorldNode> node;
+        WorldNode& node;
 
-        RaycastHit2D(SP<WorldNode> node) :
+        RaycastHit2D(WorldNode& node) :
             node(node) {}
     };
 
@@ -19,5 +17,3 @@ namespace PJ {
         virtual VectorList<RaycastHit2D> Raycast(Vector2 origin, Vector2 direction) = 0;
     };
 } // namespace PJ
-
-#endif

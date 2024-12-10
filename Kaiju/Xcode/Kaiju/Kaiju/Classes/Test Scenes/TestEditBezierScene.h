@@ -14,7 +14,7 @@ public:
 
     TestEditBezierScene() {}
 
-    void LoadInto(WorldNode& root) {
+    void LoadInto(WorldNode& root) override {
         root.name = "TestEditBezierScene";
 
         auto& camera = root.With<OrthoCamera>();

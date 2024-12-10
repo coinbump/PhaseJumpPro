@@ -6,8 +6,8 @@ using namespace PJ;
 
 // TODO: needs unit tests
 void BatchByMaterialRenderProcessor::Process(CameraRenderModel& cameraModel) {
-    // Force the z order for an orthographic camera
-    // FUTURE: will need a different solution for perspective cameras
+    // Force z order based on model order (used by opaque objects to optimize renders by using the
+    // depth buffer)
     float z = 0;
     float zStep = 1.0f / cameraModel.models.size();
     std::for_each(cameraModel.models.begin(), cameraModel.models.end(), [&](RenderModel& model) {
@@ -21,121 +21,187 @@ void BatchByMaterialRenderProcessor::Process(CameraRenderModel& cameraModel) {
             std::cout << value;
         });
 #endif
-
-        // Group render models by material
-        UnorderedMap<String, VectorList<RenderModel*>> modelsByMaterial;
-        for (auto& renderModel : cameraModel.models) {
-            auto modelMaterial = renderModel.Material();
-            GUARD_CONTINUE(modelMaterial)
-            modelsByMaterial[modelMaterial->PropertyId()].push_back(&renderModel);
-        }
-
         VectorList<RenderModel> models;
-        models.reserve(modelsByMaterial.size());
 
-        // Combine render models that have a matching material (doesn't have to be shared)
-        for (auto& materialModels : modelsByMaterial) {
-            auto& modelsInMaterial = materialModels.second;
+        VectorList<RenderModel*> cameraModels;
+        std::transform(
+            cameraModel.models.begin(), cameraModel.models.end(), std::back_inserter(cameraModels),
+            [](auto& model) { return &model; }
+        );
 
-            // Optimize: Skip process if we have nothing to batch
-            if (modelsInMaterial.size() == 1) {
-                models.push_back(*modelsInMaterial[0]);
-                continue;
-            }
+        // Opaque objects are rendered behind blended render models
+        VectorList<RenderModel*> noBlendRenderModels;
+        std::copy_if(
+            cameraModels.begin(), cameraModels.end(), std::back_inserter(noBlendRenderModels),
+            [](auto& model) { return !model->IsFeatureEnabled(RenderFeature::Blend); }
+        );
 
-            // Make sure everything is in world coordinates before we batch
-            for (auto& model : modelsInMaterial) {
-                model->mesh *= model->matrix;
-                model->matrix.LoadIdentity();
-            }
+        // Transparent objects must be above opaque objects
+        // If you want objects to respect Z-ordering, they must have the same blend type
+        VectorList<RenderModel*> blendRenderModels;
+        std::copy_if(
+            cameraModels.begin(), cameraModels.end(), std::back_inserter(blendRenderModels),
+            [](auto& model) { return model->IsFeatureEnabled(RenderFeature::Blend); }
+        );
 
-            size_t vertexCount = 0;
-            size_t trianglesCount = 0;
-            size_t uvsCount = 0;
-            size_t colorsCount = 0;
+        // Process a list of render models
+        auto processModels = [&](VectorList<RenderModel*>& cameraModels) {
+            GUARD(!IsEmpty(cameraModels))
 
-            for (auto& modelP : modelsInMaterial) {
-                auto& model = *modelP;
-                vertexCount += model.Vertices().size();
-                trianglesCount += model.mesh.Triangles().size();
-                uvsCount += model.mesh.UVs().size();
+            String prevPropertyId;
+            std::stack<RenderModel*> modelStack;
 
-                // 1 color per vertex
-                colorsCount += model.Vertices().size();
+            bool isBlended = cameraModels[0]->IsFeatureEnabled(RenderFeature::Blend);
 
-                auto thisColorsCount = model.VertexColors().size();
-                auto thisVertexCount = model.Vertices().size();
-                if (thisColorsCount != thisVertexCount) {
-                    PJ::Log(
-                        "WARNING: colorsCount ", (int)thisColorsCount, " and vertexCount ",
-                        (int)thisVertexCount, " don't match"
-                    );
-                }
-            }
+            // Combine a list of render models
+            auto combineRecent = [&]() {
+                VectorList<RenderModel*> subModels;
 
-            RenderModel renderModel = **materialModels.second.begin();
-            VectorList<Vector3> vertices;
-            vertices.resize(vertexCount);
-            renderModel.mesh.SetVertices(vertices);
-            renderModel.mesh.ModifiableTriangles().resize(trianglesCount);
+                while (!IsEmpty(modelStack)) {
+                    auto top = modelStack.top();
+                    auto topPropertyId = top->Material()->PropertyId();
 
-            VectorList<Vector2> uvs;
-            uvs.resize(uvsCount);
-            renderModel.mesh.SetUVs(uvs);
-            renderModel.ModifiableVertexColors().resize(colorsCount);
-
-            size_t vertexIndex = 0;
-            size_t triangleIndex = 0;
-            size_t uvIndex = 0;
-            size_t colorIndex = 0;
-
-            for (auto& modelP : modelsInMaterial) {
-                auto& model = *modelP;
-                auto modelVertexCount = model.Vertices().size();
-                auto modelTriangleCount = model.mesh.Triangles().size();
-                auto modelUVCount = model.UVs().size();
-                auto modelColorCount = model.VertexColors().size();
-
-                // Force the z order for an orthographic camera
-                // FUTURE: will need a different solution for perspective cameras
-                std::for_each(
-                    model.ModifiableVertices().begin(), model.ModifiableVertices().end(),
-                    [=](Vector3& vertex) { vertex.z = model.z; }
-                );
-
-                std::copy_n(
-                    model.Vertices().cbegin(), modelVertexCount,
-                    renderModel.ModifiableVertices().begin() + vertexIndex
-                );
-                std::copy_n(
-                    model.UVs().cbegin(), modelUVCount, renderModel.mesh.UVs().begin() + uvIndex
-                );
-                std::copy_n(
-                    model.mesh.Triangles().begin(), modelTriangleCount,
-                    renderModel.mesh.ModifiableTriangles().begin() + triangleIndex
-                );
-
-                // Max: 1 color per vertex
-                std::copy_n(
-                    model.VertexColors().begin(), std::min(modelColorCount, modelVertexCount),
-                    renderModel.ModifiableVertexColors().begin() + colorIndex
-                );
-
-                for (int i = 0; i < modelTriangleCount; i++) {
-                    renderModel.mesh.ModifiableTriangles()[triangleIndex + i] += vertexIndex;
+                    if (topPropertyId == prevPropertyId) {
+                        subModels.push_back(top);
+                        modelStack.pop();
+                    } else {
+                        break;
+                    }
                 }
 
-                vertexIndex += modelVertexCount;
-                triangleIndex += modelTriangleCount;
-                uvIndex += modelUVCount;
+                // Blended were inserted in the wrong order, so reverse them
+                if (isBlended) {
+                    std::reverse(subModels.begin(), subModels.end());
+                }
 
-                // 1 color per vertex
-                colorIndex += modelVertexCount;
+                auto combinedSubModel = Combine(subModels);
+                if (combinedSubModel) {
+                    models.push_back(*combinedSubModel);
+                };
+            };
+
+            for (auto& renderModel : cameraModels) {
+                auto modelMaterial = renderModel->Material();
+                GUARD_CONTINUE(modelMaterial)
+
+                String propertyId = modelMaterial->PropertyId();
+                if (prevPropertyId == propertyId || IsEmpty(modelStack)) {
+                    modelStack.push(renderModel);
+                } else {
+                    combineRecent();
+                    modelStack.push(renderModel);
+                }
+                prevPropertyId = propertyId;
             }
-
-            models.push_back(renderModel);
-        }
+            combineRecent();
+        };
+        processModels(noBlendRenderModels);
+        processModels(blendRenderModels);
 
         cameraModel.models = models;
     }
+}
+
+std::optional<RenderModel>
+BatchByMaterialRenderProcessor::Combine(VectorList<RenderModel*>& renderModels) {
+    GUARDR(!IsEmpty(renderModels), {})
+
+    if (!renderModels[0]->IsFeatureEnabled(RenderFeature::Blend)) {
+        for (auto& modelP : renderModels) {
+            auto& model = *modelP;
+            // Force the z order of opaque objects for depth buffer optimization
+            std::for_each(
+                model.ModifiableVertices().begin(), model.ModifiableVertices().end(),
+                [&](Vector3& vertex) { vertex.z = model.z; }
+            );
+        }
+    }
+
+    // Optimize: Skip process if we have nothing to batch
+    if (renderModels.size() == 1) {
+        return *renderModels[0];
+    }
+
+    // Make sure everything is in world coordinates before we batch
+    for (auto& model : renderModels) {
+        model->mesh *= model->matrix;
+        model->matrix.LoadIdentity();
+    }
+
+    size_t vertexCount = 0;
+    size_t trianglesCount = 0;
+    size_t uvsCount = 0;
+    size_t colorsCount = 0;
+
+    for (auto& modelP : renderModels) {
+        auto& model = *modelP;
+        vertexCount += model.Vertices().size();
+        trianglesCount += model.mesh.Triangles().size();
+        uvsCount += model.mesh.UVs().size();
+
+        // 1 color per vertex
+        colorsCount += model.Vertices().size();
+
+        auto thisColorsCount = model.VertexColors().size();
+        auto thisVertexCount = model.Vertices().size();
+        if (thisColorsCount != thisVertexCount) {
+            PJ::Log(
+                "WARNING: colorsCount ", (int)thisColorsCount, " and vertexCount ",
+                (int)thisVertexCount, " don't match"
+            );
+        }
+    }
+
+    RenderModel renderModel = *renderModels[0];
+    VectorList<Vector3> vertices;
+    vertices.resize(vertexCount);
+    renderModel.mesh.SetVertices(vertices);
+    renderModel.mesh.ModifiableTriangles().resize(trianglesCount);
+
+    VectorList<Vector2> uvs;
+    uvs.resize(uvsCount);
+    renderModel.mesh.SetUVs(uvs);
+    renderModel.ModifiableVertexColors().resize(colorsCount);
+
+    size_t vertexIndex = 0;
+    size_t triangleIndex = 0;
+    size_t uvIndex = 0;
+    size_t colorIndex = 0;
+
+    for (auto& modelP : renderModels) {
+        auto& model = *modelP;
+        auto modelVertexCount = model.Vertices().size();
+        auto modelTriangleCount = model.mesh.Triangles().size();
+        auto modelUVCount = model.UVs().size();
+        auto modelColorCount = model.VertexColors().size();
+
+        std::copy_n(
+            model.Vertices().cbegin(), modelVertexCount,
+            renderModel.ModifiableVertices().begin() + vertexIndex
+        );
+        std::copy_n(model.UVs().cbegin(), modelUVCount, renderModel.mesh.UVs().begin() + uvIndex);
+        std::copy_n(
+            model.mesh.Triangles().begin(), modelTriangleCount,
+            renderModel.mesh.ModifiableTriangles().begin() + triangleIndex
+        );
+
+        // Max: 1 color per vertex
+        std::copy_n(
+            model.VertexColors().begin(), std::min(modelColorCount, modelVertexCount),
+            renderModel.ModifiableVertexColors().begin() + colorIndex
+        );
+
+        for (int i = 0; i < modelTriangleCount; i++) {
+            renderModel.mesh.ModifiableTriangles()[triangleIndex + i] += vertexIndex;
+        }
+
+        vertexIndex += modelVertexCount;
+        triangleIndex += modelTriangleCount;
+        uvIndex += modelUVCount;
+
+        // 1 color per vertex
+        colorIndex += modelVertexCount;
+    }
+
+    return renderModel;
 }

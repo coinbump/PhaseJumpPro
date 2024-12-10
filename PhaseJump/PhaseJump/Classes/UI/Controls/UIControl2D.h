@@ -5,7 +5,7 @@
 /*
  RATING: 5 stars
  Tested and works
- CODE REVIEW: 9/22/24
+ CODE REVIEW: 12/1/24
  */
 namespace PJ {
     /// An interactive UI object that accepts inputs from the user and produces
@@ -15,17 +15,17 @@ namespace PJ {
         using Base = View2D;
         using This = UIControl2D;
 
-        using OnControlUpdateFunc = std::function<void(This&)>;
+        using OnControlChangeFunc = std::function<void(This&)>;
 
     protected:
         /// Called when the control's state changes
-        OnControlUpdateFunc onControlUpdateFunc;
+        OnControlChangeFunc onControlChangeFunc;
 
     public:
-        void SetOnControlUpdateFunc(OnControlUpdateFunc value) {
-            onControlUpdateFunc = value;
-            GUARD(onControlUpdateFunc)
-            onControlUpdateFunc(*this);
+        void SetOnControlChangeFunc(OnControlChangeFunc value) {
+            onControlChangeFunc = value;
+            GUARD(onControlChangeFunc)
+            onControlChangeFunc(*this);
         }
 
         // MARK: SomeWorldComponent
@@ -38,6 +38,6 @@ namespace PJ {
         void Awake() override;
 
         /// Called when the control state changes
-        virtual void OnStateChange();
+        virtual void OnControlChange();
     };
 } // namespace PJ

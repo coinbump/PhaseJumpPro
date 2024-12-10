@@ -21,7 +21,7 @@ Emitter::EmitFunc EmitFuncs::MakeSpread2D(int count, Angle angleStep, Angle vary
                 angle += random->Delta(varyAngle.Degrees());
             }
 
-            model.tags.Add(EmitModelTag::Angle, Angle::DegreesAngle(angle));
+            model.tags.Set(EmitModelTag::Angle, Angle::DegreesAngle(angle));
 
             Add(result, model);
         }
@@ -40,7 +40,7 @@ Emitter::EmitFunc EmitFuncs::MakeVaryAngle(int count, Angle angle, Angle varyAng
         for (int i = 0; i < count; i++) {
             EmitModel model;
             float emitAngle = random->VaryFloat(angle.Degrees(), varyAngle.Degrees());
-            model.tags.Add(EmitModelTag::Angle, Angle::DegreesAngle(emitAngle));
+            model.tags.Set(EmitModelTag::Angle, Angle::DegreesAngle(emitAngle));
 
             Add(result, model);
         }
@@ -58,7 +58,7 @@ Emitter::EmitFunc EmitFuncs::AddVaryDirectionVelocity(
         auto result = baseFunc(emitter);
         for (auto& model : result) {
             float emitVelocity = random->VaryFloat(velocity, varyVelocity);
-            model.tags.Add(EmitModelTag::StartDirectionVelocity, emitVelocity);
+            model.tags.Set(EmitModelTag::StartDirectionVelocity, emitVelocity);
         }
 
         return result;

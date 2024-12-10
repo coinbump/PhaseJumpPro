@@ -1,48 +1,39 @@
-#ifndef PJGEOTRANSFORM_H
-#define PJGEOTRANSFORM_H
+#pragma once
 
 #include "Angle.h"
 #include "Vector3.h"
 
-// CODE REVIEW: ?/23
+/*
+ RATING: 5 stars
+ Simple type
+ CODE REVIEW: 11/3/24
+ */
 namespace PJ {
-    /// Geometry transform for a world node
-    /// Currently this is missing support for hierarchical coordinates
+    /// Geometry transform for an object in world space
     struct GeoTransform {
         Vector3 position;
 
-        // FUTURE: evaluate storing quaternion/eulerAngles here if we add 3D
-        // support
+        // FUTURE: evaluate storing quaternion/eulerAngles for 3D support
         Vector3 rotation;
         Vector3 scale;
         Vector3 offset;
 
-        GeoTransform(
-            Vector3 position = Vector3::zero, Vector3 rotation = Vector3::zero,
-            Vector3 scale = Vector3::one
-        ) :
-            position(position),
-            rotation(rotation),
-            scale(scale) {}
+        struct Config {
+            Vector3 position;
+            Vector3 rotation;
+            Vector3 scale{ 1, 1, 1 };
+        };
 
-        // FUTURE: support hierarchical positions
-        Vector3 LocalPosition() const {
-            return position;
-        }
+        GeoTransform(Config const& config) :
+            position(config.position),
+            rotation(config.rotation),
+            scale(config.scale) {}
 
         Vector3 Position() const {
             return position;
         }
 
-        Angle Rotation2D() const {
-            return Angle::DegreesAngle(-rotation.z);
-        }
-
-        void SetRotation2D(Angle angle) {
-            rotation.z = -angle.Degrees();
-        }
-
-        void SetLocalPosition(Vector3 value) {
+        void SetPosition(Vector3 value) {
             position = value;
         }
 
@@ -66,35 +57,32 @@ namespace PJ {
             scale.AxisValue(axis) = value;
         }
 
-        void SetPosition(Vector3 value) {
-            position = value;
-        }
-
         Vector3 Scale() const {
             return scale;
         }
 
         void SetScale(Vector3 value) {
-            this->scale = value;
+            scale = value;
         }
 
-        void SetRotation(Angle rotation) {
-            // TODO: support both z-ordering directions (Geometry::zRotationFactor)
-            this->rotation = Vector3(0, 0, -rotation.Degrees());
-        }
-
-        // TODO: is this correct?
-        Vector3 LocalEulerAngles() const {
+        Vector3 Rotation() const {
             return rotation;
         }
 
-        // TODO: is this correct?
-        void SetLocalEulerAngles(Vector3 value) {
+        Angle Rotation2D() const {
+            return Angle::DegreesAngle(-rotation.z);
+        }
+
+        void SetRotation(Vector3 value) {
             rotation = value;
         }
 
-        static GeoTransform const defaultTransform;
+        void SetRotation(Angle value) {
+            // FUTURE: support alternate z-rotation direction if needed
+            rotation = Vector3(0, 0, -value.Degrees());
+        }
+
+        // FUTURE: Vector3 LocalEulerAngles() const
+        // FUTURE: void SetLocalEulerAngles(Vector3 value)
     };
 } // namespace PJ
-
-#endif

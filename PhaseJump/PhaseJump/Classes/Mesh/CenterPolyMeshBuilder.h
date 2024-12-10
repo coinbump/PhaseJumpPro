@@ -7,7 +7,7 @@
 
 /*
  RATING: 4 stars
- Tested and works (8/25/24). Needs unit tests
+ Tested and works. Needs unit tests
  CODE REVIEW: 8/25/24
  */
 namespace PJ {
@@ -27,14 +27,14 @@ namespace PJ {
         }
 
         size_t SliceCount(Polygon const& poly) const {
-            GUARDR(!IsEmpty(poly.value), 0)
+            GUARDR(!IsEmpty(poly.Value()), 0)
             return poly.Count() - 1;
         }
 
         Mesh BuildMesh() override {
             Mesh result;
 
-            auto poly = CenterPolyBuilder().Build(vec2Zero, worldSize, shape);
+            auto poly = CenterPolyBuilder().Build({}, worldSize, shape);
 
             if (poly.Count() < 2) {
                 return result;
@@ -42,8 +42,8 @@ namespace PJ {
 
             auto vertexCount = MeshVertexCount(poly);
 
-            VectorList<Vector3> vertices(vertexCount, Vector3::zero);
-            VectorList<Vector2> uvs(vertexCount, vec2Zero);
+            VectorList<Vector3> vertices(vertexCount, Vector3{});
+            VectorList<Vector2> uvs(vertexCount, Vector2{});
 
             auto sliceCount = SliceCount(poly);
             auto trianglesCount = sliceCount * 3;
@@ -51,18 +51,18 @@ namespace PJ {
             VectorList<uint32_t> triangles(trianglesCount, 0);
 
             // Center vertex
-            vertices[0] = Vector3::zero;
+            vertices[0] = {};
             uvs[0] = Vector2(0.5f, 0.5f);
 
             Polygon polyWithCenter;
-            Add(polyWithCenter.value, vertices[0]);
-            AddRange(polyWithCenter.value, poly.value);
+            polyWithCenter.Add(vertices[0]);
+            polyWithCenter.Add(poly.Value());
             auto polygonMin = polyWithCenter.Min();
             auto polygonSize = polyWithCenter.Size();
 
             // Edge vertices
             int vi = 1;
-            for (auto& vertex : poly.value) {
+            for (auto& vertex : poly.Value()) {
                 vertices[vi] = vertex;
                 uvs[vi] = Vector2(
                     (vertex.x - polygonMin.x) / polygonSize.x,

@@ -29,8 +29,10 @@ namespace PJ {
             renderer(renderer),
             path(path) {}
 
-        void GoInternal() override {
-            Base::GoInternal();
+        // MARK: Base
+
+        void OnGo() override {
+            Base::OnGo();
 
             SDL_Texture* result = IMG_LoadTexture(renderer, path.string().c_str());
             if (result) {

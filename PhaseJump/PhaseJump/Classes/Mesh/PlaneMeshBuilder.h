@@ -7,7 +7,7 @@
 
 /*
  RATING: 4 stars
- Tested and works (8/25/24). Needs unit tests (Has unit tests in C# equivalent)
+ Tested and works. Needs unit tests (Has unit tests in C# equivalent)
  CODE REVIEW: 8/25/24
  */
 namespace PJ {
@@ -31,7 +31,7 @@ namespace PJ {
         PlaneMeshBuilder() {}
 
         PlaneMeshBuilder(
-            Vector2 worldSize = vec2One, Vector2Int meshSize = Vector2Int::three,
+            Vector2 worldSize = Vector2::one, Vector2Int meshSize = Vector2Int::three,
             Axis faceAxis = Axis::Z
         ) :
             meshSize(meshSize),
@@ -45,13 +45,13 @@ namespace PJ {
             int vertexZCount = meshSize.y + 1;
             int verticesSize = vertexXCount * vertexZCount;
 
-            VectorList<Vector3> vertices(verticesSize, Vector3::zero);
+            VectorList<Vector3> vertices(verticesSize, Vector3{});
 
             auto cellCount = meshSize.x * meshSize.y;
             auto trianglesSize = cellCount * 6;
             VectorList<uint32_t> triangles(trianglesSize, 0);
             auto uvSize = verticesSize;
-            VectorList<Vector2> uvs(uvSize, vec2Zero);
+            VectorList<Vector2> uvs(uvSize, Vector2{});
 
             for (size_t z = 0, i = 0; z < vertexZCount; z++) {
                 for (size_t x = 0; x < vertexXCount; x++) {

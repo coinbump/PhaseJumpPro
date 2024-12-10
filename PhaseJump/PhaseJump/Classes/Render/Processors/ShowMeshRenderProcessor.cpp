@@ -11,9 +11,7 @@ using namespace std;
 using namespace PJ;
 
 void ShowMeshRenderProcessor::Process(CameraRenderModel& cameraModel) {
-    auto triMaterial = ColorRenderer::MakeMaterial(
-        color.IsOpaque() ? RenderOpacityType::Opaque : RenderOpacityType::Blend
-    );
+    auto triMaterial = ColorRenderer::MakeMaterial(RenderOpacityTypeFor(color));
     cameraModel.materials.push_back(triMaterial);
 
     Mesh finalMesh;
@@ -41,11 +39,12 @@ void ShowMeshRenderProcessor::Process(CameraRenderModel& cameraModel) {
 
     // FUTURE: we can optimize this by building only 1 render model
     // FUTURE: we can probably speed this up with a shader
-    auto renderer = MAKE<ColorRenderer>(triMaterial, color, vec2Zero);
+    auto renderer =
+        MAKE<ColorRenderer>(ColorRenderer::Config{ .material = triMaterial, .color = color });
     renderer->model.SetBuildMeshFunc([&](RendererModel const& model) { return finalMesh; });
     cameraModel.renderers.push_back(renderer);
 
-    auto thisRenderModels = renderer->MakeRenderModels();
+    auto thisRenderModels = renderer->RenderModels();
     AddRange(renderModels, thisRenderModels);
 
     // Replace the existing models and only show the mesh

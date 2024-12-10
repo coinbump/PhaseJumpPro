@@ -2,7 +2,6 @@
 
 #include "DragModel.h"
 #include "SomeCollider2D.h"
-#include "SomeEffect.h"
 #include "WorldComponent.h"
 
 /*

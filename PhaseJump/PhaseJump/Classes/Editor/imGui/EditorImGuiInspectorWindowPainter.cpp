@@ -9,16 +9,15 @@ using namespace PJ;
 EditorImGuiInspectorWindowPainter::EditorImGuiInspectorWindowPainter(EditorWorldSystem& _system) :
     system(_system) {
     drawFunc = [this](auto& painter) {
-        auto& isInspectorWindowConfiguredStorage =
-            system.imGuiStorage.ValueStorage<bool>("window.inspector", "isConfigured");
-        auto& isInspectorWindowVisibleStorage =
-            system.imGuiStorage.ValueStorage<bool>("window.inspector", "isVisible");
+        bool isInspectorWindowConfigured =
+            system.storage.Value<bool>("window.inspector", "isConfigured");
+        bool isInspectorWindowVisible = system.storage.Value<bool>("window.inspector", "isVisible");
 
-        if (!isInspectorWindowConfiguredStorage) {
-            isInspectorWindowConfiguredStorage = true;
+        if (!isInspectorWindowConfigured) {
+            system.storage.Set("window.inspector", "isConfigured", true);
 
             // Show inspector for scene UI
-            isInspectorWindowVisibleStorage = true;
+            isInspectorWindowVisible = true;
 
             ImGuiIO& io = ImGui::GetIO();
 
@@ -26,17 +25,18 @@ EditorImGuiInspectorWindowPainter::EditorImGuiInspectorWindowPainter(EditorWorld
             ImGui::SetNextWindowPos(ImVec2(io.DisplaySize.x - 320, 20));
         }
 
-        if (isInspectorWindowVisibleStorage) {
-            ImGui::Begin("Inspector", &isInspectorWindowVisibleStorage);
+        if (isInspectorWindowVisible) {
+            ImGui::Begin("Inspector", &isInspectorWindowVisible);
+            system.storage.Set("window.inspector", "isVisible", isInspectorWindowVisible);
 
             if (system.sceneUIPlan) {
                 if (ImGui::CollapsingHeader("Scene", ImGuiTreeNodeFlags_DefaultOpen)) {
-                    ImGuiPlanPainter(*system.sceneUIPlan, system.imGuiStorage).Paint();
+                    ImGuiPlanPainter(*system.sceneUIPlan).Paint();
                 }
             }
 
-            if (system.inspectNodeModel && system.inspectNodeModel->node) {
-                auto inspectNode = system.inspectNodeModel->node;
+            if (system.inspectNodeModel && !system.inspectNodeModel->node.expired()) {
+                auto inspectNode = system.inspectNodeModel->node.lock();
                 auto& node = *inspectNode;
 
                 auto nodeName = IsEmpty(node.name) ? "Node" : node.name.c_str();
@@ -64,37 +64,31 @@ EditorImGuiInspectorWindowPainter::EditorImGuiInspectorWindowPainter(EditorWorld
                          )
                 );
 
-                ImGuiPlanPainter(uiPlan, system.inspectNodeModel->imGuiStorage).Paint();
+                ImGuiPlanPainter(uiPlan).Paint();
 
                 // FUTURE: add 3D support if needed
-                auto& rotationStorage =
-                    system.imGuiStorage.ValueStorage<float>("inspect", "rotation2D");
-                rotationStorage = -node.transform.Rotation().z;
-                if (ImGui::SliderFloat("Rotation", &rotationStorage, 0, 360.0f)) {
-                    node.transform.SetRotation({ 0, 0, -rotationStorage });
+                float rotation = -node.transform.Rotation().z;
+                if (ImGui::SliderFloat("Rotation", &rotation, 0, 360.0f)) {
+                    node.transform.SetRotation({ 0, 0, -rotation });
                 }
 
                 // FUTURE: add 3D support if needed
-                auto& scaleUniformStorage =
-                    system.imGuiStorage.ValueStorage<float>("inspect", "scale2D.uniform");
-                scaleUniformStorage = node.transform.Scale().x;
-                if (ImGui::SliderFloat("Scale", &scaleUniformStorage, 0.5f, 5.0f)) {
-                    node.transform.SetScale({ scaleUniformStorage, scaleUniformStorage, 1 });
+                float scaleUniform = node.transform.Scale().x;
+                if (ImGui::SliderFloat("Scale", &scaleUniform, 0.5f, 5.0f)) {
+                    node.transform.SetScale({ scaleUniform, scaleUniform, 1 });
                 }
 
                 ImGui::Text("Components");
                 for (auto& component : inspectNode->Components()) {
-                    SomeWorldComponent* id = component.get();
                     auto name = component->Name();
                     GUARD_CONTINUE(!IsEmpty(name))
 
-                    try {
-                        auto& uiPlan = system.inspectNodeModel->componentUIPlans.at(id);
+                    auto uiPlan = component->MakeUIPlan(UIContextId::Inspector);
+                    if (uiPlan) {
                         if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
-                            ImGuiPlanPainter(*uiPlan.get(), system.inspectNodeModel->imGuiStorage)
-                                .Paint();
+                            ImGuiPlanPainter(*uiPlan.get()).Paint();
                         }
-                    } catch (...) {
+                    } else {
                         ImGui::Text("%s", component->Name().c_str());
                     }
                 }

@@ -1,42 +1,213 @@
 #pragma once
 
-#include "PointerClickUIEvent.h"
+#include "ObservedValue.h"
 #include "Rect.h"
-#include "UIWorldSystem.h"
+#include "SomeViewLayout.h"
 #include "WorldComponent.h"
 #include "WorldSizeable.h"
 #include <functional>
 #include <optional>
 
-// CODE REVIEW: ?/23
+/*
+ RATING: 5 stars
+ Has unit tests
+ CODE REVIEW: 11/17/24
+ */
 namespace PJ {
-    // TODO: add ResolvedView methods
+    /// Identifiers of common UI constraints
+    namespace UIConstraintId {
+        // Type: float
+        auto constexpr FixedWidth = "fixed.width";
+        auto constexpr FixedHeight = "fixed.height";
+        auto constexpr MaxWidth = "max.width";
+        auto constexpr MaxHeight = "max.height";
+        auto constexpr PositionX = "pos.x";
+        auto constexpr PositionY = "pos.y";
+        auto constexpr OffsetX = "offset.x";
+        auto constexpr OffsetY = "offset.y";
+
+        // Type: bool
+        auto constexpr IsIdealWidth = "isIntrinsic.width";
+        auto constexpr IsIdealHeight = "isIntrinsic.height";
+    } // namespace UIConstraintId
+
+    /// Handles logic and layout for a reading-layout oriented node
+    /// Example: windows, controls, buttons
     class View2D : public WorldComponent<>, public WorldSizeable {
     public:
-        using OptionalFloat = std::optional<float>;
-        using IntrinsicLengthFunc = std::function<OptionalFloat(View2D&)>;
-        using ProposedLengthFunc = std::function<OptionalFloat(View2D&, Vector2)>;
+        using Base = WorldComponent<>;
+        using This = View2D;
+
+        using IdealSizeFunc = std::function<ViewSizeProposal(This&, ViewSizeProposal)>;
+        using BuildViewFunc = std::function<void(View2D&)>;
 
     protected:
-        // Views can have independent intrinsic sizes
-        // Example: intrinsicWidth is null, but intrinsicHeight is 10
-        IntrinsicLengthFunc intrinsicWidthFunc;
-        IntrinsicLengthFunc intrinsicHeightFunc;
-
         Rect frame;
 
+        /// If true, the view will layout its subviews on demand
         bool needsLayout = true;
 
+        bool needsRebuild{};
+
+        /// Returns the intrinsic size of the view
+        IdealSizeFunc idealSizeFunc;
+
+        /// Layout for the view
+        UP<SomeViewLayout> layout;
+
+        /// @return Returns a list of view proxies of subviews for layout
+        VectorList<ViewProxy> ChildViewProxies() const;
+
+        /// Stores UI constraints, identifiers are defined in UIConstraintId
+        Tags constraints;
+
+        /// Environment variables (found by walking from child to root)
+        Tags environment;
+
+        ObservedValue<bool> isHovering{ false };
+
     public:
-        virtual OptionalFloat IntrinsicWidth() {
-            GUARDR(intrinsicWidthFunc, {})
-            return intrinsicWidthFunc(*this);
+        /// Used to rebuild this view if the content changes
+        BuildViewFunc buildViewFunc;
+
+        View2D();
+
+        void SetNeedsRebuild();
+        void RebuildIfNeeded();
+        virtual void Rebuild();
+
+        template <class Type>
+        Type EnvironmentValue(String id, Type defaultValue = {}) const {
+            try {
+                auto value = environment.At<Type>(id);
+                return value;
+            } catch (...) {
+                auto parentView = ParentView();
+                if (parentView) {
+                    return parentView->EnvironmentValue<Type>(id);
+                }
+            }
+
+            return defaultValue;
         }
 
-        virtual OptionalFloat IntrinsicHeight() {
-            GUARDR(intrinsicHeightFunc, {})
-            return intrinsicHeightFunc(*this);
+        template <class Type>
+        void SetEnvironmentValue(String id, Type value) {
+            environment.Set(id, value);
+
+            // Don't rebuild here. We might be in the render loop when editing environment values
+            // from imGui
+            SetNeedsRebuild();
         }
+
+        SomeViewLayout* Layout() const {
+            return layout.get();
+        }
+
+        // MARK: Hover
+
+        bool IsHovering() const {
+            return isHovering;
+        }
+
+        virtual void SetIsHovering(bool value) {
+            isHovering = value;
+        }
+
+        /// @return Returns the intrinsic size (if any) for the view
+        virtual ViewSizeProposal IdealSize(ViewSizeProposal proposal) {
+            GUARDR(idealSizeFunc, {})
+            return idealSizeFunc(*this, proposal);
+        }
+
+        void SetIdealSizeFunc(IdealSizeFunc value) {
+            idealSizeFunc = value;
+            SetNeedsLayout();
+        }
+
+        Rect WithFrameConstraints(Rect frame) const;
+        Vector2 WithPositionConstraints(Vector2 origin) const;
+        Vector2 WithSizeConstraints(Vector2 size) const;
+
+        void SetOffset(std::optional<float> x, std::optional<float> y) {
+            constraints.SetOrRemove(UIConstraintId::OffsetX, x);
+            constraints.SetOrRemove(UIConstraintId::OffsetY, y);
+
+            SetNeedsLayout();
+        }
+
+        void SetPosition(std::optional<float> x, std::optional<float> y) {
+            constraints.SetOrRemove(UIConstraintId::PositionX, x);
+            constraints.SetOrRemove(UIConstraintId::PositionY, y);
+
+            SetNeedsLayout();
+        }
+
+        bool IsIdealWidth() const {
+            return constraints.SafeValue<bool>(UIConstraintId::IsIdealWidth);
+        }
+
+        bool IsIdealHeight() const {
+            return constraints.SafeValue<bool>(UIConstraintId::IsIdealHeight);
+        }
+
+        void SetIsIdealSize(bool isX, bool isY) {
+            constraints.Set(UIConstraintId::IsIdealWidth, isX);
+            constraints.Set(UIConstraintId::IsIdealHeight, isY);
+
+            SetNeedsLayout();
+        }
+
+        std::optional<float> FixedWidth() const {
+            return constraints.Value<float>(UIConstraintId::FixedWidth);
+        }
+
+        std::optional<float> FixedHeight() const {
+            return constraints.Value<float>(UIConstraintId::FixedHeight);
+        }
+
+        void SetFixedSize(std::optional<float> x, std::optional<float> y) {
+            constraints.SetOrRemove(UIConstraintId::FixedWidth, x);
+            constraints.SetOrRemove(UIConstraintId::FixedHeight, y);
+
+            SetNeedsLayout();
+        }
+
+        std::optional<float> MaxWidth() const {
+            return constraints.Value<float>(UIConstraintId::MaxWidth);
+        }
+
+        std::optional<float> MaxHeight() const {
+            return constraints.Value<float>(UIConstraintId::MaxHeight);
+        }
+
+        void SetMaxSize(std::optional<float> x, std::optional<float> y) {
+            constraints.SetOrRemove(UIConstraintId::MaxWidth, x);
+            constraints.SetOrRemove(UIConstraintId::MaxHeight, y);
+
+            SetNeedsLayout();
+        }
+
+        /// @return Returns true if the view needs layout (only valid for root view)
+        bool NeedsLayout() const {
+            return RootView()->needsLayout;
+        }
+
+        /// Sets a flag to force the view to rebuild its layout
+        void SetNeedsLayout();
+
+        /// Rebuilds the view layout if needed
+        void LayoutIfNeeded();
+
+        /// Applies the layout manually
+        /// Preferred: use `LayoutIfNeeded` instead
+        void ApplyLayout();
+
+        /// Sets the layout and applies it
+        void SetLayout(UP<SomeViewLayout>& value);
+
+        /// Used internally for view layouts
+        virtual ViewProxy MakeViewProxy();
 
         // MARK: - Bounds
 
@@ -50,13 +221,15 @@ namespace PJ {
             SetFrame({ frame.origin, { value.x, value.y } });
         }
 
-        /// Local bounds (origin is always zero)
+        /// @return Returns local bounds (origin is zero)
         Rect Bounds() const;
 
+        /// @return Returns the 2D size of this view
         Vector2 WorldSize2D() const {
             return Frame().size;
         }
 
+        /// Sets the 2D size of this view (equivalent to SetFrameSize)
         void SetWorldSize2D(Vector2 value);
 
         // MARK: WorldSizeable
@@ -75,70 +248,60 @@ namespace PJ {
             return "View2D";
         }
 
+        // MARK: Internal
+
+        /// Called before layout is applied (internal use only)
+        void StartLayout();
+
     protected:
+        /// Called when the frame changes
         virtual void OnFrameChange();
+
+        /// Resizes sibling components to match the size of the view
         virtual void UpdateFrameComponents();
-
-    public:
-        virtual std::optional<Rect> ParentBounds();
-
-        // MARK: - Layout
-
-        SP<View2D> ParentView() const;
-        SP<View2D> FirstChildView() const;
 
         /// Called when the view size changes
         virtual void OnViewSizeChange();
 
-        VectorList<SP<View2D>> ChildViews() const;
+    public:
+        /// @return Returns the bounds of the parent view, if any
+        virtual std::optional<Rect> ParentBounds();
 
-        ProposedLengthFunc proposeWidthWithoutConstraintsFunc;
-        ProposedLengthFunc proposeWidthWithConstraintsFunc;
-        ProposedLengthFunc proposeHeightWithoutConstraintsFuncs;
-        ProposedLengthFunc proposeHeightWithConstraintsFunc;
+        /// @return Returns the parent view, if any
+        View2D* ParentView() const;
 
-        virtual OptionalFloat ProposedWidthWithoutConstraints(Vector2 layoutSize) {
-            GUARDR(proposeWidthWithoutConstraintsFunc, {})
-            return proposeWidthWithoutConstraintsFunc(*this, layoutSize);
+        /// @return Returns the root view
+        View2D* RootView() const;
+
+        /// @return Returns true if this view is the root view
+        bool IsRoot() const {
+            return nullptr == ParentView();
         }
 
-        virtual OptionalFloat ProposedWidthWithConstraints(Vector2 layoutSize) {
-            GUARDR(proposeWidthWithConstraintsFunc, {})
-            return proposeWidthWithConstraintsFunc(*this, layoutSize);
-        }
+        /// @return Returns the first subview
+        View2D* FirstChildView() const;
 
-        virtual OptionalFloat ProposedHeightWithoutConstraints(Vector2 layoutSize) {
-            GUARDR(proposeHeightWithoutConstraintsFuncs, {})
-            return proposeHeightWithoutConstraintsFuncs(*this, layoutSize);
-        }
+        /// @return Returns all subviews
+        VectorList<View2D*> ChildViews() const;
 
-        virtual OptionalFloat ProposedHeightWithConstraints(Vector2 layoutSize) {
-            GUARDR(proposeHeightWithConstraintsFunc, {})
-            return proposeHeightWithConstraintsFunc(*this, layoutSize);
-        }
+        /// @return Returns the top-left of this view in world coordinates
+        Vector3 TopLeftWorldPosition() const;
 
-        Vector3 TopLeftWorldPosition() {
-            Vector3 worldPos = LocalToWorld(Vector3::zero);
+        /// @return returns true if the view position is inside this view's frame
+        /// View position is in local reading coordinates
+        bool TestViewPositionHit(Vector2 viewPosition) const;
 
-            Vector3 topLeft(
-                worldPos.x + (WorldSize().x / 2.0f) * vecLeft,
-                worldPos.y + (WorldSize().y / 2.0f) * vecUp, worldPos.z
-            );
-            return topLeft;
-        }
-
-        bool IsViewPositionInside(Vector3 viewPosition) {
-            GUARDR(viewPosition.x >= 0 && viewPosition.y >= 0, false)
-            GUARDR(viewPosition.x < frame.size.x && viewPosition.y < frame.size.y, false)
-
-            return true;
-        }
+        Vector2 ToViewPosition(ViewPoint viewPoint) const;
+        Vector3 ViewToWorldPosition(Vector2 viewPosition) const;
+        Vector3 ViewToLocalPosition(Vector2 viewPosition) const;
+        Vector2 WorldToViewPosition(Vector3 worldPosition) const;
+        Vector2 LocalToViewPosition(Vector3 localPosition) const;
+        Vector3 TopLeftChildLocalPosition(Rect childFrame) const;
+        Vector3 ChildLocalPosition(Rect childFrame) const;
 
     protected:
-        virtual void _ApplyLayout(Vector2 layoutSize) {}
-
         // MARK: SomeComponent
 
-        void Awake() override;
+        void Start() override;
     };
 } // namespace PJ

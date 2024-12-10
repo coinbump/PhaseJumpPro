@@ -32,11 +32,11 @@ VectorList<RaycastHit2D> SimpleRaycaster2D::Raycast(Vector2 origin, Vector2 dire
     // FUTURE: find more optimal raycast solutions as needed
     auto root = world->root;
 
-    WorldNode::NodeList graph;
-    CollectBreadthFirstTree(root, graph);
+    VectorList<WorldNode*> graph;
+    CollectBreadthFirstTree(root.get(), graph);
 
     for (auto& node : graph) {
-        auto worldNode = SCAST<WorldNode>(node);
+        auto worldNode = node;
         auto colliders = worldNode->GetComponents<SomeCollider2D>();
         GUARD_CONTINUE(!IsEmpty(colliders))
 
@@ -44,7 +44,7 @@ VectorList<RaycastHit2D> SimpleRaycaster2D::Raycast(Vector2 origin, Vector2 dire
         auto nodeWorldPosition = node->transform.WorldPosition();
 
         for (auto& collider : colliders) {
-            auto polyCollider = As<PolygonCollider2D>(collider.get());
+            auto polyCollider = As<PolygonCollider2D>(collider);
             if (polyCollider) {
                 auto polygon = polyCollider->poly;
 
@@ -58,16 +58,16 @@ VectorList<RaycastHit2D> SimpleRaycaster2D::Raycast(Vector2 origin, Vector2 dire
                 if (polygon.TestHit(origin)) {
                     // cout << "Log: Test Poly HIT\n";
 
-                    result.push_back(worldNode);
+                    result.push_back(*worldNode);
                 }
                 continue;
             }
 
             // TODO: add unit tests
-            auto circleCollider = As<CircleCollider2D>(collider.get());
+            auto circleCollider = As<CircleCollider2D>(collider);
             if (circleCollider) {
                 if (circleCollider->TestHit(origin - nodeWorldPosition)) {
-                    result.push_back(worldNode);
+                    result.push_back(*worldNode);
                 }
             }
         }

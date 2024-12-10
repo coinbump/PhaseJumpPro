@@ -5,7 +5,7 @@
 
 /*
  RATING: 5 stars
- Tested and works (8/25/24)
+ Tested and works
  CODE REVIEW: 8/25/24
  */
 namespace PJ {

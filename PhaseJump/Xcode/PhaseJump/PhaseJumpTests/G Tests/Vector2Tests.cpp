@@ -129,8 +129,8 @@ TEST(Vector2, AxisValue) {
 
     EXPECT_EQ(1, sut.AxisValue(Axis2D::X));
     EXPECT_EQ(3, sut.AxisValue(Axis2D::Y));
-    EXPECT_EQ(3, sut.AxisValueReverse(Axis2D::X));
-    EXPECT_EQ(1, sut.AxisValueReverse(Axis2D::Y));
+    EXPECT_EQ(3, sut.AxisValueOrthogonal(Axis2D::X));
+    EXPECT_EQ(1, sut.AxisValueOrthogonal(Axis2D::Y));
 }
 
 TEST(Vector2, AccessOutOfRange) {

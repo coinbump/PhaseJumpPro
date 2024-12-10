@@ -6,10 +6,10 @@ using namespace PJ;
 void UIControl2D::Awake() {
     Base::Awake();
 
-    OnStateChange();
+    OnControlChange();
 }
 
-void UIControl2D::OnStateChange() {
-    GUARD(onControlUpdateFunc)
-    onControlUpdateFunc(*this);
+void UIControl2D::OnControlChange() {
+    GUARD(onControlChangeFunc)
+    onControlChangeFunc(*this);
 }

@@ -16,7 +16,7 @@ namespace PJ {
 
         // MARK: SomeWorldComponent
 
-        virtual String TypeName() const override {
+        String TypeName() const override {
             return "SimpleRaycaster2D";
         }
     };

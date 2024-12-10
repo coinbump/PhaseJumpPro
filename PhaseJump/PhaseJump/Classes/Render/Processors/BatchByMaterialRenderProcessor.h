@@ -4,12 +4,13 @@
 #include "Utils.h"
 
 /*
- RATING: 4 stars
- Tested and works. Needs unit tests
- CODE REVIEW: 8/28/24
+ RATING: 5 stars
+ Tested and works
+ CODE REVIEW: 12/8/24
  */
 namespace PJ {
     class CameraRenderModel;
+    class RenderModel;
 
     /// Batches render models by material to reduce the total # of draw calls and improve render
     /// performance
@@ -21,6 +22,8 @@ namespace PJ {
         // camera
         BatchByMaterialRenderProcessor() :
             Base("Batch by material", { RenderPhase::Camera }) {}
+
+        std::optional<RenderModel> Combine(VectorList<RenderModel*>& renderModels);
 
         // MARK: RenderProcessor
 

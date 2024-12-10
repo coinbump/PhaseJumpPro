@@ -8,7 +8,7 @@ class TestBulletsScene : public Scene {
 public:
     TestBulletsScene() {}
 
-    void LoadInto(WorldNode& root) {
+    void LoadInto(WorldNode& root) override {
         root.name = "TestBulletsScene";
 
         StandardRandom random;
@@ -22,7 +22,7 @@ public:
         QB(root)
             .OrthoStandard()
             .And("Emitter")
-            .TurnRight(Angle::DegreesAngle(10))
+            .Turn(Angle::DegreesAngle(10))
             .With<Emitter>()
             .ModifyLatest<Emitter>([&root](auto& emitter) {
                 emitter.spawnParent = SCAST<WorldNode>(root.shared_from_this());
@@ -42,7 +42,7 @@ public:
                     node->Add(spriteRenderer);
 
                     auto angle = emit.tags.SafeValue<Angle>(EmitModelTag::Angle);
-                    node->transform.SetRotation2D(angle + emitter.owner->transform.Rotation2D());
+                    node->transform.SetRotation(angle + emitter.owner->transform.Rotation2D());
 
                     auto steering = MAKE<DirectionKSteering2D>(300);
                     node->Add(steering);

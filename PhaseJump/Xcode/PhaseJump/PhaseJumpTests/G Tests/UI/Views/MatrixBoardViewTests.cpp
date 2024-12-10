@@ -16,7 +16,7 @@ namespace MatrixBoardViewTests {
 using namespace MatrixBoardViewTests;
 
 TEST(MatrixBoardView, Init) {
-    MatrixBoardView sut(vec2Zero, {8, 10});
+    MatrixBoardView sut({}, {8, 10});
     EXPECT_EQ(sut.BoardSize(), Vec2I(8, 10));
 }
 
@@ -33,7 +33,7 @@ TEST(MatrixBoardView, Put) {
     World world;
 
     VectorList<String> shape{"**", "* "};
-    MatrixBoardView sut(vec2Zero, {3, 3});
+    MatrixBoardView sut({}, {3, 3});
 
     {
         auto node = MAKE<WorldNode>();

@@ -21,9 +21,9 @@ namespace PJ {
     /// A node hit with the local position hit inside the node
     struct LocalHit {
         LocalPosition localPos;
-        SP<WorldNode> node;
+        WorldNode& node;
 
-        LocalHit(LocalPosition localPos, SP<WorldNode> node) :
+        LocalHit(LocalPosition localPos, WorldNode& node) :
             localPos(localPos),
             node(node) {}
     };
@@ -34,7 +34,7 @@ namespace PJ {
     public:
         using Base = SomeWorldSystem;
         using This = EventWorldSystem;
-        using EventNodeList = VectorList<WP<WorldNode>>;
+        using EventNodeList = VectorList<WorldNode*>;
 
     public:
         /// Maps UI events to input events
@@ -64,6 +64,6 @@ namespace PJ {
 
     protected:
         void DispatchEvent(String signalId, SomeSignal const& signal, EventNodeList const& nodes);
-        void DispatchEvent(SP<WorldNode> node, String signalId, SomeSignal const& signal);
+        void DispatchEvent(WorldNode& node, String signalId, SomeSignal const& signal);
     };
 } // namespace PJ

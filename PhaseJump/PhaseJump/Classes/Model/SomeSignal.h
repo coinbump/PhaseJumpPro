@@ -28,7 +28,7 @@ namespace PJ {
     public:
         Core core{};
 
-        Event(Core core) :
+        Event(Core core = {}) :
             core(core) {}
     };
 } // namespace PJ

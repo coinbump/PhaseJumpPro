@@ -9,7 +9,7 @@ class TestMeshPathScene : public Scene {
 public:
     TestMeshPathScene() {}
 
-    void LoadInto(WorldNode& root) {
+    void LoadInto(WorldNode& root) override {
         root.name = "TestMeshPathScene";
 
         QB(root).And("Camera").With<OrthoCamera>().AndPrefab("archer");

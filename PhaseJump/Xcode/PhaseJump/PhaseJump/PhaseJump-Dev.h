@@ -22,6 +22,7 @@
 #include <PhaseJump-Dev/ClassRegistry.h>
 #include <PhaseJump-Dev/ColorRenderer.h>
 #include <PhaseJump-Dev/Colliders2D.h>
+#include <PhaseJump-Dev/ColorView.h>
 #include <PhaseJump-Dev/Command.h>
 #include <PhaseJump-Dev/CommandHistory.h>
 #include <PhaseJump-Dev/DepthFirstOrderRenderProcessor.h>
@@ -29,6 +30,7 @@
 #include <PhaseJump-Dev/DirectionKSteering2D.h>
 #include <PhaseJump-Dev/DragHandler2D.h>
 #include <PhaseJump-Dev/DropFilesUIEvent.h>
+#include <PhaseJump-Dev/DuckDesignSystem.h>
 #include <PhaseJump-Dev/EditorImGuiCommandHistoryPainter.h>
 #include <PhaseJump-Dev/EditorImGuiInspectorWindowPainter.h>
 #include <PhaseJump-Dev/EditorImGuiPrefabsPainter.h>
@@ -60,6 +62,7 @@
 #include <PhaseJump-Dev/ImGuiMainMenuBarPainter.h>
 #include <PhaseJump-Dev/ImGuiGLRenderProcessor.h>
 #include <PhaseJump-Dev/ImGuiPlanPainter.h>
+#include <PhaseJump-Dev/ImRenderer.h>
 #include <PhaseJump-Dev/IncludeAliasFileProcessor.h>
 #include <PhaseJump-Dev/Input.h>
 #include <PhaseJump-Dev/InputMap.h>
@@ -90,6 +93,7 @@
 #include <PhaseJump-Dev/ResourceRepository.h>
 #include <PhaseJump-Dev/ResourceScanner.h>
 #include <PhaseJump-Dev/Macros.h>
+#include <PhaseJump-Dev/PageView.h>
 #include <PhaseJump-Dev/PointerClickUIEvent.h>
 #include <PhaseJump-Dev/Shared.h>
 #include <PhaseJump-Dev/SharedVector.h>
@@ -110,7 +114,8 @@
 #include <PhaseJump-Dev/ScrollBarControl.h>
 #include <PhaseJump-Dev/SignalTypes.h>
 #include <PhaseJump-Dev/SimpleRaycaster2D.h>
-#include <PhaseJump-Dev/SlicedTextureRenderer.h>
+#include <PhaseJump-Dev/Slice3TextureRenderer.h>
+#include <PhaseJump-Dev/Slice9TextureRenderer.h>
 #include <PhaseJump-Dev/SliderControl.h>
 #include <PhaseJump-Dev/SomeControllerUIEvent.h>
 #include <PhaseJump-Dev/SomeDragHandler.h>
@@ -124,6 +129,8 @@
 #include <PhaseJump-Dev/StandardRandom.h>
 #include <PhaseJump-Dev/StringUtils.h>
 #include <PhaseJump-Dev/Theme.h>
+#include <PhaseJump-Dev/ThemeBuilder.h>
+#include <PhaseJump-Dev/ToggleButtonControl.h>
 #include <PhaseJump-Dev/TypeClass.h>
 #include <PhaseJump-Dev/UIPlan.h>
 #include <PhaseJump-Dev/UIPlanner.h>
@@ -137,7 +144,6 @@
 #include <PhaseJump-Dev/ShowMeshRenderProcessor.h>
 #include <PhaseJump-Dev/SimpleAnimationController.h>
 #include <PhaseJump-Dev/SimpleGradientRenderer.h>
-#include <PhaseJump-Dev/SimpleVelocityTracker.h>
 #include <PhaseJump-Dev/SomeDragGestureHandler2D.h>
 #include <PhaseJump-Dev/SomeHoverGestureHandler.h>
 #include <PhaseJump-Dev/SomeUIEvent.h>
@@ -145,6 +151,11 @@
 #include <PhaseJump-Dev/TextureAtlas.h>
 #include <PhaseJump-Dev/TextRenderer.h>
 #include <PhaseJump-Dev/VelocityKSteering.h>
+#include <PhaseJump-Dev/VelocityTracker.h>
+#include <PhaseJump-Dev/View2D.h>
+#include <PhaseJump-Dev/PadViewLayout.h>
+#include <PhaseJump-Dev/FlowStackViewLayout.h>
+#include <PhaseJump-Dev/LayoutInsets.h>
 #include <PhaseJump-Dev/Void.h>
 #include <PhaseJump-Dev/VFlow.h>
 #include <PhaseJump-Dev/WorldComponent.h>

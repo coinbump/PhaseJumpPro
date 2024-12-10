@@ -15,6 +15,7 @@
 #include "TestTextureScene.h"
 #include "TestThemeScene.h"
 #include "TestUIScene.h"
+#include "TestViewsScene.h"
 #include "TestZOrderScene.h"
 
 using namespace std;
@@ -86,6 +87,9 @@ void KaijuWorldSystem::RegisterSceneClasses() {
     }));
     sceneClasses.Add(NEW<SceneClass>("test.bullets", "Test bullets", []() {
         return MAKE<TestBulletsScene>();
+    }));
+    sceneClasses.Add(NEW<SceneClass>("test.views", "Test views", []() {
+        return MAKE<TestViewsScene>();
     }));
     sceneClasses.Add(NEW<SceneClass>("app.animate", "Test animate app", []() {
         return MAKE<TestAnimateApp>();

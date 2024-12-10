@@ -16,10 +16,5 @@ MeshRenderer::MeshRenderer(Vector3 worldSize) :
         return builder.BuildMesh();
     });
 
-    model.material = MAKE<RenderMaterial>();
-
-    auto program = SomeShaderProgram::registry["color.vary"];
-    GUARD(program)
-
-    model.material->SetShaderProgram(program);
+    model.material = MAKE<RenderMaterial>(RenderMaterial::Config{ .shaderId = "color.vary" });
 }

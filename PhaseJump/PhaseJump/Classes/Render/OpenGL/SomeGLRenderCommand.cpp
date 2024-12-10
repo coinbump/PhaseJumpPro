@@ -6,20 +6,20 @@ using namespace PJ;
 using namespace std;
 
 SP<SomeGLRenderCommand> GLRenderCommands::SetViewportRender(Vector2Int size) {
-    return MAKE<GLRenderCommand<Vector2Int>>(size, [](Vector2Int& core, GLRenderEngine& engine) {
-        engine.SetViewport(0, 0, core.x, core.y);
+    return MAKE<GLRenderCommand<Vector2Int>>(size, [](auto& command, GLRenderEngine& engine) {
+        engine.SetViewport(0, 0, command.core.x, command.core.y);
     });
 }
 
 SP<SomeGLRenderCommand> GLRenderCommands::ProjectionMatrixLoadOrthographic(Vector2 size) {
-    return MAKE<GLRenderCommand<Vector2>>(size, [](Vector2& core, GLRenderEngine& engine) {
+    return MAKE<GLRenderCommand<Vector2>>(size, [](auto& command, GLRenderEngine& engine) {
         // TODO: are these 1, -1 values correct
-        engine.projectionMatrix.LoadOrthographic(0, core.x, 0, core.y, 1, -1);
+        engine.projectionMatrix.LoadOrthographic(0, command.core.x, 0, command.core.y, 1, -1);
     });
 }
 
 SP<SomeGLRenderCommand> GLRenderCommands::LoadTranslate(Vector3 value) {
-    return MAKE<GLRenderCommand<Vector3>>(value, [](Vector3& core, GLRenderEngine& engine) {
-        engine.viewMatrix.LoadTranslate(core);
+    return MAKE<GLRenderCommand<Vector3>>(value, [](auto& command, GLRenderEngine& engine) {
+        engine.viewMatrix.LoadTranslate(command.core);
     });
 }

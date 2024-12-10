@@ -14,3 +14,7 @@ ostream& PJ::operator<<(ostream& os, RenderFeatureState const& value) {
     }
     return os;
 }
+
+RenderOpacityType PJ::RenderOpacityTypeFor(Color const& color) {
+    return color.IsOpaque() ? RenderOpacityType::Opaque : RenderOpacityType::Blend;
+}

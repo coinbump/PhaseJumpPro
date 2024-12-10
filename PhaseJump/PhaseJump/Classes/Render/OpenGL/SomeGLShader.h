@@ -7,7 +7,7 @@
 /*
  RATING: 5 stars
  Simple types
- CODE REVIEW: 7/14/24
+ CODE REVIEW: 12/1/24
  */
 namespace PJ {
     /// Interfaces with the GPU to process vertices/fragments
@@ -16,9 +16,9 @@ namespace PJ {
     /// Manages an OpenGLShader
     class SomeGLShader : public SomeShader {
     public:
-        GLuint glId = 0;
-        GLenum glType = 0;
-        bool isCompiled = false;
+        GLuint glId{};
+        GLenum glType{};
+        bool isCompiled{};
 
         SomeGLShader();
         virtual ~SomeGLShader();

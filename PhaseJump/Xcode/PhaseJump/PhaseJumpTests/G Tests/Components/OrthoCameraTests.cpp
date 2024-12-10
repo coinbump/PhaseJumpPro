@@ -72,7 +72,7 @@ TEST(OrthoCamera, WorldToScreen) {
 
     auto& sut = world->AddNode().AddComponent<OrthoCamera>();
 
-    auto screenZero = sut.WorldToScreen(Vector3::zero);
+    auto screenZero = sut.WorldToScreen({});
     EXPECT_EQ(Vector2(200, 100), screenZero);
 
     auto screenOne = sut.WorldToScreen(Vector3(1, 1, 0));
@@ -92,7 +92,7 @@ TEST(OrthoCamera, ScreenToWorld) {
     auto& sut = world->AddNode().AddComponent<OrthoCamera>();
 
     auto worldZero = sut.ScreenToWorld(Vector2(200, 100));
-    EXPECT_EQ(Vector3::zero, worldZero);
+    EXPECT_EQ(Vector3{}, worldZero);
 
     auto worldOne = sut.ScreenToWorld(Vector2(201, 99));
     EXPECT_EQ(Vector3(1, 1, 0), worldOne);
@@ -112,14 +112,14 @@ TEST(OrthoCamera, WorldToScreenWithHalfHeight) {
     auto& sut = world->AddNode().AddComponent<OrthoCamera>();
     sut.SetHalfHeight(50);
 
-    auto screenZero = sut.WorldToScreen(Vector3::zero);
+    auto screenZero = sut.WorldToScreen({});
     EXPECT_EQ(Vector2(200, 100), screenZero);
 
     auto screenOne = sut.WorldToScreen(Vector3(1, 1, 0));
     EXPECT_EQ(Vector2(202, 98), screenOne);
 
     sut.owner->transform.SetWorldPosition(Vector3(1, 1, 0));
-    auto screenZeroOffset = sut.WorldToScreen(Vector3::zero);
+    auto screenZeroOffset = sut.WorldToScreen({});
     EXPECT_EQ(Vector2(198, 102), screenZeroOffset);
 
     auto screenOneOffset = sut.WorldToScreen(Vector3(1, 1, 0));
@@ -135,7 +135,7 @@ TEST(OrthoCamera, ScreenToWorldWithHalfHeight) {
     sut.SetHalfHeight(50);
 
     auto worldZero = sut.ScreenToWorld(Vector2(200, 100));
-    EXPECT_EQ(Vector3::zero, worldZero);
+    EXPECT_EQ(Vector3{}, worldZero);
 
     auto worldOne = sut.ScreenToWorld(Vector2(202, 98));
     EXPECT_EQ(Vector3(1, 1, 0), worldOne);
@@ -143,7 +143,7 @@ TEST(OrthoCamera, ScreenToWorldWithHalfHeight) {
     sut.owner->transform.SetWorldPosition(Vector3(1, 1, 0));
 
     auto worldZeroOffset = sut.ScreenToWorld(Vector2(198, 102));
-    EXPECT_EQ(Vector3::zero, worldZeroOffset);
+    EXPECT_EQ(Vector3{}, worldZeroOffset);
 
     auto screenOneOffset = sut.ScreenToWorld(Vector2(200, 100));
     EXPECT_EQ(Vector3(1, 1, 0), screenOneOffset);

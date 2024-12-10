@@ -17,8 +17,8 @@ TEST(World, TestNodePositionsAtRoot) {
     world->Add(node);
     world->Go();
 
-    EXPECT_EQ(Vector3::zero, node->transform.LocalPosition());
-    EXPECT_EQ(Vector3::zero, node->transform.WorldPosition());
+    EXPECT_EQ(Vector3{}, node->transform.LocalPosition());
+    EXPECT_EQ(Vector3{}, node->transform.WorldPosition());
 
     node->transform.SetLocalPosition(Vector3(1, 1, 0));
     EXPECT_EQ(Vector3(1, 1, 0), node->transform.LocalPosition());
@@ -34,8 +34,8 @@ TEST(World, TestNodePositionsAsChild) {
     world->Add(parentNode);
     world->Go();
 
-    EXPECT_EQ(Vector3::zero, node->transform.LocalPosition());
-    EXPECT_EQ(Vector3::zero, node->transform.WorldPosition());
+    EXPECT_EQ(Vector3{}, node->transform.LocalPosition());
+    EXPECT_EQ(Vector3{}, node->transform.WorldPosition());
 
     node->transform.SetLocalPosition(Vector3(1, 1, 0));
     EXPECT_EQ(Vector3(1, 1, 0), node->transform.LocalPosition());

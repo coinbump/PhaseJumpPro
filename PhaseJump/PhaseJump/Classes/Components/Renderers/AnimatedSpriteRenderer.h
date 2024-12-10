@@ -62,8 +62,6 @@ namespace PJ {
         /// Keyframe models for startup
         VectorList<KeyframeModel> keyframeModels;
 
-        AnimatedSpriteRenderer(Vector3 worldSize, float frameRate, AnimationCycleType cycleType);
-
         void Configure();
 
     public:
@@ -71,6 +69,21 @@ namespace PJ {
 
         static constexpr float DefaultFrameRate = 24.0f;
 
+        struct Config {
+            /// Configuration: textures
+            TextureList textures;
+
+            /// Alt Configuration: texture atlas
+            TextureAtlas const* atlas{};
+
+            /// Alt Configuration: keyframe models
+            VectorList<KeyframeModel> keyframeModels;
+
+            float frameRate = DefaultFrameRate;
+            AnimationCycleType cycleType = AnimationCycleType::Loop;
+        };
+
+        AnimatedSpriteRenderer(Config config);
         AnimatedSpriteRenderer(
             TextureList const& textures, float frameRate = DefaultFrameRate,
             AnimationCycleType cycleType = AnimationCycleType::Loop

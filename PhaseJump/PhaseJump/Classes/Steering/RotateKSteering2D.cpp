@@ -11,5 +11,5 @@ void RotateKSteering2D::OnUpdate(TimeSlice time) {
 
     Angle rotation = owner->transform.Rotation2D();
     rotation += Angle::DegreesAngle(turnSpeed.Degrees() * time.delta);
-    owner->transform.SetRotation2D(rotation.Clipped());
+    owner->transform.SetRotation(rotation.Clipped());
 }

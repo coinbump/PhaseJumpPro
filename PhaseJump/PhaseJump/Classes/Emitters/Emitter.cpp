@@ -120,6 +120,6 @@ SpawnList Emitter::Spawn(EmitModel const& emit) {
 
 /// @return Returns local position for new spawn
 Vector3 Emitter::SpawnPosition(SpawnType spawn) {
-    GUARDR(positionFunc, Vector3::zero)
+    GUARDR(positionFunc, {})
     return positionFunc(*this);
 }

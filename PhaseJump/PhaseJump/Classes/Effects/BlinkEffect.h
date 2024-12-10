@@ -1,9 +1,10 @@
 #pragma once
 
 #include "AnimationCycleTypes.h"
-#include "SomeEffect.h"
+#include "Switchable.h"
 #include "TimeTrack.h"
 #include "VectorList.h"
+#include "WorldComponent.h"
 
 /*
  RATING: 5 stars
@@ -14,9 +15,9 @@ namespace PJ {
     class SomeRenderer;
 
     /// Turns renderers on/off based on a time track
-    class BlinkEffect : public SomeEffect {
+    class BlinkEffect : public WorldComponent<> {
     public:
-        using Base = SomeEffect;
+        using Base = WorldComponent<>;
         using This = BlinkEffect;
 
     protected:

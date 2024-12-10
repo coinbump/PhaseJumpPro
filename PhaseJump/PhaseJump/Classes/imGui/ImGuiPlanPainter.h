@@ -12,14 +12,12 @@ namespace PJ {
     /// Paints a UI plan into imGui
     class ImGuiPlanPainter : public SomeImGuiPainter {
     public:
-        using Storage = PJ::Storage<String>;
         using DrawModelFunc = std::function<void(This&, SomeUIModel&)>;
 
         UIPlan& plan;
-        Storage& storage;
 
         UnorderedMap<String, DrawModelFunc> drawModelFuncs;
 
-        ImGuiPlanPainter(UIPlan& plan, Storage& storage);
+        ImGuiPlanPainter(UIPlan& plan);
     };
 } // namespace PJ

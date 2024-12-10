@@ -67,7 +67,7 @@ void ButtonControl::OnPointerUp(PointerUpUIEvent const& _event) {
 void ButtonControl::SetIsPressed(bool value) {
     GUARD(value != isPressed)
     isPressed = value;
-    OnStateChange();
+    OnControlChange();
 }
 
 void ButtonControl::OnPress() {

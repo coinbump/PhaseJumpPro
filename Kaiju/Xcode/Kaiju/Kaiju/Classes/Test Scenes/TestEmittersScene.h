@@ -28,7 +28,7 @@ public:
     float EmitDelta() {
         GUARDR(owner, 0)
 
-        VectorList<SP<Emitter>> emitters;
+        VectorList<Emitter*> emitters;
         owner->CollectChildTypeComponents<Emitter>(emitters);
         if (!IsEmpty(emitters)) {
             return static_cast<TimerDriver*>(emitters[0]->driver.get())->Duration();
@@ -37,7 +37,7 @@ public:
     }
 
     void SetEmitDelta(float value) {
-        VectorList<SP<Emitter>> emitters;
+        VectorList<Emitter*> emitters;
         owner->CollectChildTypeComponents<Emitter>(emitters);
         if (!IsEmpty(emitters)) {
             static_cast<TimerDriver*>(emitters[0]->driver.get())->SetDuration(value);
@@ -65,9 +65,8 @@ public:
         auto texture = DCAST<GLTexture>(world.FindTexture("heart-full"));
         GUARD(texture)
 
-        heartMaterial = MAKE<RenderMaterial>();
-        heartMaterial->SetShaderProgram(SomeShaderProgram::registry["texture.uniform"]);
-        heartMaterial->EnableFeature(RenderFeature::Blend, false);
+        heartMaterial =
+            MAKE<RenderMaterial>(RenderMaterial::Config{ .shaderId = "texture.uniform" });
         heartMaterial->Add(texture);
 
         auto font = DCAST<Font>(world.FindFontWithSize(32));
@@ -92,12 +91,14 @@ public:
             auto countString = MakeString(emitter.owner->ChildCount());
 
             WorldNode& textNode = node->And("Text " + countString);
-            textNode.With<TextRenderer>(font, countString, Vector2(400, 400))
+            textNode
+                .With<TextRenderer>(TextRenderer::Config{
+                    .font = font, .text = countString, .worldSize = { 400, 400 } })
                 .SetLineAlignFunc(AlignFuncs::center)
                 .SetTextAlignFunc(AlignFuncs::center)
                 .SetTextColor(Color::white)
                 .SetLineClip(LineClip::None)
-                .SizeToFit();
+                .SizeToFit({ 400, 400 });
 
             // #define DESTROY_ON_TAP
 

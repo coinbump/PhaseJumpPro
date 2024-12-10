@@ -6,7 +6,7 @@
 
 /*
  RATING: 4 stars
- Tested and works (8/25/24). Needs unit tests
+ Tested and works. Needs unit tests
  CODE REVIEW: 8/25/24
  */
 namespace PJ {

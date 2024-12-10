@@ -1,6 +1,5 @@
 #pragma once
 
-#include "SomeEffect.h"
 #include "SomeResolver.h"
 #include "SomeSignal.h"
 #include "UIWorldSystem.h"
@@ -10,6 +9,7 @@
 namespace PJ {
     /// Hints for changing focus in response to focus navigation events
     struct FocusHint {
+        // TODO: should these be funcs?... Yes, but store the WP
         WP<WorldNode> left;
         WP<WorldNode> right;
         WP<WorldNode> up;
@@ -18,6 +18,7 @@ namespace PJ {
         WP<WorldNode> next;
     };
 
+    /// Focus  coordinator event for determining current focus
     class FocusEvent : public SomeSignal {
     public:
         String id;

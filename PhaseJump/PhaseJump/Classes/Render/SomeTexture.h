@@ -44,7 +44,7 @@ namespace PJ {
             Vector2Int trimOrigin;
             std::optional<Vector2Int> untrimmedSize;
             Vector2 normalOrigin;
-            Vector2 normalSize = vec2One;
+            Vector2 normalSize = Vector2::one;
             String alphaMode = TextureAlphaMode::Standard;
         };
 

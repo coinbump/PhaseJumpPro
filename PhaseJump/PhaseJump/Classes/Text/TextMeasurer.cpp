@@ -13,7 +13,7 @@ TextMetrics TextMeasurer::Measure(
 
         auto u32 = ToU32String(text);
 
-        TextLineMetrics line(font.Height());
+        TextLineMetrics line{ .size = { 0, (float)font.Height() } };
 
         int leading = font.metrics.leading;
         if (metricsFunc) {
@@ -47,7 +47,7 @@ TextMetrics TextMeasurer::Measure(
 
             auto lineBreak = [&](int width, int advanceX) {
                 lines.push_back(line);
-                TextLineMetrics newLine(font.Height());
+                TextLineMetrics newLine{ .size = { 0, (float)font.Height() } };
                 newLine.y = line.y + leading;
 
                 // Don't add invisible characters
@@ -72,8 +72,6 @@ TextMetrics TextMeasurer::Measure(
             GUARD_CONTINUE(fontGlyphI != font.glyphs.end());
 
             auto& fontGlyph = fontGlyphI->second;
-
-            Vector2 pos;
 
             int advanceX = fontGlyph.advanceX;
             if (line.charMetrics.size() > 0) {
@@ -113,7 +111,13 @@ TextMetrics TextMeasurer::Measure(
                 //                }
             } else {
                 line.Add(charString, advanceX);
-                line.size.x += advanceX;
+
+                if (i == u32.size() - 1) {
+                    // Final character doesn't advance, so use width
+                    line.size.x += width;
+                } else {
+                    line.size.x += advanceX;
+                }
             }
 
             if (i == u32.size() - 1) {
@@ -126,6 +130,6 @@ TextMetrics TextMeasurer::Measure(
 
     auto lines = measureLines();
 
-    TextMetrics result(lines, TextMetrics::CalculateSize(lines));
+    TextMetrics result(lines);
     return result;
 }

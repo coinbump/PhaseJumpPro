@@ -26,9 +26,9 @@ namespace PJ {
         /// Turns on diagnose flag if we're in DEBUG mode
         void EnableIfDebug() {
 #ifdef DEBUG
-            return Enable(true);
+            Enable(true);
 #else
-            return Enable(false);
+            Enable(false);
 #endif
         }
     };

@@ -35,20 +35,27 @@ void RendererModel::SetBuildVertexColorsFunc(BuildColorsFunc value) {
     SetVertexColorsNeedsBuild();
 }
 
-void RendererModel::SetColor(ColorType value) {
-    colors = { value };
+void RendererModel::SetOnColorsChangeFunc(RendererFunc value) {
+    onColorsChangeFunc = value;
+
+    GUARD(onColorsChangeFunc)
+    onColorsChangeFunc(*this);
+}
+
+void RendererModel::SetColors(VectorList<ColorType> const& value) {
+    colors = value;
     SetVertexColorsNeedsBuild();
 
-    GUARD(material)
-    GUARD(IsEmpty(material->Textures()))
-    material->EnableFeature(RenderFeature::Blend, value.a != 1);
+    GUARD(onColorsChangeFunc)
+    onColorsChangeFunc(*this);
+}
+
+void RendererModel::SetColor(ColorType value) {
+    SetColors({ value });
 }
 
 void RendererModel::SetAlpha(float value) {
+    auto colors = this->colors;
     std::for_each(colors.begin(), colors.end(), [=](auto& color) { color.a = value; });
-    SetVertexColorsNeedsBuild();
-
-    GUARD(material)
-    GUARD(IsEmpty(material->Textures()))
-    material->EnableFeature(RenderFeature::Blend, value != 1);
+    SetColors(colors);
 }

@@ -2,6 +2,7 @@
 
 #include "Color.h"
 #include "Macros.h"
+#include "RenderFeature.h"
 #include "RenderTypes.h"
 #include "SomeTexture.h"
 #include "Tags.h"
@@ -20,6 +21,9 @@ namespace PJ {
 
     /// Render properties for object
     class RenderMaterial {
+    public:
+        using FeatureStateMap = UnorderedMap<String, RenderFeatureState>;
+
     protected:
         SP<SomeShaderProgram> shaderProgram;
 
@@ -33,7 +37,7 @@ namespace PJ {
         VectorList<float> uniformFloats;
 
         /// Render features enabled or disabled for this material
-        UnorderedMap<String, RenderFeatureState> features;
+        FeatureStateMap features;
 
         /// Cached propertyId that identifies the properties of this material, to determine if it
         /// can be combined with another render material. This also allows us to group propertyIds
@@ -45,6 +49,17 @@ namespace PJ {
         }
 
     public:
+        struct Config {
+            SP<SomeTexture> texture;
+
+            String shaderId;
+            FeatureStateMap features = { { RenderFeature::Blend, RenderFeatureState::Disable } };
+        };
+
+        RenderMaterial(Config config);
+
+        RenderMaterial() {}
+
         String PropertyId() const {
             return propertyId;
         }
@@ -116,6 +131,11 @@ namespace PJ {
             features[feature] =
                 isEnabled ? RenderFeatureState::Enable : RenderFeatureState::Disable;
 
+            OnChange();
+        }
+
+        void SetFeatureStates(FeatureStateMap const& value) {
+            features = value;
             OnChange();
         }
 

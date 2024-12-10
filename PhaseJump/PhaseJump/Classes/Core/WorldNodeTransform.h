@@ -6,73 +6,75 @@
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 8/27/23
+ CODE REVIEW: 11/3/24
  */
 namespace PJ {
     class WorldNode;
 
-    /// Keeps track of the object's world position as it is modified
+    /// Transform for a world node
     class WorldNodeTransform {
     public:
+        /// Used to customize behavior for SetWorldPosition
         using SetLocalPosFunc = std::function<void(WorldNodeTransform&, Vector3 localPos)>;
 
     protected:
-        GeoTransform value;
+        GeoTransform geo;
 
     public:
         WorldNode& owner;
 
         WorldNodeTransform(WorldNode& owner) :
-            owner(owner) {}
+            owner(owner),
+            geo({}) {}
 
         WorldNodeTransform(WorldNode& owner, GeoTransform transform) :
             owner(owner),
-            value(transform) {}
+            geo(transform) {}
 
         GeoTransform& Value() {
-            return value;
+            return geo;
         }
 
         GeoTransform const& Value() const {
-            return value;
+            return geo;
         }
 
         Vector3 LocalPosition() const {
-            return value.position;
+            return geo.position;
         }
 
         void SetLocalPosition(Vector3 position) {
-            value.SetPosition(position);
+            geo.SetPosition(position);
         }
 
         float PositionAxisValue(Axis axis) const {
-            return value.PositionAxisValue(axis);
+            return geo.PositionAxisValue(axis);
         }
 
         void SetAxisPosition(Axis axis, Vector3 value) {
-            this->value.SetAxisPosition(axis, value.AxisValue(axis));
+            geo.SetAxisPosition(axis, value.AxisValue(axis));
         }
 
         void SetAxisPosition(Axis axis, float value) {
-            this->value.SetAxisPosition(axis, value);
+            geo.SetAxisPosition(axis, value);
         }
 
         void SetAxisScale(Axis axis, Vector3 value) {
-            this->value.SetAxisScale(axis, value.AxisValue(axis));
+            geo.SetAxisScale(axis, value.AxisValue(axis));
         }
 
         void SetAxisScale(Axis axis, float value) {
-            this->value.SetAxisScale(axis, value);
+            geo.SetAxisScale(axis, value);
         }
 
         // MARK: Scale
 
         Vector3 Scale() const {
-            return value.scale;
+            return geo.scale;
         }
 
         void SetScale(Vector3 value) {
-            this->value.scale = value;
+            this->geo.scale = value;
         }
 
         void SetScale(float value) {
@@ -80,46 +82,35 @@ namespace PJ {
         }
 
         void SetScale2D(Vector2 value) {
-            SetScale(Vector3(value.x, value.y, 1.0f));
+            SetScale({ value.x, value.y, 1.0f });
         }
 
         void SetScale2D(float value) {
-            SetScale(Vector3(value, value, 1.0f));
-        }
-
-        Vector3 LocalScale() const {
-            return Scale();
-        }
-
-        void SetLocalScale(Vector3 value) {
-            SetScale(value);
+            SetScale({ value, value, 1.0f });
         }
 
         // MARK: Rotation
 
         Vector3 Rotation() const {
-            return value.rotation;
+            return geo.rotation;
         }
 
         void SetRotation(Vector3 value) {
-            this->value.rotation = value;
+            geo.rotation = value;
         }
 
-        void SetRotation(Angle rotation) {
-            value.SetRotation(rotation);
+        Angle Rotation2D() const {
+            return geo.Rotation2D();
         }
 
-        Vector3 LocalEulerAngles() const {
-            return value.LocalEulerAngles();
-        }
-
-        void SetLocalEulerAngles(Vector3 value) {
-            this->value.SetLocalEulerAngles(value);
+        void SetRotation(Angle angle) {
+            geo.SetRotation(angle);
         }
 
         Vector3 WorldPosition() const;
 
-        // TODO: what is this func doing and why do we need it?
+        /// Set the world position, with a func that applies the value to local position (we might
+        /// not want to transform the z value in 2D space)
         void SetWorldPosition(
             Vector3 position,
             SetLocalPosFunc func = [](WorldNodeTransform& transform,
@@ -128,13 +119,5 @@ namespace PJ {
 
         /// Set only x,y world positon. Leave z intact
         void SetWorldPositionXY(Vector3 position);
-
-        Angle Rotation2D() const {
-            return value.Rotation2D();
-        }
-
-        void SetRotation2D(Angle angle) {
-            value.SetRotation2D(angle);
-        }
     };
 } // namespace PJ

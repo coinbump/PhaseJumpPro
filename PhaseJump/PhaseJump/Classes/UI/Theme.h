@@ -1,114 +1,101 @@
 #pragma once
 
 #include "Color.h"
+#include "Font.h"
+#include "UITypes.h"
 #include "UnorderedMap.h"
+#include "Vector2.h"
 
-// CODE REVIEW: ?/23
+/*
+ RATING: 5 stars
+ Has unit tests
+ CODE REVIEW: 12/8/24
+ */
 namespace PJ {
-    /// Names of common UI elements that can be used in maps
-    namespace UIElement {
-        auto constexpr SliderTrack = "slider.track";
-        auto constexpr SliderThumb = "slider.thumb";
-        auto constexpr SliderVerticalTrack = "slider.vertical.track";
-        auto constexpr SliderVerticalThumb = "slider.vertical.thumb";
-        auto constexpr ButtonSurface = "button.surface";
-        auto constexpr PopoverSurface = "popover.surface";
-        auto constexpr ToggleSurface = "toggle.surface";
-        auto constexpr ToggleSwitch = "toggle.switch";
-        auto constexpr CheckboxSwitch = "checkbox.switch";
-        auto constexpr CheckboxCheck = "checkbox.check";
-        auto constexpr CheckboxFont = "checkbox.font";
-        auto constexpr TextInputSurface = "textInput.surface";
-        auto constexpr TextInputFont = "textInput.font";
-        auto constexpr TabBarSurface = "tabBar.surface";
-        auto constexpr ScrollBarTrack = "scrollBar.track";
-        auto constexpr ScrollBarThumb = "scrollBar.thumb";
-        auto constexpr ScrollBarVerticalTrack = "scrollBar.vertical.track";
-        auto constexpr ScrollBarVerticalThumb = "scrollBar.vertical.thumb";
-        auto constexpr ToastSurface = "toast.surface";
-        auto constexpr AlertSurface = "alert.surface";
-        auto constexpr SelectableItemSurface = "selectableItem.surface";
-        auto constexpr SelectableItemSelectedSurface = "selectableItem.selected.surface";
-        auto constexpr Dial = "dial";
-
-        // Drag handles (for resizing/altering objects)
-        auto constexpr HandleFill = "handle.fill";
-        auto constexpr HandleFrame = "handle.frame";
-    } // namespace UIElement
-
-    /// Custom property names for common UI elements
-    namespace UITag {
-        /// Slice points for sliced texture renderer
-        auto constexpr SlicePoints = "slicePoints";
-
-        /// Size of end caps for UI objects that have one (slider)
-        auto constexpr EndCapSize = "endCap.size";
-    } // namespace UITag
-
-    // Material 3 colors: https://m3.material.io/styles/color/static/baseline
-    // Apple colors:
-    // https://developer.apple.com/design/human-interface-guidelines/color#system-colors
-
-    /// Used to provide swappable theme information for displaying UI
+    /// Provides theme metadata for displaying UI
     class Theme {
     public:
-        struct Element {
-            String colorId;
+        /*
+         REFERENCE:
+         Google
+         Material 3 colors: https://m3.material.io/styles/color/static/baseline
+         Material 3 roles: https://m3.material.io/styles/color/roles
 
-            // FUTURE: support font, size information, etc.
-
-            Element(String colorId) {}
-        };
+         Apple
+         Apple colors:
+         https://developer.apple.com/design/human-interface-guidelines/color#system-colors
+         */
 
         // FUTURE: add font support
         using ColorMap = UnorderedMap<String, Color>;
-        using SemanticColorMap = UnorderedMap<String, String>;
-        using ElementMap = UnorderedMap<String, Element>;
 
     protected:
         /// Each color has a unique id, that must not be the same as a semantic or element color
         ColorMap colors;
 
-        /**
-         Semantic colors are mapped to colors
-         Example: labelSecondary -> gray2
-         Also known as "roles" in Material design
-         */
-        SemanticColorMap semanticColors;
+        /// Maps UI element ids to custom properties
+        Storage<> elements;
 
-        /// Element colors are mapped to either semantic or non-semantic colors
-        /// Example: buttonFillPressed-> backgroundTertiary or red
-        ElementMap elements;
+        String ResolveElementId(String id) const;
 
     public:
-        Theme(
-            std::initializer_list<ColorMap::value_type> colors,
-            std::initializer_list<SemanticColorMap::value_type> semanticColors,
-            std::initializer_list<ElementMap::value_type> elements
-        ) :
-            colors(colors),
-            semanticColors(semanticColors),
-            elements(elements) {}
+        /// Metadata for a configuring UI elements
+        struct ElementConfig {
+            /// Alias to another element
+            String alias;
+
+            String colorId;
+
+            /// Layout size for this element
+            std::optional<Vector2> size;
+
+            /// Layout padding for this element
+            std::optional<Vector2> padding;
+
+            /// Layout spacing for this element
+            std::optional<Vector2> spacing;
+
+            /// Font information for this element
+            std::optional<FontSpec> fontSpec;
+        };
+
+        struct Config {
+            using ElementConfigMap = UnorderedMap<String, ElementConfig>;
+
+            ColorMap colors;
+            ElementConfigMap elements;
+        };
+
+        Theme(Config const& config);
 
         ColorMap const& Colors() const {
             return colors;
         }
 
-        Color ThemeColor(String id) const {
-            try {
-                id = elements.at(id).colorId;
-            } catch (...) {}
-
-            try {
-                id = semanticColors.at(id);
-            } catch (...) {}
-
-            try {
-                return colors.at(id);
-            } catch (...) {
-                return Color::black;
-            }
+        /// Sets a tag value for a UI element
+        template <class Type>
+        void SetElementTag(String elementId, String tagName, Type value) {
+            elements.Set(elementId, tagName, value);
         }
+
+        /// @return Returns a tag value for a UI element
+        template <class Type>
+        Type ElementTagValue(String elementId, String tagName, Type defaultValue = {}) const {
+            return elements.Value<Type>(elementId, tagName, defaultValue);
+        }
+
+        /// @return Returns value if it exists
+        /// @throws Throws error if value doesn't exist
+        template <class Type>
+        Type ElementTagValueAt(String elementId, String tagName) const {
+            return elements.At<Type>(elementId, tagName);
+        }
+
+        /// @return Returns the color for the specified color id
+        Color ThemeColor(String id, Color defaultValue = Color::black) const;
+
+        /// @return Returns the size for the specified element id
+        Vector2 ElementSize(String id, Vector2 defaultValue = {}) const;
     };
 
     namespace Themes {

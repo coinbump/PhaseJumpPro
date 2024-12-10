@@ -88,22 +88,22 @@ namespace PJ {
 
         static Vector3 Accelerometer() {
             // FUTURE: support if needed
-            return Vector3::zero;
+            return {};
         }
 
         static Vector3 Gravity() {
             // FUTURE: support if needed
-            return Vector3::zero;
+            return {};
         }
 
         static Vector3 Magnetometer() {
             // FUTURE: support if needed
-            return Vector3::zero;
+            return {};
         }
 
         static Vector3 Gyroscope() {
             // FUTURE: support if needed
-            return Vector3::zero;
+            return {};
         }
 
         // float ActionAxisValue

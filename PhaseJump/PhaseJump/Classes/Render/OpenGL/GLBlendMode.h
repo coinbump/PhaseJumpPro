@@ -5,16 +5,17 @@
 /*
  RATING: 5 stars
  Simple type
- CODE REVIEW: 7/18/24
+ CODE REVIEW: 11/16/24
  */
 namespace PJ {
+    /// Stores parameters for OpenGL blend mode
     struct GLBlendMode {
-        GLenum sFactor;
-        GLenum dFactor;
+        GLenum sourceFactor;
+        GLenum destFactor;
 
-        GLBlendMode(GLenum sFactor, GLenum dFactor) :
-            sFactor(sFactor),
-            dFactor(dFactor) {}
+        GLBlendMode(GLenum sourceFactor, GLenum destFactor) :
+            sourceFactor(sourceFactor),
+            destFactor(destFactor) {}
 
         static GLBlendMode const standard;
     };

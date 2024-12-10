@@ -15,17 +15,18 @@ SomeHoverGestureHandler::SomeHoverGestureHandler() {
 ValveHoverGestureHandler::ValveHoverGestureHandler(float turnOnDuration, float turnOffDuration) :
     turnOnDuration(turnOnDuration),
     turnOffDuration(turnOffDuration) {
-    updatables.Add(valve);
+    updatable.onUpdateFunc = [this](auto& updatable, auto time) {
+        valve.OnUpdate(time);
+        return FinishType::Continue;
+    };
 }
 
 void ValveHoverGestureHandler::SetIsHovering(bool value) {
     Base::SetIsHovering(value);
 
-    GUARD(valve);
-
     if (value) {
-        valve->TurnOn(turnOnDuration);
+        valve.TurnOn(turnOnDuration);
     } else {
-        valve->TurnOff(turnOffDuration);
+        valve.TurnOff(turnOffDuration);
     }
 }

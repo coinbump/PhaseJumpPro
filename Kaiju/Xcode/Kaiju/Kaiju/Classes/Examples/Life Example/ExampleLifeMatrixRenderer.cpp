@@ -8,12 +8,8 @@ using namespace Example::Life;
 MatrixRenderer::MatrixRenderer() :
     Base({ 1200, 1200, 0 }),
     matrix({ 300, 300 }) {
-    auto program = SomeShaderProgram::registry.find("color.vary");
-    GUARD(program != SomeShaderProgram::registry.end())
 
-    auto material = MAKE<RenderMaterial>();
-    material->SetShaderProgram(program->second);
-
+    auto material = MAKE<RenderMaterial>(RenderMaterial::Config{ .shaderId = "color.vary" });
     model.material = material;
 
     model.SetBuildMeshFunc([this](auto& model) {
@@ -38,7 +34,7 @@ MatrixRenderer::MatrixRenderer() :
 
         // Optimize: fast bounds calculate
         mesh.calculateBoundsFunc = [=](auto& mesh) {
-            return Bounds(Vector3::zero, Vector3(worldSize.x / 2.0f, worldSize.y / 2.0f, 0));
+            return Bounds({}, Vector3(worldSize.x / 2.0f, worldSize.y / 2.0f, 0));
         };
 
         return mesh;

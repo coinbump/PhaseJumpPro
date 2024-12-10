@@ -24,6 +24,7 @@ namespace PJ {
     };
 
     class OperationQueue : public Base {
+
         List<SP<SomeOperation>> operations;
     };
 } // namespace PJ

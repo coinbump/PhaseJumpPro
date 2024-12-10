@@ -17,6 +17,9 @@ namespace PJ {
     /// Standard model for a renderer that renders a mesh
     class RendererModel {
     public:
+        using This = RendererModel;
+
+        using RendererFunc = std::function<void(This&)>;
         using BuildMeshFunc = std::function<Mesh(RendererModel const& model)>;
         using BuildColorsFunc =
             std::function<void(RendererModel const& model, VectorList<RenderColor>&)>;
@@ -52,6 +55,9 @@ namespace PJ {
         /// Builds render models on demand
         BuildRenderModelsFunc buildRenderModelsFunc;
 
+        /// Called when the model colors change
+        RendererFunc onColorsChangeFunc;
+
     public:
         /// (Optional). Specifies z layer group for render
         int zIndex = 0;
@@ -61,7 +67,20 @@ namespace PJ {
 
         RendererModel(Vector3 worldSize);
 
+        RenderMaterial* Material() const {
+            return material.get();
+        }
+
+        VectorList<ColorType> Colors() const {
+            return colors;
+        }
+
+        VectorList<ColorType>& Colors() {
+            return colors;
+        }
+
         void SetBuildMeshFunc(BuildMeshFunc value);
+        void SetOnColorsChangeFunc(RendererFunc value);
 
         BuildColorsFunc BuildVertexColorsFunc() const {
             return buildVertexColorsFunc;
@@ -125,10 +144,7 @@ namespace PJ {
             renderModelsNeedBuild = true;
         }
 
-        void SetColors(VectorList<ColorType> const& value) {
-            colors = value;
-            SetVertexColorsNeedsBuild();
-        }
+        void SetColors(VectorList<ColorType> const& value);
 
         VectorList<RenderColor> const& VertexColors() {
             BuildIfNeeded();

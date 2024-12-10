@@ -5,7 +5,7 @@
 /*
  RATING: 5 stars
  Simple type
- CODE REVIEW: 7/13/24
+ CODE REVIEW: 12/1/24
  */
 namespace PJ {
     /**
@@ -20,12 +20,5 @@ namespace PJ {
 
         /// Value to set for mutation
         SQLValue value;
-
-        SQLTableMutateArguments(
-            String columnName, std::optional<SQLWhereArguments> where, SQLValue value
-        ) :
-            columnName(columnName),
-            where(where),
-            value(value) {}
     };
 } // namespace PJ

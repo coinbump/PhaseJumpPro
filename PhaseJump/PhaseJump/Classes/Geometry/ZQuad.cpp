@@ -13,7 +13,7 @@ void ZQuad::FlipH() {
     std::swap(value[2], value[3]);
 }
 
-void ZQuad::TurnRight(int numRotations) {
+void ZQuad::Turn(int numRotations) {
     // TODO: I think this is wrong?
     numRotations = numRotations % 4;
     for (int i = 0; i < numRotations; i++) {

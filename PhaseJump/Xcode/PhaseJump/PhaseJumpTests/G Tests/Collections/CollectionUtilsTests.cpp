@@ -228,8 +228,8 @@ TEST(CollectionUtils, CollectBreadthFirstTree) {
     auto d2 = d->push_back("d2");
     auto e = c->push_back("e");
 
-    VectorList<SP<StringNode>> nodes;
-    CollectBreadthFirstTree(root, nodes);
+    VectorList<StringNode*> nodes;
+    CollectBreadthFirstTree(root.get(), nodes);
 
     ostringstream os;
     for (auto& node : nodes) {

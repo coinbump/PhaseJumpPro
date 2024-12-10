@@ -39,6 +39,7 @@ void KaijuGo() {
     SDLPlatformClass _class;
     auto& config = *_class.configs.at(ConfigId::GameEditorGL).get();
     config.windowConfig.title = "Kaiju";
+    config.windowConfig.SetAllowHighDPI(true);
     config.clearColor = Color(.8, .8, .8, 1.0f);
     config.resourcesPath = FilePath("resources/art");
 
@@ -47,21 +48,21 @@ void KaijuGo() {
     // Store SDL objects statically so they don't get destroyed
     static auto configResult = _class.Configure(config, world);
 
-    auto designSystem = MAKE<DesignSystem>();
-    designSystem->Add(UIElement::SliderTrack, world->FindTexture("slider-track"));
-    designSystem->Add(UIElement::SliderThumb, world->FindTexture("slider-thumb"));
-    designSystem->Add(UIElement::SliderVerticalTrack, world->FindTexture("slider-track-v"));
-    designSystem->Add(UIElement::SliderVerticalThumb, world->FindTexture("slider-thumb-v"));
-    designSystem->SetTag(
-        UIElement::SliderTrack, UITag::SlicePoints,
-        SlicedTextureRenderer::SlicePoints{ { 12, 12 }, { 12, 12 } }
+    auto designSystem = MAKE<DuckDesignSystem>();
+    designSystem->AddElementTexture(UIElementId::SliderTrack, world->FindTexture("slider-track"));
+    designSystem->AddElementTexture(UIElementId::SliderThumb, world->FindTexture("slider-thumb"));
+    designSystem->AddElementTexture(
+        UIElementId::SliderVerticalTrack, world->FindTexture("slider-track-v")
     );
-    designSystem->SetTag(UIElement::SliderTrack, UITag::EndCapSize, 20.0f);
-    designSystem->Add(UIElement::ButtonSurface, world->FindTexture("example-button-normal"));
-    designSystem->SetTag(
-        UIElement::ButtonSurface, UITag::SlicePoints,
-        SlicedTextureRenderer::SlicePoints{ { 12, 12 }, { 12, 12 } }
+    designSystem->AddElementTexture(
+        UIElementId::SliderVerticalThumb, world->FindTexture("slider-thumb-v")
     );
+    designSystem->theme->SetElementTag(
+        UIElementId::SliderTrack, UITag::Slice9Model,
+        Slice9TextureRenderer::SliceModel{ .topLeftInsets = { 10, 10 },
+                                           .bottomRightInsets = { 10, 10 } }
+    );
+    designSystem->theme->SetElementTag(UIElementId::SliderTrack, UITag::EndCapSize, 20.0f);
     world->designSystem = designSystem;
 
     auto kaijuSystem = MAKE<KaijuWorldSystem>();

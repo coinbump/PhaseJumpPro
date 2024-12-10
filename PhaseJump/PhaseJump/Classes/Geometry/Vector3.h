@@ -16,17 +16,18 @@ namespace Terathon {
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 7/6/24
+ CODE REVIEW: 11/29/24
  */
 namespace PJ {
+    /// 3-component vector with float values
     class Vector3 {
     public:
         using This = Vector3;
         using MathType = float;
 
-        float x = 0;
-        float y = 0;
-        float z = 0;
+        float x{};
+        float y{};
+        float z{};
 
         constexpr Vector3() {}
 
@@ -41,17 +42,14 @@ namespace PJ {
             z(0) {}
 
         static constexpr Vector3 Uniform(float value) {
-            return Vector3(value, value, value);
+            return { value, value, value };
         }
 
-        // TODO: cleanup using constexpr (see Vector2)
-        static Vector3 const one;
-        static Vector3 const zero;
         static Vector3 const forward;
         static Vector3 const back;
 
         constexpr operator Vector2() const {
-            return Vector2(x, y);
+            return { x, y };
         }
 
         MathType& operator[](size_t index) {
@@ -108,25 +106,22 @@ namespace PJ {
 
         VECTOR_METHODS(Vector3, MathType, 3);
 
-        friend std::ostream& operator<<(std::ostream&, Vector3 const& value);
+        friend std::ostream& operator<<(std::ostream&, This const& value);
 
         // MARK: StringConvertible
 
-        String ToString() const {
-            std::stringstream stream;
-            stream << "{" << x << ", " << y << ", " << z << "}";
-            return stream.str();
-        }
+        String ToString() const;
     };
 
+    /// 3-component vector with int values
     class Vector3Int {
     public:
         using This = Vector3Int;
         using MathType = int;
 
-        int x = 0;
-        int y = 0;
-        int z = 0;
+        int x{};
+        int y{};
+        int z{};
 
         Vector3Int() {}
 
@@ -156,18 +151,30 @@ namespace PJ {
         }
 
         constexpr operator Vector2() const {
-            return Vector2((float)x, (float)y);
+            return { (float)x, (float)y };
+        }
+
+        constexpr operator Vector2Int() const {
+            return { x, y };
         }
 
         VECTOR_METHODS(Vector3Int, int, 3);
+
+        friend std::ostream& operator<<(std::ostream&, This const& value);
+
+        // MARK: StringConvertible
+
+        String ToString() const;
     };
 
     // Convenience names
     using Vec3 = Vector3;
     using Vec3I = Vector3Int;
+    using Vec3i = Vector3Int;
 
     // MARK: Stream friend operators
 
     std::ostream& operator<<(std::ostream& os, PJ::Vector3 const& value);
+    std::ostream& operator<<(std::ostream& os, PJ::Vector3Int const& value);
 
 } // namespace PJ

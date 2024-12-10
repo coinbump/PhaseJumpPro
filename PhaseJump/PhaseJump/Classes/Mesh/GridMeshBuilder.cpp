@@ -12,9 +12,9 @@ Mesh GridMeshBuilder::BuildMesh() {
     auto trianglesSize = SegmentCount() * 6;
     auto uvSize = meshVertexCount;
 
-    VectorList<Vector3> vertices(meshVertexCount, Vector3::zero);
+    VectorList<Vector3> vertices(meshVertexCount, Vector3{});
     VectorList<uint32_t> triangles(trianglesSize, 0);
-    VectorList<Vector2> uvs(uvSize, vec2Zero);
+    VectorList<Vector2> uvs(uvSize, Vector2{});
 
     Vector2 cellSize;
     cellSize.x = worldSize.x / gridSize.x;

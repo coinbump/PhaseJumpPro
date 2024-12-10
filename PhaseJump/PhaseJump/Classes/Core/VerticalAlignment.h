@@ -1,5 +1,4 @@
-#ifndef PJVERTICALALIGNMENT_H
-#define PJVERTICALALIGNMENT_H
+#pragma once
 
 #include "SomeAligner.h"
 #include "Utils.h"
@@ -8,26 +7,13 @@
 /*
  RATING: 5 stars
  Utility
- CODE REVIEW: 7/5/24
+ CODE REVIEW: 12/1/24
  */
 namespace PJ {
-    enum class VerticalAlignmentType { Center = 0, Top = 1, Bottom = 2 };
-
     /// Vertical alignment in a horizontal flow
-    struct VerticalAlignment {
-        struct Builder {
-            VerticalAlignment VerticalAlignmentFrom(VerticalAlignmentType type);
-        };
-
-        AlignFunc aligner;
-
-        VerticalAlignment(AlignFunc aligner) :
-            aligner(aligner) {}
-
-        static const VerticalAlignment top;
-        static const VerticalAlignment center;
-        static const VerticalAlignment bottom;
-    };
+    namespace VerticalAlignment {
+        extern const AlignFunc top;
+        extern const AlignFunc center;
+        extern const AlignFunc bottom;
+    }; // namespace VerticalAlignment
 } // namespace PJ
-
-#endif

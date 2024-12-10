@@ -10,10 +10,22 @@ namespace PolygonTests {
     public:
         TestPolygon()
         {
-            Add(Vector3(0, 1, 0));
-            Add(Vector3(1, 1, 0));
-            Add(Vector3(1, 0, 0));
-            Add(Vector3(0, 0, 0));
+            Add(Vector2(0, 1));
+            Add(Vector2(1, 1));
+            Add(Vector2(1, 0));
+            Add(Vector2(0, 0));
+        }
+    };
+    
+    class TestWithRangePolygon : public PJ::Polygon
+    {
+    public:
+        TestWithRangePolygon()
+        {
+            Add({Vector2(0, 1),
+                Vector2(1, 1),
+                Vector2(1, 0),
+                Vector2(0, 0)});
         }
     };
 }
@@ -23,29 +35,58 @@ using namespace PolygonTests;
 TEST(Polygon, MinMax)
 {
     TestPolygon sut;
-    EXPECT_EQ(Vector3(0, 0, 0), sut.Min());
-    EXPECT_EQ(Vector3(1, 1, 0), sut.Max());
+    EXPECT_EQ(Vector2(0, 0), sut.Min());
+    EXPECT_EQ(Vector2(1, 1), sut.Max());
+}
+
+TEST(Polygon, MinMaxWithRange)
+{
+    TestWithRangePolygon sut;
+    EXPECT_EQ(Vector2(0, 0), sut.Min());
+    EXPECT_EQ(Vector2(1, 1), sut.Max());
 }
 
 TEST(Polygon, SizeCenter)
 {
     TestPolygon sut;
-    EXPECT_EQ(Vector3(1, 1, 0), sut.Size());
-    EXPECT_EQ(Vector3(0.5f, 0.5f, 0), sut.Center());
+    EXPECT_EQ(Vector2(1, 1), sut.Size());
+    EXPECT_EQ(Vector2(0.5f, 0.5f), sut.Center());
 }
 
-TEST(Polygon, At)
+TEST(Polygon, SizeCenterWithRange)
+{
+    TestWithRangePolygon sut;
+    EXPECT_EQ(Vector2(1, 1), sut.Size());
+    EXPECT_EQ(Vector2(0.5f, 0.5f), sut.Center());
+}
+
+TEST(Polygon, SetSize)
 {
     TestPolygon sut;
-    EXPECT_EQ(Vector3(0, 1, 0), sut.At(0));
-    EXPECT_EQ(Vector3(0, 1, 0), sut.At(4));
-    EXPECT_EQ(Vector3(0, 0, 0), sut.At(-1));
+    sut.SetSize({2, 2});
+    EXPECT_EQ(Vector2(2, 2), sut.Size());
+    EXPECT_EQ(Vector2(0.5f, 0.5f), sut.Center());
 }
 
-TEST(Polygon, AtWithEmptyPolygon)
+TEST(Polygon, ModAt)
+{
+    TestPolygon sut;
+    EXPECT_EQ(Vector2(0, 1), sut.ModAt(0));
+    EXPECT_EQ(Vector2(0, 1), sut.ModAt(4));
+    EXPECT_EQ(Vector2(0, 0), sut.ModAt(-1));
+}
+
+TEST(Polygon, ModAtWithEmptyPolygon)
 {
     Polygon sut;
-    EXPECT_EQ(Vector3::zero, sut.At(0));
-    EXPECT_EQ(Vector3::zero, sut.At(4));
-    EXPECT_EQ(Vector3::zero, sut.At(-1));
+    EXPECT_EQ(Vector2{}, sut.ModAt(0));
+    EXPECT_EQ(Vector2{}, sut.ModAt(4));
+    EXPECT_EQ(Vector2{}, sut.ModAt(-1));
+}
+
+TEST(Polygon, ArrayOperators)
+{
+    TestPolygon sut;
+    EXPECT_EQ(Vector2(0, 1), sut[0]);
+    EXPECT_EQ(Vector2(1, 0), sut[2]);
 }

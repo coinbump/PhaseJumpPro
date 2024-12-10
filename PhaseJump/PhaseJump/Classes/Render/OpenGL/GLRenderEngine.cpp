@@ -135,8 +135,8 @@ void GLRenderEngine::RunGL(std::function<void()> command, String name) {
     }
 }
 
-void GLRenderEngine::GoInternal() {
-    Base::GoInternal();
+void GLRenderEngine::OnGo() {
+    Base::OnGo();
 
     const char* gl_version = (const char*)glGetString(GL_VERSION);
     PJ::Log("OpenGL Version: ", gl_version);
@@ -187,7 +187,7 @@ void GLRenderEngine::GoInternal() {
 void GLRenderEngine::SetBlendMode(GLBlendMode blendMode) {
     Base::SetBlendMode(blendMode);
 
-    RunGL([&]() { glBlendFunc(blendMode.sFactor, blendMode.dFactor); }, "glBlendFunc");
+    RunGL([&]() { glBlendFunc(blendMode.sourceFactor, blendMode.destFactor); }, "glBlendFunc");
 }
 
 void GLRenderEngine::BindVertexArray(GLuint vao) {
@@ -264,7 +264,7 @@ void GLRenderEngine::BindIndexBuffer(GLuint ibo) {
 }
 
 SP<SomeGLRenderCommand> GLRenderEngine::BuildRenderCommand(SomeRenderCommandModel& proxyCommand) {
-    // FUTURE: replace with a map and factories
+    // TODO: replace with a map and factories
     if (proxyCommand.id == RenderCommandId::ProjectionMatrixLoadOrthographic) {
         auto command = As<RenderCommandModel<Vector2>>(&proxyCommand);
         GUARDR(command, nullptr)
@@ -417,14 +417,6 @@ void GLRenderEngine::RenderDraw(RenderDrawModel const& drawModel) {
         }
     );
 
-    // Sort blended back-to-front
-    std::sort(
-        blendRenderPlans.begin(), blendRenderPlans.end(),
-        [](SP<GLRenderPlan> const& lhs, SP<GLRenderPlan> const& rhs) {
-            return lhs->model.z > rhs->model.z;
-        }
-    );
-
     // Sort opaque front-to-back
     std::sort(
         noBlendRenderPlans.begin(), noBlendRenderPlans.end(),
@@ -437,8 +429,9 @@ void GLRenderEngine::RenderDraw(RenderDrawModel const& drawModel) {
     RenderDrawPlans(noBlendRenderPlans);
 
     EnableFeature(RenderFeature::DepthTest, false);
-    // TODO: do we need glDepthFunc here?
     RenderDrawPlans(blendRenderPlans);
+
+    EnableFeature(RenderFeature::DepthTest, true);
 
     // FUTURE: support batching, logging
     renderPlans.clear();

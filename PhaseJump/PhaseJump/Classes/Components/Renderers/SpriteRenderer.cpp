@@ -13,8 +13,32 @@
 using namespace std;
 using namespace PJ;
 
-SpriteRenderer::SpriteRenderer(Vector3 worldSize) :
-    Base(worldSize) {
+SpriteRenderer::SpriteRenderer(Config config) :
+    Base(Vector3{}) {
+
+    if (config.texture) {
+        auto texture = config.texture;
+
+        model.material = MAKE<RenderMaterial>(RenderMaterial::Config{
+            .shaderId = "texture.vary", .features = config.features });
+        model.material->Add(texture);
+    } else if (config.material) {
+        model.material = config.material;
+    }
+
+    if (model.material) {
+        if (!IsEmpty(model.material->Textures())) {
+            auto& texture = *model.material->Textures().begin();
+            model.SetWorldSize(Vector2(texture->size.x, texture->size.y));
+        }
+    }
+
+    model.SetBuildMeshFunc([](RendererModel const& model) {
+        QuadMeshBuilder builder(model.WorldSize());
+        return builder.BuildMesh();
+    });
+    Configure();
+
     PlanUIFunc planUIFunc = [](auto& component, String context, UIPlanner& planner) {
         auto renderer = static_cast<This*>(&component);
 
@@ -32,49 +56,10 @@ SpriteRenderer::SpriteRenderer(Vector3 worldSize) :
 }
 
 SpriteRenderer::SpriteRenderer(SP<SomeTexture> texture) :
-    SpriteRenderer(texture ? Vector3(texture->size.x, texture->size.y, 0) : Vector3::zero) {
-    this->texture = texture;
-    model.material = MAKE<RenderMaterial>();
-    GUARD(texture);
-
-    model.SetBuildMeshFunc([](RendererModel const& model) {
-        QuadMeshBuilder builder(model.WorldSize());
-        return builder.BuildMesh();
-    });
-
-    model.material->Add(texture);
-
-    auto program = SomeShaderProgram::registry.find("texture.vary");
-    GUARD(program != SomeShaderProgram::registry.end())
-    model.material->SetShaderProgram(program->second);
-    model.material->EnableFeature(RenderFeature::Blend, true);
-    model.SetWorldSize(Vector2(texture->size.x, texture->size.y));
-
-    Configure();
-}
+    SpriteRenderer(Config{ .texture = texture }) {}
 
 SpriteRenderer::SpriteRenderer(SP<RenderMaterial> material) :
-    SpriteRenderer(vec2Zero) {
-    model.material = material;
-    GUARD(material)
-
-    model.SetBuildMeshFunc([](RendererModel const& model) {
-        QuadMeshBuilder builder(model.WorldSize());
-        return builder.BuildMesh();
-    });
-
-    GUARD(!IsEmpty(material->Textures()))
-
-    texture = *material->Textures().begin();
-    model.SetWorldSize(Vector2(texture->size.x, texture->size.y));
-
-    Configure();
-}
-
-Vector2 SpriteRenderer::Size() const {
-    GUARDR(texture, {})
-    return Vector2((float)texture->size.x, (float)texture->size.y);
-}
+    SpriteRenderer(Config{ .material = material }) {}
 
 void SpriteRenderer::Configure() {
     model.SetBuildRenderModelsFunc([this](auto& model) {

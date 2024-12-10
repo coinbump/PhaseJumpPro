@@ -1,4 +1,5 @@
 #include "MatrixBoardView.h"
+#include "WorldNode.h"
 
 using namespace std;
 using namespace PJ;
@@ -51,7 +52,7 @@ bool MatrixBoardView::Put(MatrixPieceHandler& handler, Vector2Int origin) {
 
 /// @return Returns the cell size
 Vector2 MatrixBoardView::CellSize() const {
-    GUARDR(board.IsValid(), vec2Zero)
+    GUARDR(board.IsValid(), {})
 
     auto worldSize = WorldSize();
 
@@ -102,7 +103,7 @@ WorldNode& MatrixBoardView::NodeAt(Vector2Int loc) {
 }
 
 Vector3 MatrixBoardView::NodeLocalPosition(MatrixPieceHandler const& handler) {
-    GUARDR(handler.piece, Vector3::zero)
+    GUARDR(handler.piece, {})
 
     auto pieceOrigin = handler.piece->Origin();
     auto pieceSize = handler.piece->Size();
@@ -137,7 +138,7 @@ std::optional<Vector2Int> MatrixBoardView::WorldPositionToLocation(Vector2 world
     auto topLeft = TopLeftWorldPosition();
 
     Vector2 viewPosition(worldPosition.x - topLeft.x, std::abs(worldPosition.y - topLeft.y));
-    GUARDR(IsViewPositionInside(viewPosition), std::nullopt)
+    GUARDR(TestViewPositionHit(viewPosition), std::nullopt)
 
     auto cell = ViewPositionToLocation(viewPosition);
     return cell;
@@ -194,4 +195,14 @@ MatrixBoardView::MoveResult MatrixBoardView::Move(
     }
 
     return MoveResult::Success;
+}
+
+void MatrixBoardView::PutChildPieces() {
+    /// Put pieces defined by piece handlers on the board
+    for (auto& child : owner->Children()) {
+        auto handler = child->TypeComponent<MatrixPieceHandler>();
+        GUARD_CONTINUE(handler)
+
+        Put(*handler, handler->startOrigin);
+    }
 }

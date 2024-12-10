@@ -6,7 +6,7 @@
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 7/14/24
+ CODE REVIEW: 12/1/24
  */
 namespace PJ {
     /// Handles life state for a part of the world
@@ -44,10 +44,7 @@ namespace PJ {
         }
 
         void CheckedStart(LifeFunc startFunc) {
-            if (!IsAwake()) {
-                PJ::Log("ERROR. Call Awake before Start");
-                return;
-            }
+            GUARD_LOG(IsAwake(), "ERROR. Call Awake before Start")
 
             GUARD(!IsStarted());
             Start();

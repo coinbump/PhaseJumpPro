@@ -1,10 +1,9 @@
-#ifndef PJSOMEDEVICE_H
-#define PJSOMEDEVICE_H
+#pragma once
 
 /*
  RATING: 5 stars
  Simple type
- CODE REVIEW: 7/13/24
+ CODE REVIEW: 12/1/24
  */
 namespace PJ {
     /// Some device that sends inputs (mouse, gamepad, etc.)
@@ -15,5 +14,3 @@ namespace PJ {
         virtual bool IsAvailable() = 0;
     };
 } // namespace PJ
-
-#endif

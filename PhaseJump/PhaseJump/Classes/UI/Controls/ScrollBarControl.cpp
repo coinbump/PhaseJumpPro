@@ -76,7 +76,7 @@ void ScrollBarControl::UpdateThumbPositionForValue(float value) {
 
     Vector2 newPos;
     newPos.AxisValue(axis) = minThumbPos + position * (maxThumbPos - minThumbPos);
-    newPos.AxisValueReverse(axis) = ((Vector2)localPosition).AxisValueReverse(axis);
+    newPos.AxisValueOrthogonal(axis) = ((Vector2)localPosition).AxisValueOrthogonal(axis);
 
     thumb->transform.SetLocalPosition(Vector3(newPos.x, newPos.y, localPosition.z));
 }
@@ -87,7 +87,7 @@ Vector2 ScrollBarControl::TrackSize() const {
     auto rendererSize = RendererSize(*owner);
     Vector2 result;
     result.AxisValue(axis) = frame.size.AxisValue(axis);
-    result.AxisValueReverse(axis) = rendererSize.AxisValueReverse(axis);
+    result.AxisValueOrthogonal(axis) = rendererSize.AxisValueOrthogonal(axis);
 
     return result;
 }
@@ -132,7 +132,7 @@ void ScrollBarControl::OnDragThumbUpdate(WorldNode& thumb, Vector2 inputPosition
 
     Vector2 newPos;
     newPos.AxisValue(axis) = pos;
-    newPos.AxisValueReverse(axis) = ((Vector2)thumbPosition).AxisValueReverse(axis);
+    newPos.AxisValueOrthogonal(axis) = ((Vector2)thumbPosition).AxisValueOrthogonal(axis);
 
     auto newLocalPosition = Vector3(newPos.x, newPos.y, thumbPosition.z);
     thumb.transform.SetLocalPosition(newLocalPosition);

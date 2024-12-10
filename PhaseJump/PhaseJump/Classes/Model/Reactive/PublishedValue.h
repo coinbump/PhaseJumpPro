@@ -15,6 +15,7 @@ namespace PJ {
         requires std::equality_comparable<Type>
     struct PublishedValue {
     public:
+        using This = PublishedValue;
         using Subscription = SomeSimpleSubscription<Type>;
         using ReceiveFunc = SomeSimplePublisher<Type>::ReceiveFunc;
 
@@ -22,17 +23,15 @@ namespace PJ {
         ValueSimpleSubject<Type> subject;
 
     public:
-        PublishedValue(Type const& value) :
+        explicit PublishedValue(Type value = {}) :
             subject(value) {}
 
-        Type const& Value() const {
+        Type Value() const {
             return subject.Value();
         }
 
         void SetValue(Type const& value) {
-            if (subject.Value() == value) {
-                return;
-            }
+            GUARD(subject.Value() != value)
             subject.Send(value);
         }
 
@@ -43,8 +42,13 @@ namespace PJ {
             return subject.Receive(receiveFunc);
         }
 
-        operator Type const&() {
+        operator Type() const {
             return subject.Value();
+        }
+
+        This& operator=(Type const& value) {
+            SetValue(value);
+            return *this;
         }
     };
 } // namespace PJ

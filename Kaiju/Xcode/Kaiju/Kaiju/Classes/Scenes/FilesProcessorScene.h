@@ -10,7 +10,7 @@ namespace Kaiju {
     public:
         FilesProcessorScene() {}
 
-        void LoadInto(WorldNode& root) {
+        void LoadInto(WorldNode& root) override {
             QB(root).Named("Files processor").OrthoStandard().OnDropFiles([](auto args) {
                 auto filesProcessor = MAKE<FilesProcessor>(
                     [](auto filePath) { PJ_Dev::IncludeAliasFileProcessor().Process(filePath); },

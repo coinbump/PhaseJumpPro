@@ -7,7 +7,7 @@
 /*
  RATING: 5 stars
  Simple type
- CODE REVIEW: 7/13/24
+ CODE REVIEW: 12/1/24
  */
 namespace PJ {
     /**
@@ -19,16 +19,5 @@ namespace PJ {
 
         // Optional where clause
         std::optional<SQLWhereArguments> where;
-
-        SQLTableQueryArguments(String columnName, std::optional<SQLWhereArguments> where) :
-            where(where) {
-            Add(columnNames, columnName);
-        }
-
-        SQLTableQueryArguments(
-            VectorList<String> columnNames, std::optional<SQLWhereArguments> where
-        ) :
-            columnNames(columnNames),
-            where(where) {}
     };
 } // namespace PJ

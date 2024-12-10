@@ -37,6 +37,9 @@ namespace PJ {
         /// Child node was added. Sends AddChildNodeEvent
         auto constexpr RemoveChildNode = "remove.childNode";
 
+        /// Called before render. Sends empty Event
+        auto constexpr RenderPrepare = "render.prepare";
+
         /*
          UNSUPPORTED SIGNALS
          */

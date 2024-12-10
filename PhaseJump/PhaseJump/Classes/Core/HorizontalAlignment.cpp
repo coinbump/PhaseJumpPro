@@ -2,6 +2,6 @@
 
 using namespace PJ;
 
-const HorizontalAlignment HorizontalAlignment::leading(AlignFuncs::left);
-const HorizontalAlignment HorizontalAlignment::center(AlignFuncs::center);
-const HorizontalAlignment HorizontalAlignment::trailing(AlignFuncs::right);
+const AlignFunc HorizontalAlignment::leading(AlignFuncs::left);
+const AlignFunc HorizontalAlignment::center(AlignFuncs::center);
+const AlignFunc HorizontalAlignment::trailing(AlignFuncs::right);

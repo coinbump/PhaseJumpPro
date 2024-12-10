@@ -66,7 +66,7 @@ namespace PJ {
         };
 
         /// Determines position for spawned object
-        PositionFunc positionFunc = [](This& emitter) { return Vector3::zero; };
+        PositionFunc positionFunc = [](This& emitter) { return Vector3{}; };
 
     protected:
         using WeakNodeSet = WeakOrderedSet<WP<WorldNode>>;

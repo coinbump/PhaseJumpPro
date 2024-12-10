@@ -55,7 +55,7 @@ namespace PJ {
             onPlayStateChangeFunc(*this);
         }
 
-        /// Set a func to be called when the play state changes
+        /// Sest a func to be called when the play state changes
         void SetOnPlayStateChangeFunc(OnPlayStateChangeFunc value) {
             onPlayStateChangeFunc = value;
 
@@ -63,7 +63,7 @@ namespace PJ {
             OnPlayStateChange();
         }
 
-        /// Set a func to be called when the play time changes
+        /// Sets a func to be called when the play time changes
         void SetOnPlayTimeChangeFunc(OnPlayTimeChangeFunc value) {
             onPlayTimeChangeFunc = value;
 
@@ -76,7 +76,7 @@ namespace PJ {
             return Controller() != nullptr;
         }
 
-        /// Dispatch a func to the controller if there is one, or if there isn't a controller call
+        /// Dispatches a func to the controller if there is one, or if there isn't a controller call
         /// the func
         void Dispatch(std::function<void(Playable&)> func) {
             auto controller = Controller();
@@ -84,7 +84,7 @@ namespace PJ {
             func(*controller);
         }
 
-        /// Dispatch a func with a result to the controller if there is one, or if there isn't a
+        /// Dispatches a func with a result to the controller if there is one, or if there isn't a
         /// controller call the func
         template <class Type>
         Type DispatchResult(std::function<Type(Playable&)> func) const {

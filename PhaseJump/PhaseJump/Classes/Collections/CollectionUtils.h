@@ -78,7 +78,6 @@ namespace PJ {
     /// @return Returns true if the collection contains a value where check returns true
     template <class Collection, class UnaryPred>
     constexpr bool ContainsIf(Collection const& collection, UnaryPred check) {
-        GUARDR(check, false)
         auto i = std::find_if(collection.begin(), collection.end(), check);
         return i != collection.end();
     }
@@ -236,17 +235,18 @@ namespace PJ {
      */
     // TODO: improve with Treeable protocol
     template <class Node, class NodeList>
-    void CollectBreadthFirstTree(Node const& fromNode, NodeList& result) {
+    void CollectBreadthFirstTree(Node* fromNode, NodeList& result) {
         result.clear();
+        GUARD(fromNode)
+
         result.push_back(fromNode);
 
-        std::function<void(NodeList&, Node const&)> collectFunc = [&](NodeList& result,
-                                                                      Node const& fromNode) {
+        std::function<void(NodeList&, Node*)> collectFunc = [&](NodeList& result, Node* fromNode) {
             for (auto& child : fromNode->Children()) {
-                result.push_back(child);
+                result.push_back(child.get());
             }
             for (auto& child : fromNode->Children()) {
-                collectFunc(result, child);
+                collectFunc(result, child.get());
             }
         };
 

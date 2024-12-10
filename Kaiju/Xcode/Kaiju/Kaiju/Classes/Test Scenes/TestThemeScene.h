@@ -8,7 +8,7 @@ class TestThemeScene : public Scene {
 public:
     TestThemeScene() {}
 
-    void LoadInto(WorldNode& root) {
+    void LoadInto(WorldNode& root) override {
         QB qb(root);
 
         qb.Named("TestThemeScene")

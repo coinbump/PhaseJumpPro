@@ -49,12 +49,36 @@ void AnimatedSpriteRenderer::SetTextures(VectorList<SP<SomeTexture>> const& text
     );
 }
 
-AnimatedSpriteRenderer::AnimatedSpriteRenderer(
-    Vector3 worldSize, float frameRate, AnimationCycleType cycleType
-) :
-    Base(worldSize) {
+AnimatedSpriteRenderer::AnimatedSpriteRenderer(Config config) :
+    Base({}) {
 
-    framePlayable = NEW<FramePlayable>(0, frameRate, cycleType);
+    model.material = MAKE<RenderMaterial>(RenderMaterial::Config{ .shaderId = "texture.vary" });
+
+    model.SetBuildMeshFunc([](auto& model) {
+        QuadMeshBuilder builder(model.WorldSize());
+        return builder.BuildMesh();
+    });
+
+    model.material->EnableFeature(RenderFeature::Blend, true);
+
+    auto textures = config.textures;
+
+    if (config.atlas) {
+        auto& atlas = *config.atlas;
+        VectorList<SP<SomeTexture>> someTextures(atlas.Textures().begin(), atlas.Textures().end());
+        textures = someTextures;
+    }
+
+    SetTextures(textures);
+    framePlayable = NEW<FramePlayable>(textures.size(), config.frameRate, config.cycleType);
+
+    // Keyframes require textures, so wait until Awake when we have a world
+    keyframeModels = config.keyframeModels;
+
+    SetCycleType(config.cycleType);
+
+    // Synchronize states
+    OnFrameChange();
 
     PlanUIFunc planUIFunc = [](auto& component, String context, UIPlanner& planner) {
         auto renderer = static_cast<This*>(&component);
@@ -95,63 +119,20 @@ AnimatedSpriteRenderer::AnimatedSpriteRenderer(
 AnimatedSpriteRenderer::AnimatedSpriteRenderer(
     TextureList const& textures, float frameRate, AnimationCycleType cycleType
 ) :
-    AnimatedSpriteRenderer(vec2Zero, frameRate, cycleType) {
-    SetTextures(textures);
-
-    model.SetBuildMeshFunc([](auto& model) {
-        QuadMeshBuilder builder(model.WorldSize());
-        return builder.BuildMesh();
-    });
-
-    model.material = MAKE<RenderMaterial>();
-
-    auto program = SomeShaderProgram::registry.find("texture.vary");
-    GUARD(program != SomeShaderProgram::registry.end())
-    model.material->SetShaderProgram(program->second);
-    model.material->EnableFeature(RenderFeature::Blend, true);
-
-    framePlayable = NEW<FramePlayable>(textures.size(), frameRate, cycleType);
-    SetCycleType(cycleType);
-
-    // Synchronize states
-    OnFrameChange();
-}
+    AnimatedSpriteRenderer(Config{
+        .textures = textures, .frameRate = frameRate, .cycleType = cycleType }) {}
 
 AnimatedSpriteRenderer::AnimatedSpriteRenderer(
     TextureAtlas const& atlas, float frameRate, AnimationCycleType cycleType
 ) :
-    AnimatedSpriteRenderer(vec2Zero, frameRate, cycleType) {
-    VectorList<SP<SomeTexture>> someTextures(atlas.Textures().begin(), atlas.Textures().end());
-    SetTextures(someTextures);
-
-    model.material = MAKE<RenderMaterial>();
-
-    model.SetBuildMeshFunc([](auto& model) {
-        QuadMeshBuilder builder(model.WorldSize());
-        return builder.BuildMesh();
-    });
-
-    auto program = SomeShaderProgram::registry.find("texture.vary");
-    GUARD(program != SomeShaderProgram::registry.end())
-    model.material->SetShaderProgram(program->second);
-    model.material->EnableFeature(RenderFeature::Blend, true);
-
-    auto const& textures = atlas.Textures();
-    framePlayable = NEW<FramePlayable>(textures.size(), frameRate, cycleType);
-    SetCycleType(cycleType);
-
-    // Synchronize states
-    OnFrameChange();
-}
+    AnimatedSpriteRenderer(Config{ .atlas = &atlas, .frameRate = frameRate, .cycleType = cycleType }
+    ) {}
 
 AnimatedSpriteRenderer::AnimatedSpriteRenderer(
     VectorList<KeyframeModel> const& models, float frameRate, AnimationCycleType cycleType
 ) :
-    AnimatedSpriteRenderer(TextureList{}, frameRate, cycleType) {
-
-    // Keyframes require textures, so wait until Awake when we have a world
-    keyframeModels = models;
-}
+    AnimatedSpriteRenderer(Config{
+        .keyframeModels = models, .frameRate = frameRate, .cycleType = cycleType }) {}
 
 void AnimatedSpriteRenderer::Awake() {
     if (!IsEmpty(keyframeModels)) {
@@ -219,7 +200,7 @@ void AnimatedSpriteRenderer::Reset() {
 }
 
 Vector2 AnimatedSpriteRenderer::Size() const {
-    GUARDR(frame >= 0 && frame < frames.size(), vec2Zero)
+    GUARDR(frame >= 0 && frame < frames.size(), {})
     auto const& texture = frames[frame].texture;
     auto textureSize = texture->Size();
 

@@ -10,11 +10,11 @@ Mesh PolyFrameMeshBuilder::BuildMesh() {
     auto segmentCount = SegmentCount();
 
     auto vertexCount = MeshVertexCount();
-    VectorList<Vector3> vertices(vertexCount, Vector3::zero);
+    VectorList<Vector3> vertices(vertexCount, Vector3{});
     auto trianglesSize = segmentCount * 6;
     VectorList<uint32_t> triangles(trianglesSize, 0);
     auto uvSize = vertexCount;
-    VectorList<Vector2> uvs(uvSize, vec2Zero);
+    VectorList<Vector2> uvs(uvSize, Vector2{});
 
     // Outer frame
     auto meshVertexIndex = 0;
@@ -59,7 +59,7 @@ Mesh PolyFrameMeshBuilder::BuildMesh() {
         }
     } else {
         for (size_t i = 0; i < uvSize; i++) {
-            uvs[i] = vec2Zero;
+            uvs[i] = {};
         }
     }
 

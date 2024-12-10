@@ -39,7 +39,7 @@ namespace PJ {
 
         void FlipH();
         void FlipV();
-        void TurnRight(int count);
+        void Turn(int count);
         void TurnLeft(int count);
         void Offset(Vector3 offset);
     };

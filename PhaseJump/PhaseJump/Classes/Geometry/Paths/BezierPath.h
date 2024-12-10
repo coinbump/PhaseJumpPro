@@ -40,7 +40,7 @@ namespace PJ {
                 );
             }
 
-            return Vector3::zero;
+            return {};
         }
 
         Vector3 QuadraticValueFor(float t, Vector3 p0, Vector3 p1, Vector3 p2) const {

@@ -16,10 +16,11 @@ namespace PJ {
     class SomeTagClass : public Class<> {
     public:
         using Base = Class<>;
+        using This = SomeTagClass;
 
         String id;
 
-        List<SP<SomeAttribute>> attributes;
+        VectorList<SP<SomeAttribute>> attributes;
 
         virtual String Type() const = 0;
 

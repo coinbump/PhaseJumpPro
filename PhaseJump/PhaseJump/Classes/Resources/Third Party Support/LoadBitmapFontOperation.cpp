@@ -47,12 +47,12 @@ Tags ReadLine(String line) {
             }
             RemoveIf(second, [](char _char) { return _char == '"'; });
 
-            result.Add(first, second);
+            result.Set(first, second);
         } else if (IsNumericInt(second)) {
             int intValue = TypeValue<int>(second);
-            result.Add(first, intValue);
+            result.Set(first, intValue);
         } else {
-            result.Add(first, second);
+            result.Set(first, second);
         }
     }
 

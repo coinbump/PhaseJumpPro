@@ -1,5 +1,4 @@
-#ifndef PJPOLYGON_H
-#define PJPOLYGON_H
+#pragma once
 
 #include "Utils.h"
 #include "Vector3.h"
@@ -10,18 +9,35 @@
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 7/6/23
+ CODE REVIEW: 12/1/24
  */
 namespace PJ {
-    // TODO: does it make sense for this to use Vector2 instead?
     /// Stores vertices for closed polygon
-    struct Polygon {
-        VectorList<Vector3> value;
+    class Polygon {
+    protected:
+        VectorList<Vector2> value;
 
+        /// Cached min value
+        mutable Vector2 min{};
+
+        /// Cached max value
+        mutable Vector2 max{};
+
+        /// If true, the bounds needs to be recalculated
+        mutable bool isBoundsInvalid = true;
+
+        Vector2 CalculateMin() const;
+        Vector2 CalculateMax() const;
+
+    public:
         Polygon() {}
 
-        Polygon(std::initializer_list<Vector3> vertices) :
+        Polygon(std::initializer_list<Vector2> vertices) :
             value(vertices) {}
+
+        VectorList<Vector2> const& Value() const {
+            return value;
+        }
 
         /// @return Returns a square polygon (4 vertices) based on the given size
         static Polygon MakeSquare(float size) {
@@ -30,57 +46,43 @@ namespace PJ {
 
         /// @return Returns a rect polygon (4 vertices) based on the given size
         static Polygon MakeRect(Vector2 size) {
+            GUARDR_LOG(size.x > 0 && size.y > 0, {}, "ERROR: Can't create empty size polygon");
+
             float halfWidth = size.x / 2.0f;
             float halfHeight = size.y / 2.0f;
-            Polygon result{ { halfWidth * vecLeft, halfHeight * vecUp, 0 },
-                            { halfWidth * vecRight, halfHeight * vecUp, 0 },
-                            { halfWidth * vecRight, halfHeight * vecDown, 0 },
-                            { halfWidth * vecLeft, halfHeight * vecDown, 0 } };
+            Polygon result{ { halfWidth * vecLeft, halfHeight * vecUp },
+                            { halfWidth * vecRight, halfHeight * vecUp },
+                            { halfWidth * vecRight, halfHeight * vecDown },
+                            { halfWidth * vecLeft, halfHeight * vecDown } };
             return result;
         }
 
-        Vector3 Min() const {
-            if (value.size() == 0) {
-                return Vector3::zero;
-            }
+        void CalculateBoundsIfNeeded() const {
+            GUARD(isBoundsInvalid)
+            isBoundsInvalid = false;
 
-            auto result = value[0];
-
-            for (auto& vertex : value) {
-                result = Vector3(
-                    std::min(result.x, vertex.x), std::min(result.y, vertex.y),
-                    std::min(result.z, vertex.z)
-                );
-            }
-
-            return result;
+            min = CalculateMin();
+            max = CalculateMax();
         }
 
-        Vector3 Max() const {
-            if (value.size() == 0) {
-                return Vector3::zero;
-            }
-
-            auto result = value[0];
-
-            for (auto& vertex : value) {
-                result = Vector3(
-                    std::max(result.x, vertex.x), std::max(result.y, vertex.y),
-                    std::max(result.z, vertex.z)
-                );
-            }
-
-            return result;
+        Vector2 Min() const {
+            CalculateBoundsIfNeeded();
+            return min;
         }
 
-        Vector3 Size() const {
+        Vector2 Max() const {
+            CalculateBoundsIfNeeded();
+            return max;
+        }
+
+        Vector2 Size() const {
             auto min = Min();
             auto max = Max();
 
-            return Vector3(
-                std::abs(max.x - min.x), std::abs(max.y - min.y), std::abs(max.z - min.z)
-            );
+            return { std::abs(max.x - min.x), std::abs(max.y - min.y) };
         }
+
+        void SetSize(Vector2 value);
 
         float Width() const {
             return Size().x;
@@ -90,22 +92,29 @@ namespace PJ {
             return Size().y;
         }
 
-        Vector3 Center() const {
+        Vector2 Center() const {
             auto min = Min();
             auto size = Size();
 
-            return Vector3(min.x + size.x / 2.0f, min.y + size.y / 2.0f, min.z + size.z / 2.0f);
+            return { min.x + size.x / 2.0f, min.y + size.y / 2.0f };
         }
 
         bool TestHit(Vector2 pt) const;
 
-        void Add(Vector3 value) {
-            this->value.push_back(value);
+        void Add(Vector2 _value) {
+            value.push_back(_value);
+            isBoundsInvalid = true;
         }
 
-        Vector3 At(size_t index) const {
+        void Add(VectorList<Vector2> _value) {
+            PJ::AddRange(value, _value);
+            isBoundsInvalid = true;
+        }
+
+        /// Returns the vertex at the specified index, which is modulo-wrapped if needed
+        Vector2 ModAt(size_t index) const {
             auto size = value.size();
-            GUARDR(size > 0, Vector3::zero);
+            GUARDR(size > 0, {});
             return value[index >= 0 && index < size ? index : index % size];
         }
 
@@ -115,16 +124,14 @@ namespace PJ {
 
         String ToString() const;
 
-        Vector3& operator[](size_t index) {
+        Vector2& operator[](size_t index) {
             Assert(index >= 0 && index < value.size());
             return value[index];
         }
 
-        Vector3 const& operator[](size_t index) const {
+        Vector2 const& operator[](size_t index) const {
             Assert(index >= 0 && index < value.size());
             return value[index];
         }
     };
 } // namespace PJ
-
-#endif

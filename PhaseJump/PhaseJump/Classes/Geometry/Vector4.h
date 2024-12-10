@@ -9,7 +9,7 @@
 /*
  RATING: 5 stars
  Simple type
- CODE REVIEW: 7/13/24
+ CODE REVIEW: /23
  */
 // TODO: needs unit tests
 // namespace PJ {

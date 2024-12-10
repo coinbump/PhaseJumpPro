@@ -29,6 +29,8 @@
 		CD376CBD29E797DA00DC7950 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD376CBC29E797D900DC7950 /* OpenGL.framework */; };
 		CD420AA82957F3CE00C5D3E1 /* resources in Resources */ = {isa = PBXBuildFile; fileRef = CD420AA72957F3CE00C5D3E1 /* resources */; };
 		CD420AE92959FE6900C5D3E1 /* SDLKaiju.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD420AE82959FE6900C5D3E1 /* SDLKaiju.cpp */; };
+		CD51DBDB2CEAE45300658590 /* TestViewsScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD51DBDA2CEAE45300658590 /* TestViewsScene.cpp */; };
+		CD51DBDC2CEAE45300658590 /* TestViewsScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD51DBDA2CEAE45300658590 /* TestViewsScene.cpp */; };
 		CD5E59592CC4DA4D0071BA96 /* SDL3_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD5E59582CC4DA4D0071BA96 /* SDL3_image.framework */; };
 		CD5E595A2CC4DA4D0071BA96 /* SDL3_image.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CD5E59582CC4DA4D0071BA96 /* SDL3_image.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CD5E595C2CC4DA7F0071BA96 /* SDL3.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD5E595B2CC4DA7F0071BA96 /* SDL3.framework */; };
@@ -138,6 +140,8 @@
 		CD420AA72957F3CE00C5D3E1 /* resources */ = {isa = PBXFileReference; lastKnownFileType = folder; path = resources; sourceTree = "<group>"; };
 		CD420AE72959FE6900C5D3E1 /* SDLKaiju.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDLKaiju.h; sourceTree = "<group>"; };
 		CD420AE82959FE6900C5D3E1 /* SDLKaiju.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SDLKaiju.cpp; sourceTree = "<group>"; };
+		CD51DBD92CEAE45300658590 /* TestViewsScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestViewsScene.h; sourceTree = "<group>"; };
+		CD51DBDA2CEAE45300658590 /* TestViewsScene.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TestViewsScene.cpp; sourceTree = "<group>"; };
 		CD5E59582CC4DA4D0071BA96 /* SDL3_image.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL3_image.framework; path = ../../../../../../../../Library/Frameworks/SDL3_image.framework; sourceTree = "<group>"; };
 		CD5E595B2CC4DA7F0071BA96 /* SDL3.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL3.framework; path = ../../../../../../../../Library/Frameworks/SDL3.framework; sourceTree = "<group>"; };
 		CD5FB81A291E130D004F2FB4 /* Kaiju-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Kaiju-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -431,6 +435,8 @@
 				CD21C6892C855770004EE116 /* TestZOrderScene.h */,
 				CD815FF22CB24B1D00FBB665 /* TestSteeringScene.h */,
 				CD815FF92CB2E29200FBB665 /* TestBulletsScene.h */,
+				CD51DBD92CEAE45300658590 /* TestViewsScene.h */,
+				CD51DBDA2CEAE45300658590 /* TestViewsScene.cpp */,
 			);
 			path = "Test Scenes";
 			sourceTree = "<group>";
@@ -654,6 +660,7 @@
 				CD372FB62CC6F7C700D79CA5 /* KaijuWorldSystem.cpp in Sources */,
 				CD1D46862C9368BA00839F39 /* ObjCBridge.mm in Sources */,
 				CD815F042CA371AF00FBB665 /* KaijuImGuiRenderProcessor.cpp in Sources */,
+				CD51DBDC2CEAE45300658590 /* TestViewsScene.cpp in Sources */,
 				CD1D46872C9368BA00839F39 /* ExampleLifeMatrixRenderer.cpp in Sources */,
 				CD1D46882C9368BA00839F39 /* AppDelegate.mm in Sources */,
 				CDEC25F32C9BD94F00FF14A2 /* ExampleMatrixBoardViewAnimationScene.cpp in Sources */,
@@ -681,6 +688,7 @@
 				CD372FB52CC6F7C700D79CA5 /* KaijuWorldSystem.cpp in Sources */,
 				CD5FB83229200602004F2FB4 /* ObjCBridge.mm in Sources */,
 				CD815F052CA371AF00FBB665 /* KaijuImGuiRenderProcessor.cpp in Sources */,
+				CD51DBDB2CEAE45300658590 /* TestViewsScene.cpp in Sources */,
 				CDDB6F7D2C8E51710073D3A2 /* ExampleLifeMatrixRenderer.cpp in Sources */,
 				CD6FEB5729170AE500F674D3 /* AppDelegate.mm in Sources */,
 				CDEC25F22C9BD94F00FF14A2 /* ExampleMatrixBoardViewAnimationScene.cpp in Sources */,

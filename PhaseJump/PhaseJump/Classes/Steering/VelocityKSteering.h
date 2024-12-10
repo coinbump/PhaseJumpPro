@@ -16,7 +16,7 @@ namespace PJ {
 
         Vector3 velocity;
 
-        VelocityKSteering(Vector3 velocity = Vector3::zero) :
+        VelocityKSteering(Vector3 velocity = {}) :
             velocity(velocity) {}
 
         // MARK: Updatable

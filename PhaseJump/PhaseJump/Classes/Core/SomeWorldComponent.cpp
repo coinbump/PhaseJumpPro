@@ -22,12 +22,12 @@ void SomeWorldComponent::CheckedStart() {
     life.CheckedStart([this]() { this->Start(); });
 }
 
-Vector3 SomeWorldComponent::LocalToWorld(Vector3 localPos) {
+Vector3 SomeWorldComponent::LocalToWorld(Vector3 localPos) const {
     GUARDR(owner, localPos)
     return owner->LocalToWorld(localPos);
 }
 
-Vector3 SomeWorldComponent::WorldToLocal(Vector3 worldPos) {
+Vector3 SomeWorldComponent::WorldToLocal(Vector3 worldPos) const {
     GUARDR(owner, worldPos)
     return owner->WorldToLocal(worldPos);
 }

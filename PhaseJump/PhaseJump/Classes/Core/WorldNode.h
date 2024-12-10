@@ -50,7 +50,6 @@ namespace PJ {
 
      Each component provides composable logic for their owner node
      */
-    // TODO: re-evaluate use of multiple inheritance here
     class WorldNode : public Base, public Treeable<WorldNode> {
     public:
         using Base = PJ::Base;
@@ -101,19 +100,29 @@ namespace PJ {
 
         virtual ~WorldNode() {}
 
+        /// Destroy this node in the next update, or after a countdown
         void Destroy(float countdown = 0);
-        void Restore();
-        virtual void OnDestroy();
 
+        /// Restore a destroyed object (for undo)
+        void Restore();
+
+        /// @return Returns the list of child nodes
         NodeList const& ChildNodes() const;
 
+        /// @return Returns the list of child nodes
         NodeList const& Children() const {
             return tree.Children();
         }
 
+        std::size_t ChildCount();
+
         World* World() const;
+
         bool IsAwake() const;
         bool IsStarted() const;
+
+        /// Send a signal to this node and its components
+        void Signal(String signalId, SomeSignal const& signal);
 
         /// Called before Start
         void CheckedAwake();
@@ -121,90 +130,124 @@ namespace PJ {
         /// Called after Awake
         void CheckedStart();
 
+        /// @return Returns true if the node is marked to be destroyed
         bool IsDestroyed() const;
-        std::size_t ChildCount();
 
+        /// Called by world when object is destroyed
+        virtual void OnDestroy();
+
+        /// @return Returns true if the node is enabled for events, interactions, etc.
         bool IsEnabled() const;
+
+        /// Enable or disable the node. Disabled nodes receive no time or signal events
         This& Enable(bool value);
+
+        /// Toggle the node's enabled state. Disabled nodes receive no time or signal events
         void ToggleEnable();
 
+        /// @return Returns a matrix for transforming from model to world space
         Matrix4x4 ModelMatrix() const;
 
-        // MARK: Add and remove
-
+        /// @return Returns the node's components
         ComponentList const& Components() const;
 
+        /// Adds a component
         void Add(SP<SomeWorldComponent> component);
 
-        template <class T, typename... Arguments>
+        /// Adds an associate component (implementation depends on single vs multiple component ECS)
+        void AddAssociate(SP<SomeWorldComponent> component);
+
+        /// Adds a component based on type and arguments
+        /// @return Returns a reference to the component
+        template <class Type, typename... Arguments>
         auto& AddComponent(Arguments... args) {
-            auto component = MAKE<T>(args...);
+            auto component = MAKE<Type>(args...);
             Add(component);
             return *component;
         }
 
-        // TODO: unit test
-        template <class T, typename... Arguments>
+        /// Adds a component if needed. If one of this type already exists, it is returned
+        /// @return Returns a reference to the component
+        template <class Type, typename... Arguments>
         auto& AddComponentIfNeeded(Arguments... args) {
-            auto existingComponent = TypeComponent<T>();
+            auto existingComponent = TypeComponent<Type>();
             GUARDR(nullptr == existingComponent, *existingComponent)
 
-            auto component = MAKE<T>(args...);
+            auto component = MAKE<Type>(args...);
             Add(component);
             return *component;
         }
 
-        // TODO: unit test
-        template <class T, typename... Arguments>
+        /// Adds a component if needed. If one of this type already exists, it is returned
+        /// Sets was needed flag to true if a new component was added
+        /// @return Returns a reference to the component
+        template <class Type, typename... Arguments>
         auto& AddComponentIfNeededWasNeeded(bool& wasNeeded, Arguments... args) {
-            auto existingComponent = TypeComponent<T>();
+            auto existingComponent = TypeComponent<Type>();
             wasNeeded = false;
             GUARDR(nullptr == existingComponent, *existingComponent)
 
             wasNeeded = true;
 
-            auto component = MAKE<T>(args...);
+            auto component = MAKE<Type>(args...);
             Add(component);
             return *component;
         }
 
-        template <class T, typename... Arguments>
+        /// Quick build for adding a component with type and arguments
+        /// @return Returns a reference to the component
+        template <class Type, typename... Arguments>
         constexpr auto& With(Arguments... args) {
-            return AddComponent<T>(args...);
+            return AddComponent<Type>(args...);
         }
 
-        template <class T, typename... Arguments>
+        /// Quick build for adding a component with id, type, and arguments
+        /// @return Returns a reference to the component
+        template <class Type, typename... Arguments>
         constexpr auto& WithId(String id, Arguments... args) {
-            auto& result = AddComponent<T>(args...);
+            auto& result = AddComponent<Type>(args...);
             result.id = id;
             return result;
         }
 
-        template <class T, typename... Arguments>
+        /// Quick build for adding a component with core, type, and arguments
+        /// @return Returns a reference to the component
+        template <class Type, typename... Arguments>
         constexpr auto& WithCore(Arguments... args) {
-            return AddComponent<WorldComponent<T>>(args...);
+            return AddComponent<WorldComponent<Type>>(args...);
         }
 
-        template <class T, typename... Arguments>
+        /// Adds a component based on type and arguments
+        /// @return Returns the component pointer
+        template <class Type, typename... Arguments>
         auto AddComponentPtr(Arguments... args) {
-            auto component = MAKE<T>(args...);
+            auto component = MAKE<Type>(args...);
             Add(component);
             return component;
         }
 
-        template <class T, typename... Arguments>
+        /// Quick build for adding a component with type and arguments
+        /// @return Returns the component pointer
+        template <class Type, typename... Arguments>
         auto WithPtr(Arguments... args) {
-            return AddComponentPtr<T>(args...);
+            return AddComponentPtr<Type>(args...);
         }
 
-        template <class T, typename... Arguments>
+        /// Quick build for adding a component with core, type, and arguments
+        /// @return Returns the component pointer
+        template <class Type, typename... Arguments>
         auto WithCorePtr(Arguments... args) {
-            return AddComponentPtr<WorldComponent<T>>(args...);
+            return AddComponentPtr<WorldComponent<Type>>(args...);
         }
 
+        /// Adds a child node
         void Add(SP<WorldNode> node);
+
+        /// Insert a child node at the specified index (for redo)
         void Insert(SP<WorldNode> node, size_t index);
 
+        /// Adds a child node based on arguments
+        /// @return Returns a reference to the node
         template <typename... Arguments>
         WorldNode& AddNode(Arguments... args) {
             SP<WorldNode> result = MAKE<WorldNode>(args...);
@@ -212,11 +255,15 @@ namespace PJ {
             return *result;
         }
 
+        /// Quick build for adding a child node based on arguments
+        /// @return Returns a reference to the node
         template <typename... Arguments>
         constexpr WorldNode& And(Arguments... args) {
             return AddNode(args...);
         }
 
+        /// Adds a child node based on arguments
+        /// @return Returns the node pointer
         template <typename... Arguments>
         SP<WorldNode> AddNodePtr(Arguments... args) {
             SP<WorldNode> result = MAKE<WorldNode>(args...);
@@ -224,11 +271,15 @@ namespace PJ {
             return result;
         }
 
+        /// Quick build for adding a child node based on arguments
+        /// @return Returns the node pointer
         template <typename... Arguments>
         SP<WorldNode> AndPtr(Arguments... args) {
             return AddNodePtr(args...);
         }
 
+        /// Quick build for adding a child node based on position and arguments
+        /// @return Returns the node pointer
         template <typename... Arguments>
         WorldNode& AddNodeAt(Vector3 pos, Arguments... args) {
             SP<WorldNode> result = MAKE<WorldNode>(args...);
@@ -242,124 +293,153 @@ namespace PJ {
         void Remove(SomeWorldComponent& component);
         void RemoveAllComponents();
 
-        template <class T>
+        /// Removes all components of the specified type
+        template <class Type>
         void RemoveType() {
             auto iterComponents = components;
             std::for_each(
                 iterComponents.begin(), iterComponents.end(),
                 [&](SP<SomeWorldComponent>& component) {
-                    if (Is<T>(component.get())) {
+                    if (Is<Type>(component.get())) {
                         Remove(*component);
                     }
                 }
             );
         }
 
-        template <class T>
-        SP<T> TypeComponent() const {
+        /// @return Returns the first component of the specified type, if any exists
+        template <class Type>
+        Type* TypeComponent() const {
             for (auto& component : components) {
-                auto typeComponent = DCAST<T>(component);
-                if (typeComponent) {
-                    return typeComponent;
-                }
+                auto typeComponent = DCAST<Type>(component);
+                GUARD_CONTINUE(typeComponent)
+
+                return typeComponent.get();
             }
 
             return nullptr;
         }
 
-        template <class Component>
+        /// @return Returns true if any component of the specified type is enabled
+        template <class Type>
         bool IsTypeEnabled() const {
             auto i = FirstIf(components, [](auto& component) {
-                return Is<Component>(component.get()) && component->IsEnabled();
+                return Is<Type>(component.get()) && component->IsEnabled();
             });
             return i.has_value();
         }
 
-        template <class Component>
+        /// Updates enabled value for all components of the specified type
+        template <class Type>
         This& EnableType(bool value) {
             for (auto& component : components) {
-                GUARD_CONTINUE(Is<Component>(component.get()))
+                GUARD_CONTINUE(Is<Type>(component.get()))
                 component->Enable(value);
             }
             return *this;
         }
 
-        template <class T, class ComponentList>
-        void CollectTypeComponents(ComponentList& result) const {
-            result.clear();
-
+        /// Collects all components of the specified type
+        template <class Type, class ComponentList>
+        void
+        CollectTypeComponents(ComponentList& result, std::function<bool(Type&)> filter = {}) const {
             for (auto& component : components) {
-                auto typeComponent = DCAST<T>(component);
-                if (typeComponent) {
-                    result.push_back(typeComponent);
+                auto typeComponent = DCAST<Type>(component);
+                GUARD_CONTINUE(typeComponent)
+
+                if (filter) {
+                    GUARD_CONTINUE(filter(*typeComponent))
                 }
+
+                result.push_back(typeComponent.get());
             }
         }
 
-        template <class Component>
-        VectorList<SP<Component>> TypeComponents() const {
-            VectorList<SP<Component>> result;
-            CollectTypeComponents<Component>(result);
+        /// @return Returns all components of the specified type
+        template <class Type>
+        VectorList<Type*> TypeComponents() const {
+            VectorList<Type*> result;
+            CollectTypeComponents<Type>(result);
             return result;
         }
 
-        /// Modify components of this type
-        template <class Component>
-        void Modify(std::function<void(Component&)> func) {
-            auto components = TypeComponents<Component>();
+        /// Call a modify function for each component of this type
+        template <class Type>
+        void Modify(std::function<void(Type&)> func) {
+            auto components = TypeComponents<Type>();
             std::for_each(components.begin(), components.end(), [&](auto& component) {
                 func(*component);
             });
         }
 
-        /// Can't be const because of `shared_from_this`
-        template <class T, class ComponentList>
-        void CollectChildTypeComponents(ComponentList& result) {
-            result.clear();
-
-            NodeList graph;
-            SP<WorldNode> sharedThis = SCAST<WorldNode>(shared_from_this());
-            CollectBreadthFirstTree(sharedThis, graph);
+        /// Collects components of the specified type in all descendant nodes
+        template <class Type, class ComponentList>
+        void CollectDescendantTypeComponents(
+            ComponentList& result, std::function<bool(Type&)> filter = {}
+        ) {
+            VectorList<WorldNode*> graph;
+            CollectBreadthFirstTree(this, graph);
 
             for (auto& node : graph) {
-                auto& components = node->Components();
-
-                for (auto& component : components) {
-                    auto typeComponent = DCAST<T>(component);
-                    if (typeComponent) {
-                        result.push_back(typeComponent);
-                    }
-                }
+                node->CollectTypeComponents<Type>(result, filter);
             }
         }
 
+        /// Collects components of the specified type in direct child nodes
+        template <class Type, class ComponentList>
+        void
+        CollectChildTypeComponents(ComponentList& result, std::function<bool(Type&)> filter = {}) {
+            for (auto& node : tree.Children()) {
+                node->CollectTypeComponents<Type>(result, filter);
+            }
+        }
+
+        /// Collects components of the specified type in node and direct child nodes
+        template <class Type, class ComponentList>
+        void CollectAssociateTypeComponents(
+            ComponentList& result, std::function<bool(Type&)> filter = {}
+        ) {
+            CollectTypeComponents<Type>(result, filter);
+            CollectChildTypeComponents<Type>(result, filter);
+        }
+
+        /// @return Returns converted local point in world coordinates
         Vector3 LocalToWorld(Vector3 localPos);
+
+        /// @return Returns converted world point in local coordinates
         Vector3 WorldToLocal(Vector3 worldPos);
 
+        /// @return Returns the opacity of an attached renderer
         float Opacity() const;
+
+        /// Sets the opacity of an attached renderer
         This& SetOpacity(float value);
 
+        /// @return Returns true if value is one of this node's components
         bool Contains(SomeWorldComponent& value);
 
         // MARK: Convenience
 
-        template <class T>
-        SP<T> GetComponent() const {
-            return TypeComponent<T>();
+        /// @return Returns the component of the specified type, if any
+        template <class Type>
+        Type* GetComponent() const {
+            return TypeComponent<Type>();
         }
 
-        template <class T>
-        VectorList<SP<T>> GetComponents() const {
-            VectorList<SP<T>> result;
-            CollectTypeComponents<T>(result);
+        /// @return Returns a list of components of the specified type
+        template <class Type>
+        VectorList<Type*> GetComponents() const {
+            VectorList<Type*> result;
+            CollectTypeComponents<Type>(result);
 
             return result;
         }
 
-        template <class T>
-        VectorList<SP<T>> GetComponentsInChildren() {
-            VectorList<SP<T>> result;
-            CollectChildTypeComponents<T>(result);
+        /// @return Returns a list of components of the specified type in all descendant nodes
+        template <class Type>
+        VectorList<Type*> GetDescendantComponents() {
+            VectorList<Type*> result;
+            CollectDescendantTypeComponents<Type>(result);
             return result;
         }
 
@@ -368,8 +448,6 @@ namespace PJ {
         This& SetScale(float value);
         This& SetScale2D(Vector2 value);
         This& SetScale2D(float value);
-        Vector3 LocalScale() const;
-        This& SetLocalScale(Vector3 value);
 
         This& SetLocalPosition(Vector3 position) {
             transform.SetLocalPosition(position);
@@ -396,4 +474,17 @@ namespace PJ {
     protected:
         void Remove(SP<WorldNode> node);
     };
+
+    /// @return Returns the sibling components of the specified type
+    template <class Type>
+    VectorList<Type*> SiblingTypeComponents(SomeWorldComponent& component) {
+        GUARDR(component.owner, {})
+
+        VectorList<Type*> result;
+        component.owner->CollectTypeComponents<Type>(result, [&](Type& sibling) {
+            return &sibling != &component;
+        });
+
+        return result;
+    }
 } // namespace PJ

@@ -14,7 +14,7 @@ namespace Example {
         public:
             Scene() {}
 
-            void LoadInto(WorldNode& root) {
+            void LoadInto(WorldNode& root) override {
                 QB(root)
                     .Named("ExampleLifeScene")
                     .OrthoStandard(Color::gray)

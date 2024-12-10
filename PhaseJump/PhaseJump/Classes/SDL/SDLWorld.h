@@ -51,8 +51,8 @@ namespace PJ {
     protected:
         void MainLoop();
 
-        // MARK: World
+        // MARK: Base
 
-        void GoInternal() override;
+        void OnGo() override;
     };
 } // namespace PJ

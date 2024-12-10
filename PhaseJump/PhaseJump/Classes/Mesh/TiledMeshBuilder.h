@@ -14,7 +14,7 @@
 namespace PJ {
     /// Builds uv coordinates and vertices for tiling an internal texture
     /// Used when the repeated is internal to the whole texture, so we can't use
-    /// repeat wrap (Example: 9 slice texture) Usage: Use TextureWrap::Repeat if
+    /// repeat wrap (Example: 9 slice texture). Usage: Use TextureWrap::Repeat if
     /// possible, it's faster. Fallback to this if you need it
     class TiledMeshBuilder : public SomeMeshBuilder {
     public:
@@ -23,7 +23,8 @@ namespace PJ {
         UVRect uvBounds;
 
         TiledMeshBuilder(
-            Vector2 worldSize = vec2One, Vector2 tileSize = vec2One, UVRect uvBounds = uvRectOne
+            Vector2 worldSize = Vector2::one, Vector2 tileSize = Vector2::one,
+            UVRect uvBounds = uvRectOne
         ) :
             worldSize(worldSize),
             tileSize(tileSize),

@@ -22,13 +22,7 @@ EventWorldSystem::EventWorldSystem(String name) :
         nodes.clear();
         GUARD(system.world && system.world->root)
 
-        WorldNode::NodeList graph;
-        CollectBreadthFirstTree(system.world->root, graph);
-
-        std::transform(
-            graph.begin(), graph.end(), std::back_inserter(nodes),
-            [](SP<WorldNode> node) { return node; }
-        );
+        CollectBreadthFirstTree(system.world->root.get(), nodes);
     }) {}
 
 VectorList<PJ::LocalHit> EventWorldSystem::TestScreenHit(ScreenPosition screenPosition) {
@@ -43,12 +37,12 @@ VectorList<PJ::LocalHit> EventWorldSystem::TestScreenHit(ScreenPosition screenPo
     auto worldPosition = camera->ScreenToWorld(screenPosition);
     // cout << "Log: Test: " << worldPosition.ToString() << std::endl;
 
-    auto hits = raycaster->Raycast(worldPosition, vec2Zero);
+    auto hits = raycaster->Raycast(worldPosition, {});
 
     VectorList<PJ::LocalHit> result;
     for (auto& hit : hits) {
         auto worldHitPosition = camera->ScreenToWorld(screenPosition);
-        auto worldModelMatrix = world->WorldModelMatrix(*hit.node);
+        auto worldModelMatrix = world->WorldModelMatrix(hit.node);
         Terathon::Point3D point(worldHitPosition.x, worldHitPosition.y, worldHitPosition.z);
         auto localHitPosition = Terathon::InverseTransform(worldModelMatrix, point);
 
@@ -125,7 +119,7 @@ void EventWorldSystem::DispatchEvent(
     GUARD(world)
 
     for (auto& node : nodes) {
-        DispatchEvent(node.lock(), signalId, signal);
+        DispatchEvent(*node, signalId, signal);
     }
 
     for (auto& system : world->Systems()) {
@@ -155,12 +149,10 @@ void EventWorldSystem::OnInputAction(
 
 void EventWorldSystem::OnPointerMove(PointerMoveUIEvent const& event) {}
 
-void EventWorldSystem::DispatchEvent(
-    SP<WorldNode> node, String signalId, SomeSignal const& signal
-) {
-    GUARD(node && node->IsEnabled());
+void EventWorldSystem::DispatchEvent(WorldNode& node, String signalId, SomeSignal const& signal) {
+    GUARD(node.IsEnabled());
 
-    auto iterComponents = node->Components();
+    auto iterComponents = node.Components();
     std::for_each(iterComponents.begin(), iterComponents.end(), [&](auto& component) {
         GUARD(component->IsEnabled())
         try {

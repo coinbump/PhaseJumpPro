@@ -37,8 +37,8 @@ namespace PJ {
 
         static GLint GLTextureMagnification(TextureMagnificationType textureMagnification) {
             OrderedMap<TextureMagnificationType, GLint> map = {
-                { TextureMagnification::Nearest, GL_NEAREST },
-                { TextureMagnification::Linear, GL_LINEAR },
+                { TextureMagnify::Nearest, GL_NEAREST },
+                { TextureMagnify::Linear, GL_LINEAR },
             };
             auto i = map.find(textureMagnification);
             GUARDR(i != map.end(), GL_LINEAR);

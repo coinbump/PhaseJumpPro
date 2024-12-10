@@ -14,12 +14,13 @@
 #include "GridMeshBuilder.h"
 #include "Matrix4x4.h"
 #include "OrthoCamera.h"
+#include "PadViewLayout.h"
 #include "QuadFrameMeshBuilder.h"
 #include "RenderFeature.h"
 #include "RotateKSteering2D.h"
 #include "SimpleAnimationController.h"
 #include "SimpleRaycaster2D.h"
-#include "SlicedTextureRenderer.h"
+#include "Slice9TextureRenderer.h"
 #include "SliderControl.h"
 #include "SomeCollider2D.h"
 #include "SomeHoverGestureHandler.h"
@@ -64,7 +65,8 @@ This& QuickBuild::Texture(String id) {
 }
 
 This& QuickBuild::Circle(float radius, Color color) {
-    return With<ColorRenderer>(color, Vector2(radius * 2, radius * 2))
+    return With<ColorRenderer>(ColorRenderer::Config{
+                                   .color = color, .worldSize = Vector2(radius * 2, radius * 2) })
         .ModifyLatest<ColorRenderer>([](auto& renderer) {
             renderer.SetBuildMeshFunc([](RendererModel const& model) {
                 return EllipseMeshBuilder(model.WorldSize()).BuildMesh();
@@ -72,13 +74,18 @@ This& QuickBuild::Circle(float radius, Color color) {
         });
 }
 
+This& QuickBuild::Rect(Vector2 size, Color color) {
+    return With<ColorRenderer>(ColorRenderer::Config{ .color = color, .worldSize = size });
+}
+
 This& QuickBuild::RectFrame(Vector2 size, Color color, float strokeWidth) {
-    return With<ColorRenderer>(color, size).ModifyLatest<ColorRenderer>([=](auto& renderer) {
-        renderer.SetBuildMeshFunc([=](RendererModel const& model) {
-            return QuadFrameMeshBuilder(model.WorldSize(), { strokeWidth, strokeWidth })
-                .BuildMesh();
+    return With<ColorRenderer>(ColorRenderer::Config{ .color = color, .worldSize = size })
+        .ModifyLatest<ColorRenderer>([=](auto& renderer) {
+            renderer.SetBuildMeshFunc([=](RendererModel const& model) {
+                return QuadFrameMeshBuilder(model.WorldSize(), { strokeWidth, strokeWidth })
+                    .BuildMesh();
+            });
         });
-    });
 }
 
 This& QuickBuild::SquareFrame(float size, Color color, float strokeWidth) {
@@ -86,11 +93,12 @@ This& QuickBuild::SquareFrame(float size, Color color, float strokeWidth) {
 }
 
 This& QuickBuild::Grid(Vector2 worldSize, Vec2I gridSize, Color color, float strokeWidth) {
-    return With<ColorRenderer>(color, worldSize).ModifyLatest<ColorRenderer>([=](auto& renderer) {
-        renderer.SetBuildMeshFunc([=](RendererModel const& model) {
-            return GridMeshBuilder(worldSize, gridSize, strokeWidth).BuildMesh();
+    return With<ColorRenderer>(ColorRenderer::Config{ .color = color, .worldSize = worldSize })
+        .ModifyLatest<ColorRenderer>([=](auto& renderer) {
+            renderer.SetBuildMeshFunc([=](RendererModel const& model) {
+                return GridMeshBuilder(worldSize, gridSize, strokeWidth).BuildMesh();
+            });
         });
-    });
 }
 
 This& QuickBuild::Drag(OnDragUpdateFunc onDragUpdateFunc) {
@@ -149,40 +157,50 @@ This& QuickBuild::CircleCollider(float radius) {
 
 void QuickBuild::AddSlider(
     World& world, WorldNode& parent, DesignSystem& designSystem, SP<SomeTexture> trackTexture,
-    SP<SomeTexture> thumbTexture, String name, Vector2 worldSize, Axis2D axis,
-    std::function<void(float)> valueFunc
+    SP<SomeTexture> thumbTexture, SliderConfig config
 ) {
     GUARD(trackTexture && thumbTexture)
 
-    SlicedTextureRenderer::SlicePoints slicePoints =
-        designSystem.TagValue<SlicedTextureRenderer::SlicePoints>(
-            UIElement::SliderTrack, UITag::SlicePoints
+    Slice9TextureRenderer::SliceModel slicePoints =
+        designSystem.theme->ElementTagValue<Slice9TextureRenderer::SliceModel>(
+            UIElementId::SliderTrack, UITag::Slice9Model
         );
 
-    auto& sliderNode = parent.AddNode("Slider track");
+    // Pin track orthogonal size to minimum size for sliced texture
+    float trackOrthogonal = config.trackOrthogonal;
+    switch (config.axis) {
+    case Axis2D::X:
+        trackOrthogonal = std::max(trackOrthogonal, slicePoints.topLeftInsets.x * 2.0f + 1.0f);
+        break;
+    case Axis2D::Y:
+        trackOrthogonal = std::max(trackOrthogonal, slicePoints.topLeftInsets.y * 2.0f + 1.0f);
+        break;
+    }
 
-    sliderNode.AddComponent<SlicedTextureRenderer>(trackTexture, vec2Zero, slicePoints);
-    auto& sliderControl = sliderNode.AddComponent<SliderControl>(axis);
+    auto& sliderControl = parent.AddComponentIfNeeded<SliderControl>(SliderControl::Config{
+        .axis = config.axis,
+        .trackOrthogonal = trackOrthogonal,
+        .valueBinding = config.valueBinding });
     components.push_back(&sliderControl);
 
-    float endCapSize = designSystem.TagValue<float>(UIElement::SliderTrack, UITag::EndCapSize);
-    sliderControl.SetEndCapSize(endCapSize).SetFrame(Rect({ 0, 0 }, worldSize));
-    auto& thumbNode = sliderNode.AddNode("Slider thumb");
+    auto& trackNode = parent.AddNode("Slider track");
+    trackNode.AddComponent<Slice9TextureRenderer>(trackTexture, Vector2{}, slicePoints);
 
+    float endCapSize =
+        designSystem.theme->ElementTagValue<float>(UIElementId::SliderTrack, UITag::EndCapSize);
+    sliderControl.SetEndCapSize(endCapSize).SetFrame(PJ::Rect({ 0, 0 }, config.worldSize));
+
+    auto& thumbNode = parent.AddNode("Slider thumb");
     thumbNode.AddComponent<PolygonCollider2D>().SetPoly(Polygon::MakeRect(thumbTexture->size));
-
     thumbNode.AddComponent<SpriteRenderer>(thumbTexture);
 
-    if (valueFunc) {
-        // Subscribe to value and store subscription
-        // Careful: watch out for strong reference cycles when using smart pointers
-        sliderNode.cancellables.insert(sliderControl.Value().Receive(valueFunc));
-    }
+    sliderControl.SetTrack(SCAST<WorldNode>(trackNode.shared_from_this()));
+    sliderControl.SetThumb(SCAST<WorldNode>(thumbNode.shared_from_this()));
 }
 
-This& QuickBuild::Slider(String name, Vector2 worldSize, std::function<void(float)> valueFunc) {
-    if (worldSize.y > worldSize.x) {
-        return SliderVertical(name, worldSize, valueFunc);
+This& QuickBuild::Slider(SliderConfig config) {
+    if (config.axis == Axis2D::Y) {
+        return SliderVertical(config);
     }
 
     auto world = Node().World();
@@ -191,22 +209,17 @@ This& QuickBuild::Slider(String name, Vector2 worldSize, std::function<void(floa
     auto designSystem = world->designSystem;
     GUARDR_LOG(designSystem, *this, "Missing design system")
 
-    auto trackTexture = designSystem->Texture(UIElement::SliderTrack);
+    auto trackTexture = designSystem->Texture(UIElementId::SliderTrack);
     GUARDR_LOG(trackTexture, *this, "Missing slider track texture")
 
-    auto thumbTexture = designSystem->Texture(UIElement::SliderThumb);
+    auto thumbTexture = designSystem->Texture(UIElementId::SliderThumb);
     GUARDR_LOG(thumbTexture, *this, "Missing slider thumb texture")
 
-    AddSlider(
-        *world, Node(), *designSystem, trackTexture, thumbTexture, name, worldSize, Axis2D::X,
-        valueFunc
-    );
+    AddSlider(*world, Node(), *designSystem, trackTexture, thumbTexture, config);
     return *this;
 }
 
-This& QuickBuild::SliderVertical(
-    String name, Vector2 worldSize, std::function<void(float)> valueFunc
-) {
+This& QuickBuild::SliderVertical(SliderConfig config) {
     auto world = Node().World();
     GUARDR(world, *this)
 
@@ -214,16 +227,13 @@ This& QuickBuild::SliderVertical(
     GUARDR_LOG(designSystem, *this, "Missing design system")
 
     // FUTURE: support UV rotation so we don't have to duplicate textures
-    auto trackTexture = designSystem->Texture(UIElement::SliderVerticalTrack);
+    auto trackTexture = designSystem->Texture(UIElementId::SliderVerticalTrack);
     GUARDR_LOG(trackTexture, *this, "Missing slider track texture")
 
-    auto thumbTexture = designSystem->Texture(UIElement::SliderVerticalThumb);
+    auto thumbTexture = designSystem->Texture(UIElementId::SliderVerticalThumb);
     GUARDR_LOG(thumbTexture, *this, "Missing slider thumb texture")
 
-    AddSlider(
-        *world, Node(), *designSystem, trackTexture, thumbTexture, name, worldSize, Axis2D::Y,
-        valueFunc
-    );
+    AddSlider(*world, Node(), *designSystem, trackTexture, thumbTexture, config);
     return *this;
 }
 
@@ -279,7 +289,7 @@ This& QuickBuild::HoverScaleTo(float endValue) {
                 *handler.owner, endValue, startValue, EaseFuncs::outSquared
             );
 
-            handler.valve->SetOnValveUpdateFunc([=](auto& valve) {
+            handler.valve.SetOnValveUpdateFunc([=](auto& valve) {
                 switch (valve.State()) {
                 case Valve::StateType::TurnOff:
                     reverseBinding(1.0f - valve.Value());
@@ -312,8 +322,8 @@ This& QuickBuild::HoverScaleToPingPong(float endValue) {
             }
         };
 
-        handlerPtr->valve->SetOnValveUpdateFunc(
-            OverrideFunc(handlerPtr->valve->GetOnValveUpdateFunc(), overrideFunc)
+        handlerPtr->valve.SetOnValveUpdateFunc(
+            OverrideFunc(handlerPtr->valve.GetOnValveUpdateFunc(), overrideFunc)
         );
     });
 
@@ -342,6 +352,13 @@ This& QuickBuild::AnimateScale(float startValue, float endValue) {
         startValue, endValue,
         AnimateFuncs::UniformScaleMaker(AnimateState().duration, AnimateState().easeFunc)
     );
+}
+
+This& QuickBuild::RootView(Vector2 size, ViewBuilder::BuildViewFunc buildFunc) {
+    ViewBuilder vb(Node());
+    vb.RootView(size, buildFunc);
+
+    return *this;
 }
 
 This& QuickBuild::ScaleIn(float startValue) {
@@ -420,9 +437,9 @@ This& QuickBuild::OpacityTo(float endValue) {
     return AnimateOpacity(Node().Opacity(), endValue);
 }
 
-This& QuickBuild::TurnRight(Angle speed) {
+This& QuickBuild::Turn(Angle speed) {
     return With<RotateKSteering2D>(speed).ModifyLatest<RotateKSteering2D>([=](auto& component) {
-        component.TurnRight(speed);
+        component.Turn(speed);
     });
 }
 

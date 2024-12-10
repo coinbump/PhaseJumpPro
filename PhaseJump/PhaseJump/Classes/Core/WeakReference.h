@@ -1,5 +1,4 @@
-#ifndef PJWEAKREFERENCE_H
-#define PJWEAKREFERENCE_H
+#pragma once
 
 #include "SomeReference.h"
 #include <memory>
@@ -7,7 +6,7 @@
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 7/6/24
+ CODE REVIEW: 12/1/24
  */
 namespace PJ {
     /// Holds weak reference to object
@@ -24,12 +23,14 @@ namespace PJ {
             value = b.value;
         }
 
-        SP<T> Value() const override {
-            return value.lock();
-        }
-
         bool IsExpired() const {
             return value.expired();
+        }
+
+        // MARK: SomeReference
+
+        SP<T> Value() const override {
+            return value.lock();
         }
 
         void SetValue(SP<T> const& value) override {
@@ -37,5 +38,3 @@ namespace PJ {
         }
     };
 } // namespace PJ
-
-#endif

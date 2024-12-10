@@ -3,8 +3,7 @@
 using namespace std;
 using namespace PJ;
 
-ImGuiPlanPainter::ImGuiPlanPainter(UIPlan& plan, Storage& _storage) :
-    storage(_storage),
+ImGuiPlanPainter::ImGuiPlanPainter(UIPlan& plan) :
     plan(plan) {
     drawFunc = [this](auto& painter) {
         for (auto& model : this->plan.Models()) {
@@ -16,67 +15,89 @@ ImGuiPlanPainter::ImGuiPlanPainter(UIPlan& plan, Storage& _storage) :
         }
     };
 
-    drawModelFuncs[UIModelId::InputFloat] = [](auto& painter, auto& _model) {
+    drawModelFuncs[UIModelType::Button] = [this](auto& painter, auto& _model) {
+        auto ptr = dynamic_cast<UIModel<ActionUICore>*>(&_model);
+        GUARD(ptr);
+        auto& model = *ptr;
+
+        auto label = model.name;
+
+        if (!IsEmpty(label)) {
+            if (ImGui::Button(label.c_str())) {
+                GUARD(model.core.func)
+                model.core.func();
+            }
+        }
+    };
+
+    drawModelFuncs[UIModelType::Text] = [this](auto& painter, auto& _model) {
+        auto ptr = dynamic_cast<ValueUIModel<String>*>(&_model);
+        GUARD(ptr);
+        auto& model = *ptr;
+
+        auto label = model.name;
+        String value = model.core.binding;
+
+        if (!IsEmpty(label)) {
+            ImGui::Text("%s", label.c_str());
+        }
+        ImGui::Text("%s", value.c_str());
+    };
+
+    drawModelFuncs[UIModelType::InputFloat] = [](auto& painter, auto& _model) {
         auto ptr = dynamic_cast<ValueUIModel<float>*>(&_model);
         GUARD(ptr)
         auto& model = *ptr;
 
         auto label = model.name;
-        model.core.value = model.core.binding;
-        if (ImGui::InputFloat(model.name.c_str(), &model.core.value)) {
-            model.core.binding = model.core.value;
+        float value = model.core.binding;
+        if (ImGui::InputFloat(model.name.c_str(), &value)) {
+            model.core.binding = value;
         }
     };
 
-    drawModelFuncs[UIModelId::PickerColor] = [](auto& painter, auto& _model) {
+    drawModelFuncs[UIModelType::PickerColor] = [](auto& painter, auto& _model) {
         auto ptr = dynamic_cast<ValueUIModel<Color>*>(&_model);
         GUARD(ptr)
         auto& model = *ptr;
 
-        model.core.value = model.core.binding;
-        if (ImGui::ColorEdit4(model.name.c_str(), &model.core.value.r)) {
-            model.core.binding = model.core.value;
+        Color value = model.core.binding;
+        if (ImGui::ColorEdit4(model.name.c_str(), &value.r)) {
+            model.core.binding = value;
         }
     };
 
-    drawModelFuncs[UIModelId::InputBool] = [](auto& painter, auto& _model) {
+    drawModelFuncs[UIModelType::InputBool] = [](auto& painter, auto& _model) {
         auto ptr = dynamic_cast<ValueUIModel<bool>*>(&_model);
         GUARD(ptr)
         auto& model = *ptr;
 
-        model.core.value = model.core.binding;
-        if (ImGui::Checkbox(model.name.c_str(), &model.core.value)) {
-            model.core.binding = model.core.value;
+        bool value = model.core.binding;
+        if (ImGui::Checkbox(model.name.c_str(), &value)) {
+            model.core.binding = value;
         }
     };
 
-    drawModelFuncs[UIModelId::InputText] = [this](auto& painter, auto& _model) {
+    drawModelFuncs[UIModelType::InputText] = [this](auto& painter, auto& _model) {
         auto ptr = dynamic_cast<ValueUIModel<String>*>(&_model);
         GUARD(ptr)
         auto& model = *ptr;
 
-        // FUTURE: re-evaluate this character limit as needed
-        auto constexpr characterLimit = 2000;
-        using TextStorage = std::array<char, characterLimit + 1>;
-
         try {
-            auto& textStorage =
-                storage.ValueStorage<TextStorage>(MakeString((uint64_t)ptr), "text");
-
             String modelValue = model.core.binding;
-            std::copy(modelValue.begin(), modelValue.end(), textStorage.begin());
-            textStorage[modelValue.size()] = 0;
+            VectorList<char> value;
+            value.resize(modelValue.size() + 16);
 
-            if (ImGui::InputTextMultiline(model.name.c_str(), textStorage.data(), characterLimit)) {
-                String storageValue(
-                    textStorage.begin(), std::find(textStorage.begin(), textStorage.end(), 0)
-                );
+            std::copy(modelValue.begin(), modelValue.end(), value.begin());
+
+            if (ImGui::InputTextMultiline(model.name.c_str(), value.data(), 10000)) {
+                String storageValue(value.begin(), std::find(value.begin(), value.end(), 0));
                 model.core.binding = storageValue;
             }
         } catch (...) {}
     };
 
-    drawModelFuncs[UIModelId::PickerList] = [](auto& painter, auto& _model) {
+    drawModelFuncs[UIModelType::PickerList] = [](auto& painter, auto& _model) {
         auto ptr = dynamic_cast<UIModel<ValueOptionsUICore>*>(&_model);
         GUARD(ptr)
         auto& model = *ptr;
@@ -89,17 +110,37 @@ ImGuiPlanPainter::ImGuiPlanPainter(UIPlan& plan, Storage& _storage) :
             [](String& str) { return str.c_str(); }
         );
 
-        try {
-            auto& storage = model.core.value;
-            storage = model.core.binding;
+        int value = model.core.binding;
 
-            if (ImGui::Combo(
-                    model.name.c_str(), &storage, optionNames.data(), (int)optionNames.size(),
-                    (int)optionNames.size()
-                )) {
+        if (ImGui::Combo(
+                model.name.c_str(), &value, optionNames.data(), (int)optionNames.size(),
+                (int)optionNames.size()
+            )) {
+            model.core.binding = value;
+        }
+    };
 
-                model.core.binding = storage;
-            }
-        } catch (...) {}
+    drawModelFuncs[UIModelType::ListSelect] = [](auto& painter, auto& _model) {
+        auto ptr = dynamic_cast<UIModel<ValueOptionsUICore>*>(&_model);
+        GUARD(ptr)
+        auto& model = *ptr;
+
+        auto& options = model.core.options;
+
+        VectorList<const char*> optionNames;
+        std::transform(
+            options.begin(), options.end(), std::back_inserter(optionNames),
+            [](String& str) { return str.c_str(); }
+        );
+
+        int value = model.core.binding;
+
+        // FUTURE: ImGui::PushID();
+        if (ImGui::ListBox(
+                model.name.c_str(), &value, optionNames.data(), (int)optionNames.size(), 5
+            )) {
+            model.core.binding = value;
+        }
+        // FUTURE: ImGui::PopID();
     };
 }

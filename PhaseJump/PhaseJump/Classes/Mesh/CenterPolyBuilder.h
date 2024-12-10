@@ -5,7 +5,7 @@
 
 /*
  RATING: 4 stars
- Tested and works (8/25/24). Needs unit tests
+ Tested and works. Needs unit tests
  CODE REVIEW: 8/25/24
  */
 namespace PJ {
@@ -47,9 +47,8 @@ namespace PJ {
 
             while (angle < endAngleDegrees) {
                 auto vector = (Vector2)Angle::DegreesAngle(angle);
-                auto vertex =
-                    Vector3(center.x + vector.x * radii.x, center.y + vector.y * radii.y, 0);
-                Add(poly.value, vertex);
+                auto vertex = Vector2(center.x + vector.x * radii.x, center.y + vector.y * radii.y);
+                poly.Add(vertex);
 
                 angle += angleStep;
             }
@@ -57,9 +56,8 @@ namespace PJ {
             // Add final step for rounding errors
             if (angle >= endAngleDegrees) {
                 auto vector = (Vector2)Angle::DegreesAngle(endAngleDegrees);
-                auto vertex =
-                    Vector3(center.x + vector.x * radii.x, center.y + vector.y * radii.y, 0);
-                Add(poly.value, vertex);
+                auto vertex = Vector2(center.x + vector.x * radii.x, center.y + vector.y * radii.y);
+                poly.Add(vertex);
             }
 
             return poly;

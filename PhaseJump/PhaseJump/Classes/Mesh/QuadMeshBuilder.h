@@ -5,7 +5,7 @@
 
 /*
  RATING: 5 stars
- Tested and works (8/25/24)
+ Tested and works
  CODE REVIEW: 8/25/24
  */
 namespace PJ {
@@ -17,28 +17,12 @@ namespace PJ {
     /// 1x1 quad mesh, oriented to x-y plane
     class QuadMeshBuilder : public SomeMeshBuilder {
     public:
-        Vector2 worldSize{ 10.0f, 10.0f };
+        Vector2 worldSize{};
 
-        QuadMeshBuilder(Vector2 worldSize = vec2One) :
-            worldSize(worldSize) {}
+        QuadMeshBuilder(Vector2 worldSize = Vector2::one);
 
-        Mesh BuildMesh() override {
-            float halfX = worldSize.x / 2.0f;
-            float halfY = worldSize.y / 2.0f;
+        // MARK: SomeMeshBuilder
 
-            Mesh result({ { halfX * vecLeft, halfY * vecUp, 0 },
-                          { halfX * vecRight, halfY * vecUp, 0 },
-                          { halfX * vecLeft, halfY * vecDown, 0 },
-                          { halfX * vecRight, halfY * vecDown, 0 } });
-
-            // FUTURE: this is an interesting idea, because copying a pointer is faster than a
-            // vector copy But it adds more complexity and edge cases elsewhere. Re-evaluate later
-            // result.SetSharedTriangles(&QuadMesh::triangles);
-
-            result.SetTriangles(Mesh::TrianglesSpan(QuadMesh::triangles));
-            result.SetUVs(QuadMesh::uvs);
-
-            return result;
-        }
+        Mesh BuildMesh() override;
     };
 } // namespace PJ

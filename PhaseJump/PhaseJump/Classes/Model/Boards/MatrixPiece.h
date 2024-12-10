@@ -17,6 +17,8 @@ namespace PJ {
     /// Example: tetromino inside a grid
     class MatrixPiece {
     public:
+        using This = MatrixPiece;
+
         using Cell = uint8_t;
 
         friend class MatrixBoard;
@@ -39,6 +41,13 @@ namespace PJ {
 
         MatrixPiece(Vector2Int size) :
             matrix(size) {}
+
+        /// @return Returns a rectangular piece
+        static This Rect(Vector2Int size) {
+            This result(size);
+            result.Fill();
+            return result;
+        }
 
         Vector2Int Origin() const {
             return origin;

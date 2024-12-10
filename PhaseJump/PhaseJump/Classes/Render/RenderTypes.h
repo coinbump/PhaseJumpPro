@@ -49,6 +49,8 @@ namespace PJ {
         Blend
     };
 
+    RenderOpacityType RenderOpacityTypeFor(Color const& color);
+
     using TextureAlphaModeType = String;
 
     namespace TextureAlphaMode {
@@ -58,10 +60,10 @@ namespace PJ {
 
     using TextureMagnificationType = String;
 
-    namespace TextureMagnification {
+    namespace TextureMagnify {
         auto constexpr Nearest = "nearest";
         auto constexpr Linear = "linear";
-    }; // namespace TextureMagnification
+    }; // namespace TextureMagnify
 
     using TextureWrapType = String;
 

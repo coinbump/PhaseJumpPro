@@ -43,9 +43,9 @@ TEST(WorldNodeTransform, SetWorldPosition)
     auto n2 = MAKE<WorldNode>();
     auto n3 = MAKE<WorldNode>();
 
-    n1->transform.SetLocalPosition(Vector3::zero);
-    n2->transform.SetLocalPosition(Vector3::zero);
-    n3->transform.SetLocalPosition(Vector3::zero);
+    n1->transform.SetLocalPosition({});
+    n2->transform.SetLocalPosition({});
+    n3->transform.SetLocalPosition({});
 
     world.Add(n1);
     n1->Add(n2);
@@ -71,9 +71,9 @@ TEST(WorldNodeTransform, SetWorldPositionXY)
     auto n2 = MAKE<WorldNode>();
     auto n3 = MAKE<WorldNode>();
 
-    n1->transform.SetLocalPosition(Vector3::zero);
-    n2->transform.SetLocalPosition(Vector3::zero);
-    n3->transform.SetLocalPosition(Vector3::zero);
+    n1->transform.SetLocalPosition({});
+    n2->transform.SetLocalPosition({});
+    n3->transform.SetLocalPosition({});
 
     world.Add(n1);
     n1->Add(n2);

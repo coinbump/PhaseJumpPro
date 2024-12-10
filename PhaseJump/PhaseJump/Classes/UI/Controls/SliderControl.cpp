@@ -2,74 +2,83 @@
 #include "Dev.h"
 #include "SomeDragGestureHandler2D.h"
 #include "SomeRenderer.h"
+#include "UIPlanner.h"
 
 using namespace std;
 using namespace PJ;
 
-SliderControl::SliderControl(Axis2D axis) :
-    axis(axis) {}
+SliderControl::SliderControl(Config config) :
+    axis(config.axis),
+    trackOrthogonal(config.trackOrthogonal) {
+    updatable.onUpdateFunc = [this](auto& updatable, auto time) {
+        if (valueBinding.getFunc) {
+            SetValue(valueBinding.getFunc());
+        }
+        return FinishType::Continue;
+    };
 
-std::optional<float> SliderControl::IntrinsicHeight() {
-    // TODO: come back to this when we work on views
-    return std::nullopt;
-    //    auto thumbBounds = ThumbBounds();
-    //    auto trackBounds = TrackBounds();
-    //    auto boundingBounds = thumbBounds + trackBounds;
-    //
-    //    return boundingBounds.height;
-}
+    IdealSizeFunc idealSizeFunc = [this](auto& view, auto proposal) {
+        auto thumbSize = ThumbSize();
 
-Rect SliderControl::TrackFrame() const {
-    // TODO: this isn't quite right. Come back to this when we work on views
-    //    auto trackSize = TrackSize();
-    //    Rect result(Vector2(0, 0), trackSize);
-    //    return result;
+        switch (this->axis) {
+        case Axis2D::X:
+            {
+                auto maxOrthogonal = std::max(thumbSize.y, trackOrthogonal);
+                return ViewSizeProposal{ .width = FloatMath::maxValue, .height = maxOrthogonal };
+            }
+        case Axis2D::Y:
+            {
+                auto maxOrthogonal = std::max(thumbSize.x, trackOrthogonal);
+                return ViewSizeProposal{ .width = maxOrthogonal, .height = FloatMath::maxValue };
+            }
+        }
+    };
 
-    Rect result(vec2Zero, vec2Zero);
-    return result;
-}
-
-std::optional<Rect> SliderControl::ThumbFrame() const {
-    // TODO: this isn't quite right. Come back to this when we work on views
-    Rect result(vec2Zero, vec2Zero);
-    return result;
-
-    //    auto thumbSize = ThumbSize();
-    //    Rect result(Vector2(0, thumb->transform.LocalPosition().y), thumbSize);
-    //    return result;
-
-    //    auto thumb = Thumb();
-    //    GUARDR(thumb, std::nullopt);
-    //
-    //    auto thumbSize = ThumbSize();
-    //    Rect result(Vector2(0, thumb->transform.LocalPosition().y), thumbSize);
-    //    return result;
-}
-
-PublishedValue<float>& SliderControl::Value() {
-    return value;
-}
-
-SP<WorldNode> SliderControl::Thumb() const {
-    if (!thumb.expired()) {
-        return LOCK(thumb);
+    switch (this->axis) {
+    case Axis2D::X:
+        SetIsIdealSize(false, true);
+        break;
+    case Axis2D::Y:
+        SetIsIdealSize(true, false);
+        break;
     }
+    SetIdealSizeFunc(idealSizeFunc);
 
-    return nullptr;
+    value.SetOnValueChangeFunc([this](auto value) { OnValueChange(); });
+
+    PlanUIFunc planUIFunc = [this](auto& component, String context, UIPlanner& planner) {
+        planner.Text("Value", [this]() {
+            stringstream ss;
+            ss << MakeString(value);
+            return ss.str();
+        });
+    };
+    Override(planUIFuncs[UIContextId::Inspector], planUIFunc);
+
+    SetValueBinding(config.valueBinding);
+}
+
+void SliderControl::Configure(Config config) {
+    axis = config.axis;
+    trackOrthogonal = config.trackOrthogonal;
+    SetValueBinding(config.valueBinding);
+}
+
+WorldNode* SliderControl::Thumb() const {
+    GUARDR(!thumb.expired(), {})
+    return thumb.lock().get();
+}
+
+WorldNode* SliderControl::Track() const {
+    GUARDR(!track.expired(), {})
+    return track.lock().get();
 }
 
 void SliderControl::Awake() {
     Base::Awake();
 
-    if (thumb.expired()) {
-        auto const& childNodes = owner->ChildNodes();
-        if (!IsEmpty(childNodes)) {
-            thumb = *childNodes.begin();
-        } else {
-            PJ::Log("ERROR. SliderControl is missing thumb.");
-            return;
-        }
-    }
+    GUARD_LOG(!track.expired(), "ERROR. SliderControl is missing track.");
+    GUARD_LOG(!thumb.expired(), "ERROR. SliderControl is missing thumb.");
 
     auto thumbLock = LOCK(thumb);
     GUARD(thumbLock)
@@ -94,8 +103,17 @@ void SliderControl::Awake() {
         }
     };
 
-    valueSubscription =
-        value.Receive([this](float value) { this->UpdateThumbPositionForValue(value); });
+    OnValueChange();
+}
+
+void SliderControl::OnValueChange() {
+    float value = this->value;
+    UpdateThumbPositionForValue(value);
+
+    valueBinding.SetValue(value);
+
+    GUARD(onValueChangeFunc)
+    onValueChangeFunc(*this);
 }
 
 void SliderControl::UpdateThumbPositionForValue(float value) {
@@ -110,27 +128,22 @@ void SliderControl::UpdateThumbPositionForValue(float value) {
     auto minThumbPos = MinThumbPos(*thumb);
     auto maxThumbPos = MaxThumbPos(*thumb);
 
-    value = clamp(value, minValue, maxValue);
+    SetValue(clamp(value, minValue, maxValue));
     float position = (value - minValue) / (maxValue - minValue);
 
     auto localPosition = thumb->transform.LocalPosition();
 
     Vector2 newPos;
     newPos.AxisValue(axis) = minThumbPos + position * (maxThumbPos - minThumbPos);
-    newPos.AxisValueReverse(axis) = ((Vector2)localPosition).AxisValueReverse(axis);
+    newPos.AxisValueOrthogonal(axis) = ((Vector2)localPosition).AxisValueOrthogonal(axis);
 
     thumb->transform.SetLocalPosition(Vector3(newPos.x, newPos.y, localPosition.z));
 }
 
-Vector2 SliderControl::TrackSize() const {
-    GUARDR(owner, {})
-
-    auto rendererSize = RendererSize(*owner);
-    Vector2 result;
-    result.AxisValue(axis) = frame.size.AxisValue(axis);
-    result.AxisValueReverse(axis) = rendererSize.AxisValueReverse(axis);
-
-    return result;
+float SliderControl::TrackLength() const {
+    auto track = Track();
+    GUARDR(track, {})
+    return RendererSize(*track).AxisValue(axis);
 }
 
 Vector2 SliderControl::RendererSize(WorldNode& target) const {
@@ -155,7 +168,7 @@ Vector2 SliderControl::ThumbSize() const {
 }
 
 float SliderControl::HalfTrackLength(WorldNode& thumb) {
-    auto trackWidth = TrackSize().AxisValue(axis);
+    auto trackWidth = TrackLength();
     auto thumbWidth = ThumbSize().AxisValue(axis);
 
     auto halfTrackWidth = trackWidth / 2.0f - endCapSize - thumbWidth / 2.0f;
@@ -167,17 +180,35 @@ void SliderControl::OnDragThumbUpdate(WorldNode& thumb, Vector2 inputPosition) {
                (inputPosition.AxisValue(axis) - dragStartInputPosition.AxisValue(axis));
     auto minThumbPos = MinThumbPos(thumb);
     auto maxThumbPos = MaxThumbPos(thumb);
+    GUARD(maxThumbPos > minThumbPos)
+
     pos = clamp(pos, minThumbPos, maxThumbPos);
 
     auto thumbPosition = thumb.transform.LocalPosition();
 
     Vector2 newPos;
     newPos.AxisValue(axis) = pos;
-    newPos.AxisValueReverse(axis) = ((Vector2)thumbPosition).AxisValueReverse(axis);
+    newPos.AxisValueOrthogonal(axis) = ((Vector2)thumbPosition).AxisValueOrthogonal(axis);
 
     auto newLocalPosition = Vector3(newPos.x, newPos.y, thumbPosition.z);
     thumb.transform.SetLocalPosition(newLocalPosition);
 
     auto newValue = (newPos.AxisValue(axis) - minThumbPos) / (maxThumbPos - minThumbPos);
-    Value().SetValue(newValue);
+    SetValue(newValue);
+}
+
+void SliderControl::UpdateFrameComponents() {
+    Base::UpdateFrameComponents();
+
+    auto track = Track();
+    if (track) {
+        auto trackRenderer = track->TypeComponent<SomeRenderer>();
+        if (trackRenderer) {
+            Vector2 trackSize = frame.size;
+            trackSize.AxisValueOrthogonal(axis) = trackOrthogonal;
+            trackRenderer->SetWorldSize({ trackSize.x, trackSize.y, 0 });
+        }
+    }
+
+    UpdateThumbPositionForValue(value);
 }

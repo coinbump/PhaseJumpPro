@@ -8,7 +8,7 @@
 /*
  RATING: 5 stars
  Simple type
- CODE REVIEW: 7/8/24
+ CODE REVIEW: 12/1/24
  PORTED TO: C++, C#
  */
 namespace PJ {
@@ -21,7 +21,7 @@ namespace PJ {
         bool didGo = false;
 
         /// Called only if the object hasn't been started already
-        virtual void GoInternal() {}
+        virtual void OnGo() {}
 
     public:
         /// Used to enable extra logging for this object
@@ -36,8 +36,10 @@ namespace PJ {
             GUARD(!didGo);
             didGo = true;
 
-            GoInternal();
+            OnGo();
         }
+
+        // MARK: StringConvertible
 
         /// @return Returns description for logs
         String ToString() const override {

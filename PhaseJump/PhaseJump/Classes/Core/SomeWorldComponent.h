@@ -4,6 +4,7 @@
 #include "Macros.h"
 #include "SomeSignal.h"
 #include "UIPlan.h"
+#include "UITypes.h"
 #include "UnorderedMap.h"
 #include "Updatables.h"
 #include "WorldNodeTransform.h"
@@ -22,14 +23,6 @@ namespace PJ {
     class Matrix4x4;
     class UIPlan;
     class UIPlanner;
-
-    namespace UIContextId {
-        /// UI shown in the editor (always visible)
-        auto constexpr Editor = "editor";
-
-        /// UI shown in the inspector UI
-        auto constexpr Inspector = "inspector";
-    }; // namespace UIContextId
 
     /**
      Interface for a world component
@@ -67,7 +60,7 @@ namespace PJ {
         /// Signal handlers. Mapped by signal id
         UnorderedMap<String, SignalFunc> signalFuncs;
 
-        /// (Optional). Func to make UI plan for custom UI in editor
+        /// Func to make UI plan for custom UI in editor
         UnorderedMap<String, PlanUIFunc> planUIFuncs;
 
         Func awakeFunc;
@@ -106,6 +99,14 @@ namespace PJ {
             return name.size() > 0 ? name : TypeName();
         }
 
+        String Id() const {
+            return id;
+        }
+
+        void SetId(String value) {
+            id = value;
+        }
+
         /// @return Returns the type name of this component for browsers and debugging
         virtual String TypeName() const = 0;
 
@@ -113,8 +114,8 @@ namespace PJ {
 
         Matrix4x4 ModelMatrix() const;
 
-        Vector3 LocalToWorld(Vector3 worldPos);
-        Vector3 WorldToLocal(Vector3 localPos);
+        Vector3 LocalToWorld(Vector3 worldPos) const;
+        Vector3 WorldToLocal(Vector3 localPos) const;
 
         // MARK: Lifecycle events
 

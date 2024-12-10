@@ -65,6 +65,13 @@ SDLConfigPlatformResult SDLPlatformClass::Configure(SDLPlatformConfig& config, S
     auto window = MAKE<SDLPlatformWindow>(world);
     window->Configure(config.windowConfig);
 
+    int pixelW{}, pixelH{};
+    SDL_GetWindowSizeInPixels(window->SDLWindow(), &pixelW, &pixelH);
+
+    PJ::Log("SDL: Window display scale: ", SDL_GetWindowDisplayScale(window->SDLWindow()));
+    // FUTURE: PJ::Log("SDL: Display content scale: ", SDL_GetDisplayContentScale(display)));
+    PJ::Log("SDL: Window pixel density: ", SDL_GetWindowPixelDensity(window->SDLWindow()));
+    PJ::Log("SDL: Window size in pixels: ", pixelW, ", ", pixelH);
     PJ::Log("SDL: Is Joystick Enabled?: ", SDL_JoystickEventsEnabled());
     PJ::Log("SDL: Is Gamepad Enabled?: ", SDL_GamepadEventsEnabled());
 

@@ -23,6 +23,8 @@ namespace PJ {
         static float Sqrt(Floating value) {
             return sqrt(value);
         }
+
+        static constexpr float maxValue = std::numeric_limits<float>::infinity();
     };
 
     // FUTURE: support DoubleMath if needed

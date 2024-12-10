@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Axis.h"
-#include "PublishedValue.h"
+#include "ObservedValue.h"
 #include "SomeDragHandler.h"
 #include "UIControl2D.h"
 
@@ -28,32 +28,76 @@ namespace PJ {
         using Base = UIControl2D;
         using This = SliderControl;
 
-        /// The object for the thumb (if not specified, the first child object is
-        /// used)
+        using OnValueChangeFunc = std::function<void(This&)>;
+
+    protected:
+        /// Track node
+        WP<WorldNode> track;
+
+        /// Thumb node
         WP<WorldNode> thumb;
 
         float minValue = 0;
         float maxValue = 1.0f;
 
-    public:
+        Binding<float> valueBinding;
+        OnValueChangeFunc onValueChangeFunc;
+
+        virtual void OnValueChange();
+
         Axis2D axis = Axis2D::X;
+        float trackOrthogonal{};
 
-        SliderControl(Axis2D axis = Axis2D::X);
+    public:
+        struct Config {
+            Axis2D axis = Axis2D::X;
 
-        PublishedValue<float>& Value();
+            /// Orthogonal size of the slider track perpendicular to the primary axis
+            float trackOrthogonal = 10;
+
+            Binding<float> valueBinding;
+        };
+
+        SliderControl(Config config);
+
+        void Configure(Config config);
+
+        void SetThumb(SP<WorldNode> value) {
+            thumb = value;
+        }
+
+        void SetTrack(SP<WorldNode> value) {
+            track = value;
+        }
+
+        float Value() const {
+            return value;
+        }
+
+        void SetOnValueChangeFunc(OnValueChangeFunc value) {
+            onValueChangeFunc = value;
+
+            GUARD(onValueChangeFunc)
+            onValueChangeFunc(*this);
+        }
+
+        void SetValueBinding(Binding<float> binding) {
+            valueBinding = binding;
+            SetValue(binding);
+        }
+
+        void SetValue(float value) {
+            this->value.SetValue(value);
+        }
 
         auto& SetEndCapSize(float value) {
             endCapSize = value;
             return *this;
         }
 
-        // MARK: View2D
-
-        std::optional<float> IntrinsicHeight() override;
-
     protected:
         /// Value clamped between minValue and maxValue
-        PublishedValue<float> value{ 0.0 };
+        ObservedValue<float> value;
 
         SP<Cancellable> valueSubscription;
 
@@ -64,18 +108,17 @@ namespace PJ {
         Vector3 thumbStartLocalPosition;
         SP<SomeDragGestureHandler2D> thumbDragHandler;
 
-        Rect TrackFrame() const;
-        std::optional<Rect> ThumbFrame() const;
         Vector2 RendererSize(WorldNode& target) const;
 
         void OnDragThumbStart(WorldNode& thumb, Vector2 inputPosition);
         void OnDragThumbUpdate(WorldNode& thumb, Vector2 inputPosition);
         void OnDragThumbEnd();
 
-        Vector2 TrackSize() const;
+        float TrackLength() const;
         Vector2 ThumbSize() const;
 
-        SP<WorldNode> Thumb() const;
+        WorldNode* Thumb() const;
+        WorldNode* Track() const;
 
         void UpdateThumbPositionForValue(float value);
 
@@ -88,6 +131,10 @@ namespace PJ {
         float MaxThumbPos(WorldNode& thumb) {
             return HalfTrackLength(thumb);
         }
+
+        // MARK: View2D
+
+        void UpdateFrameComponents() override;
 
         // MARK: SomeWorldComponent
 

@@ -34,10 +34,11 @@ void UIWorldSystem::OnUpdate(TimeSlice time) {
 
 void UIWorldSystem::UpdateActiveHover(VectorList<PJ::LocalHit> hits) {
     for (auto& hit : hits) {
-        for (auto& component : hit.node->Components()) {
+        for (auto& component : hit.node.Components()) {
             try {
+                // TODO: why is this handler unused?
                 auto handler = component->signalFuncs.at(SignalId::Hover);
-                SetActiveHover(hit.node);
+                SetActiveHover(SCAST<WorldNode>(hit.node.shared_from_this()));
                 return;
             } catch (...) {}
         }
@@ -49,13 +50,8 @@ void UIWorldSystem::SetActiveHover(SP<WorldNode> value) {
     GUARD(activeHover != value)
 
     auto updateHover = [](WorldNode& node, bool isHovering) {
-        for (auto& component : node.Components()) {
-            try {
-                auto handler = component->signalFuncs.at(SignalId::Hover);
-                HoverUIEvent event{ isHovering };
-                handler(*component, event);
-            } catch (...) {}
-        }
+        HoverUIEvent event{ isHovering };
+        node.Signal(SignalId::Hover, event);
     };
 
     if (activeHover) {
@@ -98,12 +94,12 @@ void UIWorldSystem::OnPointerMove(PointerMoveUIEvent const& event) {
 
             auto _node = node.lock();
             PointerExitUIEvent event;
-            DispatchEvent(_node, SignalId::PointerExit, event);
+            DispatchEvent(*_node, SignalId::PointerExit, event);
         }
         pointerEnterNodes.clear();
     } else {
         // We hit something, send pointer exit events for the others and pointer enter for this
-        auto hitNode = hit->node;
+        auto& hitNode = hit->node;
 
         UpdateActiveHover(hits);
 
@@ -114,7 +110,7 @@ void UIWorldSystem::OnPointerMove(PointerMoveUIEvent const& event) {
             }
 
             auto _node = node.lock();
-            if (_node == hitNode) {
+            if (_node.get() == &hitNode) {
                 isHitInPointerEnterNodes = true;
                 continue;
             }
@@ -122,11 +118,11 @@ void UIWorldSystem::OnPointerMove(PointerMoveUIEvent const& event) {
             // cout << "Log: Pointer Exit: " <<
             // pointerMotionEvent->position.ToString() << std::endl;
             PointerExitUIEvent event;
-            DispatchEvent(_node, SignalId::PointerExit, event);
+            DispatchEvent(*_node, SignalId::PointerExit, event);
         }
         pointerEnterNodes.clear();
 
-        Add(pointerEnterNodes, hitNode);
+        Add(pointerEnterNodes, SCAST<WorldNode>(hitNode.shared_from_this()));
 
         // The hit node already received a pointer enter event
         if (!isHitInPointerEnterNodes) {
@@ -162,11 +158,12 @@ void UIWorldSystem::OnPointerDown(PointerDownUIEvent const& pointerDownEvent) {
         // Send mouse down event to node components
         // TODO: we aren't converting to local pos here
         auto localPointerDownEvent = PointerDownUIEvent(screenPos, pointerDownEvent.button);
-        auto hitNode = hit.node;
+        auto& hitNode = hit.node;
         DispatchEvent(hitNode, SignalId::PointerDown, localPointerDownEvent);
 
         pointerDownNodesMap[pointerDownEvent.button].clear();
-        Add(pointerDownNodesMap[pointerDownEvent.button], hitNode);
+        Add(pointerDownNodesMap[pointerDownEvent.button],
+            SCAST<WorldNode>(hitNode.shared_from_this()));
     }
 }
 
@@ -193,6 +190,6 @@ void UIWorldSystem::OnPointerUp(PointerUpUIEvent const& pointerUpEvent) {
         // Send event to node components
         // TODO: we aren't converting to local pos here
         auto localPointerUpEvent = PointerUpUIEvent(pointerUpEvent.button);
-        DispatchEvent(_node, SignalId::PointerUp, localPointerUpEvent);
+        DispatchEvent(*_node, SignalId::PointerUp, localPointerUpEvent);
     }
 }

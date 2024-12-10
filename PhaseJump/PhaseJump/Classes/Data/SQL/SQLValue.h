@@ -1,5 +1,4 @@
-#ifndef SQLVALUE_H
-#define SQLVALUE_H
+#pragma once
 
 #include "SQLTypes.h"
 #include "StringUtils.h"
@@ -7,9 +6,10 @@
 /*
  RATING: 5 stars
  Simple type
- CODE REVIEW: 7/13/24
+ CODE REVIEW: 12/1/24
  */
 namespace PJ {
+    /// Stores a SQL value
     struct SQLValue {
         SQLValueType type;
         String value;
@@ -19,5 +19,3 @@ namespace PJ {
             value(value) {}
     };
 } // namespace PJ
-
-#endif

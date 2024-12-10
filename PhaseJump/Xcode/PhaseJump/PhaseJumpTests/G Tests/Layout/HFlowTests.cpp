@@ -32,6 +32,6 @@ TEST(HFlow, Tests)
     EXPECT_EQ(2.0f, sut->Size().x);
     EXPECT_EQ(1.0f, sut->spacing);
     EXPECT_EQ(Vector2(1.0f, 0) * vecLeft, (Vector2)childNode1->transform.LocalPosition());
-    EXPECT_EQ(vec2Zero, (Vector2)childNode2->transform.LocalPosition());
+    EXPECT_EQ(Vector2{}, (Vector2)childNode2->transform.LocalPosition());
     EXPECT_EQ(Vector2(1.0f, 0) * vecRight, (Vector2)childNode3->transform.LocalPosition());
 }

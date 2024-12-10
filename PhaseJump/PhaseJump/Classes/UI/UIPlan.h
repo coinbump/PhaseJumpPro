@@ -4,6 +4,7 @@
 #include "Tags.h"
 #include "TreeNode.h"
 #include "VectorList.h"
+#include "Void.h"
 
 /*
  RATING: 5 stars
@@ -14,14 +15,17 @@ namespace PJ {
     class SomeUIModel;
 
     /// Class ids for UI models in a UI plan
-    namespace UIModelId {
+    namespace UIModelType {
         auto constexpr InputFloat = "input.float";
         auto constexpr InputBool = "input.bool";
         auto constexpr InputInt = "input.int";
         auto constexpr InputText = "input.text";
         auto constexpr PickerList = "picker.list";
+        auto constexpr ListSelect = "list.select";
         auto constexpr PickerColor = "picker.color";
-    } // namespace UIModelId
+        auto constexpr Text = "text";
+        auto constexpr Button = "button";
+    } // namespace UIModelType
 
     /// An item in a UI plan, used to build UIs
     class SomeUIModel : public Treeable<SomeUIModel> {
@@ -83,7 +87,7 @@ namespace PJ {
     };
 
     /// UI plan model with core
-    template <class Core>
+    template <class Core = Void>
     class UIModel : public SomeUIModel {
     public:
         using Base = SomeUIModel;
@@ -96,14 +100,17 @@ namespace PJ {
             core(core) {}
     };
 
+    /// Core for UI plan model with an action
+    class ActionUICore {
+    public:
+        std::function<void()> func;
+    };
+
     /// Core for UI plan model with a storage value and binding
     template <class Type>
     class ValueUICore {
     public:
         using This = ValueUICore;
-
-        /// Storage for value, if needed (for immediate mode UI)
-        Type value{};
 
         Binding<Type> binding;
 
@@ -122,9 +129,6 @@ namespace PJ {
 
         /// List of possible values
         VectorList<String> options;
-
-        /// Storage for value, if needed (for immediate mode UI)
-        int value{};
 
         Binding<int> binding;
 

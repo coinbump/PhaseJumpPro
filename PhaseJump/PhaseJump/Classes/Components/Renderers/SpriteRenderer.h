@@ -1,5 +1,6 @@
 #pragma once
 
+#include "RenderFeature.h"
 #include "SomeRenderer.h"
 #include "SomeTexture.h"
 #include <memory>
@@ -20,21 +21,23 @@ namespace PJ {
         bool flipX = false;
         bool flipY = false;
 
-        /// Material holds the render texture, this is the actual texture object (child texture for
-        /// texture atlas)
-        SP<SomeTexture> texture;
-
         void Configure();
-
-        SpriteRenderer(Vector3 worldSize);
 
     public:
         // FUTURE: float pixelsPerUnit = 1.0f;
 
+        struct Config {
+            using FeatureStateMap = RenderMaterial::FeatureStateMap;
+
+            SP<SomeTexture> texture;
+            SP<RenderMaterial> material;
+
+            FeatureStateMap features = { { RenderFeature::Blend, RenderFeatureState::Enable } };
+        };
+
+        SpriteRenderer(Config config);
         SpriteRenderer(SP<SomeTexture> texture);
         SpriteRenderer(SP<RenderMaterial> material);
-
-        Vector2 Size() const;
 
         void SetFlipX(bool value) {
             GUARD(flipX != value)

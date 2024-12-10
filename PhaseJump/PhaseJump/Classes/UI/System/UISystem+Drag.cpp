@@ -2,6 +2,7 @@
 #include "SomeDragHandler.h"
 #include "SomeDropTarget.h"
 #include "UIWorldSystem.h"
+#include "World.h"
 
 using namespace std;
 using namespace PJ;
@@ -25,7 +26,7 @@ void UIWorldSystem::OnDragUpdate() {
         auto dragged = dragModel->DragHandler();
         GUARD(dragged)
 
-        auto inputScreenPosition = mouseDevice->Position();
+        auto inputScreenPosition = mouseDevice->Position() * world->uiScale;
         auto inputWorldPosition =
             PJ::WorldPosition(Camera()->ScreenToWorld(Vector3(inputScreenPosition)));
         dragged->OnDragUpdate(WorldPosition(inputWorldPosition));
@@ -40,20 +41,20 @@ void UIWorldSystem::CheckDropTargets(ScreenPosition screenPos) {
 
     auto hits = TestScreenHit(screenPos);
     auto hit = hits.size() > 0 ? &hits[0] : nullptr;
-    SP<WorldNode> hitNode = hit ? hit->node : nullptr;
+    WorldNode* hitNode = hit ? &hit->node : nullptr;
     auto activeDropTarget = this->activeDropTarget.lock();
 
-    if (activeDropTarget && hitNode != activeDropTarget) {
+    if (activeDropTarget && hitNode != activeDropTarget.get()) {
         DragExitUIEvent event;
-        DispatchEvent(activeDropTarget, SignalId::DragExit, event);
+        DispatchEvent(*activeDropTarget, SignalId::DragExit, event);
     }
 
     if (hitNode) {
-        activeDropTarget = hitNode;
+        activeDropTarget = SCAST<WorldNode>(hitNode->shared_from_this());
         this->activeDropTarget = activeDropTarget;
 
         DragEnterUIEvent event(*dragModel);
-        DispatchEvent(activeDropTarget, SignalId::DragEnter, event);
+        DispatchEvent(*activeDropTarget, SignalId::DragEnter, event);
     } else {
         activeDropTarget.reset();
     }

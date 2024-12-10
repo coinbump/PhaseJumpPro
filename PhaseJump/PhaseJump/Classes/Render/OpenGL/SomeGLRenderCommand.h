@@ -22,7 +22,9 @@ namespace PJ {
     /// OpenGL render command
     template <class Core>
     struct GLRenderCommand : public SomeGLRenderCommand {
-        using RunFunc = std::function<void(Core&, GLRenderEngine&)>;
+        using This = GLRenderCommand<Core>;
+
+        using RunFunc = std::function<void(This&, GLRenderEngine&)>;
 
         Core core{};
         RunFunc runFunc;
@@ -33,7 +35,7 @@ namespace PJ {
 
         void Run(GLRenderEngine& engine) override {
             GUARD(runFunc)
-            runFunc(core, engine);
+            runFunc(*this, engine);
         }
     };
 

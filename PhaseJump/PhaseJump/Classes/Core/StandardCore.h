@@ -16,6 +16,7 @@ namespace PJ {
     /// Or you can define your own
     class StandardCore {
     public:
+        // TODO: SP audit
         using ClassPtr = SP<Class<>>;
 
     protected:

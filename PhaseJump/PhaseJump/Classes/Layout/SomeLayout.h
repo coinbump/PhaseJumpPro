@@ -17,7 +17,7 @@ namespace PJ {
         using This = SomeLayout;
 
     protected:
-        bool layoutNeedsBuild = true;
+        bool needsLayout = true;
 
         /// Arrange child objects according to the layout
         virtual void ApplyLayout() = 0;
@@ -28,16 +28,17 @@ namespace PJ {
         bool autoApply = true;
 
         void LayoutIfNeeded() {
-            GUARD(layoutNeedsBuild);
-            layoutNeedsBuild = false;
+            GUARD(needsLayout);
+            needsLayout = false;
             ApplyLayout();
         }
 
         void SetNeedsLayout() {
-            layoutNeedsBuild = true;
+            needsLayout = true;
         }
 
     protected:
         void Awake() override;
+        void Start() override;
     };
 } // namespace PJ

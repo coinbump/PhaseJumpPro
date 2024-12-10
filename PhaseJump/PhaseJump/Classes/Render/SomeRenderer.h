@@ -33,7 +33,12 @@ namespace PJ {
         virtual void Reset() {}
 
         /// Create models to send to the render engine for a render
-        virtual VectorList<RenderModel> MakeRenderModels();
+        virtual VectorList<RenderModel> RenderModels();
+
+        /// @return Returns a calculated size from the given size proposal
+        virtual Vector2 CalculateSize(Vector2 proposal) {
+            return proposal;
+        }
 
         This& SetBuildMeshFunc(BuildMeshFunc buildMeshFunc) {
             model.SetBuildMeshFunc(buildMeshFunc);

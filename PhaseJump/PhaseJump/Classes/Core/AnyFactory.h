@@ -1,10 +1,9 @@
-#ifndef PJANYFACTORY_H_
-#define PJANYFACTORY_H_
+#pragma once
 
 /*
  RATING: 5 stars
  Simple type
- CODE REVIEW: 6/8/24
+ CODE REVIEW: 12/1/24
  */
 namespace PJ {
     /// For type erasure
@@ -13,5 +12,3 @@ namespace PJ {
         virtual ~AnyFactory() {}
     };
 } // namespace PJ
-
-#endif

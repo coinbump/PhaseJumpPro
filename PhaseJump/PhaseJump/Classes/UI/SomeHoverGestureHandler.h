@@ -50,7 +50,7 @@ namespace PJ {
         using This = ValveHoverGestureHandler;
 
         // SP so we can add to updatables
-        SP<Valve> valve = MAKE<Valve>();
+        Valve valve;
 
         float turnOnDuration = 0.3f;
         float turnOffDuration = 0.3f;

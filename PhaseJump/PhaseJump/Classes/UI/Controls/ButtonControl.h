@@ -1,14 +1,16 @@
 #pragma once
 
+#include "PointerClickUIEvent.h"
 #include "StandardEventCore.h"
 #include "UIControl2D.h"
 
 /*
  RATING: 5 stars
  Tested and works
- CODE REVIEW: 9/4/24
+ CODE REVIEW: 11/29/24
  */
 namespace PJ {
+    /// Handles button tracking behavior for a button control
     class ButtonControl : public UIControl2D {
     public:
         using This = ButtonControl;

@@ -17,7 +17,7 @@ SimpleGradientRenderer::SimpleGradientRenderer(
     Base(worldSize),
     startColor(startColor),
     endColor(endColor) {
-    model.material = MAKE<RenderMaterial>();
+    model.material = MAKE<RenderMaterial>(RenderMaterial::Config{ .shaderId = "color.vary" });
 
     model.SetBuildMeshFunc([](RendererModel const& model) {
         QuadMeshBuilder builder(model.WorldSize());
@@ -34,11 +34,6 @@ SimpleGradientRenderer::SimpleGradientRenderer(
 
     // FUTURE: support different gradient directions if needed
     // FUTURE: support MultiGradientRenderer with multiple color stops if needed
-    auto program = SomeShaderProgram::registry.find("color.vary");
-    GUARD(program != SomeShaderProgram::registry.end())
-
-    // FUTURE: support a colors builder that works for different mesh types
-    model.material->SetShaderProgram(program->second);
 
     bool isOpaque = startColor.IsOpaque() && endColor.IsOpaque();
     model.material->EnableFeature(RenderFeature::Blend, !isOpaque);

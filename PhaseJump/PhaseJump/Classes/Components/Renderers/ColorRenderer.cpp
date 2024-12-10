@@ -11,38 +11,44 @@
 using namespace std;
 using namespace PJ;
 
-ColorRenderer::ColorRenderer(Color color, Vector2 worldSize) :
-    Base(worldSize) {
+ColorRenderer::ColorRenderer(Config config) :
+    Base(config.worldSize) {
+
     model.material =
-        MakeMaterial(color.IsOpaque() ? RenderOpacityType::Opaque : RenderOpacityType::Blend);
-    model.SetColor(color);
+        config.material ? config.material : MakeMaterial(RenderOpacityTypeFor(config.color));
+    model.SetColor(config.color);
 
     model.SetBuildMeshFunc([](RendererModel const& model) {
         QuadMeshBuilder builder(model.WorldSize());
         return builder.BuildMesh();
     });
-}
 
-ColorRenderer::ColorRenderer(SP<RenderMaterial> material, Color color, Vector2 worldSize) :
-    Base(worldSize) {
-    model.material = material;
-    model.SetColor(color);
+    model.SetOnColorsChangeFunc([](auto& model) {
+        auto material = model.material;
+        GUARD(material)
 
-    model.SetBuildMeshFunc([](RendererModel const& model) {
-        QuadMeshBuilder builder(model.WorldSize());
-        return builder.BuildMesh();
+        auto& colors = model.Colors();
+        GUARD(!IsEmpty(colors))
+
+        auto color = colors[0];
+        material->EnableFeature(RenderFeature::Blend, color.a != 1);
     });
 }
+
+ColorRenderer::ColorRenderer(Color color, Vector2 worldSize) :
+    ColorRenderer({ .color = color, .worldSize = worldSize }) {}
 
 SP<RenderMaterial> ColorRenderer::MakeMaterial(RenderOpacityType opacityType) {
-    auto program = SomeShaderProgram::registry.find("color.vary");
-    GUARDR(program != SomeShaderProgram::registry.end(), nullptr)
-
-    auto material = MAKE<RenderMaterial>();
-
-    material->SetShaderProgram(program->second);
-
+    auto material = MAKE<RenderMaterial>(RenderMaterial::Config{ .shaderId = "color.vary" });
     material->EnableFeature(RenderFeature::Blend, opacityType == RenderOpacityType::Blend);
 
     return material;
+}
+
+void ColorRenderer::EnableBlend(bool isFeatureEnabled) {
+    model.SetOnColorsChangeFunc({});
+
+    auto material = model.Material();
+    GUARD(material)
+    material->EnableFeature(RenderFeature::Blend, isFeatureEnabled);
 }

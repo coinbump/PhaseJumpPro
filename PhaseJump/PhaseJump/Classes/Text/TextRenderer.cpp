@@ -12,19 +12,15 @@
 using namespace std;
 using namespace PJ;
 
-TextRenderer::TextRenderer(SP<Font> font, String text, Vector2 size) :
-    Base(vec2Zero),
-    font(font),
-    text(text),
-    size(size) {
+TextRenderer::TextRenderer(Config config) :
+    Base(config.worldSize),
+    font(config.font),
+    text(config.text) {
 
     GUARD(font && font->atlas && font->atlas->Textures().size() > 0)
 
-    model.material = MAKE<RenderMaterial>();
-    auto program = SomeShaderProgram::registry["texture.vary"];
+    model.material = MAKE<RenderMaterial>(RenderMaterial::Config{ .shaderId = "texture.vary" });
     model.material->Add(font->atlas->texture);
-
-    model.material->SetShaderProgram(program);
     model.material->EnableFeature(RenderFeature::Blend, true);
 
     auto defaultFunc = model.BuildVertexColorsFunc();
@@ -38,12 +34,9 @@ TextRenderer::TextRenderer(SP<Font> font, String text, Vector2 size) :
         this->modifyColorsFunc(*this, colors);
     });
 
-    PlanUIFunc planUIFunc = [](auto& component, String context, UIPlanner& planner) {
-        auto renderer = static_cast<This*>(&component);
-
+    PlanUIFunc planUIFunc = [this](auto& component, String context, UIPlanner& planner) {
         planner.InputText(
-            "Text",
-            { [=]() { return renderer->text; }, [=](auto& value) { renderer->SetText(value); } }
+            "Text", { [this]() { return text; }, [this](auto& value) { SetText(value); } }
         );
     };
     Override(planUIFuncs[UIContextId::Inspector], planUIFunc);
@@ -66,15 +59,16 @@ Mesh TextRenderer::BuildMesh() {
     renderChars.clear();
 
     TextMeasurer tm(*font);
-    metrics = tm.Measure(text, size, lineClip);
+    Vector2 worldSize2 = WorldSize();
+    auto metrics = tm.Measure(text, worldSize2, lineClip);
+    this->metrics = metrics;
 
-    auto& lines = metrics->lines;
+    auto& lines = metrics.lines;
 
-    float textHeight = 0;
+    auto size = metrics.CalculateSize();
+    float textHeight = size.y;
 
     for (auto& line : lines) {
-        textHeight += line.size.y;
-
         float lineX = 0;
         if (lineAlignFunc) {
             lineX = lineAlignFunc(size.x, line.size.x);
@@ -140,12 +134,14 @@ Mesh TextRenderer::BuildMesh() {
     return mesh;
 }
 
-// TODO: this can't work because the size it's using to measure is the wrong size, it needs to be as
-// large as possible (or based on # of lines?)
-TextRenderer& TextRenderer::SizeToFit() {
-    GUARDR(metrics, *this)
-
-    size = metrics->size;
-
+TextRenderer& TextRenderer::SizeToFit(Vector2 proposal) {
+    SetWorldSize(CalculateSize(proposal));
     return *this;
+}
+
+Vector2 TextRenderer::CalculateSize(Vector2 proposal) {
+    TextMeasurer tm(*font);
+    auto metrics = tm.Measure(Text(), proposal, GetLineClip());
+    auto calculatedSize = metrics.CalculateSize(metrics.lines);
+    return calculatedSize;
 }

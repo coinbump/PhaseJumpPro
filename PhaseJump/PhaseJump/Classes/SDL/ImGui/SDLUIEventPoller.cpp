@@ -49,7 +49,9 @@ SDLUIEventPoller::Result SDLUIEventPoller::Process(SDLEventList const& events) {
         }
     }
 
-    UIEventList thisUIEvents = SDLUIEventsBuilder().BuildUIEvents(events);
+    float uiScale = SDL_GetWindowPixelDensity(window);
+
+    UIEventList thisUIEvents = SDLUIEventsBuilder().BuildUIEvents(events, uiScale);
     AddRange(uiEvents, thisUIEvents);
 
     return Result(StateType::Run, uiEvents);

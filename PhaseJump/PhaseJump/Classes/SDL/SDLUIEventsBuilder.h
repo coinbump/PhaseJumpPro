@@ -9,12 +9,13 @@
 // CODE REVIEW: ?/23
 namespace PJ {
     class SomeUIEvent;
+    class World;
 
     // TODO: vecotrList?
     using SDLEventList = List<SDL_Event>;
 
     struct SDLUIEventsBuilder {
         // TODO: Use UP here?
-        UIEventList BuildUIEvents(SDLEventList const& events);
+        UIEventList BuildUIEvents(SDLEventList const& events, float uiScale);
     };
 } // namespace PJ

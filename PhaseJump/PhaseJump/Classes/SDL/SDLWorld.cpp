@@ -20,7 +20,7 @@ class QuadMeshBuilderA : public SomeMeshBuilder {
 public:
     Vector2 worldSize{ 10.0f, 10.0f };
 
-    QuadMeshBuilderA(Vector2 worldSize = vec2One) :
+    QuadMeshBuilderA(Vector2 worldSize = Vector2::one) :
         worldSize(worldSize) {}
 
     Mesh BuildMesh() override {
@@ -41,7 +41,7 @@ class QuadMeshBuilderB : public SomeMeshBuilder {
 public:
     Vector2 worldSize{ 10.0f, 10.0f };
 
-    QuadMeshBuilderB(Vector2 worldSize = vec2One) :
+    QuadMeshBuilderB(Vector2 worldSize = Vector2::one) :
         worldSize(worldSize) {}
 
     Mesh BuildMesh() override {
@@ -112,8 +112,10 @@ public:
     }
 };
 
-void SDLWorld::GoInternal() {
-    Base::GoInternal();
+void SDLWorld::OnGo() {
+    Base::OnGo();
+
+    uiScale = SDL_GetWindowPixelDensity(window);
 
     DevABProfiler profile(
         "Vector[]- switch",

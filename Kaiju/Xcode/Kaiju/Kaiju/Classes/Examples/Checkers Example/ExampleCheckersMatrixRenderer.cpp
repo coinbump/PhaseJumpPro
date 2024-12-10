@@ -7,12 +7,8 @@ using namespace Checkers;
 
 MatrixRenderer::MatrixRenderer(Vector3 worldSize) :
     Base(worldSize) {
-    auto program = SomeShaderProgram::registry.find("color.vary");
-    GUARD(program != SomeShaderProgram::registry.end())
 
-    auto material = MAKE<RenderMaterial>();
-    material->EnableFeature(RenderFeature::Blend, false);
-    material->SetShaderProgram(program->second);
+    auto material = MAKE<RenderMaterial>(RenderMaterial::Config{ .shaderId = "color.vary" });
 
     Vec2I matrixSize{ 8, 8 };
     model.material = material;

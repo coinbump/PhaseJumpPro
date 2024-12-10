@@ -30,9 +30,9 @@ Mesh TiledMeshBuilder::BuildMesh() {
     int vertexYCount = meshSize.y * 2;
     int verticesSize = vertexXCount * vertexYCount;
 
-    VectorList<Vector3> vertices(verticesSize, Vector3::zero);
+    VectorList<Vector3> vertices(verticesSize, Vector3{});
     auto uvSize = verticesSize;
-    VectorList<Vector2> uvs(uvSize, vec2Zero);
+    VectorList<Vector2> uvs(uvSize, Vector2{});
 
     for (size_t meshY = 0, i = 0; meshY < meshSize.y; meshY++) {
         for (size_t y = 0; y < 2; y++) {

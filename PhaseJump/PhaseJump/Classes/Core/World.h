@@ -32,7 +32,9 @@ namespace PJ {
         std::optional<TimePoint> fpsCheckTimePoint;
         uint64_t renderFrameCount;
 
-        void GoInternal() override;
+        // MARK: Base
+
+        void OnGo() override;
 
         WorldNode::NodeList updateList;
         VectorList<SP<SomeWorldSystem>> systems;
@@ -44,6 +46,10 @@ namespace PJ {
         RateLimiter renderLimiter{ 1.0f / 240.0f };
 
     public:
+        /// Number of pixels per point
+        /// Example: on a Retina screen, each point represents 2 pixels, this value would be 2
+        float uiScale = 1;
+
         /// Stores objects that need time updates
         Updatables updatables;
 

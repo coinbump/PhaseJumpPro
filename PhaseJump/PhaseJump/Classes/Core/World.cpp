@@ -63,26 +63,25 @@ SP<SomeCamera> World::MainCamera() {
 
     GUARDR(!mainCamera, mainCamera)
 
-    WorldNode::NodeList graph;
-    CollectBreadthFirstTree(root, graph);
+    VectorList<WorldNode*> graph;
+    CollectBreadthFirstTree(root.get(), graph);
 
     for (auto& node : graph) {
-        auto worldNode = SCAST<WorldNode>(node);
-
+        auto worldNode = node;
         auto camera = worldNode->GetComponent<SomeCamera>();
 
         // Offscreen cameras don't qualify as the main camera
         GUARD_CONTINUE(camera && !camera->renderContext)
 
-        mainCamera = camera;
+        mainCamera = camera ? SCAST<SomeCamera>(camera->shared_from_this()) : nullptr;
         return mainCamera;
     }
 
     return nullptr;
 }
 
-void World::GoInternal() {
-    Base::GoInternal();
+void World::OnGo() {
+    Base::OnGo();
 
 #ifdef DEBUG
     std::cout << "PHASE JUMP IS DEBUG";
@@ -134,7 +133,7 @@ void World::RenderNow() {
         nodes.begin(), nodes.end(), std::back_inserter(optionalCameras),
         [](WorldNode* node) {
             auto result = node->GetComponent<SomeCamera>();
-            return (result && result->IsEnabled()) ? result.get() : nullptr;
+            return (result && result->IsEnabled()) ? result : nullptr;
         }
     );
     VectorList<SomeCamera*> cameras;
@@ -157,8 +156,8 @@ void World::RenderNow() {
         }
     }
 
-    renderStats.Insert(RenderStatId::DrawCount, drawCount);
-    renderStats.Insert(RenderStatId::NodeCount, (int)contextModel.nodes.size());
+    renderStats.Set(RenderStatId::DrawCount, drawCount);
+    renderStats.Set(RenderStatId::NodeCount, (int)contextModel.nodes.size());
 
     renderFrameCount++;
 }

@@ -304,7 +304,7 @@ TEST(WorldNode, TypeComponent)
     sut->Add(component);
     auto component2 = MAKE<TestComponent>();
     sut->Add(component2);
-    EXPECT_EQ(component, sut->TypeComponent<TestComponent>());
+    EXPECT_EQ(component.get(), sut->TypeComponent<TestComponent>());
 }
 
 TEST(WorldNode, TypeComponent2)
@@ -317,11 +317,11 @@ TEST(WorldNode, TypeComponent2)
     sut->Add(component);
     auto component2 = MAKE<TestComponent>();
     sut->Add(component2);
-    List<SP<TestComponent>> components;
+    VectorList<TestComponent*> components;
     sut->CollectTypeComponents<TestComponent>(components);
 
     EXPECT_EQ(2, components.size());
-    EXPECT_EQ(component, *components.begin());
+    EXPECT_EQ(component.get(), *components.begin());
 }
 
 TEST(WorldNode, DestroyNow)
@@ -372,6 +372,55 @@ TEST(WorldNode, Update)
     EXPECT_EQ(3.0f, component2->updateTime);
 }
 
+TEST(WorldNode, CollectDescendantTypeComponents)
+{
+    auto world = MAKE<World>();
+    auto sut = MAKE<WorldNode>();
+    world->Add(sut);
+
+    auto child = MAKE<WorldNode>();
+    sut->Add(child);
+
+    auto child2 = MAKE<WorldNode>();
+    child->Add(child2);
+    
+    auto component = MAKE<TestComponent>();
+    sut->Add(component);
+    auto component2 = MAKE<TestComponent>();
+    child2->Add(component2);
+    VectorList<TestComponent*> components;
+    sut->CollectDescendantTypeComponents<TestComponent>(components);
+
+    EXPECT_EQ(2, components.size());
+    EXPECT_EQ(component.get(), *components.begin());
+    EXPECT_EQ(component2.get(), *(++components.begin()));
+}
+
+TEST(WorldNode, CollectDescendantTypeComponentsWithFilter)
+{
+    auto world = MAKE<World>();
+    auto sut = MAKE<WorldNode>();
+    world->Add(sut);
+
+    auto child = MAKE<WorldNode>();
+    sut->Add(child);
+
+    auto child2 = MAKE<WorldNode>();
+    child->Add(child2);
+    
+    auto component = MAKE<TestComponent>();
+    sut->Add(component);
+    auto component2 = MAKE<TestComponent>();
+    child2->Add(component2);
+    VectorList<TestComponent*> components;
+    sut->CollectDescendantTypeComponents<TestComponent>(components, [&](auto& component) {
+        return &component == component2.get();
+    });
+
+    ASSERT_EQ(1, components.size());
+    EXPECT_EQ(component2.get(), *components.begin());
+}
+
 TEST(WorldNode, CollectChildTypeComponents)
 {
     auto world = MAKE<World>();
@@ -381,16 +430,101 @@ TEST(WorldNode, CollectChildTypeComponents)
     auto child = MAKE<WorldNode>();
     sut->Add(child);
 
+    auto child2 = MAKE<WorldNode>();
+    child->Add(child2);
+    
     auto component = MAKE<TestComponent>();
     sut->Add(component);
+    auto component1 = MAKE<TestComponent>();
+    child->Add(component1);
     auto component2 = MAKE<TestComponent>();
-    child->Add(component2);
-    List<SP<TestComponent>> components;
+    child2->Add(component2);
+    VectorList<TestComponent*> components;
     sut->CollectChildTypeComponents<TestComponent>(components);
 
-    EXPECT_EQ(2, components.size());
-    EXPECT_EQ(component, *components.begin());
-    EXPECT_EQ(component2, *(++components.begin()));
+    ASSERT_EQ(1, components.size());
+    EXPECT_EQ(component1.get(), *components.begin());
+}
+
+TEST(WorldNode, CollectChildTypeComponentsWithFilter)
+{
+    auto world = MAKE<World>();
+    auto sut = MAKE<WorldNode>();
+    world->Add(sut);
+
+    auto child = MAKE<WorldNode>();
+    sut->Add(child);
+
+    auto child2 = MAKE<WorldNode>();
+    child->Add(child2);
+    
+    auto component = MAKE<TestComponent>();
+    sut->Add(component);
+    auto component1 = MAKE<TestComponent>();
+    child->Add(component1);
+    auto component2 = MAKE<TestComponent>();
+    child->Add(component2);
+    
+    VectorList<TestComponent*> components;
+    sut->CollectChildTypeComponents<TestComponent>(components, [&](auto& component) {
+        return &component == component2.get();
+    });
+
+    ASSERT_EQ(1, components.size());
+    EXPECT_EQ(component2.get(), *components.begin());
+}
+
+TEST(WorldNode, CollectAssociateTypeComponents)
+{
+    auto world = MAKE<World>();
+    auto sut = MAKE<WorldNode>();
+    world->Add(sut);
+
+    auto child = MAKE<WorldNode>();
+    sut->Add(child);
+
+    auto child2 = MAKE<WorldNode>();
+    child->Add(child2);
+    
+    auto component = MAKE<TestComponent>();
+    sut->Add(component);
+    auto component1 = MAKE<TestComponent>();
+    child->Add(component1);
+    auto component2 = MAKE<TestComponent>();
+    child2->Add(component2);
+    VectorList<TestComponent*> components;
+    sut->CollectAssociateTypeComponents<TestComponent>(components);
+
+    ASSERT_EQ(2, components.size());
+    EXPECT_EQ(component.get(), *components.begin());
+    EXPECT_EQ(component1.get(), *(++components.begin()));
+}
+
+TEST(WorldNode, CollectAssociateTypeComponentsWithFilter)
+{
+    auto world = MAKE<World>();
+    auto sut = MAKE<WorldNode>();
+    world->Add(sut);
+
+    auto child = MAKE<WorldNode>();
+    sut->Add(child);
+
+    auto child2 = MAKE<WorldNode>();
+    child->Add(child2);
+    
+    auto component = MAKE<TestComponent>();
+    sut->Add(component);
+    auto component1 = MAKE<TestComponent>();
+    child->Add(component1);
+    auto component2 = MAKE<TestComponent>();
+    child2->Add(component2);
+    VectorList<TestComponent*> components;
+    sut->CollectAssociateTypeComponents<TestComponent>(components, [&](auto& component) {
+        return &component == component1.get();
+    });
+
+    ASSERT_EQ(1, components.size());
+    EXPECT_EQ(component1.get(), *components.begin());
 }
 
 TEST(WorldNode, LocalToWorld)
@@ -491,4 +625,60 @@ TEST(WorldNode, EnableType_IsTypeEnabled)
     EXPECT_TRUE(sut->IsTypeEnabled<TestComponent>());
     sut->EnableType<TestComponent>(false);
     EXPECT_FALSE(sut->IsTypeEnabled<TestComponent>());
+}
+
+TEST(WorldNode, SiblingTypeComponents)
+{
+    auto sut = MAKE<WorldNode>();
+    auto component = MAKE<TestComponent>();
+    sut->Add(component);
+    auto component2 = MAKE<TestComponent>();
+    sut->Add(component2);
+
+    auto siblings = SiblingTypeComponents<TestComponent>(*component);
+    ASSERT_EQ(1, siblings.size());
+    EXPECT_EQ(component2.get(), siblings[0]);
+}
+
+TEST(WorldNode, AddComponentIfNeeded)
+{
+    auto sut = MAKE<WorldNode>();
+    sut->AddComponentIfNeeded<TestComponent>();
+    ASSERT_EQ(1, sut->Components().size());
+}
+
+TEST(WorldNode, AddComponentIfNeededWasNeeded)
+{
+    auto sut = MAKE<WorldNode>();
+    
+    bool wasNeeded{};
+    sut->AddComponentIfNeededWasNeeded<TestComponent>(wasNeeded);
+    ASSERT_EQ(1, sut->Components().size());
+    EXPECT_TRUE(wasNeeded);
+}
+
+TEST(WorldNode, AddComponentIfNeededWasNeededAlreadyExists)
+{
+    auto sut = MAKE<WorldNode>();
+    sut->AddComponentIfNeeded<TestComponent>();
+    
+    bool wasNeeded{};
+    sut->AddComponentIfNeededWasNeeded<TestComponent>(wasNeeded);
+    ASSERT_EQ(1, sut->Components().size());
+    EXPECT_FALSE(wasNeeded);
+}
+
+TEST(WorldNode, Signal)
+{
+    int signalCount{};
+    
+    auto sut = MAKE<WorldNode>();
+    sut->AddComponentIfNeeded<TestComponent>().signalFuncs["test"] = [&](auto& component, auto& signal) {
+        signalCount++;
+    };
+    
+    Event event;
+    sut->Signal("test", event);
+    
+    ASSERT_EQ(1, signalCount);
 }

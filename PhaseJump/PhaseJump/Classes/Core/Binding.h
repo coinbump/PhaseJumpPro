@@ -12,6 +12,9 @@ namespace PJ {
     template <class T>
     using SetBindingFunc = std::function<void(T const&)>;
 
+    template <class T>
+    using GetFunc = std::function<T()>;
+
     /// Binding that gets and sets values via function
     template <class T>
     class Binding : public SomeBinding<T> {
@@ -19,11 +22,13 @@ namespace PJ {
         using Base = SomeBinding<T>;
         using This = Binding;
 
-        using GetFunc = std::function<T()>;
+        using GetFunc = GetFunc<T>;
         using SetFunc = SetBindingFunc<T>;
 
         GetFunc getFunc;
         SetFunc setFunc;
+
+        Binding() {}
 
         Binding(GetFunc getFunc, SetFunc setFunc) :
             getFunc(getFunc),
@@ -46,6 +51,10 @@ namespace PJ {
         This const& operator=(T const& value) const {
             SetValue(value);
             return *this;
+        }
+
+        bool IsValid() const {
+            return getFunc || setFunc;
         }
     };
 } // namespace PJ

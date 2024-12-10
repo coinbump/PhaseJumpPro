@@ -4,6 +4,7 @@
 #include "OrderedMap.h"
 #include "PointerClickUIEvent.h"
 #include "SomeControllerUIEvent.h"
+#include "World.h"
 #include <iostream>
 
 using namespace std;
@@ -42,10 +43,10 @@ void OnControllerButtonDown(String controllerId, int button, UIEventList& result
     result.push_back(SCAST<SomeUIEvent>(event));
 }
 
-UIEventList SDLUIEventsBuilder::BuildUIEvents(SDLEventList const& events) {
+UIEventList SDLUIEventsBuilder::BuildUIEvents(SDLEventList const& events, float uiScale) {
     UIEventList result;
 
-    List<SP<DropFilesUIEvent>> dropFileEvents;
+    VectorList<SP<DropFilesUIEvent>> dropFileEvents;
 
     for (auto& sdlEvent : events) {
         switch (sdlEvent.type) {
@@ -103,8 +104,8 @@ UIEventList SDLUIEventsBuilder::BuildUIEvents(SDLEventList const& events) {
                 // Combine separate drop file events
                 auto droppedFile = sdlEvent.drop.data;
                 auto event = MAKE<DropFilesUIEvent>(
-                    List<FilePath>{ FilePath(droppedFile) },
-                    ScreenPosition(Vector2(sdlEvent.drop.x, sdlEvent.drop.y))
+                    VectorList<FilePath>{ FilePath(droppedFile) },
+                    Vector2(sdlEvent.drop.x, sdlEvent.drop.y) * uiScale
                 );
                 dropFileEvents.push_back(event);
                 break;
@@ -164,7 +165,7 @@ UIEventList SDLUIEventsBuilder::BuildUIEvents(SDLEventList const& events) {
         case SDL_EVENT_MOUSE_BUTTON_DOWN:
             {
                 auto inputButton = PointerInputButtonFromSDLButton(sdlEvent.button.button);
-                auto screenPosition = ScreenPosition(Vector2(sdlEvent.button.x, sdlEvent.button.y));
+                auto screenPosition = Vector2(sdlEvent.button.x, sdlEvent.button.y) * uiScale;
                 auto event = MAKE<PointerDownUIEvent>(screenPosition, inputButton);
                 result.push_back(SCAST<SomeUIEvent>(event));
                 break;
@@ -184,7 +185,7 @@ UIEventList SDLUIEventsBuilder::BuildUIEvents(SDLEventList const& events) {
                 //                /* Used as the SDL_TouchID for touch events simulated with mouse
                 //                input */ #define SDL_MOUSE_TOUCHID ((SDL_TouchID)-1)
 
-                auto screenPosition = ScreenPosition(Vector2(sdlEvent.motion.x, sdlEvent.motion.y));
+                auto screenPosition = Vector2(sdlEvent.motion.x, sdlEvent.motion.y) * uiScale;
                 auto delta = Vector2(sdlEvent.motion.xrel, sdlEvent.motion.yrel);
                 result.push_back(MAKE<PointerMoveUIEvent>(screenPosition, delta));
                 break;
@@ -193,7 +194,7 @@ UIEventList SDLUIEventsBuilder::BuildUIEvents(SDLEventList const& events) {
     }
 
     if (!IsEmpty(dropFileEvents)) {
-        List<FilePath> combinedFilePaths;
+        VectorList<FilePath> combinedFilePaths;
         for (auto& dropFileEvent : dropFileEvents) {
             AddRange(combinedFilePaths, dropFileEvent->filePaths);
         }

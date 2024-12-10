@@ -31,29 +31,29 @@ namespace PJ {
         Mesh BuildMesh() override {
             Mesh result;
 
-            auto poly = CenterPolyBuilder().Build(vec2Zero, worldSize, shape);
+            auto poly = CenterPolyBuilder().Build({}, worldSize, shape);
 
             if (poly.Count() < 2) {
                 return result;
             }
 
             auto vertexCount = MeshVertexCount(poly);
-            VectorList<Vector3> vertices(vertexCount, Vector3::zero);
+            VectorList<Vector3> vertices(vertexCount, Vector3{});
             auto uvCount = vertexCount;
-            VectorList<Vector2> uvs(uvCount, vec2Zero);
+            VectorList<Vector2> uvs(uvCount, Vector2{});
             auto sliceCount = SliceCount(poly);
             auto trianglesCount = sliceCount * 6;
             VectorList<uint32_t> triangles(trianglesCount, 0);
 
             Polygon polyWithCenter;
-            polyWithCenter.Add(Vector3::zero);
-            AddRange(polyWithCenter.value, poly.value);
+            polyWithCenter.Add(Vector2{});
+            polyWithCenter.Add(poly.Value());
             auto polygonMin = polyWithCenter.Min();
             auto polygonSize = polyWithCenter.Size();
 
             // Edge vertices
             int vi = 0;
-            for (auto& vertex : poly.value) {
+            for (auto& vertex : poly.Value()) {
                 vertices[vi] = vertex;
                 uvs[vi] = Vector2(
                     (vertex.x - polygonMin.x) / polygonSize.x,
@@ -62,12 +62,12 @@ namespace PJ {
                 vi++;
             }
 
-            Vector3 prevVertex = Vector3::zero;
+            Vector3 prevVertex = {};
             bool hasPrevVertex = false;
             size_t index = 0;
 
             // This has only been tested with closed shapes
-            for (auto& vertex : poly.value) {
+            for (auto& vertex : poly.Value()) {
                 auto thisVertex = vertex;
 
                 Vector3 reference = vertex;

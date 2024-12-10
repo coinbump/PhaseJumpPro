@@ -26,6 +26,7 @@ SomeRenderer::SomeRenderer(Vector3 worldSize) :
         RenderModelBuilder builder;
         auto renderModel = builder.Build(*this, model.Mesh(), *material, materialTextures);
         renderModel.SetVertexColors(std::span<RenderColor const>(model.VertexColors()));
+        GUARDR(renderModel.IsValid(), result)
 
         Add(result, renderModel);
 
@@ -44,7 +45,7 @@ SomeRenderer::SomeRenderer(Vector3 worldSize) :
     Override(planUIFuncs[UIContextId::Inspector], planUIFunc);
 }
 
-VectorList<RenderModel> SomeRenderer::MakeRenderModels() {
+VectorList<RenderModel> SomeRenderer::RenderModels() {
     auto result = model.RenderModels();
 
     // Always update the matrix for latest transform

@@ -129,7 +129,8 @@ SomeLoadResourcesOperation::Result SDLLoadGLTextureOperation::LoadResources() {
     }
 
     auto texture = MAKE<GLTexture>(
-        id, glTexture, Vector2Int(width, height), vec2Zero, vec2One, TextureAlphaMode::Standard
+        id, glTexture, Vector2Int(width, height), Vector2{}, Vector2::one,
+        TextureAlphaMode::Standard
     );
     texture->SomeTexture::SetTextureMagnification(textureMagnification);
 

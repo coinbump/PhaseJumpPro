@@ -1,39 +1,34 @@
 #pragma once
 
+#include "Binding.h"
 #include "ButtonControl.h"
 #include "Macros.h"
-#include "SomeEffect.h"
+#include "ObservedValue.h"
+#include "WorldComponent.h"
 
 /*
  RATING: 5 stars
  Verified
- CODE REVIEW: 9/4/24
+ CODE REVIEW: 12/1/24
  */
 namespace PJ {
-    /// A button that, when pressed, toggles off and on
+    /// A button that when pressed, toggles off and on
     class ToggleButtonControl : public ButtonControl {
     public:
         using Base = ButtonControl;
 
-        bool IsToggleOn() const {
-            return isToogleOn;
-        }
+        ToggleButtonControl(Binding<bool> isOnBinding = {});
 
-        void SetIsToggleOn(bool value) {
-            GUARD(isToogleOn != value)
-            isToogleOn = value;
-            OnStateChange();
-        }
+        bool IsToggleOn() const;
+        void SetIsToggleOn(bool value);
+        void SetIsOnBinding(Binding<bool> value);
 
     protected:
-        bool isToogleOn = false;
+        ObservedValue<bool> isOn;
+        Binding<bool> isOnBinding;
 
         // MARK: ButtonControl
 
-        void OnPress() override {
-            Base::OnPress();
-
-            SetIsToggleOn(!IsToggleOn());
-        }
+        void OnPress() override;
     };
 } // namespace PJ

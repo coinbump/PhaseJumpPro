@@ -8,7 +8,7 @@ class TestUIScene : public Scene {
 public:
     TestUIScene() {}
 
-    void LoadInto(WorldNode& root) {
+    void LoadInto(WorldNode& root) override {
         auto world = root.World();
         auto font = world->FindFontWithResourceId("ArialBlack-32");
         GUARD(font)
@@ -24,10 +24,11 @@ public:
             .CircleCollider(20)
             .With<SomeDragGestureHandler2D>()
             .And("label")
-            .With<TextRenderer>(font, "Delta:", Vector2(400, 400))
+            .With<TextRenderer>(TextRenderer::Config{
+                .font = font, .text = "Delta:", .worldSize = { 400, 400 } })
             .SetLocalPosition({ 0, -30, 0 })
             .ModifyLatest<SomeDragGestureHandler2D>([](SomeDragGestureHandler2D& c) {
-                auto childComponents = c.owner->GetComponentsInChildren<TextRenderer>();
+                auto childComponents = c.owner->GetDescendantComponents<TextRenderer>();
                 GUARD(!IsEmpty(childComponents))
                 auto textRenderer = childComponents[0];
 
@@ -58,7 +59,7 @@ public:
             .ModifyLatest<ButtonControl>([=](ButtonControl& button) {
                 button.onPressFunc = [](auto&) { std::cout << "Press" << std::endl; };
                 button.SetWorldSize({ 200, 50, 0 });
-                button.SetOnControlUpdateFunc([](UIControl2D& control) {
+                button.SetOnControlChangeFunc([](UIControl2D& control) {
                     auto spriteRenderer = control.owner->TypeComponent<SpriteRenderer>();
                     GUARD(spriteRenderer)
                     spriteRenderer->SetColor(

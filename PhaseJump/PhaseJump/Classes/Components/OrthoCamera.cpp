@@ -12,7 +12,7 @@ using namespace PJ;
 OrthoCamera::~OrthoCamera() {}
 
 Vector2 OrthoCamera::RenderContextSize() const {
-    GUARDR(owner && owner->World() && owner->World()->renderContext, vec2Zero)
+    GUARDR(owner && owner->World() && owner->World()->renderContext, {})
 
     // FUTURE: re-evaluate Size vs PixelSize with hi-DP screens
     auto contextSize = owner->World()->renderContext->PixelSize();
@@ -44,7 +44,7 @@ Vector2 OrthoCamera::WorldToScreenScale() const {
     auto contextSize = RenderContextSize();
 
     // Prevent divide by zero
-    GUARDR(cameraSize != vec2Zero && contextSize != vec2Zero, vec2One)
+    GUARDR(cameraSize != Vector2{} && contextSize != Vector2{}, Vector2::one)
 
     Vector2 result = contextSize / cameraSize;
     return result;
@@ -72,8 +72,8 @@ Vector3 OrthoCamera::ScreenToWorld(Vector2 position) {
     auto cameraPosition = owner->transform.WorldPosition();
 
     auto worldToScreenScale = WorldToScreenScale();
-    GUARDR(worldToScreenScale.x != 0 && worldToScreenScale.y != 0, Vector3::zero)
-    auto screenToWorldScale = vec2One / worldToScreenScale;
+    GUARDR(worldToScreenScale.x != 0 && worldToScreenScale.y != 0, {})
+    auto screenToWorldScale = Vector2::one / worldToScreenScale;
 
     Vector2 screenCartesian =
         Vector2(position.x + contextExtents.x * vecLeft, -position.y + contextExtents.y * vecUp);
@@ -120,7 +120,7 @@ bool OrthoCamera::IsCulled(Mesh const& mesh) {
     case Frustrum::None:
         {
             Vector3 cameraExtents(halfSize.x, halfSize.y, 0);
-            Bounds cameraBounds2D(Vector3::zero, cameraExtents);
+            Bounds cameraBounds2D({}, cameraExtents);
             Vector3 meshCenter2D(mesh.GetBounds().center.x, mesh.GetBounds().center.y, 0);
             Vector3 meshExtents2D(mesh.GetBounds().extents.x, mesh.GetBounds().extents.y, 0);
             Bounds meshBounds2D(meshCenter2D, meshExtents2D);

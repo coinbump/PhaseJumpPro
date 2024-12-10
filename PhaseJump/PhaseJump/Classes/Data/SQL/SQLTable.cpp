@@ -80,19 +80,19 @@ VectorList<SQLRowValues> SQLTable::RowValuesList(SQLTableQueryArguments query) {
                 case SQLITE_INTEGER:
                     {
                         auto value = sqlite3_column_int(command.sqliteStatement, i);
-                        row.Add(columnName, value);
+                        row.Set(columnName, value);
                         break;
                     }
                 case SQLITE_FLOAT:
                     {
                         auto value = sqlite3_column_double(command.sqliteStatement, i);
-                        row.Add(columnName, value);
+                        row.Set(columnName, value);
                         break;
                     }
                 case SQLITE_TEXT:
                     {
                         String value = (const char*)sqlite3_column_text(command.sqliteStatement, i);
-                        row.Add(columnName, value);
+                        row.Set(columnName, value);
                         break;
                     }
                 default:
