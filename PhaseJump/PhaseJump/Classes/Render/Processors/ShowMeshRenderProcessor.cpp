@@ -29,7 +29,7 @@ void ShowMeshRenderProcessor::Process(CameraRenderModel& cameraModel) {
             poly.Add(vertices[indices[i + 1]]);
             poly.Add(vertices[indices[i + 2]]);
 
-            PolyFrameMeshBuilder builder(poly, 2);
+            PolyFrameMeshBuilder builder({ .poly = poly, .strokeWidth = 2 });
             auto mesh = builder.BuildMesh();
             mesh *= renderModel.matrix;
 

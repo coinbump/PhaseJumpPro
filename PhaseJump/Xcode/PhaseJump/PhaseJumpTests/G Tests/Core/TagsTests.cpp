@@ -106,9 +106,3 @@ TEST(Tags, AddIfMissing) {
 
     EXPECT_EQ("hello", sut.SafeValue<String>("test"));
 }
-
-TEST(Storage, Test) {
-    Storage<String> sut;
-
-    // TODO:
-}

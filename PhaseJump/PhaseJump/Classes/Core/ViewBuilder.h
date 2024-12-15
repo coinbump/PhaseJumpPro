@@ -1,8 +1,10 @@
 #pragma once
 
+#include "Alignment2D.h"
 #include "Binding.h"
 #include "ButtonControl.h"
 #include "Color.h"
+#include "DesignSystem.h"
 #include "Font.h"
 #include "LayoutInsets.h"
 #include "PageView.h"
@@ -36,6 +38,20 @@ namespace PJ {
 
         template <class Config>
         using BuildConfigFunc = std::function<Config(View2D&)>;
+
+        using SurfaceConfig = DesignSystem::SurfaceConfig;
+        using ButtonConfig = DesignSystem::ButtonConfig;
+        using ToggleButtonConfig = DesignSystem::ToggleButtonConfig;
+        using ProgressBarConfig = DesignSystem::ProgressBarConfig;
+        using LabelConfig = DesignSystem::LabelConfig;
+        using DialConfig = DesignSystem::DialConfig;
+
+        struct RadioButtonGroupConfig {
+            SingleSelectStore* store{};
+            VectorList<String> options;
+        };
+
+        using SegmentedPickerConfig = RadioButtonGroupConfig;
 
         /// Generic view config
         struct ViewConfig {
@@ -71,8 +87,8 @@ namespace PJ {
         /// ZStack view config
         struct ZStackConfig {
             String name = "ZStack";
-            AlignFunc xAlignFunc = AlignFuncs::center;
-            AlignFunc yAlignFunc = AlignFuncs::center;
+
+            Alignment2D alignment = Alignment2D::center;
             BuildViewFunc buildViewFunc;
         };
 
@@ -99,22 +115,12 @@ namespace PJ {
             Color color = Color::white;
         };
 
-        /// Slider control config
-        struct SliderConfig {
-            String name = "Slider";
-            Axis2D axis = Axis2D::X;
-            Binding<float> valueBinding;
-
-            /// Orthogonal size of the slider track perpendicular to the primary axis
-            float trackOrthogonal = 10;
-        };
-
         /// Page view config
         struct PagesConfig {
             String name = "Pages";
             String selectedPage;
 
-            SP<PageViewStore> store = MAKE<PageViewStore>();
+            SP<SingleSelectStore> store = MAKE<SingleSelectStore>();
 
             VectorList<PageView::PageConfig> pages;
         };
@@ -129,8 +135,18 @@ namespace PJ {
             ModifyRendererFunc modifyRendererFunc;
         };
 
-        /// Button config
-        struct ButtonConfig {
+        /// Slider view config
+        struct SliderViewConfig {
+            String name = "Slider";
+            Axis2D axis = Axis2D::X;
+            Binding<float> valueBinding;
+
+            /// Orthogonal size of the slider track perpendicular to the primary axis
+            float trackOrthogonal = 10;
+        };
+
+        /// Button view config
+        struct ButtonViewConfig {
             String name = "Button";
             UIControl2D::OnControlChangeFunc onControlChangeFunc;
             MakeColliderFunc makeColliderFunc;
@@ -139,8 +155,8 @@ namespace PJ {
             ButtonControl::OnPressFunc onPressFunc;
         };
 
-        /// Toggle button config
-        struct ToggleButtonConfig {
+        /// Toggle button view config
+        struct ToggleButtonViewConfig {
             String name = "Toggle Button";
             UIControl2D::OnControlChangeFunc onControlChangeFunc;
             MakeColliderFunc makeColliderFunc;
@@ -223,11 +239,11 @@ namespace PJ {
         }
 
         /// Adds a dynamic button view
-        This& Button(BuildConfigFunc<ButtonConfig> buildConfigFunc);
+        This& ButtonView(BuildConfigFunc<ButtonViewConfig> buildConfigFunc);
 
         /// Adds a button view
-        This& Button(ButtonConfig config) {
-            return Button([=](auto& view) { return config; });
+        This& ButtonView(ButtonViewConfig config) {
+            return ButtonView([=](auto& view) { return config; });
         }
 
         /// Adds a dynamic intermediate render view
@@ -237,6 +253,9 @@ namespace PJ {
         This& Immediate(ImmediateConfig config) {
             return Immediate([=](auto& view) { return config; });
         }
+
+        /// Adds an associate immediate render component for the current view
+        This& AssociateImmediate(BuildConfigFunc<ImmediateConfig> buildConfigFunc);
 
         /// Adds a dynamic Page view
         This& Pages(BuildConfigFunc<PagesConfig> buildConfigFunc);
@@ -255,15 +274,15 @@ namespace PJ {
         }
 
         /// Adds a dynamic toggle button view
-        This& ToggleButton(BuildConfigFunc<ToggleButtonConfig> buildConfigFunc);
+        This& ToggleButtonView(BuildConfigFunc<ToggleButtonViewConfig> buildConfigFunc);
 
         /// Adds a toggle button view
-        This& ToggleButton(ToggleButtonConfig config) {
-            return ToggleButton([=](auto& view) { return config; });
+        This& ToggleButtonView(ToggleButtonViewConfig config) {
+            return ToggleButtonView([=](auto& view) { return config; });
         }
 
         /// Adds a slider
-        This& Slider(SliderConfig config);
+        This& SliderView(SliderViewConfig config);
 
         /// Adds a Spacer view
         This& Spacer();
@@ -282,6 +301,50 @@ namespace PJ {
 
         /// Sets is ideal size for the most recent view
         This& SetIsIdealSize(bool isX = true, bool isY = true);
+
+        // MARK: Design system components
+
+        /// Adds a themed surface view
+        This& Surface(SurfaceConfig config = {});
+
+        /// Adds a themed button view
+        This& Button(ButtonConfig config);
+
+        /// Adds a themed segment toggle view
+        This& SegmentToggle(ToggleButtonConfig config);
+
+        /// Adds a themed image toggle view
+        This& ImageToggle(ToggleButtonConfig config);
+
+        /// Adds a themed progress bar view
+        This& ProgressBar(ProgressBarConfig config);
+
+        /// Adds a themed progress circle view
+        This& ProgressCircle(ProgressBarConfig config);
+
+        /// Adds a themed label view
+        This& Label(LabelConfig config);
+
+        /// Adds a themed check button view
+        This& CheckButton(ToggleButtonConfig config);
+
+        /// Adds a themed dial control view
+        This& Dial(DialConfig config);
+
+        /// Adds a themed radio button view
+        This& RadioButton(ToggleButtonConfig config);
+
+        /// Adds a themed switch toggle button view
+        This& SwitchToggle(ToggleButtonConfig config);
+
+        /// Adds a themed toast view
+        This& Toast(LabelConfig config);
+
+        /// Adds a themed radio button group
+        This& RadioButtonGroup(RadioButtonGroupConfig config);
+
+        /// Adds a themed segmented picker control
+        This& SegmentedPicker(SegmentedPickerConfig config);
 
     protected:
         This& AddMatchZStack(View2D& view, MatchZStackConfig config);

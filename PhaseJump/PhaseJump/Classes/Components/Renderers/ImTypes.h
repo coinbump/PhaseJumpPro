@@ -1,8 +1,11 @@
 #pragma once
 
+#include "Angle.h"
 #include "Color.h"
 #include "Font.h"
+#include "Polygon.h"
 #include "Rect.h"
+#include "RoundCornersMeshBuilder.h"
 #include "Vector2.h"
 #include "VectorList.h"
 
@@ -22,9 +25,15 @@ namespace PJ {
 
     /// Immedate mode path item type IDs
     namespace ImPathItemType {
+        auto constexpr Capsule = "capsule";
         auto constexpr MoveTo = "moveTo";
         auto constexpr LineTo = "lineTo";
         auto constexpr Rect = "rect";
+        auto constexpr RoundCorners = "roundCorners";
+
+        /// Used to render arcs, ellipses, and circles
+        auto constexpr Arc = "arc";
+
         auto constexpr Polygon = "poly";
         auto constexpr Text = "text";
         auto constexpr Image = "image";
@@ -36,16 +45,39 @@ namespace PJ {
     public:
         String type;
 
-        /// Unique identifier;
+        /// Unique identifier (Example: image id)
         String id;
 
+        /// Required: frame for translation
         Rect frame;
+
+        /// Shape for polygon paths
+        Polygon poly;
+        PolyClose polyClose{};
 
         VectorList<Vector2> vectors;
         VectorList<Color> colors;
 
+        float strokeWidth = 1;
+
+        PathCap startPathCap = PathCap::Flat;
+        PathCap endPathCap = PathCap::Flat;
+        PathCorner pathCorner = PathCorner::Round;
+
         String text;
         FontSpec fontSpec;
+
+        /// Primary axis
+        Axis2D axis{};
+
+        /// Round corners
+        RoundCorners roundCorners;
+
+        /// First angle of this item (example: start angle for arc)
+        Angle startAngle;
+
+        /// Distance from start angle
+        Angle angleDelta;
 
         Vector2 GetVector(size_t index, Vector2 defaultValue = {}) {
             return index >= 0 && index < vectors.size() ? vectors[index] : defaultValue;

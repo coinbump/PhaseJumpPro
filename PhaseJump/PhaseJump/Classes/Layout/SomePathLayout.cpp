@@ -42,7 +42,7 @@ void SomePathLayout::ApplyLayout() {
             rotationDegreeAngle += orientDegreeAngle;
             childObject->transform.SetRotation(rotationDegreeAngle);
         } else {
-            childObject->transform.SetRotation(Angle::DegreesAngle(0));
+            childObject->transform.SetRotation(Angle::WithDegrees(0));
         }
 
         index++;

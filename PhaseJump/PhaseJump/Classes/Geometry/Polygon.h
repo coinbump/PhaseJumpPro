@@ -12,8 +12,14 @@
  CODE REVIEW: 12/1/24
  */
 namespace PJ {
-    /// Stores vertices for closed polygon
+    enum class PolyClose { Open, Closed };
+
+    /// Stores vertices for a closed polygon
+    /// Polygons are assumed to be closed between the final and first vertices
     class Polygon {
+    public:
+        using This = Polygon;
+
     protected:
         VectorList<Vector2> value;
 
@@ -82,7 +88,7 @@ namespace PJ {
             return { std::abs(max.x - min.x), std::abs(max.y - min.y) };
         }
 
-        void SetSize(Vector2 value);
+        This& SetSize(Vector2 value);
 
         float Width() const {
             return Size().x;
@@ -101,15 +107,27 @@ namespace PJ {
 
         bool TestHit(Vector2 pt) const;
 
-        void Add(Vector2 _value) {
-            value.push_back(_value);
+        bool IsBoundsInvalid() const {
+            return isBoundsInvalid;
+        }
+
+        void SetBoundsInvalid() {
             isBoundsInvalid = true;
         }
 
-        void Add(VectorList<Vector2> _value) {
+        This& Add(Vector2 _value) {
+            value.push_back(_value);
+            isBoundsInvalid = true;
+            return *this;
+        }
+
+        This& Add(VectorList<Vector2> _value) {
             PJ::AddRange(value, _value);
             isBoundsInvalid = true;
+            return *this;
         }
+
+        This& Offset(Vector2 value);
 
         /// Returns the vertex at the specified index, which is modulo-wrapped if needed
         Vector2 ModAt(size_t index) const {

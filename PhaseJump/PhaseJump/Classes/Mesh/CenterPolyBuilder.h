@@ -5,62 +5,31 @@
 
 /*
  RATING: 4 stars
- Tested and works. Needs unit tests
- CODE REVIEW: 8/25/24
+ Has unit tests
+ CODE REVIEW: 12/14/24
  */
 namespace PJ {
     /// Defines shape metrics for centered uniform polygon
-    struct CenterPolyShape {
+    struct CenterPolyModel {
         Angle startAngle;
-        Angle endAngle;
-        Angle angleStep;
 
-        CenterPolyShape(Angle startAngle, Angle endAngle, Angle angleStep) :
-            startAngle(startAngle),
-            endAngle(endAngle),
-            angleStep(angleStep) {}
+        /// Distance from start angle to end angle
+        Angle angleDelta = Angle::WithDegrees(360);
 
-        static CenterPolyShape circle;
-        static CenterPolyShape hex;
-        static CenterPolyShape square;
+        Angle angleStep = Angle::WithDegrees(10);
+
+        static CenterPolyModel ellipse;
+        static CenterPolyModel hex;
+        static CenterPolyModel quad;
+
+        bool IsClosed() const {
+            return angleDelta.Degrees() >= 360.0f;
+        }
     };
 
     /// Builds a centered uniform poly
     class CenterPolyBuilder {
     public:
-        Polygon Build(Vector2 center, Vector2 worldSize, CenterPolyShape shape) {
-            Polygon poly;
-
-            auto radii = worldSize / 2.0f;
-
-            auto endAngleDegrees = shape.endAngle.Degrees();
-
-            float angleDelta = endAngleDegrees - shape.startAngle.Degrees();
-            float angleStep = shape.angleStep.Degrees();
-
-            // Avoid infinite loop
-            if (angleStep <= 0 || angleDelta < 0) {
-                return poly;
-            }
-
-            float angle = shape.startAngle.Degrees();
-
-            while (angle < endAngleDegrees) {
-                auto vector = (Vector2)Angle::DegreesAngle(angle);
-                auto vertex = Vector2(center.x + vector.x * radii.x, center.y + vector.y * radii.y);
-                poly.Add(vertex);
-
-                angle += angleStep;
-            }
-
-            // Add final step for rounding errors
-            if (angle >= endAngleDegrees) {
-                auto vector = (Vector2)Angle::DegreesAngle(endAngleDegrees);
-                auto vertex = Vector2(center.x + vector.x * radii.x, center.y + vector.y * radii.y);
-                poly.Add(vertex);
-            }
-
-            return poly;
-        }
+        Polygon Build(Vector2 center, Vector2 worldSize, CenterPolyModel shape);
     };
 } // namespace PJ

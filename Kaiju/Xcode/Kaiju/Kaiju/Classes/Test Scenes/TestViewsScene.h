@@ -20,6 +20,10 @@ public:
 
     VectorList<LayoutModel> layouts;
     WorldComponent* rootComponent{};
+    float dialValue = 0.3f;
+    float dialValue2 = 0.7f;
+
+    SingleSelectStore toggleGroupStore;
 
     struct BuildViewModel {
         String name;

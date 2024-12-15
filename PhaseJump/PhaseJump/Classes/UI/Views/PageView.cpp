@@ -4,11 +4,11 @@
 using namespace std;
 using namespace PJ;
 
-PageView::PageView(SP<PageViewStore> store) {
+PageView::PageView(SP<SingleSelectStore> store) {
     SetStore(store);
 }
 
-void PageView::SetStore(SP<PageViewStore> value) {
+void PageView::SetStore(SP<SingleSelectStore> value) {
     GUARD(store != value)
     store = value;
 
@@ -16,7 +16,7 @@ void PageView::SetStore(SP<PageViewStore> value) {
 
     cancellables.clear();
 
-    auto cancellable = store->selectedPage.Receive([this](auto& value) { RebuildPage(); });
+    auto cancellable = store->selection.Receive([this](auto& value) { RebuildPage(); });
     cancellables.insert(cancellable);
 }
 
@@ -31,7 +31,7 @@ void PageView::RebuildPage() {
     GUARD(owner);
 
     try {
-        auto& pageFunc = buildPageFuncs.at(store->selectedPage);
+        auto& pageFunc = buildPageFuncs.at(store->selection);
         owner->RemoveAllChildren();
         pageFunc(*owner);
     } catch (...) {}
@@ -39,15 +39,15 @@ void PageView::RebuildPage() {
 
 void PageView::SelectPage(string page) {
     GUARD(store)
-    store->selectedPage.SetValue(page);
+    store->selection.SetValue(page);
 }
 
 void PageView::Navigate(NavigateDirection direction, bool loop) {
     GUARD(!IsEmpty(pageOrder));
     GUARD(store)
 
-    auto selectedPage = store->selectedPage;
-    auto optionalIndex = IndexOf(pageOrder, selectedPage);
+    auto selection = store->selection;
+    auto optionalIndex = IndexOf(pageOrder, selection);
     int index{};
 
     if (optionalIndex) {
@@ -69,7 +69,7 @@ void PageView::Navigate(NavigateDirection direction, bool loop) {
         }
 
         if (index >= 0 && index < pageOrder.size()) {
-            store->selectedPage.SetValue(pageOrder[index]);
+            store->selection.SetValue(pageOrder[index]);
         }
     }
 }

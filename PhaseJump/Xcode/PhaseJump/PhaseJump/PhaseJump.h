@@ -23,6 +23,7 @@
 #include <PhaseJump/EditorWorldSystem.h>
 #include <PhaseJump/EmitFuncs.h>
 #include <PhaseJump/ButtonControl.h>
+#include <PhaseJump/CapsuleMeshBuilder.h>
 #include <PhaseJump/CameraCullRenderProcessor.h>
 #include <PhaseJump/CenterPolyFrameMeshBuilder.h>
 #include <PhaseJump/CenterPolyBuilder.h>
@@ -92,6 +93,7 @@
 #include <PhaseJump/RenderWorldSystem.h>
 #include <PhaseJump/ResourceRepository.h>
 #include <PhaseJump/ResourceScanner.h>
+#include <PhaseJump/RoundCornersMeshBuilder.h>
 #include <PhaseJump/Macros.h>
 #include <PhaseJump/PageView.h>
 #include <PhaseJump/PointerClickUIEvent.h>
@@ -128,7 +130,6 @@
 #include <PhaseJump/StandardRandom.h>
 #include <PhaseJump/StringUtils.h>
 #include <PhaseJump/Theme.h>
-#include <PhaseJump/ThemeBuilder.h>
 #include <PhaseJump/ToggleButtonControl.h>
 #include <PhaseJump/TypeClass.h>
 #include <PhaseJump/UIPlan.h>

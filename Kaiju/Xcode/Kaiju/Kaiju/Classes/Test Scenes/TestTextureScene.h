@@ -154,7 +154,7 @@ public:
                     //
                     //                            if (_char == 'e') {
                     ////                                Matrix4x4 matrix;
-                    //// matrix.LoadXRadRotation(Angle::DegreesAngle(45).Radians());
+                    //// matrix.LoadXRadRotation(Angle::WithDegrees(45).Radians());
                     //
                     //                                size_t vertexIndex = renderChar.vertexIndex;
                     //
@@ -237,7 +237,7 @@ public:
 
             //            auto renderer = MAKE<SpriteRenderer>(texture);
             //            meshNode->Add(renderer);
-            //            meshNode->transform.value.SetRotation(Angle::DegreesAngle(45));
+            //            meshNode->transform.value.SetRotation(Angle::WithDegrees(45));
 
             auto renderer = animatedTexture;
             animatedTexture->SetColor(Color::blue);

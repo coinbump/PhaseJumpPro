@@ -877,16 +877,6 @@ class Window : public View2D {
     // WindowModel
 };
 
-class SegmentButton : public UIControl2D {
-    struct Segment {
-        String id;
-        String title;
-    };
-
-    // TODO: PublishedValue
-    PublishedValue<String> selection;
-};
-
 namespace ThemeKey {
     auto constexpr ButtonBackgroundColor = "button.background.color";
 }

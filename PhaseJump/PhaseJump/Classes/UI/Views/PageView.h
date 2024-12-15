@@ -9,13 +9,13 @@
  CODE REVIEW: 12/1/24
  */
 namespace PJ {
-    /// Stores model state for page view
-    class PageViewStore {
+    /// Stores model state for single selection
+    class SingleSelectStore {
     public:
-        PublishedValue<String> selectedPage;
+        PublishedValue<String> selection;
 
         bool HasSelection() {
-            return !IsEmpty(selectedPage.Value());
+            return !IsEmpty(selection.Value());
         }
     };
 
@@ -30,7 +30,7 @@ namespace PJ {
 
     protected:
         /// Shared state
-        SP<PageViewStore> store;
+        SP<SingleSelectStore> store;
 
         /// Stores subscriptions to reactive values
         UnorderedSet<SP<Cancellable>> cancellables;
@@ -43,11 +43,11 @@ namespace PJ {
             BuildPageFunc buildPageFunc;
         };
 
-        PageViewStore* Store() const {
+        SingleSelectStore* Store() const {
             return store.get();
         }
 
-        void SetStore(SP<PageViewStore> value);
+        void SetStore(SP<SingleSelectStore> value);
 
         /// View builder funcs for each page
         BuildPageFuncsMap buildPageFuncs;
@@ -55,7 +55,7 @@ namespace PJ {
         /// Order of pages by id
         VectorList<String> pageOrder;
 
-        PageView(SP<PageViewStore> store);
+        PageView(SP<SingleSelectStore> store);
 
         void SelectPage(String page);
         void Navigate(NavigateDirection direction, bool loop);

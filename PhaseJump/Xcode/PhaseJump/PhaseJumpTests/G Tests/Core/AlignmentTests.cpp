@@ -11,21 +11,21 @@ using namespace AlignmentTests;
 
 TEST(Alignment, HorizontalCenter)
 {
-    auto sut = HorizontalAlignment::center;
+    auto sut = AlignFuncs::center;
 
     EXPECT_EQ(5, sut(20, 10));
 }
 
 TEST(Alignment, HorizontalLeading)
 {
-    auto sut = HorizontalAlignment::leading;
+    auto sut = AlignFuncs::left;
 
     EXPECT_EQ(0, sut(20, 5));
 }
 
 TEST(Alignment, HorizontalTrailing)
 {
-    auto sut = HorizontalAlignment::trailing;
+    auto sut = AlignFuncs::right;
 
     EXPECT_EQ(15, sut(20, 5));
 }

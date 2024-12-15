@@ -3,6 +3,8 @@
 using namespace std;
 using namespace PJ;
 
+using This = Polygon;
+
 Vector2 Polygon::CalculateMin() const {
     GUARDR(!IsEmpty(value), {})
 
@@ -64,16 +66,16 @@ String Polygon::ToString() const {
     return s.str();
 }
 
-void Polygon::SetSize(Vector2 value) {
+This& Polygon::SetSize(Vector2 value) {
     // Once a polygon is zero size, it can never be resized
-    GUARD(value.x > 0 && value.y > 0)
+    GUARDR(value.x > 0 && value.y > 0, *this)
 
     auto center = Center();
     auto size = Size();
-    GUARD(size != value);
+    GUARDR(size != value, *this);
 
     // Avoid divide by zero
-    GUARD(size.x > 0 && size.y > 0)
+    GUARDR(size.x > 0 && size.y > 0, *this)
 
     auto factor = value / size;
 
@@ -83,5 +85,16 @@ void Polygon::SetSize(Vector2 value) {
         v = center + distance;
     }
 
-    isBoundsInvalid = true;
+    SetBoundsInvalid();
+
+    return *this;
+}
+
+This& Polygon::Offset(Vector2 value) {
+    for (auto& v : this->value) {
+        v += value;
+    }
+    SetBoundsInvalid();
+
+    return *this;
 }

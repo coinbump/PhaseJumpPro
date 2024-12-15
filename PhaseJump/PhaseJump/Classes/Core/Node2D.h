@@ -46,16 +46,16 @@ namespace PJ {
     //        }
     //
     //        void SetRotationNormal(float value) {
-    //            SetRotationAngle(Angle::DegreesAngle(360.0f * value));
+    //            SetRotationAngle(Angle::WithDegrees(360.0f * value));
     //        }
     //
     //        Angle RotationAngle(bool clipRotation = false) const {
-    //            GUARDR(owner, Angle::DegreesAngle(0))
+    //            GUARDR(owner, Angle::WithDegrees(0))
     //            NodeTransform& transform = owner->transform;
     //
     //            return clipRotation ?
-    //            Angle::DegreesAngle(-transform.LocalEulerAngles().z).Clipped()
-    //                                : Angle::DegreesAngle(-transform.LocalEulerAngles().z);
+    //            Angle::WithDegrees(-transform.LocalEulerAngles().z).Clipped()
+    //                                : Angle::WithDegrees(-transform.LocalEulerAngles().z);
     //        }
     //
     //        Angle ClippedRotationAngle() const {

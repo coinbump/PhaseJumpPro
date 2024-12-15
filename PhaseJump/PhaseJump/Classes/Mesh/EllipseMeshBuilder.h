@@ -5,23 +5,25 @@
 
 /*
  RATING: 5 stars
- Tested and works
- CODE REVIEW: 8/25/24
+ Has unit tests (from CenterPolyMeshBuilder)
+ CODE REVIEW: 12/13/24
  */
 namespace PJ {
     /// Renders an ellipse
     class EllipseMeshBuilder : public SomeMeshBuilder {
     public:
-        Angle angleStep = Angle::DegreesAngle(10.0f);
-        Vector2 worldSize = Vector2(1.0f, 1.0f);
+        Angle angleStep{ { .degrees = 10 } };
+        Vector2 worldSize{ 1, 1 };
 
-        EllipseMeshBuilder(Vector2 worldSize, Angle angleStep = Angle::DegreesAngle(10)) :
+        EllipseMeshBuilder(Vector2 worldSize, Angle angleStep = Angle::WithDegrees(10)) :
             angleStep(angleStep),
             worldSize(worldSize) {}
 
+        // MARK: SomeMeshBuilder
+
         Mesh BuildMesh() override {
             return ArcMeshBuilder(
-                       worldSize, Angle::DegreesAngle(0), Angle::DegreesAngle(360.0f), angleStep
+                       worldSize, Angle::WithDegrees(0), Angle::WithDegrees(360.0f), angleStep
             )
                 .BuildMesh();
         }

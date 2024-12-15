@@ -41,18 +41,26 @@ namespace PJ {
         struct ToggleButtonConfig {
             String label = "Toggle";
             Binding<bool> isOnBinding;
-        };
 
-        /// Toggle button with an image config
-        struct ImageToggleButtonConfig {
             String imageId;
-            Binding<bool> isOnBinding;
+            std::optional<Color> imageColor;
+            std::optional<Vector2> size;
         };
 
         /// Progress bar config
         struct ProgressBarConfig {
+            /// Returns normalized progress value (0-1)
             GetFunc<float> valueFunc;
+
             std::optional<Color> color;
+        };
+
+        /// Dial control config
+        struct DialConfig {
+            Binding<float> valueBinding;
+
+            std::optional<Color> surfaceColor;
+            std::optional<Color> onSurfaceColor;
         };
 
         /// Label config

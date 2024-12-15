@@ -21,8 +21,15 @@ namespace PJ {
     public:
         using This = Angle;
 
+        struct Config {
+            float degrees{};
+        };
+
         Angle() :
             value(0) {}
+
+        Angle(Config config) :
+            value(config.degrees) {}
 
         float Degrees() const {
             return value;
@@ -40,79 +47,27 @@ namespace PJ {
             this->value = value / FloatMath::DegreesToRadians;
         }
 
-        Angle(Vector2 distance) {
-            // Prevent infinite/invalid angle
-            if (distance.x == 0 && distance.y == 0) {
-                this->value = 0;
-                return;
-            }
+        Angle(Vector2 distance);
 
-            float radians = atan2(distance.y * vecDown, distance.x);
-            auto angle = Angle::DegreesAngle((FloatMath::RadiansToDegrees * radians) + 90.0f);
-            auto result = angle.Clipped();
-            this->value = result.Degrees();
-        }
-
-        Angle Clipped() const {
-            auto angle = Degrees();
-            angle = fmod(angle, 360.0f);
-            if (angle < 0) {
-                angle = 360.0f - fmod(abs(angle), 360.0f);
-            }
-            return Angle::DegreesAngle(angle);
-        }
+        Angle Clipped() const;
 
         void Clip() {
             SetDegrees(Clipped().Degrees());
         }
 
-        static Angle RadiansAngle(float radians) {
+        static Angle WithRadians(float radians) {
             return Angle(radians * FloatMath::RadiansToDegrees);
         }
 
-        static Angle DegreesAngle(float degrees) {
+        static Angle WithDegrees(float degrees) {
             return Angle(degrees);
         }
 
-        Vector2 ToVector2(float magnitude = 1.0f) const {
-            Vector2 result(0, 0);
-
-            float sinVal = sin(Radians());
-            float cosVal = cos(Radians());
-
-            float x = magnitude * sinVal;
-            float y = magnitude * cosVal * vecUp;
-            result.x = x;
-            result.y = y;
-
-            return result;
-        }
+        Vector2 ToVector2(float magnitude = 1.0f) const;
 
         /// @return Returns the closest turn between two angles.
         /// EXAMPLE: closest turn between angle 3 and angle 359 is -4, not 356.
-        Angle MinAngleTo(Angle angle) const {
-            float firstAngle = Degrees();
-            float finalAngle = angle.Degrees();
-
-            float delta1, delta2;
-            float result = 0;
-
-            if (finalAngle > firstAngle) {
-                delta1 = finalAngle - firstAngle;
-                delta2 = -(360.0f - delta1);
-            } else {
-                delta1 = -(firstAngle - finalAngle);
-                delta2 = 360.0f + delta1;
-            }
-
-            if (abs(delta1) < abs(delta2)) {
-                result = delta1;
-            } else {
-                result = delta2;
-            }
-
-            return Angle::DegreesAngle(result);
-        }
+        Angle MinAngleTo(Angle angle) const;
 
         MATH_OPERATORS(Angle, value)
 

@@ -7,21 +7,21 @@ using namespace std;
 using namespace PJ;
 
 TEST(TiledMeshBuilder, TestMeshSizeEven) {
-    TiledMeshBuilder sut(Vector2(100, 100), Vector2(20, 10));
+    TiledMeshBuilder sut({100, 100}, {20, 10}, uvRectOne);
     auto meshSize = sut.MeshSize();
 
     EXPECT_EQ(Vec2I(5, 10), meshSize);
 }
 
 TEST(TiledMeshBuilder, TestMeshSizeUneven) {
-    TiledMeshBuilder sut(Vector2(100, 100), Vector2(22, 12));
+    TiledMeshBuilder sut({100, 100}, {22, 12}, uvRectOne);
     auto meshSize = sut.MeshSize();
 
     EXPECT_EQ(Vec2I(5, 9), meshSize);
 }
 
 TEST(TiledMeshBuilder, TestBuildMeshEven) {
-    TiledMeshBuilder builder(Vector2(10, 10), Vector2(5, 5));
+    TiledMeshBuilder builder({10, 10}, {5, 5}, uvRectOne);
     auto sut = builder.BuildMesh();
 
     EXPECT_EQ(16, sut.Vertices().size());
@@ -131,7 +131,7 @@ TEST(TiledMeshBuilder, TestUVBoundsInternal) {
 }
 
 TEST(TiledMeshBuilder, TestBuildMeshUneven) {
-    TiledMeshBuilder builder(Vector2(10, 10), Vector2(8, 8));
+    TiledMeshBuilder builder({10, 10}, {8, 8}, uvRectOne);
     auto sut = builder.BuildMesh();
 
     EXPECT_EQ(16, sut.Vertices().size());

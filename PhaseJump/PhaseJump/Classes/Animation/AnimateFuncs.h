@@ -94,7 +94,7 @@ namespace PJ {
                 duration, easeFunc,
                 [](auto& target) {
                     return [&](auto& value) {
-                        target.transform.SetRotation(Angle::DegreesAngle(value));
+                        target.transform.SetRotation(Angle::WithDegrees(value));
                     };
                 },
                 cycle, reverseEaseFunc

@@ -22,7 +22,7 @@ public:
         QB(root)
             .OrthoStandard()
             .And("Emitter")
-            .Turn(Angle::DegreesAngle(10))
+            .Turn(Angle::WithDegrees(10))
             .With<Emitter>()
             .ModifyLatest<Emitter>([&root](auto& emitter) {
                 emitter.spawnParent = SCAST<WorldNode>(root.shared_from_this());
@@ -54,9 +54,8 @@ public:
                 emitter.driver =
                     NEW<TimerDriver>(0.5f, RunType::Repeat, [&emitter]() { emitter.Fire(); });
 
-                emitter.emitFunc = EmitFuncs::MakeSpread2D(
-                    4, Angle::DegreesAngle(20.0f), Angle::DegreesAngle(3.0f)
-                );
+                emitter.emitFunc =
+                    EmitFuncs::MakeSpread2D(4, Angle::WithDegrees(20.0f), Angle::WithDegrees(3.0f));
             });
     }
 };

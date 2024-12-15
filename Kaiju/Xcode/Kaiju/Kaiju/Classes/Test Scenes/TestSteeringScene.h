@@ -17,7 +17,7 @@ public:
             qb.And("Steering")
                 .Texture("heart-full")
                 .With<DirectionKSteering2D>(random.IntValue(40, 60), 100, 800)
-                .With<RotateKSteering2D>(Angle::DegreesAngle(random.IntValue(-45, 45)))
+                .With<RotateKSteering2D>(Angle::WithDegrees(random.IntValue(-45, 45)))
                 .Pop();
         });
     }

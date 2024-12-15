@@ -48,6 +48,11 @@ namespace PJ {
     constexpr void Toggle(bool& value) {
         value = !value;
     }
+
+    template <class Type>
+    Type Lerp(Type start, Type end, float factor) {
+        return start + ((end - start) * factor);
+    }
 } // namespace PJ
 
 /// MARK: - Shared pointer aliases

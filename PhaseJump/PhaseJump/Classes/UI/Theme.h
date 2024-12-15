@@ -96,6 +96,9 @@ namespace PJ {
 
         /// @return Returns the size for the specified element id
         Vector2 ElementSize(String id, Vector2 defaultValue = {}) const;
+
+        /// @return Returns the spacing for the specified element id
+        Vector2 ElementSpacing(String id, Vector2 defaultValue = {}) const;
     };
 
     namespace Themes {

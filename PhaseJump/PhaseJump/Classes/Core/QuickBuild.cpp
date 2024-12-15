@@ -386,7 +386,7 @@ This& QuickBuild::AnimateRotate(Angle startValue, Angle endValue) {
 }
 
 This& QuickBuild::RotateTo(Angle endValue) {
-    return AnimateRotate(Angle::DegreesAngle(-Node().transform.Rotation().z), endValue);
+    return AnimateRotate(Angle::WithDegrees(-Node().transform.Rotation().z), endValue);
 }
 
 This& QuickBuild::RotateToPingPong(Angle endValue) {
@@ -399,16 +399,16 @@ This& QuickBuild::RotateToPingPong(Angle endValue) {
 }
 
 This& QuickBuild::RotateIn(Angle startValue) {
-    return AnimateRotate(startValue, Angle::DegreesAngle(0));
+    return AnimateRotate(startValue, Angle::WithDegrees(0));
 }
 
 This& QuickBuild::RotateContinue(Angle value) {
     auto& node = Node();
 
     node.updatables.AddContinue([=, &node](auto time) {
-        Angle angle = Angle::DegreesAngle(-node.transform.Rotation().z);
+        Angle angle = Angle::WithDegrees(-node.transform.Rotation().z);
         auto deltaDegrees = value.Degrees() * time.delta;
-        node.transform.SetRotation(Angle::DegreesAngle(angle.Degrees() + deltaDegrees));
+        node.transform.SetRotation(Angle::WithDegrees(angle.Degrees() + deltaDegrees));
     });
 
     return *this;

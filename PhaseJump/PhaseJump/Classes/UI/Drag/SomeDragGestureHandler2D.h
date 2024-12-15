@@ -24,7 +24,7 @@ namespace PJ {
                 End
             };
 
-            SomeDragGestureHandler2D& gesture;
+            SomeDragGestureHandler2D& handler;
             Type type;
             Vector2 worldPosition;
             Vector2 delta;
@@ -32,7 +32,7 @@ namespace PJ {
             Update(
                 SomeDragGestureHandler2D& gesture, Type type, Vector2 worldPosition, Vector2 delta
             ) :
-                gesture(gesture),
+                handler(gesture),
                 type(type),
                 worldPosition(worldPosition),
                 delta(delta) {}

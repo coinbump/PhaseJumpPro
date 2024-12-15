@@ -5,9 +5,9 @@
 #include "Vector3.h"
 
 /*
- RATING: 4 stars
- Tested and works (8/25/24). Needs unit tests
- CODE REVIEW: 8/25/24
+ RATING: 5 stars
+ Tested and works
+ CODE REVIEW: 12/12/24
  */
 namespace PJ {
     /// Abstract interface to an object that builds a poly frame mesh

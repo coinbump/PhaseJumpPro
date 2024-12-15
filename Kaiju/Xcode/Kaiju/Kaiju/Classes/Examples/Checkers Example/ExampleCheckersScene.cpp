@@ -17,7 +17,7 @@ void Checkers::Scene::LoadInto(WorldNode& root) {
         .And("Animator")
         .SetAnimateDuration(1)
         .SetAnimateEase(EaseFuncs::outElastic)
-        .RotateIn(Angle::DegreesAngle(-45))
+        .RotateIn(Angle::WithDegrees(-45))
         .MoveIn(Vector3(-300, 0, 0))
         .ScaleIn(0.7f)
         .And("Board view")

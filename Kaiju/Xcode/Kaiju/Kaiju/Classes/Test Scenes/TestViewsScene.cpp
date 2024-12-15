@@ -111,23 +111,23 @@ void TestViewsScene::LoadInto(WorldNode& root) {
 
     auto colorButton = [=](ViewBuilder& vb, String label,
                            std::function<void(ButtonControl&)> onPressFunc) -> ViewBuilder& {
-        ThemeBuilder(vb).Button({ .label = label, .onPressFunc = onPressFunc });
+        vb.Button({ .label = label, .onPressFunc = onPressFunc });
         return vb;
     };
 
     auto toggleButton = [=](ViewBuilder& vb, String label) -> ViewBuilder& {
-        ThemeBuilder(vb).SegmentButton({ .label = label });
+        vb.SegmentToggle({ .label = label });
         return vb;
     };
 
-    static SP<PageViewStore> toggleGroupStore = MAKE<PageViewStore>();
+    auto toggleGroupStore = &this->toggleGroupStore;
 
     auto toggleButtonGroup = [=](ViewBuilder& vb, String id, String label) -> ViewBuilder& {
-        vb.ToggleButton(
-            { .isOnBinding = { [=]() { return toggleGroupStore->selectedPage.Value() == id; },
+        vb.ToggleButtonView(
+            { .isOnBinding = { [=]() { return toggleGroupStore->selection.Value() == id; },
                                [=](auto& value) {
                                    if (value)
-                                       toggleGroupStore->selectedPage = id;
+                                       toggleGroupStore->selection = id;
                                } },
               .onControlChangeFunc =
                   [](auto& control) {
@@ -196,55 +196,110 @@ void TestViewsScene::LoadInto(WorldNode& root) {
                                                 .valueFunc = []() { return 0.3f; } });
                     } });
                                    });
-                               } });
+                               }});
 #endif
+        auto dialStack = [=, this](ViewBuilder& vb) {
+            vb.VStack({ .spacing = 20, .buildViewFunc = [=, this](auto& vb) {
+                           vb.HStack({ .buildViewFunc = [=, this](auto& vb) {
+                               vb.Spacer().Dial({ .valueBinding = { [this]() { return dialValue; },
+                                                                    [this](auto& value) {
+                                                                        dialValue = value;
+                                                                    } } });
+                           } });
+                       } });
+        };
 
-        buildViewModels.push_back(
-            { "Duck",
-              [=](WorldNode& root) {
-                  QB(root).And("Root View").RootView({ 800, 800 }, [=](auto& vb) {
-                      vb.ZStack({ .buildViewFunc = [=](auto& vb) {
-                          ThemeBuilder(vb).Surface();
+        auto duckUIStack = [=, this](ViewBuilder& vb) {
+            vb.VStack({ .spacing = 20, .buildViewFunc = [=, this](auto& vb) {
+                           vb.HStack({ .buildViewFunc = [=](auto& vb) {
+                               vb.Label({ .text = "Label + Color" })
+                                   .Label({ .color = Color::red, .text = "Red Label" });
+                           } });
 
-                          vb.VStack({ .spacing = 20, .buildViewFunc = [=](auto& vb) {
-                                         vb.HStack({ .buildViewFunc = [=](auto& vb) {
-                                             ThemeBuilder(vb)
-                                                 .Label({ .color = Color::red, .text = "Button" })
-                                                 .Button({ .label = "Duck UI" });
-                                         } });
+                           vb.HStack({ .buildViewFunc = [=](auto& vb) {
+                               vb.Label({ .text = "Button" }).Button({ .label = "Duck UI" });
+                           } });
 
-                                         vb.HStack({ .buildViewFunc = [=](auto& vb) {
-                                             ThemeBuilder(vb)
-                                                 .Label({ .text = "Progress Bar" })
-                                                 .ProgressBar({ .color = Color::red,
-                                                                .valueFunc = []() { return 0.3f; } }
-                                                 );
-                                         } });
+                           vb.HStack({ .spacing = 15, .buildViewFunc = [=, this](auto& vb) {
+                                          vb.Label({ .text = "Dial" })
+                                              .Dial({ .valueBinding = {
+                                                          [this]() { return dialValue; },
+                                                          [this](auto& value) {
+                                                              dialValue = value;
+                                                          } } })
+                                              .Dial({ .surfaceColor = Color32(106, 162, 137),
+                                                      .valueBinding = {
+                                                          [this]() { return dialValue2; },
+                                                          [this](auto& value) {
+                                                              dialValue2 = value;
+                                                          } } });
+                                      } });
 
-                                         vb.HStack({ .buildViewFunc = [=](auto& vb) {
-                                             ThemeBuilder(vb)
-                                                 .Label({ .text = "Segment Button" })
-                                                 .SegmentButton({ .label = "Toggle" });
-                                         } });
+                           vb.HStack({ .buildViewFunc = [=](auto& vb) {
+                               vb.Label({ .text = "Progress Bar" })
+                                   .ProgressBar({ .valueFunc = []() { return 0.3f; } });
+                           } });
 
-                                         vb.HStack({ .buildViewFunc = [=](auto& vb) {
-                                             ThemeBuilder(vb)
-                                                 .Label({ .text = "Check Button" })
-                                                 .CheckButton({ .label = "Checked" });
-                                         } });
+                           vb.HStack({ .buildViewFunc = [=](auto& vb) {
+                               vb.Label({ .text = "Progress Bar + Color" })
+                                   .ProgressBar({ .color = Color::red,
+                                                  .valueFunc = []() { return 0.3f; } });
+                           } });
 
-                                         vb.HStack({ .buildViewFunc = [=](auto& vb) {
-                                             ThemeBuilder(vb)
-                                                 .Label({ .text = "Toast" })
-                                                 .Toast(
-                                                     { .text = "This is an important announcement" }
-                                                 );
-                                         } });
-                                     } });
-                      } });
-                  });
-              } }
-        );
+                           vb.HStack({ .buildViewFunc = [=](auto& vb) {
+                               vb.Label({ .text = "Progress Circle" })
+                                   .ProgressCircle({ .valueFunc = []() { return 0.65f; } });
+                           } });
+
+                           vb.HStack({ .buildViewFunc = [=](auto& vb) {
+                               vb.Label({ .text = "Segment Toggle" })
+                                   .SegmentToggle({ .label = "Toggle" });
+                           } });
+
+                           vb.HStack({ .buildViewFunc = [=](auto& vb) {
+                               vb.Label({ .text = "Check Button" })
+                                   .CheckButton({ .label = "Checked" });
+                           } });
+
+                           vb.HStack({ .buildViewFunc = [=](auto& vb) {
+                               vb.Label({ .text = "Radio Button Group" })
+                                   .RadioButtonGroup({ .store = toggleGroupStore,
+                                                       .options = { "Option 1", "Option 2" } });
+                           } });
+
+                           vb.HStack({ .buildViewFunc = [=](auto& vb) {
+                               vb.Label({ .text = "Segmented Picker" })
+                                   .SegmentedPicker({ .store = toggleGroupStore,
+                                                      .options = { "First", "Second", "Final" } });
+                           } });
+
+                           vb.HStack({ .buildViewFunc = [=](auto& vb) {
+                               vb.Label({ .text = "Image Toggle" })
+                                   .ImageToggle({ .imageId = "heart-full",
+                                                  .size = Vector2{ 100, 100 } });
+                           } });
+
+                           vb.HStack({ .buildViewFunc = [=](auto& vb) {
+                               vb.Label({ .text = "Switch Toggle" }).SwitchToggle({});
+                           } });
+
+                           vb.HStack({ .buildViewFunc = [=](auto& vb) {
+                               vb.Label({ .text = "Toast" })
+                                   .Toast({ .text = "This is an important announcement" });
+                           } });
+                       } });
+        };
+
+        buildViewModels
+            .push_back({ "Duck", [=](WorldNode& root) {
+                            QB(root).And("Root View").RootView({ 800, 1800 }, [=](auto& vb) {
+                                vb.ZStack({ .buildViewFunc = [=](auto& vb) {
+                                    vb.Surface();
+                                    vb.Pad({ .insets = LayoutInsets::Uniform(20),
+                                             .buildViewFunc = duckUIStack });
+                                } });
+                            });
+                        } });
 
         buildViewModels.push_back(
             { "Immediate",
@@ -253,9 +308,15 @@ void TestViewsScene::LoadInto(WorldNode& root) {
                       vb.ZStack({ .buildViewFunc = [=](auto& vb) {
                           vb.Color(Color::white)
                               .Immediate({ .renderFunc = [](auto& view, auto& renderer) {
-                                  renderer.FillRect({ .size = { 200, 200 } }, Color::yellow);
-                                  renderer.FillRect({ .size = { 100, 100 } }, Color::green);
-                                  renderer.FillRect({ .size = { 50, 50 } }, Color::blue);
+                                  renderer.SetStrokeWidth(4)
+                                      .SetStartPathCap(PathCap::Flat)
+                                      .SetEndPathCap(PathCap::Round)
+                                      .SetPathCorner(PathCorner::Round)
+                                      .FillCircle({}, 100, Color::yellow)
+                                      .FillCircle({}, 50, Color::green)
+                                      .FillCircle({}, 20, Color::blue)
+                                      .FrameCircle({}, 20, Color::red)
+                                      .FramePolygon({ { 0, 0 }, { 45, 45 }, { 45, 100 } });
                               } });
                       } });
                   });
@@ -271,20 +332,23 @@ void TestViewsScene::LoadInto(WorldNode& root) {
                               .Pad({ .insets = LayoutInsets::Uniform(10),
                                      .buildViewFunc = [=](auto& vb) {
                                          vb.HStack({ .buildViewFunc = [=](auto& vb) {
-                                             vb.HStack({ .alignFunc = AlignFuncs::left,
-                                                         .spacing = 10,
-                                                         .buildViewFunc =
-                                                             [=](auto& vb) {
-                                                                 for (int i = 0; i < 1; i++) {
-                                                                     vb.Slider(
-                                                                         ViewBuilder::SliderConfig{}
-                                                                     );
-                                                                 }
-                                                             } })
+                                             vb.HStack(
+                                                   { .alignFunc = AlignFuncs::left,
+                                                     .spacing = 10,
+                                                     .buildViewFunc =
+                                                         [=](auto& vb) {
+                                                             for (int i = 0; i < 1; i++) {
+                                                                 vb.SliderView(
+                                                                     ViewBuilder::SliderViewConfig{}
+                                                                 );
+                                                             }
+                                                         } }
+                                             )
                                                  .HStack({ .spacing = 10,
                                                            .buildViewFunc = [=](auto& vb) {
                                                                for (int i = 0; i < 1; i++) {
-                                                                   vb.Slider({ .axis = Axis2D::Y });
+                                                                   vb.SliderView({ .axis =
+                                                                                       Axis2D::Y });
                                                                }
                                                            } });
                                          } });
@@ -455,7 +519,7 @@ void TestViewsScene::LoadInto(WorldNode& root) {
               } }
         );
 
-        static SP<PageViewStore> pageViewStore = MAKE<PageViewStore>();
+        static SP<SingleSelectStore> pageViewStore = MAKE<SingleSelectStore>();
 
         buildViewModels.push_back(
             { "Pages",
@@ -471,14 +535,14 @@ void TestViewsScene::LoadInto(WorldNode& root) {
                                                                colorButton(
                                                                    vb, "Page 1",
                                                                    [](auto& button) {
-                                                                       pageViewStore->selectedPage =
+                                                                       pageViewStore->selection =
                                                                            "1";
                                                                    }
                                                                );
                                                                colorButton(
                                                                    vb, "Page 2",
                                                                    [](auto& button) {
-                                                                       pageViewStore->selectedPage =
+                                                                       pageViewStore->selection =
                                                                            "2";
                                                                    }
                                                                );
@@ -535,20 +599,23 @@ void TestViewsScene::LoadInto(WorldNode& root) {
                               .Pad({ .insets = LayoutInsets::Uniform(10),
                                      .buildViewFunc = [=](auto& vb) {
                                          vb.HStack({ .buildViewFunc = [=](auto& vb) {
-                                             vb.VStack({ .alignFunc = AlignFuncs::left,
-                                                         .spacing = 10,
-                                                         .buildViewFunc =
-                                                             [=](auto& vb) {
-                                                                 for (int i = 0; i < 4; i++) {
-                                                                     vb.Slider(
-                                                                         ViewBuilder::SliderConfig{}
-                                                                     );
-                                                                 }
-                                                             } })
+                                             vb.VStack(
+                                                   { .alignFunc = AlignFuncs::left,
+                                                     .spacing = 10,
+                                                     .buildViewFunc =
+                                                         [=](auto& vb) {
+                                                             for (int i = 0; i < 4; i++) {
+                                                                 vb.SliderView(
+                                                                     ViewBuilder::SliderViewConfig{}
+                                                                 );
+                                                             }
+                                                         } }
+                                             )
                                                  .HStack({ .spacing = 10,
                                                            .buildViewFunc = [=](auto& vb) {
                                                                for (int i = 0; i < 4; i++) {
-                                                                   vb.Slider({ .axis = Axis2D::Y });
+                                                                   vb.SliderView({ .axis =
+                                                                                       Axis2D::Y });
                                                                }
                                                            } });
                                          } });

@@ -22,23 +22,23 @@ TEST(Angle, InitDegrees)
 {
     const float near = .001f;
 
-    auto sut = Angle::DegreesAngle(360.0f);
+    auto sut = Angle::WithDegrees(360.0f);
     EXPECT_EQ(360.0f, sut.Degrees());
     EXPECT_NEAR(2.0f * M_PI, sut.Radians(), near);
 }
 
 TEST(Angle, InitRadians)
 {
-    auto sut = Angle::RadiansAngle(M_PI * 2.0f);
+    auto sut = Angle::WithRadians(M_PI * 2.0f);
     EXPECT_EQ(360.0f, sut.Degrees());
 }
 
 TEST(Angle, Clipped)
 {
-    EXPECT_EQ(1, Angle::DegreesAngle(361).Clipped().Degrees());
-    EXPECT_EQ(0, Angle::DegreesAngle(-360).Clipped().Degrees());
-    EXPECT_EQ(359, Angle::DegreesAngle(-361).Clipped().Degrees());
-    EXPECT_EQ(0, Angle::DegreesAngle(-720).Clipped().Degrees());
+    EXPECT_EQ(1, Angle::WithDegrees(361).Clipped().Degrees());
+    EXPECT_EQ(0, Angle::WithDegrees(-360).Clipped().Degrees());
+    EXPECT_EQ(359, Angle::WithDegrees(-361).Clipped().Degrees());
+    EXPECT_EQ(0, Angle::WithDegrees(-720).Clipped().Degrees());
 }
 
 TEST(Angle, ToVector2)
@@ -47,22 +47,22 @@ TEST(Angle, ToVector2)
 
     const float near = .001f;
 
-    auto adjOpp = Angle::DegreesAngle(45).ToVector2(sqrt2);
+    auto adjOpp = Angle::WithDegrees(45).ToVector2(sqrt2);
     EXPECT_NEAR(adjOpp.x, 1, .01);
     EXPECT_NEAR(adjOpp.y, 1 * vecUp, near);
-    adjOpp = Angle::DegreesAngle(135).ToVector2(sqrt2);
+    adjOpp = Angle::WithDegrees(135).ToVector2(sqrt2);
     EXPECT_NEAR(adjOpp.x, 1, .01);
     EXPECT_NEAR(adjOpp.y, 1 * vecDown, near);
-    adjOpp = Angle::DegreesAngle(225).ToVector2(sqrt2);
+    adjOpp = Angle::WithDegrees(225).ToVector2(sqrt2);
     EXPECT_NEAR(adjOpp.x, -1, .01);
     EXPECT_NEAR(adjOpp.y, 1 * vecDown, near);
-    adjOpp = Angle::DegreesAngle(315).ToVector2(sqrt2);
+    adjOpp = Angle::WithDegrees(315).ToVector2(sqrt2);
     EXPECT_NEAR(adjOpp.x, -1, .01);
     EXPECT_NEAR(adjOpp.y, 1 * vecUp, near);
 
     // IMPORTANT: the angle specified is away from the 0 degree, *not* from the.x-coordinate line.
     // 60 degrees rotated away from origin 0 is a 30 degree right triangle.
-    adjOpp = Angle::DegreesAngle(60).ToVector2(1);
+    adjOpp = Angle::WithDegrees(60).ToVector2(1);
     EXPECT_NEAR(adjOpp.x, .866, .01);
     EXPECT_NEAR(adjOpp.y, .5 * vecUp, .01);
 }
@@ -116,15 +116,15 @@ TEST(Angle, InitVector2)
 
 TEST(Angle, MinusOperator)
 {
-    auto sut = Angle::DegreesAngle(360);
+    auto sut = Angle::WithDegrees(360);
     sut = -sut;
     EXPECT_EQ(-360.0f, sut.Degrees());
 }
 
 TEST(Angle, MinAngleTo)
 {
-    auto sut = Angle::DegreesAngle(360);
-    auto sut2 = Angle::DegreesAngle(2);
+    auto sut = Angle::WithDegrees(360);
+    auto sut2 = Angle::WithDegrees(2);
     EXPECT_EQ(2.0f, sut.MinAngleTo(sut2).Degrees());
     EXPECT_EQ(-2.0f, sut2.MinAngleTo(sut).Degrees());
 }

@@ -5,26 +5,26 @@
 #include "SomeMeshBuilder.h"
 
 /*
- RATING: 4 stars
- Tested and works. Needs unit tests
- CODE REVIEW: 8/25/24
+ RATING: 5 stars
+ Has unit tests (from CenterPolyMeshBuilder)
+ CODE REVIEW: 12/13/24
  */
 namespace PJ {
     /// Renders an arc
     class ArcMeshBuilder : public SomeMeshBuilder {
     public:
-        Angle startAngle = Angle::DegreesAngle(0);
-        Angle endAngle = Angle::DegreesAngle(360);
-        Angle angleStep = Angle::DegreesAngle(10);
-        Vector2 worldSize = Vector2(10, 10);
+        Angle startAngle;
+        Angle angleDelta{ { .degrees = 360 } };
+        Angle angleStep{ { .degrees = 10 } };
+        Vector2 worldSize{ 10, 10 };
 
-        ArcMeshBuilder(Vector2 worldSize, Angle startAngle, Angle endAngle, Angle angleStep) :
+        ArcMeshBuilder(Vector2 worldSize, Angle startAngle, Angle angleDelta, Angle angleStep) :
             startAngle(startAngle),
-            endAngle(endAngle),
+            angleDelta(angleDelta),
             angleStep(angleStep),
             worldSize(worldSize) {}
 
-        size_t SliceCount() const;
+        // MARK: SomeMeshBuilder
 
         Mesh BuildMesh() override;
     };

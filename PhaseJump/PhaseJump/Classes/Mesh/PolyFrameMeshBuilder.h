@@ -3,52 +3,44 @@
 #include "Polygon.h"
 #include "SomeMeshBuilder.h"
 
-// /23
+/*
+ RATING: 5 stars
+ Has unit tests
+ CODE REVIEW: 12/14/24
+ */
 namespace PJ {
-    enum class PolyClose { Open, Closed };
-
     /**
      Builds a mesh that shows the frame of a polygon
 
-     NOTE: this is a basic implementation with no support for high quality features like correct
-     miters FUTURE: support correct miter, rounded corners, etc.
+     FUTURE: support miter, smooth corners, end caps, etc.
      */
     class PolyFrameMeshBuilder : SomeMeshBuilder {
     public:
-        float strokeWidth = 2;
+        struct Config {
+            Polygon poly;
+            float strokeWidth = 1;
+            PolyClose polyClose = PolyClose::Closed;
+            PathCap startCap = PathCap::Flat;
+            PathCap endCap = PathCap::Flat;
+            PathCorner corner = PathCorner::None;
+        };
+
+        float strokeWidth = 1;
 
         /// Determines how to render the final segment (from final vertex to last vertex)
         PolyClose polyClose = PolyClose::Closed;
 
         Polygon poly;
 
-        PolyFrameMeshBuilder(
-            Polygon poly, float strokeWidth, PolyClose polyClose = PolyClose::Closed
-        ) :
-            poly(poly),
-            polyClose(polyClose),
-            strokeWidth(strokeWidth) {}
+        PathCap startCap = PathCap::Flat;
+        PathCap endCap = PathCap::Flat;
 
-        size_t PolyVertexCount() const {
-            return poly.Count();
-        }
+        // FUTURE: WORK IN PROGRESS (unfinished)
+        PathCorner corner = PathCorner::None;
 
-        size_t SegmentCount() const {
-            switch (polyClose) {
-            case PolyClose::Closed:
-                return PolyVertexCount();
-                break;
-            case PolyClose::Open:
-                return PolyVertexCount() - 1;
-                break;
-            }
-        }
+        PolyFrameMeshBuilder(Config config);
 
-        size_t MeshVertexCount() const {
-            // Each segment of a poly must be its own quad, in order for the stroke width to
-            // Render at the proper offset along that segment.
-            return SegmentCount() * 4;
-        }
+        // MARK: SomeMeshBuilder
 
         Mesh BuildMesh() override;
     };

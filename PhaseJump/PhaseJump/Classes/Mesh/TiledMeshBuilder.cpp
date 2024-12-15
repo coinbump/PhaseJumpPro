@@ -1,4 +1,5 @@
 #include "TiledMeshBuilder.h"
+#include <algorithm>
 
 using namespace std;
 using namespace PJ;
@@ -18,21 +19,23 @@ Vector2Int TiledMeshBuilder::MeshSize() const {
 } // Tested
 
 Mesh TiledMeshBuilder::BuildMesh() {
+    GUARDR(worldSize.x > 0 && worldSize.y > 0, {})
+
     Mesh result;
 
     auto meshSize = MeshSize();
 
     auto cellCount = meshSize.x * meshSize.y;
     auto trianglesSize = cellCount * 6;
-    VectorList<uint32_t> triangles(trianglesSize, 0);
+    VectorList<uint32_t> triangles(trianglesSize);
 
     int vertexXCount = meshSize.x * 2;
     int vertexYCount = meshSize.y * 2;
     int verticesSize = vertexXCount * vertexYCount;
 
-    VectorList<Vector3> vertices(verticesSize, Vector3{});
+    VectorList<Vector3> vertices(verticesSize);
     auto uvSize = verticesSize;
-    VectorList<Vector2> uvs(uvSize, Vector2{});
+    VectorList<Vector2> uvs(uvSize);
 
     for (size_t meshY = 0, i = 0; meshY < meshSize.y; meshY++) {
         for (size_t y = 0; y < 2; y++) {

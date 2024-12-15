@@ -18,7 +18,7 @@ namespace PJ {
             radius(radius) {}
 
         Vector3 PositionAt(float progress) override {
-            auto result = Angle::DegreesAngle(progress * 360.0f).ToVector2(radius);
+            auto result = Angle::WithDegrees(progress * 360.0f).ToVector2(radius);
             return Vector3(result.x, result.y, 0);
         }
     };

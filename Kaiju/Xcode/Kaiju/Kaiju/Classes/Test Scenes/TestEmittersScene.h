@@ -123,7 +123,7 @@ public:
 #endif
 
         emitter->emitFunc =
-            EmitFuncs::MakeSpread2D(4, Angle::DegreesAngle(20.0f), Angle::DegreesAngle(3.0f));
+            EmitFuncs::MakeSpread2D(4, Angle::WithDegrees(20.0f), Angle::WithDegrees(3.0f));
         emitter->positionFunc = [](auto& emitter) {
             return CirclePositioner2D::MakeFunc(500.0f)(*emitter.random);
         };

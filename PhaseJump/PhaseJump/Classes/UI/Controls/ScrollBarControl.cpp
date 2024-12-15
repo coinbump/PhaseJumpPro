@@ -42,13 +42,13 @@ void ScrollBarControl::Awake() {
 
         switch (update.type) {
         case SomeDragGestureHandler2D::Update::Type::Start:
-            target->OnDragThumbStart(*update.gesture.owner, update.worldPosition);
+            target->OnDragThumbStart(*update.handler.owner, update.worldPosition);
             break;
         case SomeDragGestureHandler2D::Update::Type::End:
             target->OnDragThumbEnd();
             break;
         case SomeDragGestureHandler2D::Update::Type::Update:
-            target->OnDragThumbUpdate(*update.gesture.owner, update.worldPosition);
+            target->OnDragThumbUpdate(*update.handler.owner, update.worldPosition);
             break;
         }
     };

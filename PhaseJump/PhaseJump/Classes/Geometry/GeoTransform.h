@@ -70,7 +70,7 @@ namespace PJ {
         }
 
         Angle Rotation2D() const {
-            return Angle::DegreesAngle(-rotation.z);
+            return Angle::WithDegrees(-rotation.z);
         }
 
         void SetRotation(Vector3 value) {

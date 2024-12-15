@@ -12,6 +12,7 @@
 #include <PhaseJump-Dev/BezierPathLayout.h>
 #include <PhaseJump-Dev/BlinkEffect.h>
 #include <PhaseJump-Dev/ButtonControl.h>
+#include <PhaseJump-Dev/CapsuleMeshBuilder.h>
 #include <PhaseJump-Dev/CameraCullRenderProcessor.h>
 #include <PhaseJump-Dev/CenterPolyFrameMeshBuilder.h>
 #include <PhaseJump-Dev/CenterPolyBuilder.h>
@@ -92,6 +93,7 @@
 #include <PhaseJump-Dev/RenderWorldSystem.h>
 #include <PhaseJump-Dev/ResourceRepository.h>
 #include <PhaseJump-Dev/ResourceScanner.h>
+#include <PhaseJump-Dev/RoundCornersMeshBuilder.h>
 #include <PhaseJump-Dev/Macros.h>
 #include <PhaseJump-Dev/PageView.h>
 #include <PhaseJump-Dev/PointerClickUIEvent.h>
@@ -129,7 +131,6 @@
 #include <PhaseJump-Dev/StandardRandom.h>
 #include <PhaseJump-Dev/StringUtils.h>
 #include <PhaseJump-Dev/Theme.h>
-#include <PhaseJump-Dev/ThemeBuilder.h>
 #include <PhaseJump-Dev/ToggleButtonControl.h>
 #include <PhaseJump-Dev/TypeClass.h>
 #include <PhaseJump-Dev/UIPlan.h>

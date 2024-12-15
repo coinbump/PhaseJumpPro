@@ -26,7 +26,7 @@ namespace PJ {
         bool orientToPath = true;
 
         /// Angle of rotation for child node from orientation of path
-        Angle orientDegreeAngle = Angle::DegreesAngle(90.0f);
+        Angle orientDegreeAngle = Angle::WithDegrees(90.0f);
 
         /// (Optional). Normalized positions for each child node (0-1.0)
         /// If empty, each child node will be positioned at equal intervals

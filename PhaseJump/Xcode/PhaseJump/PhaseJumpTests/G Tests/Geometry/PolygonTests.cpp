@@ -64,8 +64,18 @@ TEST(Polygon, SetSize)
 {
     TestPolygon sut;
     sut.SetSize({2, 2});
+    EXPECT_TRUE(sut.IsBoundsInvalid());
+    
     EXPECT_EQ(Vector2(2, 2), sut.Size());
     EXPECT_EQ(Vector2(0.5f, 0.5f), sut.Center());
+}
+
+TEST(Polygon, Offset)
+{
+    Polygon sut{{{1, 1}}};
+    sut.Offset({2, 2});
+    EXPECT_EQ(Vector2(3, 3), sut[0]);
+    EXPECT_TRUE(sut.IsBoundsInvalid());
 }
 
 TEST(Polygon, ModAt)

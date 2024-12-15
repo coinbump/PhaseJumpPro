@@ -32,7 +32,7 @@ public:
               c.owner->SetScale(Vector3(1.0f + progress, 1.0f + progress, 1));
 
               c.model.SetBuildMeshFunc([](RendererModel const& model) {
-                  EllipseMeshBuilder builder(model.WorldSize(), Angle::DegreesAngle(5.0f));
+                  EllipseMeshBuilder builder(model.WorldSize(), Angle::WithDegrees(5.0f));
                   return builder.BuildMesh();
               });
           }).ModifyAll<CirclePathLayout2D>([](CirclePathLayout2D& c, auto index) {
@@ -50,7 +50,7 @@ public:
 
         qb.ModifyAll<MeshRenderer>([=](MeshRenderer& c, auto index) {
               c.model.SetBuildMeshFunc([](RendererModel const& model) {
-                  EllipseMeshBuilder builder(model.WorldSize(), Angle::DegreesAngle(5.0f));
+                  EllipseMeshBuilder builder(model.WorldSize(), Angle::WithDegrees(5.0f));
                   return builder.BuildMesh();
               });
 

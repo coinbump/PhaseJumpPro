@@ -120,7 +120,7 @@ This& ViewBuilder::ZStack(BuildConfigFunc<ZStackConfig> buildConfigFunc) {
                 view.owner->name = config.name;
 
                 UP<SomeViewLayout> layout =
-                    NEW<ZStackViewLayout>(config.xAlignFunc, config.yAlignFunc);
+                    NEW<ZStackViewLayout>(config.alignment.xAlignFunc, config.alignment.yAlignFunc);
                 view.SetLayout(layout);
 
                 GUARD(config.buildViewFunc)
@@ -280,7 +280,7 @@ This& ViewBuilder::Text(BuildConfigFunc<TextConfig> buildConfigFunc) {
 
 // NOTE: Slider isn't dynamic because we need to know the axis of the slider when we create it
 // FUTURE: add dynamic slider support if needed
-This& ViewBuilder::Slider(SliderConfig config) {
+This& ViewBuilder::SliderView(SliderViewConfig config) {
     qb->And(config.name)
         .Slider({ .axis = config.axis,
                   .valueBinding = config.valueBinding,
@@ -290,7 +290,7 @@ This& ViewBuilder::Slider(SliderConfig config) {
     return *this;
 }
 
-This& ViewBuilder::Button(BuildConfigFunc<ButtonConfig> buildConfigFunc) {
+This& ViewBuilder::ButtonView(BuildConfigFunc<ButtonViewConfig> buildConfigFunc) {
     qb->And("")
         .With<ButtonControl>()
         .ModifyLatest<ButtonControl>([&](auto& view) {
@@ -334,7 +334,7 @@ This& ViewBuilder::Button(BuildConfigFunc<ButtonConfig> buildConfigFunc) {
     return *this;
 }
 
-This& ViewBuilder::ToggleButton(BuildConfigFunc<ToggleButtonConfig> buildConfigFunc) {
+This& ViewBuilder::ToggleButtonView(BuildConfigFunc<ToggleButtonViewConfig> buildConfigFunc) {
     qb->And("")
         .With<ToggleButtonControl>()
         .ModifyLatest<ToggleButtonControl>([&](auto& view) {
@@ -381,35 +381,41 @@ This& ViewBuilder::ToggleButton(BuildConfigFunc<ToggleButtonConfig> buildConfigF
 }
 
 This& ViewBuilder::Immediate(BuildConfigFunc<ImmediateConfig> buildConfigFunc) {
-    qb->And("")
-        .With<View2D>()
-        .ModifyLatest<View2D>([&](auto& view) {
-            view.buildViewFunc = [=](auto& view) {
-                GUARD(buildConfigFunc)
-                GUARD(view.owner)
+    qb->And("").With<View2D>();
 
-                auto config = buildConfigFunc(view);
-                view.owner->name = config.name;
+    AssociateImmediate(buildConfigFunc);
+    qb->Pop();
 
-                auto& renderer = view.owner->template AddComponentIfNeeded<ImRenderer>();
+    return *this;
+}
 
-                View2D* viewPtr = &view;
+This& ViewBuilder::AssociateImmediate(BuildConfigFunc<ImmediateConfig> buildConfigFunc) {
+    qb->ModifyLatest<View2D>([&](auto& view) {
+        view.buildViewFunc = [=](auto& view) {
+            GUARD(buildConfigFunc)
+            GUARD(view.owner)
 
-                renderer.signalFuncs[SignalId::RenderPrepare] = [=](auto& renderer, auto& signal) {
-                    ImRenderer& imRenderer = *(static_cast<ImRenderer*>(&renderer));
-                    if (config.renderFunc) {
-                        config.renderFunc(*viewPtr, imRenderer);
-                    }
-                };
+            auto config = buildConfigFunc(view);
+            view.owner->name = config.name;
 
-                if (config.modifyRendererFunc) {
-                    config.modifyRendererFunc(renderer);
+            auto& renderer = view.owner->template AddComponentIfNeeded<ImRenderer>();
+
+            View2D* viewPtr = &view;
+
+            renderer.signalFuncs[SignalId::RenderPrepare] = [=](auto& renderer, auto& signal) {
+                ImRenderer& imRenderer = *(static_cast<ImRenderer*>(&renderer));
+                if (config.renderFunc) {
+                    config.renderFunc(*viewPtr, imRenderer);
                 }
             };
 
-            view.Rebuild();
-        })
-        .Pop();
+            if (config.modifyRendererFunc) {
+                config.modifyRendererFunc(renderer);
+            }
+        };
+
+        view.Rebuild();
+    });
 
     return *this;
 }
@@ -511,4 +517,138 @@ World* ViewBuilder::GetWorld() const {
 
 DesignSystem* ViewBuilder::GetDesignSystem() const {
     return qb->Node().World()->designSystem.get();
+}
+
+This& ViewBuilder::RadioButtonGroup(RadioButtonGroupConfig config) {
+    GUARDR_LOG(config.store, *this, "ERROR. Missing store for radio button group")
+
+    auto designSystem = GetDesignSystem();
+    GUARDR(designSystem, *this)
+
+    auto spacing = designSystem->theme->ElementSpacing(UIElementId::ControlGroup, { 0, 16 });
+
+    VStack({ .spacing = spacing.y, .alignFunc = AlignFuncs::left, .buildViewFunc = [=](auto& vb) {
+                for (int i = 0; i < config.options.size(); i++) {
+                    auto& option = config.options[i];
+                    String id = MakeString(i);
+
+                    vb.RadioButton({ .label = option,
+                                     .isOnBinding = {
+                                         [=]() { return config.store->selection.Value() == id; },
+                                         [=](auto& value) {
+                                             if (value)
+                                                 config.store->selection = id;
+                                         } } });
+                }
+            } });
+
+    return *this;
+}
+
+This& ViewBuilder::SegmentedPicker(SegmentedPickerConfig config) {
+    GUARDR_LOG(config.store, *this, "ERROR. Missing store for segmented picker")
+
+    auto designSystem = GetDesignSystem();
+    GUARDR(designSystem, *this)
+
+    HStack({ .buildViewFunc = [=](auto& vb) {
+        for (int i = 0; i < config.options.size(); i++) {
+            auto& option = config.options[i];
+            String id = MakeString(i);
+
+            vb.SegmentToggle({ .label = option,
+                               .isOnBinding = {
+                                   [=]() { return config.store->selection.Value() == id; },
+                                   [=](auto& value) {
+                                       if (value)
+                                           config.store->selection = id;
+                                   } } });
+        }
+    } });
+
+    return *this;
+}
+
+This& ViewBuilder::Surface(SurfaceConfig config) {
+    auto designSystem = GetDesignSystem();
+    GUARDR(designSystem, *this)
+    designSystem->BuildView(UIItemId::Surface, config, *this);
+    return *this;
+}
+
+This& ViewBuilder::Button(ButtonConfig config) {
+    auto designSystem = GetDesignSystem();
+    GUARDR(designSystem, *this)
+    designSystem->BuildView(UIItemId::Button, config, *this);
+    return *this;
+}
+
+This& ViewBuilder::SegmentToggle(ToggleButtonConfig config) {
+    auto designSystem = GetDesignSystem();
+    GUARDR(designSystem, *this)
+    designSystem->BuildView(UIItemId::SegmentToggle, config, *this);
+    return *this;
+}
+
+This& ViewBuilder::ImageToggle(ToggleButtonConfig config) {
+    auto designSystem = GetDesignSystem();
+    GUARDR(designSystem, *this)
+    designSystem->BuildView(UIItemId::ImageToggle, config, *this);
+    return *this;
+}
+
+This& ViewBuilder::SwitchToggle(ToggleButtonConfig config) {
+    auto designSystem = GetDesignSystem();
+    GUARDR(designSystem, *this)
+    designSystem->BuildView(UIItemId::SwitchToggle, config, *this);
+    return *this;
+}
+
+This& ViewBuilder::Dial(DialConfig config) {
+    auto designSystem = GetDesignSystem();
+    GUARDR(designSystem, *this)
+    designSystem->BuildView(UIItemId::Dial, config, *this);
+    return *this;
+}
+
+This& ViewBuilder::ProgressBar(ProgressBarConfig config) {
+    auto designSystem = GetDesignSystem();
+    GUARDR(designSystem, *this)
+    designSystem->BuildView(UIItemId::ProgressBar, config, *this);
+    return *this;
+}
+
+This& ViewBuilder::ProgressCircle(ProgressBarConfig config) {
+    auto designSystem = GetDesignSystem();
+    GUARDR(designSystem, *this)
+    designSystem->BuildView(UIItemId::ProgressCircle, config, *this);
+    return *this;
+}
+
+This& ViewBuilder::Label(LabelConfig config) {
+    auto designSystem = GetDesignSystem();
+    GUARDR(designSystem, *this)
+    designSystem->BuildView(UIItemId::Label, config, *this);
+    return *this;
+}
+
+This& ViewBuilder::CheckButton(ToggleButtonConfig config) {
+    auto designSystem = GetDesignSystem();
+    GUARDR(designSystem, *this)
+    designSystem->BuildView(UIItemId::CheckButton, config, *this);
+    return *this;
+}
+
+This& ViewBuilder::RadioButton(ToggleButtonConfig config) {
+    auto designSystem = GetDesignSystem();
+    GUARDR(designSystem, *this)
+    designSystem->BuildView(UIItemId::RadioButton, config, *this);
+    return *this;
+}
+
+This& ViewBuilder::Toast(LabelConfig config) {
+    auto designSystem = GetDesignSystem();
+    GUARDR(designSystem, *this)
+    designSystem->BuildView(UIItemId::Toast, config, *this);
+    return *this;
 }

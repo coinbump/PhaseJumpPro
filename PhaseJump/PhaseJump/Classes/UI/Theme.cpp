@@ -88,8 +88,19 @@ Vector2 Theme::ElementSize(String id, Vector2 defaultValue) const {
     id = ResolveElementId(id);
 
     try {
-        auto elementSize = ElementTagValueAt<Vector2>(id, "size");
-        return elementSize;
+        auto result = ElementTagValueAt<Vector2>(id, "size");
+        return result;
+    } catch (...) {}
+
+    return defaultValue;
+}
+
+Vector2 Theme::ElementSpacing(String id, Vector2 defaultValue) const {
+    id = ResolveElementId(id);
+
+    try {
+        auto result = ElementTagValueAt<Vector2>(id, "spacing");
+        return result;
     } catch (...) {}
 
     return defaultValue;

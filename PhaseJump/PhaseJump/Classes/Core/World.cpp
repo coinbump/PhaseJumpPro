@@ -182,7 +182,7 @@ Matrix4x4 World::LocalModelMatrix(WorldNode const& node) {
 
     // This is 2D rotation only
     // FUTURE: support 3D rotation if needed.
-    rotationMatrix.LoadZRadRotation(Angle::DegreesAngle(node.transform.Rotation().z).Radians());
+    rotationMatrix.LoadZRadRotation(Angle::WithDegrees(node.transform.Rotation().z).Radians());
 
     auto m1 = translateMatrix * rotationMatrix;
     auto modelMatrix = m1 * scaleMatrix;

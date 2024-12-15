@@ -25,6 +25,17 @@ namespace PJ {
         auto constexpr Surface = "surface";
         auto constexpr OnSurface = "on.surface";
         auto constexpr SurfaceContainer = "surface.container";
+        auto constexpr OnSurfaceContainer = "on.surface.container";
+
+        auto constexpr SurfaceContainerLowSecondary = "surface.container.low.secondary";
+        auto constexpr OnSurfaceContainerLowSecondary = "on.surface.container.low.secondary";
+        auto constexpr SurfaceContainerLowTertiary = "surface.container.low.tertiary";
+        auto constexpr OnSurfaceContainerLowTertiary = "on.surface.container.low.tertiary";
+
+        auto constexpr SurfaceContainerHighSecondary = "surface.container.high.secondary";
+        auto constexpr OnSurfaceContainerHighSecondary = "on.surface.container.high.secondary";
+        auto constexpr SurfaceContainerHighTertiary = "surface.container.high.tertiary";
+        auto constexpr OnSurfaceContainerHighTertiary = "on.surface.container.high.tertiary";
 
         auto constexpr SurfaceInteractive = "surface.interactive";
         auto constexpr SurfaceInteractiveHover = "surface.interactive.hover";
@@ -41,6 +52,7 @@ namespace PJ {
         auto constexpr SurfaceToggleOnPress = "surface.toggle.on.press";
 
         auto constexpr ControlFrame = "control.frame";
+        auto constexpr ControlGroup = "control.group";
 
         auto constexpr SliderTrack = "slider.track";
         auto constexpr SliderThumb = "slider.thumb";
@@ -60,14 +72,17 @@ namespace PJ {
     namespace UIItemId {
         auto constexpr Surface = "surface";
         auto constexpr Button = "button";
-        auto constexpr SegmentButton = "segmentButton";
-        auto constexpr ImageToggleButton = "imageToggleButton";
+        auto constexpr SegmentToggle = "segmentToggle";
+        auto constexpr ImageToggle = "imageToggle";
+        auto constexpr SwitchToggle = "switchToggle";
         auto constexpr Label = "label";
         auto constexpr Toast = "toast";
+        auto constexpr Dial = "dial";
         auto constexpr ProgressBar = "progressBar";
+        auto constexpr ProgressCircle = "progressCircle";
         auto constexpr CheckButton = "checkButton";
         auto constexpr RadioButton = "radioButton";
-        auto constexpr PickerSegmented = "picker.segmented";
+        auto constexpr SegmentedPicker = "picker.segmented";
     } // namespace UIItemId
 
     /// Custom property names for common UI elements

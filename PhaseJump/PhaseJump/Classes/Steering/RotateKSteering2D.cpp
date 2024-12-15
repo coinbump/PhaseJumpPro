@@ -10,6 +10,6 @@ void RotateKSteering2D::OnUpdate(TimeSlice time) {
     GUARD(owner)
 
     Angle rotation = owner->transform.Rotation2D();
-    rotation += Angle::DegreesAngle(turnSpeed.Degrees() * time.delta);
+    rotation += Angle::WithDegrees(turnSpeed.Degrees() * time.delta);
     owner->transform.SetRotation(rotation.Clipped());
 }
