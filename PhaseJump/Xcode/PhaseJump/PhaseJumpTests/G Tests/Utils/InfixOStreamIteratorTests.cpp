@@ -37,8 +37,8 @@ TEST(InfixOStreamIterator, TestJoinStrings3) {
 TEST(InfixOStreamIterator, TestJoinInt3) {
     vector<int> list{0, 1, 2};
     std::stringstream stream;
-    std::copy(list.begin(), list.end(), InfixOStreamIterator<int>(stream, ","));
+    std::copy(list.begin(), list.end(), InfixOStreamIterator<int>(stream, "++"));
     auto sut = stream.str();
 
-    EXPECT_EQ("0,1,2", sut);
+    EXPECT_EQ("0++1++2", sut);
 }

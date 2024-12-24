@@ -41,7 +41,7 @@ void KaijuGo() {
     config.windowConfig.title = "Kaiju";
     config.windowConfig.SetAllowHighDPI(true);
     config.clearColor = Color(.8, .8, .8, 1.0f);
-    config.resourcesPath = FilePath("resources/art");
+    config.resourcesPath = FilePath("resources");
 
     world->And().With<TestTextureScene>();
 
@@ -49,13 +49,17 @@ void KaijuGo() {
     static auto configResult = _class.Configure(config, world);
 
     auto designSystem = MAKE<DuckDesignSystem>();
-    designSystem->AddElementTexture(UIElementId::SliderTrack, world->FindTexture("slider-track"));
-    designSystem->AddElementTexture(UIElementId::SliderThumb, world->FindTexture("slider-thumb"));
     designSystem->AddElementTexture(
-        UIElementId::SliderVerticalTrack, world->FindTexture("slider-track-v")
+        UIElementId::SliderTrack, world->resources.FindTexture("slider-track")
     );
     designSystem->AddElementTexture(
-        UIElementId::SliderVerticalThumb, world->FindTexture("slider-thumb-v")
+        UIElementId::SliderThumb, world->resources.FindTexture("slider-thumb")
+    );
+    designSystem->AddElementTexture(
+        UIElementId::SliderVerticalTrack, world->resources.FindTexture("slider-track-v")
+    );
+    designSystem->AddElementTexture(
+        UIElementId::SliderVerticalThumb, world->resources.FindTexture("slider-thumb-v")
     );
     designSystem->theme->SetElementTag(
         UIElementId::SliderTrack, UITag::Slice9Model,

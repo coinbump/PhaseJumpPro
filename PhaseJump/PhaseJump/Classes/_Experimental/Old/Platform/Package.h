@@ -1,21 +1,28 @@
-#ifndef PJPACKAGE_h
-#define PJPACKAGE_h
+#pragma once
 
 #include "Base.h"
 #include "Module.h"
+#include "VectorList.h"
 #include <memory>
 #include <vector>
 
-// CODE REVIEW: ?/23
+/*
+ RATING: 5 stars
+ Simple type
+ CODE REVIEW: 12/19/24
+ */
 namespace PJ {
     /// A collection of modules
     class Package : public Base {
     public:
-        std::vector<ModuleSharedPtr> modules;
+        VectorList<ModuleSharedPtr> modules;
 
+    protected:
         // MARK: Base
 
         void OnGo() override {
+            Base::OnGo();
+
             for (auto& _module : modules) {
                 if (_module.get()) {
                     _module->Go();
@@ -24,5 +31,3 @@ namespace PJ {
         }
     };
 } // namespace PJ
-
-#endif

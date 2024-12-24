@@ -3,8 +3,10 @@
 using namespace std;
 using namespace PJ;
 
+using This = Mesh;
+
 Mesh::Mesh() {
-    calculateBoundsFunc = [](This& mesh) {
+    calculateBoundsFunc = [](auto& mesh) {
         bool hasFirst = false;
         Vector3 minValue;
         Vector3 maxValue;
@@ -42,7 +44,7 @@ void Mesh::Update(
     needsCalculate = true;
 }
 
-void Mesh::CalculateIfNeeded() {
+void Mesh::CalculateIfNeeded() const {
     GUARD(needsCalculate)
     needsCalculate = false;
 
@@ -63,6 +65,7 @@ Mesh& Mesh::operator+=(Mesh const& rhs) {
     uint32_t triangleOffset = (uint32_t)result.vertices.size();
 
     AddRange(result.vertices, rhs.vertices);
+    AddRange(result.uvs, rhs.uvs);
 
     VectorList<uint32_t> newTriangles;
     newTriangles.assign(rhs.Triangles().begin(), rhs.Triangles().end());
@@ -70,8 +73,7 @@ Mesh& Mesh::operator+=(Mesh const& rhs) {
         triangle += triangleOffset;
     }
 
-    AddRange(result.triangles.Modifiable(), newTriangles);
-    AddRange(result.uvs, rhs.uvs);
+    AddRange(result.triangles, newTriangles);
 
     result.needsCalculate = true;
 
@@ -91,4 +93,12 @@ Mesh Mesh::operator*(Matrix4x4 const& rhs) const {
     Mesh result = *this;
     result *= rhs;
     return result;
+}
+
+This& Mesh::Offset(Vector3 offset) {
+    for (auto& v : vertices) {
+        v += offset;
+    }
+
+    return *this;
 }

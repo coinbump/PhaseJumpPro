@@ -7,6 +7,7 @@ AnimationCycleTimer::AnimationCycleTimer(float duration, AnimationCycleType cycl
     timer(duration, RunType::Once),
     cycleType(cycleType),
     cycleState(AnimationCycleState::Forward) {
+    controller = &timer;
     timer.SetOnPlayTimeChangeFunc([this](auto& playable) {
         GUARD(onPlayTimeChangeFunc);
         onPlayTimeChangeFunc(*this);

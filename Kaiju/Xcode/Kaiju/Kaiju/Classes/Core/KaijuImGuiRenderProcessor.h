@@ -22,7 +22,7 @@ public:
 
     // TODO: re-evaluate all registered render phases, probably don't want to run for each camera
     KaijuImGuiRenderProcessor(KaijuWorldSystem& system) :
-        Base("", { RenderPhase::PostClear }),
+        Base({ .phases = { RenderPhase::PostClear } }),
         system(system) {}
 
     // MARK: RenderProcessor

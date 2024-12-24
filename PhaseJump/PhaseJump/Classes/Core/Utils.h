@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Macros.h"
+#include <functional>
 #include <memory>
 
 /// MARK: - Pointer cast convenience

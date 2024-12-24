@@ -156,3 +156,22 @@ TEST(Data, TestCount)
     EXPECT_EQ(2, sut.Count());
 }
 
+TEST(Data, Span)
+{
+    Data<int> sut([](size_t size) {
+        return (int*)CallocDataAllocator()(size);
+    });
+
+    sut.ResizeCount(2);
+    sut[0] = 5;
+    sut[1] = 10;
+    
+    auto span = sut.Span();
+    EXPECT_EQ(2 * sizeof(int), span.size_bytes());
+    
+    Data<int> sut2(span);
+    EXPECT_EQ(2 * sizeof(int), sut2.Size());
+    EXPECT_EQ(2, sut2.Count());
+    EXPECT_EQ(5, sut2[0]);
+    EXPECT_EQ(10, sut2[1]);
+}

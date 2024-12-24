@@ -30,7 +30,7 @@ public:
             //            auto gradientRenderer = MAKE<SimpleGradientRenderer>(Color::black,
             //            Color::black.WithAlpha(1), Vector2(400, 400));
 
-            // TODO: ArcMeshBuilder, CenterPolyMeshBuilder, EllipseMeshBuilder, QuadMeshBuilder,
+            // ArcMeshBuilder, CenterPolyMeshBuilder, EllipseMeshBuilder, QuadMeshBuilder,
             // QuadFrameMeshBuilder, CenterPolyFrameMeshBuilder
 
             auto& ac = gradientNode->AddComponent<SimpleAnimationController>();
@@ -100,10 +100,12 @@ public:
             ac.states.AddTransition("2", "next", "0");
             ac.states.SetState("0");
 
-            ac.signalFuncs[SignalId::KeyDown] = [](auto& component, auto& signal) {
-                auto& animationController = *(static_cast<SimpleAnimationController*>(&component));
-                animationController.states.Input("next");
-            };
+            ac.AddSignalHandler({ .id = SignalId::KeyDown,
+                                  .func = [](auto& component, auto& signal) {
+                                      auto& animationController =
+                                          *(static_cast<SimpleAnimationController*>(&component));
+                                      animationController.states.Input("next");
+                                  } });
 
             //
             //            gradientRenderer->model.SetBuildMeshFunc([](RendererModel const& model) {

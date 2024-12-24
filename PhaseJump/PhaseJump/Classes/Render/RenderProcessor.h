@@ -5,12 +5,16 @@
 #include "Utils.h"
 #include <functional>
 
-// CODE REVIEW: ?/23
+/*
+ RATING: 5 stars
+ Tested and works
+ CODE REVIEW: 12/21/24
+ */
 namespace PJ {
     class RenderWorldSystem;
-    class CameraRenderModel;
+    class RenderCameraModel;
 
-    /// A node in the render pipeline
+    /// A processor in the render pipeline
     /// Each processor creates render models, or performs operations on models created by previous
     /// processors
     class RenderProcessor {
@@ -25,18 +29,28 @@ namespace PJ {
         using ProcessFunc = std::function<void(String phase)>;
 
         /// Called for camera render phases
-        using ProcessCameraFunc = std::function<void(CameraRenderModel&)>;
+        using ProcessCameraFunc = std::function<void(RenderCameraModel&)>;
 
+        /// Use facing name, for browsing
         String name;
+
+        /// Called for system render phases
         ProcessFunc processFunc;
+
+        /// Called for camera render phases
         ProcessCameraFunc processCameraFunc;
 
         /// Each processor must register to run for specific render phases
         UnorderedSet<String> phases;
 
-        RenderProcessor(String name, std::initializer_list<String> phases) :
-            name(name),
-            phases(phases) {}
+        struct Config {
+            String name;
+            UnorderedSet<String> phases;
+        };
+
+        RenderProcessor(Config config) :
+            name(config.name),
+            phases(config.phases) {}
 
         virtual ~RenderProcessor() {}
 
@@ -53,45 +67,9 @@ namespace PJ {
             processFunc(phase);
         }
 
-        virtual void Process(CameraRenderModel& cameraModel) {
+        virtual void Process(RenderCameraModel& cameraModel) {
             GUARD(processCameraFunc)
             processCameraFunc(cameraModel);
         }
-
-#if FALSE
-        class SomeRenderSystemCommand {};
-
-        namespace SomeRenderSystemCommands {
-            // ??? What advantage do we gain by this? Just let them alter the render system directly
-            class AddModelsCommand {
-                // modelGroups here
-            };
-
-            class ReplaceModelsCommand {
-                // modelGroups here
-            };
-
-            class FilterNodesCommand {};
-
-            class FilterCamerasCommand {};
-
-            class
-        }; // namespace SomeRenderSystemCommands
-
-        virtual SP<List<SomeRenderSystemCommand>> ProcessV2(CameraRenderModel const& cameraModel) {
-            // How do we do this by returning a value and not modifying the render system directly?
-            // A: commands. Problem: limited, not sure what all the possibilities are
-            // B: Copy render system model in processor. Cons: expensive? Each processor has to copy
-            // everything C: allow render processor to directly edit context model and render system
-            // <- fragile??
-
-            //            for (auto& group: renderSystem.modelGroups) {
-            //                ProcessModelGroup(renderSystem, )
-            //            }
-
-            GUARDR(processFunc, nullptr)
-            return processFunc(renderSystem, contextModel);
-        }
-#endif
     };
 } // namespace PJ

@@ -4,6 +4,7 @@
 #include "Vector2.h"
 #include "VectorList.h"
 #include "RenderContextModel.h"
+#include "SomeRenderEngine.h"
 
 using namespace PJ;
 
@@ -13,6 +14,25 @@ using namespace PJ;
  CODE REVIEW: 9/2/24
  */
 namespace PJTest {
+    class MockRenderEngine : public PJ::SomeRenderEngine {
+        virtual void RenderStart(RenderContextModel& contextModel) {}
+        virtual void RenderDraw(RenderDrawModel const& drawModel) {}
+
+        virtual void SetLineWidth(float lineWidth) {}
+        virtual void EnableFeature(String featureId, bool isEnabled) {}
+
+        virtual void ProjectionMatrixLoadOrthographic(Vector2 size) {}
+        virtual void LoadTranslate(Vector3 value) {}
+
+        virtual SP<SomeRenderContext> MakeTextureBuffer() { return {}; }
+        virtual UnorderedSet<String> EnabledFeatures() { return {}; }
+
+        /// Called once for each render pass
+        virtual void ResetForRenderPass() {}
+        virtual bool IsContextCleared(uint32_t id) { return {}; }
+        virtual void SetIsContextCleared(uint32_t id, bool value) {}
+    };
+    
     class MockRenderContext : public PJ::SomeRenderContext
     {
     public:
@@ -20,8 +40,9 @@ namespace PJTest {
 
         Vector2 size;
         VectorList<RenderContextModel> renderHistory;
-
-        MockRenderContext(Vector2 size = Vector2(400, 200)) : Base(nullptr), size(size) {
+        MockRenderEngine renderEngine;
+        
+        MockRenderContext(Vector2 size = Vector2(400, 200)) : Base(renderEngine), size(size) {
         }
 
         // Make context current, for renders

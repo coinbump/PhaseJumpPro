@@ -30,7 +30,7 @@ void CycleHueEffect::UpdateEffect() {
     auto target = Target();
     GUARD(target)
 
-    auto renderer = target->GetComponent<SomeRenderer>();
+    auto renderer = target->GetComponent<SomeMaterialRenderer>();
     GUARD(renderer)
 
     ModelColor hsv;

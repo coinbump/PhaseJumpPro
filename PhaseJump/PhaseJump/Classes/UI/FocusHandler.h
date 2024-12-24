@@ -5,7 +5,7 @@
 #include "UIWorldSystem.h"
 #include "WorldComponent.h"
 
-// CODE REVIEW: ?/23
+// Future Feature, Unfinished, don't use
 namespace PJ {
     /// Hints for changing focus in response to focus navigation events
     struct FocusHint {
@@ -69,13 +69,12 @@ namespace PJ {
                     return lock;
                 }
             }
-            // TODO: add the rest as needed
+            // FUTURE: add the rest as needed
 
             return nullptr;
         }
     };
 
-    // TODO: finish porting from C# + modernize
     /// Allows an object to have focus
     //    class FocusHandler : public WorldComponent<>
 

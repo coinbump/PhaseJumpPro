@@ -7,7 +7,7 @@
 /*
  RATING: 5 stars
  Simple type
- CODE REVIEW: 9/10/24
+ CODE REVIEW: 12/20/24
  */
 namespace PJ {
     /// Specifies information for loading an individual resource
@@ -23,18 +23,11 @@ namespace PJ {
          load the resource
 
          Allows for multiple file types to use the same load operation (Example: "png", "jpg",
-         "jpeg" load a "texture" resource type)
+         "jpeg" load a ResourceType::Texture resource type)
          */
         String type;
 
         /// Custom arguments for loading
         Tags loadArgs;
-
-        ResourceInfo() {}
-
-        ResourceInfo(StringView id, FilePath filePath, StringView type) :
-            filePath(filePath),
-            type(type),
-            id(id) {}
     };
 } // namespace PJ

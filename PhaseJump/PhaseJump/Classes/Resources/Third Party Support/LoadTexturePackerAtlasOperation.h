@@ -13,8 +13,8 @@ namespace PJ {
     public:
         using Base = SomeLoadResourcesOperation;
 
-        LoadTexturePackerAtlasOperation(ResourceInfo info, LoadResourcesModel& loadResourcesModel) :
-            Base(info, loadResourcesModel) {}
+        LoadTexturePackerAtlasOperation(ResourceInfo info, ResourceRepositoryModel& repoModel) :
+            Base(info, repoModel) {}
 
         // MARK: SomeLoadResourcesOperation
 

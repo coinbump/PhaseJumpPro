@@ -12,7 +12,7 @@ using namespace std;
 using namespace PJ;
 
 void AddOverlay(
-    CameraRenderModel& cameraModel, WorldNode* node, SP<RenderMaterial> colliderMaterial,
+    RenderCameraModel& cameraModel, WorldNode* node, SP<RenderMaterial> colliderMaterial,
     Color color, Vector2 overlaySize
 ) {
     auto renderer = MAKE<ColorRenderer>(ColorRenderer::Config{
@@ -30,7 +30,7 @@ void AddOverlay(
     AddRange(cameraModel.models, debugRenderModels);
 }
 
-void ShowCollidersRenderProcessor::Process(CameraRenderModel& cameraModel) {
+void ShowCollidersRenderProcessor::Process(RenderCameraModel& cameraModel) {
     auto colliderMaterial = ColorRenderer::MakeMaterial(RenderOpacityTypeFor(color));
     cameraModel.materials.push_back(colliderMaterial);
 

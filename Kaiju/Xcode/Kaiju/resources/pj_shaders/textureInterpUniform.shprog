@@ -1,5 +1,5 @@
 {
 	"id": "texture.interp.uniform",
-	"shader.vertex": "vertex+texture",
-	"shader.fragment": "textureInterpUniform"
+	"shader.vertex.path": "vertex/vertex.vsh",
+	"shader.fragment.path": "fragment/textureInterpUniform.fsh"
 }

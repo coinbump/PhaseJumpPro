@@ -1,5 +1,5 @@
 #include "SomeGLRenderEngine.h"
-#include "GLVertexBuffer.h"
+#include "GLSomeBuffer.h"
 
 using namespace PJ;
 

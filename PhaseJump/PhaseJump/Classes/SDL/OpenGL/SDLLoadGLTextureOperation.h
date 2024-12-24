@@ -13,21 +13,20 @@
 /*
  RATING: 5 stars
  Tested and works
- CODE REVIEW: 4/19/23
+ CODE REVIEW: 12/21/24
  */
 namespace PJ {
     class GLTexture;
 
-    /// Use SDL to load an OpenGL texture
+    /// Uses SDL to load an OpenGL texture
     class SDLLoadGLTextureOperation : public SomeLoadResourcesOperation {
     public:
         using Base = SomeLoadResourcesOperation;
 
-        // TODO: Does it make sense to put this here??
         String textureMagnification = TextureMagnify::Linear;
 
-        SDLLoadGLTextureOperation(ResourceInfo info, LoadResourcesModel& loadResourcesModel) :
-            Base(info, loadResourcesModel) {}
+        SDLLoadGLTextureOperation(ResourceInfo info, ResourceRepositoryModel& repoModel) :
+            Base(info, repoModel) {}
 
         // MARK: SomeLoadResourcesOperation
 

@@ -55,9 +55,7 @@ void SDLGLRenderContext::Configure(SDL_Window* window) {
 }
 
 SomeGLRenderEngine* SDLGLRenderContext::GetGLRenderEngine() const {
-    GUARDR(renderEngine, {})
-
-    return SCAST<SomeGLRenderEngine>(renderEngine).get();
+    return static_cast<SomeGLRenderEngine*>(&renderEngine);
 }
 
 void SDLGLRenderContext::Bind() {

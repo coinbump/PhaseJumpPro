@@ -14,6 +14,8 @@
  CODE REVIEW: 11/17/24
  */
 namespace PJ {
+    class ViewBuilder;
+
     /// Identifiers of common UI constraints
     namespace UIConstraintId {
         // Type: float
@@ -31,6 +33,17 @@ namespace PJ {
         auto constexpr IsIdealHeight = "isIntrinsic.height";
     } // namespace UIConstraintId
 
+    /// Config for presenting a top level view (popovers, alerts)
+    struct PresentTopLevelViewConfig {
+        using MakeFrameFunc = std::function<Rect(View2D& presenterView, View2D& view)>;
+        using BuildViewFunc = std::function<void(ViewBuilder&)>;
+
+        /// Returns the frame for the top level view
+        MakeFrameFunc makeFrameFunc;
+
+        BuildViewFunc buildViewFunc;
+    };
+
     /// Handles logic and layout for a reading-layout oriented node
     /// Example: windows, controls, buttons
     class View2D : public WorldComponent<>, public WorldSizeable {
@@ -40,6 +53,9 @@ namespace PJ {
 
         using IdealSizeFunc = std::function<ViewSizeProposal(This&, ViewSizeProposal)>;
         using BuildViewFunc = std::function<void(View2D&)>;
+
+        /// If true, this view is an attachment to another view
+        bool isAttachment{};
 
     protected:
         Rect frame;
@@ -64,7 +80,11 @@ namespace PJ {
         /// Environment variables (found by walking from child to root)
         Tags environment;
 
+        // If true, this view is in hover state
         ObservedValue<bool> isHovering{ false };
+
+        // If true, this is a top level view (popover, alert, etc.)
+        bool isTopLevel{};
 
     public:
         /// Used to rebuild this view if the content changes
@@ -232,6 +252,27 @@ namespace PJ {
         /// Sets the 2D size of this view (equivalent to SetFrameSize)
         void SetWorldSize2D(Vector2 value);
 
+        // MARK: Top level views
+
+        bool IsTopLevel() const {
+            return isTopLevel;
+        }
+
+        /// @return Returns a list of top level views that are currently presented
+        VectorList<View2D*> TopLevelViews();
+
+        /// Presents a top level view
+        void Present(PresentTopLevelViewConfig config);
+
+        /// Dismisses a top level view
+        void Dismiss(View2D& view);
+
+        /// Pops top level views until this view is the frontmost top level view
+        void PopTo(View2D& view);
+
+        /// Dismisses the topmost top level view
+        void PopTopLevel();
+
         // MARK: WorldSizeable
 
         Vector3 WorldSize() const override {
@@ -253,17 +294,6 @@ namespace PJ {
         /// Called before layout is applied (internal use only)
         void StartLayout();
 
-    protected:
-        /// Called when the frame changes
-        virtual void OnFrameChange();
-
-        /// Resizes sibling components to match the size of the view
-        virtual void UpdateFrameComponents();
-
-        /// Called when the view size changes
-        virtual void OnViewSizeChange();
-
-    public:
         /// @return Returns the bounds of the parent view, if any
         virtual std::optional<Rect> ParentBounds();
 
@@ -291,15 +321,36 @@ namespace PJ {
         /// View position is in local reading coordinates
         bool TestViewPositionHit(Vector2 viewPosition) const;
 
-        Vector2 ToViewPosition(ViewPoint viewPoint) const;
+        Vector2 ToViewPosition(LayoutAnchor2D viewPoint) const;
         Vector3 ViewToWorldPosition(Vector2 viewPosition) const;
         Vector3 ViewToLocalPosition(Vector2 viewPosition) const;
         Vector2 WorldToViewPosition(Vector3 worldPosition) const;
+
+        /// @return Returns a view position, converted from the local position
         Vector2 LocalToViewPosition(Vector3 localPosition) const;
-        Vector3 TopLeftChildLocalPosition(Rect childFrame) const;
+
+        /// @return Returns the top-left local position in this view's node for child views
+        Vector3 TopLeftLocalPosition() const;
+
+        /// @return Returns top left local position in this view's node for the child view
+        Vector3 ChildTopLeftLocalPosition(Rect childFrame) const;
+
+        /// @return Returns local position in this view's node to place the child view
         Vector3 ChildLocalPosition(Rect childFrame) const;
 
+        /// @return Returns a position in this view converted to a position in the root view
+        Vector2 ToRootViewPosition(Vector2 viewPosition);
+
     protected:
+        /// Called when the frame changes
+        virtual void OnFrameChange();
+
+        /// Resizes sibling components to match the size of the view
+        virtual void UpdateFrameComponents();
+
+        /// Called when the view size changes
+        virtual void OnViewSizeChange();
+
         // MARK: SomeComponent
 
         void Start() override;

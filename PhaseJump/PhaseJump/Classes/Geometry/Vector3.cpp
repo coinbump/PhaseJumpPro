@@ -15,7 +15,7 @@ Vector3::operator Terathon::Point3D() const {
 }
 
 std::ostream& PJ::operator<<(std::ostream& os, Vector3 const& value) {
-    os << "{" << value.x << ", " << value.y << ", " << value.z << "}";
+    os << std::format("{{{}, {}, {}}}", value.x, value.y, value.z);
     return os;
 }
 
@@ -28,7 +28,7 @@ String Vector3::ToString() const {
 // MARK: Vector3Int
 
 std::ostream& PJ::operator<<(std::ostream& os, Vector3Int const& value) {
-    os << "{" << value.x << ", " << value.y << ", " << value.z << "}";
+    os << std::format("{{{}, {}, {}}}", value.x, value.y, value.z);
     return os;
 }
 

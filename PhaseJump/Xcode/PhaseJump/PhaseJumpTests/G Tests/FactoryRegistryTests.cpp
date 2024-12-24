@@ -19,16 +19,15 @@ namespace FactoryRegistryTests {
 using namespace FactoryRegistryTests;
 
 TEST(FactoryRegistry, Factory) {
-    auto allocator = [] () -> SP<TestClass> { return MAKE<TestClass>(); };
+    auto allocator = [] () -> UP<TestClass> { return NEW<TestClass>(); };
 
     FactoryRegistry<TestClass> registry;
 
-    auto factory = MAKE<Factory<TestClass>>(allocator);
-    registry.map["test"] = factory;
+    registry.map["test"] = NEW<Factory<TestClass>>(allocator);
 
     auto value = ContainsKey(registry.map, "test");
     EXPECT_TRUE(value);
 
-    auto tc = registry.New("test");
+    auto tc = registry.Make("test");
     EXPECT_NE(nullptr, tc);
 }

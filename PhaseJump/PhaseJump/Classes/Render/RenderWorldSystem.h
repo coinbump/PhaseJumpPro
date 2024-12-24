@@ -6,9 +6,9 @@
 #include "SomeWorldSystem.h"
 
 /*
- RATING: 5 stars
- Tested and works
- CODE REVIEW: 8/28/23
+ RATING: 4 stars
+ Tested and works. Missing full support for multiple cameras, offscreen view ports, and perspective
+ cameras CODE REVIEW: 12/22/24
  */
 namespace PJ {
     class RenderProcessor;
@@ -27,9 +27,9 @@ namespace PJ {
     };
 
     /// Manages render phases and notification when phase changes
-    class PhaseRenderModel {
+    class RenderPhaseModel {
     public:
-        using This = PhaseRenderModel;
+        using This = RenderPhaseModel;
 
         using OnPhaseChangeFunc = std::function<void(This&, String phase)>;
 
@@ -46,39 +46,39 @@ namespace PJ {
     /// Defines the model for a render pass
     /// The render system sends this to render processors, which can then modify it to
     /// add new draw commands, modify existing commands, filter nodes or cameras, etc.
-    class CameraRenderModel {
+    class RenderCameraModel {
     public:
-        using This = CameraRenderModel;
+        using This = RenderCameraModel;
 
     public:
         using ModelSortFunc = std::function<bool(RenderModel const&, RenderModel const&)>;
 
-        PhaseRenderModel phaseModel;
+        RenderPhaseModel phaseModel;
 
         /// Pointer, not reference for model copies
-        SomeRenderContext* renderContext = nullptr;
+        SomeRenderContext* renderContext{};
 
         /// Root node, used for z-order sorting
-        WorldNode* root = nullptr;
+        WorldNode* root{};
 
         /// Nodes to be rendered
         VectorList<WorldNode*> nodes;
 
         /// Camera being rendered
-        SomeCamera* camera = nullptr;
+        SomeCamera* camera{};
 
         /// Models to render
         VectorList<RenderModel> models;
 
         /// Model groups (grouping should be done as a final step)
-        VectorList<RenderModelGroup> modelGroups;
+        // FUTURE: VectorList<RenderModelGroup> modelGroups;
 
         /// Temporary materials used by render processors
         /// Example: we can create a processor that shows mesh shape, collider bounds, etc
         VectorList<SP<RenderMaterial>> materials;
 
         /// Temporary renderers used by render processors
-        /// Because we share memory from the renderer colors, we need to store it somewhere
+        /// We share memory from the renderer model, keep it in memory
         VectorList<SP<SomeRenderer>> renderers;
 
         /// Materials created by render processor that override an existing material
@@ -87,7 +87,8 @@ namespace PJ {
 
         // MARK: Z-Order
 
-        /// Used to sort render models for back-to-front render
+        /// (Experimental). Used to sort render models for back-to-front render
+        /// By default, standard Z-ordering is used (Breadth first order)
         ModelSortFunc modelSortFunc = [this](RenderModel const& lhs, RenderModel const& rhs) {
             // Z index layering allows us to render groups as layers
             if (lhs.zIndex < rhs.zIndex) {
@@ -96,36 +97,17 @@ namespace PJ {
             return lhs.order < rhs.order;
         };
 
-        /// @return Returns the override material for this model if one exists
-        SP<RenderMaterial> OverrideMaterial(RenderModel const& model) {
-            // TODO: unit test
-            auto i = overrideMaterials.find(model.BaseMaterial());
-            GUARDR(i != overrideMaterials.end(), nullptr)
-
-            return i->second;
-        }
-
-        /// Creates an override material for this model
-        SP<RenderMaterial> MakeOverrideMaterial(RenderModel const& model) {
-            // TODO: unit test
-            auto baseMaterial = model.BaseMaterial();
-            GUARDR(baseMaterial, nullptr)
-
-            auto i = overrideMaterials.find(baseMaterial);
-            GUARDR(i == overrideMaterials.end(), i->second)
-
-            auto result = MAKE<RenderMaterial>();
-            *result = *baseMaterial;
-            overrideMaterials.insert_or_assign(baseMaterial, result);
-
-            return result;
-        }
-
-        void SetPhase(String value);
-
-        CameraRenderModel(
+        RenderCameraModel(
             RenderContextModel& contextModel, SomeCamera& camera, VectorList<RenderModel> models
         );
+
+        /// @return Returns the override material for this model if one exists
+        SP<RenderMaterial> OverrideMaterial(RenderModel const& model);
+
+        /// Creates an override material for this model
+        SP<RenderMaterial> MakeOverrideMaterial(RenderModel const& model);
+
+        void SetPhase(String value);
     };
 
     class RenderContextModel;
@@ -135,7 +117,7 @@ namespace PJ {
     public:
         class Model {
         public:
-            PhaseRenderModel phaseModel;
+            RenderPhaseModel phaseModel;
             RenderProcessingModel processingModel;
         };
 

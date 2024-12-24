@@ -29,7 +29,7 @@ EditorImGuiPrefabsPainter::EditorImGuiPrefabsPainter(EditorWorldSystem& _system)
 
                 if (ImGui::SmallButton(addButtonName.c_str())) {
                     auto prefabNode = MAKE<WorldNode>();
-                    system.Add(prefabNode, world.root.get(), world.root->Children().size() - 1);
+                    system.Add(prefabNode, world.Root(), world.Root()->Children().size() - 1);
                     world.LoadPrefab(id, *prefabNode);
                     QB(*prefabNode).Drag();
                 }

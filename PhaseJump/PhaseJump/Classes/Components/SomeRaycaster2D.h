@@ -2,7 +2,11 @@
 
 #include "SomeRaycaster.h"
 
-// : /23
+/*
+ RATING: 5 stars
+ Simple types
+ CODE REVIEW: 12/16/24
+ */
 namespace PJ {
     struct RaycastHit2D {
         WorldNode& node;

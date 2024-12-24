@@ -1,6 +1,6 @@
 #include "LoadTexturePackerAtlasOperation.h"
 #include "AtlasTexture.h"
-#include "LoadResourcesModel.h"
+#include "ResourceRepositoryModel.h"
 #include "SDLLoadGLTextureOperation.h"
 #include "StringUtils.h"
 #include "TextureAtlas.h"
@@ -31,8 +31,8 @@ SomeLoadResourcesOperation::Result LoadTexturePackerAtlasOperation::LoadResource
         fullImagePath.replace_extension("png");
 
         // No id needed, we're not storing the parent texture in resources
-        ResourceInfo loadTextureInfo("", fullImagePath, "texture");
-        auto loadTextureOperations = loadResourcesModel.MakeLoadOperations(loadTextureInfo);
+        ResourceInfo loadTextureInfo{ .filePath = fullImagePath, .type = ResourceType::Texture };
+        auto loadTextureOperations = repoModel.MakeLoadOperations(loadTextureInfo);
 
         GUARDR(!IsEmpty(loadTextureOperations), Failure())
 
@@ -40,13 +40,12 @@ SomeLoadResourcesOperation::Result LoadTexturePackerAtlasOperation::LoadResource
 
         loadTextureOperation.Run();
         GUARDR(loadTextureOperation.result, Failure())
-        GUARDR(loadTextureOperation.result.value().IsSuccess(), Failure())
-        auto successValue = loadTextureOperation.result.value().SuccessValue();
+        GUARDR(loadTextureOperation.result->IsSuccess(), Failure())
+        auto successValue = loadTextureOperation.result->SuccessValue();
 
-        GUARDR(successValue && successValue.value().size(), Failure())
+        GUARDR(successValue && successValue->size() > 0, Failure())
 
-        SP<SomeTexture> texture =
-            DCAST<SomeTexture>(successValue.value().loadedResources[0].resource);
+        SP<SomeTexture> texture = DCAST<SomeTexture>(successValue->resources[0].resource);
         GUARDR(texture, Failure());
 
         Success result;
@@ -119,17 +118,19 @@ SomeLoadResourcesOperation::Result LoadTexturePackerAtlasOperation::LoadResource
                                          .orientation = orientation };
             auto atlasTexture = MAKE<AtlasTexture>(config);
 
-            ResourceModel loadedResource(
-                SCAST<PJ::Base>(atlasTexture), atlasTextureId, filePath, "texture"
-            );
+            ResourceModel loadedResource{ .resource = SCAST<PJ::Base>(atlasTexture),
+                                          .info = { .id = atlasTextureId,
+                                                    .filePath = filePath,
+                                                    .type = ResourceType::Texture } };
             result.Add(loadedResource);
 
             textureAtlas->Add(atlasTexture);
         }
 
-        ResourceModel loadedAtlasResource(
-            SCAST<PJ::Base>(textureAtlas), info.id, filePath, "texture.atlas"
-        );
+        ResourceModel loadedAtlasResource{
+            .resource = SCAST<PJ::Base>(textureAtlas),
+            .info = { .id = info.id, .filePath = filePath, .type = "texture.atlas" }
+        };
         result.Add(loadedAtlasResource);
 
         return result;

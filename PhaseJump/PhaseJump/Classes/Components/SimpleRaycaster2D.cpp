@@ -30,10 +30,10 @@ VectorList<RaycastHit2D> SimpleRaycaster2D::Raycast(Vector2 origin, Vector2 dire
 
     // This is a brute force solution and not efficient
     // FUTURE: find more optimal raycast solutions as needed
-    auto root = world->root;
+    auto root = world->Root();
 
     VectorList<WorldNode*> graph;
-    CollectBreadthFirstTree(root.get(), graph);
+    CollectBreadthFirstTree(root, graph);
 
     for (auto& node : graph) {
         auto worldNode = node;

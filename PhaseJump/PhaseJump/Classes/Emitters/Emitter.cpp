@@ -35,7 +35,7 @@ void Emitter::OnUpdate(TimeSlice time) {
     Base::OnUpdate(time);
 
     EmitList finishedEmits;
-    List<DelayedEmitModel> unfinishedEmits;
+    VectorList<DelayedEmitModel> unfinishedEmits;
     for (auto& delayedEmit : delayedEmits) {
         delayedEmit.OnUpdate(time);
 
@@ -70,8 +70,8 @@ Emitter::EmitList Emitter::Fire() {
     return result;
 }
 
-List<Emitter::SpawnType> Emitter::EmitWithEmits(EmitList emits) {
-    List<Emitter::SpawnType> result;
+VectorList<Emitter::SpawnType> Emitter::EmitWithEmits(EmitList emits) {
+    VectorList<Emitter::SpawnType> result;
 
     for (auto& emit : emits) {
         auto spawnDelay = emit.Delay();

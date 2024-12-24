@@ -12,18 +12,30 @@
 #include <SDL3/SDL_main.h>
 #include <SDL3/SDL_render.h>
 
+/// Enable to enable profiling code called on launch
+// #define LAUNCH_PROFILE
+
+/// Enable to enable profiling code
 // #define PROFILE
 
-// CODE REVIEW: ?/23
+/*
+ RATING: 5 stars
+ Tested and works
+ CODE REVIEW: 12/21/24
+ */
 namespace PJ {
-    /// A world with a SDL main loop
+    /**
+     A world with a SDL main loop
+
+     Call Configure first, then Go.
+     */
     class SDLWorld : public World {
     public:
         using Base = World;
         using This = SDLWorld;
 
     protected:
-        /// Becomes true when the app is finished polling events
+        /// True when the app is finished polling events
         bool isFinished{};
 
         /// SDL window parent for this world (window owns the world)
@@ -43,6 +55,7 @@ namespace PJ {
             return window;
         }
 
+        /// Called before Go to associate types
         virtual void Configure(SDL_Window* window, SP<SomeRenderContext> renderContext) {
             this->window = window;
             this->renderContext = renderContext;

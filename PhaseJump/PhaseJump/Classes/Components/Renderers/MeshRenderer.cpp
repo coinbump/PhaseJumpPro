@@ -3,7 +3,6 @@
 #include "QuadMeshBuilder.h"
 #include "RenderContextModel.h"
 #include "RenderModel.h"
-#include "RenderModelBuilder.h"
 #include "SomeShaderProgram.h"
 
 using namespace std;
@@ -16,5 +15,6 @@ MeshRenderer::MeshRenderer(Vector3 worldSize) :
         return builder.BuildMesh();
     });
 
-    model.material = MAKE<RenderMaterial>(RenderMaterial::Config{ .shaderId = "color.vary" });
+    model.material =
+        MAKE<RenderMaterial>(RenderMaterial::Config{ .shaderId = ShaderId::ColorVary });
 }

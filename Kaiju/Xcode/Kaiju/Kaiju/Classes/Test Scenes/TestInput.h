@@ -21,7 +21,7 @@ class TestInput : public WorldComponent<> {
     }
 
     void OnUpdate(TimeSlice time) override {
-        // TODO: support reading from any controller
+        // support reading from any controller
         //        {
         //            auto value = Input::FirstAxisValue(ControllerAxisId::LeftX);
         //            if (value < -0.5f) {

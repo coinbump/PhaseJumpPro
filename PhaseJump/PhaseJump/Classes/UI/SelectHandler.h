@@ -1,28 +1,38 @@
-#ifndef PJSELECTHANDLER_H
-#define PJSELECTHANDLER_H
+#pragma once
 
-#include "SomeResolver.h"
 #include "WorldComponent.h"
 
 /*
  RATING: 5 stars
- Direct port
- CODE REVIEW: 6/18/23
+ Simple type
+ CODE REVIEW: 12/21/24
  */
 namespace PJ {
     class UIWorldSystem;
 
-    /// Handles selection state behavior (Example: Marquee select objects UI)
+    /// Sent when an object is selected or de-selected
+    class SelectEvent : public SomeSignal {
+    public:
+        bool isSelected{};
+
+        SelectEvent(bool isSelected) :
+            isSelected(isSelected) {}
+    };
+
+    /// Handles selection state behavior in an object canvas
+    /// Default behavior: Sends signal when selection changes
     class SelectHandler : public WorldComponent<> {
     public:
         using Base = WorldComponent;
+        using This = SelectHandler;
+        using SelectHandlerFunc = std::function<void(This&)>;
 
     protected:
         bool isSelected = false;
         bool isSelectable = true;
 
     public:
-        SP<SomeWorldComponent> selectEffect;
+        SelectHandlerFunc onSelectChangeFunc;
 
         SelectHandler();
 
@@ -30,21 +40,12 @@ namespace PJ {
             return isSelectable;
         }
 
-        std::function<UIWorldSystem*()> uiSystemResolver;
-
-        virtual UIWorldSystem* UISystem() const {
-            GUARDR(uiSystemResolver, nullptr)
-            return uiSystemResolver();
-        }
-
         bool IsSelected() const {
             return isSelected;
         }
 
         void SetIsSelected(bool value) {
-            if (isSelected == value) {
-                return;
-            }
+            GUARD(isSelected != value)
             if (value && !isSelectable) {
                 return;
             }
@@ -62,19 +63,8 @@ namespace PJ {
     protected:
         void Awake() override {
             Base::Awake();
-
-            UpdateSelectEffect();
-        }
-
-        void UpdateSelectEffect() {
-            if (!selectEffect) {
-                return;
-            }
-            selectEffect->Enable(IsSelected());
         }
 
         virtual void OnSelectChange();
     };
 } // namespace PJ
-
-#endif

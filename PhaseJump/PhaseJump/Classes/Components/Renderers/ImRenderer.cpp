@@ -16,7 +16,7 @@ using namespace PJ;
 using This = ImRenderer;
 
 ImRenderer::ImRenderer(Config config) :
-    Base(config.worldSize),
+    model(config.worldSize),
     areShapesOpaque(config.areShapesOpaque) {
     Configure();
 }
@@ -53,11 +53,27 @@ This& ImRenderer::TemplateImage(String id, Vector2 origin, std::optional<Color> 
     return *this;
 }
 
+This& ImRenderer::Image(SP<SomeTexture> texture, Vector2 origin) {
+    GUARDR(texture, *this)
+
+    ImPathItem item;
+    item.type = ImPathItemType::Image;
+
+    Color itemColor = Color::white;
+    item.colors = { itemColor };
+    item.frame.origin = origin;
+
+    item.texture = texture;
+    AddPath({ .item = item });
+
+    return *this;
+}
+
 This& ImRenderer::FramePolygon(Polygon poly, PolyClose polyClose, std::optional<Color> color) {
     ImPathItem item;
     item.type = ImPathItemType::Polygon;
 
-    Color itemColor = color ? *color : this->color;
+    Color itemColor = color ? *color : this->strokeColor;
     item.colors = { itemColor };
 
     item.frame.origin = poly.Min();
@@ -86,7 +102,7 @@ This& ImRenderer::FrameRect(Rect frame, std::optional<Color> color) {
     ImPathItem item;
     item.type = ImPathItemType::Rect;
 
-    Color itemColor = color ? *color : this->color;
+    Color itemColor = color ? *color : this->strokeColor;
     item.colors = { itemColor };
 
     item.frame = frame;
@@ -165,7 +181,7 @@ This& ImRenderer::FrameArc(
     ImPathItem item;
     item.type = ImPathItemType::Arc;
 
-    Color itemColor = color ? *color : this->color;
+    Color itemColor = color ? *color : this->strokeColor;
     item.colors = { itemColor };
 
     item.frame = frame;
@@ -397,12 +413,12 @@ void ImRenderer::Configure() {
         auto world = owner->World();
         GUARDR(world, {})
 
-        SP<Font> font = world->FindFont(item.fontSpec);
+        SP<Font> font = FindFont(world->resources, item.fontSpec);
         GUARDR(font, {})
 
         UP<SomeRenderer> result = NEW<TextRenderer>(TextRenderer::Config{
             .font = font, .text = item.text, .worldSize = item.frame.size });
-        result->SetColor(item.GetColor(0, Color::white));
+        static_cast<TextRenderer*>(result.get())->SetColor(item.GetColor(0, Color::white));
         return result;
     };
 
@@ -410,16 +426,19 @@ void ImRenderer::Configure() {
 
     id = String(ImPathItemType::Image) + String(".") + String(ImPathRenderType::Fill);
     buildRendererFuncs[id] = [this](auto& item) -> UP<SomeRenderer> {
-        GUARDR(owner, {})
+        SP<SomeTexture> texture = item.texture;
+        if (nullptr == texture) {
+            GUARDR(owner, {})
 
-        auto world = owner->World();
-        GUARDR(world, {})
+            auto world = owner->World();
+            GUARDR(world, {})
 
-        SP<SomeTexture> texture = world->FindTexture(item.id);
-        GUARDR(texture, {})
+            texture = world->resources.FindTexture(item.id);
+            GUARDR(texture, {})
+        }
 
         UP<SomeRenderer> result = NEW<SpriteRenderer>(SpriteRenderer::Config{ .texture = texture });
-        result->SetColor(item.GetColor(0, Color::white));
+        static_cast<SpriteRenderer*>(result.get())->SetColor(item.GetColor(0, Color::white));
 
         return result;
     };

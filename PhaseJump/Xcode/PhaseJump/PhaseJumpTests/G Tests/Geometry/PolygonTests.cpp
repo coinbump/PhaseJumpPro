@@ -81,17 +81,17 @@ TEST(Polygon, Offset)
 TEST(Polygon, ModAt)
 {
     TestPolygon sut;
-    EXPECT_EQ(Vector2(0, 1), sut.ModAt(0));
-    EXPECT_EQ(Vector2(0, 1), sut.ModAt(4));
-    EXPECT_EQ(Vector2(0, 0), sut.ModAt(-1));
+    EXPECT_EQ(Vector2(0, 1), sut.ModGet(0));
+    EXPECT_EQ(Vector2(0, 1), sut.ModGet(4));
+    EXPECT_EQ(Vector2(0, 0), sut.ModGet(-1));
 }
 
 TEST(Polygon, ModAtWithEmptyPolygon)
 {
     Polygon sut;
-    EXPECT_EQ(Vector2{}, sut.ModAt(0));
-    EXPECT_EQ(Vector2{}, sut.ModAt(4));
-    EXPECT_EQ(Vector2{}, sut.ModAt(-1));
+    EXPECT_EQ(Vector2{}, sut.ModGet(0));
+    EXPECT_EQ(Vector2{}, sut.ModGet(4));
+    EXPECT_EQ(Vector2{}, sut.ModGet(-1));
 }
 
 TEST(Polygon, ArrayOperators)

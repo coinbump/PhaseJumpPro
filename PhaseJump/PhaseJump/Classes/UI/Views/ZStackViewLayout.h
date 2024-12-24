@@ -1,7 +1,7 @@
 #pragma once
 
+#include "AlignFunc.h"
 #include "LayoutInsets.h"
-#include "SomeAligner.h"
 #include "SomeViewLayout.h"
 
 /*

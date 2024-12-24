@@ -15,6 +15,8 @@
  CODE REVIEW: 12/7/24
  */
 namespace PJ {
+    class SomeTexture;
+
     namespace ImPathRenderType {
         /// Fill the path with a color
         auto constexpr Fill = "fill";
@@ -26,8 +28,6 @@ namespace PJ {
     /// Immedate mode path item type IDs
     namespace ImPathItemType {
         auto constexpr Capsule = "capsule";
-        auto constexpr MoveTo = "moveTo";
-        auto constexpr LineTo = "lineTo";
         auto constexpr Rect = "rect";
         auto constexpr RoundCorners = "roundCorners";
 
@@ -37,10 +37,21 @@ namespace PJ {
         auto constexpr Polygon = "poly";
         auto constexpr Text = "text";
         auto constexpr Image = "image";
+
+        // FUTURE: support context translate and rotation:
+        // https://stackoverflow.com/questions/8774001/core-graphics-rotate-rectangle
+
+        // FUTURE: support these if needed
+        auto constexpr MoveTo = "moveTo";
+        auto constexpr LineTo = "lineTo";
+        auto constexpr TurtleForward = "turtle.forward";
+        auto constexpr TurtleLeft = "turtle.left";
+        auto constexpr TurtleRight = "turtle.right";
+        auto constexpr TurtlePenUp = "turtle.penUp";
+        auto constexpr TurtlePenDown = "turtle.penDown";
     } // namespace ImPathItemType
 
-    /// Defines an item component of a complex path for immediate mode renders
-    /// Some paths can be combined into another path (multiple lines -> polygon)
+    /// Defines an item component of a path-type object for immediate mode renders
     class ImPathItem {
     public:
         String type;
@@ -78,6 +89,9 @@ namespace PJ {
 
         /// Distance from start angle
         Angle angleDelta;
+
+        /// Image texture
+        SP<SomeTexture> texture{};
 
         Vector2 GetVector(size_t index, Vector2 defaultValue = {}) {
             return index >= 0 && index < vectors.size() ? vectors[index] : defaultValue;

@@ -29,6 +29,7 @@
 #include "WorldComponent.h"
 #include "WorldNode.h"
 
+// Experimental
 namespace PJ {
 #if FALSE.
     SomeRenderer
@@ -73,8 +74,6 @@ void DuckUI::BuildButtonFunc(ButtonConfig config) {
             });
 }
 
-// TODO: animation transitions with time value in 2D art don't make sense
-// TODO: how do we associate the playable with the state??
 class AnimationTransition : public Updatable {
 public:
     float duration = 0;
@@ -128,11 +127,10 @@ public:
     size_t index;
 };
 
-/// Wraps a texture to allow us to change properties without altering
-/// the original texture
-class Image {
-    Vector2 size;
-    SP<SomeTexture> texture;
+/// Allows states to be pushed on the stack and
+class TextState {
+public:
+    Color color;
 };
 
 /// Image inside rich text
@@ -148,12 +146,26 @@ public:
 };
 
 /// Style attribute inside rich text
-/// Attributes are pushed on to the stack and then popped when they end
 class SomeAttributeTextPart : public SomeTextPart {
 public:
     enum class Type { Start, End };
 
     Type type = Type::Start;
+};
+
+/// Font attribute inside rich text
+class ColorAttributeTextPart : public SomeAttributeTextPart {
+public:
+    Color color;
+
+    ColorAttributeTextPart(Color color) :
+        color(color) {}
+};
+
+/// Style attribute inside rich text
+class StyleAttributeTextPart : public SomeAttributeTextPart {
+public:
+    UnorderedSet<String> styles;
 };
 
 /// Font attribute inside rich text
@@ -181,7 +193,7 @@ struct TextStyle {
 
 class RichTextMeasurer {};
 
-class RichTextRenderer : public SomeRenderer {};
+class RichTextRenderer : public SomeMaterialRenderer {};
 
 class AnimateApp : public Scene {};
 
@@ -234,7 +246,6 @@ class RenderPostProcessor {};
 
 class ShaderPostRenderOperation {};
 
-// TODO: don't name it effect? confusing with other "effects"
 class GrainPostRenderEffect {
     /// In order for this to work we need to always render into texture buffer
     /// Render texture buffer again into next texture buffer with effect shader
@@ -289,11 +300,10 @@ public:
 class Box2DSystem {
     List<Box2DNode> nodes;
 
-    void OnAdd(List<WorldNode> const& nodes) {} // TODO: <- sent to all systems
+    void OnAdd(List<WorldNode> const& nodes) {}
 
-    void OnRemove(List<WorldNode> const& nodes) {} // TODO: <- sent to all system
+    void OnRemove(List<WorldNode> const& nodes) {}
 
-    // TODO:
     void OnFixedUpdate() {}
 };
 
@@ -648,7 +658,7 @@ struct VaryingValue {
 //        }
 //    };
 
-class ParticlesRenderer2D : public SomeRenderer {
+class ParticlesRenderer2D : public SomeMaterialRenderer {
 protected:
     bool didFire{};
 
@@ -686,7 +696,7 @@ public:
 
     int maxAlive = 0;
 
-    // TODO: can we add paths to this?
+    // can we add paths to this?
     //        ParticlesRenderer2D() {
     //            onUpdateFunc = [](auto& owner, auto time) {
     //                for (size_t i = 0; i < particles.EndIndex(); i++) {
@@ -721,7 +731,7 @@ public:
     VaryingValue<Vector2> emitGravity;
     MinMaxValue<float> emitLifeTime;
 
-    // TODO: use VaryingValue here? is there an advantage to either one?
+    // use VaryingValue here? is there an advantage to either one?
     MinMaxValue<Angle> emitAngle;
     MinMaxValue<Angle> emitRotation;
     MinMaxValue<Angle> emitAngularVelocity;
@@ -756,59 +766,13 @@ public:
     WP<WorldNode> target;
 };
 
-// TODO: this is incorrect, fix it
+// this is incorrect, fix it
 using ViewPosition = ScreenPosition;
 
-#if FALSE
-class Label : View2D {
-protected:
-    TextRenderer renderer;
-
-public:
-    void SetVisibleRatio(float value) {}
-
-    void SetVisibleCharacterCount(int value) {}
-
-    // TODO: need a text modifier?
-    void SetIsUppercase(bool value) {}
-};
-#endif
-
-class ProgressBar : View2D {};
-
-/// Menu button presents a popup menu when tapped
-class MenuButtonControl : public UIControl2D {
-public:
-    using Base = UIControl2D;
-
-    void Awake() override {
-        Base::Awake();
-
-        // Create popup menu control as child and hide it
-    }
-};
-
-class PopupMenuView : public UIControl2D {};
-
-class TextInputControl : public UIControl2D {};
-
-class AlertView : public View2D {};
-
-/// ?? Isn't this just a ToggleButton
-class SwitchControl : public UIControl2D {};
-
-/// Tab control presents tab to control a page view
-class TabControl : public View2D {
-    // ?? How are the tabs given size and renderers?
-    // ?? Naming: how to distinguish between an abstract control and something that has concrete
-    // UI? DuckButton <- duck is the UI theme
-    WP<PageView> pageView;
-
-    // ?? std::function<SP<SomeRenderer>()> makeRendererFunc;
-};
+class DocumentBundle;
 
 class FocusCoordinator {
-    // TODO: how do we attach metadata to nodes, like left-neighbor? Can only UI controls be
+    // how do we attach metadata to nodes, like left-neighbor? Can only UI controls be
     // focused? SEE: https://docs.godotengine.org/en/stable/tutorials/ui/gui_navigation.html
 };
 
@@ -861,7 +825,7 @@ namespace CursorId {
     /// The native OS cursor
     auto constexpr Native = "native";
 
-    // TODO: add from here: https://developer.apple.com/documentation/appkit/nscursor
+    // add from here: https://developer.apple.com/documentation/appkit/nscursor
 }; // namespace CursorId
 
 class CursorArea {
@@ -915,7 +879,7 @@ struct QuickView {
     This& Pad(leading, trailing, top, bottom) < -Adds parent pad view
 };
 
-// CODE REVIEW: ?/23
+// Experimental
 namespace PJ {
 #if FALSE
 
@@ -928,13 +892,13 @@ namespace PJ {
 
     //    class View2D : public WorldComponent<>, public WorldSizeable {
     //    protected:
-    //        // TODO: UP<ViewLayout> layout;
+    //        // UP<ViewLayout> layout;
     //
     //    public:
     //        //    void SetLayout(UP<ViewLayout>& value) {
     //        //        layout = std::move(value);
     //        //
-    //        //        // TODO: apply layout
+    //        //        // apply layout
     //        //    }
     //
     //

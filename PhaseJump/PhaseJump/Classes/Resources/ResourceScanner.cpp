@@ -1,8 +1,8 @@
 #include "ResourceScanner.h"
 #include "Dev.h"
 #include "FileManager.h"
-#include "LoadResourcesModel.h"
-#include "LoadResourcesPlan.h"
+#include "ResourceRepositoryModel.h"
+#include "ResourceRepositoryPlan.h"
 #include "SomeLoadResourcesOperation.h"
 #include <filesystem>
 
@@ -10,13 +10,8 @@ using namespace std;
 using namespace PJ;
 namespace fs = std::filesystem;
 
-LoadResourcesPlan ResourceScanner::ScanAt(FilePath path, FileSearchType searchType) {
-    LoadResourcesPlan result;
-
-    if (nullptr == fm || nullptr == loadResourcesModel) {
-        return result;
-    }
-    auto& fm = (*this->fm);
+ResourceRepositoryPlan ResourceScanner::ScanAt(FilePath path, FileSearchType searchType) {
+    ResourceRepositoryPlan result;
 
     // This doesn't do anything meaningful, but it's a first test of async code
     auto pathsFuture = fm.PathListAsync(path, searchType);
@@ -25,39 +20,53 @@ LoadResourcesPlan ResourceScanner::ScanAt(FilePath path, FileSearchType searchTy
 
     for (auto& path : paths) {
         auto info = ScanFile(path);
-        if (info) {
-            auto resourceInfo = info.value();
-            result.infoMap[resourceInfo.type][resourceInfo.id] = resourceInfo;
-        }
+        GUARD_CONTINUE(info)
+
+        auto resourceInfo = info.value();
+        result.infos.push_back(resourceInfo);
     }
 
     return result;
 }
 
 std::optional<ResourceInfo> ResourceScanner::ScanFile(FilePath path) {
-    if (nullptr == fm || nullptr == loadResourcesModel) {
-        return std::nullopt;
-    }
-    auto& fm = (*this->fm);
-
     if (fm.IsDirectory(path)) {
         return std::nullopt;
     }
 
-    ResourceInfo result;
-
     auto fileExtension = fm.FileExtension(path, false);
+    auto type = scanModel.TypeForFileExtension(fileExtension);
 
-    auto type = loadResourcesModel->TypeIdForFileExtension(fileExtension);
-    if (std::nullopt == type) {
-        // PJ::Log("WARNING. Unrecognized resource extension, %s", fileExtension.c_str());
-        return std::nullopt;
-    }
+    // Unrecognized file extension
+    GUARDR(type, {})
 
-    result.type = type.value();
-
+    ResourceInfo result;
+    result.type = *type;
     result.id = fm.FileName(path, false);
     result.filePath = path;
 
     return result;
+}
+
+// MARK: StandardResourceScanModel
+
+StandardResourceScanModel::StandardResourceScanModel(LoadType loadType) {
+    switch (loadType) {
+    case LoadType::Rez:
+        {
+            // Scan for .rez files, which describe the resources to be loaded
+            fileExtensionMap[ResourceType::Rez] = ResourceType::Rez;
+            break;
+        }
+    case LoadType::Scan:
+        {
+            // Scan for resource files (complex resource types not supported)
+            fileExtensionMap["png"] = ResourceType::Texture;
+            fileExtensionMap["jpg"] = ResourceType::Texture;
+            fileExtensionMap["jpeg"] = ResourceType::Texture;
+            fileExtensionMap["bmp"] = ResourceType::Texture;
+            fileExtensionMap["shprog"] = ResourceType::ShaderProgram;
+            break;
+        }
+    }
 }

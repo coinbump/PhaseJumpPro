@@ -16,9 +16,9 @@ namespace PJ {
     struct Mesh;
 
     /// Renders a single texture as a 9-slice
-    class Slice9TextureRenderer : public SomeRenderer {
+    class Slice9TextureRenderer : public SomeMaterialRenderer {
     public:
-        using Base = SomeRenderer;
+        using Base = SomeMaterialRenderer;
 
         // TODO: replace with config stop using as a tag, use funcs instead
         /// Model that defines how to slice the texture

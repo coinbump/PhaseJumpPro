@@ -60,12 +60,10 @@ namespace PJ {
         KeyframeList keyframes;
 
         AnimationCycleTimer timer;
-        Playable* controller = &timer;
 
     public:
         /// Used to enable extra logging for this object
-        // TODO: TEMP CODE, DO NOT KEEP
-        DiagnoseModel _diagnose{ true };
+        DiagnoseModel _diagnose;
 
         /// Applies the timeline's current value via binding
         /// Example: set uniform scale based on timeline float value
@@ -89,6 +87,7 @@ namespace PJ {
         TimeTrack(Config const& config) :
             Base(config.id),
             timer(config.duration, config.cycleType) {
+            controller = &timer;
             timer.SetOnPlayTimeChangeFunc([this](auto& playable) { OnPlayTimeChange(); });
 
             switch (config.keyedTimeType) {
@@ -315,9 +314,8 @@ namespace PJ {
                     return;
                 }
 
-                auto interpolatorFunc = InterpolateFuncs::MakeEase(
-                    InterpolateFuncs::Make(startValue, endValue), easeFunc
-                );
+                auto interpolatorFunc =
+                    InterpolateFuncs::Ease(InterpolateFuncs::Make(startValue, endValue), easeFunc);
                 Type value = interpolatorFunc(progress);
 
                 PJ::LogIf(
@@ -336,10 +334,6 @@ namespace PJ {
                     setBindingFunc(kfStart->value);
                 }
             }
-        }
-
-        Playable* Controller() const override {
-            return controller;
         }
     };
 } // namespace PJ

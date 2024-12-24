@@ -6,12 +6,13 @@ using namespace std;
 using namespace PJ;
 
 TextMetrics TextMeasurer::Measure(
-    String text, Vector2 textSize, LineClip lineClip, MeasureMetricsFunc metricsFunc
+    AttributedString text, Vector2 textSize, LineClip lineClip, MeasureMetricsFunc metricsFunc
 ) {
     std::function measureLines = [&]() {
         VectorList<TextLineMetrics> lines;
 
-        auto u32 = ToU32String(text);
+        // FUTURE: support attributes that can affect the measurement
+        auto u32 = ToU32String(text.PlainText());
 
         TextLineMetrics line{ .size = { 0, (float)font.Height() } };
 
@@ -52,7 +53,7 @@ TextMetrics TextMeasurer::Measure(
 
                 // Don't add invisible characters
                 if (width > 0) {
-                    newLine.Add(charString, advanceX);
+                    newLine.Add(charString, advanceX, text.Attributes(i));
                     newLine.size.x = width;
                     newLine.sourceIndex = sourceIndex;
                 } else {
@@ -93,7 +94,7 @@ TextMetrics TextMeasurer::Measure(
 
                 lineBreak(width, fontGlyph.advanceX);
 
-                // TODO:
+                // FUTURE: add word wrap
                 //                switch (textWrap) {
                 //                    case TextWrap::Word:
                 //                        String prevWord;
@@ -110,7 +111,7 @@ TextMetrics TextMeasurer::Measure(
                 //                        break;
                 //                }
             } else {
-                line.Add(charString, advanceX);
+                line.Add(charString, advanceX, text.Attributes(i));
 
                 if (i == u32.size() - 1) {
                     // Final character doesn't advance, so use width

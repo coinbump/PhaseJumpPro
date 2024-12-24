@@ -7,7 +7,11 @@
 #include "UIPlan.h"
 #include "UnorderedMap.h"
 
-// /23
+/*
+ RATING: 4 stars
+ Tested and works. Missing push/pop id
+ CODE REVIEW: 12/17/24
+ */
 namespace PJ {
     /// Paints a UI plan into imGui
     class ImGuiPlanPainter : public SomeImGuiPainter {

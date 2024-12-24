@@ -56,9 +56,20 @@ TEST(CollectionUtils, RemoveIf) {
 
 TEST(CollectionUtils, Compact) {
     int value = 10;
-    VectorList<int*> sut{ &value, nullptr, nullptr, &value };
+    int value2 = 10;
+    VectorList<int*> sut{ &value, nullptr, nullptr, &value2 };
     Compact(sut);
-    EXPECT_EQ(2, sut.size());
+    VectorList<int*> expectedValues{ &value, &value2 };
+    EXPECT_EQ(expectedValues, sut);
+}
+
+TEST(CollectionUtils, CompactMap) {
+    int value = 10;
+    int value2 = 10;
+    VectorList<int*> sut{ &value, nullptr, nullptr, &value2 };
+    auto values = CompactMap<int*>(sut, [](auto& value) { return value; });
+    VectorList<int*> expectedValues{ &value, &value2 };
+    EXPECT_EQ(expectedValues, values);
 }
 
 TEST(CollectionUtils, FirstIterator) {

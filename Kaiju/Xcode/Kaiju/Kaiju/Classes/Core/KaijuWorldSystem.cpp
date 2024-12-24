@@ -3,6 +3,7 @@
 #include "ExampleLifeScene.h"
 #include "ExampleMatrixBoardViewAnimationScene.h"
 #include "FilesProcessorScene.h"
+#include "ImageAppScene.h"
 #include "TestAnimateApp.h"
 #include "TestAudioScene.h"
 #include "TestBulletsScene.h"
@@ -27,11 +28,11 @@ KaijuWorldSystem::KaijuWorldSystem() {
     // [](auto& menuItem) { std::cout << "Hello" << std::endl; }); menuItem->isToggleOn = true;
     typeTags.insert(EditorTypeTag::Persist);
 
-    auto undoMenuItem = MAKE<MenuItem>(
+    auto undoMenuItem = NEW<MenuItem>(
         "Undo", VectorList<KeyboardShortcut>{ { "z", { KeyModifier::Shortcut } } },
         [this](auto& menuItem) { this->commands.Undo(); }
     );
-    auto redoMenuItem = MAKE<MenuItem>(
+    auto redoMenuItem = NEW<MenuItem>(
         "Redo",
         VectorList<KeyboardShortcut>{ { "z", { KeyModifier::Shortcut, KeyModifier::Shift } } },
         [this](auto& menuItem) { this->commands.Redo(); }
@@ -46,8 +47,10 @@ KaijuWorldSystem::KaijuWorldSystem() {
     };
     redoMenuItem->isEnabledFunc = [this](auto& menuItem) { return commands.CanRedo(); };
 
-    Menu::MenuItemList menuItems{ undoMenuItem, redoMenuItem, MAKE<SeparatorMenuItem>() };
-    auto menu = NEW<Menu>("Edit", menuItems);
+    auto menu = NEW<Menu>("Edit");
+    menu->items.push_back(std::move(undoMenuItem));
+    menu->items.push_back(std::move(redoMenuItem));
+    menu->items.push_back(NEW<SeparatorMenuItem>());
     menus.push_back(std::move(menu));
 
     RegisterSceneClasses();
@@ -55,57 +58,63 @@ KaijuWorldSystem::KaijuWorldSystem() {
 
 void KaijuWorldSystem::RegisterSceneClasses() {
     auto testTextureSceneClass =
-        NEW<SceneClass>("test.texture", "Test Texture", []() { return MAKE<TestTextureScene>(); });
+        NEW<SceneClass>("test.texture", "Test Texture", []() { return NEW<TestTextureScene>(); });
     sceneClasses.Add(testTextureSceneClass);
     sceneClasses.Add(NEW<SceneClass>("test.slicedTexture", "Test Sliced Texture", []() {
-        return MAKE<TestSlicedTextureScene>();
+        return NEW<TestSlicedTextureScene>();
     }));
     sceneClasses.Add(NEW<SceneClass>("test.gradients", "Test Gradients", []() {
-        return MAKE<TestGradientsScene>();
+        return NEW<TestGradientsScene>();
     }));
     sceneClasses.Add(NEW<SceneClass>("test.meshPath", "Test Mesh Path", []() {
-        return MAKE<TestMeshPathScene>();
+        return NEW<TestMeshPathScene>();
     }));
     sceneClasses.Add(NEW<SceneClass>("test.audio", "Test Audio", []() {
-        return MAKE<TestAudioScene>();
+        return NEW<TestAudioScene>();
     }));
     sceneClasses.Add(NEW<SceneClass>("test.emitters", "Test Emitters", []() {
-        return MAKE<TestEmittersScene>();
+        return NEW<TestEmittersScene>();
     }));
     sceneClasses.Add(NEW<SceneClass>("test.zOrder", "Test ZOrder", []() {
-        return MAKE<TestZOrderScene>();
+        return NEW<TestZOrderScene>();
     }));
     sceneClasses.Add(NEW<SceneClass>("test.editBezier", "Test edit bezier", []() {
-        return MAKE<TestEditBezierScene>();
+        return NEW<TestEditBezierScene>();
     }));
     sceneClasses.Add(NEW<SceneClass>("test.theme", "Test theme", []() {
-        return MAKE<TestThemeScene>();
+        return NEW<TestThemeScene>();
     }));
-    sceneClasses.Add(NEW<SceneClass>("test.ui", "Test UI", []() { return MAKE<TestUIScene>(); }));
+    sceneClasses.Add(NEW<SceneClass>("test.ui", "Test UI", []() { return NEW<TestUIScene>(); }));
     sceneClasses.Add(NEW<SceneClass>("test.steering", "Test steering", []() {
-        return MAKE<TestSteeringScene>();
+        return NEW<TestSteeringScene>();
     }));
     sceneClasses.Add(NEW<SceneClass>("test.bullets", "Test bullets", []() {
-        return MAKE<TestBulletsScene>();
+        return NEW<TestBulletsScene>();
     }));
     sceneClasses.Add(NEW<SceneClass>("test.views", "Test views", []() {
-        return MAKE<TestViewsScene>();
+        return NEW<TestViewsScene>();
     }));
     sceneClasses.Add(NEW<SceneClass>("app.animate", "Test animate app", []() {
-        return MAKE<TestAnimateApp>();
+        return NEW<TestAnimateApp>();
     }));
     sceneClasses.Add(NEW<SceneClass>("example.life", "Example: Life", []() {
-        return MAKE<Example::Life::Scene>();
+        return NEW<Example::Life::Scene>();
     }));
     sceneClasses.Add(NEW<SceneClass>(
         "example.matrixBoardViewAnimation", "Example: Matrix board view",
-        []() { return MAKE<Example::MatrixBoardViewAnimation::Scene>(); }
+        []() { return NEW<Example::MatrixBoardViewAnimation::Scene>(); }
     ));
     sceneClasses.Add(NEW<SceneClass>("example.checkers", "Example: Checkers", []() {
-        return MAKE<Example::Checkers::Scene>();
+        return NEW<Example::Checkers::Scene>();
     }));
     sceneClasses.Add(NEW<SceneClass>("app.filesProcessor", "Files processor", []() {
-        return MAKE<Kaiju::FilesProcessorScene>();
+        return NEW<Kaiju::FilesProcessorScene>();
+    }));
+
+    // MARK: Apps
+
+    sceneClasses.Add(NEW<SceneClass>("app.image", "App: Image", []() {
+        return NEW<ImageAppScene>();
     }));
 }
 

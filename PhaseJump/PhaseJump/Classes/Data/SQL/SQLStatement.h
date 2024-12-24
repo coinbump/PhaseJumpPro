@@ -1,5 +1,4 @@
-#ifndef PJSQLSTATEMENT_H
-#define PJSQLSTATEMENT_H
+#pragma once
 
 #include "Dev.h"
 #include "SQLTool.h"
@@ -11,7 +10,7 @@
 /*
  RATING: 5 stars
  Simple utility
- CODE REVIEW: 3/29/23
+ CODE REVIEW: 12/19/24
  */
 namespace PJ {
     struct SQLIdentifierFormatter {
@@ -71,5 +70,3 @@ namespace PJ {
         }
     };
 } // namespace PJ
-
-#endif

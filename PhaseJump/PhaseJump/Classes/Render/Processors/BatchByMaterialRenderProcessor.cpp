@@ -5,15 +5,11 @@ using namespace std;
 using namespace PJ;
 
 // TODO: needs unit tests
-void BatchByMaterialRenderProcessor::Process(CameraRenderModel& cameraModel) {
+void BatchByMaterialRenderProcessor::Process(RenderCameraModel& cameraModel) {
     // Force z order based on model order (used by opaque objects to optimize renders by using the
     // depth buffer)
     float z = 0;
     float zStep = 1.0f / cameraModel.models.size();
-    std::for_each(cameraModel.models.begin(), cameraModel.models.end(), [&](RenderModel& model) {
-        model.z = z;
-        z += zStep * Vector3::back.z;
-    });
 
     {
 #ifdef PROFILE
@@ -34,6 +30,14 @@ void BatchByMaterialRenderProcessor::Process(CameraRenderModel& cameraModel) {
         std::copy_if(
             cameraModels.begin(), cameraModels.end(), std::back_inserter(noBlendRenderModels),
             [](auto& model) { return !model->IsFeatureEnabled(RenderFeature::Blend); }
+        );
+
+        std::for_each(
+            noBlendRenderModels.begin(), noBlendRenderModels.end(),
+            [&](RenderModel* model) {
+                model->z = z;
+                z += zStep * Vector3::back.z;
+            }
         );
 
         // Transparent objects must be above opaque objects
@@ -111,7 +115,7 @@ BatchByMaterialRenderProcessor::Combine(VectorList<RenderModel*>& renderModels) 
             auto& model = *modelP;
             // Force the z order of opaque objects for depth buffer optimization
             std::for_each(
-                model.ModifiableVertices().begin(), model.ModifiableVertices().end(),
+                model.mesh.Vertices().begin(), model.mesh.Vertices().end(),
                 [&](Vector3& vertex) { vertex.z = model.z; }
             );
         }
@@ -135,15 +139,15 @@ BatchByMaterialRenderProcessor::Combine(VectorList<RenderModel*>& renderModels) 
 
     for (auto& modelP : renderModels) {
         auto& model = *modelP;
-        vertexCount += model.Vertices().size();
+        vertexCount += model.mesh.Vertices().size();
         trianglesCount += model.mesh.Triangles().size();
         uvsCount += model.mesh.UVs().size();
 
         // 1 color per vertex
-        colorsCount += model.Vertices().size();
+        colorsCount += model.mesh.Vertices().size();
 
         auto thisColorsCount = model.VertexColors().size();
-        auto thisVertexCount = model.Vertices().size();
+        auto thisVertexCount = model.mesh.Vertices().size();
         if (thisColorsCount != thisVertexCount) {
             PJ::Log(
                 "WARNING: colorsCount ", (int)thisColorsCount, " and vertexCount ",
@@ -156,7 +160,7 @@ BatchByMaterialRenderProcessor::Combine(VectorList<RenderModel*>& renderModels) 
     VectorList<Vector3> vertices;
     vertices.resize(vertexCount);
     renderModel.mesh.SetVertices(vertices);
-    renderModel.mesh.ModifiableTriangles().resize(trianglesCount);
+    renderModel.mesh.Triangles().resize(trianglesCount);
 
     VectorList<Vector2> uvs;
     uvs.resize(uvsCount);
@@ -170,19 +174,21 @@ BatchByMaterialRenderProcessor::Combine(VectorList<RenderModel*>& renderModels) 
 
     for (auto& modelP : renderModels) {
         auto& model = *modelP;
-        auto modelVertexCount = model.Vertices().size();
+        auto modelVertexCount = model.mesh.Vertices().size();
         auto modelTriangleCount = model.mesh.Triangles().size();
-        auto modelUVCount = model.UVs().size();
+        auto modelUVCount = model.mesh.UVs().size();
         auto modelColorCount = model.VertexColors().size();
 
         std::copy_n(
-            model.Vertices().cbegin(), modelVertexCount,
-            renderModel.ModifiableVertices().begin() + vertexIndex
+            model.mesh.Vertices().cbegin(), modelVertexCount,
+            renderModel.mesh.Vertices().begin() + vertexIndex
         );
-        std::copy_n(model.UVs().cbegin(), modelUVCount, renderModel.mesh.UVs().begin() + uvIndex);
+        std::copy_n(
+            model.mesh.UVs().cbegin(), modelUVCount, renderModel.mesh.UVs().begin() + uvIndex
+        );
         std::copy_n(
             model.mesh.Triangles().begin(), modelTriangleCount,
-            renderModel.mesh.ModifiableTriangles().begin() + triangleIndex
+            renderModel.mesh.Triangles().begin() + triangleIndex
         );
 
         // Max: 1 color per vertex
@@ -192,7 +198,7 @@ BatchByMaterialRenderProcessor::Combine(VectorList<RenderModel*>& renderModels) 
         );
 
         for (int i = 0; i < modelTriangleCount; i++) {
-            renderModel.mesh.ModifiableTriangles()[triangleIndex + i] += vertexIndex;
+            renderModel.mesh.Triangles()[triangleIndex + i] += vertexIndex;
         }
 
         vertexIndex += modelVertexCount;

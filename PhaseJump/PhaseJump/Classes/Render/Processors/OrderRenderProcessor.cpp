@@ -5,7 +5,7 @@
 using namespace std;
 using namespace PJ;
 
-void OrderRenderProcessor::Process(CameraRenderModel& cameraModel) {
+void OrderRenderProcessor::Process(RenderCameraModel& cameraModel) {
     GUARD(sortFunc)
 
     // Sort the models

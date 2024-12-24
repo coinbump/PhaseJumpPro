@@ -10,8 +10,9 @@ EditorImGuiInspectorWindowPainter::EditorImGuiInspectorWindowPainter(EditorWorld
     system(_system) {
     drawFunc = [this](auto& painter) {
         bool isInspectorWindowConfigured =
-            system.storage.Value<bool>("window.inspector", "isConfigured");
-        bool isInspectorWindowVisible = system.storage.Value<bool>("window.inspector", "isVisible");
+            system.storage.SafeValue<bool>("window.inspector", "isConfigured");
+        bool isInspectorWindowVisible =
+            system.storage.SafeValue<bool>("window.inspector", "isVisible");
 
         if (!isInspectorWindowConfigured) {
             system.storage.Set("window.inspector", "isConfigured", true);
@@ -45,24 +46,27 @@ EditorImGuiInspectorWindowPainter::EditorImGuiInspectorWindowPainter(EditorWorld
                 UIPlan uiPlan;
                 UIPlanner planner(uiPlan);
 
-                planner.InputFloat(
-                    "X", Binding<float>(
-                             [&]() { return node.transform.LocalPosition().x; },
-                             [&](auto& value) { node.transform.SetAxisPosition(Axis::X, value); }
-                         )
-                );
-                planner.InputFloat(
-                    "Y", Binding<float>(
-                             [&]() { return node.transform.LocalPosition().y; },
-                             [&](auto& value) { node.transform.SetAxisPosition(Axis::Y, value); }
-                         )
-                );
-                planner.InputFloat(
-                    "Z", Binding<float>(
-                             [&]() { return node.transform.LocalPosition().z; },
-                             [&](auto& value) { node.transform.SetAxisPosition(Axis::Z, value); }
-                         )
-                );
+                planner.InputFloat({ .label = "X",
+                                     .binding = Binding<float>(
+                                         [&]() { return node.transform.LocalPosition().x; },
+                                         [&](auto& value) {
+                                             node.transform.SetAxisPosition(Axis::X, value);
+                                         }
+                                     ) });
+                planner.InputFloat({ .label = "Y",
+                                     .binding = Binding<float>(
+                                         [&]() { return node.transform.LocalPosition().y; },
+                                         [&](auto& value) {
+                                             node.transform.SetAxisPosition(Axis::Y, value);
+                                         }
+                                     ) });
+                planner.InputFloat({ .label = "Z",
+                                     .binding = Binding<float>(
+                                         [&]() { return node.transform.LocalPosition().z; },
+                                         [&](auto& value) {
+                                             node.transform.SetAxisPosition(Axis::Z, value);
+                                         }
+                                     ) });
 
                 ImGuiPlanPainter(uiPlan).Paint();
 
@@ -77,6 +81,12 @@ EditorImGuiInspectorWindowPainter::EditorImGuiInspectorWindowPainter(EditorWorld
                 if (ImGui::SliderFloat("Scale", &scaleUniform, 0.5f, 5.0f)) {
                     node.transform.SetScale({ scaleUniform, scaleUniform, 1 });
                 }
+
+                auto scaleString = MakeString(
+                    "X: ", node.transform.Scale().x, " Y: ", node.transform.Scale().y,
+                    " Z: ", node.transform.Scale().z
+                );
+                ImGui::Text("%s", scaleString.c_str());
 
                 ImGui::Text("Components");
                 for (auto& component : inspectNode->Components()) {

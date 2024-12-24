@@ -35,7 +35,7 @@ namespace PJ {
         /// @return Returns an interpolation func that applies an ease curve to the progress
         /// parameter
         template <class T>
-        InterpolateFunc<T> MakeEase(InterpolateFunc<T> func, EaseFunc ease = EaseFuncs::linear) {
+        InterpolateFunc<T> Ease(InterpolateFunc<T> func, EaseFunc ease = EaseFuncs::linear) {
             return [=](float progress) {
                 GUARDR(func && ease, T())
                 return func(ease(progress));
@@ -44,7 +44,7 @@ namespace PJ {
 
         /// @return Returns an interpolation func that interpolates in reverse (from end to start)
         template <class T>
-        InterpolateFunc<T> MakeReverse(InterpolateFunc<T> func) {
+        InterpolateFunc<T> Reverse(InterpolateFunc<T> func) {
             return [=](float progress) {
                 GUARDR(func, T())
                 return func(1.0f - progress);
@@ -54,7 +54,7 @@ namespace PJ {
         /// @return Returns a set binding func that takes a progress value, calls the interpolator,
         /// and sets the value via the binding
         template <class T>
-        SetBindingFunc<T> MakeBinding(InterpolateFunc<T> func, SetBindingFunc<T> binding) {
+        SetBindingFunc<T> Binding(InterpolateFunc<T> func, SetBindingFunc<T> binding) {
             return [=](float progress) {
                 GUARD(func && binding)
                 binding(func(progress));

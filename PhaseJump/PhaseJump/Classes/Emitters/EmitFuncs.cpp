@@ -4,21 +4,23 @@ using namespace std;
 using namespace PJ;
 using namespace EmitFuncs;
 
-Emitter::EmitFunc EmitFuncs::MakeSpread2D(int count, Angle angleStep, Angle varyAngle) {
+Emitter::EmitFunc EmitFuncs::Spread2D(Spread2DConfig config) {
     return [=](Emitter& emitter) {
         VectorList<EmitModel> result;
 
+        auto count = config.count;
+
         GUARDR(count > 0, result)
 
-        auto firstAngle = -angleStep.Degrees() * ((float)(count - 1) / 2.0f);
+        auto firstAngle = -config.angleStep.Degrees() * ((float)(count - 1) / 2.0f);
         auto random = emitter.random.get();
 
         for (int i = 0; i < count; i++) {
             EmitModel model;
-            float angle = firstAngle + i * angleStep.Degrees();
+            float angle = firstAngle + i * config.angleStep.Degrees();
 
             if (random) {
-                angle += random->Delta(varyAngle.Degrees());
+                angle += random->Delta(config.varyAngle.Degrees());
             }
 
             model.tags.Set(EmitModelTag::Angle, Angle::WithDegrees(angle));
@@ -30,16 +32,16 @@ Emitter::EmitFunc EmitFuncs::MakeSpread2D(int count, Angle angleStep, Angle vary
     };
 }
 
-Emitter::EmitFunc EmitFuncs::MakeVaryAngle(int count, Angle angle, Angle varyAngle) {
+Emitter::EmitFunc EmitFuncs::VaryAngle(VaryAngleConfig config) {
     return [=](Emitter& emitter) {
         VectorList<EmitModel> result;
 
-        GUARDR(count > 0, result)
+        GUARDR(config.count > 0, result)
         auto random = emitter.random.get();
 
-        for (int i = 0; i < count; i++) {
+        for (int i = 0; i < config.count; i++) {
             EmitModel model;
-            float emitAngle = random->VaryFloat(angle.Degrees(), varyAngle.Degrees());
+            float emitAngle = random->VaryFloat(config.angle.Degrees(), config.varyAngle.Degrees());
             model.tags.Set(EmitModelTag::Angle, Angle::WithDegrees(emitAngle));
 
             Add(result, model);

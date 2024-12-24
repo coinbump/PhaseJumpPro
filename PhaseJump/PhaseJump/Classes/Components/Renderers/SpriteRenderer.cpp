@@ -20,7 +20,7 @@ SpriteRenderer::SpriteRenderer(Config config) :
         auto texture = config.texture;
 
         model.material = MAKE<RenderMaterial>(RenderMaterial::Config{
-            .shaderId = "texture.vary", .features = config.features });
+            .shaderId = ShaderId::TextureVary, .features = config.features });
         model.material->Add(texture);
     } else if (config.material) {
         model.material = config.material;
@@ -33,49 +33,13 @@ SpriteRenderer::SpriteRenderer(Config config) :
         }
     }
 
-    model.SetBuildMeshFunc([](RendererModel const& model) {
+    model.SetBuildMeshFunc([this](RendererModel const& model) {
         QuadMeshBuilder builder(model.WorldSize());
-        return builder.BuildMesh();
-    });
-    Configure();
-
-    PlanUIFunc planUIFunc = [](auto& component, String context, UIPlanner& planner) {
-        auto renderer = static_cast<This*>(&component);
-
-        planner
-            .InputBool(
-                "Flip X", { [=]() { return renderer->flipX; },
-                            [=](auto& value) { renderer->SetFlipX(value); } }
-            )
-            .InputBool(
-                "Flip Y", { [=]() { return renderer->flipY; },
-                            [=](auto& value) { renderer->SetFlipY(value); } }
-            );
-    };
-    Override(planUIFuncs[UIContextId::Inspector], planUIFunc);
-}
-
-SpriteRenderer::SpriteRenderer(SP<SomeTexture> texture) :
-    SpriteRenderer(Config{ .texture = texture }) {}
-
-SpriteRenderer::SpriteRenderer(SP<RenderMaterial> material) :
-    SpriteRenderer(Config{ .material = material }) {}
-
-void SpriteRenderer::Configure() {
-    model.SetBuildRenderModelsFunc([this](auto& model) {
-        VectorList<RenderModel> result;
-
-        auto material = model.material;
-        if (nullptr == material) {
-            PJ::Log("ERROR. Missing material.");
-            return result;
-        }
-
-        Mesh mesh = model.Mesh();
+        auto result = builder.BuildMesh();
 
         if (flipX || flipY) {
             std::transform(
-                mesh.UVs().cbegin(), mesh.UVs().cend(), mesh.UVs().begin(),
+                result.UVs().cbegin(), result.UVs().cend(), result.UVs().begin(),
                 [this](Vector2 uv) {
                     if (flipX) {
                         uv.x = 1.0f - uv.x;
@@ -89,11 +53,41 @@ void SpriteRenderer::Configure() {
             );
         }
 
-        RenderModelBuilder builder;
-        auto renderModel = builder.Build(*this, mesh, *material, material->Textures());
-        renderModel.SetVertexColors(std::span<RenderColor const>(model.VertexColors()));
+        GUARDR(model.Material(), result)
+        auto& textures = model.Material()->Textures();
+        if (!IsEmpty(textures)) {
+            UVTransformFuncs::textureCoordinates(*textures[0], result.UVs());
+        }
 
-        result.push_back(renderModel);
         return result;
+    });
+    Configure();
+
+    PlanUIFunc planUIFunc = [](auto& component, String context, UIPlanner& planner) {
+        auto renderer = static_cast<This*>(&component);
+
+        planner
+            .InputBool({ .label = "Flip X",
+                         .binding = { [=]() { return renderer->flipX; },
+                                      [=](auto& value) { renderer->SetFlipX(value); } } })
+            .InputBool({ .label = "Flip Y",
+                         .binding = { [=]() { return renderer->flipY; },
+                                      [=](auto& value) { renderer->SetFlipY(value); } } });
+    };
+    Override(planUIFuncs[UIContextId::Inspector], planUIFunc);
+}
+
+SpriteRenderer::SpriteRenderer(SP<SomeTexture> texture) :
+    SpriteRenderer(Config{ .texture = texture }) {}
+
+SpriteRenderer::SpriteRenderer(SP<RenderMaterial> material) :
+    SpriteRenderer(Config{ .material = material }) {}
+
+void SpriteRenderer::Configure() {
+    model.SetBuildRenderModelsFunc([this](auto& model) {
+        auto renderModel = RenderModelBuilder().Build(*this, model);
+        GUARDR(renderModel, VectorList<RenderModel>())
+        renderModel->SetVertexColors(std::span<RenderColor const>(model.VertexColors()));
+        return VectorList<RenderModel>{ *renderModel };
     });
 }

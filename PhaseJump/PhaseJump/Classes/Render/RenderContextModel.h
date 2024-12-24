@@ -1,11 +1,13 @@
 #pragma once
 
-#include "List.h"
-#include "SomeRenderCommandModel.h"
 #include "StringUtils.h"
 #include "VectorList.h"
 
-// /23
+/*
+ RATING: 5 stars
+ Simple type
+ CODE REVIEW: 12/21/24
+ */
 namespace PJ {
     class SomeRenderContext;
     class WorldNode;
@@ -13,21 +15,12 @@ namespace PJ {
 
     struct RenderContextModel {
         /// Pointer, not reference for model copies
-        SomeRenderContext* renderContext = nullptr;
+        SomeRenderContext* renderContext{};
 
         /// Root node, used for z-order sorting
-        WorldNode* root = nullptr;
+        WorldNode* root{};
 
         VectorList<WorldNode*> nodes;
         VectorList<SomeCamera*> cameras;
-
-        RenderContextModel(
-            SomeRenderContext* renderContext, WorldNode* root, VectorList<WorldNode*> const& nodes,
-            VectorList<SomeCamera*> const& cameras
-        ) :
-            renderContext(renderContext),
-            root(root),
-            nodes(nodes),
-            cameras(cameras) {}
     };
 } // namespace PJ

@@ -12,9 +12,9 @@
  */
 namespace PJ {
     /// Renders between start and end color
-    class SimpleGradientRenderer : public SomeRenderer {
+    class SimpleGradientRenderer : public SomeMaterialRenderer {
     public:
-        using Base = SomeRenderer;
+        using Base = SomeMaterialRenderer;
 
         Color startColor;
         Color endColor;

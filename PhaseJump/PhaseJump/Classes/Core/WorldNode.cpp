@@ -56,16 +56,29 @@ std::size_t WorldNode::ChildCount() {
 }
 
 bool WorldNode::IsEnabled() const {
-    return isEnabled && !isDestroyed;
+    return !isDisabled && !isDestroyed;
 }
 
 WorldNode& WorldNode::Enable(bool value) {
-    isEnabled = value;
+    isDisabled = !value;
     return *this;
 }
 
 void WorldNode::ToggleEnable() {
-    Enable(!isEnabled);
+    Enable(isDisabled);
+}
+
+bool WorldNode::IsVisible() const {
+    return !isInvisible && !isDestroyed;
+}
+
+WorldNode& WorldNode::SetIsVisible(bool value) {
+    isInvisible = !value;
+    return *this;
+}
+
+void WorldNode::ToggleIsVisible() {
+    SetIsVisible(isInvisible);
 }
 
 // MARK: Add and remove
@@ -91,6 +104,10 @@ void WorldNode::Add(SP<SomeWorldComponent> component) {
     }
     if (life.IsStarted()) {
         component->CheckedStart();
+    }
+
+    if (!IsEmpty(component->_core.SignalHandlers())) {
+        isListener = true;
     }
 }
 
@@ -286,14 +303,14 @@ Vector3 WorldNode::WorldToLocal(Vector3 worldPos) {
 }
 
 float WorldNode::Opacity() const {
-    auto renderer = TypeComponent<SomeRenderer>();
+    auto renderer = TypeComponent<SomeMaterialRenderer>();
     GUARDR(renderer, 1.0f)
 
     return renderer->GetColor().a;
 }
 
 This& WorldNode::SetOpacity(float value) {
-    auto renderer = TypeComponent<SomeRenderer>();
+    auto renderer = TypeComponent<SomeMaterialRenderer>();
     GUARDR(renderer, *this)
 
     renderer->SetAlpha(value);
@@ -307,10 +324,9 @@ bool WorldNode::Contains(SomeWorldComponent& value) {
 }
 
 void WorldNode::Signal(String signalId, SomeSignal const& signal) {
-    for (auto& component : Components()) {
-        try {
-            auto handler = component->signalFuncs.at(signalId);
-            handler(*component, signal);
-        } catch (...) {}
-    }
+    auto iterComponents = Components();
+    std::for_each(iterComponents.begin(), iterComponents.end(), [&](auto& component) {
+        GUARD(component->IsEnabled())
+        component->Signal(signalId, signal);
+    });
 }

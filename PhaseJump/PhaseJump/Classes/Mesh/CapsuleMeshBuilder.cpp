@@ -47,7 +47,7 @@ Mesh CapsuleMeshBuilder::BuildMesh() {
     Vector2 startCapOffset;
     startCapOffset.AxisValue(axis) = frameAxisLength / 2.0f;
     startCapOffset *= Vector2::upLeft;
-    startCapMesh.OffsetBy(startCapOffset);
+    startCapMesh.Offset(startCapOffset);
 
     CenterPolyMeshBuilder endCapBuilder(
         centerPolySize, { .startAngle = Angle::WithDegrees(endAngleStart),
@@ -58,7 +58,7 @@ Mesh CapsuleMeshBuilder::BuildMesh() {
     Vector2 endCapOffset;
     endCapOffset.AxisValue(axis) = frameAxisLength / 2.0f;
     endCapOffset *= Vector2::downRight;
-    endCapMesh.OffsetBy(endCapOffset);
+    endCapMesh.Offset(endCapOffset);
 
     return startCapMesh + frameMesh + endCapMesh;
 }

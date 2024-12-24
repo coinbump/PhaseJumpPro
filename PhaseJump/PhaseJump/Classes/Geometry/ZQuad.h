@@ -1,5 +1,4 @@
-#ifndef PJZQUAD_H
-#define PJZQUAD_H
+#pragma once
 
 #include "Vector3.h"
 #include <array>
@@ -7,13 +6,15 @@
 
 /*
  RATING: 4 stars
- TODO: needs unit tests
- CODE REVIEW: 4/13/23
+ Has unit tests
+ CODE REVIEW: 12/17/24
  */
 namespace PJ {
-    /// Arranges quad vertices in a Z shape: top-left, top-right, bottom-left,
-    /// bottom-right Useful for rendering triangle strips
+    /// Stores quad vertices in a Z shape: top-left, top-right, bottom-left,
+    /// bottom-right. Useful for rendering triangle strips
     struct ZQuad {
+        using This = ZQuad;
+
         static constexpr size_t size = 4;
 
         std::array<Vector3, size> value;
@@ -26,11 +27,11 @@ namespace PJ {
             return value.data();
         }
 
-        Vector3 const& operator[](size_t index) const {
+        Vector3 const& ModGet(size_t index) const {
             return value[index >= 0 && index < size ? index : index % size];
         }
 
-        Vector3& operator[](size_t index) {
+        Vector3& ModGet(size_t index) {
             return value[index >= 0 && index < size ? index : index % size];
         }
 
@@ -40,9 +41,10 @@ namespace PJ {
         void FlipH();
         void FlipV();
         void Turn(int count);
-        void TurnLeft(int count);
         void Offset(Vector3 offset);
+
+        constexpr bool operator==(This const& rhs) const {
+            return value == rhs.value;
+        }
     };
 } // namespace PJ
-
-#endif

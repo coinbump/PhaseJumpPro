@@ -9,22 +9,24 @@
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 8/9/23
+ CODE REVIEW: 12/21/24
  */
-// TODO: update using std::span, std::copy
-// TODO: should this be a template class for the data type inside?
 namespace PJ {
+    /// Calls malloc to allocate data
+    template <class Type = int8_t>
     struct MallocDataAllocator {
-        void* operator()(size_t size) const {
+        Type* operator()(size_t size) const {
             // May return null if it fails
-            return malloc(size);
+            return (Type*)malloc(size);
         }
     };
 
+    /// Calls calloc to allocate data
+    template <class Type = int8_t>
     struct CallocDataAllocator {
-        void* operator()(size_t size) const {
+        Type* operator()(size_t size) const {
             // May return null if it fails
-            return calloc(1, size);
+            return (Type*)calloc(1, size);
         }
     };
 
@@ -37,19 +39,22 @@ namespace PJ {
     };
 
     /// Data in memory
-    template <class Type = void>
+    template <class Type = int8_t>
     class Data : public SomeData {
     private:
-        /// Disable copy
+        /// Disables copy
         Data(Data const&);
 
     protected:
         Type* data = nullptr;
         size_t size = 0;
-        std::function<Type*(size_t size)> allocator;
 
     public:
         using This = Data;
+
+        std::function<Type*(size_t size)> allocator = [](size_t size) {
+            return (Type*)malloc(size);
+        };
 
         Data(
             std::function<Type*(size_t size)> allocator = [](size_t size
@@ -57,26 +62,37 @@ namespace PJ {
         ) :
             allocator(allocator) {}
 
+        Data(std::span<Type> span) {
+            auto byteSize = span.size_bytes();
+            auto resizeResult = ResizeBytes(byteSize);
+            if (resizeResult == byteSize) {
+                memcpy(data, span.data(), byteSize);
+            }
+        }
+
         virtual ~Data() {
             if (data) {
                 free(data);
             }
         }
 
+        std::span<Type> Span() {
+            GUARDR(data && size > 0, {})
+            return std::span<Type>(data, Count());
+        }
+
         bool CopyIn(Type* data, size_t size) {
             GUARDR(data != this->data, false)
             GUARDR(data && size > 0, false)
 
-            if (ResizeBytes(size) == size) {
-                memcpy(this->data, data, size);
-                return true;
-            }
+            GUARDR(ResizeBytes(size) == size, false)
+            memcpy(this->data, data, size);
 
-            return false;
+            return true;
         }
 
-        SP<This> Copy() const {
-            auto result = MAKE<This>();
+        UP<This> Copy() const {
+            auto result = NEW<This>();
 
             if (size > 0 && nullptr != data) {
                 result->CopyIn(data, size);

@@ -1,6 +1,7 @@
 #include "Slice3TextureRenderer.h"
 #include "RenderFeature.h"
 #include "RenderMaterial.h"
+#include "SomeShaderProgram.h"
 #include "TiledMeshBuilder.h"
 
 using namespace std;
@@ -15,7 +16,7 @@ Slice3TextureRenderer::Slice3TextureRenderer(Config config) :
 
     model.material = MAKE<RenderMaterial>(RenderMaterial::Config{
         .texture = config.texture,
-        .shaderId = "texture.vary",
+        .shaderId = ShaderId::TextureVary,
         .features = { { RenderFeature::Blend, RenderFeatureState::Enable } } });
 
     model.SetBuildMeshFunc([this](RendererModel const& model) {
@@ -94,7 +95,7 @@ Mesh Slice3TextureRenderer::BuildMesh(Vector3 worldSize) {
                                   bm.start.worldSize.AxisValue(axis) / 2.0f) *
                                  Vector2::upLeft.AxisValue(axis);
 
-        startMesh.OffsetBy(offset);
+        startMesh.Offset(offset);
         mesh += startMesh;
     }
     if (bm.center.IsValid()) {
@@ -112,7 +113,7 @@ Mesh Slice3TextureRenderer::BuildMesh(Vector3 worldSize) {
             (bm.center.worldSize.AxisValue(axis) / 2.0f + bm.end.worldSize.AxisValue(axis) / 2.0f) *
             Vector2::downRight.AxisValue(axis);
 
-        endMesh.OffsetBy(offset);
+        endMesh.Offset(offset);
         mesh += endMesh;
     }
 

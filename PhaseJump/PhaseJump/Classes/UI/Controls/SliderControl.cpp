@@ -1,5 +1,6 @@
 #include "SliderControl.h"
 #include "Dev.h"
+#include "QuickBuild.h"
 #include "SomeDragGestureHandler2D.h"
 #include "SomeRenderer.h"
 #include "UIPlanner.h"
@@ -7,10 +8,14 @@
 using namespace std;
 using namespace PJ;
 
+using This = SliderControl;
+
 SliderControl::SliderControl(Config config) :
     axis(config.axis),
+    minValue(config.minValue),
+    maxValue(config.maxValue),
     trackOrthogonal(config.trackOrthogonal) {
-    updatable.onUpdateFunc = [this](auto& updatable, auto time) {
+    GetUpdatable().onUpdateFunc = [this](auto& updatable, auto time) {
         if (valueBinding.getFunc) {
             SetValue(valueBinding.getFunc());
         }
@@ -47,20 +52,13 @@ SliderControl::SliderControl(Config config) :
     value.SetOnValueChangeFunc([this](auto value) { OnValueChange(); });
 
     PlanUIFunc planUIFunc = [this](auto& component, String context, UIPlanner& planner) {
-        planner.Text("Value", [this]() {
-            stringstream ss;
-            ss << MakeString(value);
-            return ss.str();
+        planner.Text([this]() {
+            return UIPlanner::TextConfig{ .label = "Value",
+                                          .text = std::format("{}", value.Value()) };
         });
     };
     Override(planUIFuncs[UIContextId::Inspector], planUIFunc);
 
-    SetValueBinding(config.valueBinding);
-}
-
-void SliderControl::Configure(Config config) {
-    axis = config.axis;
-    trackOrthogonal = config.trackOrthogonal;
     SetValueBinding(config.valueBinding);
 }
 
@@ -77,28 +75,19 @@ WorldNode* SliderControl::Track() const {
 void SliderControl::Awake() {
     Base::Awake();
 
-    GUARD_LOG(!track.expired(), "ERROR. SliderControl is missing track.");
-    GUARD_LOG(!thumb.expired(), "ERROR. SliderControl is missing thumb.");
+    QB(*this->owner).RectCollider({ 1, 1 });
 
-    auto thumbLock = LOCK(thumb);
-    GUARD(thumbLock)
-
-    WP<This> weakThis = SCAST<This>(shared_from_this());
-
-    thumbDragHandler = thumbLock->AddComponentPtr<SomeDragGestureHandler2D>();
-    thumbDragHandler->onDragGestureUpdateFunc = [weakThis](auto update) {
-        GUARD(!weakThis.expired())
-        auto target = weakThis.lock();
-
+    dragHandler = owner->AddComponentPtr<SomeDragGestureHandler2D>();
+    dragHandler->onDragGestureUpdateFunc = [this](auto update) {
         switch (update.type) {
         case SomeDragGestureHandler2D::Update::Type::Start:
-            target->OnDragThumbStart(*update.handler.owner, update.worldPosition);
+            OnDragStart(update.worldPosition);
             break;
         case SomeDragGestureHandler2D::Update::Type::End:
-            target->OnDragThumbEnd();
+            OnDragEnd();
             break;
         case SomeDragGestureHandler2D::Update::Type::Update:
-            target->OnDragThumbUpdate(*update.handler.owner, update.worldPosition);
+            OnDragUpdate(update.worldPosition);
             break;
         }
     };
@@ -117,11 +106,6 @@ void SliderControl::OnValueChange() {
 }
 
 void SliderControl::UpdateThumbPositionForValue(float value) {
-    // Don't move the thumb while the user is dragging it.
-    if (nullptr != thumbDragHandler && thumbDragHandler->IsDragging()) {
-        return;
-    }
-
     auto thumb = Thumb();
     GUARD(thumb)
 
@@ -141,9 +125,7 @@ void SliderControl::UpdateThumbPositionForValue(float value) {
 }
 
 float SliderControl::TrackLength() const {
-    auto track = Track();
-    GUARDR(track, {})
-    return RendererSize(*track).AxisValue(axis);
+    return frame.size.AxisValue(axis);
 }
 
 Vector2 SliderControl::RendererSize(WorldNode& target) const {
@@ -154,12 +136,11 @@ Vector2 SliderControl::RendererSize(WorldNode& target) const {
     return size;
 }
 
-void SliderControl::OnDragThumbStart(WorldNode& thumb, Vector2 inputPosition) {
-    dragStartInputPosition = inputPosition;
-    thumbStartLocalPosition = thumb.transform.LocalPosition();
+void SliderControl::OnDragStart(Vector2 inputWorldPos) {
+    dragStartInputWorldPos = inputWorldPos;
 }
 
-void SliderControl::OnDragThumbEnd() {}
+void SliderControl::OnDragEnd() {}
 
 Vector2 SliderControl::ThumbSize() const {
     auto thumb = Thumb();
@@ -175,26 +156,30 @@ float SliderControl::HalfTrackLength(WorldNode& thumb) {
     return halfTrackWidth;
 }
 
-void SliderControl::OnDragThumbUpdate(WorldNode& thumb, Vector2 inputPosition) {
-    auto pos = ((Vector2)thumbStartLocalPosition).AxisValue(axis) +
-               (inputPosition.AxisValue(axis) - dragStartInputPosition.AxisValue(axis));
-    auto minThumbPos = MinThumbPos(thumb);
-    auto maxThumbPos = MaxThumbPos(thumb);
-    GUARD(maxThumbPos > minThumbPos)
+void SliderControl::OnDragUpdate(Vector2 inputWorldPos) {
+    auto viewPos = WorldToViewPosition(inputWorldPos);
 
-    pos = clamp(pos, minThumbPos, maxThumbPos);
+    float minAxisValue = endCapSize;
+    float maxAxisValue = frame.size.AxisValue(axis) - endCapSize;
+    GUARD(maxAxisValue > 0)
 
-    auto thumbPosition = thumb.transform.LocalPosition();
+    viewPos.AxisValue(axis) = std::clamp(viewPos.AxisValue(axis), minAxisValue, maxAxisValue);
 
-    Vector2 newPos;
-    newPos.AxisValue(axis) = pos;
-    newPos.AxisValueOrthogonal(axis) = ((Vector2)thumbPosition).AxisValueOrthogonal(axis);
+    auto newValueNormal = (viewPos.AxisValue(axis) - minAxisValue) / (maxAxisValue - minAxisValue);
 
-    auto newLocalPosition = Vector3(newPos.x, newPos.y, thumbPosition.z);
-    thumb.transform.SetLocalPosition(newLocalPosition);
+    switch (axis) {
+    case Axis2D::Y:
+        // Vertical sliders have their lowest value at the bottom
+        newValueNormal = 1.0f - newValueNormal;
+        break;
+    default:
+        break;
+    }
 
-    auto newValue = (newPos.AxisValue(axis) - minThumbPos) / (maxThumbPos - minThumbPos);
+    auto newValue = minValue + (maxValue - minValue) * newValueNormal;
+
     SetValue(newValue);
+    UpdateThumbPositionForValue(newValue);
 }
 
 void SliderControl::UpdateFrameComponents() {
@@ -211,4 +196,37 @@ void SliderControl::UpdateFrameComponents() {
     }
 
     UpdateThumbPositionForValue(value);
+}
+
+void SliderControl::SetThumb(SP<WorldNode> value) {
+    thumb = value;
+}
+
+void SliderControl::SetTrack(SP<WorldNode> value) {
+    track = value;
+}
+
+void SliderControl::SetOnValueChangeFunc(OnValueChangeFunc value) {
+    onValueChangeFunc = value;
+
+    GUARD(onValueChangeFunc)
+    onValueChangeFunc(*this);
+}
+
+void SliderControl::SetValueBinding(Binding<float> binding) {
+    valueBinding = binding;
+    SetValue(binding);
+}
+
+void SliderControl::SetValue(float value) {
+    this->value.SetValue(value);
+}
+
+This& SliderControl::SetEndCapSize(float value) {
+    endCapSize = value;
+    return *this;
+}
+
+bool SliderControl::IsDragging() const {
+    return dragHandler && dragHandler->IsDragging();
 }

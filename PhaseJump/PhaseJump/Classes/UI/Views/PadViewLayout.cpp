@@ -7,21 +7,18 @@ using namespace PJ;
 PadViewLayout::PadViewLayout(LayoutInsets _insets) :
     insets(_insets) {
     PlanUIFunc planUIFunc = [this](auto& component, String context, UIPlanner& planner) {
-        planner.InputFloat(
-            "Leading",
-            { [this]() { return insets.leading; }, [this](auto& value) { SetLeadingInset(value); } }
-        );
-        planner.InputFloat(
-            "Trailing", { [this]() { return insets.trailing; },
-                          [this](auto& value) { SetTrailingInset(value); } }
-        );
-        planner.InputFloat(
-            "Top", { [this]() { return insets.top; }, [this](auto& value) { SetTopInset(value); } }
-        );
-        planner.InputFloat(
-            "Bottom",
-            { [this]() { return insets.bottom; }, [this](auto& value) { SetBottomInset(value); } }
-        );
+        planner.InputFloat({ .label = "Leading",
+                             .binding = { [this]() { return insets.leading; },
+                                          [this](auto& value) { SetLeadingInset(value); } } });
+        planner.InputFloat({ .label = "Trailing",
+                             .binding = { [this]() { return insets.trailing; },
+                                          [this](auto& value) { SetTrailingInset(value); } } });
+        planner.InputFloat({ .label = "Top",
+                             .binding = { [this]() { return insets.top; },
+                                          [this](auto& value) { SetTopInset(value); } } });
+        planner.InputFloat({ .label = "Bottom",
+                             .binding = { [this]() { return insets.bottom; },
+                                          [this](auto& value) { SetBottomInset(value); } } });
     };
     Override(planUIFuncs[UIContextId::Inspector], planUIFunc);
 }
@@ -57,7 +54,7 @@ void PadViewLayout::LayoutSubviews(Vector2 boundsSize, VectorList<ViewProxy> con
     ViewProxy proxy = child;
     proxy.viewSizeFunc = [=](auto& proxy, auto proposal) { return viewSize; };
     proxy.PlaceView(
-        { insets.leading, insets.top }, ViewPoint::topLeading, { viewSize.x, viewSize.y }
+        { insets.leading, insets.top }, LayoutAnchor2D::topLeft, { viewSize.x, viewSize.y }
     );
 }
 

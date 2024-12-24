@@ -1,6 +1,10 @@
 #pragma once
 
-// REVIEW: /23
+/*
+ RATING: 5 stars
+ Simple types
+ CODE REVIEW: 12/15/24
+ */
 namespace PJ {
     namespace UIContextId {
         /// UI shown in the editor (always visible)
@@ -16,11 +20,15 @@ namespace PJ {
         auto constexpr OnPrimary = "on.primary";
         auto constexpr Secondary = "secondary";
         auto constexpr OnSecondary = "on.secondary";
+        auto constexpr Tertiary = "tertiary";
+        auto constexpr OnTertiary = "on.tertiary";
 
         auto constexpr PrimaryContainer = "primary.container";
         auto constexpr OnPrimaryContainer = "on.primary.container";
         auto constexpr SecondaryContainer = "secondary.container";
         auto constexpr OnSecondaryContainer = "on.secondary.container";
+        auto constexpr TertiaryContainer = "tertiary.container";
+        auto constexpr OnTertiaryContainer = "on.tertiary.container";
 
         auto constexpr Surface = "surface";
         auto constexpr OnSurface = "on.surface";
@@ -53,6 +61,7 @@ namespace PJ {
 
         auto constexpr ControlFrame = "control.frame";
         auto constexpr ControlGroup = "control.group";
+        auto constexpr OutlineControlGroup = "outline.control.group";
 
         auto constexpr SliderTrack = "slider.track";
         auto constexpr SliderThumb = "slider.thumb";
@@ -61,7 +70,6 @@ namespace PJ {
 
         auto constexpr SurfaceBanner = "surface.banner";
         auto constexpr OnSurfaceBanner = "on.surface.banner";
-        auto constexpr SurfaceAlert = "surface.alert";
 
         // Drag handles (for resizing/altering objects)
         auto constexpr SurfaceHandle = "surface.handle";
@@ -70,13 +78,18 @@ namespace PJ {
 
     /// Ids of common UI components
     namespace UIItemId {
+        /// Main surface behind themed objects
         auto constexpr Surface = "surface";
+
         auto constexpr Button = "button";
+        auto constexpr Slider = "slider ";
+        auto constexpr CollapsingHeader = "collapsingHeader";
         auto constexpr SegmentToggle = "segmentToggle";
         auto constexpr ImageToggle = "imageToggle";
         auto constexpr SwitchToggle = "switchToggle";
         auto constexpr Label = "label";
         auto constexpr Toast = "toast";
+        auto constexpr ToolTip = "toolTip";
         auto constexpr Dial = "dial";
         auto constexpr ProgressBar = "progressBar";
         auto constexpr ProgressCircle = "progressCircle";
@@ -87,11 +100,10 @@ namespace PJ {
 
     /// Custom property names for common UI elements
     namespace UITag {
-        // TODO: get rid of model, use config
         /// Slice points for sliced texture renderer
         auto constexpr Slice9Model = "slice9.model";
 
-        /// Size of end caps for UI objects that have one (slider)
+        /// Size of end caps for UI objects that have one (Example: slider)
         auto constexpr EndCapSize = "endCap.size";
     } // namespace UITag
 

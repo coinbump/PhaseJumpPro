@@ -1,5 +1,6 @@
 #pragma once
 
+#include "AlignFunc.h"
 #include "AnimatedSpriteRenderer.h"
 #include "AnimationCycleTypes.h"
 #include "Animator.h"
@@ -10,7 +11,6 @@
 #include "Font.h"
 #include "LayoutInsets.h"
 #include "SimpleAnimationController.h"
-#include "SomeAligner.h"
 #include "Switchable.h"
 #include "ViewBuilder.h"
 #include "WorldNode.h"
@@ -20,7 +20,6 @@
  Tested and works
  CODE REVIEW: 9/9/24
  */
-// TODO: needs unit tests
 namespace PJ {
     class DesignSystem;
     class SomeTexture;
@@ -338,7 +337,7 @@ namespace PJ {
         template <class T, typename... Arguments>
         constexpr This& WithId(String id, Arguments... args) {
             auto& component = Node().AddComponent<T>(args...);
-            component.id = id;
+            component.SetId(id);
             components.push_back(&component);
             return *this;
         }

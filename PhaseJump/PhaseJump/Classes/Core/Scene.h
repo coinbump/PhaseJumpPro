@@ -58,5 +58,5 @@ namespace PJ {
         }
     };
 
-    using SceneClassRegistry = ClassRegistry<Scene, SceneClass>;
+    using SceneClassRegistry = ClassRegistry<SceneClass>;
 } // namespace PJ

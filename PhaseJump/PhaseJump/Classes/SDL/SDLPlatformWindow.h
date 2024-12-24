@@ -22,25 +22,16 @@ namespace PJ {
         SDL_Window* window{};
         SDL_Renderer* renderer{};
 
+        Config config;
+
     public:
         using Base = SomePlatformWindow;
 
-        SDLPlatformWindow(SP<SDLWorld> world) :
-            Base(world) {}
+        SDLPlatformWindow(Config config);
 
         virtual ~SDLPlatformWindow() {
             SDL_DestroyWindow(window);
             SDL_DestroyRenderer(renderer);
-        }
-
-        void Configure(Config& config);
-
-        SP<SDLWorld> World() const {
-            return world;
-        }
-
-        void SetWorld(SP<SDLWorld> world) {
-            this->world = world;
         }
 
         SDL_Window* SDLWindow() const {
@@ -73,5 +64,10 @@ namespace PJ {
             SDL_GetWindowSizeInPixels(window, &x, &y);
             return Vector2Int(x, y);
         }
+
+    protected:
+        // MARK: Base
+
+        void OnGo() override;
     };
 } // namespace PJ

@@ -45,9 +45,10 @@ bool Polygon::TestHit(Vector2 pt) const {
     int c = 0;
 
     for (size_t i = 0, j = nvert - 1; i < nvert; j = i++) {
-        if (((ModAt(i).y > testy) != (ModAt(j).y > testy)) &&
-            (testx < (ModAt(j).x - ModAt(i).x) * (testy - ModAt(i).y) / (ModAt(j).y - ModAt(i).y) +
-                         ModAt(i).x)) {
+        if (((ModGet(i).y > testy) != (ModGet(j).y > testy)) &&
+            (testx <
+             (ModGet(j).x - ModGet(i).x) * (testy - ModGet(i).y) / (ModGet(j).y - ModGet(i).y) +
+                 ModGet(i).x)) {
             c = !c;
         }
     }

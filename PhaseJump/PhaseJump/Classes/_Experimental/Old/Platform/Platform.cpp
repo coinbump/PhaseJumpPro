@@ -1,5 +1,4 @@
-#ifndef PJPLATFORM_H
-#define PJPLATFORM_H
+#pragma once
 
 #include "Base.h"
 #include "Class.h"
@@ -8,7 +7,7 @@
 #include <stdio.h>
 #include <vector>
 
-// CODE REVIEW: ?/23
+// Experimental
 namespace PJ {
     //    static FactoryRegistry<Class> classRegistry;
 
@@ -121,5 +120,3 @@ namespace PJ {
         // Register Windows platform classes here
     }
 } // namespace PJ
-
-#endif

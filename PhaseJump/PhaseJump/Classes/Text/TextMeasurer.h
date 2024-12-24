@@ -1,5 +1,6 @@
 #pragma once
 
+#include "AttributedString.h"
 #include "TextMetrics.h"
 #include "Vector2.h"
 #include "VectorList.h"
@@ -70,7 +71,7 @@ namespace PJ {
             font(font) {}
 
         TextMetrics Measure(
-            String text, Vector2 textSize, LineClip lineClip = LineClip::Hidden,
+            AttributedString text, Vector2 textSize, LineClip lineClip = LineClip::Hidden,
             MeasureMetricsFunc metricsFunc = MeasureMetricsFunc()
         );
     };

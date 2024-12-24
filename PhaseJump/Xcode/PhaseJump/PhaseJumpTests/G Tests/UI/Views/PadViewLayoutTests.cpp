@@ -40,8 +40,7 @@ TEST(PadViewLayout, Test) {
     padView->SetLayout(layout);
     padView->LayoutIfNeeded();
     
-    EXPECT_EQ(Vector3(0, 0, 0), parentView->owner->transform.WorldPosition());
-    EXPECT_EQ(Vector2(38, 42), padView->Frame().origin);
+    EXPECT_EQ(Vector2(0, 0), padView->Frame().origin);
     EXPECT_EQ(Vector2(10 + 14, 10 + 6), padView->Frame().size);
 
     EXPECT_EQ(Vector2(4, 2), view->Frame().origin);

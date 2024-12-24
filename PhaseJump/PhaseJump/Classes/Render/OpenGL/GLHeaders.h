@@ -1,5 +1,4 @@
-#ifndef PJGLHEADERS_H
-#define PJGLHEADERS_H
+#pragma once
 
 #ifdef _WIN32
 
@@ -22,7 +21,5 @@ using GLchar = char;
 #include <OpenGL/gl3ext.h>
 #include <OpenGL/glext.h>
 #include <OpenGL/glu.h>
-
-#endif
 
 #endif

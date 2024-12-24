@@ -19,7 +19,7 @@ EditorImGuiScenesPainter::EditorImGuiScenesPainter(
 
         if (ImGui::CollapsingHeader("Scenes", ImGuiTreeNodeFlags_DefaultOpen)) {
             VectorList<SceneClass*> sceneClasses;
-            for (auto& sceneClassI : system.sceneClasses.map) {
+            for (auto& sceneClassI : system.sceneClasses.Map()) {
                 sceneClasses.push_back(sceneClassI.second.get());
             }
 

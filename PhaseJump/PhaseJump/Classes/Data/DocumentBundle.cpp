@@ -1,0 +1,36 @@
+#include "DocumentBundle.h"
+#include "CollectionUtils.h"
+
+using namespace std;
+using namespace PJ;
+
+VectorList<Document*> DocumentBundle::ModifiedDocuments() const {
+    VectorList<Document*> result =
+        Map<Document*>(documents, [](auto& document) { return document.get(); });
+    result = Filter(result, [](auto& document) { return document->IsModified(); });
+    return result;
+}
+
+void DocumentBundle::SaveModified() {
+    auto documents = ModifiedDocuments();
+    for (auto& document : documents) {
+        document->Save();
+    }
+}
+
+void DocumentBundle::Add(SP<Document> document) {
+    GUARD(document)
+
+    documents.push_back(document);
+    Document::DocumentFunc onCloseFunc = [this](auto& document) {
+        Remove(document);
+
+        GUARD(this->onCloseFunc)
+        this->onCloseFunc(document);
+    };
+    Override(document->onCloseFunc, onCloseFunc);
+}
+
+void DocumentBundle::Remove(Document& _document) {
+    documents = Filter(documents, [&](auto& document) { return &_document != document.get(); });
+}

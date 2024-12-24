@@ -5,7 +5,6 @@
 #include "RenderFeature.h"
 #include "RenderMaterial.h"
 #include "RenderModel.h"
-#include "RenderModelBuilder.h"
 #include "SomeRenderEngine.h"
 
 using namespace std;
@@ -17,7 +16,8 @@ SimpleGradientRenderer::SimpleGradientRenderer(
     Base(worldSize),
     startColor(startColor),
     endColor(endColor) {
-    model.material = MAKE<RenderMaterial>(RenderMaterial::Config{ .shaderId = "color.vary" });
+    model.material =
+        MAKE<RenderMaterial>(RenderMaterial::Config{ .shaderId = ShaderId::ColorVary });
 
     model.SetBuildMeshFunc([](RendererModel const& model) {
         QuadMeshBuilder builder(model.WorldSize());

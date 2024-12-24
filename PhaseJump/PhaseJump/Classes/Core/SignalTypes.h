@@ -1,6 +1,10 @@
 #pragma once
 
-// /23
+/*
+ RATING: 5 stars
+ Simple types
+ CODE REVIEW: 12/17/24
+ */
 namespace PJ {
     namespace SignalId {
         /// Pointer device button down. Sends PointerDownUIEvent

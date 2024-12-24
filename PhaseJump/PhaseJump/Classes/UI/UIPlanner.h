@@ -20,28 +20,92 @@ namespace PJ {
         UIPlanner(UIPlan& plan) :
             plan(plan) {}
 
-        /// Add button with action to UI
-        This& Button(String label, std::function<void()> func);
+        struct ButtonConfig {
+            String label;
+            std::function<void()> func;
+        };
 
-        /// Add text to UI
-        This& Text(String label, std::function<String()> valueFunc);
+        struct TextConfig {
+            String label;
+            String text;
+        };
 
-        /// Add float input field to UI
-        This& InputFloat(String label, Binding<float> binding);
+        struct InputFloatConfig {
+            String label;
+            Binding<float> binding;
+        };
 
-        /// Add bool input field to UI
-        This& InputBool(String label, Binding<bool> binding);
+        struct InputBoolConfig {
+            String label;
+            Binding<bool> binding;
+        };
 
-        /// Add text input field to UI
-        This& InputText(String label, Binding<String> binding);
+        struct InputTextConfig {
+            String label;
+            Binding<String> binding;
+        };
 
-        /// Add single selection list UI
-        This& ListSelect(String label, VectorList<String> choices, Binding<int> binding);
+        struct ListSelectConfig {
+            String label;
+            VectorList<String> options;
+            Binding<int> binding;
+        };
 
-        /// Add list picker to UI
-        This& PickerList(String label, VectorList<String> choices, Binding<int> binding);
+        struct PickerListConfig {
+            String label;
+            VectorList<String> options;
+            Binding<int> binding;
+        };
 
-        /// Add color picker field to UI
-        This& PickerColor(String label, Binding<Color> binding);
+        struct PickerColorConfig {
+            String label;
+            Binding<Color> binding;
+        };
+
+        // FUTURE: add dynamic builders as needed
+
+        /// Adds button with action to UI
+        This& Button(std::function<ButtonConfig()> configFunc);
+
+        /// Adds button with action to UI
+        This& Button(ButtonConfig config) {
+            return Button([=]() { return config; });
+        }
+
+        /// Adds dynamic text to UI
+        This& Text(std::function<TextConfig()> configFunc);
+
+        /// Adds text to UI
+        This& Text(TextConfig config) {
+            return Text([=]() { return config; });
+        }
+
+        /// Adds float input field to UI
+        This& InputFloat(InputFloatConfig config);
+
+        /// Adds bool input field to UI
+        This& InputBool(InputBoolConfig config);
+
+        /// Adds text input field to UI
+        This& InputText(InputTextConfig config);
+
+        /// Adds dynamic single selection list UI
+        This& ListSelect(std::function<ListSelectConfig()> configFunc);
+
+        /// Adds single selection list UI
+        This& ListSelect(ListSelectConfig config) {
+            return ListSelect([=]() { return config; });
+        }
+
+        /// Adds dynamic list picker to UI
+        This& PickerList(std::function<PickerListConfig()> configFunc);
+
+        /// Adds list picker to UI
+        This& PickerList(PickerListConfig config) {
+            return PickerList([=]() { return config; });
+        }
+
+        /// Adds color picker field to UI
+        This& PickerColor(PickerColorConfig config);
     };
 } // namespace PJ

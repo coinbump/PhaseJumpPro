@@ -19,25 +19,50 @@ TextRenderer::TextRenderer(Config config) :
 
     GUARD(font && font->atlas && font->atlas->Textures().size() > 0)
 
-    model.material = MAKE<RenderMaterial>(RenderMaterial::Config{ .shaderId = "texture.vary" });
+    model.material =
+        MAKE<RenderMaterial>(RenderMaterial::Config{ .shaderId = ShaderId::TextureVary });
     model.material->Add(font->atlas->texture);
     model.material->EnableFeature(RenderFeature::Blend, true);
 
     auto defaultFunc = model.BuildVertexColorsFunc();
 
-    model.SetBuildMeshFunc([this](auto& model) { return this->BuildMesh(); });
+    model.SetBuildMeshFunc([this](auto& model) { return BuildMesh(); });
 
     model.SetBuildVertexColorsFunc([=, this](auto& model, auto& colors) {
         defaultFunc(model, colors);
+
+        if (metrics) {
+            int colorIndex = 0;
+
+            for (auto& line : metrics->lines) {
+                for (auto& c : line.charMetrics) {
+                    auto& attributes = c.attributes;
+
+                    auto colorAttributes = Filter(attributes, [](auto& part) {
+                        return part.type == TextPartType::AttributeColor;
+                    });
+
+                    if (!IsEmpty(colorAttributes)) {
+                        Color color = colorAttributes[0].color;
+                        colors[colorIndex] = color;
+                        colors[colorIndex + 1] = color;
+                        colors[colorIndex + 2] = color;
+                        colors[colorIndex + 3] = color;
+                    }
+
+                    colorIndex += 4;
+                }
+            }
+        }
 
         GUARD(this->modifyColorsFunc)
         this->modifyColorsFunc(*this, colors);
     });
 
     PlanUIFunc planUIFunc = [this](auto& component, String context, UIPlanner& planner) {
-        planner.InputText(
-            "Text", { [this]() { return text; }, [this](auto& value) { SetText(value); } }
-        );
+        planner.InputText({ .label = "Text",
+                            .binding = { [this]() { return text.PlainText(); },
+                                         [this](auto& value) { SetText(value); } } });
     };
     Override(planUIFuncs[UIContextId::Inspector], planUIFunc);
 }
@@ -100,11 +125,11 @@ Mesh TextRenderer::BuildMesh() {
 
             auto quadMesh = qm.BuildMesh();
 
-            quadMesh.OffsetBy(
+            quadMesh.Offset(
                 Vector2((qm.worldSize.x / 2.0f) * vecRight, (qm.worldSize.y / 2.0f) * vecDown)
             );
 
-            quadMesh.OffsetBy(Vector2(
+            quadMesh.Offset(Vector2(
                 (size.x / 2.0f) * vecLeft + (viewPos.x + fontGlyph.offset.x) * vecRight,
                 (size.y / 2.0f) * vecUp + (viewPos.y + fontGlyph.offset.y) * vecDown
             ));
@@ -123,11 +148,11 @@ Mesh TextRenderer::BuildMesh() {
     }
 
     if (textAlignFunc) {
-        mesh.OffsetBy(Vector3(0, textAlignFunc(size.y, textHeight) * vecDown, 0));
+        mesh.Offset(Vector3(0, textAlignFunc(size.y, textHeight) * vecDown, 0));
     }
 
     if (modifyVerticesFunc) {
-        modifyVerticesFunc(*this, mesh.ModifiableVertices());
+        modifyVerticesFunc(*this, mesh.Vertices());
         mesh.SetNeedsCalculate();
     }
 

@@ -10,7 +10,7 @@ ToggleButtonControl::ToggleButtonControl(Binding<bool> _isOnBinding) :
         OnControlChange();
     });
 
-    updatable.onUpdateFunc = [this](auto& updatable, auto time) {
+    GetUpdatable().onUpdateFunc = [this](auto& updatable, auto time) {
         if (isOnBinding.getFunc) {
             SetIsToggleOn(isOnBinding.getFunc());
         }

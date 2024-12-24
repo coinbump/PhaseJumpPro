@@ -4,7 +4,11 @@
 #include "VectorList.h"
 #include <memory>
 
-// CODE REVIEW: ?/23
+/*
+ RATING: 5 stars
+ Tested and works
+ CODE REVIEW: 12/17/24
+ */
 namespace PJ {
     class SomeShaderProgram;
     struct RenderModel;
@@ -14,7 +18,11 @@ namespace PJ {
     class SomeTexture;
     class WorldNode;
     class SomeRenderer;
+    class SomeMaterialRenderer;
+    class RendererModel;
 
+    /// Called to transform uv coordinates for a texture (usally for textures inside a texture
+    /// atlas)
     using UVTransformFunc = std::function<void(SomeTexture&, VectorList<Vector2>& uvs)>;
 
     namespace UVTransformFuncs {
@@ -22,21 +30,12 @@ namespace PJ {
     }
 
     struct RenderModelBuilder {
-        RenderModel Build(
-            SomeRenderer& renderer, Mesh const& mesh, RenderMaterial& material,
-            VectorList<SP<SomeTexture>> const& textures,
-            UVTransformFunc uvTransformFunc = UVTransformFuncs::textureCoordinates
-        );
+        std::optional<RenderModel> Build(SomeMaterialRenderer& renderer, RendererModel& model);
 
-        RenderModel Build(
+    protected:
+        std::optional<RenderModel> Build(
             WorldNode* node, Mesh const& mesh, RenderMaterial& material,
-            VectorList<SP<SomeTexture>> const& textures,
-            UVTransformFunc uvTransformFunc = UVTransformFuncs::textureCoordinates
+            VectorList<SP<SomeTexture>> const& textures
         );
-        //        RenderModel Build(
-        //            Mesh const& mesh, RenderMaterial& material, VectorList<SomeTexture*> const&
-        //            textures, Matrix4x4 modelMatrix, float z, UVTransformFunc uvTransformFunc =
-        //            UVTransformFuncs::textureCoordinates
-        //        );
     };
 } // namespace PJ

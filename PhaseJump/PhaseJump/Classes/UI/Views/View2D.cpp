@@ -1,6 +1,8 @@
 #include "View2D.h"
+#include "QuickBuild.h"
 #include "SomeHoverGestureHandler.h"
 #include "UIPlanner.h"
+#include "ViewBuilder.h"
 #include "WorldNode.h"
 
 using namespace std;
@@ -12,73 +14,88 @@ View2D::View2D() {
         LayoutIfNeeded();
         return FinishType::Continue;
     };
-    updatable.onUpdateFunc = onUpdateFunc;
+    GetUpdatable().onUpdateFunc = onUpdateFunc;
 
-    signalFuncs[SignalId::AddChildNode] = [this](auto& _component, auto& event) {
-        SetNeedsLayout();
-    };
-    signalFuncs[SignalId::RemoveChildNode] = [this](auto& _component, auto& event) {
-        SetNeedsLayout();
-    };
+    AddSignalHandler<AddChildNodeEvent>({ .id = SignalId::AddChildNode,
+                                          .func = [this](auto& _component, auto& event) {
+                                              auto view =
+                                                  event.node->template TypeComponent<View2D>();
+                                              GUARD(view)
 
-    signalFuncs[SignalId::Hover] = [](auto& owner, auto& signal) {
-        auto event = static_cast<HoverUIEvent const*>(&signal);
-        static_cast<This*>(&owner)->SetIsHovering(event->isHovering);
-    };
+                                              // Top level views don't affect layout
+                                              GUARD(!view->IsTopLevel())
+
+                                              SetNeedsLayout();
+                                          } });
+    AddSignalHandler<RemoveChildNodeEvent>({ .id = SignalId::RemoveChildNode,
+                                             .func = [this](auto& _component, auto& event) {
+                                                 auto view =
+                                                     event.node->template TypeComponent<View2D>();
+                                                 GUARD(view)
+
+                                                 // Top level views don't affect layout
+                                                 GUARD(!view->IsTopLevel())
+
+                                                 SetNeedsLayout();
+                                             } });
+
+    AddSignalHandler<HoverUIEvent>({ .id = SignalId::Hover, .func = [](auto& owner, auto& event) {
+                                        static_cast<This*>(&owner)->SetIsHovering(event.isHovering);
+                                    } });
 
     PlanUIFunc planUIFunc = [this](auto& component, String context, UIPlanner& planner) {
-        planner.Text("Frame", [this]() {
-            stringstream ss;
-            ss << "Origin: " << MakeString(frame.origin.x) << ", " << MakeString(frame.origin.y);
-            ss << "\t";
-            ss << "Size: " << MakeString(frame.size.x) << ", " << MakeString(frame.size.y);
-
-            return ss.str();
+        planner.Text([this]() {
+            String frameString = std::format(
+                "Origin: {}, {} \tSize: {}, {}", frame.origin.x, frame.origin.y, frame.size.x,
+                frame.size.y
+            );
+            return UIPlanner::TextConfig{ .label = "Frame", .text = frameString };
         });
 
-        planner.InputFloat(
-            "Fixed Width",
-            { [this]() { return FixedWidth() ? *FixedWidth() : 0; },
-              [this](auto& value) {
-                  SetFixedSize(value > 0 ? value : std::optional<float>{}, FixedHeight());
-              } }
-        );
-        planner.InputFloat(
-            "Fixed Height",
-            { [this]() { return FixedHeight() ? *FixedHeight() : 0; },
-              [this](auto& value) {
-                  SetFixedSize(FixedWidth(), value > 0 ? value : std::optional<float>{});
-              } }
-        );
+        planner.InputFloat({ .label = "Fixed Width",
+                             .binding = { [this]() { return FixedWidth() ? *FixedWidth() : 0; },
+                                          [this](auto& value) {
+                                              SetFixedSize(
+                                                  value > 0 ? value : std::optional<float>{},
+                                                  FixedHeight()
+                                              );
+                                          } } });
+        planner.InputFloat({ .label = "Fixed Height",
+                             .binding = { [this]() { return FixedHeight() ? *FixedHeight() : 0; },
+                                          [this](auto& value) {
+                                              SetFixedSize(
+                                                  FixedWidth(),
+                                                  value > 0 ? value : std::optional<float>{}
+                                              );
+                                          } } });
 
         planner.InputFloat(
-            "Max Width", { [this]() { return MaxWidth() ? *MaxWidth() : 0; },
+            { .label = "Max Width",
+              .binding = { [this]() { return MaxWidth() ? *MaxWidth() : 0; },
                            [this](auto& value) {
                                SetMaxSize(value > 0 ? value : std::optional<float>{}, MaxHeight());
-                           } }
+                           } } }
         );
         planner.InputFloat(
-            "Max Height", { [this]() { return MaxHeight() ? *MaxHeight() : 0; },
-                            [this](auto& value) {
-                                SetMaxSize(MaxWidth(), value > 0 ? value : std::optional<float>{});
-                            } }
+            { .label = "Max Height",
+              .binding = { [this]() { return MaxHeight() ? *MaxHeight() : 0; },
+                           [this](auto& value) {
+                               SetMaxSize(MaxWidth(), value > 0 ? value : std::optional<float>{});
+                           } } }
         );
 
-        planner.InputBool(
-            "Ideal Width", { [this]() { return IsIdealWidth(); },
-                             [this](auto& value) { SetIsIdealSize(value, IsIdealHeight()); } }
-        );
-        planner.InputBool(
-            "Ideal Height", { [this]() { return IsIdealHeight(); },
-                              [this](auto& value) { SetIsIdealSize(IsIdealWidth(), value); } }
-        );
+        planner.InputBool({ .label = "Ideal Width",
+                            .binding = { [this]() { return IsIdealWidth(); },
+                                         [this](auto& value) {
+                                             SetIsIdealSize(value, IsIdealHeight());
+                                         } } });
+        planner.InputBool({ .label = "Ideal Height",
+                            { [this]() { return IsIdealHeight(); },
+                              [this](auto& value) { SetIsIdealSize(IsIdealWidth(), value); } } });
 
         if (layout) {
-            planner.Text("", [this]() {
-                stringstream ss;
-                ss << "Layout: " << layout->TypeName();
-                return ss.str();
-            });
+            String layoutLabel = std::format("Layout: {}", layout->TypeName());
+            planner.Text({ .text = layoutLabel });
 
             try {
                 auto planUIFunc = layout->planUIFuncs.at(context);
@@ -87,7 +104,7 @@ View2D::View2D() {
         }
 
         // Don't rebuild in immediate mode render loop, it will flash
-        planner.Button("Rebuild", [this]() { SetNeedsRebuild(); });
+        planner.Button({ .label = "Rebuild", .func = [this]() { SetNeedsRebuild(); } });
     };
     Override(planUIFuncs[UIContextId::Inspector], planUIFunc);
 }
@@ -147,17 +164,6 @@ VectorList<View2D*> View2D::ChildViews() const {
     return result;
 }
 
-Vector3 View2D::TopLeftWorldPosition() const {
-    // This result only makes sense if layout has already been applied to the view and its ancestors
-    Vector3 worldPos = LocalToWorld({});
-
-    Vector3 topLeft(
-        worldPos.x + (WorldSize().x / 2.0f) * vecLeft, worldPos.y + (WorldSize().y / 2.0f) * vecUp,
-        worldPos.z
-    );
-    return topLeft;
-}
-
 bool View2D::TestViewPositionHit(Vector2 viewPosition) const {
     GUARDR(viewPosition.x >= 0 && viewPosition.y >= 0, false)
     GUARDR(viewPosition.x < frame.size.x && viewPosition.y < frame.size.y, false)
@@ -165,22 +171,23 @@ bool View2D::TestViewPositionHit(Vector2 viewPosition) const {
     return true;
 }
 
-Vector2 View2D::ToViewPosition(ViewPoint viewPoint) const {
+Vector2 View2D::ToViewPosition(LayoutAnchor2D viewPoint) const {
     return { frame.size.x * viewPoint.x, frame.size.y * viewPoint.y };
 }
 
-Vector3 View2D::ViewToWorldPosition(Vector2 viewPosition) const {
-    auto topLeftWorldPosition = TopLeftWorldPosition();
-    Vector3 result(
-        topLeftWorldPosition.x + viewPosition.x * vecRight,
-        topLeftWorldPosition.y + viewPosition.y * vecDown, topLeftWorldPosition.z
-    );
+Vector3 View2D::TopLeftWorldPosition() const {
+    return LocalToWorld(TopLeftLocalPosition());
+}
 
-    return result;
+Vector3 View2D::ViewToWorldPosition(Vector2 viewPosition) const {
+    return LocalToWorld(ViewToLocalPosition(viewPosition));
 }
 
 Vector3 View2D::ViewToLocalPosition(Vector2 viewPosition) const {
-    return WorldToLocal(ViewToWorldPosition(viewPosition));
+    auto local = viewPosition - frame.size / 2.0f;
+    local.y *= vecDown;
+
+    return local;
 }
 
 Vector2 View2D::WorldToViewPosition(Vector3 worldPosition) const {
@@ -195,23 +202,23 @@ Vector2 View2D::LocalToViewPosition(Vector3 localPosition) const {
     return { viewX, viewY };
 }
 
-Vector3 View2D::TopLeftChildLocalPosition(Rect childFrame) const {
-    auto parentFrame = frame;
+Vector3 View2D::TopLeftLocalPosition() const {
+    Vector3 result{ frame.size.x / 2.0f * vecLeft, frame.size.y / 2.0f * vecUp,
+                    owner->transform.LocalPosition().z };
+    return result;
+}
 
-    Vector3 topLeft(
-        -parentFrame.size.x / 2.0f + childFrame.origin.x,
-        (parentFrame.size.y / 2.0f) * vecUp + childFrame.origin.y * vecDown, 0
-    );
-    return topLeft;
+Vector3 View2D::ChildTopLeftLocalPosition(Rect childFrame) const {
+    auto result = TopLeftLocalPosition();
+    result.x += childFrame.origin.x * vecRight;
+    result.y += childFrame.origin.y * vecDown;
+    return result;
 }
 
 Vector3 View2D::ChildLocalPosition(Rect childFrame) const {
-    auto topLeft = TopLeftChildLocalPosition(childFrame);
-    Vector3 result(
-        topLeft.x + childFrame.size.x / 2.0f * vecRight,
-        topLeft.y + (childFrame.size.y / 2.0f) * vecDown, 0
-    );
-
+    auto result = ChildTopLeftLocalPosition(childFrame);
+    result.x += childFrame.size.x / 2.0f * vecRight;
+    result.y += childFrame.size.y / 2.0f * vecDown;
     return result;
 }
 
@@ -249,30 +256,40 @@ void View2D::ApplyLayout() {
     };
 
     auto layoutRoot = [this, layoutRecurse]() {
-        auto child = FirstChildView();
-        GUARD(child)
-        child->owner->SetLocalPosition({ 0, 0, 0 });
+        auto childViews = ChildViews();
 
-        GUARD(child->layout)
+        for (int i = 0; i < childViews.size(); i++) {
+            auto isTopLevel = i > 0;
+            auto child = childViews[i];
 
-        ViewSizeProposal proposal({ .width = frame.size.x, .height = frame.size.y });
-        auto proxies = child->ChildViewProxies();
-        auto viewSize = child->layout->ViewSize(proposal, proxies);
+            // The first child view's layout determines its size
+            // Top level views have a fixed size, which must be calculated when the view is
+            // presented
+            if (child->layout && !isTopLevel) {
+                ViewSizeProposal proposal({ .width = frame.size.x, .height = frame.size.y });
 
-        // Pin unbounded frame values to root view size
-        if (viewSize.x == FloatMath::maxValue) {
-            viewSize.x = frame.size.x;
+                auto proxies = child->ChildViewProxies();
+                auto viewSize = child->layout->ViewSize(proposal, proxies);
+
+                // Pin unbounded frame values to root view size
+                if (viewSize.x == FloatMath::maxValue) {
+                    viewSize.x = frame.size.x;
+                }
+                if (viewSize.y == FloatMath::maxValue) {
+                    viewSize.y = frame.size.y;
+                }
+
+                Rect childBounds;
+                childBounds.size = viewSize;
+                child->SetFrame(childBounds);
+            }
+
+            child->owner->SetLocalPosition(
+                ViewToLocalPosition(child->frame.origin + child->frame.size / 2.0f)
+            );
+
+            layoutRecurse(*child);
         }
-        if (viewSize.y == FloatMath::maxValue) {
-            viewSize.y = frame.size.y;
-        }
-
-        Rect childBounds;
-        childBounds.size = viewSize;
-        child->SetFrame({ .origin = { frame.size.x / 2.0f - viewSize.x / 2.0f,
-                                      frame.size.y / 2.0f - viewSize.y / 2.0f },
-                          .size = viewSize });
-        layoutRecurse(*child);
     };
 
     // Root view has a fixed size and centers its first child
@@ -451,4 +468,77 @@ void View2D::SetNeedsRebuild() {
 void View2D::RebuildIfNeeded() {
     GUARD(needsRebuild);
     Rebuild();
+}
+
+VectorList<View2D*> View2D::TopLevelViews() {
+    auto rootView = RootView();
+    GUARDR(rootView, {})
+
+    auto childViews = rootView->ChildViews();
+    GUARDR(childViews.size() > 1, {})
+
+    // Top level views are the views after the first view in the root
+    childViews.erase(childViews.begin());
+    return childViews;
+}
+
+void View2D::Present(PresentTopLevelViewConfig config) {
+    GUARD(config.makeFrameFunc)
+    GUARD(config.buildViewFunc)
+
+    auto rootView = RootView();
+    GUARD(rootView)
+
+    ViewBuilder vb(*rootView->owner);
+    config.buildViewFunc(vb);
+
+    vb.QB().ModifyLatest<View2D>([&](auto& view) {
+        auto frame = config.makeFrameFunc(*this, view);
+        view.SetFrame(frame);
+        view.isTopLevel = true;
+    });
+}
+
+void View2D::Dismiss(View2D& view) {
+    auto topLevelViews = TopLevelViews();
+    GUARD(!IsEmpty(TopLevelViews()))
+
+    if (Contains(topLevelViews, &view)) {
+        auto* parent = view.owner->Parent();
+        GUARD(parent)
+
+        parent->Remove(*view.owner);
+    }
+}
+
+void View2D::PopTopLevel() {
+    auto topLevelViews = TopLevelViews();
+    GUARD(!IsEmpty(TopLevelViews()))
+
+    Dismiss(*topLevelViews[topLevelViews.size() - 1]);
+}
+
+void View2D::PopTo(View2D& view) {
+    auto topLevelViews = TopLevelViews();
+    GUARD(!IsEmpty(TopLevelViews()))
+
+    for (auto i = topLevelViews.rbegin(); i != topLevelViews.rend(); i++) {
+        auto& topLevelView = *i;
+        if (topLevelView == &view) {
+            return;
+        }
+        Dismiss(*topLevelView);
+    }
+}
+
+Vector2 View2D::ToRootViewPosition(Vector2 viewPosition) {
+    Vector2 result = viewPosition;
+
+    auto parent = this;
+    while (parent) {
+        result += parent->frame.origin;
+        parent = parent->ParentView();
+    }
+
+    return result;
 }

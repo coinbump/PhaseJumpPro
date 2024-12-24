@@ -12,11 +12,23 @@ namespace PJ {
     namespace EmitFuncs {
         using Func = Emitter::EmitFunc;
 
+        struct Spread2DConfig {
+            int count = 1;
+            Angle angleStep;
+            Angle varyAngle;
+        };
+
+        struct VaryAngleConfig {
+            int count = 1;
+            Angle angle;
+            Angle varyAngle;
+        };
+
         /// Emits N objects in 2D space, spread by N degrees each, centered to 0
-        Func MakeSpread2D(int count, Angle angleStep, Angle varyAngle);
+        Func Spread2D(Spread2DConfig config);
 
         /// Emits N objects in 2D space, with a varying emit angle
-        Emitter::EmitFunc MakeVaryAngle(int count, Angle angle, Angle varyAngle);
+        Emitter::EmitFunc VaryAngle(VaryAngleConfig config);
 
         /// Modifies an emit func by adding varying directional velocity
         Emitter::EmitFunc AddVaryDirectionVelocity(

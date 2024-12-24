@@ -11,12 +11,13 @@
 
 /*
  RATING: 4 stars
- Tested and works. Needs unit tests
+ Tested and works
  CODE REVIEW: 10/6/24
  */
 namespace PJ {
     class WorldNode;
     class DropFilesUIEvent;
+    class KeyDownUIEvent;
 
     /// A node hit with the local position hit inside the node
     struct LocalHit {

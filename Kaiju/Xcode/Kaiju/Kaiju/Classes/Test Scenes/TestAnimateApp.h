@@ -19,17 +19,17 @@ public:
         QB(root).Named("TestAnimateApp").OrthoStandard().OnDropFiles([](auto args) {
             AnimatedSpriteRenderer::TextureList textures;
             for (auto& filePath : std::get<1>(args).filePaths) {
-                LoadResourcesModel loadResourcesModel;
-                // FUTURE: need factory for load operations so this isn't bound to OpenGL
-                ResourceInfo info{ "", filePath, "texture" };
-                auto loadTexture = MAKE<SDLLoadGLTextureOperation>(info, loadResourcesModel);
+                ResourceRepositoryModel repoModel;
+                // TODO: use ResourceRepository here
+                ResourceInfo info{ .filePath = filePath, .type = ResourceType::Texture };
+                auto loadTexture = MAKE<SDLLoadGLTextureOperation>(info, repoModel);
                 loadTexture->Run();
 
                 auto successValue = loadTexture->result->SuccessValue();
                 GUARD_CONTINUE(successValue)
-                GUARD_CONTINUE(!IsEmpty(successValue->loadedResources))
+                GUARD_CONTINUE(!IsEmpty(successValue->resources))
 
-                auto texture = DCAST<SomeTexture>(successValue->loadedResources[0].resource);
+                auto texture = DCAST<SomeTexture>(successValue->resources[0].resource);
                 GUARD_CONTINUE(texture)
 
                 textures.push_back(texture);

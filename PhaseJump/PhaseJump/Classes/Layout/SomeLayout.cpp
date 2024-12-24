@@ -11,14 +11,12 @@ void SomeLayout::Awake() {
         LayoutIfNeeded();
         return FinishType::Continue;
     };
-    updatable.onUpdateFunc = onUpdateFunc;
+    GetUpdatable().onUpdateFunc = onUpdateFunc;
 
-    signalFuncs[SignalId::AddChildNode] = [this](auto& _component, auto& event) {
-        SetNeedsLayout();
-    };
-    signalFuncs[SignalId::RemoveChildNode] = [this](auto& _component, auto& event) {
-        SetNeedsLayout();
-    };
+    AddSignalHandler({ .id = SignalId::AddChildNode,
+                       .func = [this](auto& _component, auto& event) { SetNeedsLayout(); } });
+    AddSignalHandler({ .id = SignalId::RemoveChildNode,
+                       .func = [this](auto& _component, auto& event) { SetNeedsLayout(); } });
 }
 
 void SomeLayout::Start() {

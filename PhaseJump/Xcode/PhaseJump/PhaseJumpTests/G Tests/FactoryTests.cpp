@@ -31,27 +31,27 @@ namespace FactoryTests {
 using namespace FactoryTests;
 
 TEST(Factory, FactoryNew) {
-    Factory<TestClass> factory([]() { return MAKE<TestClass>(); });
-    EXPECT_NE(factory.New(), nullptr);
-    EXPECT_NE(DCAST<TestClass>(factory.New()), nullptr);
+    Factory<TestClass> factory([]() { return NEW<TestClass>(); });
+    EXPECT_NE(factory.Make(), nullptr);
+    EXPECT_NE(DCAST<TestClass>(factory.Make()), nullptr);
 }
 
 TEST(Factory, Factory) {
-    auto constructor = [] () -> SP<TestClass> { return MAKE<TestClass>(); };
+    auto constructor = [] () -> UP<TestClass> { return NEW<TestClass>(); };
 
     Factory<TestClass> factory(constructor);
-    EXPECT_NE(factory.New(), nullptr);
-    EXPECT_NE(DCAST<TestClass>(factory.New()), nullptr);
+    EXPECT_NE(factory.Make(), nullptr);
+    EXPECT_NE(DCAST<TestClass>(factory.Make()), nullptr);
 }
 
 TEST(Factory, FactoryNewWithArgs) {
-    Factory<TestClassWithArgs, int, String> factory([](int intValue, String stringValue) { return MAKE<TestClassWithArgs>(intValue, stringValue); });
+    Factory<TestClassWithArgs, int, String> factory([](int intValue, String stringValue) { return NEW<TestClassWithArgs>(intValue, stringValue); });
 
-    auto value = factory.New(10, "t");
+    auto value = factory.Make(10, "t");
     EXPECT_NE(value, nullptr);
 
     EXPECT_EQ(10, value->intValue);
     EXPECT_EQ("t", value->stringValue);
 
-    EXPECT_NE(DCAST<TestClassWithArgs>(factory.NewBase(11, "y")), nullptr);
+    EXPECT_NE(DCAST<TestClassWithArgs>(factory.MakeBase(11, "y")), nullptr);
 }

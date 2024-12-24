@@ -8,10 +8,10 @@ using namespace std;
 using namespace PJ;
 
 SomeDragHandler::SomeDragHandler() {
-    signalFuncs[SignalId::PointerDown] = [](auto& component, auto& signal) {
-        auto event = static_cast<PointerDownUIEvent const*>(&signal);
-        static_cast<This*>(&component)->OnPointerDown(*event);
-    };
+    AddSignalHandler<PointerDownUIEvent>({ .id = SignalId::PointerDown,
+                                           .func = [](auto& component, auto& event) {
+                                               static_cast<This*>(&component)->OnPointerDown(event);
+                                           } });
 }
 
 bool SomeDragHandler::IsDragging() const {

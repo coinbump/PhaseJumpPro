@@ -5,8 +5,6 @@
 
 using namespace PJ;
 
-VectorList<GLShaderProgram::Info> GLShaderProgram::Info::registry;
-
 GLShaderProgram::~GLShaderProgram() {
     if (glId) {
         glDeleteProgram(glId);
@@ -25,8 +23,6 @@ void GLShaderProgram::FlushShaders() {
     fragmentShader = nullptr;
 }
 
-/// Attach shaders. Use shared-ptr because there's no guarantee when we'll be
-/// done configuring the program
 void GLShaderProgram::AttachShaders(
     SP<VertexGLShader> vertexShader, SP<FragmentGLShader> fragmentShader
 ) {
@@ -48,8 +44,6 @@ void GLShaderProgram::AttachShaders(
     // - Link the shader program.
 }
 
-/// Bind attributes in vertex shader (Vertex shader only)
-/// You can either bind your own locations or use the defaults
 void GLShaderProgram::BindAttributeLocation(GLuint index, const GLchar* name) {
     if (0 == glId) {
         PJ::Log("ERROR. Create program before binding attribute locations");
@@ -60,10 +54,9 @@ void GLShaderProgram::BindAttributeLocation(GLuint index, const GLchar* name) {
     attributeLocations[String(name)] = index;
 }
 
-/// Verify the validity of the GL shader program and return the status
 GLint GLShaderProgram::Validate() {
-    GLint logLength;
-    GLint status = 0;
+    GLint logLength{};
+    GLint status{};
 
     glValidateProgram(glId);
     glGetProgramiv(glId, GL_INFO_LOG_LENGTH, &logLength);
@@ -102,11 +95,11 @@ bool GLShaderProgram::Link() {
     }
 
     GLsizei bufferSize = 255;
-    GLsizei length;
-    GLint size;
-    GLenum type;
+    GLsizei length{};
+    GLint size{};
+    GLenum type{};
 
-    GLint count;
+    GLint count{};
 
     // Must be called after program is linked
     glGetProgramiv(glId, GL_ACTIVE_ATTRIBUTES, &count);
@@ -138,14 +131,10 @@ bool GLShaderProgram::Configure(
 ) {
     AttachShaders(vertexShader, fragmentShader);
 
-    if (!Link()) {
-        return false;
-    }
+    GUARDR(Link(), {})
+    GUARDR(Validate(), {})
 
-    if (Validate() == GL_FALSE) {
-        return false;
-    }
-
+    // Once the shaders are linked to the shader program we don't need them anymore
     FlushShaders();
 
     return true;

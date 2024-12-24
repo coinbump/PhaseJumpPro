@@ -1,8 +1,8 @@
 #include "ResourceRepository.h"
 #include "Dev.h"
 #include "FileManager.h"
-#include "LoadResourcesModel.h"
-#include "LoadResourcesPlan.h"
+#include "ResourceRepositoryModel.h"
+#include "ResourceRepositoryPlan.h"
 #include "SomeLoadResourcesOperation.h"
 #include <filesystem>
 
@@ -11,15 +11,12 @@ using namespace PJ;
 namespace fs = std::filesystem;
 
 void ResourceRepository::Load(ResourceInfo info) {
-    if (nullptr == loadResourcesModel) {
-        return;
-    }
-
-    auto operations = LoadOperations(info);
+    // Important: don't use this in a shipping app. This blocks the main thread
+    auto operations = MakeLoadOperations(info);
     Run(operations);
 }
 
-void ResourceRepository::Run(List<SP<SomeLoadResourcesOperation>> const& operations) {
+void ResourceRepository::Run(VectorList<SP<SomeLoadResourcesOperation>> const& operations) {
     // FUTURE: support loading on background thread
     // FUTURE: support both main + background operations (load image on
     // background thread -> create OpenGL texture on main thread)
@@ -32,9 +29,8 @@ void ResourceRepository::Run(List<SP<SomeLoadResourcesOperation>> const& operati
             {
                 auto successValue = operation->result->SuccessValue();
                 if (successValue) {
-                    for (auto& loadedResource : successValue->loadedResources) {
-                        loadedResources->map[loadedResource.info.type][loadedResource.info.id] =
-                            loadedResource;
+                    for (auto& loadedResource : successValue->resources) {
+                        resourceCatalog.Add(loadedResource);
 
                         PJ::Log(
                             "Loaded Resource: ", loadedResource.info.id,
@@ -42,6 +38,9 @@ void ResourceRepository::Run(List<SP<SomeLoadResourcesOperation>> const& operati
                         );
                     }
 
+                    // Loading a resource can kickstart new load resource operations
+                    // Example: load metadata file + load image
+                    // Currently we assume that this can only happen once
                     auto& loadOperations = (*successValue).loadOperations;
                     Run(loadOperations);
                 }
@@ -54,8 +53,9 @@ void ResourceRepository::Run(List<SP<SomeLoadResourcesOperation>> const& operati
     }
 }
 
-List<SP<SomeLoadResourcesOperation>> ResourceRepository::LoadOperations(ResourceInfo info) {
-    auto operations = loadResourcesModel->MakeLoadOperations(info);
+VectorList<SP<SomeLoadResourcesOperation>> ResourceRepository::MakeLoadOperations(ResourceInfo info
+) {
+    auto operations = repoModel.MakeLoadOperations(info);
     if (IsEmpty(operations)) {
         PJ::Log("ERROR. No load operations for type: ", info.type);
         return operations;
@@ -64,12 +64,12 @@ List<SP<SomeLoadResourcesOperation>> ResourceRepository::LoadOperations(Resource
     return operations;
 }
 
-List<SP<SomeLoadResourcesOperation>> ResourceRepository::LoadOperations(LoadResourcesPlan plan) {
-    List<SP<SomeLoadResourcesOperation>> result;
+VectorList<SP<SomeLoadResourcesOperation>>
+ResourceRepository::MakeLoadOperations(ResourceRepositoryPlan plan) {
+    VectorList<SP<SomeLoadResourcesOperation>> result;
 
-    auto allInfos = plan.AllInfos();
-    for (auto& info : allInfos) {
-        auto operations = LoadOperations(info);
+    for (auto& info : plan.infos) {
+        auto operations = MakeLoadOperations(info);
         AddRange(result, operations);
     }
 

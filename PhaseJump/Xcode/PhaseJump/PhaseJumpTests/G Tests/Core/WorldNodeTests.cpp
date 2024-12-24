@@ -26,6 +26,44 @@ namespace WorldNodeTests {
 
 using namespace WorldNodeTests;
 
+TEST(WorldNode, IsEnabled)
+{
+    WorldNode sut("name");
+    EXPECT_EQ(String("name"), sut.name);
+    EXPECT_TRUE(sut.IsEnabled());
+    
+    sut.ToggleEnable();
+    EXPECT_FALSE(sut.IsEnabled());
+    
+    sut.Enable(true);
+    EXPECT_TRUE(sut.IsEnabled());
+
+    sut.Destroy();
+    EXPECT_FALSE(sut.IsEnabled());
+}
+
+TEST(WorldNode, IsVisible)
+{
+    WorldNode sut("name");
+    EXPECT_EQ(String("name"), sut.name);
+    EXPECT_TRUE(sut.IsVisible());
+    
+    sut.ToggleIsVisible();
+    EXPECT_FALSE(sut.IsVisible());
+    
+    sut.SetIsVisible(true);
+    EXPECT_TRUE(sut.IsVisible());
+    
+    sut.Hide();
+    EXPECT_FALSE(sut.IsVisible());
+    
+    sut.Show();
+    EXPECT_TRUE(sut.IsVisible());
+
+    sut.Destroy();
+    EXPECT_FALSE(sut.IsVisible());
+}
+
 TEST(WorldNode, Toggles)
 {
     WorldNode sut("name");
@@ -166,7 +204,7 @@ TEST(WorldNode, AddNode_Null)
     auto world = MAKE<World>();
     SP<WorldNode> sut;
     world->Add(sut);
-    EXPECT_EQ(0, world->root->ChildCount());
+    EXPECT_EQ(0, world->Root()->ChildCount());
 }
 
 TEST(WorldNode, RemoveNode)
@@ -594,9 +632,9 @@ TEST(WorldNode, OnAddChildNode)
 
     int value = 0;
     auto component = MAKE<WorldComponent<StandardCore>>();
-    component->signalFuncs[SignalId::AddChildNode] = [&](auto& owner, auto& event) {
+    component->AddSignalHandler({.id = SignalId::AddChildNode, .func = [&](auto& owner, auto& event) {
         value++;
-    };
+    }});
     sut->Add(component);
 
     EXPECT_EQ(0, value);
@@ -673,12 +711,63 @@ TEST(WorldNode, Signal)
     int signalCount{};
     
     auto sut = MAKE<WorldNode>();
-    sut->AddComponentIfNeeded<TestComponent>().signalFuncs["test"] = [&](auto& component, auto& signal) {
+    sut->AddComponentIfNeeded<TestComponent>().AddSignalHandler({.id = "test", .func = [&](auto& component, auto& signal) {
         signalCount++;
-    };
+    }});
     
     Event event;
     sut->Signal("test", event);
     
     ASSERT_EQ(1, signalCount);
+}
+
+TEST(WorldNode, SignalMultiple)
+{
+    int signalCount{};
+    
+    auto sut = MAKE<WorldNode>();
+    auto add = [&]() {
+        sut->AddComponentIfNeeded<TestComponent>().AddSignalHandler({.id = "test", .func = [&](auto& component, auto& signal) {
+        signalCount++;
+        }}).AddSignalHandler({.id = "test", .func = [&](auto& component, auto& signal) {
+            signalCount++;
+        }});
+    };
+    
+    add();
+    add();
+    
+    Event event;
+    sut->Signal("test", event);
+    
+    ASSERT_EQ(4, signalCount);
+}
+
+TEST(WorldNode, SignalDisabled)
+{
+    int signalCount{};
+    
+    auto sut = MAKE<WorldNode>();
+    sut->AddComponentIfNeeded<TestComponent>()
+        .AddSignalHandler({.id = "test", .func = [&](auto& component, auto& signal) {
+        signalCount++;
+        }}).Enable(false);
+    
+    Event event;
+    sut->Signal("test", event);
+    
+    ASSERT_EQ(0, signalCount);
+}
+
+TEST(SomeWorldComponent, AddComponentWithSignals)
+{
+    WorldNode node;
+    auto sut = MAKE<WorldComponent<>>("");
+    
+    EXPECT_FALSE(node.isListener);
+    
+    sut->AddSignalHandler({.id = "test"});
+    node.Add(sut);
+    
+    EXPECT_TRUE(node.isListener);
 }

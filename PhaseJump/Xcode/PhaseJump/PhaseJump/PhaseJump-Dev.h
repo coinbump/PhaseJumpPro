@@ -10,10 +10,13 @@
 #include <PhaseJump-Dev/BatchByMaterialRenderProcessor.h>
 #include <PhaseJump-Dev/BezierPath.h>
 #include <PhaseJump-Dev/BezierPathLayout.h>
+#include <PhaseJump-Dev/Bitmap.h>
+#include <PhaseJump-Dev/BitmapOperations.h>
 #include <PhaseJump-Dev/BlinkEffect.h>
 #include <PhaseJump-Dev/ButtonControl.h>
 #include <PhaseJump-Dev/CapsuleMeshBuilder.h>
 #include <PhaseJump-Dev/CameraCullRenderProcessor.h>
+#include <PhaseJump-Dev/CartesianUtils.h>
 #include <PhaseJump-Dev/CenterPolyFrameMeshBuilder.h>
 #include <PhaseJump-Dev/CenterPolyBuilder.h>
 #include <PhaseJump-Dev/CharacterController.h>
@@ -29,6 +32,8 @@
 #include <PhaseJump-Dev/DepthFirstOrderRenderProcessor.h>
 #include <PhaseJump-Dev/DesignSystem.h>
 #include <PhaseJump-Dev/DirectionKSteering2D.h>
+#include <PhaseJump-Dev/Document.h>
+#include <PhaseJump-Dev/DocumentBundle.h>
 #include <PhaseJump-Dev/DragHandler2D.h>
 #include <PhaseJump-Dev/DropFilesUIEvent.h>
 #include <PhaseJump-Dev/DuckDesignSystem.h>
@@ -54,7 +59,7 @@
 
 #include <PhaseJump-Dev/GLRenderEngine.h>
 #include <PhaseJump-Dev/GLShaderProgram.h>
-#include <PhaseJump-Dev/GLShaderProgramLoader.h>
+#include <PhaseJump-Dev/GLLoadShaderProgramOperation.h>
 #include <PhaseJump-Dev/GLTexture.h>
 #include <PhaseJump-Dev/GLTextureBuffer.h>
 #include <PhaseJump-Dev/GridMeshBuilder.h>
@@ -98,14 +103,13 @@
 #include <PhaseJump-Dev/PageView.h>
 #include <PhaseJump-Dev/PointerClickUIEvent.h>
 #include <PhaseJump-Dev/Shared.h>
-#include <PhaseJump-Dev/SharedVector.h>
+#include <PhaseJump-Dev/SharedVectorList.h>
 #include <PhaseJump-Dev/SQLDatabase.h>
 #include <PhaseJump-Dev/SDLAudioStream.h>
 #include <PhaseJump-Dev/SDLFileManager.h>
 #include <PhaseJump-Dev/SDLGLRenderContext.h>
 #include <PhaseJump-Dev/SDLLoadAudioStreamOperation.h>
 #include <PhaseJump-Dev/SDLLoadGLTextureOperation.h>
-#include <PhaseJump-Dev/SDLLoadSDLTextureOperation.h>
 #include <PhaseJump-Dev/SDLMouseDevice.h>
 #include <PhaseJump-Dev/SDLPlatformClass.h>
 #include <PhaseJump-Dev/SDLPlatformConfig.h>
@@ -122,12 +126,13 @@
 #include <PhaseJump-Dev/SomeControllerUIEvent.h>
 #include <PhaseJump-Dev/SomeDragHandler.h>
 #include <PhaseJump-Dev/SomeDropTarget.h>
+#include <PhaseJump-Dev/SomeKeyUIEvent.h>
 #include <PhaseJump-Dev/SomePointerUIEvent.h>
 #include <PhaseJump-Dev/SomeRenderCommandModel.h>
 #include <PhaseJump-Dev/SomeRenderEngine.h>
 #include <PhaseJump-Dev/SomeUIEvent.h>
 #include <PhaseJump-Dev/SpriteRenderer.h>
-#include <PhaseJump-Dev/StandardLoadResourcesModel.h>
+#include <PhaseJump-Dev/StandardResourceRepositoryModel.h>
 #include <PhaseJump-Dev/StandardRandom.h>
 #include <PhaseJump-Dev/StringUtils.h>
 #include <PhaseJump-Dev/Theme.h>

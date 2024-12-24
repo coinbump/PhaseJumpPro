@@ -1,5 +1,4 @@
-#ifndef SQLTABLESCHEMA_H
-#define SQLTABLESCHEMA_H
+#pragma once
 
 #include "VectorList.h"
 #include <optional>
@@ -29,5 +28,3 @@ namespace PJ {
         VectorList<SQLColumnSchema> columns;
     };
 } // namespace PJ
-
-#endif

@@ -14,9 +14,9 @@ SQLDatabase::~SQLDatabase() {
 }
 
 void SQLDatabase::Close() {
-    if (NULL != db) {
+    if (nullptr != db) {
         sqlite3_close(db);
-        db = NULL;
+        db = nullptr;
     }
 }
 
@@ -46,8 +46,8 @@ bool SQLDatabase::TryOpen(FilePath filePath, SQLDatabaseOpenType openType, int f
 
     this->filePath = filePath;
 
-    int openResult = sqlite3_open_v2(databasePath.c_str(), &db, flags, NULL);
-    auto isSuccess = (SQLITE_OK == openResult && NULL != db);
+    int openResult = sqlite3_open_v2(databasePath.c_str(), &db, flags, nullptr);
+    auto isSuccess = (SQLITE_OK == openResult && nullptr != db);
 
     if (!isSuccess) {
         throw(openResult);
@@ -67,8 +67,9 @@ int SQLDatabase::Prepare(SQLCommand& command) {
         return SQLITE_MISUSE;
     }
 
-    int result =
-        sqlite3_prepare_v2(db, command.statement.value.c_str(), -1, &command.sqliteStatement, NULL);
+    int result = sqlite3_prepare_v2(
+        db, command.statement.value.c_str(), -1, &command.sqliteStatement, nullptr
+    );
 
 #ifdef __SQL_DEBUG__
     PJ::Log("SQL. Prepare ", command.statement.value, " RESULT: ", result);
@@ -223,7 +224,7 @@ bool SQLDatabase::CreateTable(String tableName, String paramsString) {
 }
 
 void SQLDatabase::BeginTransaction() {
-    switch (transactionStateMachine->State()) {
+    switch (transactionStateMachine.State()) {
     case SQLDatabase::TransactionState::InTransaction:
         return; // Already in transaction
         break;
@@ -231,15 +232,15 @@ void SQLDatabase::BeginTransaction() {
         break;
     }
 
-    char* errorMessage = NULL;
-    if (SQLITE_OK == sqlite3_exec(db, "BEGIN TRANSACTION", NULL, NULL, &errorMessage)) {
-        transactionStateMachine->SetState(TransactionState::InTransaction);
+    char* errorMessage = nullptr;
+    if (SQLITE_OK == sqlite3_exec(db, "BEGIN TRANSACTION", nullptr, nullptr, &errorMessage)) {
+        transactionStateMachine.SetState(TransactionState::InTransaction);
     }
 }
 
 void SQLDatabase::EndTransaction() {
-    char* errorMessage = NULL;
-    if (SQLITE_OK == sqlite3_exec(db, "END TRANSACTION", NULL, NULL, &errorMessage)) {
-        transactionStateMachine->SetState(TransactionState::Default);
+    char* errorMessage = nullptr;
+    if (SQLITE_OK == sqlite3_exec(db, "END TRANSACTION", nullptr, nullptr, &errorMessage)) {
+        transactionStateMachine.SetState(TransactionState::Default);
     }
 }

@@ -6,16 +6,19 @@
 #include <memory>
 #include <SDL3/SDL.h>
 
-// CODE REVIEW: ?/23
+/*
+ RATING: 4 stars
+ Tested and works. Basic functionality
+ CODE REVIEW: 12/21/24
+ */
 namespace PJ {
     class SomeUIEvent;
     class World;
 
-    // TODO: vecotrList?
-    using SDLEventList = List<SDL_Event>;
+    using SDLEventList = VectorList<SDL_Event>;
 
+    /// Converts a list of SDL events into their corresponding PhaseJump event objects
     struct SDLUIEventsBuilder {
-        // TODO: Use UP here?
         UIEventList BuildUIEvents(SDLEventList const& events, float uiScale);
     };
 } // namespace PJ

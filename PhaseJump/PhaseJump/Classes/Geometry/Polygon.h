@@ -130,7 +130,7 @@ namespace PJ {
         This& Offset(Vector2 value);
 
         /// Returns the vertex at the specified index, which is modulo-wrapped if needed
-        Vector2 ModAt(size_t index) const {
+        Vector2 ModGet(size_t index) const {
             auto size = value.size();
             GUARDR(size > 0, {});
             return value[index >= 0 && index < size ? index : index % size];

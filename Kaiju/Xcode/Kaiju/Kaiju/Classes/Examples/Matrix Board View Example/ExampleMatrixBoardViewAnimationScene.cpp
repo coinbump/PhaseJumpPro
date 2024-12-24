@@ -65,7 +65,7 @@ void MatrixBoardViewAnimation::Scene::LoadInto(WorldNode& root) {
                     };
                     Override(limiter->onFireFunc, overrideFunc);
 
-                    handler.updatables.AddContinue([=](auto time) {
+                    handler.GetUpdatables().AddContinue([=](auto time) {
                         limiter->OnUpdate(time);
                         limiter->Fire();
                     });

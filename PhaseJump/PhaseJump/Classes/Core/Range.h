@@ -1,5 +1,4 @@
-#ifndef PJRANGE_H_
-#define PJRANGE_H_
+#pragma once
 
 /*
  RATING: 5 stars
@@ -101,5 +100,3 @@ namespace PJ {
         }
     };
 } // namespace PJ
-
-#endif

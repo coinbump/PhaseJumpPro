@@ -59,7 +59,7 @@ namespace PJ {
                 glType(glType),
                 normalize(normalize) {
                 this->data = MAKE<Data<>>();
-                this->data->CopyIn(data, componentCount * componentSize);
+                this->data->CopyIn((int8_t*)data, componentCount * componentSize);
             }
         };
 

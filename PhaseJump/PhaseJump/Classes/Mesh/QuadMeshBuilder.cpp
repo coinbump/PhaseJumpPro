@@ -23,7 +23,7 @@ Mesh QuadMeshBuilder::BuildMesh() {
                   { halfX * vecLeft, halfY * vecDown, 0 },
                   { halfX * vecRight, halfY * vecDown, 0 } });
 
-    result.SetTriangles(Mesh::TrianglesSpan(QuadMesh::triangles));
+    result.SetTriangles(QuadMesh::triangles);
     result.SetUVs(QuadMesh::uvs);
 
     return result;

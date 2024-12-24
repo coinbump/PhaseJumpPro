@@ -1,5 +1,4 @@
 #include "Matrix4x4.h"
-#include "Vector4.h"
 #include <sstream>
 #include <TSMatrix3D.h>
 #include <TSMatrix4D.h>

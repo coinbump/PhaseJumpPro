@@ -1,0 +1,72 @@
+{
+    "resources": [
+        {
+            "type": "shaderProgram",
+            "path": "pj_shaders/colorVary.shprog"
+        },
+        {
+            "type": "shaderProgram",
+            "path": "pj_shaders/colorUniform.shprog"
+        },
+        {
+            "type": "shaderProgram",
+            "path": "pj_shaders/textureInterpUniform.shprog"
+        },
+        {
+            "type": "shaderProgram",
+            "path": "pj_shaders/textureInvert.shprog"
+        },
+        {
+            "type": "shaderProgram",
+            "path": "pj_shaders/textureUniform.shprog"
+        },
+        {
+            "type": "shaderProgram",
+            "path": "pj_shaders/textureVary.shprog"
+        },
+        {
+            "type": "texture",
+            "path": "art/audio-pad.png"
+        },
+        {
+            "type": "texture",
+            "path": "art/heart-full.png"
+        },
+        {
+            "type": "rtexPacker.atlas",
+            "path": "art/man-run-atlas.json"
+        },
+        {
+            "type": "texture",
+            "path": "art/example-button-normal.png"
+        },
+        {
+            "type": "texture",
+            "path": "art/slider-thumb.png"
+        },
+        {
+            "type": "texture",
+            "path": "art/slider-track.png"
+        },
+        {
+            "type": "texture",
+            "path": "art/slider-thumb-v.png"
+        },
+        {
+            "type": "texture",
+            "path": "art/slider-track-v.png"
+        },
+        {
+            "type": "rtexPacker.atlas",
+            "path": "art/TestFont.json"
+        },
+        {
+            "type": "texturePacker.atlas",
+            "path": "art/TexturePacker.json"
+        },
+        {
+            "type": "bitmapFont",
+            "path": "art/ArialBlack-32.fnt"
+        }
+    ]
+}

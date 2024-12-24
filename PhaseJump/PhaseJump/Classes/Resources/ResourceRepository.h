@@ -1,56 +1,63 @@
-#ifndef PJRESOURCEREPOSITORY_H
-#define PJRESOURCEREPOSITORY_H
+#pragma once
 
 #include "FilePath.h"
-#include "LoadResourcesPlan.h"
 #include "OrderedMap.h"
-#include "ResourceModels.h"
+#include "ResourceCatalog.h"
+#include "ResourceRepositoryPlan.h"
 #include "Result.h"
 #include "SomeLoadResourcesOperation.h"
 #include "StringUtils.h"
 
-// CODE REVIEW: ?/23
+/*
+ RATING: 5 stars
+ Tested and works
+ CODE REVIEW: 12/20/24
+ */
 namespace PJ {
-    class LoadResourcesModel;
-    struct ResourceModel;
+    class ResourceRepositoryModel;
     struct ResourceInfo;
     class SomeFileManager;
-    struct ResourceModels;
 
     /// Interface to an object that loads resources
     class SomeResourceRepository {
     public:
         virtual ~SomeResourceRepository() {}
+
+        virtual VectorList<SP<SomeLoadResourcesOperation>> MakeLoadOperations(ResourceInfo info
+        ) = 0;
+        virtual VectorList<SP<SomeLoadResourcesOperation>>
+        MakeLoadOperations(ResourceRepositoryPlan plan) = 0;
     };
 
-    /// Scans and loads resources
+    /// Loads resources
     class ResourceRepository : public SomeResourceRepository {
     protected:
-        void Run(List<SP<SomeLoadResourcesOperation>> const& operations);
+        void Run(VectorList<SP<SomeLoadResourcesOperation>> const& operations);
 
     public:
-        // TODO: SP-audit
-        /// Defines how we're scanning/loading resources
-        SP<LoadResourcesModel> loadResourcesModel;
+        /// Contains registered factories to create load resource operations
+        ResourceRepositoryModel& repoModel;
 
         /// Destination for the loaded resources
-        SP<ResourceModels> loadedResources;
+        ResourceCatalog& resourceCatalog;
 
         /// File manager (for mock injection in unit tests)
-        SP<SomeFileManager> fm;
+        SomeFileManager& fm;
 
         ResourceRepository(
-            SP<LoadResourcesModel> loadResourcesModel, SP<ResourceModels> loadedResources,
-            SP<SomeFileManager> fm
+            ResourceRepositoryModel& repoModel, ResourceCatalog& resourceCatalog,
+            SomeFileManager& fm
         ) :
-            loadResourcesModel(loadResourcesModel),
-            loadedResources(loadedResources),
+            repoModel(repoModel),
+            resourceCatalog(resourceCatalog),
             fm(fm) {}
 
         void Load(ResourceInfo info);
-        List<SP<SomeLoadResourcesOperation>> LoadOperations(ResourceInfo info);
-        List<SP<SomeLoadResourcesOperation>> LoadOperations(LoadResourcesPlan plan);
+
+        // MARK: SomeResourceRepository
+
+        VectorList<SP<SomeLoadResourcesOperation>> MakeLoadOperations(ResourceInfo info) override;
+        VectorList<SP<SomeLoadResourcesOperation>> MakeLoadOperations(ResourceRepositoryPlan plan
+        ) override;
     };
 } // namespace PJ
-
-#endif

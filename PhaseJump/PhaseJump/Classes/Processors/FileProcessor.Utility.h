@@ -1,15 +1,14 @@
-#ifndef PJFILEPROCESSOR_UTILITY_H
-#define PJFILEPROCESSOR_UTILITY_H
+#pragma once
 
 #include "FilesProcessor.h"
 #include "StringUtils.h"
 #include <filesystem>
 
-// CODE REVIEW: ?/23
+// Experimental
 namespace PJ {
     //    namespace FileProcessor {
     //        namespace Utility {
-    //            // TODO: this should just be a func
+    //            // this should just be a func
     //            class RenameCSToHFileProcessor : public FileProcessor {
     //                void Process(FilePath path) override {
     //                    std::error_code error;
@@ -21,5 +20,3 @@ namespace PJ {
     //        } // namespace Utility
     //    } // namespace FileProcessor
 } // namespace PJ
-
-#endif

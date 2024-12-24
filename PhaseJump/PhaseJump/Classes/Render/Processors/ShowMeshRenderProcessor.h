@@ -18,11 +18,11 @@ namespace PJ {
         Color color;
 
         ShowMeshRenderProcessor(Color color = Color::blue) :
-            Base("Show mesh", { RenderPhase::Camera }),
+            Base({ .name = "Show mesh", .phases = { RenderPhase::Camera } }),
             color(color) {}
 
         // MARK: RenderProcessor
 
-        void Process(CameraRenderModel& cameraModel) override;
+        void Process(RenderCameraModel& cameraModel) override;
     };
 } // namespace PJ

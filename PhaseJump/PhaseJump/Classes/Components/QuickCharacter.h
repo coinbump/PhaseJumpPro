@@ -3,7 +3,11 @@
 #include "CharacterController.h"
 #include "Timeline.h"
 
-// /23
+/*
+ RATING: 5 stars
+ Tested and works
+ CODE REVIEW: 12/15/24
+ */
 namespace PJ {
     /// Tool to quickly build a character controller
     class QuickCharacter {

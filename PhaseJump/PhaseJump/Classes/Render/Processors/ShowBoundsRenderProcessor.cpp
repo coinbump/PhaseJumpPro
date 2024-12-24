@@ -11,7 +11,7 @@
 using namespace std;
 using namespace PJ;
 
-void ShowBoundsRenderProcessor::Process(CameraRenderModel& cameraModel) {
+void ShowBoundsRenderProcessor::Process(RenderCameraModel& cameraModel) {
     auto boundsMaterial = ColorRenderer::MakeMaterial(RenderOpacityTypeFor(color));
     cameraModel.materials.push_back(boundsMaterial);
 

@@ -1,7 +1,7 @@
 #pragma once
 
+#include "LayoutTypes.h"
 #include "Vector2.h"
-#include "ViewPoint.h"
 #include "ViewSizeProposal.h"
 #include <functional>
 
@@ -25,7 +25,7 @@ namespace PJ {
             view(view) {}
 
         using ViewSizeFunc = std::function<Vector2(This const&, ViewSizeProposal)>;
-        using PlaceViewFunc = std::function<void(This&, Vector2, ViewPoint, ViewSizeProposal)>;
+        using PlaceViewFunc = std::function<void(This&, Vector2, LayoutAnchor2D, ViewSizeProposal)>;
 
         ViewSizeFunc viewSizeFunc;
         PlaceViewFunc placeViewFunc;
@@ -45,7 +45,7 @@ namespace PJ {
         bool IsAxisUnbounded(Axis2D axis, ViewSizeProposal proposal) const;
 
         /// Place the view at the specified anchor with the size proposal
-        void PlaceView(Vector2 viewPosition, ViewPoint anchor, ViewSizeProposal proposal);
+        void PlaceView(Vector2 viewPosition, LayoutAnchor2D anchor, ViewSizeProposal proposal);
 
         /// @return Returns a view size func that specifies a fixed size
         static ViewSizeFunc MakeFixedViewSizeFunc(Vector2 size) {

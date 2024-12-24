@@ -14,7 +14,7 @@ TextRenderer* TextView::Renderer() {
     auto world = owner->World();
     GUARDR(world, {})
 
-    auto font = world->FindFont(config.fontSpec);
+    auto font = FindFont(world->resources, config.fontSpec);
     GUARDR_LOG(font, {}, "ERROR: Missing font");
 
     owner->AddComponent<TextRenderer>(TextRenderer::Config{
@@ -53,10 +53,10 @@ TextView::TextView(Config config) :
     this->config = config;
 }
 
-void TextView::SetText(StringView value) {
+void TextView::SetText(String value) {
     auto renderer = Renderer();
     GUARD(renderer);
-    GUARD(value != renderer->Text())
+    GUARD(value != renderer->PlainText())
 
     renderer->SetText(value);
     SetNeedsLayout();

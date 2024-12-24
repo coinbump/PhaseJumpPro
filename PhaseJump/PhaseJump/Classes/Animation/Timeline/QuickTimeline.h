@@ -3,6 +3,11 @@
 #include "Timeline.h"
 #include "WorldNode.h"
 
+/*
+ RATING: 5 stars
+ Tested and works
+ CODE REVIEW: 12/20/24
+ */
 namespace PJ {
     enum class AnimatePositionType {
         /// Animate positions relative to starting position

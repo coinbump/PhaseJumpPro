@@ -7,7 +7,7 @@
 using namespace std;
 using namespace PJ;
 
-void CameraCullRenderProcessor::Process(CameraRenderModel& cameraModel) {
+void CameraCullRenderProcessor::Process(RenderCameraModel& cameraModel) {
     GUARD(cameraModel.camera)
 
     auto beforeCullCount = cameraModel.models.size();

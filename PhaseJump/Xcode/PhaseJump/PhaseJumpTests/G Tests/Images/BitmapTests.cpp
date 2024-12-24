@@ -1,6 +1,7 @@
 #include "gtest/gtest.h"
 
 #include "Bitmap.h"
+#include "BitmapOperations.h"
 
 using namespace std;
 using namespace PJ;
@@ -131,8 +132,9 @@ TEST(Bitmap, FlipV)
     sut.SetPixelColor(Vector2Int(0, 1), Color::blue);
     sut.SetPixelColor(Vector2Int(1, 1), Color::white);
 
-    sut.FlipV();
-
+    auto flipVOperation = BitmapOperations::FlipV(sut);
+    flipVOperation->Run();
+    
     {
         auto scanlineData = sut.ScanLineData(0);
         EXPECT_EQ(2, scanlineData.size());

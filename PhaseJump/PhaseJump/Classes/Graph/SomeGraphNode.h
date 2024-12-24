@@ -1,12 +1,12 @@
 #pragma once
 
 #include "List.h"
-#include "OrderedSet.h"
 #include "SomeReference.h"
 #include "StandardCore.h"
 #include "StandardEdgeCore.h"
 #include "StringUtils.h"
 #include "Tags.h"
+#include "UnorderedSet.h"
 #include "Updatable.h"
 #include "VectorList.h"
 #include "Void.h"
@@ -15,39 +15,38 @@
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 5/12/23
+ CODE REVIEW: 12/21/24
  */
 namespace PJ {
-    /// Use to build trees, graphs, state machines, etc.
+    /**
+     Use to build trees, graphs, state machines with edges.
+
+     Don't use this for simple trees. Use TreeNode/Treeable for that. The purpose of this class is
+     to allow you to attach properties to graph edges
+     */
     template <class EdgeCore = StandardEdgeCore, class Core = Void>
-    class SomeGraphNode : public Base, public Updatable {
+    class SomeGraphNode : public Base {
     public:
         using This = SomeGraphNode<EdgeCore, Core>;
         using Node = This;
-        using NodeWeakPtr = WP<Node>;
         using NodeSharedPtr = SP<Node>;
         using NodeReference = SomeReference<Node>;
-        using NodeReferenceSharedPtr = SP<SomeReference<Node>>;
-        // TODO: why is this set ordered?
-        using NodeSet = OrderedSet<NodeSharedPtr>;
-        using WeakNodeSet = OrderedSet<NodeWeakPtr, std::owner_less<NodeWeakPtr>>;
+        using NodeSet = UnorderedSet<NodeSharedPtr>;
+        using WeakNodeSet = UnorderedSet<Node*>;
         using NodeList = VectorList<NodeSharedPtr>;
 
         struct Edge {
-            // TODO: doesn't make sense
-            NodeWeakPtr fromNode;
+            Node* fromNode{};
             EdgeCore core;
-            NodeReferenceSharedPtr toNode;
+            UP<SomeReference<Node>> toNode;
 
-            Edge(NodeWeakPtr fromNode, EdgeCore model, NodeReferenceSharedPtr toNode) :
+            Edge(Node* fromNode, EdgeCore model, UP<SomeReference<Node>>& toNode) :
                 fromNode(fromNode),
                 core(model),
-                toNode(toNode) {}
+                toNode(std::move(toNode)) {}
         };
 
-        using EdgeSharedPtr = SP<Edge>;
-        using EdgePtr = EdgeSharedPtr const&;
-        using EdgeList = VectorList<EdgeSharedPtr>;
+        using EdgeList = VectorList<UP<Edge>>;
 
         String id;
         Core core{};
@@ -56,8 +55,6 @@ namespace PJ {
 
     protected:
         EdgeList edges;
-        // TODO: why weak pointers? When a node is removed from the graph, it should remove all
-        // references to itself, so...
         WeakNodeSet fromNodes;
 
     public:
@@ -92,31 +89,32 @@ namespace PJ {
 
         virtual NodeSharedPtr AddEdge(NodeSharedPtr toNode, EdgeCore model = EdgeCore()) = 0;
 
-        void AddEdgeInternal(EdgeCore model, NodeReferenceSharedPtr toNode) {
+        void AddEdgeInternal(EdgeCore model, UP<SomeReference<Node>>& toNode) {
             if (nullptr == toNode || nullptr == toNode->Value()) {
                 return;
             }
 
-            auto fromNode = SCAST<Node>(this->shared_from_this());
-            auto forwardEdge = MAKE<Edge>(fromNode, model, toNode);
-            Add(edges, forwardEdge);
-            toNode->Value()->FromNodes().insert(fromNode);
+            toNode->Value()->FromNodes().insert(this);
+            auto forwardEdge = NEW<Edge>(this, model, toNode);
+            edges.push_back(std::move(forwardEdge));
         }
 
-        void RemoveEdge(EdgePtr _edge) {
-            if (nullptr == _edge) {
+        void AddEdgeInternal(EdgeCore model, UP<SomeReference<Node>>&& toNode) {
+            if (nullptr == toNode || nullptr == toNode->Value()) {
                 return;
             }
 
-            auto edge = _edge;
-            Remove(edges, edge);
+            toNode->Value()->FromNodes().insert(this);
+            auto forwardEdge = NEW<Edge>(this, model, toNode);
+            edges.push_back(std::move(forwardEdge));
+        }
 
-            if (nullptr == edge->toNode->Value()) {
-                return;
+        void RemoveEdge(Edge& _edge) {
+            if (_edge.toNode && _edge.toNode->Value()) {
+                _edge.toNode->Value()->FromNodes().erase(this);
             }
 
-            NodeWeakPtr fromNode = SCAST<Node>(this->shared_from_this());
-            edge->toNode->Value()->FromNodes().erase(fromNode);
+            RemoveFirstIf(edges, [&](auto& edge) { return edge.get() == &_edge; });
         }
 
         void RemoveEdgesFrom(Node& fromNode) {
@@ -124,23 +122,20 @@ namespace PJ {
         }
 
         void RemoveEdgesTo(Node& toNode) {
-            auto iterEdges = edges;
+            VectorList<Edge*> iterEdges = Map<Edge*>(edges, [](auto& edge) { return edge.get(); });
             for (auto& edge : iterEdges) {
                 auto edgeValue = edge->toNode->Value();
                 if (edgeValue.get() == &toNode) {
-                    RemoveEdge(edge);
+                    RemoveEdge(*edge);
                 }
             }
         }
 
         void RemoveAllEdges() {
-            auto iterEdges = EdgeList(edges);
+            VectorList<Edge*> iterEdges = Map<Edge*>(edges, [](auto& edge) { return edge.get(); });
             for (auto& edge : iterEdges) {
-                RemoveEdge(edge);
+                RemoveEdge(*edge);
             }
         }
-
-    public:
-        void OnUpdate(TimeSlice time) override {}
     };
 } // namespace PJ

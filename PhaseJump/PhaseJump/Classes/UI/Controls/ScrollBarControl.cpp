@@ -6,6 +6,7 @@
 using namespace std;
 using namespace PJ;
 
+#if FALSE
 ScrollBarControl::ScrollBarControl(Axis2D axis) :
     axis(axis) {}
 
@@ -140,3 +141,4 @@ void ScrollBarControl::OnDragThumbUpdate(WorldNode& thumb, Vector2 inputPosition
     auto newValue = (newPos.AxisValue(axis) - minThumbPos) / (maxThumbPos - minThumbPos);
     Value().SetValue(newValue);
 }
+#endif

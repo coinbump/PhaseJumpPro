@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SomeAligner.h"
+#include "AlignFunc.h"
 
 /*
  RATING: 5 stars
@@ -10,8 +10,8 @@
 namespace PJ {
     /// Combines horizontal and vertical alignment
     struct Alignment2D {
-        AlignFunc xAlignFunc;
-        AlignFunc yAlignFunc;
+        AlignFunc xAlignFunc = AlignFuncs::center;
+        AlignFunc yAlignFunc = AlignFuncs::center;
 
         static const Alignment2D topLeading;
         static const Alignment2D top;

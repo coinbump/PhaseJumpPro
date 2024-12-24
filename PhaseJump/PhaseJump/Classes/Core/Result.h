@@ -6,11 +6,12 @@
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 7/18/24
+ CODE REVIEW: 12/20/24
  */
 namespace PJ {
     enum class ResultType { Success, Failure };
 
+    /// Standard result type that holds either success or failure
     template <class Success, class Failure>
     class Result {
     protected:

@@ -13,7 +13,7 @@
  */
 namespace PJ {
 #if PSEUDOCODE
-    // TODO: Why do we need this? Just make it all static?
+    // Why do we need this? Just make it all static?
     class ColorRendererClass : public SomeRendererClass {
         class ImGuiInspectorBuilder {
         public:
@@ -64,13 +64,13 @@ namespace PJ {
 #endif
 
     /// Renders a uniform color
-    class ColorRenderer : public SomeRenderer {
+    class ColorRenderer : public SomeMaterialRenderer {
     public:
 #if PSEUDOCODE
         MIRROR_CLASS(ColorRendererClass);
 #endif
 
-        using Base = SomeRenderer;
+        using Base = SomeMaterialRenderer;
         using This = ColorRenderer;
 
         struct Config {

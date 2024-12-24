@@ -2,7 +2,7 @@
 
 #include "Vector2.h"
 
-// CODE REVIEW: ?/23
+// Future feature. Unimplemented
 namespace PJ {
     enum class FocusDirection { Forward, Back, Up, Down, Left, Right };
 

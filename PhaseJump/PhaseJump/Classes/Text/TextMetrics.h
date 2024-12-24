@@ -1,5 +1,6 @@
 #pragma once
 
+#include "AttributedString.h"
 #include "StringUtils.h"
 #include "Vector2.h"
 #include "VectorList.h"
@@ -7,7 +8,7 @@
 /*
  RATING: 5 stars
  Has unit tests
- COD EREVIEW: 11/28/24
+ CODE REVIEW: 11/28/24
  */
 namespace PJ {
     /// Stores metrics for a measured line of text
@@ -16,6 +17,7 @@ namespace PJ {
         struct CharMetric {
             String text;
             float advanceX = 0;
+            VectorList<TextPart> attributes;
         };
 
         String text;
@@ -32,10 +34,11 @@ namespace PJ {
         /// Line start index in the source text
         size_t sourceIndex = 0;
 
-        void Add(StringView _char, float advanceX) {
+        void Add(StringView _char, float advanceX, VectorList<TextPart> attributes) {
             CharMetric cm;
             cm.text = _char;
             cm.advanceX = advanceX;
+            cm.attributes = attributes;
             charMetrics.push_back(cm);
 
             text += _char;

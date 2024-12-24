@@ -3,7 +3,6 @@
 using namespace PJ;
 
 void ZQuad::FlipV() {
-    ZQuad quad = *this;
     std::swap(value[0], value[2]);
     std::swap(value[1], value[3]);
 }
@@ -14,34 +13,34 @@ void ZQuad::FlipH() {
 }
 
 void ZQuad::Turn(int numRotations) {
-    // TODO: I think this is wrong?
-    numRotations = numRotations % 4;
-    for (int i = 0; i < numRotations; i++) {
-        ZQuad quad = *this;
-        value[0] = quad[1];
-        value[1] = quad[3];
-        value[2] = quad[0];
-        value[3] = quad[2];
-    }
-}
+    if (numRotations < 0) {
+        numRotations = -numRotations;
+        numRotations = numRotations % 4;
+        for (int i = 0; i < numRotations; i++) {
+            ZQuad quad = *this;
 
-void ZQuad::TurnLeft(int numRotations) {
-    numRotations = numRotations % 4;
-    // TODO: I think this is wrong?
-    for (int i = 0; i < numRotations; i++) {
-        ZQuad quad = *this;
-
-        value[0] = quad[2];
-        value[1] = quad[0];
-        value[2] = quad[3];
-        value[3] = quad[1];
+            value[0] = quad.value[1];
+            value[1] = quad.value[3];
+            value[2] = quad.value[0];
+            value[3] = quad.value[2];
+        }
+    } else {
+        numRotations = numRotations % 4;
+        for (int i = 0; i < numRotations; i++) {
+            ZQuad quad = *this;
+            value[0] = quad.value[2];
+            value[1] = quad.value[0];
+            value[2] = quad.value[3];
+            value[3] = quad.value[1];
+        }
     }
 }
 
 void ZQuad::Offset(Vector3 offset) {
-    for (int i = 0; i < 4; i++) {
-        value[i] += offset;
-    }
+    value[0] += offset;
+    value[1] += offset;
+    value[2] += offset;
+    value[3] += offset;
 }
 
 int ZQuad::VertexIndexToCornerIndex(int index) {

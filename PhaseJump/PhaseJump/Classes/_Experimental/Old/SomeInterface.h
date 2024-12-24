@@ -1,5 +1,4 @@
-#ifndef PJSOMEINTERFACE_h
-#define PJSOMEINTERFACE_h
+#pragma once
 
 #include "Class.h"
 #include "ClassIds.h"
@@ -9,7 +8,7 @@
 
 // #define CLASS(id, Type)
 
-// CODE REVIEW: ?/23
+// Experimental code
 namespace PJ {
     /// A window for displaying GUI
     class SomeWindow {
@@ -106,5 +105,3 @@ namespace GLFWKit {
     //        }
     //    }
 }
-
-#endif

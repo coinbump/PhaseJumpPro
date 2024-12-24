@@ -12,10 +12,9 @@
 
 /*
  RATING: 5 stars
- Simple type
- CODE REVIEW: 7/21/23
+ Tested and works
+ CODE REVIEW: 12/21/24
  */
-// TODO: needs unit tests
 namespace PJ {
     class SomeShaderProgram;
 
@@ -64,36 +63,28 @@ namespace PJ {
             return propertyId;
         }
 
-        void SetShaderProgram(SP<SomeShaderProgram> program) {
-            GUARD(program && shaderProgram != program);
-            shaderProgram = program;
+        /// Sets the shader program for this material
+        void SetShaderProgram(SP<SomeShaderProgram> program);
 
-            OnChange();
+        /// @return Returns the shader program for this material
+        SomeShaderProgram* ShaderProgram() const {
+            return shaderProgram.get();
         }
 
-        SP<SomeShaderProgram> ShaderProgram() const {
-            return shaderProgram;
-        }
-
-        /// Warning: Avoid using uniforms. They can't be batch-rendered
+        /// @return Returns the list of uniform colors (Warning: avoid uniforms, they can't be batch
+        /// rendered)
         VectorList<Color> const& UniformColors() const {
             return uniformColors;
         }
 
-        void AddUniformColor(Color color) {
-            PJ::Add(uniformColors, color);
+        /// Adds a uniform color (Warning: avoid uniforms, they can't be batch rendered)
+        void AddUniformColor(Color color);
 
-            OnChange();
-        }
+        /// Sets the uniform color (Warning: avoid uniforms, they can't be batch rendered)
+        void SetUniformColor(size_t index, Color color);
 
-        void SetUniformColor(size_t index, Color color) {
-            GUARD(index < uniformColors.size());
-            uniformColors[index] = color;
-
-            OnChange();
-        }
-
-        /// Warning: Avoid using uniforms. They can't be batch-rendered
+        /// @return Returns the list of uniform floats. (Warning: avoid uniforms, they can't be
+        /// batch rendered)
         VectorList<float> const& UniformFloats() const {
             return uniformFloats;
         }
@@ -106,43 +97,21 @@ namespace PJ {
             return textures;
         }
 
-        /// Set the texture if one exists, or add it if missing (only used for single-texture
+        /// Sets the texture if one exists, or add it if missing (only used for single-texture
         /// materials)
-        void SetTexture(SP<SomeTexture> texture) {
-            GUARD(texture)
+        void SetTexture(SP<SomeTexture> texture);
 
-            if (textures.size() == 1 && textures[0] == texture) {
-                return;
-            }
+        /// Adds the texture's render texture to the material
+        void Add(SP<SomeTexture> texture);
 
-            textures = { texture };
-            OnChange();
-        }
+        /// Enables or disables a feature for this material
+        void EnableFeature(String feature, bool isEnabled);
 
-        /// Add the texture's render texture to the material
-        void Add(SP<SomeTexture> texture) {
-            GUARD(texture)
-            PJ::Add(textures, texture);
+        /// Updates all feature enabled states for this material
+        void SetFeatureStates(FeatureStateMap const& value);
 
-            OnChange();
-        }
-
-        void EnableFeature(String feature, bool isEnabled) {
-            features[feature] =
-                isEnabled ? RenderFeatureState::Enable : RenderFeatureState::Disable;
-
-            OnChange();
-        }
-
-        void SetFeatureStates(FeatureStateMap const& value) {
-            features = value;
-            OnChange();
-        }
-
-        /// A unique string that determines if this material can be rendered with the same draw call
-        /// as others
+        /// @return Returns a unique string that determines if this material can be rendered with
+        /// the same draw call as others
         String BuildPropertyId() const;
-
-        bool operator==(RenderMaterial const& rhs) const;
     };
 } // namespace PJ

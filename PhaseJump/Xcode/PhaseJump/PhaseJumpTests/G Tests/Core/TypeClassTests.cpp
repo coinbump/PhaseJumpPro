@@ -20,7 +20,7 @@ using namespace TypeClassTests;
 
 TEST(TypeClass, InitWithDefaultConstructor)
 {
-    TypeClass<TestType> sut("id", []() { return MAKE<TestType>(""); });
+    TypeClass<TestType> sut("id", []() { return NEW<TestType>(""); });
     auto object = sut.Make();
     GTEST_ASSERT_NE(nullptr, object);
     EXPECT_EQ("", object->value);
@@ -28,7 +28,7 @@ TEST(TypeClass, InitWithDefaultConstructor)
 
 TEST(TypeClass, InitWithCustomAllocatr)
 {
-    TypeClass<TestType> sut("id", []() { return MAKE<TestType>("test"); });
+    TypeClass<TestType> sut("id", []() { return NEW<TestType>("test"); });
     auto object = sut.Make();
     GTEST_ASSERT_NE(nullptr, object);
     EXPECT_EQ("test", object->value);

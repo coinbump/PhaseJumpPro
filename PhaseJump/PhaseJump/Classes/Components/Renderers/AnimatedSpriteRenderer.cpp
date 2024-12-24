@@ -8,6 +8,7 @@
 #include "RenderMaterial.h"
 #include "RenderModel.h"
 #include "RenderModelBuilder.h"
+#include "ResourceCatalog.h"
 #include "SomeRenderEngine.h"
 #include "SomeShaderProgram.h"
 #include "TextureAtlas.h"
@@ -19,13 +20,13 @@ using namespace std;
 using namespace PJ;
 
 UnorderedSet<SP<SomeTexture>>
-FindTextures(World& world, VectorList<AnimatedSpriteRenderer::KeyframeModel> const& models) {
+_FindTextures(World& world, VectorList<AnimatedSpriteRenderer::KeyframeModel> const& models) {
     VectorList<String> textureIds =
         Map<String>(models, [](auto& model) { return model.textureId; });
     textureIds = Filter(textureIds, [](auto& textureId) { return textureId.length() > 0; });
 
     UnorderedSet<String> textureIdSet(textureIds.begin(), textureIds.end());
-    return world.FindTextures(textureIdSet);
+    return world.resources.TypeSet<SomeTexture>(ResourceType::Texture, textureIdSet);
 }
 
 void AnimatedSpriteRenderer::SetTextures(VectorList<SP<SomeTexture>> const& textures) {
@@ -52,11 +53,47 @@ void AnimatedSpriteRenderer::SetTextures(VectorList<SP<SomeTexture>> const& text
 AnimatedSpriteRenderer::AnimatedSpriteRenderer(Config config) :
     Base({}) {
 
-    model.material = MAKE<RenderMaterial>(RenderMaterial::Config{ .shaderId = "texture.vary" });
+    model.material =
+        MAKE<RenderMaterial>(RenderMaterial::Config{ .shaderId = ShaderId::TextureVary });
 
-    model.SetBuildMeshFunc([](auto& model) {
+    model.SetBuildMeshFunc([this](auto& model) {
         QuadMeshBuilder builder(model.WorldSize());
-        return builder.BuildMesh();
+        auto result = builder.BuildMesh();
+
+        GUARDR(frame >= 0 && frame < frames.size(), result)
+        auto frameModel = frames[frame];
+
+        auto offset = frameModel.offset;
+        if (flipX) {
+            offset.x = -offset.x;
+        }
+        if (flipY) {
+            offset.y = -offset.y;
+        }
+
+        result.Offset(offset);
+
+        std::transform(
+            result.UVs().cbegin(), result.UVs().cend(), result.UVs().begin(),
+            [this](Vector2 uv) {
+                if (flipX) {
+                    uv.x = 1.0f - uv.x;
+                }
+
+                if (flipY) {
+                    uv.y = 1.0f - uv.y;
+                }
+                return uv;
+            }
+        );
+
+        GUARDR(model.Material(), result)
+        auto& textures = model.Material()->Textures();
+        if (!IsEmpty(textures)) {
+            UVTransformFuncs::textureCoordinates(*textures[0], result.UVs());
+        }
+
+        return result;
     });
 
     model.material->EnableFeature(RenderFeature::Blend, true);
@@ -84,31 +121,29 @@ AnimatedSpriteRenderer::AnimatedSpriteRenderer(Config config) :
         auto renderer = static_cast<This*>(&component);
 
         planner
-            .InputBool(
-                "Flip X", { [=]() { return renderer->flipX; },
-                            [=](auto& value) { renderer->SetFlipX(value); } }
-            )
-            .InputBool(
-                "Flip Y", { [=]() { return renderer->flipY; },
-                            [=](auto& value) { renderer->SetFlipY(value); } }
-            );
+            .InputBool({ .label = "Flip X",
+                         .binding = { [=]() { return renderer->flipX; },
+                                      [=](auto& value) { renderer->SetFlipX(value); } } })
+            .InputBool({ .label = "Flip Y",
+                         .binding = { [=]() { return renderer->flipY; },
+                                      [=](auto& value) { renderer->SetFlipY(value); } } });
 
         FramePlayable* rateFramePlayable =
             dynamic_cast<FramePlayable*>(renderer->framePlayable.get());
         if (rateFramePlayable) {
             VectorList<String> cycleOptions{ "Once", "PingPong", "Loop" };
             planner
-                .InputFloat(
-                    "Frame rate", { [=]() { return rateFramePlayable->FrameRate(); },
-                                    [=](auto& value) { rateFramePlayable->SetFrameRate(value); } }
-                )
-                .PickerList(
-                    "Animation cycle", cycleOptions,
-                    { [=]() { return (int)rateFramePlayable->CycleType(); },
-                      [=](auto& value) {
-                          rateFramePlayable->SetCycleType((AnimationCycleType)value);
-                      } }
-                );
+                .InputFloat({ .label = "Frame rate",
+                              .binding = {
+                                  [=]() { return rateFramePlayable->FrameRate(); },
+                                  [=](auto& value) { rateFramePlayable->SetFrameRate(value); } } })
+                .PickerList({ .label = "Animation cycle",
+                              .options = cycleOptions,
+                              .binding = { [=]() { return (int)rateFramePlayable->CycleType(); },
+                                           [=](auto& value) {
+                                               rateFramePlayable->SetCycleType((AnimationCycleType
+                                               )value);
+                                           } } });
         }
     };
     Override(planUIFuncs[UIContextId::Inspector], planUIFunc);
@@ -145,50 +180,19 @@ void AnimatedSpriteRenderer::Configure() {
     model.SetBuildRenderModelsFunc([this](auto& model) {
         VectorList<RenderModel> result;
 
-        auto material = model.material;
-        if (nullptr == material) {
-            PJ::Log("ERROR. Missing material.");
-            return result;
-        }
+        auto material = model.material.get();
+        GUARDR_LOG(material, result, "ERROR. Missing material")
 
         GUARDR(owner, result)
         GUARDR(frame >= 0 && frame < frames.size(), result)
         auto frameModel = frames[frame];
 
-        auto& frameTexture = frameModel.texture;
-        GUARDR(frameTexture, result)
+        auto renderModel = RenderModelBuilder().Build(*this, model);
+        GUARDR(renderModel, result)
 
-        Mesh mesh = model.Mesh();
-        auto offset = frameModel.offset;
-        if (flipX) {
-            offset.x = -offset.x;
-        }
-        if (flipY) {
-            offset.y = -offset.y;
-        }
+        renderModel->SetVertexColors(std::span<RenderColor const>(model.VertexColors()));
 
-        mesh.OffsetBy(offset);
-
-        std::transform(
-            mesh.UVs().cbegin(), mesh.UVs().cend(), mesh.UVs().begin(),
-            [this](Vector2 uv) {
-                if (flipX) {
-                    uv.x = 1.0f - uv.x;
-                }
-
-                if (flipY) {
-                    uv.y = 1.0f - uv.y;
-                }
-                return uv;
-            }
-        );
-
-        RenderModelBuilder builder;
-        VectorList<SP<SomeTexture>> textures{ frameModel.texture };
-        auto renderModel = builder.Build(*this, mesh, *material, textures);
-        renderModel.SetVertexColors(std::span<RenderColor const>(model.VertexColors()));
-
-        result.push_back(renderModel);
+        result.push_back(*renderModel);
         return result;
     });
 }
@@ -236,7 +240,7 @@ void AnimatedSpriteRenderer::OnFrameChange() {
 
     model.material->SetTexture(frameTexture);
     model.SetWorldSize(Size());
-    model.SetRenderModelsNeedBuild();
+    model.SetMeshNeedsBuild();
 
     PJ::LogIf(_diagnose, "Frame Change: ", MakeString(frame), " texture: ", frameTexture->id);
 }
@@ -247,7 +251,7 @@ void AnimatedSpriteRenderer::SetFrames(VectorList<KeyframeModel> models) {
     auto frameRate = framePlayable->FrameRate();
     GUARD_LOG(frameRate > 0, "ERROR. Frame rate not defined")
 
-    auto textures = FindTextures(*owner->World(), models);
+    auto textures = _FindTextures(*owner->World(), models);
     VectorList<SP<SomeTexture>> textureList(textures.begin(), textures.end());
     SetTextures(textureList);
 
@@ -297,4 +301,26 @@ std::optional<int> AnimatedSpriteRenderer::FrameForTextureId(String textureId) c
     }
 
     return {};
+}
+
+void AnimatedSpriteRenderer::SetFlipX(bool value) {
+    GUARD(flipX != value)
+    flipX = value;
+    model.SetMeshNeedsBuild();
+}
+
+void AnimatedSpriteRenderer::SetFlipY(bool value) {
+    GUARD(flipY != value)
+    flipY = value;
+    model.SetMeshNeedsBuild();
+}
+
+float AnimatedSpriteRenderer::FrameRate() const {
+    GUARDR(framePlayable, 0)
+    return framePlayable->FrameRate();
+}
+
+void AnimatedSpriteRenderer::SetFrameRate(float value) {
+    GUARD(framePlayable)
+    framePlayable->SetFrameRate(value);
 }

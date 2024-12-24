@@ -5,25 +5,25 @@ using namespace std;
 using namespace PJ;
 
 ButtonControl::ButtonControl() {
-    signalFuncs[SignalId::PointerDown] = [](auto& component, auto& signal) {
-        auto event = static_cast<PointerDownUIEvent const*>(&signal);
-        static_cast<This*>(&component)->OnPointerDown(*event);
-    };
+    AddSignalHandler<PointerDownUIEvent>({ .id = SignalId::PointerDown,
+                                           .func = [this](auto& component, auto& event) {
+                                               OnPointerDown(event);
+                                           } });
 
-    signalFuncs[SignalId::PointerEnter] = [](auto& component, auto& signal) {
-        auto event = static_cast<PointerEnterUIEvent const*>(&signal);
-        static_cast<This*>(&component)->OnPointerEnter(*event);
-    };
+    AddSignalHandler<PointerEnterUIEvent>({ .id = SignalId::PointerEnter,
+                                            .func = [this](auto& component, auto& event) {
+                                                OnPointerEnter(event);
+                                            } });
 
-    signalFuncs[SignalId::PointerExit] = [](auto& component, auto& signal) {
-        auto event = static_cast<PointerExitUIEvent const*>(&signal);
-        static_cast<This*>(&component)->OnPointerExit(*event);
-    };
+    AddSignalHandler<PointerExitUIEvent>({ .id = SignalId::PointerExit,
+                                           .func = [this](auto& component, auto& event) {
+                                               OnPointerExit(event);
+                                           } });
 
-    signalFuncs[SignalId::PointerUp] = [](auto& component, auto& signal) {
-        auto event = static_cast<PointerUpUIEvent const*>(&signal);
-        static_cast<This*>(&component)->OnPointerUp(*event);
-    };
+    AddSignalHandler<PointerUpUIEvent>({ .id = SignalId::PointerUp,
+                                         .func = [this](auto& component, auto& event) {
+                                             OnPointerUp(event);
+                                         } });
 }
 
 void ButtonControl::Awake() {

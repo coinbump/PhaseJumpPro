@@ -90,7 +90,7 @@ Mesh CenterPolyFrameMeshBuilder::BuildMesh() {
             CenterPolyMeshBuilder capBuilder(strokeSize, CenterPolyModel::ellipse);
             auto capMesh = capBuilder.BuildMesh();
             Vector2 midPoint = Lerp(vertices[triangles[0]], vertices[triangles[2]], 0.5f);
-            capMesh.OffsetBy(midPoint);
+            capMesh.Offset(midPoint);
 
             result += capMesh;
         }
@@ -102,7 +102,7 @@ Mesh CenterPolyFrameMeshBuilder::BuildMesh() {
                 vertices[triangles[triangles.size() - 3]],
                 vertices[triangles[triangles.size() - 2]], 0.5f
             );
-            capMesh.OffsetBy(midPoint);
+            capMesh.Offset(midPoint);
 
             result += capMesh;
         }

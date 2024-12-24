@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Base.h"
 #include "FilePath.h"
 #include "GLHeaders.h"
 #include "StringUtils.h"
@@ -11,7 +12,7 @@
  */
 namespace PJ {
     /// Interfaces with the GPU to process vertices/fragments
-    class SomeShader {};
+    class SomeShader : public Base {};
 
     /// Manages an OpenGLShader
     class SomeGLShader : public SomeShader {

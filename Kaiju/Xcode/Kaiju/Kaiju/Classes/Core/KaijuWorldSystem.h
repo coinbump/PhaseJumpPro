@@ -6,7 +6,7 @@ class KaijuWorldSystem : public EditorWorldSystem {
 public:
     // FUTURE: Each scene can have its own menus
     /// Default menus for app, independent of current scene
-    VectorList<SP<Menu>> defaultMenus;
+    VectorList<UP<Menu>> defaultMenus;
 
     KaijuWorldSystem();
 

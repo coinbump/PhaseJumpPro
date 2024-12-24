@@ -38,7 +38,7 @@ BlinkEffect::BlinkEffect(
         }
     };
 
-    updatables.Add([this](TimeSlice time) {
+    GetUpdatables().Add([this](TimeSlice time) {
         timeTrack.OnUpdate(time);
         return timeTrack.GetFinishType();
     });

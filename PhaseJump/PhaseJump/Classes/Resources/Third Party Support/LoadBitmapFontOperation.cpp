@@ -2,8 +2,8 @@
 #include "AtlasTexture.h"
 #include "CollectionUtils.h"
 #include "Font.h"
-#include "LoadResourcesModel.h"
-#include "RTextPackerAtlasModelBuilder.h"
+#include "ResourceRepositoryModel.h"
+#include "RTexPackerAtlasModelBuilder.h"
 #include "SDLLoadGLTextureOperation.h"
 #include "StringUtils.h"
 #include "TextureAtlas.h"
@@ -26,7 +26,7 @@ Tags ReadLine(String line) {
         auto first = components[0];
         auto second = components[1];
 
-        /// Get rid of these characters
+        // Get rid of these characters
         RemoveIf(second, [](char c) { return c == '\r'; });
 
         if (StartsWith(second, "\"")) {
@@ -106,8 +106,8 @@ SomeLoadResourcesOperation::Result LoadBitmapFontOperation::LoadResources() {
         fullImagePath /= imagePath.c_str();
 
         // No id needed, we're not storing the parent texture in resources
-        ResourceInfo loadTextureInfo("", fullImagePath, "texture");
-        auto loadTextureOperations = loadResourcesModel.MakeLoadOperations(loadTextureInfo);
+        ResourceInfo loadTextureInfo{ .filePath = fullImagePath, .type = ResourceType::Texture };
+        auto loadTextureOperations = repoModel.MakeLoadOperations(loadTextureInfo);
 
         GUARDR(!IsEmpty(loadTextureOperations), Failure())
 
@@ -121,15 +121,15 @@ SomeLoadResourcesOperation::Result LoadBitmapFontOperation::LoadResources() {
 
         GUARDR(successValue && successValue.value().size(), Failure())
 
-        SP<SomeTexture> texture =
-            DCAST<SomeTexture>(successValue.value().loadedResources[0].resource);
+        SP<SomeTexture> texture = DCAST<SomeTexture>(successValue.value().resources[0].resource);
         GUARDR(texture, Failure());
 
         Success result;
 
         auto textureAtlas = MAKE<TextureAtlas>(texture);
 
-        auto font = MAKE<Font>(infoTags.SafeValue<String>("face"), infoTags.SafeValue<int>("size"));
+        auto font = MAKE<Font>(Font::Config{ .name = infoTags.SafeValue<String>("face"),
+                                             .size = (float)infoTags.SafeValue<int>("size") });
         font->atlas = textureAtlas;
 
         for (auto& sprite : charLines) {
@@ -183,7 +183,10 @@ SomeLoadResourcesOperation::Result LoadBitmapFontOperation::LoadResources() {
             font->metrics.kern.insert_or_assign(kernPair, amount);
         }
 
-        ResourceModel loadedFontResource(SCAST<PJ::Base>(font), info.id, filePath, "font");
+        ResourceModel loadedFontResource{
+            .resource = SCAST<PJ::Base>(font),
+            .info = { .id = info.id, .filePath = filePath, .type = "font" }
+        };
         result.Add(loadedFontResource);
 
         return result;

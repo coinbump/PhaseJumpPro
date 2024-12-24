@@ -45,8 +45,8 @@ namespace PJ {
 
         // MARK: SomePathLayout
 
-        SP<SomePath> BuildPath() override {
-            return MAKE<CirclePath>(radius);
+        UP<SomePath> BuildPath() override {
+            return NEW<CirclePath>(radius);
         }
 
         // MARK: SomeWorldComponent

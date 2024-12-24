@@ -8,14 +8,29 @@ using namespace std;
 namespace ClassRegistryTests {
     class TestType : public Base {
     public:
-        using RootBaseType = Base;
     };
 
     class TestClass: public TypeClass<TestType> {
     public:
         int value = 1;
 
-        TestClass() : TypeClass<TestType>("test", [] () -> SP<TestType> { return MAKE<TestType>(); }) {
+        TestClass() : TypeClass<TestType>("test", []() { return NEW<TestType>(); }) {
+        }
+    };
+    
+    class TestTypeWithArguments : public Base {
+    public:
+        int value{};
+        
+        TestTypeWithArguments(int value) : value(value) {
+        }
+    };
+
+    class TestClassWithArguments: public TypeClass<TestTypeWithArguments, int> {
+    public:
+        int value = 1;
+
+        TestClassWithArguments() : TypeClass<TestTypeWithArguments, int>("test", [](int value) { return NEW<TestTypeWithArguments>(value); }) {
         }
     };
 }
@@ -23,24 +38,23 @@ namespace ClassRegistryTests {
 using namespace ClassRegistryTests;
 
 TEST(ClassRegistry, NewType) {
-    UP<SomeClass<Base>> testClass = NEW<TestClass>();
+    UP<TypeClass<TestType>> testClass = NEW<TestClass>();
 
-    ClassRegistry sut;
+    ClassRegistry<TypeClass<TestType>> sut;
     sut.Add(testClass);
 
-    SP<TestType> object = sut.NewType<TestType>("test");
-
+    auto object = sut.MakeType<TestType>("test");
     EXPECT_NE(nullptr, object);
 }
 
-TEST(ClassRegistry, NewBase) {
-    UP<SomeClass<Base>> testClass = NEW<TestClass>();
+TEST(ClassRegistry, NewTypeWithArguments) {
+    UP<TestClassWithArguments> testClass = NEW<TestClassWithArguments>();
 
-    ClassRegistry sut;
+    ClassRegistry<TestClassWithArguments> sut;
     sut.Add(testClass);
 
-    auto object = sut.NewBase("test");
-
-    EXPECT_NE(nullptr, object);
-    EXPECT_NE(nullptr, DCAST<TestType>(object));
+    SP<TestTypeWithArguments> object = sut.MakeType<TestTypeWithArguments>("test", 10);
+    ASSERT_NE(nullptr, object);
+    
+    EXPECT_EQ(10, object->value);
 }

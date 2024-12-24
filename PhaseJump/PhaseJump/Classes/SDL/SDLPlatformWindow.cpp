@@ -3,7 +3,20 @@
 
 using namespace PJ;
 
-void SDLPlatformWindow::Configure(Config& config) {
+SDLPlatformWindow::SDLPlatformWindow(Config config) :
+    config(config) {
+    world = config.world;
+    GUARD_LOG(world, "ERROR. Missing world for window")
+
+    renderEngine = config.renderEngine;
+    GUARD_LOG(renderEngine, "ERROR. Missing render engine for window")
+
+    // Important: Call window.Go() to create it
+}
+
+void SDLPlatformWindow::OnGo() {
+    Base::OnGo();
+
     switch (config.rendererType) {
     // Create window and renderer (easy mode)
     case Config::RendererType::WindowAndRenderer:
@@ -29,7 +42,7 @@ void SDLPlatformWindow::Configure(Config& config) {
     }
 
     GUARD(world)
-    world->Configure(window, nullptr);
+    static_cast<SDLWorld*>(world.get())->Configure(window, nullptr);
 
-    // Important: Call world->Go after you've built your scene
+    // Important: Call world.Go() after you've built your scene
 }

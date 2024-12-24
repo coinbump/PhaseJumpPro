@@ -9,9 +9,9 @@
 #include "VectorList.h"
 
 /*
- RATING: 4 stars
- Tested and works, but limited
- CODE REVIEW: 12/7/24
+ RATING: 5 stars
+ Tested and works
+ CODE REVIEW: 12/16/24
  */
 namespace PJ {
     class Matrix4x4;
@@ -20,7 +20,7 @@ namespace PJ {
      Immediate mode renderer
 
      As opposed to the traditional ECS model of creating persistent renderers, this pattern allows
-     you to draw in immediate mode This can make building certain types of apps easier
+     you to draw in immediate mode. This can make building certain types of apps easier
 
      Perform the immediate render by using the RenderPrepare signal
      */
@@ -35,14 +35,73 @@ namespace PJ {
 
         TranslateItemFunc translateItemFunc;
 
+        /// Stores cached render models and rebuilds when needed
+        class RendererModel {
+        public:
+            using This = RendererModel;
+
+            using BuildRenderModelsFunc =
+                std::function<VectorList<RenderModel>(RendererModel& model)>;
+
+        protected:
+            bool renderModelsNeedBuild = true;
+
+            /// Builds render models on demand
+            BuildRenderModelsFunc buildRenderModelsFunc;
+
+            /// Cached render model (updated when renderer changes)
+            VectorList<RenderModel> renderModels;
+
+            Vector3 worldSize;
+
+        public:
+            RendererModel(Vector3 worldSize) :
+                worldSize(worldSize) {}
+
+            Vector3 WorldSize() const {
+                return worldSize;
+            }
+
+            void SetWorldSize(Vector3 value) {
+                GUARD(worldSize != value)
+                worldSize = value;
+
+                SetRenderModelsNeedBuild();
+            }
+
+            void SetBuildRenderModelsFunc(BuildRenderModelsFunc value) {
+                buildRenderModelsFunc = value;
+                renderModelsNeedBuild = true;
+            }
+
+            VectorList<RenderModel>& RenderModels() {
+                if (renderModelsNeedBuild) {
+                    renderModelsNeedBuild = false;
+
+                    if (buildRenderModelsFunc) {
+                        renderModels = buildRenderModelsFunc(*this);
+                    }
+                }
+
+                return renderModels;
+            }
+
+            void SetRenderModelsNeedBuild() {
+                renderModelsNeedBuild = true;
+            }
+        };
+
+        RendererModel model;
+
     protected:
         Color color = Color::black;
+        Color strokeColor = Color::black;
 
-        // FUTURE: combine multiple shapes into 1 for faster renders
         /// Paths built by immediate mode render commands
         VectorList<ImPath> paths;
 
         /// Keeps renderers and materials in memory for next render
+        /// Required because we share data from the renderer with the render engine
         VectorList<UP<SomeRenderer>> renderers;
 
         /// Maps "itemType.renderType" to a build renderer func
@@ -78,6 +137,12 @@ namespace PJ {
             return *this;
         }
 
+        /// Sets the stroke color for framed shapes
+        This& SetStrokeColor(Color value) {
+            strokeColor = value;
+            return *this;
+        }
+
         /// Sets the start cap type for paths
         This& SetStartPathCap(PathCap value) {
             startPathCap = value;
@@ -104,6 +169,9 @@ namespace PJ {
 
         /// Draws an image
         This& Image(String id, Vector2 origin);
+
+        /// Draws an image texture
+        This& Image(SP<SomeTexture> texture, Vector2 origin);
 
         /// Draws a template image, which is modulated by a color
         This& TemplateImage(String id, Vector2 origin, std::optional<Color> color = {});
@@ -136,6 +204,10 @@ namespace PJ {
             Polygon poly, PolyClose polyClose = PolyClose::Open, std::optional<Color> color = {}
         );
 
+        This& PolyLine(Polygon poly, std::optional<Color> color = {}) {
+            return FramePolygon(poly, PolyClose::Open, color);
+        }
+
         /// Frame a rectangle with the color, or use the default color if not specified
         This& FrameRect(Rect frame, std::optional<Color> color = {});
 
@@ -162,6 +234,35 @@ namespace PJ {
 
         /// Use to customize item translation for different coordinate systems
         TranslateItemFunc MakeTranslateItemFunc(float down = vecDown);
+
+        // MARK: SomeRenderer
+
+        VectorList<RenderModel> RenderModels() override {
+            auto result = model.RenderModels();
+
+            // Always update the matrix for latest transform
+            for (auto& renderModel : result) {
+                renderModel.matrix = ModelMatrix();
+            }
+
+            return result;
+        }
+
+        // MARK: WorldSizeable
+
+        Vector3 WorldSize() const override {
+            return model.WorldSize();
+        }
+
+        void SetWorldSize(Vector3 value) override {
+            model.SetWorldSize(value);
+        }
+
+        // MARK: SomeWorldComponent
+
+        String TypeName() const override {
+            return "ImRenderer";
+        }
 
     protected:
         struct PathConfig {

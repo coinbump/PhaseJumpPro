@@ -5,9 +5,9 @@
 #include "SignalTypes.h"
 #include "SomeCamera.h"
 #include "SomeControllerUIEvent.h"
+#include "SomeKeyUIEvent.h"
 #include "SomePosition.h"
 #include "SomeRaycaster2D.h"
-#include "SomeUIEvent.h"
 #include "World.h"
 #include "WorldNode.h"
 #include <iostream>
@@ -20,15 +20,16 @@ EventWorldSystem::EventWorldSystem(String name) :
     Base(name),
     collectEventNodesFunc([](EventWorldSystem& system, EventNodeList& nodes) {
         nodes.clear();
-        GUARD(system.world && system.world->root)
+        GUARD(system.world && system.world->Root())
 
-        CollectBreadthFirstTree(system.world->root.get(), nodes);
+        CollectBreadthFirstTree(system.world->Root(), nodes);
+        nodes = Filter(nodes, [](auto& node) { return node->isListener; });
     }) {}
 
 VectorList<PJ::LocalHit> EventWorldSystem::TestScreenHit(ScreenPosition screenPosition) {
     GUARDR(world, {})
 
-    SP<SomeCamera> camera = world->MainCamera();
+    auto camera = world->MainCamera();
     GUARDR_LOG(camera, {}, "ERROR: Camera required for TestScreenHit")
 
     auto raycaster = camera->owner->GetComponent<SomeRaycaster2D>();
@@ -59,7 +60,7 @@ void EventWorldSystem::OnPointerUp(PointerUpUIEvent const& pointerUpEvent) {}
 void EventWorldSystem::ProcessUIEvents(UIEventList const& uiEvents) {
     SomeWorldSystem::ProcessUIEvents(uiEvents);
 
-    GUARD(world && world->root)
+    GUARD(world && world->Root())
 
     EventNodeList eventNodes;
     if (collectEventNodesFunc) {
@@ -125,8 +126,7 @@ void EventWorldSystem::DispatchEvent(
     for (auto& system : world->Systems()) {
         // FUTURE: GUARD(system->IsEnabled())
         try {
-            auto signalFunc = system->signalFuncs.at(signalId);
-            signalFunc(*system, signal);
+            system->Signal(signalId, signal);
         } catch (...) {}
     }
 }
@@ -152,12 +152,5 @@ void EventWorldSystem::OnPointerMove(PointerMoveUIEvent const& event) {}
 void EventWorldSystem::DispatchEvent(WorldNode& node, String signalId, SomeSignal const& signal) {
     GUARD(node.IsEnabled());
 
-    auto iterComponents = node.Components();
-    std::for_each(iterComponents.begin(), iterComponents.end(), [&](auto& component) {
-        GUARD(component->IsEnabled())
-        try {
-            auto i = component->signalFuncs.at(signalId);
-            i(*component, signal);
-        } catch (...) {}
-    });
+    node.Signal(signalId, signal);
 }

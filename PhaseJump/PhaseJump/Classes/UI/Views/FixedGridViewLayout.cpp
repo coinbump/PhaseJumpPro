@@ -6,14 +6,20 @@ using namespace std;
 using namespace PJ;
 
 FixedGridViewLayout::FixedGridViewLayout(Config config) :
-    config(config) {}
+    gridSize(config.gridSize),
+    cellSize(config.cellSize),
+    alignment(config.alignment),
+    spacing(config.spacing) {}
 
 Vector2
 FixedGridViewLayout::ViewSize(ViewSizeProposal proposal, VectorList<ViewProxy> const& children) {
-    GUARDR(proposal.width && proposal.height, Vector2::max)
+    GUARDR(gridSize.x > 0 && gridSize.y > 0, {})
+    GUARDR(cellSize.x > 0 && cellSize.y > 0, {})
 
-    // TODO: what if we want the ideal size to be to make them squares? Or rectangles?
-    return { *proposal.width, *proposal.height };
+    float width = cellSize.x * gridSize.x + (gridSize.x - 1) * spacing.x;
+    float height = cellSize.y * gridSize.y + (gridSize.y - 1) * spacing.y;
+
+    return { width, height };
 }
 
 void FixedGridViewLayout::CalculateFrames(
@@ -21,37 +27,32 @@ void FixedGridViewLayout::CalculateFrames(
 ) {
     GUARD(owner);
     GUARD(children.size() > 0);
-    GUARD(calculatedFrames.size() == 0)
-
-    ViewSizeProposal proposal{ .width = boundsSize.x, .height = boundsSize.y };
+    calculatedFrames.clear();
 
     int column{}, row{};
 
-    auto gridSize = config.gridSize;
-    auto spacing = config.spacing;
-
-    float cellWidth = (boundsSize.x - (gridSize.x - 1) * config.spacing.x) / children.size();
-    float cellHeight = (boundsSize.y - (gridSize.y - 1) * config.spacing.y) / children.size();
+    float cellWidth = cellSize.x;
+    float cellHeight = cellSize.y;
+    ViewSizeProposal proposal{ .width = cellWidth, .height = cellHeight };
 
     for (auto& child : children) {
-        Vec2I loc(column, row);
         float cellX = column * (cellWidth + spacing.x);
         float cellY = row * (cellHeight + spacing.y);
 
         auto childSize = child.ViewSize(proposal);
         Rect frame{ .origin = { cellX, cellY }, .size = { childSize.x, childSize.y } };
 
-        if (config.xAlignFunc) {
-            frame.origin.x = cellX + config.xAlignFunc(cellWidth, frame.size.x);
+        if (alignment.xAlignFunc) {
+            frame.origin.x = cellX + alignment.xAlignFunc(cellWidth, frame.size.x);
         }
-        if (config.yAlignFunc) {
-            frame.origin.y = cellY + config.yAlignFunc(cellHeight, frame.size.y);
+        if (alignment.yAlignFunc) {
+            frame.origin.y = cellY + alignment.yAlignFunc(cellHeight, frame.size.y);
         }
 
         calculatedFrames.push_back(frame);
 
         column++;
-        if (column >= config.gridSize.x) {
+        if (column >= gridSize.x) {
             column = 0;
             row++;
         }

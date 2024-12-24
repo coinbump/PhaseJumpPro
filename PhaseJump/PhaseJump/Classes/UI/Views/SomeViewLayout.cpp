@@ -49,7 +49,7 @@ void ViewLayout::LayoutSubviews(Vector2 boundsSize, VectorList<ViewProxy> const&
         ViewProxy proxy = child;
         proxy.viewSizeFunc = [=](auto& proxy, auto proposal) { return frame.size; };
         proxy.PlaceView(
-            frame.origin, ViewPoint::topLeading, { .width = frame.size.x, .height = frame.size.y }
+            frame.origin, LayoutAnchor2D::topLeft, { .width = frame.size.x, .height = frame.size.y }
         );
     }
     return;

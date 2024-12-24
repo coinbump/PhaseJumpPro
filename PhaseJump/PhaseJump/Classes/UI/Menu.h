@@ -7,9 +7,8 @@
 /*
  RATING: 5 stars
  Tested and works
- CODE REVIEW: 9/14/23
+ CODE REVIEW: 12/21/24
  */
-// TODO: conform these to SomeUIModel so we can add these to UI plan
 namespace PJ {
     using EventModifierType = String;
 
@@ -21,7 +20,7 @@ namespace PJ {
         ModifierSet modifiers;
 
         /// @return Returns a user-displayable string for the shortcut
-        String ToString();
+        String ToString() const;
     };
 
     /// Something inside a menu
@@ -39,7 +38,7 @@ namespace PJ {
         using BoolFunc = std::function<bool(MenuItem const&)>;
         using StringFunc = std::function<String(MenuItem const&)>;
 
-        /// (Optional). Allows menu items to be updated dynamically
+        /// Allows menu items to be updated dynamically
         BoolFunc isToggleOnFunc;
         BoolFunc isEnabledFunc;
         StringFunc titleFunc;
@@ -53,7 +52,7 @@ namespace PJ {
         VectorList<MenuItem> items;
 
         /// If true, menu item has a toggle checkmark
-        bool isToggleOn = false;
+        bool isToggleOn{};
 
         /// If true, menu item is enabled
         bool isEnabled = true;
@@ -95,8 +94,7 @@ namespace PJ {
     class Menu {
     public:
         using This = Menu;
-        // TODO: use UP here
-        using MenuItemList = VectorList<SP<SomeMenuItem>>;
+        using MenuItemList = VectorList<UP<SomeMenuItem>>;
 
         /// User displayed title
         String title;
@@ -104,12 +102,11 @@ namespace PJ {
         /// List of menu items
         MenuItemList items;
 
-        /// (Optional). Custom properties
+        /// Custom properties
         Tags tags;
 
-        Menu(String title, MenuItemList items) :
-            title(title),
-            items(items) {}
+        Menu(String title) :
+            title(title) {}
 
         // Is this needed or does the menu builder handle key events?
         // FUTURE: void OnKeyDown(KeyDownUIEvent const& event)

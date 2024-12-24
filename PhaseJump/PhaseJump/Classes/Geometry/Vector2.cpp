@@ -26,7 +26,7 @@ Vector2::operator Terathon::Point2D() const {
 }
 
 std::ostream& PJ::operator<<(std::ostream& os, Vector2 const& value) {
-    os << "{" << value.x << ", " << value.y << "}";
+    os << std::format("{{{}, {}}}", value.x, value.y);
     return os;
 }
 
@@ -39,7 +39,7 @@ String Vector2::ToString() const {
 // MARK: Vector2Int
 
 std::ostream& PJ::operator<<(std::ostream& os, Vector2Int const& value) {
-    os << "{" << value.x << ", " << value.y << "}";
+    os << std::format("{{{}, {}}}", value.x, value.y);
     return os;
 }
 

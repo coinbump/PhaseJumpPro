@@ -1,5 +1,5 @@
 #include "LoadRezOperation.h"
-#include "LoadResourcesModel.h"
+#include "ResourceRepositoryModel.h"
 #include <fstream>
 #include <json.hpp>
 
@@ -43,8 +43,8 @@ SomeLoadResourcesOperation::Result LoadRezOperation::LoadResources() {
             fullPath.remove_filename();
             fullPath /= resourcePath;
 
-            ResourceInfo loadResourceInfo(id, fullPath, type);
-            auto loadOperations = loadResourcesModel.MakeLoadOperations(loadResourceInfo);
+            ResourceInfo loadResourceInfo{ .id = id, .filePath = fullPath, .type = type };
+            auto loadOperations = repoModel.MakeLoadOperations(loadResourceInfo);
 
             AddRange(result.loadOperations, loadOperations);
         }

@@ -9,7 +9,7 @@ MatrixRenderer::MatrixRenderer() :
     Base({ 1200, 1200, 0 }),
     matrix({ 300, 300 }) {
 
-    auto material = MAKE<RenderMaterial>(RenderMaterial::Config{ .shaderId = "color.vary" });
+    auto material = MAKE<RenderMaterial>(RenderMaterial::Config{ .shaderId = ShaderId::ColorVary });
     model.material = material;
 
     model.SetBuildMeshFunc([this](auto& model) {
@@ -24,10 +24,10 @@ MatrixRenderer::MatrixRenderer() :
                 Vector2Int location(x, y);
 
                 auto qm = meshBuilder.BuildMesh();
-                qm.OffsetBy({ (worldSize.x / 2.0f) * vecLeft +
-                                  ((cellSize.x / 2.0f + cellSize.x * x) * vecRight),
-                              (worldSize.y / 2.0f) * vecUp +
-                                  ((cellSize.y / 2.0f + cellSize.y * y) * vecDown) });
+                qm.Offset(Vector2{ (worldSize.x / 2.0f) * vecLeft +
+                                       ((cellSize.x / 2.0f + cellSize.x * x) * vecRight),
+                                   (worldSize.y / 2.0f) * vecUp +
+                                       ((cellSize.y / 2.0f + cellSize.y * y) * vecDown) });
                 mesh += qm;
             }
         }

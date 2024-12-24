@@ -8,7 +8,11 @@
 #include <future>
 #include <map>
 
-// CODE REVIEW: ?/23
+/*
+ RATING: 4 stars
+ Has unit tests (partial)
+ CODE REVIEW: 12/17/24
+ */
 namespace PJ {
     /// Interface to an object that manages files
     class SomeFileManager : public Base {

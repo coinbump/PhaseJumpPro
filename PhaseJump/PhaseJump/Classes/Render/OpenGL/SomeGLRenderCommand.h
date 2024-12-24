@@ -40,9 +40,8 @@ namespace PJ {
     };
 
     namespace GLRenderCommands {
-        // TODO: should be UP
-        extern SP<SomeGLRenderCommand> SetViewportRender(Vector2Int size);
-        extern SP<SomeGLRenderCommand> ProjectionMatrixLoadOrthographic(Vector2 size);
-        extern SP<SomeGLRenderCommand> LoadTranslate(Vector3 value);
+        extern UP<SomeGLRenderCommand> SetViewportRender(Vector2Int size);
+        extern UP<SomeGLRenderCommand> ProjectionMatrixLoadOrthographic(Vector2 size);
+        extern UP<SomeGLRenderCommand> LoadTranslate(Vector3 value);
     } // namespace GLRenderCommands
 } // namespace PJ

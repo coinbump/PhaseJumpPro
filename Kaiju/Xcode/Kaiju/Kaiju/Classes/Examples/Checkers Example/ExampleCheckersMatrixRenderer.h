@@ -5,9 +5,9 @@
 namespace Example {
     namespace Checkers {
         /// Renders the 8x8 checkboard with a mesh
-        class MatrixRenderer : public SomeRenderer {
+        class MatrixRenderer : public SomeMaterialRenderer {
         public:
-            using Base = SomeRenderer;
+            using Base = SomeMaterialRenderer;
 
         public:
             MatrixRenderer(Vector3 worldSize);

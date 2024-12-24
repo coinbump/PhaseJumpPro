@@ -1,5 +1,4 @@
-#ifndef PJCYCLICGRAPH_H
-#define PJCYCLICGRAPH_H
+#pragma once
 
 #include "CyclicGraphNode.h"
 #include "StandardEdgeCore.h"
@@ -12,79 +11,62 @@
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 5/12/24
+ CODE REVIEW: 12/21/24
  */
 namespace PJ {
     /// Supports a graph with cycles (State machines, story sequences, etc.)
     /// The graph holds on to nodes, and the nodes have weak references to each
     /// other
-    // TODO: re-evaluate use of multiple inheritance here
     template <class Node>
-    class CyclicGraph : public Base, public Updatable {
+    class CyclicGraph : public Base {
     public:
-        using EdgeCore = Node::EdgeModelType;
-        using EdgeModelSharedPtr = SP<EdgeCore>;
-        using NodeWeakPtr = WP<Node>;
+        using EdgeCore = Node::EdgeCoreType;
         using NodeSharedPtr = SP<Node>;
-        using NodePtr = NodeSharedPtr const&;
         using NodeSet = UnorderedSet<NodeSharedPtr>;
+        using Edge = Node::Edge;
 
         /// Holds strong references to nodes added to graph
         NodeSet nodes;
 
     protected:
-        // Optional root node
-        NodeWeakPtr rootNode;
+        Node* rootNode{};
 
     public:
-        NodeSharedPtr Root() const {
-            return rootNode.lock();
+        Node* Root() const {
+            return rootNode;
         }
 
-        void SetRoot(NodePtr node) {
+        void SetRoot(Node* node) {
             rootNode = node;
         }
 
-        void Remove(NodePtr node) {
-            if (nullptr == node) {
-                return;
-            }
-
-            auto iterFromNodes = node->FromNodes();
+        void Remove(Node& node) {
+            auto iterFromNodes = node.FromNodes();
             for (auto& fromNode : iterFromNodes) {
-                fromNode.lock()->RemoveEdgesTo(*node);
+                fromNode->RemoveEdgesTo(node);
             }
 
-            auto iterEdges = node->Edges();
+            VectorList<Edge*> iterEdges =
+                Map<Edge*>(node.Edges(), [](auto& edge) { return edge.get(); });
             for (auto& edge : iterEdges) {
-                node->RemoveEdge(edge);
+                node.RemoveEdge(*edge);
             }
 
-            if (node == Root()) {
-                SetRoot(nullptr);
+            if (&node == Root()) {
+                SetRoot({});
             }
-            nodes.erase(node);
+            nodes.erase(SCAST<Node>(node.shared_from_this()));
         }
 
-        void AddEdge(NodePtr fromNode, EdgeCore model, NodeSharedPtr toNode) {
-            if (NULL == fromNode || NULL == toNode) {
-                return;
-            }
+        void AddEdge(SP<Node> fromNode, EdgeCore model, SP<Node> toNode) {
+            GUARD(fromNode && toNode)
 
             fromNode->AddEdgeInternal(
-                model, MAKE<WeakReference<SomeGraphNode<EdgeCore, typename Node::CoreType>>>(toNode)
+                model, NEW<WeakReference<SomeGraphNode<EdgeCore, typename Node::CoreType>>>(toNode)
             );
 
             nodes.insert(fromNode);
             nodes.insert(toNode);
         }
-
-        virtual void OnUpdate(TimeSlice time) override {
-            for (auto& node : nodes) {
-                node->OnUpdate(time);
-            }
-        }
     };
 } // namespace PJ
-
-#endif

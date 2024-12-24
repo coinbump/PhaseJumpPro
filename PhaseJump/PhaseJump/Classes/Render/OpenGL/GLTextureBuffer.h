@@ -15,22 +15,24 @@
 namespace PJ {
     /// Wraps an OpenGL frame buffer and deletes it when it goes out of scope
     struct GLFrameBuffer {
+        // Don't allow copies
+        DELETE_COPY(GLFrameBuffer);
+
         uint32_t id{};
 
         GLFrameBuffer() {}
-
-        DELETE_COPY(GLFrameBuffer);
 
         ~GLFrameBuffer();
     };
 
     /// Wraps an OpenGL render buffer and deletes it when it goes out of scope
     struct GLRenderBuffer {
+        // Don't allow copies
+        DELETE_COPY(GLRenderBuffer);
+
         uint32_t id{};
 
         GLRenderBuffer() {}
-
-        DELETE_COPY(GLRenderBuffer);
 
         ~GLRenderBuffer();
     };
@@ -56,7 +58,7 @@ namespace PJ {
         // FUTURE: store memory cost of buffers for RAM tracking tools
 
     public:
-        GLTextureBuffer(SP<SomeRenderEngine> renderEngine) :
+        GLTextureBuffer(SomeRenderEngine& renderEngine) :
             Base(renderEngine) {}
 
         virtual ~GLTextureBuffer();

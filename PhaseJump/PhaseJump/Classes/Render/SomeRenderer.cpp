@@ -8,44 +8,35 @@
 
 using namespace PJ;
 
-SomeRenderer::SomeRenderer(Vector3 worldSize) :
+SomeMaterialRenderer::SomeMaterialRenderer(Vector3 worldSize) :
     model(worldSize) {
 
     model.SetBuildRenderModelsFunc([this](auto& model) {
         VectorList<SomeTexture*> textures;
         VectorList<RenderModel> result;
 
-        auto material = model.material;
-        if (nullptr == material) {
-            PJ::Log("ERROR. Missing material.");
-            return result;
-        }
-
-        auto& materialTextures = material->Textures();
-
         RenderModelBuilder builder;
-        auto renderModel = builder.Build(*this, model.Mesh(), *material, materialTextures);
-        renderModel.SetVertexColors(std::span<RenderColor const>(model.VertexColors()));
-        GUARDR(renderModel.IsValid(), result)
+        auto renderModel = builder.Build(*this, model);
+        GUARDR(renderModel, result)
+        renderModel->SetVertexColors(std::span<RenderColor const>(model.VertexColors()));
+        GUARDR(renderModel->IsValid(), result)
 
-        Add(result, renderModel);
-
+        Add(result, *renderModel);
         return result;
     });
 
     PlanUIFunc planUIFunc = [](auto& component, String context, UIPlanner& planner) {
-        auto renderer = static_cast<SomeRenderer*>(&component);
+        auto renderer = static_cast<SomeMaterialRenderer*>(&component);
         auto& model = renderer->model;
 
-        planner.PickerColor(
-            "Color",
-            { [&]() { return model.Color(); }, [&](auto& value) { model.SetColor(value); } }
-        );
+        planner.PickerColor({ .label = "Color",
+                              .binding = { [&]() { return model.GetColor(); },
+                                           [&](auto& value) { model.SetColor(value); } } });
     };
     Override(planUIFuncs[UIContextId::Inspector], planUIFunc);
 }
 
-VectorList<RenderModel> SomeRenderer::RenderModels() {
+VectorList<RenderModel> SomeMaterialRenderer::RenderModels() {
     auto result = model.RenderModels();
 
     // Always update the matrix for latest transform

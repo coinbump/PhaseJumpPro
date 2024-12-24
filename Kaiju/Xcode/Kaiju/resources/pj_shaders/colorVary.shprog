@@ -1,5 +1,5 @@
 {
 	"id": "color.vary",
-	"shader.vertex": "vertex+color",
-	"shader.fragment": "colorVary"
+	"shader.vertex.path": "vertex/vertex.vsh",
+	"shader.fragment.path": "fragment/colorVary.fsh"
 }

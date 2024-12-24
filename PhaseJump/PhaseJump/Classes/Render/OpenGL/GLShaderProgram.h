@@ -1,5 +1,4 @@
-#ifndef PJGLSHADERPROGRAM_H
-#define PJGLSHADERPROGRAM_H
+#pragma once
 
 #include "FilePath.h"
 #include "GLHeaders.h"
@@ -12,7 +11,7 @@
 /*
  RATING: 5 stars
  Tested and works
- CODE REVIEW: 4/13/23
+ CODE REVIEW: 12/21/24
  */
 namespace PJ {
     class SomeGLRenderEngine;
@@ -26,8 +25,6 @@ namespace PJ {
             String id;
             FilePath vertexShaderPath;
             FilePath fragmentShaderPath;
-
-            static VectorList<Info> registry;
         };
 
     private:
@@ -35,12 +32,11 @@ namespace PJ {
         GLShaderProgram(GLShaderProgram const&);
 
     protected:
-        // TODO: SP-audit
         SP<VertexGLShader> vertexShader;
         SP<FragmentGLShader> fragmentShader;
 
-        GLuint glId = 0;
-        bool isLinked = false;
+        GLuint glId{};
+        bool isLinked{};
 
     public:
         /// Map of attribute names to attribute location index
@@ -60,21 +56,30 @@ namespace PJ {
         void Destroy();
         void FlushShaders();
 
-        // Full setup (you should use this)
         bool Configure(SP<VertexGLShader> vertexShader, SP<FragmentGLShader> fragmentShader);
 
+        /// @return Returns true if a vertex attribute exists for this id
         bool HasVertexAttribute(String id) {
             return attributeLocations.find(id) != attributeLocations.end();
         }
 
+        /// @return Returns true if a uniform attribute exists for this id
         bool HasUniform(String id) {
             return uniformLocations.find(id) != uniformLocations.end();
         }
 
-        // Manual setup
+        // MARK: Manual setup
+
+        /// Attaches the shaders to a shader program
         void AttachShaders(SP<VertexGLShader> vertexShader, SP<FragmentGLShader> fragmentShader);
+
+        /// Bind attributes in vertex shader (Vertex shader only)
+        /// You can either bind your own locations or use the defaults
         void BindAttributeLocation(GLuint index, const GLchar* name);
+
         bool Link();
+
+        /// Verify the validity of the GL shader program and return the status
         GLint Validate();
 
         bool IsLinked() const {
@@ -82,5 +87,3 @@ namespace PJ {
         }
     };
 } // namespace PJ
-
-#endif

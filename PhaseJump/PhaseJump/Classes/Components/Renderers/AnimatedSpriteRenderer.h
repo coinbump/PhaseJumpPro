@@ -19,9 +19,9 @@ namespace PJ {
     class TextureAtlas;
 
     /// Renders multiple textures as a sprite
-    class AnimatedSpriteRenderer : public SomeRenderer {
+    class AnimatedSpriteRenderer : public SomeMaterialRenderer {
     public:
-        using Base = SomeRenderer;
+        using Base = SomeMaterialRenderer;
         using This = AnimatedSpriteRenderer;
         using TextureList = VectorList<SP<SomeTexture>>;
 
@@ -53,9 +53,9 @@ namespace PJ {
                 offset(offset) {}
         };
 
-        int frame = 0;
-        bool flipX = false;
-        bool flipY = false;
+        int frame{};
+        bool flipX{};
+        bool flipY{};
 
         VectorList<Frame> frames;
 
@@ -104,35 +104,29 @@ namespace PJ {
             framePlayable->SetCycleType(cycleType);
         }
 
-        void SetFlipX(bool value) {
-            GUARD(flipX != value)
-            flipX = value;
-            model.SetRenderModelsNeedBuild();
-        }
+        /// Sets the x flip value. If true, the sprite will be flipped horizontally
+        void SetFlipX(bool value);
 
-        void SetFlipY(bool value) {
-            GUARD(flipY != value)
-            flipY = value;
-            model.SetRenderModelsNeedBuild();
-        }
+        /// Sets the y flip value. If true, the sprite will be flipped vertically
+        void SetFlipY(bool value);
 
+        /// Sets the current frame, by index
         void SetFrame(int value);
 
-        float FrameRate() const {
-            GUARDR(framePlayable, 0)
-            return framePlayable->FrameRate();
-        }
+        /// @return Returns the current frame rate (might not be accurate because of timeline
+        /// keyframe changes)
+        float FrameRate() const;
 
-        void SetFrameRate(float value) {
-            GUARD(framePlayable)
-            framePlayable->SetFrameRate(value);
-        }
+        /// Sets the frame rate
+        void SetFrameRate(float value);
 
+        /// Set the animation frame textures
         void SetTextures(VectorList<SP<SomeTexture>> const& textures);
 
+        /// @return Returns the frame for a specific texture id, if any
         std::optional<int> FrameForTextureId(String textureId) const;
 
-        /// Set the frame playable to use these frames and frame rates
+        /// Sets the frame playable to use these frames and frame rates
         void SetFrames(VectorList<KeyframeModel> models);
 
         AnimationCycleType CycleType() const {

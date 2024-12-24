@@ -28,7 +28,6 @@ namespace PJ {
 
     protected:
         AnimationCycleTimer timer;
-        Playable* controller = &timer;
 
         TrackList tracks;
 
@@ -106,12 +105,6 @@ namespace PJ {
 
             TimelineKeyframeConfig<Type> config{ .keyframeConfig = keyframeConfig };
             return AddKeyframe(id, time, config);
-        }
-
-        // MARK: Playable
-
-        Playable* Controller() const override {
-            return controller;
         }
 
         // MARK: Updatable

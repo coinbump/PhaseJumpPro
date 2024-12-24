@@ -18,22 +18,17 @@ SomeLoadResourcesOperation::Result SDLLoadGLTextureOperation::LoadResources() {
         return Failure();
     }
 
-    // TODO: evaluate using SDL's GL_CreateTexture instead
+    // FUTURE: evaluate using SDL_CreateTexture instead
 
     auto pixelFormatDetails = SDL_GetPixelFormatDetails(surface->format);
     GUARDR(pixelFormatDetails, Failure())
 
-    // TODO: this is Unfinished. The problem is that ComponentColor requires a constant color schema
-    auto details = pixelFormatDetails;
-    ComponentColorSchema colorSchema{ details->Rmask,  details->Gmask,  details->Bmask,
-                                      details->Amask,  details->Rshift, details->Gshift,
-                                      details->Bshift, details->Ashift };
     using SDLColor = ComponentColor32<ComponentColorSchema::bgra>;
 
     struct SDLPixelFormat {
         using Pixel = SDLColor;
 
-        SDL_PixelFormatDetails const* details = nullptr;
+        SDL_PixelFormatDetails const* details{};
 
         size_t ColorComponentBitSize(ColorComponent component) const {
             switch (component) {
@@ -61,35 +56,35 @@ SomeLoadResourcesOperation::Result SDLLoadGLTextureOperation::LoadResources() {
     SDLPixelFormat pixelFormat(pixelFormatDetails);
     using SDLBitmap = Bitmap<SDLPixelFormat>;
 
-    // TODO: use this information for loading images
-    //    typedef struct SDL_PixelFormatDetails
-    //    {
-    //        Uint8 padding[2];
-    //    } SDL_PixelFormatDetails;
-
     auto surfaceDataSize = pixelFormat.PixelSize() * surface->w * surface->h;
+
+    // FUTURE: use information in SDL_PixelFormatDetails for loading images (don't assume it's BGRA)
+    // <- convert data before using Bitmap
     BGRABitmap bgraBitmap(Vector2Int(surface->w, surface->h), surface->pixels, surfaceDataSize);
+
     RGBABitmap rgbaBitmap(Vector2Int(surface->w, surface->h));
 
     std::copy(bgraBitmap.Pixels().begin(), bgraBitmap.Pixels().end(), rgbaBitmap.Pixels().begin());
 
 // #define TEST_MAKE_SURFACE
 #ifdef TEST_MAKE_SURFACE
-    // TODO: temp code
-    auto testSurface = MakeSurface(rgbaBitmap);
-    surfaceDataSize = pixelFormat.PixelSize() * testSurface->surface->w * testSurface->surface->h;
+    // Test code
+    SDLSurface testSurface({ .bitmap = &rgbaBitmap });
+    surfaceDataSize = pixelFormat.PixelSize() * testSurface.surface->w * testSurface.surface->h;
     RGBABitmap bgraBitmap2(
-        Vector2Int(testSurface->surface->w, testSurface->surface->h), testSurface->surface->pixels,
+        Vector2Int(testSurface.surface->w, testSurface.surface->h), testSurface.surface->pixels,
         surfaceDataSize
     );
+
+    bgraBitmap2.FlipV();
 
     std::copy(
         bgraBitmap2.Pixels().begin(), bgraBitmap2.Pixels().end(), rgbaBitmap.Pixels().begin()
     );
 #endif
 
-    // SDL does not load textures premultiplied, so if we want that, we need to
-    // apply it Premultiply
+    // SDL does not load textures premultiplied, so apply it
+    // FUTURE: check shaders to make sure they take into account textures are premultiplied
     for (auto& pixel : rgbaBitmap.Pixels()) {
         Color color(pixel);
         color.r *= color.a;
@@ -99,10 +94,9 @@ SomeLoadResourcesOperation::Result SDLLoadGLTextureOperation::LoadResources() {
     }
 
     // OpenGl expects textures to be upside-down
-    // rgbaBitmap.FlipV();
 
     // http://www.sdltutorials.com/sdl-tip-sdl-surface-to-opengl-texture
-    GLuint glTexture = 0;
+    GLuint glTexture{};
     glGenTextures(1, &glTexture);
     glBindTexture(GL_TEXTURE_2D, glTexture);
 
@@ -132,9 +126,9 @@ SomeLoadResourcesOperation::Result SDLLoadGLTextureOperation::LoadResources() {
         id, glTexture, Vector2Int(width, height), Vector2{}, Vector2::one,
         TextureAlphaMode::Standard
     );
-    texture->SomeTexture::SetTextureMagnification(textureMagnification);
+    texture->SetTextureMagnification(textureMagnification);
 
-    ResourceModel loadedResource(SCAST<PJ::Base>(texture), info.id, info.filePath, info.type);
+    ResourceModel loadedResource{ .resource = SCAST<PJ::Base>(texture), .info = info };
     Success result;
     result.Add(loadedResource);
 

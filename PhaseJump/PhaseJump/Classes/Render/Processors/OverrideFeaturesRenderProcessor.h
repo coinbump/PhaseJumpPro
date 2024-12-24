@@ -7,7 +7,7 @@
 /*
  RATING: 5 stars
  Tested and works
- 9/1/24
+ CODE REVIEW: 9/1/24
  */
 namespace PJ {
     /// Overrides enabled state for render features in existing render models
@@ -22,10 +22,10 @@ namespace PJ {
         // TODO: re-evaluate all registered render phases, probably don't want to run for each
         // camera
         OverrideFeaturesRenderProcessor() :
-            Base("Override features", { RenderPhase::Camera }) {}
+            Base({ .name = "Override features", .phases = { RenderPhase::Camera } }) {}
 
         // MARK: RenderProcessor
 
-        void Process(CameraRenderModel& cameraModel) override;
+        void Process(RenderCameraModel& cameraModel) override;
     };
 } // namespace PJ

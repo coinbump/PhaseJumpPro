@@ -1,5 +1,4 @@
-#ifndef PJSOMEGOAL_H
-#define PJSOMEGOAL_H
+#pragma once
 
 #include "Broadcaster.h"
 #include "GoalEvents.h"
@@ -47,5 +46,3 @@ namespace PJ {
         virtual void OnComplete() {}
     };
 } // namespace PJ
-
-#endif

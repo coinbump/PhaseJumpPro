@@ -73,16 +73,18 @@ namespace PJ {
     public:
         using This = UIPlan;
 
+        using ModelFunc = std::function<UP<SomeUIModel>()>;
+
     protected:
-        VectorList<UP<SomeUIModel>> models;
+        VectorList<ModelFunc> modelFuncs;
 
     public:
-        VectorList<UP<SomeUIModel>> const& Models() const {
-            return models;
+        VectorList<ModelFunc> const& ModelFuncs() const {
+            return modelFuncs;
         }
 
-        void Add(UP<SomeUIModel>&& model) {
-            models.push_back(std::move(model));
+        void Add(ModelFunc modelFunc) {
+            modelFuncs.push_back(modelFunc);
         }
     };
 

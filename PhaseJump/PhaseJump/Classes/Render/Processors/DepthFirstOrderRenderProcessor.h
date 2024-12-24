@@ -18,10 +18,10 @@ namespace PJ {
         // TODO: re-evaluate all registered render phases, probably don't want to run for each
         // camera
         DepthFirstOrderRenderProcessor() :
-            Base("Depth first order", { RenderPhase::Camera }) {}
+            Base({ .name = "Depth first order", .phases = { RenderPhase::Camera } }) {}
 
         // MARK: RenderProcessor
 
-        void Process(CameraRenderModel& cameraModel) override;
+        void Process(RenderCameraModel& cameraModel) override;
     };
 } // namespace PJ

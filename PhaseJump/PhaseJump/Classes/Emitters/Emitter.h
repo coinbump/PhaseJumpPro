@@ -75,7 +75,7 @@ namespace PJ {
         WeakNodeSet emits;
 
         /// Emits that have been built, but are delayed
-        List<DelayedEmitModel> delayedEmits;
+        VectorList<DelayedEmitModel> delayedEmits;
 
     public:
         /// Driver for building emits
@@ -96,7 +96,7 @@ namespace PJ {
         }
 
     protected:
-        virtual List<SpawnType> EmitWithEmits(EmitList emits);
+        virtual VectorList<SpawnType> EmitWithEmits(EmitList emits);
 
         virtual SpawnList MakeSpawns(EmitModel const& emit);
         virtual SpawnList Spawn(EmitModel const& emit);

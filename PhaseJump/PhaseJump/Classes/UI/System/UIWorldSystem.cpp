@@ -8,7 +8,7 @@ using namespace PJ;
 
 UIWorldSystem* UIWorldSystem::shared;
 
-SP<SomeCamera> UIWorldSystem::Camera() const {
+SomeCamera* UIWorldSystem::Camera() const {
     return World()->MainCamera();
 }
 
@@ -33,16 +33,10 @@ void UIWorldSystem::OnUpdate(TimeSlice time) {
 }
 
 void UIWorldSystem::UpdateActiveHover(VectorList<PJ::LocalHit> hits) {
-    for (auto& hit : hits) {
-        for (auto& component : hit.node.Components()) {
-            try {
-                // TODO: why is this handler unused?
-                auto handler = component->signalFuncs.at(SignalId::Hover);
-                SetActiveHover(SCAST<WorldNode>(hit.node.shared_from_this()));
-                return;
-            } catch (...) {}
-        }
-    }
+    GUARD(!IsEmpty(hits))
+    auto& node = hits[0].node;
+    // TODO: SP audit
+    SetActiveHover(SCAST<WorldNode>(node.shared_from_this()));
 }
 
 void UIWorldSystem::SetActiveHover(SP<WorldNode> value) {

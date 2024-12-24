@@ -29,8 +29,8 @@ namespace PJ {
             SetNeedsLayout();
         }
 
-        SP<SomePath> BuildPath() override {
-            return MAKE<LinePath>(start, end);
+        UP<SomePath> BuildPath() override {
+            return NEW<LinePath>(start, end);
         }
 
         // MARK: SomeWorldComponent

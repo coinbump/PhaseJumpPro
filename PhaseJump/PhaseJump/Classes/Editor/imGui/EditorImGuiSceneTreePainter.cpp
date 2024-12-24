@@ -75,7 +75,7 @@ EditorImGuiSceneTreePainter::EditorImGuiSceneTreePainter(
         GUARD(system.World())
 
         if (ImGui::CollapsingHeader("Scene Tree", ImGuiTreeNodeFlags_DefaultOpen)) {
-            DrawSceneTree(system, *system.World()->root, "Root");
+            DrawSceneTree(system, *system.World()->Root(), "Root");
         }
     };
 }

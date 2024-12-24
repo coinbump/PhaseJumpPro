@@ -37,7 +37,6 @@ namespace PJ {
 
         /// If specified, the camera will render into this context instead of the default
         /// Use when rendering into a texture buffer
-        // TODO: WIP
         SP<SomeRenderContext> renderContext;
 
         virtual void PreRender(RenderContextModel const& contextModel) {}

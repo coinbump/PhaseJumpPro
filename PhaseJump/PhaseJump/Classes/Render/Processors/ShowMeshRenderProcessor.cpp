@@ -10,7 +10,7 @@
 using namespace std;
 using namespace PJ;
 
-void ShowMeshRenderProcessor::Process(CameraRenderModel& cameraModel) {
+void ShowMeshRenderProcessor::Process(RenderCameraModel& cameraModel) {
     auto triMaterial = ColorRenderer::MakeMaterial(RenderOpacityTypeFor(color));
     cameraModel.materials.push_back(triMaterial);
 
@@ -18,8 +18,8 @@ void ShowMeshRenderProcessor::Process(CameraRenderModel& cameraModel) {
 
     VectorList<RenderModel> renderModels;
     for (auto& renderModel : cameraModel.models) {
-        auto const& vertices = renderModel.Vertices();
-        auto const& indices = renderModel.Indices();
+        auto const& vertices = renderModel.mesh.Vertices();
+        auto const& indices = renderModel.mesh.Triangles();
 
         // Check: Size is: 3, i is 0, size - 2 is 1, 0 < 1, i + 2 is 2, which is a valid index
         for (size_t i = 0; (i + 2) < indices.size(); i += 3) {
@@ -41,7 +41,7 @@ void ShowMeshRenderProcessor::Process(CameraRenderModel& cameraModel) {
     // FUTURE: we can probably speed this up with a shader
     auto renderer =
         MAKE<ColorRenderer>(ColorRenderer::Config{ .material = triMaterial, .color = color });
-    renderer->model.SetBuildMeshFunc([&](RendererModel const& model) { return finalMesh; });
+    renderer->model.SetBuildMeshFunc([=](RendererModel const& model) { return finalMesh; });
     cameraModel.renderers.push_back(renderer);
 
     auto thisRenderModels = renderer->RenderModels();

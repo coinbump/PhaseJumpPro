@@ -16,7 +16,7 @@ public:
 
         World& world = *root.World();
 
-        texture = DCAST<GLTexture>(world.FindTexture("example-button-normal"));
+        texture = DCAST<GLTexture>(world.resources.FindTexture("example-button-normal"));
         GUARD(texture)
 
         auto camera = SCAST<SomeCamera>(MAKE<OrthoCamera>());
@@ -37,7 +37,7 @@ public:
         }
 
         {
-            texture = DCAST<GLTexture>(world.FindTexture("slider-track"));
+            texture = DCAST<GLTexture>(world.resources.FindTexture("slider-track"));
             GUARD(texture)
 
             auto meshNode = MAKE<WorldNode>("Slice 3- X");
@@ -57,7 +57,7 @@ public:
         }
 
         {
-            texture = DCAST<GLTexture>(world.FindTexture("slider-track-v"));
+            texture = DCAST<GLTexture>(world.resources.FindTexture("slider-track-v"));
             GUARD(texture)
 
             auto meshNode = MAKE<WorldNode>("Slice 3- Y");
@@ -83,17 +83,17 @@ public:
             meshNode->Add(renderer);
             meshNode->transform.SetLocalPosition(Vector3(200, 200, 0));
 
-            auto material = renderer->model.material;
+            renderer->AddSignalHandler({ .id = SignalId::RenderPrepare,
+                                         .func = [](auto& renderer, auto& signal) {
+                                             ImRenderer& im =
+                                                 *(static_cast<ImRenderer*>(&renderer));
 
-            renderer->signalFuncs[SignalId::RenderPrepare] = [](auto& renderer, auto& signal) {
-                ImRenderer& im = *(static_cast<ImRenderer*>(&renderer));
+                                             im.SetColor(Color::yellow);
 
-                im.SetColor(Color::yellow);
-
-                im.FillRect({ .size = { 400, 20 } })
-                    .FillRect({ .size = { 20, 400 } }, Color::red)
-                    .FillRect({ .size = { 20, 20 } }, Color::blue);
-            };
+                                             im.FillRect({ .size = { 400, 20 } })
+                                                 .FillRect({ .size = { 20, 400 } }, Color::red)
+                                                 .FillRect({ .size = { 20, 20 } }, Color::blue);
+                                         } });
 
             root.Add(meshNode);
         }

@@ -1,6 +1,7 @@
 #include "World.h"
 #include "DesignSystem.h"
 #include "DevProfiler.h"
+#include "DuckDesignSystem.h"
 #include "Font.h"
 #include "Funcs.h"
 #include "GraphNodeTool.h"
@@ -21,11 +22,15 @@ World::World() {
 
     // The render limiter has to keep running while the world is paused, or imGui stops working
     // Wrong: updatables.Add(renderLimiter);
+
+    // Default design system is "ugly duckling" design system,
+    // a basic and simple UI
+    designSystem = MAKE<DuckDesignSystem>();
 }
 
 void World::Add(SP<SomeWorldSystem> system) {
     system->SetWorld(this);
-    this->systems.push_back(system);
+    systems.push_back(system);
 }
 
 void World::RemoveAllNodes() {
@@ -34,9 +39,6 @@ void World::RemoveAllNodes() {
     // This leaves dangling pointers to world, but we assume
     // that RemoveAll causes all child objects to be de-allocated
     root->RemoveAllChildren();
-
-    // Clear cached values
-    mainCamera.reset();
 }
 
 void World::RemoveAllSystems() {
@@ -46,22 +48,23 @@ void World::RemoveAllSystems() {
 void World::Remove(SomeWorldSystem& system) {
     GUARD(system.World() == this)
 
-    system.SetWorld(nullptr);
+    system.SetWorld({});
     RemoveFirstIf(systems, [&](auto& i) { return i.get() == &system; });
 }
 
+// List is passed as copy to prevent iteration-mutation crash
 void World::Remove(VectorList<SP<SomeWorldSystem>> systems) {
     for (auto& system : systems) {
         Remove(*system);
     }
 }
 
-SP<SomeCamera> World::MainCamera() {
+SomeCamera* World::MainCamera() {
 #ifdef PROFILE
     DevProfiler devProfiler("MainCamera", [](String value) { cout << value; });
 #endif
 
-    GUARDR(!mainCamera, mainCamera)
+    GUARDR(mainCamera.expired(), mainCamera.lock().get())
 
     VectorList<WorldNode*> graph;
     CollectBreadthFirstTree(root.get(), graph);
@@ -73,11 +76,12 @@ SP<SomeCamera> World::MainCamera() {
         // Offscreen cameras don't qualify as the main camera
         GUARD_CONTINUE(camera && !camera->renderContext)
 
-        mainCamera = camera ? SCAST<SomeCamera>(camera->shared_from_this()) : nullptr;
-        return mainCamera;
+        auto sharedCamera = camera ? SCAST<SomeCamera>(camera->shared_from_this()) : nullptr;
+        mainCamera = sharedCamera;
+        return sharedCamera.get();
     }
 
-    return nullptr;
+    return {};
 }
 
 void World::OnGo() {
@@ -121,6 +125,7 @@ void World::RenderNow() {
         fpsCheckTimePoint = now;
     }
 
+    // TODO: should we use updateList?
     VectorList<WorldNode*> nodes;
     nodes.reserve(updateList.size());
     std::transform(
@@ -142,11 +147,13 @@ void World::RenderNow() {
         [](SomeCamera* camera) { return camera != nullptr; }
     );
 
-    RenderContextModel contextModel(renderContext.get(), root.get(), nodes, cameras);
+    RenderContextModel contextModel{
+        .renderContext = renderContext.get(), .root = root.get(), .nodes = nodes, .cameras = cameras
+    };
 
     int drawCount = 0;
 
-    // Prevent iteration-mutation crash
+    // Prevent iterate-mutation crash
     auto iterSystems = systems;
     for (auto& system : iterSystems) {
         auto result = system->Render(contextModel);
@@ -195,7 +202,6 @@ Matrix4x4 World::WorldModelMatrix(WorldNode const& node) {
 #endif
 
     auto modelMatrix = LocalModelMatrix(node);
-
     auto parent = node.Parent();
 
     // Transform child to parent matrix
@@ -215,6 +221,7 @@ Matrix4x4 World::WorldModelMatrix(WorldNode const& node) {
     return modelMatrix;
 }
 
+// TODO: come back to this
 void UpdateWorld(WorldNode& node, TimeSlice time, WorldNode::NodeList& updateList) {
     if (node.IsDestroyed()) {
         node.OnDestroy();
@@ -224,6 +231,7 @@ void UpdateWorld(WorldNode& node, TimeSlice time, WorldNode::NodeList& updateLis
         node.Parent()->Remove(node);
     } else {
         GUARD(node.IsEnabled())
+        // TODO: rethink. Does update need shared points? What if something is removed?
         updateList.push_back(SCAST<WorldNode>(node.shared_from_this()));
 
         if (!node.World()->IsPaused()) {
@@ -289,6 +297,27 @@ void World::SetRenderContext(SP<SomeRenderContext> renderContext) {
     this->renderContext = renderContext;
 }
 
+void World::LoadPrefab(String id, WorldNode& node) {
+    GUARD_LOG(node.World() == this, "ERROR. Node must be parented before LoadPrefab")
+
+    try {
+        auto prefab = prefabs.at(id);
+        prefab->LoadInto(node);
+    } catch (...) {}
+}
+
+bool World::IsPaused() const {
+    return isPaused;
+}
+
+void World::Pause() {
+    isPaused = true;
+}
+
+void World::Play() {
+    isPaused = false;
+}
+
 #include "Matrix4x4.h"
 #include "World.h"
 #include "WorldNode.h"
@@ -304,7 +333,7 @@ WorldPosition PJ::ScreenToWorld(SomeWorldComponent& component, ScreenPosition sc
     GUARDR(world, {})
 
     // Get the camera
-    SP<SomeCamera> camera = world->MainCamera();
+    auto camera = world->MainCamera();
     GUARDR(camera, {})
 
     auto result = camera->ScreenToWorld(screenPos);
@@ -321,7 +350,7 @@ LocalPosition PJ::ScreenToLocal(SomeWorldComponent& component, ScreenPosition sc
     GUARDR(world, result)
 
     // Get the camera
-    SP<SomeCamera> camera = world->MainCamera();
+    auto camera = world->MainCamera();
     GUARDR(camera, result)
 
     auto worldPosition = camera->ScreenToWorld(screenPos);
@@ -333,107 +362,4 @@ LocalPosition PJ::ScreenToLocal(SomeWorldComponent& component, ScreenPosition sc
     result = LocalPosition(localPosition.x, localPosition.y, 0);
 
     return result;
-}
-
-SP<SomeTexture> World::FindTexture(String id) {
-    try {
-        auto& typeMap = loadedResources->map.at("texture");
-        auto result = typeMap.at(id);
-        return DCAST<SomeTexture>(result.resource);
-    } catch (...) {
-        return nullptr;
-    }
-}
-
-UnorderedSet<SP<SomeTexture>> World::FindTextures(UnorderedSet<String> const& textureIds) {
-    VectorList<SP<SomeTexture>> result;
-
-    std::transform(
-        textureIds.begin(), textureIds.end(), std::inserter(result, result.begin()),
-        [&](auto& id) { return FindTexture(id); }
-    );
-    Compact(result);
-
-    UnorderedSet<SP<SomeTexture>> _result(result.begin(), result.end());
-    return _result;
-}
-
-VectorList<SP<SomeTexture>> World::FindTextureList(VectorList<String> const& textureIds) {
-    VectorList<SP<SomeTexture>> result;
-
-    std::transform(
-        textureIds.begin(), textureIds.end(), std::inserter(result, result.begin()),
-        [&](auto& id) { return FindTexture(id); }
-    );
-    Compact(result);
-
-    return result;
-}
-
-SP<Font> World::FindFontWithSize(float size) {
-    FontSpec spec{ .size = size };
-    return FindFont(spec);
-}
-
-SP<Font> World::FindFontWithResourceId(String id) {
-    FontSpec spec{ .resourceId = id };
-    return FindFont(spec);
-}
-
-SP<Font> World::FindFont(FontSpec spec) {
-    try {
-        auto& typeMap = loadedResources->map.at("font");
-        if (spec.resourceId.size() > 0) {
-            auto result = typeMap.at(spec.resourceId);
-            return DCAST<Font>(result.resource);
-        }
-
-        VectorList<SP<Font>> candidates;
-        for (auto const& item : typeMap) {
-            auto font = DCAST<Font>(item.second.resource);
-            GUARD_CONTINUE(font)
-            candidates.push_back(font);
-        }
-
-        GUARDR(!IsEmpty(candidates), nullptr)
-
-        // TODO: need unit test
-        std::sort(
-            candidates.begin(), candidates.end(),
-            [&](SP<Font> const& lhs, SP<Font> const& rhs) {
-                auto Weight = [](FontSpec spec, SP<Font> const& font) {
-                    int result = 0;
-                    if (!IsEmpty(spec.fontName)) {
-                        if (font->name == spec.fontName) {
-                            result++;
-                        }
-                    }
-                    if (spec.size > 0) {
-                        if (font->size == spec.size) {
-                            result += 2;
-                        }
-                    }
-
-                    return result;
-                };
-
-                int leftWeight = Weight(spec, lhs);
-                int rightWeight = Weight(spec, rhs);
-
-                return leftWeight > rightWeight;
-            }
-        );
-
-        return candidates[0];
-    } catch (...) {
-        return nullptr;
-    }
-}
-
-SP<SomeShaderProgram> World::FindShader(String id) {
-    try {
-        return SomeShaderProgram::registry.at(id);
-    } catch (...) {
-        return nullptr;
-    }
 }

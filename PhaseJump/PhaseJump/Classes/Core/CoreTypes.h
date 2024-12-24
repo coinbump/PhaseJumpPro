@@ -1,8 +1,5 @@
-#ifndef PJTYPES_H
-#define PJTYPES_H
+#pragma once
 
 #include <optional>
 
 using Optional = std::optional;
-
-#endif

@@ -2,6 +2,7 @@
 #include "CollectionUtils.h"
 #include "EditorTypes.h"
 #include "SignalTypes.h"
+#include "SomeKeyUIEvent.h"
 #include "WorldNode.h"
 
 using namespace std;

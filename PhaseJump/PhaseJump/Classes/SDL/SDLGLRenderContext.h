@@ -28,7 +28,7 @@ namespace PJ {
         using Base = SomeRenderContext;
         using This = SDLGLRenderContext;
 
-        SDLGLRenderContext(SP<SomeRenderEngine> renderEngine) :
+        SDLGLRenderContext(SomeRenderEngine& renderEngine) :
             Base(renderEngine) {}
 
         virtual ~SDLGLRenderContext();

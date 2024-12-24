@@ -4,7 +4,35 @@
 #include "World.h"
 #include "WorldNode.h"
 
+using namespace std;
 using namespace PJ;
+
+using This = SomeWorldComponent;
+
+SomeWorldComponent::SomeWorldComponent(String name) :
+    _core(*this) {
+    _core.name = name;
+
+    PlanUIFunc planUIFunc = [this](auto& component, String context, UIPlanner& planner) {
+        planner.Text([this]() {
+            VectorList<String> signalNames = _core.SignalHandlerNames();
+            auto text = Joined(signalNames, ", ");
+
+            return UIPlanner::TextConfig{ .label = "Signals", .text = text };
+        });
+    };
+    Override(planUIFuncs[UIContextId::Inspector], planUIFunc);
+}
+
+This& SomeWorldComponent::Enable(bool value) {
+    GUARDR(isEnabled != value, *this)
+    isEnabled = value;
+
+    if (onEnabledChangeFunc) {
+        onEnabledChangeFunc(*this);
+    }
+    return *this;
+}
 
 Matrix4x4 SomeWorldComponent::ModelMatrix() const {
     Matrix4x4 result;
@@ -32,13 +60,6 @@ Vector3 SomeWorldComponent::WorldToLocal(Vector3 worldPos) const {
     return owner->WorldToLocal(worldPos);
 }
 
-void SomeWorldComponent::Signal(String id, SomeSignal const& signal) {
-    auto i = signalFuncs.find(id);
-    if (i != signalFuncs.end()) {
-        i->second(*this, signal);
-    }
-}
-
 UP<UIPlan> SomeWorldComponent::MakeUIPlan(String context) {
     try {
         auto& planUIFunc = planUIFuncs.at(context);
@@ -51,4 +72,25 @@ UP<UIPlan> SomeWorldComponent::MakeUIPlan(String context) {
     } catch (...) {
         return {};
     }
+}
+
+void SomeWorldComponent::Awake() {
+    GUARD(awakeFunc)
+    awakeFunc(*this);
+}
+
+void SomeWorldComponent::Start() {
+    GUARD(startFunc)
+    startFunc(*this);
+}
+
+This& SomeWorldComponent::AddSignalHandler(SignalHandler handler) {
+    _core.AddSignalHandler(handler);
+    OnAddSignalHandler();
+    return *this;
+}
+
+void SomeWorldComponent::OnAddSignalHandler() {
+    GUARD(owner)
+    owner->isListener = true;
 }

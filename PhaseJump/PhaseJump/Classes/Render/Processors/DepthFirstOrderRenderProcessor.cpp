@@ -17,7 +17,7 @@ void Paint(OrderMap& orderMap, WorldNode& node, uint32_t& order) {
     }
 };
 
-void DepthFirstOrderRenderProcessor::Process(CameraRenderModel& cameraModel) {
+void DepthFirstOrderRenderProcessor::Process(RenderCameraModel& cameraModel) {
     GUARD(cameraModel.root)
 
     /// Object render id to order map. For Z-ordering

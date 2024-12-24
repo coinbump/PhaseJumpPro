@@ -44,10 +44,25 @@ namespace PJ {
         };
     }; // namespace PixelFormat
 
+    /// Interface to bitmap object
+    class SomeBitmap {
+    public:
+        virtual ~SomeBitmap() {};
+
+        virtual void* DataPtr() const = 0;
+        virtual Vector2Int const& Size() const = 0;
+        virtual size_t DataSize() const = 0;
+        virtual int PixelSize() const = 0;
+    };
+
+    /// Stores bitmap images in memory as pixels
     template <class PixelFormat = PixelFormat::RGBA8888>
-    class Bitmap {
+    class Bitmap : public SomeBitmap {
     public:
         using Pixel = typename PixelFormat::Pixel;
+
+        // Don't allow copies
+        DELETE_COPY(Bitmap)
 
     protected:
         VectorList<Pixel> pixels;
@@ -71,26 +86,6 @@ namespace PJ {
 
         Bitmap(Vector2Int size, PJ::Data<uint32_t> const& data) :
             Bitmap(size, data.Pointer(), data.Size()) {}
-
-        DELETE_COPY(Bitmap)
-
-        void FlipV() {
-            GUARD(size.x > 0 && size.y > 0)
-
-            for (int i = 0; i < size.y; i++) {
-                auto j = size.y - i - 1;
-                GUARD_BREAK(j > i)
-
-                std::span<Pixel> iData = ScanLineData(i);
-                std::span<Pixel> jData = ScanLineData(j);
-
-                VectorList<Pixel> swapLine;
-                swapLine.assign(iData.begin(), iData.end());
-
-                std::copy(jData.begin(), jData.end(), iData.begin());
-                std::copy(swapLine.begin(), swapLine.end(), jData.begin());
-            }
-        }
 
         template <class Check>
         bool AnyPixelsOnScanLine(int y, Check check) {
@@ -147,14 +142,6 @@ namespace PJ {
             return true;
         }
 
-        size_t DataSize() const {
-            return pixels.size() * PixelSize();
-        }
-
-        Vector2Int const& Size() const {
-            return size;
-        }
-
         VectorList<Pixel> const& Pixels() const {
             return pixels;
         }
@@ -165,10 +152,6 @@ namespace PJ {
 
         size_t ColorComponentBitSize(ColorComponent component) const {
             return pixelFormat.ColorComponentBitSize(component);
-        }
-
-        size_t PixelSize() const {
-            return pixelFormat.PixelSize();
         }
 
         bool HasAlpha() const {
@@ -277,8 +260,27 @@ namespace PJ {
             GUARDR(index, nullptr)
             return &(pixels[*index]);
         }
+
+        // MARK: SomeBitmap
+
+        void* DataPtr() const override {
+            return (void*)pixels.data();
+        }
+
+        size_t DataSize() const override {
+            return pixelFormat.PixelSize() * pixels.size();
+        }
+
+        int PixelSize() const override {
+            return pixelFormat.PixelSize();
+        }
+
+        Vector2Int const& Size() const override {
+            return size;
+        }
     };
 
     using RGBABitmap = Bitmap<PixelFormat::RGBA8888>;
     using BGRABitmap = Bitmap<PixelFormat::BGRA8888>;
+
 } // namespace PJ

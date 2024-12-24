@@ -33,7 +33,7 @@ namespace PJ {
         VectorList<float> positions;
 
         /// Called to build the path for this layout
-        virtual SP<SomePath> BuildPath() = 0;
+        virtual UP<SomePath> BuildPath() = 0;
 
         // MARK: SomeLayout
 

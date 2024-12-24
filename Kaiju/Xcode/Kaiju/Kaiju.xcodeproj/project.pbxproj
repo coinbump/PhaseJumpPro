@@ -59,6 +59,8 @@
 		CD815F042CA371AF00FBB665 /* KaijuImGuiRenderProcessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD815F032CA371AF00FBB665 /* KaijuImGuiRenderProcessor.cpp */; };
 		CD815F052CA371AF00FBB665 /* KaijuImGuiRenderProcessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD815F032CA371AF00FBB665 /* KaijuImGuiRenderProcessor.cpp */; };
 		CD815FC82CABA0FF00FBB665 /* SwiftTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD2A601A2B39EAFC000B801B /* SwiftTest.swift */; };
+		CDB7F6C12D1A088400A166F4 /* ImageAppScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDB7F6C02D1A088400A166F4 /* ImageAppScene.cpp */; };
+		CDB7F6C22D1A088400A166F4 /* ImageAppScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDB7F6C02D1A088400A166F4 /* ImageAppScene.cpp */; };
 		CDBF348A2C975AA700159636 /* PhaseJump-Dev.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDBF34892C975AA700159636 /* PhaseJump-Dev.framework */; };
 		CDBF348B2C975AA700159636 /* PhaseJump-Dev.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CDBF34892C975AA700159636 /* PhaseJump-Dev.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CDDB6F7D2C8E51710073D3A2 /* ExampleLifeMatrixRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDDB6F7C2C8E51710073D3A2 /* ExampleLifeMatrixRenderer.cpp */; };
@@ -175,6 +177,8 @@
 		CD815FF92CB2E29200FBB665 /* TestBulletsScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestBulletsScene.h; sourceTree = "<group>"; };
 		CD837E4D2A00AFCF00467542 /* TestTextureScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestTextureScene.h; sourceTree = "<group>"; };
 		CD86A73929F0C1540015BFCE /* TestSlicedTextureScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestSlicedTextureScene.h; sourceTree = "<group>"; };
+		CDB7F6BF2D1A088400A166F4 /* ImageAppScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageAppScene.h; sourceTree = "<group>"; };
+		CDB7F6C02D1A088400A166F4 /* ImageAppScene.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ImageAppScene.cpp; sourceTree = "<group>"; };
 		CDBF34892C975AA700159636 /* PhaseJump-Dev.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = "PhaseJump-Dev.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CDC2EB542C6EE52500A85053 /* TestEmittersScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestEmittersScene.h; sourceTree = "<group>"; };
 		CDD0D2722BF04E25001C4A5B /* TestAnimateApp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestAnimateApp.h; sourceTree = "<group>"; };
@@ -259,6 +263,7 @@
 		CD372FBB2CC8034700D79CA5 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				CDB7F6BE2D1A086500A166F4 /* Tools */,
 				CD815F062CA371C600FBB665 /* Core */,
 				CDDB6F742C8E37660073D3A2 /* Examples */,
 				CDF0FB8029EF941700B9EF1F /* Scenes */,
@@ -349,6 +354,15 @@
 				CD372FBC2CC8037400D79CA5 /* SDKIncludes.h */,
 			);
 			path = Core;
+			sourceTree = "<group>";
+		};
+		CDB7F6BE2D1A086500A166F4 /* Tools */ = {
+			isa = PBXGroup;
+			children = (
+				CDB7F6BF2D1A088400A166F4 /* ImageAppScene.h */,
+				CDB7F6C02D1A088400A166F4 /* ImageAppScene.cpp */,
+			);
+			path = Tools;
 			sourceTree = "<group>";
 		};
 		CDDB6F742C8E37660073D3A2 /* Examples */ = {
@@ -655,6 +669,7 @@
 				CD815FC82CABA0FF00FBB665 /* SwiftTest.swift in Sources */,
 				CD1D46832C9368BA00839F39 /* AppDelegateBridge.swift in Sources */,
 				CD1D46842C9368BA00839F39 /* main.m in Sources */,
+				CDB7F6C12D1A088400A166F4 /* ImageAppScene.cpp in Sources */,
 				CD815EE52C9F769000FBB665 /* ExampleMineSweeperScene.cpp in Sources */,
 				CD1D46852C9368BA00839F39 /* SwiftBridge.swift in Sources */,
 				CD372FB62CC6F7C700D79CA5 /* KaijuWorldSystem.cpp in Sources */,
@@ -683,6 +698,7 @@
 				CD420AE92959FE6900C5D3E1 /* SDLKaiju.cpp in Sources */,
 				CDF0FB7829EE11DA00B9EF1F /* AppDelegateBridge.swift in Sources */,
 				CD6FEB6129170AE600F674D3 /* main.m in Sources */,
+				CDB7F6C22D1A088400A166F4 /* ImageAppScene.cpp in Sources */,
 				CD815EE42C9F769000FBB665 /* ExampleMineSweeperScene.cpp in Sources */,
 				CD5FB81E291E13D5004F2FB4 /* SwiftBridge.swift in Sources */,
 				CD372FB52CC6F7C700D79CA5 /* KaijuWorldSystem.cpp in Sources */,
@@ -873,7 +889,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 12.6;
+				MACOSX_DEPLOYMENT_TARGET = 13.5;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -928,7 +944,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 12.6;
+				MACOSX_DEPLOYMENT_TARGET = 13.5;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;

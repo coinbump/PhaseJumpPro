@@ -3,6 +3,7 @@
 #include "Class.h"
 #include "Factory.h"
 #include "StringUtils.h"
+#include "TypeClass.h"
 #include "UnorderedMap.h"
 #include "Utils.h"
 
@@ -15,38 +16,58 @@ namespace PJ {
     /// Registry for classes
     /// Each registered class has metadata like tags, name, etc.
     /// Eacn registered can be a factory that creates a specific type
-    template <class BaseType = Base, class ClassType = SomeClass<Base>>
+    template <class ClassType = SomeClass>
     class ClassRegistry {
+    protected:
+        using ClassMap = UnorderedMap<String, UP<ClassType>>;
+
+        ClassMap map;
+
     public:
-        using Map = UnorderedMap<String, UP<ClassType>>;
-
-        Map map;
-
         ClassRegistry() {}
 
+        ClassMap const& Map() const {
+            return map;
+        }
+
+        /// Adds a class to the registry
         void Add(UP<ClassType>& _class) {
             Add(std::move(_class));
         }
 
+        /// Adds a class to the registry
         void Add(UP<ClassType>&& _class) {
             GUARD(_class)
             map.insert_or_assign(_class->id, std::move(_class));
         }
 
-        template <class T>
-        SP<T> NewType(String key) {
-            return DCAST<T>(NewBase(key));
+        /// Adds a class to the registry and set the id
+        void Add(String id, UP<ClassType>&& _class) {
+            GUARD(_class)
+            _class->id = id;
+            Add(_class);
         }
 
-        SP<Base> NewBase(String key) const {
+        template <
+            class Type, typename... Arguments, typename _Type = ClassType,
+            std::enable_if_t<std::is_base_of<TypeClass<Type, Arguments...>, _Type>::value>* =
+                nullptr>
+        UP<Type> NewType(String key, Arguments... args) {
             auto iterator = map.find(key);
             GUARDR(iterator != map.end(), {});
 
             auto& ptr = iterator->second;
-            auto factory = dynamic_cast<SomeFactory<Base>*>(ptr.get());
-            GUARDR(factory, {})
+            return ptr->New(args...);
+        }
 
-            return factory->NewBase();
+        /// @return Returns a new object for the class type, if the class is a TypeClass and has a
+        /// factory
+        template <
+            class Type, typename... Arguments, typename _Type = ClassType,
+            std::enable_if_t<std::is_base_of<TypeClass<Type, Arguments...>, _Type>::value>* =
+                nullptr>
+        SP<Type> MakeType(String key, Arguments... args) {
+            return std::move(NewType<Type>(key, args...));
         }
     };
 } // namespace PJ

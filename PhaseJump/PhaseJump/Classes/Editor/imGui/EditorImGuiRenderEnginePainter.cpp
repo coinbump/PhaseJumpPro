@@ -10,19 +10,19 @@ using namespace PJ;
 EditorImGuiRenderEnginePainter::EditorImGuiRenderEnginePainter(EditorWorldSystem& _system) :
     system(_system) {
     drawFunc = [this](auto& painter) {
-        auto world = *system.World();
+        auto& world = *system.World();
 
         if (ImGui::CollapsingHeader("Render Engine", ImGuiTreeNodeFlags_DefaultOpen)) {
-            auto renderEngine = world.renderContext->renderEngine;
+            auto& renderEngine = world.renderContext->renderEngine;
             if (ImGui::Checkbox(
                     "Optimize state switches", &system.renderEnginePaintModel.optimizeStateSwitches
                 )) {
-                renderEngine->optimizeStateSwitches =
+                renderEngine.optimizeStateSwitches =
                     system.renderEnginePaintModel.optimizeStateSwitches;
             }
 
             ImGui::Text("Enabled features");
-            for (auto& enabledFeature : renderEngine->EnabledFeatures()) {
+            for (auto& enabledFeature : renderEngine.EnabledFeatures()) {
                 ImGui::Text("%s", enabledFeature.c_str());
             }
 

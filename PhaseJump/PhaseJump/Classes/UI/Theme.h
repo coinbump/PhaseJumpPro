@@ -81,7 +81,7 @@ namespace PJ {
         /// @return Returns a tag value for a UI element
         template <class Type>
         Type ElementTagValue(String elementId, String tagName, Type defaultValue = {}) const {
-            return elements.Value<Type>(elementId, tagName, defaultValue);
+            return elements.SafeValue<Type>(elementId, tagName, defaultValue);
         }
 
         /// @return Returns value if it exists

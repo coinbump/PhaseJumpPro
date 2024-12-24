@@ -4,7 +4,11 @@
 #include "ParallelBehavior.h"
 #include "Timeline.h"
 
-// /23
+/*
+ RATING: 5 stars
+ Tested and works
+ CODE REVIEW: 12/15/24
+ */
 namespace PJ {
     class WorldNode;
 
@@ -54,7 +58,10 @@ namespace PJ {
             behavior->name = name;
             behavior->_diagnose.Enable(_diagnose);
 
-            TopBehavior()->Add(behavior);
+            auto topBehavior = TopBehavior();
+            GUARDR(topBehavior, *this)
+
+            topBehavior->Add(behavior);
 
             return *this;
         }

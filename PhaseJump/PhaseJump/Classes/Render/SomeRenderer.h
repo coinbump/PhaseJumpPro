@@ -19,26 +19,39 @@ namespace PJ {
     class RenderModel;
     class SomeTexture;
 
+    /// Produces render models for the render engine to render
     class SomeRenderer : public WorldComponent<>, public WorldSizeable {
     public:
-        using This = SomeRenderer;
-        using BuildMeshFunc = RendererModel::BuildMeshFunc;
-
-        /// Defines model for renderer
-        RendererModel model;
-
-        SomeRenderer(Vector3 worldSize);
-
-        /// Override to reset internal renderer states
-        virtual void Reset() {}
+        virtual ~SomeRenderer() {}
 
         /// Create models to send to the render engine for a render
-        virtual VectorList<RenderModel> RenderModels();
+        virtual VectorList<RenderModel> RenderModels() = 0;
 
         /// @return Returns a calculated size from the given size proposal
         virtual Vector2 CalculateSize(Vector2 proposal) {
             return proposal;
         }
+
+        /// Some renderers have a limited time span (animations)
+        virtual bool IsRenderFinished() const {
+            return false;
+        }
+    };
+
+    /// Renders a material and mesh
+    class SomeMaterialRenderer : public SomeRenderer {
+    public:
+        using Base = SomeRenderer;
+        using This = SomeMaterialRenderer;
+        using BuildMeshFunc = RendererModel::BuildMeshFunc;
+
+        /// Defines model for renderer
+        RendererModel model;
+
+        SomeMaterialRenderer(Vector3 worldSize);
+
+        /// Override to reset internal renderer states
+        virtual void Reset() {}
 
         This& SetBuildMeshFunc(BuildMeshFunc buildMeshFunc) {
             model.SetBuildMeshFunc(buildMeshFunc);
@@ -54,13 +67,13 @@ namespace PJ {
         }
 
         Color GetColor() {
-            return model.Color();
+            return model.GetColor();
         }
 
-        /// Some renderers have a limited time span (animations)
-        virtual bool IsRenderFinished() const {
-            return false;
-        }
+        // MARK: SomeRenderer
+
+        /// Create models to send to the render engine for a render
+        VectorList<RenderModel> RenderModels() override;
 
         // MARK: WorldSizeable
 

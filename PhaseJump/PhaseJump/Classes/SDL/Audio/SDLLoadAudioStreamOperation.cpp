@@ -7,21 +7,19 @@ using namespace std;
 using namespace PJ;
 
 SomeLoadResourcesOperation::Result SDLLoadAudioStreamOperation::LoadResources() {
-    Uint8* audioBuffer = nullptr;
-    Uint32 bufferLength = 0;
     SDL_AudioSpec inputAudioSpec;
+    Uint32 bufferLength{};
+    Uint8* audioBuffer{};
 
-    // https://wiki.libsdl.org/SDL3/Tutorials/AudioStream
-    if (SDL_LoadWAV(info.filePath.c_str(), &inputAudioSpec, &audioBuffer, &bufferLength) == 0) {
-        auto audioStream = MAKE<SDLAudioStream>(audioBuffer, bufferLength, inputAudioSpec);
+    bool isAudioLoaded =
+        SDL_LoadWAV(info.filePath.c_str(), &inputAudioSpec, &audioBuffer, &bufferLength);
+    GUARDR(isAudioLoaded, Failure())
 
-        ResourceModel loadedResource(
-            SCAST<PJ::Base>(audioStream), info.id, info.filePath, info.type
-        );
-        Success result;
-        result.Add(loadedResource);
-        return result;
-    }
+    auto audioStream = MAKE<SDLAudioStream>(audioBuffer, bufferLength, inputAudioSpec);
 
-    return Failure();
+    ResourceModel loadedResource{ .resource = audioStream, .info = info };
+    Success result;
+    result.Add(loadedResource);
+
+    return result;
 }

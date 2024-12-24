@@ -1,5 +1,4 @@
-#ifndef PJSTRONGREFERENCE_H
-#define PJSTRONGREFERENCE_H
+#pragma once
 
 #include "SomeReference.h"
 #include "Utils.h"
@@ -35,5 +34,3 @@ namespace PJ {
         }
     };
 } // namespace PJ
-
-#endif

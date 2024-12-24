@@ -31,7 +31,8 @@ public:
                     auto owner = emitter.owner;
                     auto node = MAKE<WorldNode>("Bullet");
 
-                    auto texture = DCAST<GLTexture>(owner->World()->FindTexture("heart-full"));
+                    auto texture =
+                        DCAST<GLTexture>(owner->World()->resources.FindTexture("heart-full"));
                     GUARDR(texture, Emitter::SpawnList{})
                     auto material = MAKE<RenderMaterial>();
                     material->SetShaderProgram(SomeShaderProgram::registry["texture.uniform"]);
@@ -54,8 +55,9 @@ public:
                 emitter.driver =
                     NEW<TimerDriver>(0.5f, RunType::Repeat, [&emitter]() { emitter.Fire(); });
 
-                emitter.emitFunc =
-                    EmitFuncs::MakeSpread2D(4, Angle::WithDegrees(20.0f), Angle::WithDegrees(3.0f));
+                emitter.emitFunc = EmitFuncs::Spread2D({ .count = 4,
+                                                         .angleStep = Angle::WithDegrees(20.0f),
+                                                         .varyAngle = Angle::WithDegrees(3.0f) });
             });
     }
 };

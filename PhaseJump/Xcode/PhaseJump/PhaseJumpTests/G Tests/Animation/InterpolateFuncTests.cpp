@@ -11,7 +11,7 @@ using namespace InterpolateFuncTests;
 
 TEST(Interpolator, LinearCurve)
 {
-    auto sut = InterpolateFuncs::MakeEase(InterpolateFuncs::Make<float>(0.0f, 100.0f));
+    auto sut = InterpolateFuncs::Ease(InterpolateFuncs::Make<float>(0.0f, 100.0f));
     EXPECT_EQ(0, sut(0));
     EXPECT_EQ(50.0f, sut(0.5));
     EXPECT_EQ(100.0f, sut(1.0));
@@ -24,7 +24,7 @@ TEST(Interpolator, DoubleCurve)
     InterpolateFunc<float> vf = [=](float progress) {
         return (start + (end - start) * progress) * 2.0f;
     };
-    auto sut = InterpolateFuncs::MakeEase(vf);
+    auto sut = InterpolateFuncs::Ease(vf);
 
     EXPECT_EQ(0, sut(0));
     EXPECT_EQ(100.0f, sut(0.5));
@@ -35,7 +35,7 @@ TEST(Interpolator, Reverse)
 {
     float start = 0.0f;
     float end = 100.0f;
-    auto sut = InterpolateFuncs::MakeReverse(InterpolateFuncs::Make(start, end));
+    auto sut = InterpolateFuncs::Reverse(InterpolateFuncs::Make(start, end));
 
     EXPECT_EQ(100.0f, sut(0));
     EXPECT_EQ(50.0f, sut(0.5f));
@@ -51,8 +51,8 @@ TEST(Interpolator, MakeBinding)
         return value * 2.0f;
     };
     auto interpolateFunc =
-    InterpolateFuncs::MakeEase(InterpolateFuncs::Make(start, end), easeFunc);
-    auto sut = InterpolateFuncs::MakeBinding<float>(interpolateFunc, [&](auto& value) {
+    InterpolateFuncs::Ease(InterpolateFuncs::Make(start, end), easeFunc);
+    auto sut = InterpolateFuncs::Binding<float>(interpolateFunc, [&](auto& value) {
         testValue = value;
     });
 

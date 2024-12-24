@@ -13,6 +13,7 @@ namespace PJ {
         using NodeSharedPtr = SP<Node>;
         using NodeSet = OrderedSet<NodeSharedPtr>;
         using NodeList = VectorList<NodeSharedPtr>;
+        using Edge = Node::Edge;
 
         /// Collect all forward-directed nodes from this node
         NodeSet CollectGraph(SP<Node> fromNode) {
@@ -64,9 +65,10 @@ namespace PJ {
     protected:
         NodeSet
         CollectEdgeNodesTo(SP<Node> fromNode, NodeSet& nodes, NodeSet& searchedNodes, bool isDeep) {
-            auto iterEdges = fromNode->Edges();
+            VectorList<Edge*> iterEdges =
+                Map<Edge*>(fromNode->Edges(), [](auto& edge) { return edge.get(); });
             for (auto& edge : iterEdges) {
-                auto toNode = edge->toNode;
+                auto& toNode = edge->toNode;
                 nodes.insert(toNode->Value());
 
                 // Prevent infinite loop
@@ -83,7 +85,7 @@ namespace PJ {
             NodeList& nodes, NodeSharedPtr fromNode, NodeSet& searchedNodes, NodeSet& allNodes
         ) {
             for (auto& edge : fromNode->Edges()) {
-                auto toNode = edge->toNode;
+                auto& toNode = edge->toNode;
 
                 // Avoid duplicates for graphs with loops
                 if (Contains(allNodes, toNode->Value())) {
@@ -95,7 +97,7 @@ namespace PJ {
             }
 
             for (auto& edge : fromNode->Edges()) {
-                auto toNode = edge->toNode;
+                auto& toNode = edge->toNode;
 
                 // Avoid infinite loop for graphs with loops
                 if (Contains(searchedNodes, toNode->Value())) {
@@ -114,7 +116,7 @@ namespace PJ {
             }
 
             for (auto& edge : fromNode->Edges()) {
-                auto toNode = edge->toNode;
+                auto& toNode = edge->toNode;
 
                 // Avoid infinite loop for graphs with loops
                 if (Contains(searchedNodes, toNode->Value())) {

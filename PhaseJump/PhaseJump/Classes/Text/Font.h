@@ -15,12 +15,14 @@ namespace PJ {
     class TextureAtlas;
     class SomeTexture;
 
+    /// Defines parameters for finding a font from resources
     struct FontSpec {
         String resourceId;
         String fontName;
         float size = 0;
     };
 
+    /// Stores font metrics
     struct FontMetrics {
         using KernPair = std::pair<uint32_t, uint32_t>;
 
@@ -74,9 +76,14 @@ namespace PJ {
         /// Attribute tags. Example: bold, italic, heavy, etc.
         TypeTagSet typeTags;
 
-        Font(String name, float size) :
-            name(name),
-            size(size) {}
+        struct Config {
+            String name;
+            float size{};
+        };
+
+        Font(Config config) :
+            name(config.name),
+            size(config.size) {}
 
         int Height() const {
             return metrics.ascent + metrics.descent;

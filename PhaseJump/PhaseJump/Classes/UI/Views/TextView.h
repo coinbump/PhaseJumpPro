@@ -1,5 +1,6 @@
 #pragma once
 
+#include "AttributedString.h"
 #include "Color.h"
 #include "Font.h"
 #include "StringUtils.h"
@@ -22,10 +23,10 @@ namespace PJ {
         struct Config {
             Color color = Color::black;
             FontSpec fontSpec = { .size = 12 };
-            String text;
+            AttributedString text;
         };
 
-        void SetText(StringView value);
+        void SetText(String value);
 
         // MARK: SomeWorldComponent
 

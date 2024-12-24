@@ -1,5 +1,4 @@
-#ifndef PJCOLOR_H
-#define PJCOLOR_H
+#pragma once
 
 #include "FloatMath.h"
 #include "RGBAColor.h"
@@ -89,9 +88,7 @@ namespace PJ {
         // MARK: StringConvertible
 
         String ToString() const {
-            // TODO: create ToString formatter with pair<String, String>
-            return "Red: " + MakeString(r) + ", Green: " + MakeString(g) +
-                   ", Blue: " + MakeString(b) + ", Alpha: " + MakeString(a);
+            return std::format("Red: {}, Green: {}, Blue: {}, Alpha: {}", r, g, b, a);
         }
 
         friend std::ostream& operator<<(std::ostream&, Color const& value);
@@ -120,5 +117,3 @@ namespace PJ {
     std::ostream& operator<<(std::ostream& os, Color const& value);
 
 } // namespace PJ
-
-#endif

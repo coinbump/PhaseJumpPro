@@ -6,47 +6,89 @@ using namespace PJ;
 
 using This = UIPlanner;
 
-This& UIPlanner::Text(String label, std::function<String()> valueFunc) {
-    Binding<String> binding(valueFunc, {});
-    plan.Add(NEW<ValueUIModel<String>>(UIModelType::Text, label, ValueUICore{ binding }));
+This& UIPlanner::Text(std::function<TextConfig()> configFunc) {
+    GUARDR(configFunc, *this)
+
+    plan.Add([=]() {
+        auto config = configFunc();
+        Binding<String> binding([=]() { return config.text; }, {});
+        return NEW<ValueUIModel<String>>(UIModelType::Text, config.label, ValueUICore{ binding });
+    });
     return *this;
 }
 
-This& UIPlanner::Button(String label, std::function<void()> func) {
-    plan.Add(NEW<UIModel<ActionUICore>>(UIModelType::Button, label, ActionUICore{ .func = func }));
+This& UIPlanner::Button(std::function<ButtonConfig()> configFunc) {
+    GUARDR(configFunc, *this)
+
+    plan.Add([=]() {
+        auto config = configFunc();
+        return NEW<UIModel<ActionUICore>>(
+            UIModelType::Button, config.label, ActionUICore{ .func = config.func }
+        );
+    });
     return *this;
 }
 
-This& UIPlanner::InputFloat(String label, Binding<float> binding) {
-    plan.Add(NEW<ValueUIModel<float>>(UIModelType::InputFloat, label, ValueUICore{ binding }));
+This& UIPlanner::InputFloat(InputFloatConfig config) {
+    plan.Add([=]() {
+        return NEW<ValueUIModel<float>>(
+            UIModelType::InputFloat, config.label, ValueUICore{ config.binding }
+        );
+    });
     return *this;
 }
 
-This& UIPlanner::PickerColor(String label, Binding<Color> binding) {
-    plan.Add(NEW<ValueUIModel<Color>>(UIModelType::PickerColor, label, ValueUICore{ binding }));
+This& UIPlanner::PickerColor(PickerColorConfig config) {
+    plan.Add([=]() {
+        return NEW<ValueUIModel<Color>>(
+            UIModelType::PickerColor, config.label, ValueUICore{ config.binding }
+        );
+    });
     return *this;
 }
 
-This& UIPlanner::InputBool(String label, Binding<bool> binding) {
-    plan.Add(NEW<ValueUIModel<bool>>(UIModelType::InputBool, label, ValueUICore{ binding }));
+This& UIPlanner::InputBool(InputBoolConfig config) {
+    plan.Add([=]() {
+        return NEW<ValueUIModel<bool>>(
+            UIModelType::InputBool, config.label, ValueUICore{ config.binding }
+        );
+    });
     return *this;
 }
 
-This& UIPlanner::InputText(String label, Binding<String> binding) {
-    plan.Add(NEW<ValueUIModel<String>>(UIModelType::InputText, label, ValueUICore{ binding }));
+This& UIPlanner::InputText(InputTextConfig config) {
+    plan.Add([=]() {
+        return NEW<ValueUIModel<String>>(
+            UIModelType::InputText, config.label, ValueUICore{ config.binding }
+        );
+    });
     return *this;
 }
 
-This& UIPlanner::PickerList(String label, VectorList<String> choices, Binding<int> binding) {
-    plan.Add(NEW<UIModel<ValueOptionsUICore>>(
-        UIModelType::PickerList, label, ValueOptionsUICore{ choices, binding }
-    ));
+This& UIPlanner::PickerList(std::function<PickerListConfig()> configFunc) {
+    GUARDR(configFunc, *this)
+
+    plan.Add([=]() {
+        auto config = configFunc();
+
+        return NEW<UIModel<ValueOptionsUICore>>(
+            UIModelType::PickerList, config.label,
+            ValueOptionsUICore{ config.options, config.binding }
+        );
+    });
     return *this;
 }
 
-This& UIPlanner::ListSelect(String label, VectorList<String> choices, Binding<int> binding) {
-    plan.Add(NEW<UIModel<ValueOptionsUICore>>(
-        UIModelType::ListSelect, label, ValueOptionsUICore{ choices, binding }
-    ));
+This& UIPlanner::ListSelect(std::function<ListSelectConfig()> configFunc) {
+    GUARDR(configFunc, *this)
+
+    plan.Add([=]() {
+        auto config = configFunc();
+
+        return NEW<UIModel<ValueOptionsUICore>>(
+            UIModelType::ListSelect, config.label,
+            ValueOptionsUICore{ config.options, config.binding }
+        );
+    });
     return *this;
 }

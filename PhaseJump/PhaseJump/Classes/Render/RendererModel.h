@@ -41,6 +41,8 @@ namespace PJ {
 
         /// Mesh used for render
         MeshType mesh;
+
+        /// Renderer size in world space
         Vector3 worldSize;
 
         /// Cached render model (updated when renderer changes)
@@ -122,7 +124,7 @@ namespace PJ {
         void SetColor(ColorType value);
         void SetAlpha(float value);
 
-        ColorType Color() {
+        ColorType GetColor() const {
             GUARDR(!IsEmpty(colors), Color::white)
             return colors[0];
         }

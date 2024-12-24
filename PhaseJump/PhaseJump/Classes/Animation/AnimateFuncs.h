@@ -10,7 +10,7 @@
  CODE REVIEW: 9/21/24
  */
 namespace PJ {
-    /// Convenience tool for quickly building animations
+    /// Convenience tool for quickly building animations.
     namespace AnimateFuncs {
         /// Func that makes a set binding func
         template <class Type>
@@ -24,8 +24,8 @@ namespace PJ {
         ) {
             return [=](Type start, Type end, WorldNode& target) {
                 InterpolateFunc<Type> interpolateFunc =
-                    InterpolateFuncs::MakeEase(InterpolateFuncs::Make(start, end), easeFunc);
-                InterpolateFunc<Type> reverseInterpolateFunc = InterpolateFuncs::MakeEase(
+                    InterpolateFuncs::Ease(InterpolateFuncs::Make(start, end), easeFunc);
+                InterpolateFunc<Type> reverseInterpolateFunc = InterpolateFuncs::Ease(
                     InterpolateFuncs::Make(end, start), reverseEaseFunc ? reverseEaseFunc : easeFunc
                 );
 
@@ -36,81 +36,39 @@ namespace PJ {
         }
 
         /// @return Returns a maker for a node position animation
-        static MakeAnimatorFunc<Vector3, WorldNode&> PositionMaker(
+        MakeAnimatorFunc<Vector3, WorldNode&> PositionMaker(
             float duration, EaseFunc easeFunc, AnimationCycleType cycle = AnimationCycleType::Once,
             EaseFunc reverseEaseFunc = {}
-        ) {
-            return Maker<Vector3>(
-                duration, easeFunc,
-                [](auto& target) { return [&](auto& value) { target.SetLocalPosition(value); }; },
-                cycle, reverseEaseFunc
-            );
-        }
+        );
 
         /// @return Returns a maker for a scale animation
-        static MakeAnimatorFunc<Vector3, WorldNode&> ScaleMaker(
+        MakeAnimatorFunc<Vector3, WorldNode&> ScaleMaker(
             float duration, EaseFunc easeFunc, AnimationCycleType cycle = AnimationCycleType::Once,
             EaseFunc reverseEaseFunc = {}
-        ) {
-            return Maker<Vector3>(
-                duration, easeFunc,
-                [](auto& target) { return [&](auto& value) { target.SetScale(value); }; }, cycle,
-                reverseEaseFunc
-            );
-        }
+        );
 
         /// @return Returns a maker for a uniform scale animation
-        static MakeAnimatorFunc<float, WorldNode&> UniformScaleMaker(
+        MakeAnimatorFunc<float, WorldNode&> UniformScaleMaker2D(
             float duration, EaseFunc easeFunc, AnimationCycleType cycle = AnimationCycleType::Once,
             EaseFunc reverseEaseFunc = {}
-        ) {
-            return Maker<float>(
-                duration, easeFunc,
-                [](auto& target) {
-                    return [&](auto& value) { target.SetScale({ value, value, value }); };
-                },
-                cycle, reverseEaseFunc
-            );
-        }
+        );
 
         /// @return Returns a maker for an opacity animation
-        static MakeAnimatorFunc<float, WorldNode&> OpacityMaker(
+        MakeAnimatorFunc<float, WorldNode&> OpacityMaker(
             float duration, EaseFunc easeFunc, AnimationCycleType cycle = AnimationCycleType::Once,
             EaseFunc reverseEaseFunc = {}
-        ) {
-            return Maker<float>(
-                duration, easeFunc,
-                [](auto& target) { return [&](auto& value) { target.SetOpacity(value); }; }, cycle,
-                reverseEaseFunc
-            );
-        }
+        );
 
         /// @return Returns a maker for a rotate animation
-        static MakeAnimatorFunc<float, WorldNode&> RotateMaker(
+        MakeAnimatorFunc<float, WorldNode&> RotateMaker(
             float duration, EaseFunc easeFunc, AnimationCycleType cycle = AnimationCycleType::Once,
             EaseFunc reverseEaseFunc = {}
-        ) {
-            return Maker<float>(
-                duration, easeFunc,
-                [](auto& target) {
-                    return [&](auto& value) {
-                        target.transform.SetRotation(Angle::WithDegrees(value));
-                    };
-                },
-                cycle, reverseEaseFunc
-            );
-        }
+        );
 
         // MARK: Interpolate Bindings
 
         /// @return Returns a uniform scale binding func
-        static SetBindingFunc<float>
-        MakeUniformScaleBinding(WorldNode& node, float start, float end, EaseFunc easeFunc) {
-            auto interpolateFunc =
-                InterpolateFuncs::MakeEase(InterpolateFuncs::Make(start, end), easeFunc);
-            return InterpolateFuncs::MakeBinding<float>(interpolateFunc, [&](auto& value) {
-                node.transform.SetScale({ value, value, value });
-            });
-        }
+        SetBindingFunc<float>
+        MakeUniformScaleBinding2D(WorldNode& node, float start, float end, EaseFunc easeFunc);
     } // namespace AnimateFuncs
 } // namespace PJ

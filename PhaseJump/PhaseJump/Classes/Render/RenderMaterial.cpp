@@ -1,6 +1,7 @@
 #include "RenderMaterial.h"
 #include "Dev.h"
 #include "PropertyIdBuilder.h"
+#include "ResourceTypes.h"
 #include "SomeShaderProgram.h"
 
 using namespace std;
@@ -23,30 +24,10 @@ RenderMaterial::RenderMaterial(Config config) {
     SetFeatureStates(config.features);
 }
 
-bool RenderMaterial::operator==(RenderMaterial const& rhs) const {
-    GUARDR(textures.size() == rhs.textures.size(), false)
-    GUARDR(
-        shaderProgram == rhs.shaderProgram && uniformColors == rhs.uniformColors &&
-            uniformFloats == rhs.uniformFloats,
-        false
-    )
-
-    /// We can't compare the texture objects directly because an atlas texture uses sub-textures,
-    /// but have a shared renderId
-    for (int i = 0; i < textures.size(); i++) {
-        auto& left = textures[i];
-        auto& right = rhs.textures[i];
-
-        GUARDR(left->RenderId() == right->RenderId(), false)
-    }
-
-    return false;
-}
-
 String RenderMaterial::BuildPropertyId() const {
     PropertyIdBuilder builder;
     if (shaderProgram) {
-        builder.Add("shaderProgram", shaderProgram->id);
+        builder.Add(ResourceType::ShaderProgram, shaderProgram->id);
     }
     builder.AddCollection("uniformColors", uniformColors);
     builder.AddCollection("uniformFloats", uniformFloats);
@@ -63,4 +44,53 @@ String RenderMaterial::BuildPropertyId() const {
     // cout << "BuildPropertyId: " << builder.Result() << std::endl;
 
     return builder.Result();
+}
+
+void RenderMaterial::SetShaderProgram(SP<SomeShaderProgram> program) {
+    GUARD(program && shaderProgram != program);
+    shaderProgram = program;
+
+    OnChange();
+}
+
+void RenderMaterial::AddUniformColor(Color color) {
+    PJ::Add(uniformColors, color);
+
+    OnChange();
+}
+
+void RenderMaterial::SetUniformColor(size_t index, Color color) {
+    GUARD(index < uniformColors.size());
+    uniformColors[index] = color;
+
+    OnChange();
+}
+
+void RenderMaterial::SetTexture(SP<SomeTexture> texture) {
+    GUARD(texture)
+
+    if (textures.size() == 1 && textures[0] == texture) {
+        return;
+    }
+
+    textures = { texture };
+    OnChange();
+}
+
+void RenderMaterial::Add(SP<SomeTexture> texture) {
+    GUARD(texture)
+    PJ::Add(textures, texture);
+
+    OnChange();
+}
+
+void RenderMaterial::EnableFeature(String feature, bool isEnabled) {
+    features[feature] = isEnabled ? RenderFeatureState::Enable : RenderFeatureState::Disable;
+
+    OnChange();
+}
+
+void RenderMaterial::SetFeatureStates(FeatureStateMap const& value) {
+    features = value;
+    OnChange();
 }

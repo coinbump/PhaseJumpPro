@@ -5,7 +5,7 @@
 /*
  RATING: 5 stars
  Simple type
- CODE REVIEW: 8/25/23
+ CODE REVIEW: 12/15/24
  */
 namespace PJ {
     /// Interface to an object that can return its world size

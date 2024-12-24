@@ -15,16 +15,16 @@ namespace PJ {
     } // namespace AttributeId
 
     namespace Attributes {
-        SP<SomeAttribute> NameAttribute(String name);
+        UP<SomeAttribute> NameAttribute(String name);
 
         template <class T>
-        SP<SomeAttribute> DefaultValueAttribute(T value) {
-            return MAKE<Attribute<T>>(AttributeId::DefaultValue, value);
+        UP<SomeAttribute> DefaultValueAttribute(T value) {
+            return NEW<Attribute<T>>(AttributeId::DefaultValue, value);
         }
 
         template <class T>
-        SP<SomeAttribute> RangeAttribute(T minValue, T maxValue) {
-            return MAKE<Attribute<std::pair<T, T>>>(
+        UP<SomeAttribute> RangeAttribute(T minValue, T maxValue) {
+            return NEW<Attribute<std::pair<T, T>>>(
                 AttributeId::DefaultValue, std::pair<T, T>(minValue, maxValue)
             );
         }

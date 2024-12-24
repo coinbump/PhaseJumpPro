@@ -5,7 +5,8 @@
 #include "SomeDragHandler.h"
 #include "UIControl2D.h"
 
-// /23
+// Future feature. Unimplemented
+#if FALSE
 namespace PJ {
     class SomeDragGestureHandler2D;
 
@@ -37,7 +38,6 @@ namespace PJ {
 
         ScrollBarControl(Axis2D axis = Axis2D::X);
 
-        // TODO: support ValueBinding
         PublishedValue<float>& Value();
 
         auto& SetEndCapSize(float value) {
@@ -92,3 +92,4 @@ namespace PJ {
         void Awake() override;
     };
 } // namespace PJ
+#endif

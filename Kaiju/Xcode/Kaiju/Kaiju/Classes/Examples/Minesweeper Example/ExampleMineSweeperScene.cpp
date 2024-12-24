@@ -84,7 +84,7 @@ namespace Example {
                 }
 
                 for (auto& cell : emptyCells) {
-                    // TODO: put tiles and populate
+                    // put tiles and populate
                     //                 tileObject.GetComponent<EMSTile>(); Put(tile, cell);
                 }
 
@@ -131,19 +131,19 @@ namespace Example {
                 //                        {
                 //                            case Tile::TileType::Tile:
                 //                            {
-                //                                // TODO: change to flag
+                //                                // change to flag
                 //                            }
                 //                            case Tile::TileType::Bomb:
                 //                            {
-                //                                // TODO: change to flag
+                //                                // change to flag
                 //                            }
                 //                            case Tile::TileType::ClearFlag:
                 //                            {
-                //                                // TODO: change to clear
+                //                                // change to clear
                 //                            }
                 //                            case Tile::TileType::BombFlag:
                 //                            {
-                //                                // TODO: change to tile
+                //                                // change to tile
                 //                                break;
                 //                            }
                 //                            default:
@@ -155,7 +155,7 @@ namespace Example {
             }
 
             void RemoveAll() {
-                // TODO:
+                //
             }
 
             void Restart() {
@@ -167,7 +167,6 @@ namespace Example {
             void RevealBombs() {
                 states.SetState(StateType::GameOver);
 
-                // TODO:
                 Vec2i matrixSize;
 
                 for (int y = 0; y < matrixSize.y; y++) {
@@ -178,7 +177,7 @@ namespace Example {
                             //                            auto tile = node.GetComponent<EMSTile>();
                             //
                             //                            if (tile.IsBomb()) {
-                            //                                // TODO: change the cell's texture
+                            //                                // change the cell's texture
                             //                            }
                         } catch (...) {}
                     }
@@ -196,7 +195,7 @@ namespace Example {
                     //                    auto tile = node.GetComponent<EMSTile>();
                     //                    if (tile.type == Tile::TileType::Tile)
                     {
-                        // TODO: change to clear tile texture
+                        // change to clear tile texture
                         //                        auto clearTileObject =
                         //                        Replace(clearTile, cell);
 

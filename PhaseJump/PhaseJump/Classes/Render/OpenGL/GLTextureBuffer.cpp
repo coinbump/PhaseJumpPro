@@ -38,9 +38,8 @@ bool CheckFrameBufferStatus() {
 
 void GLTextureBuffer::Bind() {
     GUARD(frameBuffer.id)
-    GUARD_LOG(renderEngine, "Missing render engine")
 
-    auto glRenderEngine = static_cast<GLRenderEngine*>(renderEngine.get());
+    auto glRenderEngine = static_cast<GLRenderEngine*>(&renderEngine);
 
     glRenderEngine->BindFrameBuffer(frameBuffer.id);
     glViewport(0, 0, size.x, size.y);
@@ -53,10 +52,9 @@ void GLTextureBuffer::Clear() {
 }
 
 void GLTextureBuffer::Build(Vector2Int size) {
-    GUARD_LOG(renderEngine, "Missing render engine")
     GUARD_LOG(!frameBuffer.id && !depthBuffer.id, "Can't rebuild existing buffer")
 
-    auto glRenderEngine = static_cast<GLRenderEngine*>(renderEngine.get());
+    auto glRenderEngine = static_cast<GLRenderEngine*>(&renderEngine);
 
     GLuint frameBufferId{};
     glGenFramebuffers(1, &frameBufferId);

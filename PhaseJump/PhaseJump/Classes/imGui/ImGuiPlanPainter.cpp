@@ -6,7 +6,9 @@ using namespace PJ;
 ImGuiPlanPainter::ImGuiPlanPainter(UIPlan& plan) :
     plan(plan) {
     drawFunc = [this](auto& painter) {
-        for (auto& model : this->plan.Models()) {
+        for (auto& modelFunc : this->plan.ModelFuncs()) {
+            auto model = modelFunc();
+
             try {
                 auto drawFunc = drawModelFuncs.at(model->classId);
                 GUARD_CONTINUE(drawFunc)

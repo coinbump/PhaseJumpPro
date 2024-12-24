@@ -5,14 +5,14 @@
 #include "Updatable.h"
 
 /*
- RATING: 4 stars
- TODO: Needs unit tests
- CODE REVIEW: 10/5/24
+ RATING: 5 stars
+ Has unit tests
+ CODE REVIEW: 12/22/24
  */
 namespace PJ {
     /// Objects with a duration, a time state (play time) that can be paused, played, or stopped
     /// In addition, playables are often linked to a controller that determines their play state
-    /// Example: Internal simple timer determines the time state for an animation cycle timer
+    /// Example: Internal simple timer determines the time state for an animation cycle timer.
     class Playable : public Updatable {
     public:
         using Base = Updatable;
@@ -35,54 +35,37 @@ namespace PJ {
         /// Default state the playable reverts to after reset
         PlayState defaultState = PlayState::Play;
 
+        /// Allows this playable's state and behavior to be defined by another playable object
+        /// Used to compose behavior
+        Playable* controller{};
+
     public:
-        Playable(PlayState defaultState = PlayState::Play) :
-            playState(defaultState),
-            defaultState(defaultState) {}
+        Playable(PlayState defaultState = PlayState::Play);
 
         virtual ~Playable() {}
 
-        /// Sets the play state and calls OnPlayStateChange if it changes
-        void SetPlayState(PlayState value) {
-            GUARD(value != playState)
-            playState = value;
-            OnPlayStateChange();
+        PlayState GetPlayState() const {
+            return playState;
         }
+
+        /// Sets the play state and calls OnPlayStateChange if it changes
+        void SetPlayState(PlayState value);
 
         /// Called when the play state changes
-        virtual void OnPlayStateChange() {
-            GUARD(onPlayStateChangeFunc)
-            onPlayStateChangeFunc(*this);
-        }
+        virtual void OnPlayStateChange();
 
         /// Sest a func to be called when the play state changes
-        void SetOnPlayStateChangeFunc(OnPlayStateChangeFunc value) {
-            onPlayStateChangeFunc = value;
-
-            // Synchronize state
-            OnPlayStateChange();
-        }
+        void SetOnPlayStateChangeFunc(OnPlayStateChangeFunc value);
 
         /// Sets a func to be called when the play time changes
-        void SetOnPlayTimeChangeFunc(OnPlayTimeChangeFunc value) {
-            onPlayTimeChangeFunc = value;
-
-            // Synchronize state
-            OnPlayTimeChange();
-        }
+        void SetOnPlayTimeChangeFunc(OnPlayTimeChangeFunc value);
 
         /// @return Returns true if this playable has a controller
-        bool HasController() const {
-            return Controller() != nullptr;
-        }
+        bool HasController() const;
 
         /// Dispatches a func to the controller if there is one, or if there isn't a controller call
         /// the func
-        void Dispatch(std::function<void(Playable&)> func) {
-            auto controller = Controller();
-            GUARD(controller)
-            func(*controller);
-        }
+        void Dispatch(std::function<void(Playable&)> func);
 
         /// Dispatches a func with a result to the controller if there is one, or if there isn't a
         /// controller call the func
@@ -94,125 +77,54 @@ namespace PJ {
         }
 
         /// Resets the playable to its default state
-        virtual void Reset() {
-            if (HasController()) {
-                Dispatch([](auto& controller) { controller.Reset(); });
-            } else {
-                SetPlayTime(0);
-                SetIsFinished(false);
-                SetPlayState(defaultState);
-            }
-        }
+        virtual void Reset();
 
         /// @return Returns the playable that controls this playable
         /// Used when another object determines the playable state for this playable object
-        virtual Playable* Controller() const {
-            return nullptr;
+        Playable* Controller() const {
+            return controller;
         }
 
         /// @return Returns total playable duration
-        virtual float Duration() const {
-            return DispatchResult<float>([](Playable& controller) { return controller.Duration(); }
-            );
-        }
+        virtual float Duration() const;
 
         /// Set the total playable duration
-        virtual void SetDuration(float value) {
-            Dispatch([=](auto& controller) { controller.SetDuration(value); });
-        }
+        virtual void SetDuration(float value);
 
         /// @return Returns normalized progress (0-1.0)
-        virtual float Progress() const {
-            return DispatchResult<float>([](Playable& controller) { return controller.Progress(); }
-            );
-        }
+        virtual float Progress() const;
 
         /// Set normalized progress (0-1.0)
-        virtual void SetProgress(float value) {
-            Dispatch([=](auto& controller) { controller.SetProgress(value); });
-        }
+        virtual void SetProgress(float value);
 
         /// Play from current play time
-        virtual void Play() {
-            if (HasController()) {
-                Dispatch([](auto& controller) { controller.Play(); });
-            } else {
-                SetPlayState(PlayState::Play);
-            }
-        }
+        virtual void Play();
 
         /// Pause. Play resumes at same position
-        virtual void Pause() {
-            if (HasController()) {
-                Dispatch([](auto& controller) { controller.Pause(); });
-            } else {
-                SetPlayState(PlayState::Pause);
-            }
-        }
+        virtual void Pause();
 
         /// Stop. Can't unpause
-        virtual void Stop() {
-            if (HasController()) {
-                Dispatch([](auto& controller) { controller.Stop(); });
-            } else {
-                SetPlayState(PlayState::Stop);
-            }
-        }
+        virtual void Stop();
 
         /// @return Returns true if the playable is paused
-        virtual bool IsPaused() const {
-            if (HasController()) {
-                return DispatchResult<bool>([](Playable& controller) {
-                    return controller.IsPaused();
-                });
-            } else {
-                return playState == PlayState::Pause;
-            }
-        }
+        virtual bool IsPaused() const;
 
         /// @return Returns true if the playable is playing
-        virtual bool IsPlaying() const {
-            GUARDR(!IsFinished(), false)
-            if (HasController()) {
-                return DispatchResult<bool>([](Playable& controller) {
-                    return controller.IsPlaying();
-                });
-            } else {
-                return playState == PlayState::Play;
-            }
-        }
+        virtual bool IsPlaying() const;
 
         /// @return Returns the current time value of the playable
-        virtual float PlayTime() const {
-            return DispatchResult<float>([](Playable& controller) { return controller.PlayTime(); }
-            );
-        }
+        virtual float PlayTime() const;
 
         /// Sets the current time value of the playable
-        virtual void SetPlayTime(float time) {
-            Dispatch([=](auto& controller) { controller.SetPlayTime(time); });
-        }
+        virtual void SetPlayTime(float time);
 
         /// Called when the play time changes. Subclass is responsible for calling this
-        virtual void OnPlayTimeChange() {
-            GUARD(onPlayTimeChangeFunc);
-            onPlayTimeChangeFunc(*this);
-        }
+        virtual void OnPlayTimeChange();
 
         // MARK: Updatable
 
-        void OnUpdate(TimeSlice time) override {
-            if (HasController()) {
-                Dispatch([=](auto& controller) { controller.OnUpdate(time); });
-            } else {
-                Base::OnUpdate(time);
-            }
-        }
+        void OnUpdate(TimeSlice time) override;
 
-        bool IsFinished() const override {
-            GUARDR(!Base::IsFinished(), true);
-            return DispatchResult<bool>([](Playable& controller) { return controller.IsFinished(); }
-            );
-        }
+        bool IsFinished() const override;
     };
 } // namespace PJ

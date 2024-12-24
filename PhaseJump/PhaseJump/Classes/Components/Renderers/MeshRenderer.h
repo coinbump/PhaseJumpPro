@@ -13,9 +13,9 @@ namespace PJ {
     struct Mesh;
 
     /// Renders a mesh
-    class MeshRenderer : public SomeRenderer {
+    class MeshRenderer : public SomeMaterialRenderer {
     public:
-        using Base = SomeRenderer;
+        using Base = SomeMaterialRenderer;
 
         MeshRenderer(Vector3 worldSize);
 

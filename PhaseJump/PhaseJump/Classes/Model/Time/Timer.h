@@ -75,7 +75,7 @@ namespace PJ {
                 return;
             }
 
-            // We can't break down large deltas because events will get compressed
+            // We can't break down large deltas here because events will get compressed
             // Example: an event happens every 3 seconds, we get a 9 second delta,
             // they should be 3 seconds apart but are 0 seconds apart instead
             SetState(state + delta);

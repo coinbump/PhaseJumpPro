@@ -1,5 +1,4 @@
-#ifndef PJENUM_H
-#define PJENUM_H
+#pragma once
 
 #include "EnumClass.h"
 #include "StandardCore.h"
@@ -46,5 +45,3 @@ namespace PJ {
         }
     };
 } // namespace PJ
-
-#endif

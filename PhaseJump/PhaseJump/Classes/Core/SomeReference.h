@@ -1,5 +1,4 @@
-#ifndef PJSOMEREFERENCE_H
-#define PJSOMEREFERENCE_H
+#pragma once
 
 #include "Utils.h"
 #include <memory>
@@ -21,5 +20,3 @@ namespace PJ {
         virtual void SetValue(SP<T> const& value) = 0;
     };
 } // namespace PJ
-
-#endif

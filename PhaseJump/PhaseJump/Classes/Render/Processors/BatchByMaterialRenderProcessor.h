@@ -9,7 +9,7 @@
  CODE REVIEW: 12/8/24
  */
 namespace PJ {
-    class CameraRenderModel;
+    class RenderCameraModel;
     class RenderModel;
 
     /// Batches render models by material to reduce the total # of draw calls and improve render
@@ -21,12 +21,12 @@ namespace PJ {
         // TODO: re-evaluate all registered render phases, probably don't want to run for each
         // camera
         BatchByMaterialRenderProcessor() :
-            Base("Batch by material", { RenderPhase::Camera }) {}
+            Base({ .name = "Batch by material", .phases = { RenderPhase::Camera } }) {}
 
         std::optional<RenderModel> Combine(VectorList<RenderModel*>& renderModels);
 
         // MARK: RenderProcessor
 
-        void Process(CameraRenderModel& cameraModel) override;
+        void Process(RenderCameraModel& cameraModel) override;
     };
 } // namespace PJ

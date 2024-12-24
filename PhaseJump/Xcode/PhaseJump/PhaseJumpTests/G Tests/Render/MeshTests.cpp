@@ -21,7 +21,7 @@ TEST(Mesh, TestCalculateBounds) {
     EXPECT_EQ(Vector3(2, 4, 6), sutBounds.Size());
 }
 
-TEST(Mesh, TestOffsetBy) {
+TEST(Mesh, TestOffset) {
     Mesh sut;
 
     VectorList<Vector3> vertices;
@@ -30,12 +30,12 @@ TEST(Mesh, TestOffsetBy) {
 
     sut.SetVertices(vertices);
 
-    sut.OffsetBy(Vector2(1, 1));
+    sut.Offset(Vector2(1, 1));
 
     EXPECT_EQ(Vector3(0, -1, -3), sut.Vertices()[0]);
     EXPECT_EQ(Vector3(2, 3, 3), sut.Vertices()[1]);
 
-    sut.OffsetBy(Vector3(10, 10, 10));
+    sut.Offset(Vector3(10, 10, 10));
     EXPECT_EQ(Vector3(12, 13, 13), sut.Vertices()[1]);
 }
 
@@ -56,14 +56,15 @@ TEST(Mesh, TestPlusOperator) {
     Add(triangles, 1);
     Add(triangles, 2);
 
-    sut1.SetVertices(vertices1);
-    sut1.ModifiableTriangles() = triangles;
-    sut2.SetVertices(vertices2);
-    sut2.ModifiableTriangles() = triangles;
+    VectorList<Vector2> uvs{2, Vector2()};
+    
+    sut1.Update(vertices1, triangles, uvs);
+    sut2.Update(vertices2, triangles, uvs);
 
     auto sut3 = sut1 + sut2;
 
     EXPECT_EQ(4, sut3.Vertices().size());
+    EXPECT_EQ(4, sut3.UVs().size());
     EXPECT_EQ(Vector3(1, 2, 3), sut3.Vertices()[0]);
     EXPECT_EQ(Vector3(4, 5, 6), sut3.Vertices()[1]);
     EXPECT_EQ(Vector3(7, 8, 9), sut3.Vertices()[2]);

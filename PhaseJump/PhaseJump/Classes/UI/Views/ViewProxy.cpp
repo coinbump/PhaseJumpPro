@@ -16,8 +16,7 @@ ViewProxy::PlaceViewFunc ViewProxy::MakePlaceViewFunc(View2D& view) {
         auto anchorViewPosition = view.ToViewPosition(anchor);
         Vector2 topLeftPositionInParent = -anchorViewPosition + viewPosition;
 
-        Vector3 topLeftWorldPosition = parentView->ViewToWorldPosition(topLeftPositionInParent);
-        Vector3 topLeftLocalPosition = parentView->WorldToLocal(topLeftWorldPosition);
+        Vector3 topLeftLocalPosition = parentView->ViewToLocalPosition(topLeftPositionInParent);
 
         Vector3 localPosition{ topLeftLocalPosition.x + (viewSize.x / 2.0f) * vecRight,
                                topLeftLocalPosition.y + (viewSize.y / 2.0f) * vecDown,
@@ -63,7 +62,7 @@ bool ViewProxy::IsAxisUnbounded(Axis2D axis, ViewSizeProposal proposal) const {
     }
 }
 
-void ViewProxy::PlaceView(Vector2 viewPosition, ViewPoint anchor, ViewSizeProposal proposal) {
+void ViewProxy::PlaceView(Vector2 viewPosition, LayoutAnchor2D anchor, ViewSizeProposal proposal) {
     GUARD(view)
     viewPosition = view->WithPositionConstraints(viewPosition);
 

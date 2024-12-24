@@ -7,7 +7,11 @@
 #include <iostream>
 #include <stdio.h>
 
-// /23
+/*
+ RATING: 5 stars
+ Tested and works
+ CODE REVIEW: 12/15/24
+ */
 namespace PJ {
     /// Specifies how much "noise" logging should make
     namespace LogLevel {
@@ -41,3 +45,17 @@ namespace PJ {
 
     void Assert(bool isTrue);
 } // namespace PJ
+
+// MARK: Macros
+
+#define GUARD_LOG(test, message) \
+    if (!(test)) {               \
+        PJ::Log(message);        \
+        return;                  \
+    }
+
+#define GUARDR_LOG(test, result, message) \
+    if (!(test)) {                        \
+        PJ::Log(message);                 \
+        return result;                    \
+    }

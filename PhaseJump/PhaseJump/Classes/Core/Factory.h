@@ -8,7 +8,7 @@
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 7/10/24
+ CODE REVIEW: 12/20/24
  */
 namespace PJ {
     /**
@@ -21,8 +21,12 @@ namespace PJ {
     public:
         virtual ~SomeFactory() {}
 
+        SP<BaseType> MakeBase(Arguments... args) {
+            return std::move(NewBase(args...));
+        }
+
         /// Create an object that subclasses BaseType
-        virtual SP<BaseType> NewBase(Arguments... args) = 0;
+        virtual UP<BaseType> NewBase(Arguments... args) = 0;
     };
 
     /// Uses allocator function for factory instantation
@@ -31,21 +35,24 @@ namespace PJ {
     protected:
         using BaseType = Type::RootBaseType;
 
-        std::function<SP<Type>(Arguments... args)> allocator;
+        std::function<UP<Type>(Arguments... args)> allocator;
 
     public:
-        Factory(std::function<SP<Type>(Arguments... args)> allocator) :
+        Factory(std::function<UP<Type>(Arguments... args)> allocator) :
             allocator(allocator) {}
 
-        // TODO: SP-audit (Make vs New)
-        SP<Type> New(Arguments... args) {
-            GUARDR(allocator, SP<Type>())
+        UP<Type> New(Arguments... args) {
+            GUARDR(allocator, {})
             return allocator(args...);
+        }
+
+        SP<Type> Make(Arguments... args) {
+            return std::move(New(args...));
         }
 
         // MARK: SomeFactory
 
-        SP<BaseType> NewBase(Arguments... args) override {
+        UP<BaseType> NewBase(Arguments... args) override {
             return New(args...);
         }
     };

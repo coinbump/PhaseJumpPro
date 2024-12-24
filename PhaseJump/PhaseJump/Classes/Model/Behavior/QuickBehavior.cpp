@@ -170,7 +170,7 @@ This& QuickBehavior::AnimationInput(String value) {
         return renderer->IsRenderFinished() ? FinishType::Finish : FinishType::Continue;
     };
 
-    return With(behavior, "Animation State: " + value);
+    return With(behavior, "Animation Input: " + value);
 }
 
 This& QuickBehavior::Delay(String name, float delay) {

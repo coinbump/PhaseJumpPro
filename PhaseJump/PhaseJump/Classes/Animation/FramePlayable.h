@@ -21,7 +21,6 @@ namespace PJ {
 
         /// Stores keyframes for the frame positions
         UP<TimeTrack<int>> track;
-        Playable* controller{};
 
     public:
         /// Constructs with a fixed frame rate
@@ -49,6 +48,7 @@ namespace PJ {
         }
 
         /// Set the frame rate for fixed rate animations
+        /// BUG: DOES NOT WORK, because we switched to timelines
         void SetFrameRate(float value) override {
             frameRate = value;
 
@@ -69,12 +69,6 @@ namespace PJ {
 
             track->SetCycleType(cycleType);
             track->Reset();
-        }
-
-        // MARK: Playable
-
-        Playable* Controller() const override {
-            return controller;
         }
     };
 } // namespace PJ

@@ -42,8 +42,8 @@ namespace PJ {
 
         // MARK: SomePathLayout
 
-        SP<SomePath> BuildPath() override {
-            return SCAST<SomePath>(MAKE<BezierPath>(controlPoints));
+        UP<SomePath> BuildPath() override {
+            return NEW<BezierPath>(controlPoints);
         }
 
         // MARK: SomeWorldComponent

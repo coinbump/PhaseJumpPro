@@ -1,5 +1,4 @@
-#ifndef PJVALUETARGETGOAL_H
-#define PJVALUETARGETGOAL_H
+#pragma once
 
 #include "SomeGoal.h"
 #include <algorithm>
@@ -52,5 +51,3 @@ namespace PJ {
         }
     };
 } // namespace PJ
-
-#endif

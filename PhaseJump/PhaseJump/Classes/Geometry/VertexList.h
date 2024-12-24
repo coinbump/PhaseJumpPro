@@ -1,5 +1,4 @@
-#ifndef PJVERTEXLIST_H
-#define PJVERTEXLIST_H
+#pragma once
 
 #include "Vector3.h"
 #include "VectorList.h"
@@ -13,5 +12,3 @@ namespace PJ {
     /// Stores vertices of a mesh
     using VertexList = VectorList<Vector3>;
 } // namespace PJ
-
-#endif

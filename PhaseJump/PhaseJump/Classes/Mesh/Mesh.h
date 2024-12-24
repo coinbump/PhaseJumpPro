@@ -5,7 +5,7 @@
 #include "Macros.h"
 #include "Matrix4x4.h"
 #include "Rect.h"
-#include "SharedVector.h"
+#include "SharedVectorList.h"
 #include "Vector2.h"
 #include "Vector3.h"
 #include "VectorList.h"
@@ -15,34 +15,35 @@
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 4/16/23
+ CODE REVIEW: 12/22/24
  */
 namespace PJ {
     /// Stores properties for rendering a mesh
     class Mesh {
     public:
         using This = Mesh;
-        using TrianglesSpan = std::span<uint32_t const>;
-        using CalculateBoundsFunc = std::function<Bounds(This&)>;
+        using CalculateBoundsFunc = std::function<Bounds(This const&)>;
 
     protected:
-        bool needsCalculate = true;
+        /// If true, associate properties for the mesh like bounds and normals need to be
+        /// recalculated
+        mutable bool needsCalculate = true;
 
+        /// Mesh bounds, calculated on demand
+        mutable Bounds bounds;
+
+        // FUTURE: calculate UVs automatically based on vertex position and mesh bounds
         /// Texture coordinate for each vertex
         VectorList<Vector2> uvs;
 
-        /// Used by index buffer (IBO) to keep vertices list smaller and improve
-        /// performance
-        SharedVector<uint32_t> triangles;
+        VectorList<uint32_t> triangles;
 
-        Bounds bounds;
-
-        void CalculateBounds() {
+        void CalculateBounds() const {
             GUARD(calculateBoundsFunc)
             bounds = calculateBoundsFunc(*this);
         }
 
-        void CalculateNormals() {
+        void CalculateNormals() const {
             // FUTURE: add normals support if needed
         }
 
@@ -53,39 +54,40 @@ namespace PJ {
 
         Mesh();
 
-        /// Using initializer list is faster than copying in the vertices
         Mesh(std::initializer_list<Vector3> const& vertices) :
             vertices(vertices) {}
 
+        /// Force associate properties (bounds, normals) to be recalculated the next time they are
+        /// requested
         void SetNeedsCalculate() {
             needsCalculate = true;
         }
 
         Bounds GetBounds() const {
-            // This is a cheat, but otherwise we spread non-const everywhere
-            const_cast<Mesh*>(this)->CalculateIfNeeded();
+            CalculateIfNeeded();
             return bounds;
         }
 
-        constexpr VectorList<Vector3> const& Vertices() const {
+        VectorList<Vector3> const& Vertices() const {
             return vertices;
         }
 
-        /// When used, you take responsibility for recaculating the bounds and normals later
-        VectorList<Vector3>& ModifiableVertices() {
+        /// After modifying vertices, call SetNeedsCalculate
+        VectorList<Vector3>& Vertices() {
             return vertices;
         }
 
+        /// Updates the vertices for this mesh
         void SetVertices(VectorList<Vector3> const& value) {
             vertices = value;
             needsCalculate = true;
         }
 
-        constexpr VectorList<Vector2> const& UVs() const {
+        VectorList<Vector2> const& UVs() const {
             return uvs;
         }
 
-        constexpr VectorList<Vector2>& UVs() {
+        VectorList<Vector2>& UVs() {
             return uvs;
         }
 
@@ -93,41 +95,20 @@ namespace PJ {
             uvs = value;
         }
 
-        constexpr std::span<uint32_t const> Triangles() const {
-            // return sharedTriangles ? *sharedTriangles : triangles;
-            return triangles.Value();
+        VectorList<uint32_t> const& Triangles() const {
+            return triangles;
         }
 
-        void SetTriangles(std::span<uint32_t const> value) {
+        VectorList<uint32_t>& Triangles() {
+            return triangles;
+        }
+
+        void SetTriangles(VectorList<uint32_t> const& value) {
             triangles = value;
         }
 
-        void SetModifiableTriangles(VectorList<uint32_t> const& value) {
-            triangles = value;
-        }
-
-        VectorList<uint32_t>& ModifiableTriangles() {
-            return triangles.Modifiable();
-        }
-
-        This& OffsetBy(Vector2 offset) {
-            for (auto& v : vertices) {
-                v.x += offset.x;
-                v.y += offset.y;
-            }
-
-            return *this;
-        }
-
-        This& OffsetBy(Vector3 offset) {
-            for (auto& v : vertices) {
-                v.x += offset.x;
-                v.y += offset.y;
-                v.z += offset.z;
-            }
-
-            return *this;
-        }
+        /// Offsets mesh vertices
+        This& Offset(Vector3 offset);
 
         /// Fit the uvs to the position and scale of the rect
         // FUTURE: void FitUVsTo(Rect r)
@@ -137,7 +118,7 @@ namespace PJ {
             VectorList<Vector2> const& uvs
         );
 
-        void CalculateIfNeeded();
+        void CalculateIfNeeded() const;
 
         Mesh operator+(Mesh const& rhs) const;
         Mesh& operator+=(Mesh const& rhs);

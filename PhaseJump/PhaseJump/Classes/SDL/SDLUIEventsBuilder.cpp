@@ -4,6 +4,7 @@
 #include "OrderedMap.h"
 #include "PointerClickUIEvent.h"
 #include "SomeControllerUIEvent.h"
+#include "SomeKeyUIEvent.h"
 #include "World.h"
 #include <iostream>
 
@@ -81,7 +82,7 @@ UIEventList SDLUIEventsBuilder::BuildUIEvents(SDLEventList const& events, float 
                 auto normalValue = value < 0 ? -((float)value / (float)INT16_MIN)
                                              : (float)value / (float)(INT16_MAX);
 
-                cout << "Axis: " << axisId << " Value: " << normalValue << std::endl;
+                PJ::Log(std::format("Axis: {} Value: {}", axisId, normalValue));
 
                 auto event =
                     MAKE<ControllerAxisUIEvent>(MakeString((int)which), axisId, normalValue);
@@ -156,7 +157,6 @@ UIEventList SDLUIEventsBuilder::BuildUIEvents(SDLEventList const& events, float 
             {
                 KeyScanCode scanCode(sdlEvent.key.scancode);
                 KeyCode keyCode(sdlEvent.key.key);
-                // FUTURE: SDL_Keymod mod;
 
                 auto event = MAKE<KeyUpUIEvent>(scanCode, keyCode);
                 result.push_back(SCAST<SomeUIEvent>(event));
@@ -178,13 +178,6 @@ UIEventList SDLUIEventsBuilder::BuildUIEvents(SDLEventList const& events, float 
             }
         case SDL_EVENT_MOUSE_MOTION:
             {
-                // TODO: support which
-                /* Used as the device ID for mouse events simulated with touch input */
-                //                #define SDL_TOUCH_MOUSEID ((SDL_MouseID)-1)
-                //
-                //                /* Used as the SDL_TouchID for touch events simulated with mouse
-                //                input */ #define SDL_MOUSE_TOUCHID ((SDL_TouchID)-1)
-
                 auto screenPosition = Vector2(sdlEvent.motion.x, sdlEvent.motion.y) * uiScale;
                 auto delta = Vector2(sdlEvent.motion.xrel, sdlEvent.motion.yrel);
                 result.push_back(MAKE<PointerMoveUIEvent>(screenPosition, delta));

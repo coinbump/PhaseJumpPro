@@ -1,6 +1,7 @@
 #include "Slice9TextureRenderer.h"
 #include "RenderFeature.h"
 #include "RenderMaterial.h"
+#include "SomeShaderProgram.h"
 #include "TiledMeshBuilder.h"
 
 using namespace std;
@@ -15,7 +16,7 @@ Slice9TextureRenderer::Slice9TextureRenderer(
 
     model.material = MAKE<RenderMaterial>(RenderMaterial::Config{
         .texture = texture,
-        .shaderId = "texture.vary",
+        .shaderId = ShaderId::TextureVary,
         .features = { { RenderFeature::Blend, RenderFeatureState::Enable } } });
 
     if (texture) {
@@ -173,31 +174,30 @@ Mesh Slice9TextureRenderer::BuildMesh(Vector3 worldSize) {
         )
             .BuildMesh();
 
-    meshList[MeshIndex::TopLeft].OffsetBy(Vector2(
+    meshList[MeshIndex::TopLeft].Offset(Vector2(
         (bm.left - bm.right) / 2.0f - bm.sliceLeft / 2.0f,
         (bm.top - bm.bottom) / 2.0f + bm.sliceTop / 2.0f
     ));
-    meshList[MeshIndex::Top].OffsetBy(
+    meshList[MeshIndex::Top].Offset(
         Vector2(0, bm.leftAndRightWorldHeight / 2.0f + bm.sliceTop / 2.0f)
     );
-    meshList[MeshIndex::TopRight].OffsetBy(Vector2(
+    meshList[MeshIndex::TopRight].Offset(Vector2(
         (bm.right - bm.left) / 2.0f + bm.sliceRightOffset / 2.0f,
         (bm.top - bm.bottom) / 2.0f + bm.sliceTop / 2.0f
     ));
-    meshList[MeshIndex::Left].OffsetBy(Vector2((bm.left - bm.right) / 2.0f - bm.sliceLeft / 2.0f, 0)
-    );
+    meshList[MeshIndex::Left].Offset(Vector2((bm.left - bm.right) / 2.0f - bm.sliceLeft / 2.0f, 0));
     // meshList[MeshIndex::Center].OffsetBy(Vector2(0, 0));
-    meshList[MeshIndex::Right].OffsetBy(
+    meshList[MeshIndex::Right].Offset(
         Vector2((bm.right - bm.left) / 2.0f + bm.sliceRightOffset / 2.0f, 0)
     );
-    meshList[MeshIndex::BottomLeft].OffsetBy(Vector2(
+    meshList[MeshIndex::BottomLeft].Offset(Vector2(
         (bm.left - bm.right) / 2.0f - bm.sliceLeft / 2.0f,
         (bm.bottom - bm.top) / 2.0f - bm.sliceBottomOffset / 2.0f
     ));
-    meshList[MeshIndex::Bottom].OffsetBy(
+    meshList[MeshIndex::Bottom].Offset(
         Vector2(0, -bm.leftAndRightWorldHeight / 2.0f - bm.sliceBottomOffset / 2.0f)
     );
-    meshList[MeshIndex::BottomRight].OffsetBy(Vector2(
+    meshList[MeshIndex::BottomRight].Offset(Vector2(
         (bm.right - bm.left) / 2.0f + bm.sliceRightOffset / 2.0f,
         (bm.bottom - bm.top) / 2.0f - bm.sliceBottomOffset / 2.0f
     ));

@@ -1,8 +1,8 @@
 #pragma once
 #include "Alignment2D.h"
 
+// Experimental
 namespace PJ {
-    // TODO: work in progress
     struct GridViewItem {
         enum class SizeType {
             /// Fixed size column/row, based on .size

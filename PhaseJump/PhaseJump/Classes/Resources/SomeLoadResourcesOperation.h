@@ -2,8 +2,8 @@
 
 #include "FilePath.h"
 #include "OrderedMap.h"
+#include "ResourceCatalog.h"
 #include "ResourceInfo.h"
-#include "ResourceModels.h"
 #include "Result.h"
 #include "SomeOperation.h"
 #include "Tags.h"
@@ -15,7 +15,7 @@
  CODE REVIEW: 8/11/24
  */
 namespace PJ {
-    class LoadResourcesModel;
+    class ResourceRepositoryModel;
 
     using Exception = std::runtime_error;
 
@@ -23,27 +23,26 @@ namespace PJ {
     class SomeLoadResourcesOperation : public SomeOperation {
     public:
         struct Success {
-            // TODO: Should be UP
-            using LoadOperationsList = List<SP<SomeLoadResourcesOperation>>;
+            using LoadOperationsList = VectorList<SP<SomeLoadResourcesOperation>>;
 
-            VectorList<ResourceModel> loadedResources;
+            VectorList<ResourceModel> resources;
             LoadOperationsList loadOperations;
 
             Success() {}
 
             Success(
-                VectorList<ResourceModel> const& loadedResources,
-                List<SP<SomeLoadResourcesOperation>> loadOperations
+                VectorList<ResourceModel> const& resources,
+                VectorList<SP<SomeLoadResourcesOperation>> loadOperations
             ) :
-                loadedResources(loadedResources),
+                resources(resources),
                 loadOperations(loadOperations) {}
 
             void Add(ResourceModel loadedResource) {
-                loadedResources.push_back(loadedResource);
+                resources.push_back(loadedResource);
             }
 
             size_t size() const {
-                return loadedResources.size();
+                return resources.size();
             }
         };
 
@@ -54,18 +53,18 @@ namespace PJ {
         // MARK: Input
 
         ResourceInfo const info;
-        LoadResourcesModel& loadResourcesModel;
+        ResourceRepositoryModel& repoModel;
 
         // MARK: Output
 
         std::optional<Result> result;
 
-        SomeLoadResourcesOperation(ResourceInfo info, LoadResourcesModel& loadResourcesModel) :
+        SomeLoadResourcesOperation(ResourceInfo info, ResourceRepositoryModel& repoModel) :
             info(info),
-            loadResourcesModel(loadResourcesModel) {}
+            repoModel(repoModel) {}
 
         /// @return Returns loaded resources if the operation was a success
-        VectorList<ResourceModel> LoadedResources() const {
+        VectorList<ResourceModel> Resources() const {
             VectorList<ResourceModel> result;
 
             GUARDR(this->result, result);
@@ -73,7 +72,7 @@ namespace PJ {
 
             auto successValue = this->result->SuccessValue();
             if (successValue) {
-                result = successValue->loadedResources;
+                result = successValue->resources;
             }
 
             return result;

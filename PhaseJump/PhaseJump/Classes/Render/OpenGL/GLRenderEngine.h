@@ -1,5 +1,4 @@
-#ifndef PJGLRENDERENGINE_H
-#define PJGLRENDERENGINE_H
+#pragma once
 
 #include "SomeGLRenderEngine.h"
 #include "UnorderedMap.h"
@@ -10,6 +9,7 @@
  RATING: 4 stars
  Tested and works
  Missing some features
+ CODE REVIEW: /23
  */
 namespace PJ {
     class SomeGLRenderCommand;
@@ -85,5 +85,3 @@ namespace PJ {
         void ScanGLExtensions();
     };
 } // namespace PJ
-
-#endif

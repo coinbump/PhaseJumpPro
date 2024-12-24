@@ -1,5 +1,5 @@
 {
-	"id": "color.uniform",
-	"shader.vertex": "vertex",
-	"shader.fragment": "colorUniform"
+    "id": "color.uniform",
+    "shader.vertex.path": "vertex/vertex.vsh",
+    "shader.fragment.path": "fragment/colorUniform.fsh"
 }

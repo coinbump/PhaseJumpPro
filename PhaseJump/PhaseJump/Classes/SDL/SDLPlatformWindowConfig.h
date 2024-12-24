@@ -6,22 +6,14 @@
 /*
  RATING: 5 stars
  Tested and works
- CODE REVIEW: 10/20/24
+ CODE REVIEW: 12/21/24
  */
 namespace PJ {
-    /// Configuration model for a platform window
-    class PlatformWindowConfig {
-    public:
-        String title;
-        Vector2Int size;
-
-        PlatformWindowConfig(String title = {}, Vector2Int size = {}) :
-            title(title),
-            size(size) {}
-    };
+    class SomeRenderEngine;
+    class World;
 
     /// Configuration model for an SDL platform window
-    class SDLPlatformWindowConfig : public PlatformWindowConfig {
+    class SDLPlatformWindowConfig {
     public:
         using This = SDLPlatformWindowConfig;
 
@@ -33,29 +25,12 @@ namespace PJ {
             WindowAndRenderer
         };
 
-        /// Properties for designated initializer
-        struct Config {
-            String title;
-            Vector2Int size;
-            uint32_t windowFlags{};
-            RendererType rendererType{};
-        };
-
+        String title;
+        Vector2Int size;
         uint32_t windowFlags{};
         RendererType rendererType{};
-
-        SDLPlatformWindowConfig(
-            String title = {}, Vector2Int size = {}, uint32_t windowFlags = {},
-            RendererType rendererType = {}
-        ) :
-            PlatformWindowConfig(title, size),
-            windowFlags(windowFlags),
-            rendererType(rendererType) {}
-
-        explicit SDLPlatformWindowConfig(Config const& config) :
-            SDLPlatformWindowConfig(
-                config.title, config.size, config.windowFlags, config.rendererType
-            ) {}
+        SP<World> world;
+        SP<SomeRenderEngine> renderEngine;
 
         /// Use platform native renderer
         // FUTURE: static Config const native;

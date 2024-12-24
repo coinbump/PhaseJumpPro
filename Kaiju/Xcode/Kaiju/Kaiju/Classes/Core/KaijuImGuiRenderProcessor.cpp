@@ -11,7 +11,7 @@ void KaijuImGuiRenderProcessor::Process(String phase) {
 
     EditorImGuiInspectorWindowPainter(system).Paint();
 
-    bool isToolsWindowConfigured = system.storage.Value<bool>("window.tools", "isConfigured");
+    bool isToolsWindowConfigured = system.storage.SafeValue<bool>("window.tools", "isConfigured");
     if (!isToolsWindowConfigured) {
         system.storage.Set("window.tools", "isConfigured", true);
 

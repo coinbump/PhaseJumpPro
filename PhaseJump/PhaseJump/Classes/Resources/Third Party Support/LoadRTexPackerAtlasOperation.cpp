@@ -1,8 +1,8 @@
 #include "LoadRTexPackerAtlasOperation.h"
 #include "AtlasTexture.h"
 #include "Font.h"
-#include "LoadResourcesModel.h"
-#include "RTextPackerAtlasModelBuilder.h"
+#include "ResourceRepositoryModel.h"
+#include "RTexPackerAtlasModelBuilder.h"
 #include "SDLLoadGLTextureOperation.h"
 #include "TextureAtlas.h"
 #include "Utils.h"
@@ -26,7 +26,7 @@ SomeLoadResourcesOperation::Result LoadRTexPackerAtlasOperation::LoadResources()
         json j;
         file >> j;
 
-        auto model = RTextPackerAtlasModelBuilder().Build(j);
+        auto model = RTexPackerAtlasModelBuilder().Build(j);
 
         String imagePath = model.atlas.imagePath;
 
@@ -35,8 +35,8 @@ SomeLoadResourcesOperation::Result LoadRTexPackerAtlasOperation::LoadResources()
         fullImagePath /= imagePath.c_str();
 
         // No id needed, we're not storing the parent texture in resources
-        ResourceInfo loadTextureInfo("", fullImagePath, "texture");
-        auto loadTextureOperations = loadResourcesModel.MakeLoadOperations(loadTextureInfo);
+        ResourceInfo loadTextureInfo{ .filePath = fullImagePath, .type = ResourceType::Texture };
+        auto loadTextureOperations = repoModel.MakeLoadOperations(loadTextureInfo);
 
         GUARDR(!IsEmpty(loadTextureOperations), Failure())
 
@@ -49,8 +49,7 @@ SomeLoadResourcesOperation::Result LoadRTexPackerAtlasOperation::LoadResources()
 
         GUARDR(successValue && successValue.value().size(), Failure())
 
-        SP<SomeTexture> texture =
-            DCAST<SomeTexture>(successValue.value().loadedResources[0].resource);
+        SP<SomeTexture> texture = DCAST<SomeTexture>(successValue.value().resources[0].resource);
         GUARDR(texture, Failure());
 
         Success result;
@@ -86,22 +85,25 @@ SomeLoadResourcesOperation::Result LoadRTexPackerAtlasOperation::LoadResources()
             }
 
             if (!model.atlas.isFont) {
-                ResourceModel loadedResource(
-                    SCAST<PJ::Base>(atlasTexture), sprite.nameId, filePath, "texture"
-                );
+                ResourceModel loadedResource{ .resource = SCAST<PJ::Base>(atlasTexture),
+                                              .info = { .id = sprite.nameId,
+                                                        .filePath = filePath,
+                                                        .type = ResourceType::Texture } };
                 result.Add(loadedResource);
             }
 
             textureAtlas->Add(atlasTexture);
         }
 
-        ResourceModel loadedAtlasResource(
-            SCAST<PJ::Base>(textureAtlas), info.id, filePath, "texture.atlas"
-        );
+        ResourceModel loadedAtlasResource{
+            .resource = SCAST<PJ::Base>(textureAtlas),
+            .info = { .id = info.id, .filePath = filePath, .type = "texture.atlas" }
+        };
         result.Add(loadedAtlasResource);
 
         if (model.atlas.isFont) {
-            auto font = MAKE<Font>(info.id, model.atlas.fontSize);
+            auto font =
+                MAKE<Font>(Font::Config{ .name = info.id, .size = (float)model.atlas.fontSize });
             font->atlas = textureAtlas;
 
             for (int i = 0; i < chars.size(); i++) {
@@ -155,7 +157,10 @@ SomeLoadResourcesOperation::Result LoadRTexPackerAtlasOperation::LoadResources()
             font->metrics.descent = descent;
             font->metrics.leading = (ascent + descent) + 5;
 
-            ResourceModel loadedFontResource(SCAST<PJ::Base>(font), info.id, filePath, "font");
+            ResourceModel loadedFontResource{
+                .resource = SCAST<PJ::Base>(font),
+                .info = { .id = info.id, .filePath = filePath, .type = "font" }
+            };
             result.Add(loadedFontResource);
         }
 

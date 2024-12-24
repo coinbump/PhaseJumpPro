@@ -7,17 +7,17 @@
 #include "UITypes.h"
 #include "UnorderedMap.h"
 #include "Updatables.h"
+#include "WorldAttachmentCore.h"
 #include "WorldNodeTransform.h"
 #include "WorldPartLife.h"
 #include <memory>
 
 /*
- RATING: 4 stars
- Needs unit tests
- CODE REVIEW: 8/12/24
+ RATING: 5 stars
+ Has unit tests
+ CODE REVIEW: 12/22/24
  */
 namespace PJ {
-    // TODO: needs unit tests
     class World;
     class WorldNode;
     class Matrix4x4;
@@ -37,28 +37,21 @@ namespace PJ {
         using This = SomeWorldComponent;
         using NodeTransform = WorldNodeTransform;
         using Func = std::function<void(This&)>;
-        using SignalFunc = std::function<void(This&, SomeSignal const&)>;
         using PlanUIFunc = std::function<void(This&, String context, UIPlanner&)>;
         using TargetFunc = std::function<WorldNode*(This&)>;
+        using AttachmentCore = WorldAttachmentCore<This>;
+        using SignalHandler = AttachmentCore::SignalHandler;
+        using SignalFunc = SignalHandler::SignalFunc;
 
-        /// Unique identifier
-        String id;
+        // Don't allow copies
+        DELETE_COPY(SomeWorldComponent)
 
-        /// User facing name for display
-        String name;
+    public:
+        AttachmentCore _core;
 
         /// Owner node
         /// Node is responsible for setting this to null when the component is removed
         WorldNode* owner{};
-
-        /// Stores func for component updates
-        Updatable updatable;
-
-        /// Stores objects that need time events
-        Updatables updatables;
-
-        /// Signal handlers. Mapped by signal id
-        UnorderedMap<String, SignalFunc> signalFuncs;
 
         /// Func to make UI plan for custom UI in editor
         UnorderedMap<String, PlanUIFunc> planUIFuncs;
@@ -73,44 +66,33 @@ namespace PJ {
         /// Called when the componet's enabled state changes
         Func onEnabledChangeFunc;
 
-        SomeWorldComponent(String name = "") :
-            name(name) {}
-
-        // Prevent accidental copies
-        DELETE_COPY(SomeWorldComponent)
+        SomeWorldComponent(String name = "");
 
         bool IsEnabled() const {
             return isEnabled;
         }
 
-        void Enable(bool value) {
-            GUARD(isEnabled != value)
-            isEnabled = value;
-
-            GUARD(onEnabledChangeFunc)
-            onEnabledChangeFunc(*this);
-        }
+        This& Enable(bool value);
 
         virtual WorldNode* Node() const {
             return owner;
         }
 
         String Name() const {
-            return name.size() > 0 ? name : TypeName();
+            return _core.name.size() > 0 ? _core.name : TypeName();
         }
 
         String Id() const {
-            return id;
+            return _core.id;
         }
 
-        void SetId(String value) {
-            id = value;
+        This& SetId(String value) {
+            _core.id = value;
+            return *this;
         }
 
         /// @return Returns the type name of this component for browsers and debugging
         virtual String TypeName() const = 0;
-
-        void Signal(String id, SomeSignal const& signal);
 
         Matrix4x4 ModelMatrix() const;
 
@@ -144,8 +126,7 @@ namespace PJ {
 
         /// Called in game loop for time delta update events
         virtual void OnUpdate(TimeSlice time) {
-            updatable.OnUpdate(time);
-            updatables.OnUpdate(time);
+            _core.OnUpdate(time);
         }
 
         /// @return Returns the target node that this component operates on
@@ -158,22 +139,44 @@ namespace PJ {
 
         virtual UP<UIPlan> MakeUIPlan(String context);
 
+        Updatable& GetUpdatable() {
+            return _core.updatable;
+        }
+
+        Updatables& GetUpdatables() {
+            return _core.updatables;
+        }
+
+        /// Adds a signal handler for the specified signal
+        This& AddSignalHandler(SignalHandler handler);
+
+        template <class Signal>
+        using SignalHandlerConfig = AttachmentCore::SignalHandlerConfig<Signal>;
+
+        template <class Signal>
+        This& AddSignalHandler(SignalHandlerConfig<Signal> config) {
+            _core.AddSignalHandler<Signal>(config);
+            OnAddSignalHandler();
+            return *this;
+        }
+
+        /// Sends a signal to registered signal handlers
+        void Signal(String id, SomeSignal const& signal) {
+            _core.Signal(id, signal);
+        }
+
     protected:
+        void OnAddSignalHandler();
+
         /// If true, the component should receive events
         bool isEnabled = true;
 
         WorldPartLife life;
 
         /// Called before Start by CheckedAwake
-        virtual void Awake() {
-            GUARD(awakeFunc)
-            awakeFunc(*this);
-        }
+        virtual void Awake();
 
         /// Called after Awake by CheckedStart
-        virtual void Start() {
-            GUARD(startFunc)
-            startFunc(*this);
-        }
+        virtual void Start();
     };
 } // namespace PJ

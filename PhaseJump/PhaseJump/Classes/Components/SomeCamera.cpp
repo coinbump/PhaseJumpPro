@@ -14,9 +14,6 @@
 
 // #define PROFILE
 
-// TODO: temp
-#include "GLShaderProgram.h"
-
 using namespace std;
 using namespace PJ;
 

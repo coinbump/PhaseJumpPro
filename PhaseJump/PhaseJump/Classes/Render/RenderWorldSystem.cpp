@@ -20,7 +20,7 @@ std::optional<RenderResult> RenderWorldSystem::Render(RenderContextModel& _conte
         model.processingModel.ProcessPhase(phase);
     };
 
-    context->renderEngine->ResetForRenderPass();
+    context->renderEngine.ResetForRenderPass();
 
     auto mainCamera = world->MainCamera();
 
@@ -33,12 +33,12 @@ std::optional<RenderResult> RenderWorldSystem::Render(RenderContextModel& _conte
     }
     context->Clear();
 
-    context->renderEngine->SetIsContextCleared(context->renderId, true);
+    context->renderEngine.SetIsContextCleared(context->renderId, true);
     model.phaseModel.SetPhase(RenderPhase::PostClear);
 
-    int drawCount = 0;
+    int drawCount{};
 
-    auto renderEngine = context->renderEngine;
+    auto& renderEngine = context->renderEngine;
 
     VectorList<RenderModel> models;
     models.reserve(_contextModel.nodes.size());
@@ -54,7 +54,10 @@ std::optional<RenderResult> RenderWorldSystem::Render(RenderContextModel& _conte
 
         // FUTURE: can this be done on parallel threads?
         for (auto& node : _contextModel.nodes) {
-            List<SomeRenderer*> renderers;
+            // Skip hidden nodes
+            GUARD_CONTINUE(node->IsVisible())
+
+            VectorList<SomeRenderer*> renderers;
             node->Signal(SignalId::RenderPrepare, Event{});
             node->CollectTypeComponents<SomeRenderer>(renderers);
             for (auto& renderer : renderers) {
@@ -87,7 +90,7 @@ std::optional<RenderResult> RenderWorldSystem::Render(RenderContextModel& _conte
 
         RenderContextModel contextModel = _contextModel;
 
-        CameraRenderModel cameraModel(contextModel, *camera, models);
+        RenderCameraModel cameraModel(contextModel, *camera, models);
         cameraModel.phaseModel.onPhaseChangeFunc = [&](auto& phaseModel, auto phase) {
             // TODO: prepend "camera." for phase here?
             // Render pipeline shared by all cameras
@@ -106,12 +109,12 @@ std::optional<RenderResult> RenderWorldSystem::Render(RenderContextModel& _conte
 
         cameraModel.renderContext->Bind();
 
-        if (!context->renderEngine->IsContextCleared(cameraModel.renderContext->renderId)) {
+        if (!context->renderEngine.IsContextCleared(cameraModel.renderContext->renderId)) {
             cameraModel.renderContext->Clear();
-            context->renderEngine->SetIsContextCleared(cameraModel.renderContext->renderId, true);
+            context->renderEngine.SetIsContextCleared(cameraModel.renderContext->renderId, true);
         }
 
-        renderEngine->RenderStart(contextModel);
+        renderEngine.RenderStart(contextModel);
         camera->PreRender(contextModel);
 
         SetPhase(RenderPhase::Camera);
@@ -125,7 +128,7 @@ std::optional<RenderResult> RenderWorldSystem::Render(RenderContextModel& _conte
         drawCount += (int)drawModel.models.size();
 
         SetPhase(RenderPhase::PrepareCameraDraw);
-        renderEngine->RenderDraw(drawModel);
+        renderEngine.RenderDraw(drawModel);
         SetPhase(RenderPhase::PostCameraDraw);
 
         SetPhase(RenderPhase::PostCamera);
@@ -149,7 +152,9 @@ RenderWorldSystem::ProcessorList const& RenderWorldSystem::Processors() const {
     return model.processingModel.Processors();
 }
 
-CameraRenderModel::CameraRenderModel(
+// MARK: RenderCameraModel
+
+RenderCameraModel::RenderCameraModel(
     RenderContextModel& contextModel, SomeCamera& camera, VectorList<RenderModel> models
 ) :
     renderContext(camera.renderContext ? camera.renderContext.get() : contextModel.renderContext),
@@ -158,11 +163,34 @@ CameraRenderModel::CameraRenderModel(
     camera(&camera),
     models(models) {}
 
-void CameraRenderModel::SetPhase(String value) {
+void RenderCameraModel::SetPhase(String value) {
     phaseModel.SetPhase(value);
 }
 
-void PhaseRenderModel::SetPhase(String value) {
+SP<RenderMaterial> RenderCameraModel::OverrideMaterial(RenderModel const& model) {
+    auto i = overrideMaterials.find(model.Material());
+    GUARDR(i != overrideMaterials.end(), nullptr)
+
+    return i->second;
+}
+
+SP<RenderMaterial> RenderCameraModel::MakeOverrideMaterial(RenderModel const& model) {
+    auto baseMaterial = model.Material();
+    GUARDR(baseMaterial, nullptr)
+
+    auto i = overrideMaterials.find(baseMaterial);
+    GUARDR(i == overrideMaterials.end(), i->second)
+
+    auto result = MAKE<RenderMaterial>();
+    *result = *baseMaterial;
+    overrideMaterials.insert_or_assign(baseMaterial, result);
+
+    return result;
+}
+
+// MARK: RenderPhaseModel
+
+void RenderPhaseModel::SetPhase(String value) {
     GUARD(phase != value);
     phase = value;
 

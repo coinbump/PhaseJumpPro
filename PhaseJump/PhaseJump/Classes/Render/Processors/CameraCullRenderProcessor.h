@@ -5,8 +5,8 @@
 #include <functional>
 
 /*
- RATING: 4 stars
- Works, but frustrum culling needs testing, rethink
+ RATING: 3 stars
+ Buggy, but reviewed
  CODE REVIEW: 9/2/24
  */
 namespace PJ {
@@ -20,10 +20,10 @@ namespace PJ {
         // TODO: re-evaluate all registered render phases, probably don't want to run for each
         // camera
         CameraCullRenderProcessor() :
-            Base("Camera cull", { RenderPhase::Camera }) {}
+            Base({ .name = "Camera cull", .phases = { RenderPhase::Camera } }) {}
 
         // MARK: RenderProcessor
 
-        void Process(CameraRenderModel& cameraModel) override;
+        void Process(RenderCameraModel& cameraModel) override;
     };
 } // namespace PJ

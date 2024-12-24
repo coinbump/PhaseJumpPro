@@ -7,6 +7,7 @@ using TrackList = Timeline::TrackList;
 
 Timeline::Timeline(Config const& config) :
     timer(config.duration, config.cycleType) {
+    controller = &timer;
     timer.SetOnPlayTimeChangeFunc([this](auto& playable) { OnPlayTimeChange(); });
 
     OnPlayTimeChangeFunc overrideFunc = [](auto& playable) {

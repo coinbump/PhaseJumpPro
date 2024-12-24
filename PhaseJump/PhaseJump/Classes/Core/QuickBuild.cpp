@@ -38,7 +38,7 @@ This& QuickBuild::WithOnEnable(String id, std::function<void(WorldComponent<>&)>
         // Disabled by default, so enable func runs
         component.Enable(false);
 
-        component.id = id;
+        component.SetId(id);
         component.onEnabledChangeFunc = [=](SomeWorldComponent& component) {
             GUARD(component.IsEnabled())
             func(*(static_cast<WorldComponent<>*>(&component)));
@@ -61,7 +61,7 @@ This& QuickBuild::OrthoStandard(Color clearColor) {
 }
 
 This& QuickBuild::Texture(String id) {
-    return With<SpriteRenderer>(Node().World()->FindTexture(id));
+    return With<SpriteRenderer>(Node().World()->resources.FindTexture(id));
 }
 
 This& QuickBuild::Circle(float radius, Color color) {
@@ -96,7 +96,10 @@ This& QuickBuild::Grid(Vector2 worldSize, Vec2I gridSize, Color color, float str
     return With<ColorRenderer>(ColorRenderer::Config{ .color = color, .worldSize = worldSize })
         .ModifyLatest<ColorRenderer>([=](auto& renderer) {
             renderer.SetBuildMeshFunc([=](RendererModel const& model) {
-                return GridMeshBuilder(worldSize, gridSize, strokeWidth).BuildMesh();
+                return GridMeshBuilder({ .worldSize = worldSize,
+                                         .gridSize = gridSize,
+                                         .strokeWidth = strokeWidth })
+                    .BuildMesh();
             });
         });
 }
@@ -129,25 +132,27 @@ This& QuickBuild::DragSnapBack(OnDragUpdateFunc onDragUpdateFunc) {
 This& QuickBuild::OnDropFiles(OnDropFilesFunc onDropFilesFunc) {
     With<WorldComponent<>>("Drop files")
         .ModifyLatestAny([onDropFilesFunc](SomeWorldComponent& component) {
-            component.signalFuncs[SignalId::DropFiles] =
-                [onDropFilesFunc](auto& component, auto& signal) {
-                    auto& dropFilesUIEvent = *(static_cast<DropFilesUIEvent const*>(&signal));
-                    onDropFilesFunc({ component, dropFilesUIEvent });
-                };
+            component.AddSignalHandler<DropFilesUIEvent>(
+                { .id = SignalId::DropFiles,
+                  .func = [onDropFilesFunc](
+                              auto& component, auto& signal
+                          ) { onDropFilesFunc({ component, signal }); } }
+            );
         });
 
     return *this;
 }
 
 This& QuickBuild::SquareCollider(float size) {
-    return With<PolygonCollider2D>().ModifyLatest<PolygonCollider2D>([=](auto& collider) {
-        collider.poly = Polygon::MakeSquare(size);
-    });
+    return RectCollider({ size, size });
 }
 
 This& QuickBuild::RectCollider(Vector2 size) {
     return With<PolygonCollider2D>().ModifyLatest<PolygonCollider2D>([=](auto& collider) {
-        collider.poly = Polygon::MakeRect(size);
+        // A zero sized rect polygon can't be resized later for views, so make sure this has some
+        // size
+        collider.poly =
+            Polygon::MakeRect({ std::max(0.00001f, size.x), std::max(0.00001f, size.y) });
     });
 }
 
@@ -206,7 +211,7 @@ This& QuickBuild::Slider(SliderConfig config) {
     auto world = Node().World();
     GUARDR(world, *this)
 
-    auto designSystem = world->designSystem;
+    auto designSystem = world->designSystem.get();
     GUARDR_LOG(designSystem, *this, "Missing design system")
 
     auto trackTexture = designSystem->Texture(UIElementId::SliderTrack);
@@ -223,7 +228,7 @@ This& QuickBuild::SliderVertical(SliderConfig config) {
     auto world = Node().World();
     GUARDR(world, *this)
 
-    auto designSystem = world->designSystem;
+    auto designSystem = world->designSystem.get();
     GUARDR_LOG(designSystem, *this, "Missing design system")
 
     // FUTURE: support UV rotation so we don't have to duplicate textures
@@ -282,10 +287,10 @@ This& QuickBuild::HoverScaleTo(float endValue) {
     )
         .ModifyLatest<ValveHoverGestureHandler>([=](auto& handler) {
             // Match the interpolation curve in both directions
-            auto binding = AnimateFuncs::MakeUniformScaleBinding(
+            auto binding = AnimateFuncs::MakeUniformScaleBinding2D(
                 *handler.owner, startValue, endValue, EaseFuncs::outSquared
             );
-            auto reverseBinding = AnimateFuncs::MakeUniformScaleBinding(
+            auto reverseBinding = AnimateFuncs::MakeUniformScaleBinding2D(
                 *handler.owner, endValue, startValue, EaseFuncs::outSquared
             );
 
@@ -350,7 +355,7 @@ This& QuickBuild::MoveTo(Vector3 endValue) {
 This& QuickBuild::AnimateScale(float startValue, float endValue) {
     return AnimateStartEnd<float>(
         startValue, endValue,
-        AnimateFuncs::UniformScaleMaker(AnimateState().duration, AnimateState().easeFunc)
+        AnimateFuncs::UniformScaleMaker2D(AnimateState().duration, AnimateState().easeFunc)
     );
 }
 
@@ -370,8 +375,8 @@ This& QuickBuild::ScaleTo(float endValue) {
 }
 
 This& QuickBuild::ScaleToPingPong(float endValue) {
-    // TODO: Need reverse ease func
-    MakeAnimatorFunc<float, WorldNode&> maker = AnimateFuncs::UniformScaleMaker(
+    // FUTURE: Add reverse ease func
+    MakeAnimatorFunc<float, WorldNode&> maker = AnimateFuncs::UniformScaleMaker2D(
         AnimateState().duration, AnimateState().easeFunc, AnimationCycleType::PingPong
     );
 
@@ -390,7 +395,7 @@ This& QuickBuild::RotateTo(Angle endValue) {
 }
 
 This& QuickBuild::RotateToPingPong(Angle endValue) {
-    // TODO: Need reverse ease func
+    // FUTURE: Add reverse ease func
     MakeAnimatorFunc<float, WorldNode&> maker = AnimateFuncs::RotateMaker(
         AnimateState().duration, AnimateState().easeFunc, AnimationCycleType::PingPong
     );

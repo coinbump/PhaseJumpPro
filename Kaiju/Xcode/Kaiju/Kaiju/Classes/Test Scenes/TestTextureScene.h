@@ -6,8 +6,6 @@
 using namespace std;
 using namespace PJ;
 
-namespace PJ {}
-
 #if FALSE
 // quickBuilder <- allows you to switch which UI you use
 
@@ -35,7 +33,7 @@ public:
 #define BUFFER
 #ifdef BUFFER
         auto& bufferCamera = root.With<OrthoCamera>();
-        auto textureBuffer = world.renderContext->renderEngine->MakeTextureBuffer();
+        auto textureBuffer = world.renderContext->renderEngine.MakeTextureBuffer();
         textureBuffer->Build(Vector2Int(2000, 1000));
         //        textureBuffer->clearColor = Color::blue;
         bufferCamera.renderContext = textureBuffer;
@@ -49,8 +47,8 @@ public:
             spriteRenderer.model.material->SetShaderProgram(program->second);
         }
 
-        // TODO: this is cheating the UV coordinates for now, don't forget
-        bufferRenderNode.transform.SetRotation(Vector3(0, 0, -180));
+        // this is cheating the UV coordinates for now, don't forget
+        // bufferRenderNode.transform.SetRotation(Vector3(0, 0, -180));
 #endif
 
         //        auto inputMap = DCAST<InputTriggerMap>(uiSystem->inputMap);
@@ -97,8 +95,8 @@ public:
 
         for (int i = 0; i < 1; i++) {
             //            auto font =
-            //            DCAST<Font>(world.loadedResources->map["font"]["TestFont"].resource);
-            auto font = DCAST<Font>(world.FindFontWithSize(32));
+            //            DCAST<Font>(world.resourceCatalog->map["font"]["TestFont"].resource);
+            auto font = FindFontWithSize(world.resources, 32);
 
             if (font) {
                 auto textureAtlas = font->atlas;
@@ -122,7 +120,7 @@ public:
                     //                        auto const& renderChars = textRenderer.RenderChars();
                     //                        auto const& text = textRenderer.Text();
                     //
-                    //                        // TODO: this doesn't work because \n isn't rendered
+                    //                        // this doesn't work because \n isn't rendered
                     //                        in the mesh for (size_t i = 0; i < renderChars.size();
                     //                        i++) {
                     //                            auto renderChar = renderChars[i];
@@ -146,7 +144,7 @@ public:
                     //                        auto const& renderChars = textRenderer.RenderChars();
                     //                        auto const& text = textRenderer.Text();
                     //
-                    //                        // TODO: this doesn't work because \n isn't rendered
+                    //                        // this doesn't work because \n isn't rendered
                     //                        in the mesh for (size_t i = 0; i < renderChars.size();
                     //                        i++) {
                     //                            auto renderChar = renderChars[i];
@@ -217,14 +215,12 @@ public:
 #endif
 
         //        texture =
-        //        DCAST<SomeTexture>(world.loadedResources->map["texture"]["man_run0015"].resource);
+        //        DCAST<SomeTexture>(world.resourceCatalog->map[ResourceType::Texture]["man_run0015"].resource);
         //        GUARD(texture)
 
-        auto textureAtlas = DCAST<TextureAtlas>(
-            world.loadedResources->map["texture.atlas"]["man-run-atlas"].resource
-        );
+        auto textureAtlas = world.resources.Find<TextureAtlas>("texture.atlas", "man-run-atlas");
         //                auto textureAtlas =
-        //                DCAST<TextureAtlas>(world.loadedResources->map["texture.atlas"]["TexturePacker"].resource);
+        //                DCAST<TextureAtlas>(world.resourceCatalog->map["texture.atlas"]["TexturePacker"].resource);
         GUARD(textureAtlas);
 
         auto animatedTexture = MAKE<AnimatedSpriteRenderer>(*textureAtlas);
@@ -277,7 +273,7 @@ public:
 //                GUARD(camera->halfHeight)
 //                camera->SetHalfHeight(*camera->halfHeight + 10.0f * time.delta);
 //            });
-           updatables.AddTimed(3, [camera](TimeSlice time) {
+                           GetUpdatables().AddTimed(3, [camera](TimeSlice time) {
                 GUARDR(camera->halfHeight, FinishType::Continue)
                 camera->SetHalfHeight(*camera->halfHeight + 50.0f * time.delta);
 

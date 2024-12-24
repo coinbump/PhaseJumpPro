@@ -5,65 +5,39 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_audio.h>
 
-// CODE REVIEW: ?/23
+/*
+ RATING: 4 stars
+ Tested and works, but missing functionality
+ CODE REVIEW: 12/20/24
+ */
 namespace PJ {
+    /// An audio stream plays a single stream of audio
     class SDLAudioStream : public SomeAudioStream {
     protected:
-        Uint8* audioBuffer = nullptr;
-        Uint32 bufferLength = 0;
+        Uint8* audioBuffer{};
+        Uint32 bufferLength{};
         SDL_AudioSpec audioSpec;
-        SDL_AudioStream* stream = nullptr;
+        SDL_AudioStream* stream{};
 
     public:
-        SDLAudioStream(Uint8* audioBuffer, Uint32 bufferLength, SDL_AudioSpec audioSpec) :
-            audioBuffer(audioBuffer),
-            bufferLength(bufferLength),
-            audioSpec(audioSpec) {}
+        SDLAudioStream(Uint8* audioBuffer, Uint32 bufferLength, SDL_AudioSpec audioSpec);
 
-        virtual ~SDLAudioStream() {
-            if (audioBuffer) {
-                SDL_free(audioBuffer);
-            }
+        virtual ~SDLAudioStream();
 
-            if (stream) {
-                SDL_DestroyAudioStream(stream);
-            }
-        }
-
-        void Flush() {
-            GUARD(stream)
-            SDL_DestroyAudioStream(stream);
-            stream = nullptr;
-        }
-
-        // MARK: Updatable
-
-        void OnUpdate(TimeSlice time) override {}
+        void Flush();
 
         // MARK: Playable
 
-        void Play() override {
-            GUARD(audioBuffer)
-            GUARD(bufferLength > 0)
-            // FUTURE: const SDL_AudioSpec outputAudioSpec = { SDL_AUDIO_S16, 2, 48000 };
+        void Play() override;
 
-            // TODO: should we reset if we're already playing? or start a new instance? Or keep
-            // playing?
-            Flush();
-
-            stream = SDL_OpenAudioDeviceStream(
-                SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &audioSpec, nullptr, nullptr
-            );
-            SDL_PutAudioStreamData(stream, audioBuffer, bufferLength);
-            SDL_FlushAudioStream(stream);
-            SDL_ResumeAudioDevice(SDL_GetAudioStreamDevice(stream));
-        }
-
+        // FUTURE: support missing playable methods
         float Duration() const override {
             return 0;
         }
 
-        void SetDuration(float value) override {}
+        void SetDuration(float value) override {
+            PJ::Log("ERROR. Can't set duration of audio stream");
+        }
 
         float Progress() const override {
             return 0;
@@ -71,21 +45,22 @@ namespace PJ {
 
         void SetProgress(float value) override {}
 
-        void Pause() override {}
-
-        void Stop() override {
+        void Pause() override {
             GUARD(stream)
             SDL_PauseAudioDevice(SDL_GetAudioStreamDevice(stream));
         }
 
-        bool IsPlaying() const override {
-            return false;
-        }
+        void Stop() override;
 
         float PlayTime() const override {
             return 0;
         }
 
         void SetPlayTime(float time) override {}
+
+        bool IsPaused() const override {
+            GUARDR(stream, false)
+            return SDL_AudioDevicePaused(SDL_GetAudioStreamDevice(stream));
+        }
     };
 } // namespace PJ

@@ -1,5 +1,4 @@
-#ifndef PJCYCLICGRAPHNODE_H
-#define PJCYCLICGRAPHNODE_H
+#pragma once
 
 #include "SomeGraphNode.h"
 #include <iostream>
@@ -7,7 +6,7 @@
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 5/12/24
+ CODE REVIEW: 12/21/24
  */
 namespace PJ {
     /// Cyclic nodes are managed by CyclicGraph
@@ -15,7 +14,7 @@ namespace PJ {
     class CyclicGraphNode : public SomeGraphNode<EdgeCore, Core> {
     public:
         using Base = SomeGraphNode<EdgeCore, Core>;
-        using EdgeModelType = EdgeCore;
+        using EdgeCoreType = EdgeCore;
         using CoreType = Core;
 
         CyclicGraphNode() {}
@@ -23,12 +22,12 @@ namespace PJ {
         CyclicGraphNode(Core core) :
             Base(core) {}
 
+        // MARK: SomeGraphNode
+
         typename Base::NodeSharedPtr
         AddEdge(typename Base::NodeSharedPtr toNode, EdgeCore model = EdgeCore()) override {
-            std::cout << "Error. Call CyclicGraph.AddEdge instead";
-            return nullptr;
+            PJ::Log("Error. Call CyclicGraph.AddEdge instead");
+            return {};
         }
     };
 } // namespace PJ
-
-#endif

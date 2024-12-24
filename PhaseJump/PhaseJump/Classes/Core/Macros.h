@@ -35,20 +35,6 @@
         return result;       \
     }
 
-// TODO: only run if in DEBUG build
-#define GUARD_LOG(test, message)           \
-    if (!(test)) {                         \
-        std::cout << message << std::endl; \
-        return;                            \
-    }
-
-// TODO: only run if in DEBUG build
-#define GUARDR_LOG(test, result, message)  \
-    if (!(test)) {                         \
-        std::cout << message << std::endl; \
-        return result;                     \
-    }
-
 #define GUARD_CONTINUE(test) \
     if (!(test)) {           \
         continue;            \

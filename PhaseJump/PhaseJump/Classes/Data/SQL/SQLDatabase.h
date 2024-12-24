@@ -1,5 +1,4 @@
-#ifndef PJSQLDATABASE_H
-#define PJSQLDATABASE_H
+#pragma once
 
 #include "FilePath.h"
 #include "OrderedSet.h"
@@ -14,7 +13,7 @@
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 3/30/23
+ CODE REVIEW: 12/21/24
  */
 namespace PJ {
     /**
@@ -36,13 +35,12 @@ namespace PJ {
     class SQLDatabase {
     protected:
         enum class TransactionState { Default, InTransaction };
-        // TODO: SP audit
-        SP<StateMachine<TransactionState>> transactionStateMachine =
-            MAKE<StateMachine<TransactionState>>();
+
+        StateMachine<TransactionState> transactionStateMachine;
 
     public:
         FilePath filePath;
-        sqlite3* db = NULL;
+        sqlite3* db{};
 
         SQLDatabase();
         virtual ~SQLDatabase();
@@ -65,11 +63,9 @@ namespace PJ {
         void EndTransaction();
 
         bool IsInTransaction() const {
-            return transactionStateMachine->State() == TransactionState::InTransaction;
+            return transactionStateMachine.State() == TransactionState::InTransaction;
         }
     };
 
     using SQLDatabaseSharedPtr = SP<SQLDatabase>;
 } // namespace PJ
-
-#endif

@@ -94,12 +94,11 @@ void OrthoCamera::PreRender(RenderContextModel const& contextModel) {
 
     auto renderContext = contextModel.renderContext;
     GUARD(renderContext)
-    GUARD(renderContext->renderEngine);
 
     auto worldPosition = owner->transform.WorldPosition();
 
     auto cameraExtents = CameraExtents();
-    renderContext->renderEngine->ProjectionMatrixLoadOrthographic(cameraExtents * 2.0f);
+    renderContext->renderEngine.ProjectionMatrixLoadOrthographic(cameraExtents * 2.0f);
 
     // Translate to standard position
     Vector3 translate(cameraExtents.x, cameraExtents.y, 0);
@@ -108,7 +107,7 @@ void OrthoCamera::PreRender(RenderContextModel const& contextModel) {
     translate.x -= worldPosition.x;
     translate.y -= worldPosition.y;
 
-    renderContext->renderEngine->LoadTranslate(translate);
+    renderContext->renderEngine.LoadTranslate(translate);
 }
 
 bool OrthoCamera::IsCulled(Mesh const& mesh) {

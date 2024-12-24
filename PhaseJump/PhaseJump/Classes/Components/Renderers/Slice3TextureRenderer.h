@@ -17,9 +17,9 @@ namespace PJ {
     struct Mesh;
 
     /// Renders a single texture as a 3-slice (start, middle, end)
-    class Slice3TextureRenderer : public SomeRenderer {
+    class Slice3TextureRenderer : public SomeMaterialRenderer {
     public:
-        using Base = SomeRenderer;
+        using Base = SomeMaterialRenderer;
 
     protected:
         SP<SomeTexture> texture;

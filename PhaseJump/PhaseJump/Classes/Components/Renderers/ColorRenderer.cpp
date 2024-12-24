@@ -5,7 +5,6 @@
 #include "RenderFeature.h"
 #include "RenderMaterial.h"
 #include "RenderModel.h"
-#include "RenderModelBuilder.h"
 #include "SomeRenderEngine.h"
 
 using namespace std;
@@ -39,7 +38,7 @@ ColorRenderer::ColorRenderer(Color color, Vector2 worldSize) :
     ColorRenderer({ .color = color, .worldSize = worldSize }) {}
 
 SP<RenderMaterial> ColorRenderer::MakeMaterial(RenderOpacityType opacityType) {
-    auto material = MAKE<RenderMaterial>(RenderMaterial::Config{ .shaderId = "color.vary" });
+    auto material = MAKE<RenderMaterial>(RenderMaterial::Config{ .shaderId = ShaderId::ColorVary });
     material->EnableFeature(RenderFeature::Blend, opacityType == RenderOpacityType::Blend);
 
     return material;

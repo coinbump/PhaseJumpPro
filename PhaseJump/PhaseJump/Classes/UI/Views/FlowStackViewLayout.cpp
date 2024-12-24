@@ -11,34 +11,35 @@ FlowStackViewLayout::FlowStackViewLayout(Axis2D _axis, float _spacing, AlignFunc
     spacing(_spacing),
     alignFunc(alignFunc) {
     PlanUIFunc planUIFunc = [this](auto& component, String context, UIPlanner& planner) {
-        planner.InputFloat(
-            "Spacing", { [this]() { return spacing; }, [this](auto& value) { SetSpacing(value); } }
-        );
-        planner.InputBool(
-            "Vertical", { [this]() { return axis == Axis2D::Y; },
-                          [this](auto& value) { SetAxis(value ? Axis2D::Y : Axis2D::X); } }
-        );
+        planner.InputFloat({ .label = "Spacing",
+                             .binding = { [this]() { return spacing; },
+                                          [this](auto& value) { SetSpacing(value); } } });
+        planner.InputBool({ .label = "Vertical",
+                            .binding = { [this]() { return axis == Axis2D::Y; },
+                                         [this](auto& value) {
+                                             SetAxis(value ? Axis2D::Y : Axis2D::X);
+                                         } } });
 
-        planner.PickerList(
-            "Alignment", _editAlignOptions,
-            { [this]() { return _editAlignOption ? *_editAlignOption : -1; },
-              [this](auto& value) {
-                  _editAlignOption = value;
-                  switch (value) {
-                  case 0:
-                      SetAlignFunc(AlignFuncs::left);
-                      break;
-                  case 1:
-                      SetAlignFunc(AlignFuncs::center);
-                      break;
-                  case 2:
-                      SetAlignFunc(AlignFuncs::right);
-                      break;
-                  default:
-                      break;
-                  }
-              } }
-        );
+        planner.PickerList({ .label = "Alignment",
+                             .options = _editAlignOptions,
+                             .binding = {
+                                 [this]() { return _editAlignOption ? *_editAlignOption : -1; },
+                                 [this](auto& value) {
+                                     _editAlignOption = value;
+                                     switch (value) {
+                                     case 0:
+                                         SetAlignFunc(AlignFuncs::left);
+                                         break;
+                                     case 1:
+                                         SetAlignFunc(AlignFuncs::center);
+                                         break;
+                                     case 2:
+                                         SetAlignFunc(AlignFuncs::right);
+                                         break;
+                                     default:
+                                         break;
+                                     }
+                                 } } });
     };
     Override(planUIFuncs[UIContextId::Inspector], planUIFunc);
 }
@@ -98,7 +99,7 @@ void FlowStackViewLayout::CalculateFrames(
 ) {
     GUARD(owner);
     GUARD(children.size() > 0);
-    GUARD(calculatedFrames.size() == 0)
+    calculatedFrames.clear();
 
     VectorList<OrthogonalLayoutDimension> dimensions;
 

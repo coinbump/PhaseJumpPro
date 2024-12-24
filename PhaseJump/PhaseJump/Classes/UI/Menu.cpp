@@ -1,11 +1,11 @@
 #include "Menu.h"
 #include "List.h"
-#include "SomeUIEvent.h"
+#include "SomeKeyUIEvent.h"
 
 using namespace std;
 using namespace PJ;
 
-String KeyboardShortcut::ToString() {
+String KeyboardShortcut::ToString() const {
     // FUTURE: support localization if needed
     // FUTURE: support ⌘, ⇧, ⌥, ⌃ (not supported by imGui)
     GUARDR(!IsEmpty(modifiers), "")

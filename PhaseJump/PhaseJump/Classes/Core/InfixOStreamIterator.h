@@ -1,5 +1,4 @@
-#ifndef INFIXOSTREAMITERATOR_H
-#define INFIXOSTREAMITERATOR_H
+#pragma once
 
 #include <iterator>
 #include <ostream>
@@ -7,7 +6,7 @@
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 4/4/23
+ CODE REVIEW: 12/21/24
  */
 namespace PJ {
     /**
@@ -15,54 +14,39 @@ namespace PJ {
 
      Documentation:
      https://codereview.stackexchange.com/questions/13176/infix-iterator-code
-     https://www.fluentcpp.com/2018/05/08/std-iterator-deprecated/
-     https://en.cppreference.com/w/cpp/io/basic_ostream
      */
     template <class T, class CharT = char, class Traits = std::char_traits<CharT>>
     class InfixOStreamIterator {
-        using iterator_category = std::output_iterator_tag;
-        using value_type = T;
-        using difference_type = T;
-        using pointer = T*;
-        using reference = T&;
-
-        std::basic_ostream<CharT, Traits>* os;
-        CharT const* delimiter;
-        bool isFirstElement = false;
+        std::basic_ostream<CharT, Traits>& os{};
+        CharT const* delimiter{};
+        bool isFirstElement = true;
 
     public:
+        using This = InfixOStreamIterator<T, CharT, Traits>;
         using OStreamType = std::basic_ostream<CharT, Traits>;
 
-        InfixOStreamIterator(OStreamType& stream) :
-            os(&stream),
-            delimiter(NULL),
-            isFirstElement(true) {}
-
         InfixOStreamIterator(OStreamType& stream, CharT const* delimiter) :
-            os(&stream),
-            delimiter(delimiter),
-            isFirstElement(true) {}
+            os(stream),
+            delimiter(delimiter) {}
 
-        InfixOStreamIterator<T, CharT, Traits>& operator=(T const& item) {
-            if (!isFirstElement && delimiter != NULL)
-                *os << delimiter;
-            *os << item;
+        This& operator=(T const& item) {
+            if (!isFirstElement && delimiter != nullptr)
+                os << delimiter;
+            os << item;
             isFirstElement = false;
             return *this;
         }
 
-        InfixOStreamIterator<T, CharT, Traits>& operator*() {
+        This& operator*() {
             return *this;
         }
 
-        InfixOStreamIterator<T, CharT, Traits>& operator++() {
+        This& operator++() {
             return *this;
         }
 
-        InfixOStreamIterator<T, CharT, Traits>& operator++(int) {
+        This& operator++(int) {
             return *this;
         }
     };
 } // namespace PJ
-
-#endif

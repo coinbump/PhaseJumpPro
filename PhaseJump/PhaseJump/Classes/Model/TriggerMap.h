@@ -97,14 +97,6 @@ namespace PJ {
             return std::nullopt;
         }
 
-        // TODO: Unit test
-        //        FilterList FiltersForAction(Action action) const {
-        //            auto& item = Find(items, [=](Item& item) { return item.action == action; });
-        //            GUARDR(item != items.end(), FilterList())
-        //
-        //            return item.filters;
-        //        }
-
         /// @return Returns a list of all actions that are activated by this trigger
         List<Action> ActionsFor(Trigger const& event) {
             List<Action> result;

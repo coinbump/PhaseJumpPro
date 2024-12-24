@@ -3,9 +3,9 @@
 #include "EditorTypes.h"
 #include "GLRenderEngine.h"
 #include "ImGuiGLRenderProcessor.h"
-#include "LoadResourcesModel.h"
 #include "RenderWorldSystem.h"
 #include "ResourceRepository.h"
+#include "ResourceRepositoryModel.h"
 #include "ResourceScanner.h"
 #include "SDLFileManager.h"
 #include "SDLPlatformConfig.h"
@@ -16,7 +16,7 @@
 #include "ShowBoundsRenderProcessor.h"
 #include "ShowCollidersRenderProcessor.h"
 #include "ShowMeshRenderProcessor.h"
-#include "StandardLoadResourcesModel.h"
+#include "StandardResourceRepositoryModel.h"
 #include "UIWorldSystem.h"
 
 using namespace std;
@@ -62,8 +62,15 @@ SDLConfigPlatformResult SDLPlatformClass::Configure(SDLPlatformConfig& config, S
         SDL_SetLogPriority(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_INFO);
     }
 
-    auto window = MAKE<SDLPlatformWindow>(world);
-    window->Configure(config.windowConfig);
+    // FUTURE: support non-OpenGL render SDKs if needed
+    SP<GLRenderEngine> glRenderEngine = MAKE<GLRenderEngine>();
+
+    auto windowConfig = config.windowConfig;
+    windowConfig.world = world;
+    windowConfig.renderEngine = glRenderEngine;
+
+    auto window = MAKE<SDLPlatformWindow>(windowConfig);
+    window->Go();
 
     int pixelW{}, pixelH{};
     SDL_GetWindowSizeInPixels(window->SDLWindow(), &pixelW, &pixelH);
@@ -75,10 +82,7 @@ SDLConfigPlatformResult SDLPlatformClass::Configure(SDLPlatformConfig& config, S
     PJ::Log("SDL: Is Joystick Enabled?: ", SDL_JoystickEventsEnabled());
     PJ::Log("SDL: Is Gamepad Enabled?: ", SDL_GamepadEventsEnabled());
 
-    // FUTURE: support non-OpenGL render SDKs if needed
-    SP<GLRenderEngine> glRenderEngine = MAKE<GLRenderEngine>();
-
-    auto renderContext = MAKE<SDLGLRenderContext>(glRenderEngine);
+    auto renderContext = MAKE<SDLGLRenderContext>(*glRenderEngine);
     renderContext->clearColor = config.clearColor;
     renderContext->Configure(window->SDLWindow());
 
@@ -89,7 +93,7 @@ SDLConfigPlatformResult SDLPlatformClass::Configure(SDLPlatformConfig& config, S
     world->Configure(window->SDLWindow(), renderContext);
 
     // Poll for UI events
-    world->uiEventPoller = MAKE<SDLUIEventPoller>(window->SDLWindow());
+    world->uiEventPoller = NEW<SDLUIEventPoller>(window->SDLWindow());
 
     // Log SDL render values
     int value{};
@@ -123,20 +127,18 @@ SDLConfigPlatformResult SDLPlatformClass::Configure(SDLPlatformConfig& config, S
     // Load initial resources
     // Careful: this is only meant for quick prototyping. It will block the main thread
     if (config.resourcesPath.string().size() > 0) {
-        SP<LoadResourcesModel> loadResourcesModel =
-            MAKE<StandardLoadResourcesModel>(StandardLoadResourcesModel::LoadType::Rez);
+        StandardResourceScanModel scanModel(StandardResourceScanModel::LoadType::Rez);
+        SDLFileManager fm;
+        ResourceScanner resourceScanner(scanModel, fm);
 
-        SP<FileManager> fm = MAKE<SDLFileManager>();
-        // TODO: scanner doesn't need SP
-        ResourceScanner resourceScanner(loadResourcesModel, fm);
-        ResourceRepository resourceRepository(loadResourcesModel, world->loadedResources, fm);
+        StandardResourceRepositoryModel repoModel;
+        ResourceRepository resourceRepository(repoModel, world->resources, fm);
 
         FilePath path = SDL_GetBasePath();
         path /= config.resourcesPath;
 
-        auto loadResourcesPlan = resourceScanner.ScanAt(path, FileSearchType::Recursive);
-        auto allInfos = loadResourcesPlan.AllInfos();
-        for (auto& info : allInfos) {
+        auto repoPlan = resourceScanner.ScanAt(path, FileSearchType::Recursive);
+        for (auto& info : repoPlan.infos) {
             resourceRepository.Load(info);
         }
     }

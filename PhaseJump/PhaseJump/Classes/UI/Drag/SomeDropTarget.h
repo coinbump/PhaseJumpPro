@@ -5,7 +5,9 @@
 #include "WorldComponent.h"
 
 /*
- CODE REVIEW: 6/18/23
+ RATING: 5 stars
+ Tested and works
+ CODE REVIEW: 12/15/24
  */
 namespace PJ {
     /// Target that can accept drag items

@@ -8,7 +8,11 @@
 #include "Vector2.h"
 #include <memory>
 
-// /23
+/*
+ RATING: 5 stars
+ Tested and works
+ CODE REVIEW: 12/21/24
+ */
 namespace PJ {
     class SomeRenderer;
     class RenderContextModel;
@@ -16,38 +20,43 @@ namespace PJ {
     class SomeRenderCommandModel;
     class SomeTexture;
 
-    /// A render context is how we render graphics via a third party SDK like
-    /// SDL or OpenGL
+    /// Destination model for renders
     class SomeRenderContext : public Base {
     public:
         String id;
-        uint32_t renderId = 0;
 
+        /// Platform native id for render context object
+        uint32_t renderId{};
+
+        /// Color used to clear this context for each render pass
         Color clearColor = Color::clear;
 
-        SP<SomeRenderEngine> renderEngine;
+        SomeRenderEngine& renderEngine;
 
-        SomeRenderContext(SP<SomeRenderEngine> renderEngine) :
+        SomeRenderContext(SomeRenderEngine& renderEngine) :
             renderEngine(renderEngine) {}
 
         virtual ~SomeRenderContext() {}
 
-        /// Make context current, for renders
+        /// Makes context current, for renders
         virtual void Bind() = 0;
 
-        /// Clear context with clear color
+        /// Clears context with clear color
         virtual void Clear() = 0;
 
-        /// Present context to display
+        /// Presents context to display
         virtual void Present() = 0;
 
+        /// @return Returns context's logical size
         virtual Vector2 Size() const = 0;
+
+        /// @return Returns context's size in pixels
         virtual Vector2Int PixelSize() const = 0;
 
-        /// Some render contexts are build on demand (texture buffer)
+        /// For on demand contexts (texture buffer)
         virtual void Build(Vector2Int size) {}
 
-        /// Some render contexts produce a render texture (texture buffer)
+        /// For viewport contexts (texture buffer)
         virtual SP<SomeTexture> Texture() const {
             return nullptr;
         }

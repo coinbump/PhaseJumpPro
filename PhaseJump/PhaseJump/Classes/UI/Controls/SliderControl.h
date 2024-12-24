@@ -7,7 +7,7 @@
 
 /*
  RATING: 4 stars
- Tested and works. Needs unit tests + intrinsic height logic for view layout
+ Tested and works
  CODE REVIEW: 9/2/24
  */
 namespace PJ {
@@ -15,12 +15,8 @@ namespace PJ {
 
     /**
      Slider UI control
-     Built with 2 nodes and two renderers
-     The parent node is the track
-     The track node contains the track renderer and a child node which is the thumb
-     The thumb node contains a renderer for the thumb
 
-     The thumb node must have a collider attached for hit testing
+     Built with optional child nodes for the track and thumb
      */
     class SliderControl : public UIControl2D {
     public:
@@ -31,28 +27,44 @@ namespace PJ {
         using OnValueChangeFunc = std::function<void(This&)>;
 
     protected:
-        /// Track node
+        /// (Optional). Track node
         WP<WorldNode> track;
 
-        /// Thumb node
+        /// (Optional). Thumb node
         WP<WorldNode> thumb;
 
+        /// Minimum control value
         float minValue = 0;
+
+        /// Maximum control value
         float maxValue = 1.0f;
 
+        /// Control value binding
         Binding<float> valueBinding;
+
+        /// Called when the control value changes
         OnValueChangeFunc onValueChangeFunc;
 
+        /// Called when the control value changes
         virtual void OnValueChange();
 
+        /// Primary axis for this control
         Axis2D axis = Axis2D::X;
+
+        /// Track size along the orthogonal axis
         float trackOrthogonal{};
 
     public:
         struct Config {
             Axis2D axis = Axis2D::X;
 
-            /// Orthogonal size of the slider track perpendicular to the primary axis
+            /// Minimum control value
+            float minValue = 0;
+
+            /// Maximum control value
+            float maxValue = 1.0f;
+
+            /// Track size along the orthogonal axis
             float trackOrthogonal = 10;
 
             Binding<float> valueBinding;
@@ -60,59 +72,55 @@ namespace PJ {
 
         SliderControl(Config config);
 
-        void Configure(Config config);
+        /// @return Returns true if the slider is tracking a drag gesture
+        bool IsDragging() const;
 
-        void SetThumb(SP<WorldNode> value) {
-            thumb = value;
-        }
+        /// Associates a thumb node with this slider
+        void SetThumb(SP<WorldNode> value);
 
-        void SetTrack(SP<WorldNode> value) {
-            track = value;
-        }
+        /// Associates a track node with this slider
+        void SetTrack(SP<WorldNode> value);
 
+        /// @return Returns the control value
         float Value() const {
             return value;
         }
 
-        void SetOnValueChangeFunc(OnValueChangeFunc value) {
-            onValueChangeFunc = value;
-
-            GUARD(onValueChangeFunc)
-            onValueChangeFunc(*this);
+        /// @return Returns the normalized control value (0-1.0)
+        float NormalValue() const {
+            return (value - minValue) / (maxValue - minValue);
         }
 
-        void SetValueBinding(Binding<float> binding) {
-            valueBinding = binding;
-            SetValue(binding);
-        }
+        /// Sets a func to be called when the control value changes
+        void SetOnValueChangeFunc(OnValueChangeFunc value);
 
-        void SetValue(float value) {
-            this->value.SetValue(value);
-        }
+        /// Sets a binding for the control value
+        void SetValueBinding(Binding<float> binding);
 
-        auto& SetEndCapSize(float value) {
-            endCapSize = value;
-            return *this;
-        }
+        /// Sets the control value and the bound value if a binding exists
+        void SetValue(float value);
+
+        /// Sets the end cap size, that limits how far the thumb can travel
+        /// Ignored if the thumb is not a child node of the slider
+        This& SetEndCapSize(float value);
 
     protected:
         /// Value clamped between minValue and maxValue
         ObservedValue<float> value;
 
-        SP<Cancellable> valueSubscription;
-
         /// Size of the end caps where the thumb can't reach
         float endCapSize = 0;
 
-        Vector2 dragStartInputPosition;
-        Vector3 thumbStartLocalPosition;
-        SP<SomeDragGestureHandler2D> thumbDragHandler;
+        Vector2 dragStartInputWorldPos;
+
+        /// Drag gesture handler for slider tracking
+        SP<SomeDragGestureHandler2D> dragHandler;
 
         Vector2 RendererSize(WorldNode& target) const;
 
-        void OnDragThumbStart(WorldNode& thumb, Vector2 inputPosition);
-        void OnDragThumbUpdate(WorldNode& thumb, Vector2 inputPosition);
-        void OnDragThumbEnd();
+        void OnDragStart(Vector2 inputWorldPos);
+        void OnDragUpdate(Vector2 inputWorldPos);
+        void OnDragEnd();
 
         float TrackLength() const;
         Vector2 ThumbSize() const;

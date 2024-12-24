@@ -1,5 +1,4 @@
-#ifndef SQLTABLE_H
-#define SQLTABLE_H
+#pragma once
 
 #include "OrderedSet.h"
 #include "SQLRowValues.h"
@@ -17,7 +16,7 @@
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 3/30/23
+ CODE REVIEW: 12/19/24
  */
 namespace PJ {
     class SQLDatabase;
@@ -29,6 +28,7 @@ namespace PJ {
         Manages a SQL table, must be connected to an SQL database to work (via
        Connect).
 
+     Additional Info:
         Managing Unique row IDs:
        http://www.sqlabs.com/blog/2010/12/sqlite-and-unique-rowid-something-you-really-need-to-know/
      */
@@ -37,17 +37,21 @@ namespace PJ {
         enum class SetValueType { Update, Insert };
 
         String name;
-        SQLDatabase* db{};
+        SQLDatabase& db;
+
+        SQLTable(String name, SQLDatabase& db);
 
         String Name() const {
             return name;
         }
 
-        SQLDatabase* DB() const {
+        SQLDatabase& DB() {
             return db;
         }
 
-        SQLTable(String name, SQLDatabase* db);
+        SQLDatabase const& DB() const {
+            return db;
+        }
 
         VectorList<SQLRowValues> RowValuesList(SQLTableQueryArguments query);
 
@@ -62,6 +66,8 @@ namespace PJ {
 
         void InsertRow();
         void DeleteRow(String whereColumn, String whereMatch);
+
+        /// Deletes the entire table
         void Drop();
 
         SQLStatement BuildStatement(String columnName, std::optional<SQLWhereArguments> where);
@@ -78,5 +84,3 @@ namespace PJ {
         void SetFloatValue(SQLTableMutateArguments mutation, SetValueType type);
     };
 } // namespace PJ
-
-#endif

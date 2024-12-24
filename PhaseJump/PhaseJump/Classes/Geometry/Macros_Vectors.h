@@ -1,10 +1,13 @@
-#ifndef PJMACROSVECTORS_H
-#define PJMACROSVECTORS_H
+#pragma once
 
 #include <math.h>
 
-// TODO: check that these are covered by Vector2 unit tests
-// Used so that the methods return the vector type, not the parent class
+/*
+ RATING: 5 stars
+ Has unit tests
+ CODE REVIEW: 12/20/24
+ */
+/// Standard vector operators
 #define VECTOR_METHODS(Vector, MathType, dim)                           \
     Vector operator+(Vector const& b) const {                           \
         Vector result = *this;                                          \
@@ -121,7 +124,3 @@
         }                                                               \
         return result;                                                  \
     }
-
-#define VECTOR_EXTERNALMETHODS(Vector, MathType) //
-
-#endif

@@ -23,11 +23,11 @@ namespace PJ {
         // TODO: re-evaluate all registered render phases, probably don't want to run for each
         // camera
         OrderRenderProcessor(SortFunc sortFunc) :
-            Base("Order", { RenderPhase::Camera }),
+            Base({ .name = "Order", .phases = { RenderPhase::Camera } }),
             sortFunc(sortFunc) {}
 
         // MARK: RenderProcessor
 
-        void Process(CameraRenderModel& cameraModel) override;
+        void Process(RenderCameraModel& cameraModel) override;
     };
 } // namespace PJ

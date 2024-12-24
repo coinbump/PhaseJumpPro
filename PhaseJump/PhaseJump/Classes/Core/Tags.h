@@ -11,7 +11,7 @@
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 9/29/24
+ CODE REVIEW: 12/21/24
  */
 namespace PJ {
     using Tag = std::any;
@@ -25,15 +25,19 @@ namespace PJ {
     };
 
     /// Holds custom attributes (tags) in a map
-    struct Tags : public StringConvertible {
+    class Tags : public StringConvertible {
+    public:
         using Key = String;
         using MapValue = Tag;
         using Map = UnorderedMap<Key, MapValue>;
 
+    protected:
         Map map;
 
+    public:
         virtual ~Tags() {}
 
+        /// Removes the value for this key from the tags map
         void Remove(Key key) {
             map.erase(key);
         }
@@ -46,10 +50,13 @@ namespace PJ {
             return map.insert_or_assign(__x.first, __x.second);
         }
 
+        /// Sets the value for this key in the tags map
         std::pair<Map::iterator, bool> Set(Key const key, MapValue value) {
             return Insert({ key, value });
         }
 
+        /// Sets this value if the value argument exists, or removes the existing value if value
+        /// argument does not exist
         template <class Type>
         void SetOrRemove(Key const key, std::optional<Type> value) {
             if (value) {
@@ -59,8 +66,6 @@ namespace PJ {
             }
         }
 
-        // TODO: why not return a reference to the value, like TypeValueAt does? Why are they
-        // different?
         /// Returns an optional with the value if it exists, or an empty optional if it doesn't
         /// exist
         template <class T>
@@ -75,8 +80,8 @@ namespace PJ {
         }
 
         /// Returns a default value if the requested value doesn't exist
-        template <class T, class Allocator = DefaultAllocator<T>>
-        T SafeValue(Key key, Allocator allocator = Allocator()) const {
+        template <class T>
+        T SafeValue(Key key, std::function<T()> allocator) const {
             try {
                 MapValue const& mapValue = map.at(key);
                 auto castValue = std::any_cast<T>(mapValue);
@@ -88,7 +93,7 @@ namespace PJ {
 
         /// Returns a default value if the requested value doesn't exist
         template <class Type>
-        Type DefaultingValue(Key key, Type defaultValue = {}) const {
+        Type SafeValue(Key key, Type defaultValue = {}) const {
             return SafeValue<Type>(key, [&]() { return defaultValue; });
         }
 
@@ -134,13 +139,8 @@ namespace PJ {
         }
 
         Tags& operator+=(Tags const& rhs) {
-            auto& result = *this;
-
-            for (auto& r : rhs.map) {
-                this->Set(r.first, r.second);
-            }
-
-            return result;
+            map.insert(rhs.map.begin(), rhs.map.end());
+            return *this;
         }
 
         // MARK: - StringConvertible
@@ -165,6 +165,8 @@ namespace PJ {
                     ss << std::any_cast<float>(tagI.second) << std::endl;
                     continue;
                 } catch (...) {}
+
+                ss << std::endl;
             }
 
             return ss.str();
@@ -187,12 +189,23 @@ namespace PJ {
             map[key].Set(tagName, value);
         }
 
-        /// @return Returns a tag value
+        /// @return Returns a tag value, or nullopt if the tag doesn't exist
         template <class Type>
-        Type Value(Key key, String tagName, Type defaultValue = {}) const {
+        std::optional<Type> Value(Key key, String tagName, Type defaultValue = {}) const {
             try {
                 auto& tags = map.at(key);
-                return tags.template DefaultingValue<Type>(tagName, defaultValue);
+                return tags.template Value<Type>(tagName);
+            } catch (...) {
+                return defaultValue;
+            }
+        }
+
+        /// @return Returns a tag value, or a default if the tag doesn't exist
+        template <class Type>
+        Type SafeValue(Key key, String tagName, Type defaultValue = {}) const {
+            try {
+                auto& tags = map.at(key);
+                return tags.template SafeValue<Type>(tagName, defaultValue);
             } catch (...) {
                 return defaultValue;
             }

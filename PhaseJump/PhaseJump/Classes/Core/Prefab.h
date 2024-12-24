@@ -2,7 +2,11 @@
 
 #include <functional>
 
-// /23
+/*
+ RATING: 5 stars
+ Simple type
+ CODE REVIEW: 12/16/24
+ */
 namespace PJ {
     class WorldNode;
 

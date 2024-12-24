@@ -21,7 +21,7 @@ ZStackViewLayout::ViewSize(ViewSizeProposal proposal, VectorList<ViewProxy> cons
 void ZStackViewLayout::CalculateFrames(Vector2 boundsSize, VectorList<ViewProxy> const& children) {
     GUARD(owner);
     GUARD(children.size() > 0);
-    GUARD(calculatedFrames.size() == 0)
+    calculatedFrames.clear();
 
     isWidthUnbounded = false;
     isHeightUnbounded = false;

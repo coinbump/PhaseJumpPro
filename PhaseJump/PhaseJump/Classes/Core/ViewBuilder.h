@@ -1,6 +1,8 @@
 #pragma once
 
+#include "AlignFunc.h"
 #include "Alignment2D.h"
+#include "AttributedString.h"
 #include "Binding.h"
 #include "ButtonControl.h"
 #include "Color.h"
@@ -8,7 +10,6 @@
 #include "Font.h"
 #include "LayoutInsets.h"
 #include "PageView.h"
-#include "SomeAligner.h"
 #include "StringUtils.h"
 
 /*
@@ -45,6 +46,8 @@ namespace PJ {
         using ProgressBarConfig = DesignSystem::ProgressBarConfig;
         using LabelConfig = DesignSystem::LabelConfig;
         using DialConfig = DesignSystem::DialConfig;
+        using ToolTipConfig = DesignSystem::ToolTipConfig;
+        using SliderConfig = DesignSystem::SliderConfig;
 
         struct RadioButtonGroupConfig {
             SingleSelectStore* store{};
@@ -52,11 +55,10 @@ namespace PJ {
         };
 
         using SegmentedPickerConfig = RadioButtonGroupConfig;
+        using ModifyViewFunc = std::function<void(View2D&)>;
 
         /// Generic view config
         struct ViewConfig {
-            using ModifyViewFunc = std::function<void(View2D&)>;
-
             String name = "View";
             ModifyViewFunc modifyViewFunc;
         };
@@ -84,6 +86,22 @@ namespace PJ {
             BuildViewFunc buildViewFunc;
         };
 
+        /// Fixed grid view config
+        struct FixedGridConfig {
+            String name = "FixedGrid";
+
+            Vector2Int gridSize{ 2, 2 };
+            Vector2 cellSize{ 100, 100 };
+
+            /// Defines how content is aligned in each cell
+            Alignment2D alignment = Alignment2D::center;
+
+            /// Spacing between rows/columns
+            Vector2 spacing;
+
+            BuildViewFunc buildViewFunc;
+        };
+
         /// ZStack view config
         struct ZStackConfig {
             String name = "ZStack";
@@ -92,13 +110,19 @@ namespace PJ {
             BuildViewFunc buildViewFunc;
         };
 
-        /// MatchZStack view config
-        struct MatchZStackConfig {
-            String name = "MatchZStack";
+        /// ViewAttachments view config
+        struct ViewAttachmentsConfig {
+            String name = "ViewAttachments";
 
             BuildViewFunc buildBackgroundFunc;
+
             BuildViewFunc buildViewFunc;
+
+            // Used if we're moving a pre-existing view
+            SP<WorldNode> viewNode;
+
             BuildViewFunc buildOverlayFunc;
+            ModifyViewFunc modifyViewFunc;
         };
 
         /// Color view config
@@ -111,7 +135,7 @@ namespace PJ {
         struct TextConfig {
             String name = "Text";
             FontSpec fontSpec = { .size = 12 };
-            String text;
+            AttributedString text;
             Color color = Color::white;
         };
 
@@ -153,6 +177,7 @@ namespace PJ {
             BuildViewFunc buildFrameFunc;
             BuildViewFunc buildLabelFunc;
             ButtonControl::OnPressFunc onPressFunc;
+            ModifyViewFunc modifyViewFunc;
         };
 
         /// Toggle button view config
@@ -163,6 +188,7 @@ namespace PJ {
             Binding<bool> isOnBinding;
             BuildViewFunc buildFrameFunc;
             BuildViewFunc buildLabelFunc;
+            ModifyViewFunc modifyViewFunc;
         };
 
         ViewBuilder(WorldNode& node);
@@ -192,15 +218,23 @@ namespace PJ {
         }
 
         /// Adds a dynamic HStack view
-        This& HStack(BuildConfigFunc<HStackConfig> config);
+        This& HStack(BuildConfigFunc<HStackConfig> buildConfigFunc);
 
         /// Adds a HStack view
         This& HStack(HStackConfig config) {
             return HStack([=](auto& view) { return config; });
         }
 
+        /// Adds a dynamic fixed grid layout view
+        This& FixedGrid(BuildConfigFunc<FixedGridConfig> buildConfigFunc);
+
+        /// Adds a fixed grid layout view
+        This& FixedGrid(FixedGridConfig config) {
+            return FixedGrid([=](auto& view) { return config; });
+        }
+
         /// Adds a dynamic VStack view
-        This& VStack(BuildConfigFunc<VStackConfig> config);
+        This& VStack(BuildConfigFunc<VStackConfig> buildConfigFunc);
 
         /// Adds a VStack view
         This& VStack(VStackConfig config) {
@@ -208,7 +242,7 @@ namespace PJ {
         }
 
         /// Adds a dynamic ZStack view
-        This& ZStack(BuildConfigFunc<ZStackConfig> config);
+        This& ZStack(BuildConfigFunc<ZStackConfig> buildConfigFunc);
 
         /// Adds a ZStack view
         This& ZStack(ZStackConfig config) {
@@ -217,12 +251,12 @@ namespace PJ {
 
         /// Adds a dynamic ZStack view with an optional background and overlay that match the size
         /// of the content view
-        This& MatchZStack(BuildConfigFunc<MatchZStackConfig> buildConfigFunc);
+        This& ViewAttachments(BuildConfigFunc<ViewAttachmentsConfig> buildConfigFunc);
 
         /// Adds a ZStack view with an optional background and overlay that match the size of the
         /// content view
-        This& MatchZStack(MatchZStackConfig config) {
-            return MatchZStack([=](auto& view) { return config; });
+        This& ViewAttachments(ViewAttachmentsConfig config) {
+            return ViewAttachments([=](auto& view) { return config; });
         }
 
         /// Adds a dynamic Color view
@@ -289,7 +323,11 @@ namespace PJ {
 
         // MARK: View modifiers
 
+        /// Adds a background view to the latest view
         This& Background(BuildViewFunc buildViewFunc);
+
+        /// Adds an overlay view to the latest view
+        This& Overlay(BuildViewFunc buildOverlayFunc);
 
         // MARK: Constraints
 
@@ -334,6 +372,9 @@ namespace PJ {
         /// Adds a themed radio button view
         This& RadioButton(ToggleButtonConfig config);
 
+        /// Adds a slider view
+        This& Slider(SliderConfig config);
+
         /// Adds a themed switch toggle button view
         This& SwitchToggle(ToggleButtonConfig config);
 
@@ -346,7 +387,15 @@ namespace PJ {
         /// Adds a themed segmented picker control
         This& SegmentedPicker(SegmentedPickerConfig config);
 
+        /// Adds a tool tip UI that will appear when the mouse is over the active view
+        This& AddToolTip(ToolTipConfig config);
+
     protected:
-        This& AddMatchZStack(View2D& view, MatchZStackConfig config);
+        This& AddViewAttachments(View2D& view, ViewAttachmentsConfig config);
     };
 } // namespace PJ
+
+// Convenience macro
+// TODO: rethink this. Doesn't work nicely with clangformat
+#define VIEW(capture) .buildViewFunc = [capture](auto& vb)
+#define COMMA ,

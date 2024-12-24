@@ -13,7 +13,7 @@ TEST(Animator, Animate)
 {
     auto testValue = -1.0f;
 
-    auto interpolator = InterpolateFuncs::MakeEase(InterpolateFuncs::Make<float>(0.0f, 360.0f));
+    auto interpolator = InterpolateFuncs::Ease(InterpolateFuncs::Make<float>(0.0f, 360.0f));
     SetBindingFunc<float> binding = [&testValue](float value) { testValue = value; };
     Animator<float> sut(interpolator,
                         1.0f,
@@ -34,7 +34,7 @@ TEST(Animator, SetProgress)
 {
     auto testValue = -1.0f;
 
-    auto interpolator = InterpolateFuncs::MakeEase(InterpolateFuncs::Make<float>(0.0f, 360.0f));
+    auto interpolator = InterpolateFuncs::Ease(InterpolateFuncs::Make<float>(0.0f, 360.0f));
     SetBindingFunc<float> binding = [&testValue](float value) { testValue = value; };
     Animator<float> sut(interpolator,
                         1.0f,
@@ -82,10 +82,10 @@ TEST(Animator, MatchInReverse)
     auto testValue = -1.0f;
 
     Animator<float> sut(
-                             InterpolateFuncs::MakeEase(InterpolateFuncs::Make(0.0f, 360.0f), EaseFuncs::inSquared),
+                             InterpolateFuncs::Ease(InterpolateFuncs::Make(0.0f, 360.0f), EaseFuncs::inSquared),
                              1.0f,
                              [&testValue] (float value) { testValue = value; }, AnimationCycleType::PingPong,
-                             InterpolateFuncs::MakeEase(InterpolateFuncs::Make(360.0f, 0.0f), EaseFuncs::inSquared));
+                             InterpolateFuncs::Ease(InterpolateFuncs::Make(360.0f, 0.0f), EaseFuncs::inSquared));
 
     sut.OnUpdate(TimeSlice(1.0f));
     EXPECT_EQ(1.0f, sut.Progress());
@@ -100,7 +100,7 @@ TEST(Animator, RewindInReverse)
     auto testValue = -1.0f;
 
     Animator<float> sut(
-                             InterpolateFuncs::MakeEase(InterpolateFuncs::Make(0.0f, 360.0f), EaseFuncs::inSquared),
+                             InterpolateFuncs::Ease(InterpolateFuncs::Make(0.0f, 360.0f), EaseFuncs::inSquared),
                              1.0f,
                              [&testValue] (float value) { testValue = value; }, AnimationCycleType::PingPong
                              );

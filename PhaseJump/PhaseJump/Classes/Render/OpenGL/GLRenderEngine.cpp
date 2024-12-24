@@ -1,10 +1,10 @@
 #include "GLRenderEngine.h"
 #include "Funcs.h"
 #include "GLHeaders.h"
+#include "GLLoadShaderProgramOperation.h"
 #include "GLShaderProgram.h"
-#include "GLShaderProgramLoader.h"
+#include "GLSomeBuffer.h"
 #include "GLTextureBuffer.h"
-#include "GLVertexBuffer.h"
 #include "RenderContextModel.h"
 #include "RenderFeature.h"
 #include "RenderModel.h"
@@ -129,7 +129,6 @@ void GLRenderEngine::RunGL(std::function<void()> command, String name) {
     GUARD(command)
     command();
 
-    // TODO: wrap in #if DEBUG
     while (auto error = glGetError()) {
         PJ::Log("ERROR: ", name, " id: ", error);
     }
@@ -149,18 +148,6 @@ void GLRenderEngine::OnGo() {
     RunGL([this]() { glGenVertexArrays(1, &vao); }, "glGenVertexArrays");
     BindVertexArray(vao);
 
-    // Load the shader programs from the info registry
-    for (auto& info : GLShaderProgram::Info::registry) {
-        GLShaderProgramLoader loader;
-        auto program = loader.LoadFromShaderPaths(info.vertexShaderPath, info.fragmentShaderPath);
-        if (!program) {
-            continue;
-        }
-
-        program->id = info.id;
-        SomeShaderProgram::registry[info.id] = program;
-    }
-
     SetBlendMode(GLBlendMode(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
     featureIdToGLFeatureIdMap[RenderFeature::Blend] = GL_BLEND;
@@ -178,7 +165,6 @@ void GLRenderEngine::OnGo() {
     EnableFeature(RenderFeature::Texture2D, true);
     EnableFeature(RenderFeature::DepthTest, true);
 
-    // TODO: this isn't working, why?
     EnableFeature(RenderFeature::MultiSample, true);
 
     ScanGLExtensions();
@@ -329,14 +315,14 @@ void GLRenderEngine::RenderProcess(RenderModel const& model) {
     auto modelMaterial = model.Material();
 
     GUARD(modelMaterial)
-    auto glProgram = As<GLShaderProgram>(modelMaterial->ShaderProgram().get());
+    auto glProgram = As<GLShaderProgram>(modelMaterial->ShaderProgram());
     if (nullptr == glProgram) {
         PJ::Log("ERROR. GLShaderProgram required");
         return;
     }
 
-    VectorList<Vector3> const& vertices = model.Vertices();
-    VectorList<Vector2> const& uvs = model.UVs();
+    auto vertices = model.mesh.Vertices();
+    auto uvs = model.mesh.UVs();
     auto vertexCount = vertices.size();
 
     VectorList<Color> colors_float(vertexCount);
@@ -389,7 +375,7 @@ void GLRenderEngine::RenderProcess(RenderModel const& model) {
             return;
         }
 
-        texCoords = uvs;
+        texCoords = VectorList<Vector2>(uvs.begin(), uvs.end());
 
         vboPlan.Add("a_texCoord", texCoords);
     }
@@ -444,7 +430,7 @@ void GLRenderEngine::RenderDrawPlans(VectorList<SP<GLRenderPlan>> const& renderP
         auto modelMaterial = model.Material();
         GUARD_CONTINUE(modelMaterial)
 
-        auto glProgram = As<GLShaderProgram>(modelMaterial->ShaderProgram().get());
+        auto glProgram = As<GLShaderProgram>(modelMaterial->ShaderProgram());
         GUARD(glProgram);
 
         auto modelMatrix = model.matrix;
@@ -452,7 +438,7 @@ void GLRenderEngine::RenderDrawPlans(VectorList<SP<GLRenderPlan>> const& renderP
         auto vbo = BuildVertexBuffer(vboPlan);
         GUARD(vbo)
 
-        auto ibo = BuildIndexBuffer(model.Indices());
+        auto ibo = BuildIndexBuffer(model.mesh.Triangles());
         GUARD(ibo)
 
         auto hasColorAttribute = glProgram->HasVertexAttribute("a_color");
@@ -532,7 +518,9 @@ void GLRenderEngine::RenderDrawPlans(VectorList<SP<GLRenderPlan>> const& renderP
             }
         }
 
-        DrawElements(GL_TRIANGLES, (GLsizei)model.Indices().size(), GL_UNSIGNED_INT, nullptr);
+        DrawElements(
+            GL_TRIANGLES, (GLsizei)model.mesh.Triangles().size(), GL_UNSIGNED_INT, nullptr
+        );
     }
 }
 
@@ -557,5 +545,5 @@ void GLRenderEngine::ScanGLExtensions() {
 }
 
 SP<SomeRenderContext> GLRenderEngine::MakeTextureBuffer() {
-    return MAKE<GLTextureBuffer>(SCAST<GLRenderEngine>(shared_from_this()));
+    return MAKE<GLTextureBuffer>(*this);
 }

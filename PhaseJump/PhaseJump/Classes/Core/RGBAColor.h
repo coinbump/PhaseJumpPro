@@ -1,5 +1,4 @@
-#ifndef PJCOLOR32_H
-#define PJCOLOR32_H
+#pragma once
 
 #include "Dev.h"
 #include "FloatMath.h"
@@ -129,5 +128,3 @@ namespace PJ {
     using Color32 = RGBAColor;
     using BGRAColor = ComponentColor32<ComponentColorSchema::bgra>;
 } // namespace PJ
-
-#endif

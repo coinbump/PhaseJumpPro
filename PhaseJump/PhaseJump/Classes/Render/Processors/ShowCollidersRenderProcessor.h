@@ -24,11 +24,11 @@ namespace PJ {
         // TODO: re-evaluate all registered render phases, probably don't want to run for each
         // camera
         ShowCollidersRenderProcessor(Color color = Color::blue) :
-            Base("Show colliders", { RenderPhase::Camera }),
+            Base({ .name = "Show colliders", .phases = { RenderPhase::Camera } }),
             color(color) {}
 
         // MARK: RenderProcessor
 
-        void Process(CameraRenderModel& cameraModel) override;
+        void Process(RenderCameraModel& cameraModel) override;
     };
 } // namespace PJ

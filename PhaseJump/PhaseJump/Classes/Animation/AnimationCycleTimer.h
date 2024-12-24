@@ -20,7 +20,6 @@ namespace PJ {
 
     protected:
         Timer timer;
-        Playable* controller = &timer;
 
         AnimationCycleType cycleType;
         AnimationCycleState cycleState;
@@ -78,9 +77,5 @@ namespace PJ {
         void SetPlayTime(float value) override;
         float Progress() const override;
         void SetProgress(float value) override;
-
-        Playable* Controller() const override {
-            return controller;
-        }
     };
 } // namespace PJ

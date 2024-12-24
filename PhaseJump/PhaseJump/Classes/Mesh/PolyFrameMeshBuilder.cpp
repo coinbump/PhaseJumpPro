@@ -108,7 +108,7 @@ Mesh PolyFrameMeshBuilder::BuildMesh() {
             CenterPolyMeshBuilder capBuilder(strokeSize, polyModel);
             auto capMesh = capBuilder.BuildMesh();
             Vector2 midPoint = Lerp(vertices[0], vertices[2], 0.5f);
-            capMesh.OffsetBy(midPoint);
+            capMesh.Offset(midPoint);
 
             result += capMesh;
         }
@@ -126,7 +126,7 @@ Mesh PolyFrameMeshBuilder::BuildMesh() {
             auto capMesh = capBuilder.BuildMesh();
             Vector2 midPoint =
                 Lerp(vertices[vertices.size() - 3], vertices[vertices.size() - 1], 0.5f);
-            capMesh.OffsetBy(midPoint);
+            capMesh.Offset(midPoint);
 
             result += capMesh;
         }
@@ -166,7 +166,7 @@ Mesh PolyFrameMeshBuilder::BuildMesh() {
                 CenterPolyMeshBuilder capBuilder(strokeSize, polyModel);
                 auto capMesh = capBuilder.BuildMesh();
                 Vector2 midPoint = Lerp(vertices[vi + 1], vertices[vi + 3], 0.5f);
-                capMesh.OffsetBy(midPoint);
+                capMesh.Offset(midPoint);
 
                 result += capMesh;
                 vi += 4;

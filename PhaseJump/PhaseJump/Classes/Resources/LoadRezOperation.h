@@ -2,7 +2,11 @@
 
 #include "SomeLoadResourcesOperation.h"
 
-// CODE REVIEW: ?/23
+/*
+ RATING: 5 stars
+ Tested and works
+ CODE REVIEW: 12/19/24
+ */
 namespace PJ {
     /// Loads resource from a resource info file
     /// Allows us to specify what resources we need instead of loading everything
@@ -10,8 +14,8 @@ namespace PJ {
     public:
         using Base = SomeLoadResourcesOperation;
 
-        LoadRezOperation(ResourceInfo info, LoadResourcesModel& loadResourcesModel) :
-            Base(info, loadResourcesModel) {}
+        LoadRezOperation(ResourceInfo info, ResourceRepositoryModel& repoModel) :
+            Base(info, repoModel) {}
 
         // MARK: SomeLoadResourcesOperation
 

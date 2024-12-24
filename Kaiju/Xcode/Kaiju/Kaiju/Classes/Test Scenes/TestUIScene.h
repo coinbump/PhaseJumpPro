@@ -10,9 +10,10 @@ public:
 
     void LoadInto(WorldNode& root) override {
         auto world = root.World();
-        auto font = world->FindFontWithResourceId("ArialBlack-32");
+        auto font = FindFontWithResourceId(world->resources, "ArialBlack-32");
         GUARD(font)
-        auto buttonTexture = DCAST<GLTexture>(root.World()->FindTexture("example-button-normal"));
+        auto buttonTexture =
+            DCAST<GLTexture>(root.World()->resources.FindTexture("example-button-normal"));
         GUARD(buttonTexture)
 
         QB(root)

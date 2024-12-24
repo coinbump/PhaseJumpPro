@@ -1,12 +1,11 @@
-#ifndef PJTESTMOCKRENDERER_H
-#define PJTESTMOCKRENDERER_H
+#pragma once
 
 #include "SomeRenderer.h"
 #include "VectorList.h"
 
 namespace PJTest
 {
-//    class MockRenderer : public SomeRenderer {
+//    class MockRenderer : public SomeMaterialRenderer {
 //    public:
 //        VectorList<RenderContextModel> renderHistory;
 //        
@@ -24,5 +23,3 @@ namespace PJTest
 //        }
 //    };
 }
-
-#endif

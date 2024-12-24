@@ -3,7 +3,11 @@
 #include "StateMachine.h"
 #include "WorldComponent.h"
 
-// /23
+/*
+ RATING: 5 stars
+ Tested and works
+ CODE REVIEW: 12/15/24
+ */
 namespace PJ {
     /// Enables/disables components based on controller states
     /// Example: turn effects on and off based on the current effect state

@@ -1,5 +1,4 @@
-#ifndef PJSIMPLERAYCASTER2D_H
-#define PJSIMPLERAYCASTER2D_H
+#pragma once
 
 #include "SomeRaycaster2D.h"
 #include <memory>
@@ -21,5 +20,3 @@ namespace PJ {
         }
     };
 } // namespace PJ
-
-#endif

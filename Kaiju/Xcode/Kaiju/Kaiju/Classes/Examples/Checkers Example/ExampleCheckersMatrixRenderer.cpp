@@ -8,7 +8,7 @@ using namespace Checkers;
 MatrixRenderer::MatrixRenderer(Vector3 worldSize) :
     Base(worldSize) {
 
-    auto material = MAKE<RenderMaterial>(RenderMaterial::Config{ .shaderId = "color.vary" });
+    auto material = MAKE<RenderMaterial>(RenderMaterial::Config{ .shaderId = ShaderId::ColorVary });
 
     Vec2I matrixSize{ 8, 8 };
     model.material = material;
@@ -25,10 +25,10 @@ MatrixRenderer::MatrixRenderer(Vector3 worldSize) :
                 Vector2Int location(x, y);
 
                 auto qm = meshBuilder.BuildMesh();
-                qm.OffsetBy({ (model.WorldSize().x / 2.0f) * vecLeft +
-                                  ((cellSize.x / 2.0f + cellSize.x * x) * vecRight),
-                              (model.WorldSize().y / 2.0f) * vecUp +
-                                  ((cellSize.y / 2.0f + cellSize.y * y) * vecDown) });
+                qm.Offset(Vector2{ (model.WorldSize().x / 2.0f) * vecLeft +
+                                       ((cellSize.x / 2.0f + cellSize.x * x) * vecRight),
+                                   (model.WorldSize().y / 2.0f) * vecUp +
+                                       ((cellSize.y / 2.0f + cellSize.y * y) * vecDown) });
                 mesh += qm;
             }
         }

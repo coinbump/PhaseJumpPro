@@ -7,38 +7,21 @@
 /*
  RATING: 5 stars
  Tested and works
- CODE REVIEW: 9/14/23
+ CODE REVIEW: 12/19/24
  */
 namespace PJ {
-    // TODO: rename this? Naming is weird
     /// Handles both begin and end. Simplifies using imGui
-    struct ImGuiBeginMainMenuBar {
-        ImGuiBeginMainMenuBar(std::function<void()> func) {
+    struct ImGuiPaintMainMenuBar {
+        ImGuiPaintMainMenuBar(std::function<void()> func) {
             if (ImGui::BeginMainMenuBar()) {
                 if (func) {
                     func();
                 }
 
-                // TODO: handle this in destructor instead?
                 ImGui::EndMainMenuBar();
             }
         }
     };
-
-    /// Provides a value and an optional alternate storage for that value
-    //    template <class Type>
-    //    class Storable {
-    //    public:
-    //        Type value{};
-    //        Type* storage{};
-    //
-    //        Storable(Type value, Type* storage) : value(value), storage(storage) {
-    //        }
-    //
-    //        Type* Storage() {
-    //            return storage ? storage : &value;
-    //        }
-    //    };
 
     /// Builds an imGui main menu from PhaseJump menu objects
     class ImGuiMainMenuBarPainter : public SomeImGuiPainter {
@@ -53,7 +36,7 @@ namespace PJ {
             drawFunc = [](auto& _painter) {
                 auto& painter = *(static_cast<This*>(&_painter));
 
-                ImGuiBeginMainMenuBar mainMenu([&]() {
+                ImGuiPaintMainMenuBar mainMenu([&]() {
                     for (auto& menu : painter.menus) {
                         if (ImGui::BeginMenu(menu->title.c_str())) {
                             for (auto& _menuItem : menu->items) {
@@ -65,7 +48,7 @@ namespace PJ {
                                 auto menuItem = As<MenuItem>(_menuItem.get());
                                 if (menuItem) {
                                     String shortcutString;
-                                    List<String> shortcutStrings;
+                                    VectorList<String> shortcutStrings;
                                     std::for_each(
                                         menuItem->shortcuts.begin(), menuItem->shortcuts.end(),
                                         [&](auto& shortcut) {

@@ -4,7 +4,7 @@
 #include "PortNode.h"
 #include "PortNodeClass.h"
 
-// /23
+// Experimental
 namespace PJ {
     class SomeAttribute;
 
@@ -27,7 +27,7 @@ namespace PJ {
         }
 
         void ConfigureVarFloat() {
-            // TODO: test with simple nodes: float var/const -> Mult -> cout processor and then done
+            // test with simple nodes: float var/const -> Mult -> cout processor and then done
             // (POC)
             //            SP<PortNodeClass> varFloatClass = MAKE<PortNodeClass>(
             //                PortGraphNodeClassIds::varFloat, PortNodeClass::Type::Data,

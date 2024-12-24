@@ -1,5 +1,4 @@
-#ifndef PJACYCLICGRAPHNODE_H
-#define PJACYCLICGRAPHNODE_H
+#pragma once
 
 #include "SomeGraphNode.h"
 #include "StandardEdgeCore.h"
@@ -8,12 +7,15 @@
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 5/12/23
+ CODE REVIEW: 12/21/24
  */
-// TODO: rethink this. Why do we need this?
 namespace PJ {
-    /// An acyclic graph node, used for trees, where there are no loops (parents
-    /// hold on to children)
+    /**
+     Acyclic graph node, for trees. Edges are directed from parent to child. Loops are not allowed
+
+     This is a heavyweight object and in general you should probably use TreeNode/Treeable instead.
+     The purpose of this class is to allow you to attach properties to graph edges
+     */
     template <class EdgeCore = StandardEdgeCore, class Core = Void>
     class AcyclicGraphNode : public SomeGraphNode<EdgeCore, Core> {
     public:
@@ -23,16 +25,9 @@ namespace PJ {
         using AcyclicNodeSharedPtr = SP<AcyclicNode>;
         using NodeStrongReference = StrongReference<SomeGraphNode<EdgeCore>>;
 
-        typename Base::NodeSharedPtr
-        AddEdge(typename Base::NodeSharedPtr toNode, EdgeCore model = EdgeCore()) override {
-            // Acyclic graph nodes hold a strong reference to their next node
-            this->AddEdgeInternal(model, MAKE<NodeStrongReference>(toNode));
-            return toNode;
-        }
-
-        AcyclicNodeSharedPtr Root() {
-            auto node = SCAST<typename Base::Node>(this->shared_from_this());
-            typename Base::NodeSet searchedNodes;
+        AcyclicNode* Root() {
+            auto node = this;
+            UnorderedSet<AcyclicNode*> searchedNodes;
 
             while (node->FromNodes().size() > 0) {
                 // Prevent infinite loop for incorrect graphs
@@ -43,47 +38,31 @@ namespace PJ {
                 searchedNodes.insert(node);
 
                 // A tree node can only have 1 fromNode (the parent)
-                auto weakFromNode = *node->FromNodes().begin();
-                auto target = weakFromNode.lock();
-                if (target) {
-                    node = DCAST<This>(target);
+                auto fromNode = *node->FromNodes().begin();
+                if (fromNode) {
+                    node = As<This>(fromNode);
                 }
             }
 
-            return DCAST<This>(node);
+            return As<This>(node);
         }
 
-        AcyclicNodeSharedPtr Parent() const {
-            GUARDR(!IsEmpty(this->FromNodes()), nullptr);
-
-            // A tree node can only have 1 fromNode (the parent)
-            auto iterator = this->FromNodes().begin();
-            if (iterator == this->FromNodes().end()) {
-                return nullptr;
-            }
-
-            auto weakFromNode = *iterator;
-            auto target = weakFromNode.lock();
-            return DCAST<This>(target);
+        AcyclicNode* Parent() const {
+            GUARDR(!IsEmpty(this->FromNodes()), {});
+            return As<This>(*this->FromNodes().begin());
         }
 
         bool IsRoot() const {
             return this->FromNodes().size() <= 0;
         }
 
-        void OnUpdate(TimeSlice time) override {
-            // TODO: rethink this
-            //            if (IsRoot()) {
-            //                auto nodes = this->CollectGraph();
-            //                for (auto& node : nodes) {
-            //                    if (node.get() == this) {
-            //                        continue;
-            //                    }
-            //                    node->OnUpdate(time);
-            //                }
-            //            }
+        // MARK: SomeGraphNode
+
+        typename Base::NodeSharedPtr
+        AddEdge(typename Base::NodeSharedPtr toNode, EdgeCore model = {}) override {
+            // Acyclic graph nodes hold a strong reference to their next node
+            this->AddEdgeInternal(model, NEW<NodeStrongReference>(toNode));
+            return toNode;
         }
     };
 } // namespace PJ
-
-#endif

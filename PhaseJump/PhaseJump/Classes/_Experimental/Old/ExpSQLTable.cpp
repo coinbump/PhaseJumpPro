@@ -174,7 +174,7 @@
 //        for (auto& _i : schema->mChildren) {
 //            PJ_FragmentPtr child = _i;
 //
-//            // TODO: shouldn't matter if column exists or not(?)
+//            // houldn't matter if column exists or not(?)
 //            // FUTURE: support unique, primary key, default constraints here.
 //            if (!db->ColumnExists(name, child->name)) {
 //                PJ_TagPtr    typeTag;
@@ -209,9 +209,8 @@
 //
 //}
 //
-//// TODO: needs unit tests.
 //
-//// TODO: untested
+//// untested
 // void SQLTable::CollectAllRows(PJ_TStdVector<PJ_FragmentPtr>& rows, DataType
 // blobType) {
 //     FileManager* fm = FileManager::GetInstance();

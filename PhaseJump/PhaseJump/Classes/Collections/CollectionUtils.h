@@ -64,7 +64,7 @@ namespace PJ {
     /// Removes all null items from the collection
     template <class Collection>
     constexpr void Compact(Collection& collection) {
-        RemoveIf(collection, [](auto& item) { return nullptr == item; });
+        RemoveIf(collection, [](auto& item) { return !item; });
     }
 
     /// @return Returns true if the collection contains the specified value
@@ -184,6 +184,17 @@ namespace PJ {
     constexpr VectorList<ResultType> Map(VectorList<Type> const& collection, Converter convert) {
         VectorList<ResultType> result;
         std::transform(begin(collection), end(collection), std::back_inserter(result), convert);
+        return result;
+    }
+
+    /// Maps a collection of one type to a collection of a different type and eliminates
+    /// nullopt/nullptr results
+    template <class ResultType, class Type, class Converter>
+    constexpr VectorList<ResultType>
+    CompactMap(VectorList<Type> const& collection, Converter convert) {
+        VectorList<ResultType> result;
+        std::transform(begin(collection), end(collection), std::back_inserter(result), convert);
+        Compact(result);
         return result;
     }
 

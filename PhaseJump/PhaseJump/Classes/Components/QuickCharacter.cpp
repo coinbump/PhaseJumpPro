@@ -24,7 +24,7 @@ This& QuickCharacter::TransitionTo(String input, StateType toState) {
 }
 
 This& QuickCharacter::WaitInput(float delay, String input) {
-    controller.updatables.AddDelay(delay, [input, this](auto time) {
+    controller.GetUpdatables().AddDelay(delay, [input, this](auto time) {
         controller.states.Input(input);
         return FinishType::Finish;
     });
@@ -32,9 +32,9 @@ This& QuickCharacter::WaitInput(float delay, String input) {
 }
 
 This& QuickCharacter::OnSignalInput(String id, String input) {
-    controller.signalFuncs[id] = [=](auto& component, auto& signal) {
-        auto& controller = *(static_cast<Controller*>(&component));
-        controller.states.Input(input);
-    };
+    controller.AddSignalHandler({ .id = id, .func = [=](auto& component, auto& signal) {
+                                     auto& controller = *(static_cast<Controller*>(&component));
+                                     controller.states.Input(input);
+                                 } });
     return *this;
 }

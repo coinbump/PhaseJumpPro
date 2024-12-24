@@ -8,14 +8,16 @@ MatrixBoardView::MatrixBoardView(Vector2 worldSize, Vector2Int matrixSize) :
     board(matrixSize) {
     SetFrameSize(worldSize);
 
-    signalFuncs[SignalId::AddChildNode] = [](auto& owner, auto& signal) {
-        auto& event = *(static_cast<AddChildNodeEvent const*>(&signal));
-
-        auto handler = event.node->TypeComponent<MatrixPieceHandler>();
-        if (handler) {
-            static_cast<This*>(&owner)->Put(*handler, handler->startOrigin);
-        }
-    };
+    AddSignalHandler<AddChildNodeEvent>(
+        { .id = SignalId::AddChildNode,
+          .func =
+              [](auto& owner, auto& event) {
+                  auto handler = event.node->template TypeComponent<MatrixPieceHandler>();
+                  if (handler) {
+                      static_cast<This*>(&owner)->Put(*handler, handler->startOrigin);
+                  }
+              } }
+    );
 }
 
 /// Remove the piece at the specified location and optionally destroy the corresponding world node

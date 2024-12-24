@@ -6,7 +6,7 @@
 /*
  RATING: 5 stars
  Has unit tests
- COD EREVIEW: 11/25/24
+ CODE REVIEW: 11/25/24
  */
 namespace PJ {
     class PadViewLayout : public ViewLayout {

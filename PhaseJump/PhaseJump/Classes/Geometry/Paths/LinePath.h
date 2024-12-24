@@ -1,5 +1,4 @@
-#ifndef PJLINEPATH_H
-#define PJLINEPATH_H
+#pragma once
 
 #include "SomePath.h"
 
@@ -24,5 +23,3 @@ namespace PJ {
         }
     };
 } // namespace PJ
-
-#endif

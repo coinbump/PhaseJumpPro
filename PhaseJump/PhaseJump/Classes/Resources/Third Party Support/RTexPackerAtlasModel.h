@@ -15,22 +15,22 @@ namespace PJ {
         struct Atlas {
             String imagePath;
             Vector2Int size;
-            int spriteCount = 0;
-            bool isFont = false;
-            int fontSize = 0;
+            int spriteCount{};
+            bool isFont{};
+            int fontSize{};
         };
 
         struct Char {
-            uint32_t value = 0;
+            uint32_t value{};
             Vector2Int offset;
-            int advanceX = 0;
+            int advanceX{};
         };
 
         struct Sprite {
             String nameId;
             Vector2Int position;
             Vector2Int sourceSize;
-            bool isTrimmed = false;
+            bool isTrimmed{};
             Vector2Int trimOrigin;
             Vector2Int trimSize;
             std::optional<Char> _char;

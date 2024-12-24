@@ -3,6 +3,7 @@
 #include "ButtonControl.h"
 #include "Color.h"
 #include "Font.h"
+#include "LayoutTypes.h"
 #include "StringUtils.h"
 #include "Tags.h"
 #include "Theme.h"
@@ -22,6 +23,9 @@ namespace PJ {
     class DesignSystem {
     public:
         using This = DesignSystem;
+        using BuildViewFunc = std::function<void(ViewBuilder&)>;
+        using ModifyViewFunc = std::function<void(View2D&)>;
+        using BuildConfigViewFunc = std::function<void(void* config, ViewBuilder&)>;
 
         /// Surface config
         struct SurfaceConfig {
@@ -33,18 +37,34 @@ namespace PJ {
 
         /// Button config
         struct ButtonConfig {
-            String label = "Button";
+            String label = "##Button##";
             ButtonControl::OnPressFunc onPressFunc;
+            ModifyViewFunc modifyViewFunc;
+        };
+
+        /// Collapsing header config
+        struct CollapsingHeaderConfig {
+            String label = "##Collapsing Header##";
+            Binding<bool> isCollapsedBinding;
+        };
+
+        struct SliderConfig {
+            Axis2D axis = Axis2D::X;
+
+            float minValue{};
+            float maxValue = 1.0f;
+            Binding<float> valueBinding;
         };
 
         /// Toggle button config
         struct ToggleButtonConfig {
-            String label = "Toggle";
+            String label = "##Toggle##";
             Binding<bool> isOnBinding;
 
             String imageId;
             std::optional<Color> imageColor;
             std::optional<Vector2> size;
+            ModifyViewFunc modifyViewFunc;
         };
 
         /// Progress bar config
@@ -52,7 +72,7 @@ namespace PJ {
             /// Returns normalized progress value (0-1)
             GetFunc<float> valueFunc;
 
-            std::optional<Color> color;
+            std::optional<Color> progressColor;
         };
 
         /// Dial control config
@@ -65,7 +85,7 @@ namespace PJ {
 
         /// Label config
         struct LabelConfig {
-            String text = "Text";
+            String text = "##Text##";
 
             String colorId = UIElementId::OnSurface;
 
@@ -73,11 +93,25 @@ namespace PJ {
             std::optional<Color> color;
         };
 
-    protected:
-        using BuildViewFunc = std::function<void(void*, ViewBuilder&)>;
+        /// ToolTip config
+        struct ToolTipConfig {
+            String text = "##Tip##";
+            float width = 400;
 
+            /// Anchor of the presenting view for presentation
+            LayoutAnchor2D presentingAnchor = LayoutAnchor2D::bottom;
+
+            /// Anchor of the tip view for presentation
+            LayoutAnchor2D anchor = LayoutAnchor2D::top;
+
+            Vector2 offset;
+
+            View2D** result{};
+        };
+
+    protected:
         /// Maps UI element ids to specific textures
-        UnorderedMap<String, BuildViewFunc> buildViewFuncs;
+        UnorderedMap<String, BuildConfigViewFunc> buildViewFuncs;
 
         /// Maps UI element ids to specific textures
         UnorderedMap<String, SP<SomeTexture>> elementTextures;

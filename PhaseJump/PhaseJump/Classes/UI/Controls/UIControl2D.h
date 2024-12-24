@@ -40,4 +40,15 @@ namespace PJ {
         /// Called when the control state changes
         virtual void OnControlChange();
     };
+
+    //
+    //    class PopoverControl : public UIControl2D {
+    //    protected:
+    //        ObservedValue<bool> isPopoverPresented;
+    //
+    //    public:
+    //        void ShowPopover() { isPopoverPresented = true; }
+    //        void HidePopover() { isPopoverPresented = false; }
+    //        void TogglePopover() { isPopoverPresented = !isPopoverPresented; }
+    //    };
 } // namespace PJ

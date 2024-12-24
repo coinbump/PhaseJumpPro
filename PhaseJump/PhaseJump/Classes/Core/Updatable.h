@@ -6,8 +6,8 @@
 
 /*
  RATING: 5 stars
- TODO: needs unit tests
- CODE REVIEW: 6/13/24
+ Has unit tests
+ CODE REVIEW: 12/22/24
  PORTED TO: C++, C#
  */
 namespace PJ {
@@ -37,20 +37,14 @@ namespace PJ {
         }
     };
 
-    /// An object that can receive time update events and can finish
+    /// An object that receives time update events
+    /// Finish the updatable when it's finished so it can be removed
     class Updatable : public SomeUpdatable {
     protected:
-        /// If true, this updatable is finished running and will be removed from any collections it
-        /// belongs to
-        bool isFinished = false;
+        /// If true, this updatable is finished running and will be removed
+        bool isFinished{};
 
-        void SetIsFinished(bool value) {
-            GUARD(isFinished != value)
-            isFinished = value;
-
-            GUARD(isFinished && onFinishFunc)
-            onFinishFunc(*this);
-        }
+        void SetIsFinished(bool value);
 
     public:
         using This = Updatable;
@@ -63,30 +57,21 @@ namespace PJ {
         /// (Optional). Called when this finishes
         Func onFinishFunc;
 
-        Updatable() {}
-
-        Updatable(OnUpdateFunc onUpdateFunc) :
-            onUpdateFunc(onUpdateFunc) {}
+        Updatable();
+        Updatable(OnUpdateFunc onUpdateFunc);
 
         virtual ~Updatable() {}
 
-        void Finish() {
-            SetIsFinished(true);
-        }
+        /// Finishes the updatable. After calling this it will not receive any more time updates
+        void Finish();
 
-        FinishType Update(TimeSlice time) {
-            OnUpdate(time);
-            return isFinished ? FinishType::Finish : FinishType::Continue;
-        }
+        /// @return Updates and returns finish type
+        FinishType Update(TimeSlice time);
 
         /// Called for each time delta event
-        virtual void OnUpdate(TimeSlice time) {
-            GUARD(!isFinished)
-            GUARD(onUpdateFunc)
-            SetIsFinished(onUpdateFunc(*this, time) == FinishType::Finish);
-        }
+        virtual void OnUpdate(TimeSlice time);
 
-        /// Allows for cleanup of old updatables
+        /// @return Returns true when this updatable is finished running and can be safely removed
         virtual bool IsFinished() const {
             return isFinished;
         }

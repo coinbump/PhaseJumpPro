@@ -50,9 +50,9 @@ EditorImGuiWorldInfoPainter::EditorImGuiWorldInfoPainter(World& _world) :
 
             for (size_t i = 0; i < systems.size(); i++) {
                 auto& system = systems[i];
-                GUARD_CONTINUE(system->name.size() > 0)
+                GUARD_CONTINUE(system->Name().size() > 0)
 
-                ImGui::Text("%s", system->name.c_str());
+                ImGui::Text("%s", system->Name().c_str());
             }
         }
     };

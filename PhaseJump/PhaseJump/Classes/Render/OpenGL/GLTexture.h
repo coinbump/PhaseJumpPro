@@ -1,5 +1,4 @@
-#ifndef PJGLTEXTURE_H
-#define PJGLTEXTURE_H
+#pragma once
 
 #include "Base.h"
 #include "GLHeaders.h"
@@ -61,5 +60,3 @@ namespace PJ {
         void SetTextureWrap(TextureWrapType value) override;
     };
 } // namespace PJ
-
-#endif

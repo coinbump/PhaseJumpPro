@@ -27,19 +27,14 @@ class TestAudioPad : public WorldComponent<> {
 public:
     using This = TestAudioPad;
 
-    SP<WorldComponent<AudioStreamPlayer>> audioStreamPlayer;
+    AudioStreamPlayer& audioStreamPlayer;
 
-    TestAudioPad(SP<WorldComponent<AudioStreamPlayer>> audioStreamPlayer) :
-        audioStreamPlayer(audioStreamPlayer) {
-        signalFuncs[SignalId::PointerDown] = [](auto& component, auto& signal) {
-            auto event = static_cast<PointerDownUIEvent const*>(&signal);
-            static_cast<This*>(&component)->OnPointerDown(*event);
-        };
-    }
-
-    void OnPointerDown(PointerDownUIEvent const& event) {
-        GUARD(audioStreamPlayer);
-        audioStreamPlayer->core.Play();
+    TestAudioPad(AudioStreamPlayer& _audioStreamPlayer) :
+        audioStreamPlayer(_audioStreamPlayer) {
+        AddSignalHandler({ .id = SignalId::PointerDown,
+                           .func = [this](auto& component, auto& signal) {
+                               audioStreamPlayer.Play();
+                           } });
     }
 
     // MARK: SomeWorldComponent
@@ -59,58 +54,54 @@ public:
     void ProcessUIEvents(UIEventList const& uiEvents) override {
         Base::ProcessUIEvents(uiEvents);
 
-        // TODO: double check for memory leaks
+        // double check for memory leaks
         for (auto& event : uiEvents) {
             auto dropFileEvent = DCAST<DropFilesUIEvent>(event);
             if (dropFileEvent) {
                 for (auto& filePath : dropFileEvent->filePaths) {
-                    SDL_AudioSpec inputAudioSpec;
-                    Uint32 wav_length;
-                    Uint8* wav_buffer;
-
-                    // TODO: SDL_ClearAudioStream, DestroyAudioStream
-
                     // https://wiki.libsdl.org/SDL3/Tutorials/AudioStream
-                    if (SDL_LoadWAV(filePath.c_str(), &inputAudioSpec, &wav_buffer, &wav_length) ==
-                        0) {
-                        // FUTURE: const SDL_AudioSpec outputAudioSpec = { SDL_AUDIO_S16, 2, 48000
-                        // };
+                    // FUTURE: const SDL_AudioSpec outputAudioSpec = { SDL_AUDIO_S16, 2, 48000
+                    // };
 
-                        StandardLoadResourcesModel loadResourcesModel(
-                            StandardLoadResourcesModel::LoadType::Rez
-                        );
-                        SDLLoadAudioStreamOperation operation(
-                            ResourceInfo("", filePath, "audio"), loadResourcesModel
-                        );
-                        operation.Run();
+                    StandardResourceRepositoryModel repoModel;
+                    SDLLoadAudioStreamOperation operation(
+                        ResourceInfo{ .filePath = filePath, .type = "audio" }, repoModel
+                    );
+                    operation.Run();
 
-                        auto loadedResources = operation.LoadedResources();
-                        if (!IsEmpty(loadedResources)) {
-                            auto stream = SCAST<SDLAudioStream>(loadedResources[0].resource);
-                            auto playerNode = MAKE<WorldNode>();
-                            auto player = playerNode->WithCorePtr<AudioStreamPlayer>();
-                            world->Add(playerNode);
+                    auto resourceCatalog = operation.Resources();
+                    if (!IsEmpty(resourceCatalog)) {
+                        auto stream = SCAST<SDLAudioStream>(resourceCatalog[0].resource);
+                        auto playerNode = MAKE<WorldNode>();
+                        auto& player = playerNode->With<AudioStreamPlayer>();
+                        world->Add(playerNode);
 
-                            auto texture = world->FindTexture("audio-pad");
-                            GUARD(texture)
-                            auto spriteRenderer = MAKE<SpriteRenderer>(texture);
+                        auto texture = world->resources.FindTexture("audio-pad");
+                        GUARD(texture)
+                        auto spriteRenderer = MAKE<SpriteRenderer>(texture);
 
-                            playerNode->Add(spriteRenderer);
+                        playerNode->Add(spriteRenderer);
 
-                            // TODO: do this by default
-                            auto thumbMaterial = spriteRenderer->model.material;
-                            thumbMaterial->EnableFeature(RenderFeature::Blend, true);
+                        // do this by default
+                        auto thumbMaterial = spriteRenderer->model.material;
+                        thumbMaterial->EnableFeature(RenderFeature::Blend, true);
 
-                            QuickBuild(*playerNode).Drag();
+                        QuickBuild(*playerNode).Drag();
 
-                            auto audioPad = MAKE<TestAudioPad>(player);
-                            playerNode->Add(audioPad);
+                        auto audioPad = MAKE<TestAudioPad>(player);
+                        playerNode->Add(audioPad);
 
-                            // TODO: playerNode->SetWorldPosition(
+                        player.AddSignalHandler({ .id = "pause",
+                                                  .func = [&player](auto& component, auto& signal) {
+                                                      player.Pause();
+                                                  } });
+                        player.AddSignalHandler({ .id = "play",
+                                                  .func = [&player](auto& component, auto& signal) {
+                                                      player.Play();
+                                                  } });
 
-                            player->core.audioStream = stream;
-                            player->core.Play();
-                        }
+                        player.audioStream = stream;
+                        player.Play();
                     }
                 }
                 continue;
@@ -122,14 +113,26 @@ public:
 /// Test scene for sliced Slice9TextureRenderer
 class TestAudioScene : public Scene {
 public:
-    TestAudioScene() {}
+    TestAudioScene() {
+        PlanUIFunc planUIFunc = [this](auto& component, String context, UIPlanner& planner) {
+            planner.Button({ .label = "Pause", .func = [this]() {
+                                for (auto& child : owner->Parent()->Children()) {
+                                    Event event;
+                                    child->Signal("pause", event);
+                                }
+                            } });
+            planner.Button({ .label = "Play", .func = [this]() {
+                                for (auto& child : owner->Parent()->Children()) {
+                                    Event event;
+                                    child->Signal("play", event);
+                                }
+                            } });
+        };
+        Override(planUIFuncs[UIContextId::Editor], planUIFunc);
+    }
 
     void LoadInto(WorldNode& root) override {
-        root.name = "TestAudioScene";
-
-        WorldNode& cameraNode = root.And("Camera");
-        cameraNode.With<OrthoCamera>();
-        cameraNode.With<SimpleRaycaster2D>();
+        QB(root).Named("TestAudioScene").OrthoStandard();
 
         World& world = *root.World();
 

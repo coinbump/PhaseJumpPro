@@ -30,7 +30,7 @@ namespace PJ {
     class _FooClass : public TypeClass<_Foo> {
     public:
         _FooClass() :
-            TypeClass<_Foo>(ClassId::Foo, []() { return MAKE<_Foo>(); }) {}
+            TypeClass<_Foo>(ClassId::Foo, []() { return NEW<_Foo>(); }) {}
 
         virtual ~_FooClass() {}
     };
@@ -39,7 +39,7 @@ namespace PJ {
     class _MacFooClass : public TypeClass<_MacFoo> {
     public:
         _MacFooClass() :
-            TypeClass<_MacFoo>(ClassId::Foo, []() { return MAKE<_MacFoo>(); }) {}
+            TypeClass<_MacFoo>(ClassId::Foo, []() { return NEW<_MacFoo>(); }) {}
     };
 
     /// Registers class objects for core types (platform neutral)
@@ -48,7 +48,7 @@ namespace PJ {
         using Base = Module;
 
         void Configure() override {
-            classRegistry.map[ClassId::Foo] = NEW<_FooClass>();
+            classRegistry.Add(ClassId::Foo, NEW<_FooClass>());
         }
 
     public:
@@ -62,7 +62,7 @@ namespace PJ {
         using Base = Module;
 
         void Configure() override {
-            classRegistry.map[ClassId::Foo] = NEW<_MacFooClass>();
+            classRegistry.Add(ClassId::Foo, NEW<_MacFooClass>());
         }
 
     public:

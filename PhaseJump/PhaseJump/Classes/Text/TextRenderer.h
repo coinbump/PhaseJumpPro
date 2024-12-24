@@ -1,8 +1,9 @@
 #pragma once
 
+#include "AlignFunc.h"
+#include "AttributedString.h"
 #include "Font.h"
 #include "RenderTypes.h"
-#include "SomeAligner.h"
 #include "SomeRenderer.h"
 #include "TextMeasurer.h"
 
@@ -17,9 +18,9 @@ namespace PJ {
     /**
      Renders text (no markup), requires a font and material to use
      */
-    class TextRenderer : public SomeRenderer {
+    class TextRenderer : public SomeMaterialRenderer {
     public:
-        using Base = SomeRenderer;
+        using Base = SomeMaterialRenderer;
         using This = TextRenderer;
 
         using ModifyColorsFunc =
@@ -39,7 +40,7 @@ namespace PJ {
         SP<Font> font;
 
         /// Text to render
-        String text;
+        AttributedString text;
 
         /// Line clip behavior when text measurer reaches the end of the text area
         LineClip lineClip = LineClip::Partial;
@@ -64,7 +65,7 @@ namespace PJ {
     public:
         struct Config {
             SP<Font> font;
-            String text;
+            AttributedString text;
             Vector2 worldSize;
         };
 
@@ -117,6 +118,11 @@ namespace PJ {
             return *this;
         }
 
+        TextMetrics Metrics() {
+            model.BuildIfNeeded();
+            return metrics ? *metrics : TextMetrics{};
+        }
+
         LineClip GetLineClip() const {
             return lineClip;
         }
@@ -137,12 +143,23 @@ namespace PJ {
             return *this;
         }
 
-        String Text() const {
+        /// @return Returns the attributed text value for this renderer
+        AttributedString Text() const {
             return text;
         }
 
-        TextRenderer& SetText(StringView value) {
-            GUARDR(text != value, *this)
+        /// @return Returns the plain text value for the attributed string
+        String PlainText() const {
+            return text.PlainText();
+        }
+
+        TextRenderer& SetPlainText(String value) {
+            return SetText(value);
+        }
+
+        TextRenderer& SetText(AttributedString value) {
+            // TODO: add equality to attributed string
+            // TODO: GUARDR(text != value, *this)
             text = value;
             OnTextChange();
 

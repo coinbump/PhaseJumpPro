@@ -11,7 +11,7 @@
  */
 namespace PJ {
     class RenderProcessor;
-    class CameraRenderModel;
+    class RenderCameraModel;
 
     /// Model for a render processing pipeline
     /// Multiple objects can have their own pipeline (system, camera)
@@ -32,6 +32,6 @@ namespace PJ {
         }
 
         void ProcessPhase(String phase);
-        void ProcessPhase(CameraRenderModel& cameraModel, String phase);
+        void ProcessPhase(RenderCameraModel& cameraModel, String phase);
     };
 } // namespace PJ

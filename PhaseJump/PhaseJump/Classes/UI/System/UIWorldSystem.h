@@ -43,7 +43,7 @@ namespace PJ {
         WP<WorldNode> activeHover;
         WP<WorldNode> activeDropTarget;
 
-        virtual SP<SomeCamera> Camera() const;
+        virtual SomeCamera* Camera() const;
 
         void ProcessUIEvents(UIEventList const& uiEvents) override;
 
@@ -67,7 +67,6 @@ namespace PJ {
         List<WP<WorldNode>> pointerEnterNodes;
 
     public:
-        // TODO: VectorList<UP<SomeFocusCoordinator>> focusCoordinators;
         WP<FocusHandler> focus;
 
         UIWorldSystem(String name = "UI") :

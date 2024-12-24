@@ -4,7 +4,7 @@
 #include "OrthoCamera.h"
 #include "Prefab.h"
 #include "RateLimiter.h"
-#include "ResourceModels.h"
+#include "ResourceCatalog.h"
 #include "SomeRenderContext.h"
 #include "SomeUIEventPoller.h"
 #include "Updatable.h"
@@ -23,27 +23,47 @@ namespace PJ {
     class FontSpec;
     class SomeShaderProgram;
 
-    // TODO: Needs unit tests
-    // TODO: re-evaluate use of multiple inheritance here (doesn't need Updatable)
-    class World : public Base, public Updatable {
+    /**
+     Container for the ECS system that drives Phase Jump Pro
+
+     Each window has a world. Each world contains a node tree with nodes. Each node contains
+     components that implement specific behavior. A renderer component produces render models, which
+     are sent to the render system. Those render models are then processed by the render
+     engine into GPU commands
+
+     If you don't want to use ECS, subclass world or create a single node + renderer.
+     */
+    class World : public Base {
+    public:
+        DELETE_COPY(World)
+
     protected:
         using TimePoint = std::chrono::time_point<std::chrono::steady_clock>;
 
+        /// Stores time point to calculate FPS
         std::optional<TimePoint> fpsCheckTimePoint;
-        uint64_t renderFrameCount;
 
-        // MARK: Base
+        /// For FPS calculation
+        uint64_t renderFrameCount{};
 
-        void OnGo() override;
-
+        /// Internal, list for update
         WorldNode::NodeList updateList;
-        VectorList<SP<SomeWorldSystem>> systems;
-        SP<SomeCamera> mainCamera;
 
+        /// Systems attached to this world
+        VectorList<SP<SomeWorldSystem>> systems;
+
+        /// Main camera for this world
+        WP<SomeCamera> mainCamera;
+
+        /// If true, the world will not receive update events
         bool isPaused = false;
 
         /// Rate limits renders
         RateLimiter renderLimiter{ 1.0f / 240.0f };
+
+        /// ECS root node. Child nodes add components that implement specific behaviors for each
+        /// node
+        SP<WorldNode> root = MAKE<WorldNode>("Root");
 
     public:
         /// Number of pixels per point
@@ -56,15 +76,17 @@ namespace PJ {
         /// Use to display render stats like fps, render count, etc.
         Tags renderStats;
 
-        SP<WorldNode> root = MAKE<WorldNode>("Root");
-        SP<ResourceModels> loadedResources = MAKE<ResourceModels>();
+        /// Stores resources loaded for this world
+        ResourceCatalog resources;
+
+        /// Main render context attached to the window for this world
         SP<SomeRenderContext> renderContext;
-        SP<SomeCamera> camera;
 
-        // TODO: UP here
-        SP<SomeUIEventPoller> uiEventPoller;
+        /// Polls for UI events
+        UP<SomeUIEventPoller> uiEventPoller;
 
-        /// (Optional). Design system for quick build UI
+        /// Design system for quick build UI
+        /// Allows us to add theme components with ViewBuilder
         SP<DesignSystem> designSystem;
 
         /// Render materials that can be shared between objects
@@ -80,6 +102,10 @@ namespace PJ {
         float timeScale = 1;
 
         World();
+
+        WorldNode* Root() const {
+            return root.get();
+        }
 
         void SetRenderRate(float value) {
             renderLimiter.core.rate = 1.0f / value;
@@ -106,22 +132,31 @@ namespace PJ {
             return TypeSystem<Type>();
         }
 
-        virtual SP<SomeCamera> MainCamera();
+        virtual SomeCamera* MainCamera();
 
+        /// @return Returns a matrix that transforms this node's vertices in local space (position +
+        /// offset + scale + rotation)
         virtual Matrix4x4 LocalModelMatrix(WorldNode const& node);
+
+        /// @return Returns a matrix that transforms this node's vertices into word space
         virtual Matrix4x4 WorldModelMatrix(WorldNode const& node);
 
-        void OnUpdate(TimeSlice time) override;
+        /// Sends update event to world
+        void OnUpdate(TimeSlice time);
 
-        /// Rate-limited render
+        /// Renders if the rate limiter allows it
         virtual void Render();
 
-        /// Render immediately
+        /// Renders immediately
         virtual void RenderNow();
 
+        /// Adds a node to the root node
         void Add(SP<WorldNode> node);
+
+        /// Adds a system
         void Add(SP<SomeWorldSystem> system);
 
+        /// Adds a node with constructor arguments
         template <typename... Arguments>
         WorldNode& AddNode(Arguments... args) {
             SP<WorldNode> result = MAKE<WorldNode>(args...);
@@ -129,11 +164,13 @@ namespace PJ {
             return *result;
         }
 
+        /// Shorthand for adding a node
         template <typename... Arguments>
         constexpr WorldNode& And(Arguments... args) {
             return AddNode(args...);
         }
 
+        /// Adds a node at a specific position
         template <typename... Arguments>
         WorldNode& AddNodeAt(Vector3 pos, Arguments... args) {
             SP<WorldNode> result = MAKE<WorldNode>(args...);
@@ -142,61 +179,54 @@ namespace PJ {
             return *result;
         }
 
+        /// @return Returns the list of systems attached to this world
         VectorList<SP<SomeWorldSystem>>& Systems() {
             return systems;
         }
 
+        /// @return Returns the list of systems attached to this world
         VectorList<SP<SomeWorldSystem>> const& Systems() const {
             return systems;
         }
 
-        //        template <class T>
-        //        void AddComponent(SP<T> component) {
-        //            auto node = MAKE<WorldNode>();
-        //            node->AddComponent(component);
-        //            Add(node);
-        //        }
+        /// @return Returns true if the world is paused
+        bool IsPaused() const;
 
-        bool IsPaused() const {
-            return isPaused;
-        }
+        /// Pauses the world so it will not receive any update events
+        void Pause();
 
-        void Pause() {
-            isPaused = true;
-        }
+        /// Unpauses the world so it can receive update events
+        void Play();
 
-        void Play() {
-            isPaused = false;
-        }
+        /// Loads a prefab into the specified node, if the prefab exists
+        void LoadPrefab(String id, WorldNode& node);
 
-        void LoadPrefab(String id, WorldNode& node) {
-            GUARD_LOG(node.World() == this, "ERROR. Node must be parented before LoadPrefab")
-
-            try {
-                auto prefab = prefabs.at(id);
-                prefab->LoadInto(node);
-            } catch (...) {}
-        }
-
+        /// Removes a system
         void Remove(SomeWorldSystem& system);
+
+        /// Removes a list of systems
         void Remove(VectorList<SP<SomeWorldSystem>> systems);
+
+        /// Removes all systems
         void RemoveAllSystems();
+
+        /// Remove all nodes except for the root node
         void RemoveAllNodes();
 
         void SetRenderContext(SP<SomeRenderContext> renderContext);
 
         virtual void ProcessUIEvents(UIEventList const& uiEvents);
 
-        SP<SomeTexture> FindTexture(String id);
-        UnorderedSet<SP<SomeTexture>> FindTextures(UnorderedSet<String> const& textureIds);
-        VectorList<SP<SomeTexture>> FindTextureList(VectorList<String> const& textureIds);
-        SP<Font> FindFont(FontSpec spec);
-        SP<Font> FindFontWithSize(float size);
-        SP<Font> FindFontWithResourceId(String id);
-        SP<SomeShaderProgram> FindShader(String id);
+    protected:
+        // MARK: Base
+
+        void OnGo() override;
     };
 
+    /// @return Returns the local position in this component's owner space for the screen position
     LocalPosition ScreenToLocal(SomeWorldComponent& component, ScreenPosition screenPos);
+
+    /// @return Returns the world positionin this component's owner space for the screen position
     WorldPosition ScreenToWorld(SomeWorldComponent& component, ScreenPosition screenPos);
 
 } // namespace PJ

@@ -4,7 +4,7 @@
 using namespace std;
 using namespace PJ;
 
-void OverrideFeaturesRenderProcessor::Process(CameraRenderModel& cameraModel) {
+void OverrideFeaturesRenderProcessor::Process(RenderCameraModel& cameraModel) {
 // #define LOG
 #ifdef LOG
     for (auto& feature : map) {
@@ -30,11 +30,6 @@ void OverrideFeaturesRenderProcessor::Process(CameraRenderModel& cameraModel) {
             overrideMaterial->EnableFeature(
                 feature.first, feature.second == RenderFeatureState::Enable
             );
-        }
-
-        auto overrideMaterial = cameraModel.OverrideMaterial(model);
-        if (overrideMaterial) {
-            model.SetOverrideMaterial(overrideMaterial.get());
         }
     }
 }

@@ -15,7 +15,7 @@ EditorImGuiResourcesPainter::EditorImGuiResourcesPainter(EditorWorldSystem& _sys
         auto& world = *system.World();
 
         if (ImGui::CollapsingHeader("Resources", ImGuiTreeNodeFlags_DefaultOpen)) {
-            for (auto& type : world.loadedResources->map) {
+            for (auto& type : world.resources.Map()) {
                 auto name = type.first.c_str();
                 GUARD_CONTINUE(name)
 
@@ -27,7 +27,7 @@ EditorImGuiResourcesPainter::EditorImGuiResourcesPainter(EditorWorldSystem& _sys
                         );
 
                         // Allow user to manually add textures into scene
-                        if (String(name) == String("texture")) {
+                        if (String(name) == String(ResourceType::Texture)) {
                             ImGui::SameLine();
 
                             String addButtonName("+");
@@ -35,7 +35,7 @@ EditorImGuiResourcesPainter::EditorImGuiResourcesPainter(EditorWorldSystem& _sys
                             addButtonName += resourceId;
 
                             if (ImGui::SmallButton(addButtonName.c_str())) {
-                                QB(*world.root)
+                                QB(*world.Root())
                                     .And()
                                     .With<SpriteRenderer>(SCAST<SomeTexture>(res.second.resource))
                                     .Drag();

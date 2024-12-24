@@ -36,7 +36,7 @@
 //             action and evaluate from there
 //
 //             //
-//             // TODO: evaluate based on the input
+//             // evaluate based on the input
 //         }
 //     };
 //
@@ -63,9 +63,8 @@
 //         }
 //     };
 //
-//     // TODO: support default values for inputs (or the evaluator does this)
+//     // support default values for inputs (or the evaluator does this)
 //
-//     // TODO: Needs unit tests
 //     /// A node that use used to process inputs from outputs
 //     /// Example: a graph of nodes that produce a GPU shader
 //     //    class PortNode

@@ -8,13 +8,13 @@
 /*
  RATING: 5 stars
  Tested and works
- CODE REVIEW: 9/6/24
+ CODE REVIEW: 12/22/24
  */
 namespace PJ {
     /// Renders a single texture as a sprite
-    class SpriteRenderer : public SomeRenderer {
+    class SpriteRenderer : public SomeMaterialRenderer {
     public:
-        using Base = SomeRenderer;
+        using Base = SomeMaterialRenderer;
         using This = SpriteRenderer;
 
     protected:
@@ -42,13 +42,13 @@ namespace PJ {
         void SetFlipX(bool value) {
             GUARD(flipX != value)
             flipX = value;
-            model.SetRenderModelsNeedBuild();
+            model.SetMeshNeedsBuild();
         }
 
         void SetFlipY(bool value) {
             GUARD(flipY != value)
             flipY = value;
-            model.SetRenderModelsNeedBuild();
+            model.SetMeshNeedsBuild();
         }
 
         // MARK: SomeWorldComponent

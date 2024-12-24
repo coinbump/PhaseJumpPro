@@ -60,11 +60,19 @@ namespace PJ {
 
         friend class World;
 
+        // Don't allow copies
+        DELETE_COPY(WorldNode)
+
     protected:
         ComponentList components;
-        float destroyCountdown = 0;
-        bool isDestroyed = false;
-        bool isEnabled = true;
+        float destroyCountdown{};
+        bool isDestroyed{};
+
+        /// If true, this node will not receive signals and updates
+        bool isDisabled{};
+
+        /// If true, this node will not be rendererd
+        bool isInvisible{};
 
         WorldPartLife life;
         // TODO: SP-Audit
@@ -87,6 +95,9 @@ namespace PJ {
         /// Core properties
         StandardCore core;
 
+        /// If true, this node will receive signals
+        bool isListener{};
+
         /// Stores subscriptions to reactive values
         UnorderedSet<SP<Cancellable>> cancellables;
 
@@ -94,9 +105,6 @@ namespace PJ {
         Updatables updatables;
 
         WorldNode(String name = "");
-
-        // Prevent accidental copies
-        DELETE_COPY(WorldNode)
 
         virtual ~WorldNode() {}
 
@@ -144,6 +152,25 @@ namespace PJ {
 
         /// Toggle the node's enabled state. Disabled nodes receive no time or signal events
         void ToggleEnable();
+
+        /// @return Returns true if the node is visible
+        bool IsVisible() const;
+
+        /// Shows or hides the node
+        WorldNode& SetIsVisible(bool value);
+
+        /// Shows the node
+        WorldNode& Show() {
+            return SetIsVisible(true);
+        }
+
+        /// Hides the node
+        WorldNode& Hide() {
+            return SetIsVisible(false);
+        }
+
+        /// Toggles the node's visibility state
+        void ToggleIsVisible();
 
         /// @return Returns a matrix for transforming from model to world space
         Matrix4x4 ModelMatrix() const;

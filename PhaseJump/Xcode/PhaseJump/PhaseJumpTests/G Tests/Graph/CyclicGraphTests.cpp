@@ -21,12 +21,6 @@ namespace CyclicGraphTests {
         Node() : time(0)
         {
         }
-
-        void OnUpdate(TimeSlice time) override
-        {
-            Base::OnUpdate(time);
-            this->time += time.delta;
-        }
     };
 }
 
@@ -39,10 +33,10 @@ TEST(CyclicGraph, Test_RemoveRoot_RootIsNull)
     auto childNode = MAKE<Node>();
     graph.AddEdge(node, StandardEdgeCore(), childNode);
 
-    graph.SetRoot(node);
+    graph.SetRoot(node.get());
 
-    EXPECT_EQ(node, graph.Root());
-    graph.Remove(node);
+    EXPECT_EQ(node.get(), graph.Root());
+    graph.Remove(*node);
     EXPECT_EQ(nullptr, graph.Root());
 }
 
@@ -55,7 +49,7 @@ TEST(CyclicGraph, Test_RemoveFromGraph_FromEdgesRemoved)
 
     EXPECT_EQ(1, childNode->FromNodes().size());
 
-    graph.Remove(node);
+    graph.Remove(*node);
 
     EXPECT_EQ(0, childNode->FromNodes().size());
 }
@@ -69,7 +63,7 @@ TEST(CyclicGraph, Test_RemoveFromGraph_ToEdgesRemoved)
 
     EXPECT_EQ(1, node->Edges().size());
 
-    graph.Remove(childNode);
+    graph.Remove(*childNode);
 
     EXPECT_EQ(0, node->Edges().size());
 }
@@ -134,27 +128,27 @@ TEST(CyclicGraph, Test_Clear_RemovesEdges)
     EXPECT_EQ(childNode2->FromNodes().size(), 0);
 }
 
-TEST(CyclicGraph, UpdateGraph_UpdatesAll)
-{
-    TestGraph graph;
-    auto node = MAKE<Node>();
-    auto childNode1 = MAKE<Node>();
-    graph.AddEdge(node, StandardEdgeCore(), childNode1);
-
-    auto childNode2 = MAKE<Node>();
-    graph.AddEdge(node, StandardEdgeCore(), childNode2);
-
-    auto deepNode = MAKE<Node>();
-    graph.AddEdge(childNode1, StandardEdgeCore(), deepNode);
-
-    auto delta = 4.0f;
-    graph.OnUpdate(TimeSlice(delta));
-
-    EXPECT_EQ(node->time, delta);
-    EXPECT_EQ(childNode1->time, delta);
-    EXPECT_EQ(childNode2->time, delta);
-    EXPECT_EQ(deepNode->time, delta);
-}
+//TEST(CyclicGraph, UpdateGraph_UpdatesAll)
+//{
+//    TestGraph graph;
+//    auto node = MAKE<Node>();
+//    auto childNode1 = MAKE<Node>();
+//    graph.AddEdge(node, StandardEdgeCore(), childNode1);
+//
+//    auto childNode2 = MAKE<Node>();
+//    graph.AddEdge(node, StandardEdgeCore(), childNode2);
+//
+//    auto deepNode = MAKE<Node>();
+//    graph.AddEdge(childNode1, StandardEdgeCore(), deepNode);
+//
+//    auto delta = 4.0f;
+//    graph.OnUpdate(TimeSlice(delta));
+//
+//    EXPECT_EQ(node->time, delta);
+//    EXPECT_EQ(childNode1->time, delta);
+//    EXPECT_EQ(childNode2->time, delta);
+//    EXPECT_EQ(deepNode->time, delta);
+//}
 
 TEST(CyclicGraph, Test_RemoveEdgeFromParent_RemovesBoth)
 {
@@ -166,7 +160,7 @@ TEST(CyclicGraph, Test_RemoveEdgeFromParent_RemovesBoth)
     EXPECT_EQ(node->Edges().size(), 1);
     EXPECT_EQ(childNode1->FromNodes().size(), 1);
 
-    node->RemoveEdge(node->Edges()[0]);
+    node->RemoveEdge(*node->Edges()[0]);
 
     EXPECT_EQ(node->Edges().size(), 0);
     EXPECT_EQ(childNode1->FromNodes().size(), 0);

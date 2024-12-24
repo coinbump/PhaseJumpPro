@@ -2,13 +2,14 @@
 #include "DialControl.h"
 #include "ImRenderer.h"
 #include "QuickBuild.h"
+#include "SliderControl.h"
 #include "ToggleButtonControl.h"
 #include "ViewBuilder.h"
 
 using namespace std;
 using namespace PJ;
 
-// TODO: update when we have real fonts
+// FUTURE: update when we have real fonts
 DuckDesignSystem::DuckDesignSystem() :
     Base(Base::Config{}) {
 
@@ -18,9 +19,14 @@ DuckDesignSystem::DuckDesignSystem() :
             { UIElementId::OnPrimary, Color::white },
             { UIElementId::PrimaryContainer, Color32(196, 180, 248) },
             { UIElementId::OnPrimaryContainer, Color32(75, 60, 119) },
+            { UIElementId::SecondaryContainer, Color32(225, 224, 247) },
+            { UIElementId::OnSecondaryContainer, Color32(68, 69, 87) },
             
             { UIElementId::Surface, Color32(78, 78, 88) },
             { UIElementId::OnSurface, Color32(200, 200, 200) },
+            { UIElementId::Secondary, Color32(93, 93, 112) },
+            { UIElementId::OnSecondary, Color32(255, 255, 255) },
+            
             { UIElementId::SurfaceContainer, Color32(40, 40, 40) },
             { UIElementId::OnSurfaceContainer, Color32(215, 215, 215) },
             { UIElementId::SurfaceInteractive, Color32(83, 83, 83) },
@@ -84,34 +90,155 @@ DuckDesignSystem::DuckDesignSystem() :
 
         bool areShapesOpaque = this->areShapesOpaque;
 
-        vb.ButtonView({ .onPressFunc = config.onPressFunc, .buildFrameFunc = [=](auto& vb) {
-                           vb.Immediate(
-                                 { .renderFunc =
-                                       [=](auto& view, auto& renderer) {
-                                           auto& button =
-                                               *(static_cast<ButtonControl*>(view.ParentView()));
+        vb.ButtonView({ .onPressFunc = config.onPressFunc,
+                        .modifyViewFunc = config.modifyViewFunc,
+                        .buildFrameFunc = [=](auto& vb) {
+                            vb.Immediate(
+                                  { .renderFunc =
+                                        [=](auto& view, auto& renderer) {
+                                            auto& button =
+                                                *(static_cast<ButtonControl*>(view.ParentView()));
 
-                                           renderer.SetColor(
-                                               button.IsPressed()    ? pressColor
-                                               : button.IsHovering() ? hoverColor
-                                                                     : surfaceColor
-                                           );
-                                           renderer.FillRect(view.Bounds());
+                                            renderer.SetColor(
+                                                button.IsPressed()    ? pressColor
+                                                : button.IsHovering() ? hoverColor
+                                                                      : surfaceColor
+                                            );
+                                            renderer.FillRect(view.Bounds());
 
-                                           renderer.SetColor(
-                                               button.IsPressed() ? labelPressColor : labelColor
-                                           );
-                                           renderer.Text(config.label, { 0, 0 }, 32);
-                                       },
-                                   .modifyRendererFunc =
-                                       [=](auto& renderer) {
-                                           renderer.areShapesOpaque = areShapesOpaque;
-                                           // Don't translate, so all contents are centered
-                                           renderer.translateItemFunc = {};
-                                       } }
-                           ).FixedSize({}, frameHeight);
-                       } });
+                                            renderer.SetColor(
+                                                button.IsPressed() ? labelPressColor : labelColor
+                                            );
+                                            renderer.Text(config.label, { 0, 0 }, 32);
+                                        },
+                                    .modifyRendererFunc =
+                                        [=](auto& renderer) {
+                                            renderer.areShapesOpaque = areShapesOpaque;
+                                            // Don't translate, so all contents are centered
+                                            renderer.translateItemFunc = {};
+                                        } }
+                            ).FixedSize({}, frameHeight);
+                        } });
     };
+
+    // MARK: Slider
+
+    buildViewFuncs[UIItemId::Slider] = [this](auto _config, auto& vb) {
+        SliderConfig& config = *(static_cast<SliderConfig*>(_config));
+
+        Color trackColor = theme->ThemeColor(UIElementId::SurfaceInteractive, Color::gray);
+        Color trackPrimaryColor = theme->ThemeColor(UIElementId::PrimaryContainer, Color::gray);
+        Color trackHoverColor =
+            theme->ThemeColor(UIElementId::SurfaceInteractiveHover, Color::gray);
+        Color thumbColor = theme->ThemeColor(UIElementId::Primary, Color::black);
+        Color thumbPressColor =
+            theme->ThemeColor(UIElementId::SurfaceInteractivePress, Color::blue);
+
+        float frameOrthogonal = theme->ElementSize(UIElementId::ControlFrame, { 30, 30 })
+                                    .AxisValueOrthogonal(config.axis);
+
+        bool areShapesOpaque = this->areShapesOpaque;
+
+        vb.QB()
+            .And("Slider")
+            .template With<SliderControl>(SliderControl::Config{ .axis = config.axis,
+                                                                 .valueBinding =
+                                                                     config.valueBinding,
+                                                                 .trackOrthogonal = frameOrthogonal,
+                                                                 .minValue = config.minValue,
+                                                                 .maxValue = config.maxValue })
+            .template With<ImRenderer>(ImRenderer::Config{ .areShapesOpaque = areShapesOpaque })
+            .template ModifyLatest<ImRenderer>([=](auto& renderer) {
+                renderer.AddSignalHandler(
+                    { .id = SignalId::RenderPrepare,
+                      .func =
+                          [=,
+                           slider = (SliderControl*)nullptr](auto& renderer, auto& signal) mutable {
+                              ImRenderer& imRenderer = *(static_cast<ImRenderer*>(&renderer));
+
+                              if (nullptr == slider) {
+                                  slider = renderer.owner->template TypeComponent<SliderControl>();
+                              }
+                              GUARD(slider);
+
+                              Rect trackBounds = slider->Bounds();
+                              imRenderer.FillRect(
+                                  trackBounds, slider->IsHovering() ? trackHoverColor : trackColor
+                              );
+
+                              Vector2 thumbSize{ frameOrthogonal, frameOrthogonal };
+                              float value = slider->NormalValue();
+
+                              float sliderAxis = slider->Bounds().size.AxisValue(config.axis);
+                              float minThumbPos = 0;
+                              float maxThumbPos = sliderAxis - frameOrthogonal;
+                              Vector2 thumbOrigin;
+
+                              // FUTURE: support vertical slider if needed
+
+                              thumbOrigin.AxisValue(config.axis) =
+                                  minThumbPos + (maxThumbPos - minThumbPos) * value;
+
+                              trackBounds.size.AxisValue(config.axis) =
+                                  thumbOrigin.AxisValue(config.axis);
+                              imRenderer.FillRect(trackBounds, trackPrimaryColor);
+
+                              Rect thumbRect{ .origin = thumbOrigin, .size = thumbSize };
+                              imRenderer.FillRect(
+                                  thumbRect, slider->IsDragging() ? thumbPressColor : thumbColor
+                              );
+                          } }
+                );
+            });
+    };
+
+    // MARK: Collapsing Header
+
+    // Need mechanism for updating views when values change
+    //    buildViewFuncs[UIItemId::CollapsingHeader] = [this](auto _config, auto& vb) {
+    //        CollapsingHeaderConfig& config = *(static_cast<CollapsingHeaderConfig*>(_config));
+    //
+    //        Color surfaceColor = theme->ThemeColor(UIElementId::SurfaceInteractive, Color::gray);
+    //        Color pressColor = theme->ThemeColor(UIElementId::SurfaceInteractivePress,
+    //        Color::blue); Color hoverColor =
+    //        theme->ThemeColor(UIElementId::SurfaceInteractiveHover, Color::red); Color labelColor
+    //        = theme->ThemeColor(UIElementId::OnSurfaceInteractive, Color::black); Color
+    //        labelPressColor =
+    //            theme->ThemeColor(UIElementId::OnSurfaceInteractivePress, Color::white);
+    //        float frameHeight = theme->ElementSize(UIElementId::ControlFrame, { 0, 30 }).y;
+    //
+    //        bool areShapesOpaque = this->areShapesOpaque;
+    //            vb.ButtonView({ .onPressFunc = [=](auto& button) {
+    //                config.isCollapsedBinding.SetValue(!config.isCollapsedBinding.Value());
+    //            }, .buildFrameFunc = [=](auto& vb) {
+    //                           vb.Immediate(
+    //                                 { .renderFunc =
+    //                                       [=](auto& view, auto& renderer) {
+    //                                           auto& button =
+    //                                               *(static_cast<ButtonControl*>(view.ParentView()));
+    //
+    //                                           renderer.SetColor(
+    //                                               button.IsPressed()    ? pressColor
+    //                                               : button.IsHovering() ? hoverColor
+    //                                                                     : surfaceColor
+    //                                           );
+    //                                           renderer.FillRect(view.Bounds());
+    //
+    //                                           renderer.SetColor(
+    //                                               button.IsPressed() ? labelPressColor :
+    //                                               labelColor
+    //                                           );
+    //                                           renderer.Text(config.label, { 0, 0 }, 32);
+    //                                       },
+    //                                   .modifyRendererFunc =
+    //                                       [=](auto& renderer) {
+    //                                           renderer.areShapesOpaque = areShapesOpaque;
+    //                                           // Don't translate, so all contents are centered
+    //                                           renderer.translateItemFunc = {};
+    //                                       } }
+    //                           ).FixedSize({}, frameHeight);
+    //                       } });
+    //    };
 
     // MARK: Segment toggle
 
@@ -131,43 +258,46 @@ DuckDesignSystem::DuckDesignSystem() :
 
         bool areShapesOpaque = this->areShapesOpaque;
 
-        vb.ToggleButtonView({ .isOnBinding = config.isOnBinding, .buildFrameFunc = [=](auto& vb) {
-                                 vb.Immediate(
-                                       { .renderFunc =
-                                             [=](auto& view, auto& renderer) {
-                                                 auto& button = *(static_cast<ToggleButtonControl*>(
-                                                     view.ParentView()
-                                                 ));
+        vb.ToggleButtonView({ .isOnBinding = config.isOnBinding,
+                              .modifyViewFunc = config.modifyViewFunc,
+                              .buildFrameFunc = [=](auto& vb) {
+                                  vb.Immediate(
+                                        { .renderFunc =
+                                              [=](auto& view, auto& renderer) {
+                                                  auto& button =
+                                                      *(static_cast<ToggleButtonControl*>(
+                                                          view.ParentView()
+                                                      ));
 
-                                                 if (button.IsToggleOn()) {
-                                                     renderer.SetColor(
-                                                         button.IsPressed()    ? isOnPressColor
-                                                         : button.IsHovering() ? isOnHoverColor
-                                                                               : isOnColor
-                                                     );
-                                                 } else {
-                                                     renderer.SetColor(
-                                                         button.IsPressed()    ? pressColor
-                                                         : button.IsHovering() ? hoverColor
-                                                                               : surfaceColor
-                                                     );
-                                                 }
-                                                 renderer.FillRect(view.Bounds());
+                                                  if (button.IsToggleOn()) {
+                                                      renderer.SetColor(
+                                                          button.IsPressed()    ? isOnPressColor
+                                                          : button.IsHovering() ? isOnHoverColor
+                                                                                : isOnColor
+                                                      );
+                                                  } else {
+                                                      renderer.SetColor(
+                                                          button.IsPressed()    ? pressColor
+                                                          : button.IsHovering() ? hoverColor
+                                                                                : surfaceColor
+                                                      );
+                                                  }
+                                                  renderer.FillRect(view.Bounds());
 
-                                                 renderer.SetColor(
-                                                     button.IsPressed() ? labelPressColor
-                                                                        : labelColor
-                                                 );
-                                                 renderer.Text(config.label, { 0, 0 }, 32);
-                                             },
-                                         .modifyRendererFunc =
-                                             [=](auto& renderer) {
-                                                 renderer.areShapesOpaque = areShapesOpaque;
-                                                 // Don't translate, so all contents are centered
-                                                 renderer.translateItemFunc = {};
-                                             } }
-                                 ).FixedSize({}, frameHeight);
-                             } });
+                                                  renderer.SetColor(
+                                                      button.IsPressed() ? labelPressColor
+                                                                         : labelColor
+                                                  );
+                                                  renderer.Text(config.label, { 0, 0 }, 32);
+                                              },
+                                          .modifyRendererFunc =
+                                              [=](auto& renderer) {
+                                                  renderer.areShapesOpaque = areShapesOpaque;
+                                                  // Don't translate, so all contents are centered
+                                                  renderer.translateItemFunc = {};
+                                              } }
+                                  ).FixedSize({}, frameHeight);
+                              } });
     };
 
     //    auto setToggleColor = [this](ToggleButtonControl& button, ImRenderer& renderer) {
@@ -214,40 +344,42 @@ DuckDesignSystem::DuckDesignSystem() :
         float frameWidth = config.size ? config.size->x : 60;
         float frameHeight = config.size ? config.size->y : 60;
 
-        vb.ToggleButtonView({ .isOnBinding = config.isOnBinding, .buildFrameFunc = [=](auto& vb) {
-                                 vb.Immediate(
-                                       { .renderFunc =
-                                             [=](auto& view, auto& renderer) {
-                                                 auto& button = *(static_cast<ToggleButtonControl*>(
-                                                     view.ParentView()
-                                                 ));
+        vb.ToggleButtonView(
+            { .isOnBinding = config.isOnBinding,
+              .modifyViewFunc = config.modifyViewFunc,
+              .buildFrameFunc =
+                  [=](auto& vb) {
+                      vb.Immediate(
+                            { .renderFunc =
+                                  [=](auto& view, auto& renderer) {
+                                      auto& button =
+                                          *(static_cast<ToggleButtonControl*>(view.ParentView()));
 
-                                                 if (button.IsToggleOn()) {
-                                                     renderer.SetColor(
-                                                         button.IsPressed()    ? isOnPressColor
-                                                         : button.IsHovering() ? isOnHoverColor
-                                                                               : isOnColor
-                                                     );
-                                                 } else {
-                                                     renderer.SetColor(
-                                                         button.IsPressed()    ? pressColor
-                                                         : button.IsHovering() ? hoverColor
-                                                                               : surfaceColor
-                                                     );
-                                                 }
-                                                 renderer.FillRoundRect(view.Bounds(), 10);
-                                                 renderer.TemplateImage(
-                                                     config.imageId, { 0, 0 }, imageColor
-                                                 );
-                                             },
-                                         .modifyRendererFunc =
-                                             [=](auto& renderer) {
-                                                 renderer.areShapesOpaque = areShapesOpaque;
-                                                 // Don't translate, so all contents are centered
-                                                 renderer.translateItemFunc = {};
-                                             } }
-                                 ).FixedSize(frameWidth, frameHeight);
-                             } });
+                                      if (button.IsToggleOn()) {
+                                          renderer.SetColor(
+                                              button.IsPressed()    ? isOnPressColor
+                                              : button.IsHovering() ? isOnHoverColor
+                                                                    : isOnColor
+                                          );
+                                      } else {
+                                          renderer.SetColor(
+                                              button.IsPressed()    ? pressColor
+                                              : button.IsHovering() ? hoverColor
+                                                                    : surfaceColor
+                                          );
+                                      }
+                                      renderer.FillRoundRect(view.Bounds(), 10);
+                                      renderer.TemplateImage(config.imageId, { 0, 0 }, imageColor);
+                                  },
+                              .modifyRendererFunc =
+                                  [=](auto& renderer) {
+                                      renderer.areShapesOpaque = areShapesOpaque;
+                                      // Don't translate, so all contents are centered
+                                      renderer.translateItemFunc = {};
+                                  } }
+                      ).FixedSize(frameWidth, frameHeight);
+                  } }
+        );
     };
 
     // MARK: SwitchToggle
@@ -267,41 +399,43 @@ DuckDesignSystem::DuckDesignSystem() :
         float frameWidth = config.size ? config.size->x : 60;
         float frameHeight = config.size ? config.size->y : 30;
 
-        vb.ToggleButtonView({ .isOnBinding = config.isOnBinding, .buildFrameFunc = [=](auto& vb) {
-                                 vb.Immediate(
-                                       { .renderFunc =
-                                             [=](auto& view, auto& renderer) {
-                                                 auto& button = *(static_cast<ToggleButtonControl*>(
-                                                     view.ParentView()
-                                                 ));
+        vb.ToggleButtonView(
+            { .isOnBinding = config.isOnBinding,
+              .modifyViewFunc = config.modifyViewFunc,
+              .buildFrameFunc =
+                  [=](auto& vb) {
+                      vb.Immediate(
+                            { .renderFunc =
+                                  [=](auto& view, auto& renderer) {
+                                      auto& button =
+                                          *(static_cast<ToggleButtonControl*>(view.ParentView()));
 
-                                                 renderer.SetColor(
-                                                     button.IsToggleOn() ? primaryContainerColor
-                                                                         : surfaceColor
-                                                 );
-                                                 renderer.FillCapsule(view.Bounds());
+                                      renderer.SetColor(
+                                          button.IsToggleOn() ? primaryContainerColor : surfaceColor
+                                      );
+                                      renderer.FillCapsule(view.Bounds());
 
-                                                 Rect circleBounds;
-                                                 circleBounds.size = { frameHeight, frameHeight };
+                                      Rect circleBounds;
+                                      circleBounds.size = { frameHeight, frameHeight };
 
-                                                 if (button.IsToggleOn()) {
-                                                     circleBounds.origin.x =
-                                                         frameWidth - circleBounds.size.x;
-                                                 }
+                                      if (button.IsToggleOn()) {
+                                          circleBounds.origin.x = frameWidth - circleBounds.size.x;
+                                      }
 
-                                                 renderer.SetColor(
-                                                     button.IsPressed()    ? pressColor
-                                                     : button.IsHovering() ? hoverColor
-                                                                           : primaryColor
-                                                 );
-                                                 renderer.FillEllipse(circleBounds);
-                                             },
-                                         .modifyRendererFunc =
-                                             [=](auto& renderer) {
-                                                 renderer.areShapesOpaque = areShapesOpaque;
-                                             } }
-                                 ).FixedSize(frameWidth, frameHeight);
-                             } });
+                                      renderer.SetColor(
+                                          button.IsPressed()    ? pressColor
+                                          : button.IsHovering() ? hoverColor
+                                                                : primaryColor
+                                      );
+                                      renderer.FillEllipse(circleBounds);
+                                  },
+                              .modifyRendererFunc =
+                                  [=](auto& renderer) {
+                                      renderer.areShapesOpaque = areShapesOpaque;
+                                  } }
+                      ).FixedSize(frameWidth, frameHeight);
+                  } }
+        );
     };
 
     // MARK: buildCheckTypeButtonFunc
@@ -325,54 +459,56 @@ DuckDesignSystem::DuckDesignSystem() :
 
         bool areShapesOpaque = this->areShapesOpaque;
 
-        vb.ToggleButtonView({ .isOnBinding = config.isOnBinding, .buildFrameFunc = [=](auto& vb) {
-                                 vb.Immediate(
-                                       { .renderFunc =
-                                             [=](auto& view, auto& renderer) {
-                                                 auto& button = *(static_cast<ToggleButtonControl*>(
-                                                     view.ParentView()
-                                                 ));
+        vb.ToggleButtonView(
+            { .isOnBinding = config.isOnBinding,
+              .modifyViewFunc = config.modifyViewFunc,
+              .buildFrameFunc =
+                  [=](auto& vb) {
+                      vb.Immediate(
+                            { .renderFunc =
+                                  [=](auto& view, auto& renderer) {
+                                      auto& button =
+                                          *(static_cast<ToggleButtonControl*>(view.ParentView()));
 
-                                                 // FUTURE: support outline role (see Material)
-                                                 float strokeWidth = button.IsPressed() ? 5 : 3;
+                                      // FUTURE: support outline role (see Material)
+                                      float strokeWidth = button.IsPressed() ? 5 : 3;
 
-                                                 if (button.IsToggleOn()) {
-                                                     renderer.SetColor(
-                                                         button.IsPressed()    ? isOnPressColor
-                                                         : button.IsHovering() ? isOnHoverColor
-                                                                               : isOnColor
-                                                     );
-                                                 } else {
-                                                     renderer.SetColor(
-                                                         button.IsPressed()    ? pressColor
-                                                         : button.IsHovering() ? hoverColor
-                                                                               : surfaceColor
-                                                     );
-                                                 }
+                                      Color color;
+                                      if (button.IsToggleOn()) {
+                                          color = button.IsPressed()    ? isOnPressColor
+                                                  : button.IsHovering() ? isOnHoverColor
+                                                                        : isOnColor;
+                                      } else {
+                                          color = button.IsPressed()    ? pressColor
+                                                  : button.IsHovering() ? hoverColor
+                                                                        : surfaceColor;
+                                      }
+                                      renderer.SetColor(color);
+                                      renderer.SetStrokeColor(color);
 
-                                                 Rect checkFrame = view.Bounds();
-                                                 checkFrame.size.x = checkFrame.size.y;
+                                      Rect checkFrame = view.Bounds();
+                                      checkFrame.size.x = checkFrame.size.y;
 
-                                                 if (button.IsToggleOn()) {
-                                                     drawFill(renderer, checkFrame);
-                                                 } else {
-                                                     drawFrame(renderer, checkFrame, strokeWidth);
-                                                 }
+                                      if (button.IsToggleOn()) {
+                                          drawFill(renderer, checkFrame);
+                                      } else {
+                                          drawFrame(renderer, checkFrame, strokeWidth);
+                                      }
 
-                                                 renderer.SetColor(
-                                                     button.IsPressed() ? labelPressColor
-                                                                        : labelColor
-                                                 );
-                                                 renderer.Text(
-                                                     config.label, { checkFrame.size.x + 15, 0 }, 32
-                                                 );
-                                             },
-                                         .modifyRendererFunc =
-                                             [=](auto& renderer) {
-                                                 renderer.areShapesOpaque = areShapesOpaque;
-                                             } }
-                                 ).FixedSize({}, frameHeight);
-                             } });
+                                      renderer.SetColor(
+                                          button.IsPressed() ? labelPressColor : labelColor
+                                      );
+                                      renderer.Text(
+                                          config.label, { checkFrame.size.x + 15, 0 }, 32
+                                      );
+                                  },
+                              .modifyRendererFunc =
+                                  [=](auto& renderer) {
+                                      renderer.areShapesOpaque = areShapesOpaque;
+                                  } }
+                      ).FixedSize({}, frameHeight);
+                  } }
+        );
     };
 
     // MARK: Check button
@@ -406,9 +542,10 @@ DuckDesignSystem::DuckDesignSystem() :
     buildViewFuncs[UIItemId::ProgressBar] = [this](auto _config, auto& vb) {
         ProgressBarConfig& config = *(static_cast<ProgressBarConfig*>(_config));
 
-        Color backColor = theme->ThemeColor(UIElementId::SecondaryContainer, Color::gray);
-        Color barColor =
-            config.color ? *config.color : theme->ThemeColor(UIElementId::Primary, Color::black);
+        Color backColor = theme->ThemeColor(UIElementId::Secondary, Color::gray);
+        Color barColor = config.progressColor
+                             ? *config.progressColor
+                             : theme->ThemeColor(UIElementId::Primary, Color::black);
         float frameHeight = theme->ElementSize(UIElementId::ControlFrame, { 0, 30 }).y;
 
         bool areShapesOpaque = this->areShapesOpaque;
@@ -436,9 +573,10 @@ DuckDesignSystem::DuckDesignSystem() :
     buildViewFuncs[UIItemId::ProgressCircle] = [this](auto _config, auto& vb) {
         ProgressBarConfig& config = *(static_cast<ProgressBarConfig*>(_config));
 
-        Color backColor = theme->ThemeColor(UIElementId::SecondaryContainer, Color::gray);
-        Color barColor =
-            config.color ? *config.color : theme->ThemeColor(UIElementId::Primary, Color::black);
+        Color backColor = theme->ThemeColor(UIElementId::Secondary, Color::gray);
+        Color barColor = config.progressColor
+                             ? *config.progressColor
+                             : theme->ThemeColor(UIElementId::Primary, Color::black);
 
         bool areShapesOpaque = this->areShapesOpaque;
 
@@ -507,7 +645,7 @@ DuckDesignSystem::DuckDesignSystem() :
                     renderer.SetStartPathCap(PathCap::Flat)
                         .SetEndPathCap(PathCap::Flat)
                         .SetStrokeWidth(8)
-                        .SetColor(onSurfaceColor);
+                        .SetStrokeColor(onSurfaceColor);
 
                     renderer.Line(start, end);
                 },
@@ -547,18 +685,38 @@ DuckDesignSystem::DuckDesignSystem() :
 
         Color surfaceColor = theme->ThemeColor(UIElementId::SurfaceContainerHighTertiary);
 
-        vb.MatchZStack({ .buildBackgroundFunc =
-                             [=](auto& vb) {
-                                 vb.Immediate({ .renderFunc = [=](auto& view, auto& renderer) {
-                                     renderer.FillRect(view.Bounds(), surfaceColor);
-                                 } });
-                             },
-                         .buildViewFunc =
-                             [=](auto& vb) {
-                                 vb.Pad({ .insets = LayoutInsets::Uniform(32),
-                                          .buildViewFunc = [=](auto& vb) {
-                                              vb.Text({ .text = config.text });
-                                          } });
+        vb.Pad({ .insets = LayoutInsets::Uniform(32),
+                 .buildViewFunc = [=](auto& vb) { vb.Text({ .text = config.text }); } }
+        ).Background([=](auto& vb) {
+            vb.Immediate({ .renderFunc = [=](auto& view, auto& renderer) {
+                renderer.FillRect(view.Bounds(), surfaceColor);
+            } });
+        });
+    };
+
+    // MARK: ToolTip
+
+    buildViewFuncs[UIItemId::ToolTip] = [this](auto _config, auto& vb) {
+        ToolTipConfig& config = *(static_cast<ToolTipConfig*>(_config));
+
+        Color surfaceColor = theme->ThemeColor(UIElementId::SurfaceContainerLowTertiary);
+
+        BuildViewFunc buildBackgroundFunc = [=](auto& vb) {
+            vb.Immediate({ .renderFunc = [=](auto& view, auto& renderer) {
+                renderer.FillRect(view.Bounds(), surfaceColor);
+            } });
+        };
+
+        BuildViewFunc buildViewFunc = [=](auto& vb) {
+            vb.Pad({ .insets = LayoutInsets::Uniform(16),
+                     .buildViewFunc = [=](auto& vb) { vb.Text({ .text = config.text }); } });
+        };
+
+        vb.ViewAttachments({ .buildBackgroundFunc = buildBackgroundFunc,
+                             .buildViewFunc = buildViewFunc,
+                             .modifyViewFunc = [config](auto& view) {
+                                 GUARD(config.result);
+                                 *config.result = &view;
                              } });
     };
 }

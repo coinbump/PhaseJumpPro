@@ -66,7 +66,7 @@ TEST(ViewProxy, MakePlaceViewFuncTopLeadingSameSizeParent) {
     ViewProxy proxy({});
     proxy.viewSizeFunc = ViewProxy::MakeFixedViewSizeFunc({20, 10});
     
-    ViewPoint viewPoint = ViewPoint::topLeading;
+    LayoutAnchor2D viewPoint = LayoutAnchor2D::topLeft;
     ViewSizeProposal proposal{100, 100};
     
     sut(proxy, {0, 0}, viewPoint, proposal);
@@ -97,7 +97,7 @@ TEST(ViewProxy, MakePlaceViewFuncCenterSameSizeParent) {
     ViewProxy proxy({});
     proxy.viewSizeFunc = ViewProxy::MakeFixedViewSizeFunc({20, 10});
     
-    ViewPoint viewPoint = ViewPoint::center;
+    LayoutAnchor2D viewPoint = LayoutAnchor2D::center;
     ViewSizeProposal proposal{100, 100};
     
     sut(proxy, {0, 0}, viewPoint, proposal);
@@ -128,7 +128,7 @@ TEST(ViewProxy, MakePlaceViewFuncCenterSameSizeParentOffset) {
     ViewProxy proxy({});
     proxy.viewSizeFunc = ViewProxy::MakeFixedViewSizeFunc({20, 10});
     
-    ViewPoint viewPoint = ViewPoint::center;
+    LayoutAnchor2D viewPoint = LayoutAnchor2D::center;
     ViewSizeProposal proposal{100, 100};
     
     sut(proxy, {4, 3}, viewPoint, proposal);
@@ -159,7 +159,7 @@ TEST(ViewProxy, MakePlaceViewFuncTopLeadingBigParent) {
     ViewProxy proxy({});
     proxy.viewSizeFunc = ViewProxy::MakeFixedViewSizeFunc({20, 10});
     
-    ViewPoint viewPoint = ViewPoint::topLeading;
+    LayoutAnchor2D viewPoint = LayoutAnchor2D::topLeft;
     ViewSizeProposal proposal{100, 100};
     
     sut(proxy, {0, 0}, viewPoint, proposal);

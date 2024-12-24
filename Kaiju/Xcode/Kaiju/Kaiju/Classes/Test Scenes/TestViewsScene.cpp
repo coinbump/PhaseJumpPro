@@ -11,22 +11,23 @@ TestViewsScene::TestViewsScene() {
         // TODO: should this be optional<int>? for no selection?
         Binding<int> binding{ [this]() { return LayoutSizeIndex() ? *LayoutSizeIndex() : -1; },
                               [this](auto& value) { SetLayoutSizeIndex(value); } };
-        planner.ListSelect("Sizes", { "1080", "phone" }, binding);
-
-        planner.PickerColor(
-            "Environment Color",
-            { [this]() {
-                 auto rootView = RootView();
-                 return rootView ? rootView->EnvironmentValue<Color>("color", Color::gray)
-                                 : Color::gray;
-             },
-              [this](auto& value) {
-                  auto rootView = RootView();
-                  if (rootView) {
-                      rootView->SetEnvironmentValue("color", value);
-                  }
-              } }
+        planner.ListSelect({ .label = "Sizes", .options = { "1080", "phone" }, .binding = binding }
         );
+
+        planner.PickerColor({ .label = "Environment Color",
+                              .binding = { [this]() {
+                                              auto rootView = RootView();
+                                              return rootView ? rootView->EnvironmentValue<Color>(
+                                                                    "color", Color::gray
+                                                                )
+                                                              : Color::gray;
+                                          },
+                                           [this](auto& value) {
+                                               auto rootView = RootView();
+                                               if (rootView) {
+                                                   rootView->SetEnvironmentValue("color", value);
+                                               }
+                                           } } });
     };
     Override(planUIFuncs[UIContextId::Editor], planUIFunc);
 }
@@ -74,33 +75,33 @@ void TestViewsScene::LoadInto(WorldNode& root) {
 
     auto& ac = root.With<WorldComponent<>>();
     rootComponent = &ac;
-    ac.signalFuncs[SignalId::KeyDown] = [this, &root](auto& component, auto& signal) {
-        auto keyDownEvent = dynamic_cast<KeyDownUIEvent const*>(&signal);
-        GUARD(keyDownEvent)
+    ac.AddSignalHandler<KeyDownUIEvent>({ .id = SignalId::KeyDown,
+                                          .func = [this,
+                                                   &root](auto& component, auto& keyDownEvent) {
+                                              switch (keyDownEvent.keyCode.value) {
+                                              case SDLK_LEFT:
+                                                  {
+                                                      targetView--;
+                                                      if (targetView < 0) {
+                                                          targetView =
+                                                              (int)buildViewModels.size() - 1;
+                                                      }
 
-        switch (keyDownEvent->keyCode.value) {
-        case SDLK_LEFT:
-            {
-                targetView--;
-                if (targetView < 0) {
-                    targetView = (int)buildViewModels.size() - 1;
-                }
+                                                      RebuildTargetView();
+                                                      break;
+                                                  }
+                                              case SDLK_RIGHT:
+                                                  {
+                                                      targetView++;
+                                                      if (targetView >= buildViewModels.size()) {
+                                                          targetView = 0;
+                                                      }
 
-                RebuildTargetView();
-                break;
-            }
-        case SDLK_RIGHT:
-            {
-                targetView++;
-                if (targetView >= buildViewModels.size()) {
-                    targetView = 0;
-                }
-
-                RebuildTargetView();
-                break;
-            }
-        }
-    };
+                                                      RebuildTargetView();
+                                                      break;
+                                                  }
+                                              }
+                                          } });
 
     auto textView = [=](ViewBuilder& vb, String text) -> ViewBuilder& {
         vb.Text({ .fontSpec = { .size = 32 }, .text = text, .color = Color::black })
@@ -134,7 +135,8 @@ void TestViewsScene::LoadInto(WorldNode& root) {
                       auto& button = *(static_cast<ToggleButtonControl*>(&control));
                       GUARD(!IsEmpty(button.owner->Children()))
 
-                      auto renderer = button.owner->Children()[0]->TypeComponent<SomeRenderer>();
+                      auto renderer =
+                          button.owner->Children()[0]->TypeComponent<SomeMaterialRenderer>();
                       GUARD(renderer)
 
                       renderer->SetColor(
@@ -198,17 +200,6 @@ void TestViewsScene::LoadInto(WorldNode& root) {
                                    });
                                }});
 #endif
-        auto dialStack = [=, this](ViewBuilder& vb) {
-            vb.VStack({ .spacing = 20, .buildViewFunc = [=, this](auto& vb) {
-                           vb.HStack({ .buildViewFunc = [=, this](auto& vb) {
-                               vb.Spacer().Dial({ .valueBinding = { [this]() { return dialValue; },
-                                                                    [this](auto& value) {
-                                                                        dialValue = value;
-                                                                    } } });
-                           } });
-                       } });
-        };
-
         auto duckUIStack = [=, this](ViewBuilder& vb) {
             vb.VStack({ .spacing = 20, .buildViewFunc = [=, this](auto& vb) {
                            vb.HStack({ .buildViewFunc = [=](auto& vb) {
@@ -242,7 +233,7 @@ void TestViewsScene::LoadInto(WorldNode& root) {
 
                            vb.HStack({ .buildViewFunc = [=](auto& vb) {
                                vb.Label({ .text = "Progress Bar + Color" })
-                                   .ProgressBar({ .color = Color::red,
+                                   .ProgressBar({ .progressColor = Color::red,
                                                   .valueFunc = []() { return 0.3f; } });
                            } });
 
@@ -287,6 +278,49 @@ void TestViewsScene::LoadInto(WorldNode& root) {
                                vb.Label({ .text = "Toast" })
                                    .Toast({ .text = "This is an important announcement" });
                            } });
+
+                           vb.HStack({ .buildViewFunc = [=](auto& vb) {
+                               vb.Label({ .text = "ToolTip" })
+                                   .Button({ .label = "Hover for Tip",
+                                             .modifyViewFunc = [=](auto& view) {
+                                                 ViewBuilder(*view.owner)
+                                                     .AddToolTip(
+                                                         { .text = "This is a helpful ToolTip" }
+                                                     );
+                                             } });
+                           } });
+
+                           vb.HStack({ .buildViewFunc = [=](auto& vb) {
+                               // FUTURE: add vertical slider if needed
+                               vb.Label({ .text = "Slider" }).Slider({ .axis = Axis2D::X });
+                           } });
+                       } });
+        };
+
+        auto colorRect = [](ViewBuilder& vb, String colorId, String colorName) {
+            auto designSystem = vb.GetDesignSystem();
+
+            vb.Immediate({ .renderFunc =
+                               [=](auto& view, auto& renderer) {
+                                   renderer.areShapesOpaque = true;
+                                   renderer.SetColor(
+                                       designSystem->theme->ThemeColor(colorId, Color::gray)
+                                   );
+
+                                   renderer.FillRect(view.Bounds())
+                                       .Text(colorName, Vector2{ 10, 10 }, 32, Color::black);
+                               } }
+            ).FixedSize({}, 36);
+        };
+
+        auto colorsStack = [=](ViewBuilder& vb) {
+            auto designSystem = vb.GetDesignSystem();
+
+            vb.VStack({ .spacing = 5, .buildViewFunc = [=](auto& vb) {
+                           for (auto& colorItem : designSystem->theme->Colors()) {
+                               auto& color = colorItem.second;
+                               colorRect(vb, colorItem.first, colorItem.first);
+                           }
                        } });
         };
 
@@ -301,6 +335,149 @@ void TestViewsScene::LoadInto(WorldNode& root) {
                             });
                         } });
 
+        buildViewModels
+            .push_back({ "Color roles", [=](WorldNode& root) {
+                            QB(root).And("Root View").RootView({ 800, 1800 }, [=](auto& vb) {
+                                vb.ZStack({ .buildViewFunc = [=](auto& vb) {
+                                    vb.Surface();
+                                    vb.Pad({ .insets = LayoutInsets::Uniform(20),
+                                             .buildViewFunc = colorsStack });
+                                } });
+                            });
+                        } });
+
+        buildViewModels.push_back(
+            { "Pop",
+              [=](WorldNode& root) {
+                  QB(root).And("Root View").RootView({ 800, 200 }, [=](auto& vb) {
+                      vb.ZStack({ .buildViewFunc = [=](auto& vb) {
+                          vb.Color(Color32(33, 60, 89))
+                              .Pad({ .insets = LayoutInsets::Uniform(10),
+                                     .buildViewFunc = [=](auto& vb) {
+                                         vb.HStack(
+                                             { .spacing = 20,
+                                               .buildViewFunc =
+                                                   [=](auto& vb) {
+                                                       auto view = vb.ActiveView();
+
+                                                       colorButton(vb, "Pop", [view](auto& button) {
+                                                           ViewBuilder vb(*view->owner);
+                                                           vb.ActiveView()->Present(
+                                                               { .makeFrameFunc =
+                                                                     [](auto& presentingView,
+                                                                        auto& view) {
+                                                                         Vector2 popoverPosition{
+                                                                             0,
+                                                                             presentingView.Frame()
+                                                                                 .size.y
+                                                                         };
+
+                                                                         return Rect{
+                                                                             .origin =
+                                                                                 presentingView
+                                                                                     .ToRootViewPosition(
+                                                                                         popoverPosition
+                                                                                     ),
+                                                                             .size = { 200, 100 }
+                                                                         };
+                                                                     },
+                                                                 .buildViewFunc =
+                                                                     [](auto& vb) {
+                                                                         vb.Immediate(
+                                                                             { .renderFunc =
+                                                                                   [](auto& view,
+                                                                                      auto& renderer
+                                                                                   ) {
+                                                                                       renderer.FillRect(
+                                                                                           view.Bounds(
+                                                                                           )
+                                                                                       );
+                                                                                   } }
+                                                                         );
+                                                                     } }
+                                                           );
+                                                       });
+
+                                                       vb.Button(
+                                                           { .label = "Button",
+                                                             .modifyViewFunc =
+                                                                 [](auto& view) {
+                                                                     ViewBuilder(*view.owner)
+                                                                         .AddToolTip(
+                                                                             { .text =
+                                                                                   "This is a test "
+                                                                                   "of a very long "
+                                                                                   "tooltip, what "
+                                                                                   "happens when "
+                                                                                   "the text gets "
+                                                                                   "longer, does "
+                                                                                   "it wrap to a "
+                                                                                   "new line or "
+                                                                                   "does something "
+                                                                                   "terrible "
+                                                                                   "happen, and "
+                                                                                   "then if it "
+                                                                                   "gets longer "
+                                                                                   "and longer and "
+                                                                                   "longer what "
+                                                                                   "gives?" }
+                                                                         );
+                                                                 } }
+                                                       );
+
+                                                       colorButton(vb, "Button", {});
+                                                   } }
+                                         );
+                                     } });
+                      } });
+                  });
+              } }
+        );
+
+        auto dialStack = [=, this](ViewBuilder& vb) {
+            vb.VStack({ .spacing = 20, .buildViewFunc = [=, this](auto& vb) {
+                           vb.HStack({ .buildViewFunc = [=, this](auto& vb) {
+                               vb.Spacer().Dial({ .valueBinding = { [this]() { return dialValue; },
+                                                                    [this](auto& value) {
+                                                                        dialValue = value;
+                                                                    } } });
+                           } });
+                       } });
+        };
+
+        auto fixedGridView = [=, this](ViewBuilder& vb) {
+            vb.FixedGrid({ .gridSize = { 5, 5 },
+                           .spacing = { 20, 20 },
+                           .buildViewFunc = [=, this](auto& vb) {
+                               Repeat(15, [this, &vb] {
+                                   vb.ZStack({ .buildViewFunc = [this](auto& vb) {
+                                       vb.Immediate({ .renderFunc =
+                                                          [](auto& view, auto& renderer) {
+                                                              renderer.SetStrokeColor(Color::white)
+                                                                  .SetStrokeWidth(3)
+                                                                  .FrameRect(view.Bounds());
+                                                          } }
+                                       ).FixedSize(100, 100);
+
+                                       vb.Dial({ .valueBinding = { [this]() { return dialValue; },
+                                                                   [this](auto& value) {
+                                                                       dialValue = value;
+                                                                   } } });
+                                   } });
+                               });
+                           } });
+        };
+
+        buildViewModels
+            .push_back({ "FixedGrid", [=](WorldNode& root) {
+                            QB(root).And("Root View").RootView({ 1000, 1000 }, [=](auto& vb) {
+                                vb.ZStack({ .buildViewFunc = [=](auto& vb) {
+                                    vb.Surface();
+                                    vb.Pad({ .insets = LayoutInsets::Uniform(20),
+                                             .buildViewFunc = fixedGridView });
+                                } });
+                            });
+                        } });
         buildViewModels.push_back(
             { "Immediate",
               [=](WorldNode& root) {
@@ -366,7 +543,10 @@ void TestViewsScene::LoadInto(WorldNode& root) {
                                      .buildViewFunc =
                                          [](auto& vb) {
                                              vb.Text({ .fontSpec = { .size = 32 },
-                                                       .text = "Quit to Main Menu?",
+                                                       .text =
+                                                           AttributedString("Quit to Main Menu?")
+                                                               .ApplyColor(Color::red, 0, 4)
+                                                               .ApplyColor(Color::blue, 8, 9),
                                                        .color = Color::black })
                                                  .SetIsIdealSize()
                                                  .HStack({ .spacing = 100,
@@ -500,25 +680,6 @@ void TestViewsScene::LoadInto(WorldNode& root) {
               } }
         );
 
-        buildViewModels.push_back(
-            { "Buttons",
-              [=](WorldNode& root) {
-                  QB(root).And("Root View").RootView({ 800, 200 }, [=](auto& vb) {
-                      vb.ZStack({ .buildViewFunc = [=](auto& vb) {
-                          vb.Color(Color32(33, 60, 89))
-                              .Pad({ .insets = LayoutInsets::Uniform(10),
-                                     .buildViewFunc = [=](auto& vb) {
-                                         vb.HStack({ .spacing = 20, .buildViewFunc = [=](auto& vb) {
-                                                        colorButton(vb, "Button", {});
-                                                        colorButton(vb, "Button", {});
-                                                        colorButton(vb, "Button", {});
-                                                    } });
-                                     } });
-                      } });
-                  });
-              } }
-        );
-
         static SP<SingleSelectStore> pageViewStore = MAKE<SingleSelectStore>();
 
         buildViewModels.push_back(
@@ -564,25 +725,30 @@ void TestViewsScene::LoadInto(WorldNode& root) {
                                                             } } } })
                                   .QB()
                                   .template ModifyLatest<PageView>([](auto& view) {
-                                      view.signalFuncs[SignalId::KeyDown] = [&](auto& component,
-                                                                                auto& signal) {
-                                          auto keyDownEvent =
-                                              dynamic_cast<KeyDownUIEvent const*>(&signal);
-                                          GUARD(keyDownEvent)
+                                      view.AddSignalHandler(
+                                          { .id = SignalId::KeyDown,
+                                            .func =
+                                                [&](auto& component, auto& signal) {
+                                                    auto keyDownEvent =
+                                                        dynamic_cast<KeyDownUIEvent const*>(&signal
+                                                        );
+                                                    GUARD(keyDownEvent)
 
-                                          switch (keyDownEvent->keyCode.value) {
-                                          case '8':
-                                              view.Navigate(
-                                                  PageView::NavigateDirection::Back, true
-                                              );
-                                              break;
-                                          case '9':
-                                              view.Navigate(
-                                                  PageView::NavigateDirection::Forward, true
-                                              );
-                                              break;
-                                          }
-                                      };
+                                                    switch (keyDownEvent->keyCode.value) {
+                                                    case '8':
+                                                        view.Navigate(
+                                                            PageView::NavigateDirection::Back, true
+                                                        );
+                                                        break;
+                                                    case '9':
+                                                        view.Navigate(
+                                                            PageView::NavigateDirection::Forward,
+                                                            true
+                                                        );
+                                                        break;
+                                                    }
+                                                } }
+                                      );
                                   });
                           } });
                       } });
@@ -795,15 +961,18 @@ void TestViewsScene::LoadInto(WorldNode& root) {
                   QB(root).And("Root View").RootView(_1080, [=](auto& vb) {
                       vb.VStack({ .buildViewFunc = [](auto& vb) {
                           vb.Spacer()
-                              .MatchZStack({ .buildBackgroundFunc =
-                                                 [](auto& vb) {
-                                                     vb.Color(Color(1, 137.0f / 255.0f, 0, 1));
-                                                 },
-                                             .buildViewFunc =
-                                                 [](auto& vb) {
-                                                     vb.Pad({ .insets = LayoutInsets::Uniform(50),
-                                                              .buildViewFunc = [](auto& vb) {
-                                                                  vb.HStack({ .spacing = 0,
+                              .ViewAttachments({ .buildBackgroundFunc =
+                                                     [](auto& vb) {
+                                                         vb.Color(Color(1, 137.0f / 255.0f, 0, 1));
+                                                     },
+                                                 .buildViewFunc =
+                                                     [](auto& vb) {
+                                                         vb
+                                                             .Pad({ .insets =
+                                                                        LayoutInsets::Uniform(50),
+                                                                    .buildViewFunc = [](auto& vb) {
+                                                                        vb.HStack(
+                                                                            { .spacing = 0,
                                                                               .buildViewFunc =
                                                                                   [](auto& vb) {
                                                                                       vb.Spacer()
@@ -857,9 +1026,10 @@ void TestViewsScene::LoadInto(WorldNode& root) {
                                                                                                         } }
                                                                                           )
                                                                                           .Spacer();
-                                                                                  } });
-                                                              } });
-                                                 } })
+                                                                                  } }
+                                                                        );
+                                                                    } });
+                                                     } })
                               .Spacer();
                       } });
                   });
@@ -1056,6 +1226,47 @@ void TestViewsScene::LoadInto(WorldNode& root) {
                                            ).Color(Color::gray);
                                        } });
                       } });
+                  });
+              } }
+        );
+
+        buildViewModels.push_back(
+            { "Background + Overlay",
+              [=](WorldNode& root) {
+                  QB(root).And("Root View").RootView(_1080, [=](auto& vb) {
+                      vb.Pad({ .insets = LayoutInsets::Uniform(50),
+                               .buildViewFunc =
+                                   [](auto& vb) {
+                                       vb.Text({ .fontSpec = { .size = 32 },
+                                                 .text = "Background/Overlay",
+                                                 .color = Color::black })
+                                           .SetIsIdealSize();
+                                   } }
+                      ).Background([](auto& vb) {
+                           vb.Color(Color(1, 0, 137.0f / 255.0f, 1));
+                       }).Overlay([](auto& vb) { vb.Color(Color(1, 1, 1, 0.3f)); });
+                  });
+              } }
+        );
+
+        buildViewModels.push_back(
+            { "View Attachments",
+              [=](WorldNode& root) {
+                  QB(root).And("Root View").RootView(_1080, [=](auto& vb) {
+                      vb.ViewAttachments(
+                          { .buildBackgroundFunc = [](auto& vb
+                                                   ) { vb.Color(Color(1, 137.0f / 255.0f, 0, 1)); },
+                            .buildViewFunc =
+                                [](auto& vb) {
+                                    vb.Pad({ .insets = LayoutInsets::Uniform(50),
+                                             .buildViewFunc = [](auto& vb) {
+                                                 vb.Text({ .fontSpec = { .size = 32 },
+                                                           .text = "Quit to Main Menu?",
+                                                           .color = Color::black })
+                                                     .SetIsIdealSize();
+                                             } });
+                                } }
+                      );
                   });
               } }
         );

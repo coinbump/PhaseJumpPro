@@ -37,9 +37,6 @@ class Image;
     FUTURE: evaluate hq3x, etc. algorithms:
     http://en.wikipedia.org/wiki/2xSaI#2xSaI
 
-    TODO: evaluate libpng, NSBitmapRep for image conversions.
-    TODO: support 16 bit bitmaps, 16 bit to 32 bit color conversion.
-
     FUTURE: Evaluate:
     Convolution Filters:
     http://www.roborealm.com/help/Convolution.php

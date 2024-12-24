@@ -2,7 +2,7 @@
 
 #include "WorldComponent.h"
 
-// /23
+// Unimplemented. Future feature (see Godo: Viewport)
 namespace PJ {
     /// Acts as storage and a render hint in the node graph for building
     /// an offscreen buffer

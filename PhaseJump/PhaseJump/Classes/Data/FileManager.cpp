@@ -16,7 +16,9 @@ String FileManager::FileExtension(FilePath filePath, bool withDot) {
     auto result = String(filePath.extension().string());
 
     if (!withDot) {
-        RemoveIf(result, [](char c) { return c == '.'; });
+        if (!IsEmpty(result) && '.' == result[0]) {
+            result = Suffix(result, result.size() - 1);
+        }
     }
 
     return result;

@@ -17,10 +17,10 @@ public:
         PlanUIFunc planUIFunc = [](auto& component, String context, UIPlanner& planner) {
             auto concrete = static_cast<This*>(&component);
 
-            planner.InputFloat(
-                "Emit delta", { [=]() { return concrete->EmitDelta(); },
-                                [=](auto& value) { concrete->SetEmitDelta(value); } }
-            );
+            planner.InputFloat({ .label = "Emit delta",
+                                 .binding = {
+                                     [=]() { return concrete->EmitDelta(); },
+                                     [=](auto& value) { concrete->SetEmitDelta(value); } } });
         };
         Override(planUIFuncs[UIContextId::Editor], planUIFunc);
     }
@@ -62,14 +62,14 @@ public:
 
         World& world = *root.World();
 
-        auto texture = DCAST<GLTexture>(world.FindTexture("heart-full"));
+        auto texture = DCAST<GLTexture>(world.resources.FindTexture("heart-full"));
         GUARD(texture)
 
         heartMaterial =
             MAKE<RenderMaterial>(RenderMaterial::Config{ .shaderId = "texture.uniform" });
         heartMaterial->Add(texture);
 
-        auto font = DCAST<Font>(world.FindFontWithSize(32));
+        auto font = DCAST<Font>(FindFontWithSize(world.resources, 32));
 
         auto node = MAKE<WorldNode>("Emitter");
         Emitter::SpawnFunc spawnFunc = [this, font](Emitter& emitter, EmitModel emit) {
@@ -122,8 +122,9 @@ public:
         emitter->maxAlive = 5;
 #endif
 
-        emitter->emitFunc =
-            EmitFuncs::MakeSpread2D(4, Angle::WithDegrees(20.0f), Angle::WithDegrees(3.0f));
+        emitter->emitFunc = EmitFuncs::Spread2D({ .count = 4,
+                                                  .angleStep = Angle::WithDegrees(20.0f),
+                                                  .varyAngle = Angle::WithDegrees(3.0f) });
         emitter->positionFunc = [](auto& emitter) {
             return CirclePositioner2D::MakeFunc(500.0f)(*emitter.random);
         };

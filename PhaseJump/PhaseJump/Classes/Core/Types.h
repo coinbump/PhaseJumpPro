@@ -1,6 +1,3 @@
-#ifndef PJTYPES_H_
-#define PJTYPES_H_
+#pragma once
 
 using Int = int64_t;
-
-#endif

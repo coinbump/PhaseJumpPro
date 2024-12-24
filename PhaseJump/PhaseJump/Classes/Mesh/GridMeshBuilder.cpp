@@ -13,7 +13,7 @@ Mesh GridMeshBuilder::BuildMesh() {
     auto uvSize = meshVertexCount;
 
     VectorList<Vector3> vertices(meshVertexCount);
-    VectorList<uint32_t> triangles(trianglesSize, 0);
+    VectorList<uint32_t> triangles(trianglesSize);
     VectorList<Vector2> uvs(uvSize);
 
     Vector2 cellSize;

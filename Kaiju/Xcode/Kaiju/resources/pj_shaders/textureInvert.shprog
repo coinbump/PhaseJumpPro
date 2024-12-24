@@ -1,5 +1,5 @@
 {
 	"id": "texture.invert",
-	"shader.vertex": "vertex+texture",
-	"shader.fragment": "textureInvert"
+	"shader.vertex.path": "vertex/vertex.vsh",
+	"shader.fragment.path": "fragment/textureInvert.fsh"
 }

@@ -35,7 +35,7 @@ void ComponentsController::AddEnableComponentsById(
 ) {
     AddEnableComponentsFunc(state, [ids](auto& controller, bool enable) {
         for (auto& component : controller.Target()->Components()) {
-            GUARD_CONTINUE(ids.contains(component->id))
+            GUARD_CONTINUE(ids.contains(component->Id()))
             component->Enable(enable);
         }
     });
@@ -46,7 +46,7 @@ void ComponentsController::AddEnableComponentsByName(
 ) {
     AddEnableComponentsFunc(state, [names](auto& controller, bool enable) {
         for (auto& component : controller.Target()->Components()) {
-            GUARD_CONTINUE(names.contains(component->name))
+            GUARD_CONTINUE(names.contains(component->Name()))
             component->Enable(enable);
         }
     });

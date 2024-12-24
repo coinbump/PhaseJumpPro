@@ -1,18 +1,20 @@
 #include "ViewBuilder.h"
 #include "ColorView.h"
+#include "FixedGridViewLayout.h"
 #include "FlowStackViewLayout.h"
 #include "Font.h"
 #include "ImRenderer.h"
-#include "MatchSizeViewLayout.h"
 #include "PadViewLayout.h"
 #include "QuickBuild.h"
 #include "SliderControl.h"
 #include "SomeCollider2D.h"
+#include "SomeHoverGestureHandler.h"
 #include "SpacerView.h"
 #include "TextRenderer.h"
 #include "TextView.h"
 #include "ToggleButtonControl.h"
 #include "View2D.h"
+#include "ViewAttachmentsLayout.h"
 #include "World.h"
 #include "ZStackViewLayout.h"
 
@@ -108,6 +110,37 @@ This& ViewBuilder::VStack(BuildConfigFunc<VStackConfig> buildConfigFunc) {
     return *this;
 }
 
+This& ViewBuilder::FixedGrid(BuildConfigFunc<FixedGridConfig> buildConfigFunc) {
+    qb->And()
+        .With<View2D>()
+        .ModifyLatest<View2D>([&](auto& view) {
+            view.buildViewFunc = [=](auto& view) {
+                GUARD(buildConfigFunc)
+                GUARD(view.owner)
+
+                auto config = buildConfigFunc(view);
+                view.owner->name = config.name;
+
+                UP<SomeViewLayout> layout = NEW<FixedGridViewLayout>(FixedGridViewLayout::Config{
+                    .gridSize = config.gridSize,
+                    .cellSize = config.cellSize,
+                    .alignment = config.alignment,
+                    .spacing = config.spacing });
+                view.SetLayout(layout);
+
+                GUARD(config.buildViewFunc)
+
+                ViewBuilder viewBuilder(*view.owner);
+                config.buildViewFunc(viewBuilder);
+            };
+
+            view.Rebuild();
+        })
+        .Pop();
+
+    return *this;
+}
+
 This& ViewBuilder::ZStack(BuildConfigFunc<ZStackConfig> buildConfigFunc) {
     qb->And()
         .With<View2D>()
@@ -136,28 +169,45 @@ This& ViewBuilder::ZStack(BuildConfigFunc<ZStackConfig> buildConfigFunc) {
     return *this;
 }
 
-This& ViewBuilder::Background(BuildViewFunc buildViewFunc) {
-    // TODO: This is a WORK IN PROGRESS. Not ready yet
+This& ViewBuilder::Background(BuildViewFunc buildBackgroundFunc) {
     qb->ModifyLatest<View2D>([&](auto& activeView) {
         auto parentView = activeView.ParentView();
         GUARD_LOG(parentView, "ERROR: Missing parent view for background")
 
+        SP<WorldNode> viewNode = SCAST<WorldNode>(activeView.owner->shared_from_this());
+        parentView->owner->Remove(*viewNode);
+
         ViewBuilder vb(*parentView->owner);
-        buildViewFunc(vb);
-
-        vb.QB().ModifyLatest<View2D>([&](auto& view) {
-            SP<View2D> activeViewShared = SCAST<View2D>(activeView.shared_from_this());
-            UP<SomeViewLayout> layout = NEW<MatchSizeViewLayout>(activeViewShared);
-            view.SetLayout(layout);
-
-            // TODO: parentView->owner->Move(view, parentView->owner->ChildIndex(*activeView));
+        vb.ViewAttachments([=](auto& view) {
+            return ViewAttachmentsConfig{ .buildBackgroundFunc = buildBackgroundFunc,
+                                          .viewNode = viewNode };
         });
     });
 
     return *this;
 }
 
-This& ViewBuilder::MatchZStack(BuildConfigFunc<MatchZStackConfig> buildConfigFunc) {
+This& ViewBuilder::Overlay(BuildViewFunc buildOverlayFunc) {
+    // Important: Add Background first or the view order will be wrong
+    // FUTURE: make this more intelligent if needed
+    qb->ModifyLatest<View2D>([&](auto& activeView) {
+        auto parentView = activeView.ParentView();
+        GUARD_LOG(parentView, "ERROR: Missing parent view for background")
+
+        SP<WorldNode> viewNode = SCAST<WorldNode>(activeView.owner->shared_from_this());
+        parentView->owner->Remove(*viewNode);
+
+        ViewBuilder vb(*parentView->owner);
+        vb.ViewAttachments([=](auto& view) {
+            return ViewAttachmentsConfig{ .buildOverlayFunc = buildOverlayFunc,
+                                          .viewNode = viewNode };
+        });
+    });
+
+    return *this;
+}
+
+This& ViewBuilder::ViewAttachments(BuildConfigFunc<ViewAttachmentsConfig> buildConfigFunc) {
     qb->And()
         .With<View2D>()
         .ModifyLatest<View2D>([&](auto& view) {
@@ -168,10 +218,12 @@ This& ViewBuilder::MatchZStack(BuildConfigFunc<MatchZStackConfig> buildConfigFun
                 auto config = buildConfigFunc(view);
                 view.owner->name = config.name;
 
-                GUARD(config.buildViewFunc)
-
                 ViewBuilder vb(*view.owner);
-                vb.AddMatchZStack(view, config);
+                vb.AddViewAttachments(view, config);
+
+                if (config.modifyViewFunc) {
+                    config.modifyViewFunc(view);
+                }
             };
 
             view.Rebuild();
@@ -181,8 +233,8 @@ This& ViewBuilder::MatchZStack(BuildConfigFunc<MatchZStackConfig> buildConfigFun
     return *this;
 }
 
-This& ViewBuilder::AddMatchZStack(View2D& view, MatchZStackConfig config) {
-    UP<SomeViewLayout> layout = NEW<ZStackViewLayout>(AlignFuncs::center, AlignFuncs::center);
+This& ViewBuilder::AddViewAttachments(View2D& view, ViewAttachmentsConfig config) {
+    UP<SomeViewLayout> layout = NEW<ViewAttachmentsLayout>();
     view.SetLayout(layout);
 
     ViewBuilder backgroundViewBuilder(qb->Node());
@@ -191,35 +243,23 @@ This& ViewBuilder::AddMatchZStack(View2D& view, MatchZStackConfig config) {
 
     if (config.buildBackgroundFunc) {
         config.buildBackgroundFunc(backgroundViewBuilder);
+        auto childViews = view.ChildViews();
+        if (!IsEmpty(childViews)) {
+            childViews[childViews.size() - 1]->isAttachment = true;
+        }
     }
 
-    if (config.buildViewFunc) {
+    if (config.viewNode) {
+        qb->Node().Add(config.viewNode);
+    } else if (config.buildViewFunc) {
         config.buildViewFunc(viewBuilder);
     }
 
-    auto zStackView = qb->Node().TypeComponent<View2D>();
-    auto childViews = zStackView->ChildViews();
-    auto matchView = childViews.size() > 0 ? childViews[childViews.size() - 1] : nullptr;
-
     if (config.buildOverlayFunc) {
         config.buildOverlayFunc(overlayViewBuilder);
-    }
-
-    if (config.buildViewFunc && matchView) {
-        SP<View2D> matchViewShared = SCAST<View2D>(matchView->shared_from_this());
-
-        if (config.buildBackgroundFunc) {
-            backgroundViewBuilder.qb->ModifyLatest<View2D>([&](auto& view) {
-                UP<SomeViewLayout> layout = NEW<MatchSizeViewLayout>(matchViewShared);
-                view.SetLayout(layout);
-            });
-        }
-
-        if (config.buildOverlayFunc) {
-            overlayViewBuilder.qb->ModifyLatest<View2D>([&](auto& view) {
-                UP<SomeViewLayout> layout = NEW<MatchSizeViewLayout>(matchViewShared);
-                view.SetLayout(layout);
-            });
+        auto childViews = view.ChildViews();
+        if (!IsEmpty(childViews)) {
+            childViews[childViews.size() - 1]->isAttachment = true;
         }
     }
 
@@ -263,7 +303,7 @@ This& ViewBuilder::Text(BuildConfigFunc<TextConfig> buildConfigFunc) {
                 auto world = view.owner->World();
                 GUARD(world)
 
-                auto font = world->FindFont(config.fontSpec);
+                auto font = FindFont(world->resources, config.fontSpec);
                 GUARD_LOG(font, "ERROR: Missing font");
 
                 auto& textView = *(static_cast<TextView*>(&view));
@@ -302,7 +342,7 @@ This& ViewBuilder::ButtonView(BuildConfigFunc<ButtonViewConfig> buildConfigFunc)
                 view.owner->name = config.name;
 
                 ViewBuilder vb(*view.owner);
-                vb.AddMatchZStack(
+                vb.AddViewAttachments(
                     view, { .name = config.name,
                             .buildBackgroundFunc = config.buildFrameFunc,
                             .buildViewFunc = config.buildLabelFunc }
@@ -325,6 +365,10 @@ This& ViewBuilder::ButtonView(BuildConfigFunc<ButtonViewConfig> buildConfigFunc)
                 } else if (nullptr == currentCollider) {
                     QuickBuild(*button.owner).RectCollider({ 1, 1 });
                 }
+
+                if (config.modifyViewFunc) {
+                    config.modifyViewFunc(view);
+                }
             };
 
             view.Rebuild();
@@ -346,7 +390,7 @@ This& ViewBuilder::ToggleButtonView(BuildConfigFunc<ToggleButtonViewConfig> buil
                 view.owner->name = config.name;
 
                 ViewBuilder vb(*view.owner);
-                vb.AddMatchZStack(
+                vb.AddViewAttachments(
                     view, { .name = config.name,
                             .buildBackgroundFunc = config.buildFrameFunc,
                             .buildViewFunc = config.buildLabelFunc }
@@ -370,6 +414,10 @@ This& ViewBuilder::ToggleButtonView(BuildConfigFunc<ToggleButtonViewConfig> buil
 
                 if (config.isOnBinding.IsValid()) {
                     button.SetIsOnBinding(config.isOnBinding);
+                }
+
+                if (config.modifyViewFunc) {
+                    config.modifyViewFunc(view);
                 }
             };
 
@@ -402,12 +450,14 @@ This& ViewBuilder::AssociateImmediate(BuildConfigFunc<ImmediateConfig> buildConf
 
             View2D* viewPtr = &view;
 
-            renderer.signalFuncs[SignalId::RenderPrepare] = [=](auto& renderer, auto& signal) {
-                ImRenderer& imRenderer = *(static_cast<ImRenderer*>(&renderer));
-                if (config.renderFunc) {
-                    config.renderFunc(*viewPtr, imRenderer);
-                }
-            };
+            renderer.AddSignalHandler({ .id = SignalId::RenderPrepare,
+                                        .func = [=](auto& renderer, auto& signal) {
+                                            ImRenderer& imRenderer =
+                                                *(static_cast<ImRenderer*>(&renderer));
+                                            if (config.renderFunc) {
+                                                config.renderFunc(*viewPtr, imRenderer);
+                                            }
+                                        } });
 
             if (config.modifyRendererFunc) {
                 config.modifyRendererFunc(renderer);
@@ -611,6 +661,13 @@ This& ViewBuilder::Dial(DialConfig config) {
     return *this;
 }
 
+This& ViewBuilder::Slider(SliderConfig config) {
+    auto designSystem = GetDesignSystem();
+    GUARDR(designSystem, *this)
+    designSystem->BuildView(UIItemId::Slider, config, *this);
+    return *this;
+}
+
 This& ViewBuilder::ProgressBar(ProgressBarConfig config) {
     auto designSystem = GetDesignSystem();
     GUARDR(designSystem, *this)
@@ -650,5 +707,69 @@ This& ViewBuilder::Toast(LabelConfig config) {
     auto designSystem = GetDesignSystem();
     GUARDR(designSystem, *this)
     designSystem->BuildView(UIItemId::Toast, config, *this);
+    return *this;
+}
+
+This& ViewBuilder::AddToolTip(ToolTipConfig config) {
+    auto designSystem = GetDesignSystem();
+    GUARDR(designSystem, *this)
+
+    auto activeView = ActiveView();
+    GUARDR(activeView, *this)
+
+    // Add a collider if needed
+    if (nullptr == activeView->owner->TypeComponent<SomeCollider2D>()) {
+        QuickBuild(*activeView->owner).RectCollider(activeView->Frame().size);
+    }
+
+    activeView->AddSignalHandler<HoverUIEvent>(
+        { .id = SignalId::Hover,
+          .func =
+              [=, toolTipView = (View2D*)nullptr](auto& owner, auto& event) mutable {
+                  auto& view = *(static_cast<View2D*>(&owner));
+
+                  if (event.isHovering) {
+                      GUARD(nullptr == toolTipView)
+                      view.Present(
+                          { .makeFrameFunc =
+                                [=](auto& presentingView, auto& view) {
+                                    float width = config.width;
+                                    view.SetFixedSize(width, {});
+
+                                    ViewSizeProposal proposal({ .width = width,
+                                                                .height = FloatMath::maxValue });
+                                    auto proxy = view.MakeViewProxy();
+                                    Vector2 frameSize = proxy.ViewSize(proposal);
+
+                                    auto presentingSize = presentingView.Bounds().size;
+                                    Vector2 presentingAnchor =
+                                        config.presentingAnchor.AnchorPosition(presentingSize);
+                                    Vector2 viewAnchor = config.anchor.AnchorPosition(frameSize);
+
+                                    Vector2 rootPresentingAnchor =
+                                        presentingView.ToRootViewPosition(presentingAnchor);
+                                    Vector2 popoverPosition = rootPresentingAnchor - viewAnchor;
+
+                                    return Rect{ .origin = popoverPosition + config.offset,
+                                                 .size = frameSize };
+                                },
+                            .buildViewFunc =
+                                [=, &toolTipView](auto& vb) {
+                                    designSystem->BuildView(
+                                        UIItemId::ToolTip,
+                                        ToolTipConfig{ .text = config.text,
+                                                       .result = &toolTipView },
+                                        vb
+                                    );
+                                } }
+                      );
+                  } else {
+                      GUARD(toolTipView)
+                      view.Dismiss(*toolTipView);
+                      toolTipView = nullptr;
+                  }
+              } }
+    );
+
     return *this;
 }

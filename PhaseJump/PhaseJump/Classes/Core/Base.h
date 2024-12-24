@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Dev.h"
 #include "DiagnoseModel.h"
 #include "StringConvertible.h"
 #include "Utils.h"
