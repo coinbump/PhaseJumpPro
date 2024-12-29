@@ -7,6 +7,7 @@
 #include "CharacterController.h"
 #include "Color.h"
 #include "DragHandler2D.h"
+#include "DropFilesUIEvent.h"
 #include "EaseFunc.h"
 #include "Font.h"
 #include "LayoutInsets.h"
@@ -21,6 +22,7 @@
  CODE REVIEW: 9/9/24
  */
 namespace PJ {
+    class DropFilesUIEvent;
     class DesignSystem;
     class SomeTexture;
 
@@ -41,9 +43,14 @@ namespace PJ {
     class QuickBuild {
     public:
         using This = QuickBuild;
+
+        struct OnDropFilesArgs {
+            SomeWorldComponent& component;
+            DropFilesUIEvent event;
+        };
+
         using OnDragUpdateFunc = std::function<void(DragHandler2D&)>;
-        using OnDropFilesFunc =
-            std::function<void(std::tuple<SomeWorldComponent&, DropFilesUIEvent const&>)>;
+        using OnDropFilesFunc = std::function<void(OnDropFilesArgs args)>;
 
         struct SliderConfig {
             Axis2D axis = Axis2D::X;
@@ -162,6 +169,12 @@ namespace PJ {
         /// Add standard orthographic camera and associated components
         This& OrthoStandard(Color clearColor = Color::white);
 
+        /// Scales a node with a fixed size to keep it proportional to the size of the window
+        This& ScaleWithWindow(Vector3 worldSize, float ratio = 1.0f);
+
+        /// Keeps the latest component sized to the window as it resizes (it must be world sizable)
+        This& SizeWithWindow(Vector2 ratio = Vector2::one);
+
         /// Add texture render component
         This& Texture(String id);
 
@@ -214,7 +227,7 @@ namespace PJ {
 
         /// Rename the current node
         This& Named(String name) {
-            Node().name = name;
+            Node().SetName(name);
             return *this;
         }
 
@@ -270,7 +283,7 @@ namespace PJ {
 
         constexpr This& PopToName(String name) {
             while (nodes.size() > 1) {
-                GUARDR(Node().name != name, *this)
+                GUARDR(Node().Name() != name, *this)
                 Pop();
             }
             return *this;
@@ -444,7 +457,7 @@ namespace PJ {
         AnimateStartEnd(Type startValue, Type endValue, MakeAnimatorFunc<Type, WorldNode&> maker) {
             auto& node = Node();
             auto animator = maker(startValue, endValue, node);
-            node.updatables.AddDelay(std::max(0.0f, AnimateState().delay), animator);
+            node.updatables.AddDelay(std::max(0.0f, AnimateState().delay), std::move(animator));
             return *this;
         }
 
@@ -453,7 +466,7 @@ namespace PJ {
         AnimateCycle(Type startValue, Type endValue, MakeAnimatorFunc<Type, WorldNode&> maker) {
             auto& node = Node();
             auto animator = maker(startValue, endValue, node);
-            node.updatables.AddDelay(std::max(0.0f, AnimateState().delay), animator);
+            node.updatables.AddDelay(std::max(0.0f, AnimateState().delay), std::move(animator));
             return *this;
         }
 

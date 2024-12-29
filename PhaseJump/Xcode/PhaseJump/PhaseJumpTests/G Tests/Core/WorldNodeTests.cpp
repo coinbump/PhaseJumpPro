@@ -29,13 +29,22 @@ using namespace WorldNodeTests;
 TEST(WorldNode, IsEnabled)
 {
     WorldNode sut("name");
-    EXPECT_EQ(String("name"), sut.name);
+    EXPECT_EQ(String("name"), sut.Name());
     EXPECT_TRUE(sut.IsEnabled());
     
     sut.ToggleEnable();
     EXPECT_FALSE(sut.IsEnabled());
     
     sut.Enable(true);
+    EXPECT_TRUE(sut.IsEnabled());
+}
+
+TEST(WorldNode, IsEnabledNodeDestroyed)
+{
+    WorldNode sut("name");
+    EXPECT_EQ(String("name"), sut.Name());
+    EXPECT_TRUE(sut.IsEnabled());
+    
     EXPECT_TRUE(sut.IsEnabled());
 
     sut.Destroy();
@@ -45,7 +54,7 @@ TEST(WorldNode, IsEnabled)
 TEST(WorldNode, IsVisible)
 {
     WorldNode sut("name");
-    EXPECT_EQ(String("name"), sut.name);
+    EXPECT_EQ(String("name"), sut.Name());
     EXPECT_TRUE(sut.IsVisible());
     
     sut.ToggleIsVisible();
@@ -67,7 +76,7 @@ TEST(WorldNode, IsVisible)
 TEST(WorldNode, Toggles)
 {
     WorldNode sut("name");
-    EXPECT_EQ(String("name"), sut.name);
+    EXPECT_EQ(String("name"), sut.Name());
     EXPECT_TRUE(sut.IsEnabled());
     EXPECT_FALSE(sut.IsAwake());
     EXPECT_FALSE(sut.IsStarted());
@@ -137,8 +146,8 @@ TEST(WorldNode, AddComponent_Null)
     WorldNode sut("");
     WorldNode sut2("");
 
-    SP<WorldComponent<>> component;
-    sut.Add(component);
+    UP<WorldComponent<>> component;
+    sut.Add(std::move(component));
     EXPECT_EQ(0, sut.Components().size());
 }
 
@@ -202,8 +211,8 @@ TEST(WorldNode, AddNode_AlreadyParented)
 TEST(WorldNode, AddNode_Null)
 {
     auto world = MAKE<World>();
-    SP<WorldNode> sut;
-    world->Add(sut);
+    UP<WorldNode> sut;
+    world->Add(std::move(sut));
     EXPECT_EQ(0, world->Root()->ChildCount());
 }
 
@@ -715,7 +724,7 @@ TEST(WorldNode, Signal)
         signalCount++;
     }});
     
-    Event event;
+    Signal event;
     sut->Signal("test", event);
     
     ASSERT_EQ(1, signalCount);
@@ -737,7 +746,7 @@ TEST(WorldNode, SignalMultiple)
     add();
     add();
     
-    Event event;
+    Signal event;
     sut->Signal("test", event);
     
     ASSERT_EQ(4, signalCount);
@@ -753,7 +762,7 @@ TEST(WorldNode, SignalDisabled)
         signalCount++;
         }}).Enable(false);
     
-    Event event;
+    Signal event;
     sut->Signal("test", event);
     
     ASSERT_EQ(0, signalCount);
@@ -770,4 +779,60 @@ TEST(SomeWorldComponent, AddComponentWithSignals)
     node.Add(sut);
     
     EXPECT_TRUE(node.isListener);
+}
+
+TEST(WorldNode, ChildMap)
+{
+    auto world = MAKE<World>();
+    auto sut = MAKE<WorldNode>();
+    world->Add(sut);
+    
+    EXPECT_EQ(nullptr, (*sut)["id"]);
+    
+    auto child = MAKE<WorldNode>(WorldNode::Config{ .id = "id" });
+    sut->Add(child);
+    
+    EXPECT_EQ(child.get(), (*sut)["id"]);
+}
+
+TEST(WorldNode, RemoveChildMap)
+{
+    auto world = MAKE<World>();
+    auto sut = MAKE<WorldNode>();
+    world->Add(sut);
+    
+    auto child = MAKE<WorldNode>(WorldNode::Config{ .id = "id" });
+    sut->Add(child);
+    
+    EXPECT_EQ(child.get(), (*sut)["id"]);
+    sut->Remove(*child);
+    EXPECT_EQ(nullptr, (*sut)["id"]);
+}
+
+TEST(WorldNode, MoveChildMap)
+{
+    auto world = MAKE<World>();
+    auto sut = MAKE<WorldNode>();
+    world->Add(sut);
+    
+    auto child = MAKE<WorldNode>(WorldNode::Config{ .id = "id" });
+    sut->Add(child);
+    
+    EXPECT_EQ(child.get(), (*sut)["id"]);
+    sut->Move(*child);
+    EXPECT_EQ(nullptr, (*sut)["id"]);
+}
+
+TEST(WorldNode, RemoveAllChildMap)
+{
+    auto world = MAKE<World>();
+    auto sut = MAKE<WorldNode>();
+    world->Add(sut);
+    
+    auto child = MAKE<WorldNode>(WorldNode::Config{ .id = "id" });
+    sut->Add(child);
+    
+    EXPECT_EQ(child.get(), (*sut)["id"]);
+    sut->RemoveAllChildren();
+    EXPECT_EQ(nullptr, (*sut)["id"]);
 }

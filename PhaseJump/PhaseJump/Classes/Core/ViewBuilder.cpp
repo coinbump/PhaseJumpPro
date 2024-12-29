@@ -23,12 +23,15 @@ using namespace PJ;
 
 using This = ViewBuilder;
 
+ViewBuilder::ViewBuilder(QuickBuild& quickBuild) :
+    quickBuild(&quickBuild) {}
+
 ViewBuilder::ViewBuilder(WorldNode& node) {
     qb = NEW<QuickBuild>(node);
 }
 
 This& ViewBuilder::Pad(BuildConfigFunc<PadConfig> buildConfigFunc) {
-    qb->And()
+    QB().And()
         .With<View2D>()
         .ModifyLatest<View2D>([=](auto& view) {
             view.buildViewFunc = [=](auto& view) {
@@ -36,7 +39,7 @@ This& ViewBuilder::Pad(BuildConfigFunc<PadConfig> buildConfigFunc) {
                 GUARD(view.owner)
 
                 auto config = buildConfigFunc(view);
-                view.owner->name = config.name;
+                view.owner->SetName(config.name);
 
                 UP<SomeViewLayout> layout = NEW<PadViewLayout>(config.insets);
                 view.SetLayout(layout);
@@ -55,7 +58,7 @@ This& ViewBuilder::Pad(BuildConfigFunc<PadConfig> buildConfigFunc) {
 }
 
 This& ViewBuilder::HStack(BuildConfigFunc<HStackConfig> buildConfigFunc) {
-    qb->And()
+    QB().And()
         .With<View2D>()
         .ModifyLatest<View2D>([&](auto& view) {
             view.buildViewFunc = [=](auto& view) {
@@ -63,7 +66,7 @@ This& ViewBuilder::HStack(BuildConfigFunc<HStackConfig> buildConfigFunc) {
                 GUARD(view.owner)
 
                 auto config = buildConfigFunc(view);
-                view.owner->name = config.name;
+                view.owner->SetName(config.name);
 
                 UP<SomeViewLayout> layout =
                     NEW<FlowStackViewLayout>(Axis2D::X, config.spacing, config.alignFunc);
@@ -83,7 +86,7 @@ This& ViewBuilder::HStack(BuildConfigFunc<HStackConfig> buildConfigFunc) {
 }
 
 This& ViewBuilder::VStack(BuildConfigFunc<VStackConfig> buildConfigFunc) {
-    qb->And()
+    QB().And()
         .With<View2D>()
         .ModifyLatest<View2D>([&](auto& view) {
             view.buildViewFunc = [=](auto& view) {
@@ -91,7 +94,7 @@ This& ViewBuilder::VStack(BuildConfigFunc<VStackConfig> buildConfigFunc) {
                 GUARD(view.owner)
 
                 auto config = buildConfigFunc(view);
-                view.owner->name = config.name;
+                view.owner->SetName(config.name);
 
                 UP<SomeViewLayout> layout =
                     NEW<FlowStackViewLayout>(Axis2D::Y, config.spacing, config.alignFunc);
@@ -111,7 +114,7 @@ This& ViewBuilder::VStack(BuildConfigFunc<VStackConfig> buildConfigFunc) {
 }
 
 This& ViewBuilder::FixedGrid(BuildConfigFunc<FixedGridConfig> buildConfigFunc) {
-    qb->And()
+    QB().And()
         .With<View2D>()
         .ModifyLatest<View2D>([&](auto& view) {
             view.buildViewFunc = [=](auto& view) {
@@ -119,7 +122,7 @@ This& ViewBuilder::FixedGrid(BuildConfigFunc<FixedGridConfig> buildConfigFunc) {
                 GUARD(view.owner)
 
                 auto config = buildConfigFunc(view);
-                view.owner->name = config.name;
+                view.owner->SetName(config.name);
 
                 UP<SomeViewLayout> layout = NEW<FixedGridViewLayout>(FixedGridViewLayout::Config{
                     .gridSize = config.gridSize,
@@ -142,7 +145,7 @@ This& ViewBuilder::FixedGrid(BuildConfigFunc<FixedGridConfig> buildConfigFunc) {
 }
 
 This& ViewBuilder::ZStack(BuildConfigFunc<ZStackConfig> buildConfigFunc) {
-    qb->And()
+    QB().And()
         .With<View2D>()
         .ModifyLatest<View2D>([&](auto& view) {
             view.buildViewFunc = [=](auto& view) {
@@ -150,7 +153,7 @@ This& ViewBuilder::ZStack(BuildConfigFunc<ZStackConfig> buildConfigFunc) {
                 GUARD(view.owner)
 
                 auto config = buildConfigFunc(view);
-                view.owner->name = config.name;
+                view.owner->SetName(config.name);
 
                 UP<SomeViewLayout> layout =
                     NEW<ZStackViewLayout>(config.alignment.xAlignFunc, config.alignment.yAlignFunc);
@@ -170,12 +173,11 @@ This& ViewBuilder::ZStack(BuildConfigFunc<ZStackConfig> buildConfigFunc) {
 }
 
 This& ViewBuilder::Background(BuildViewFunc buildBackgroundFunc) {
-    qb->ModifyLatest<View2D>([&](auto& activeView) {
+    QB().ModifyLatest<View2D>([&](auto& activeView) {
         auto parentView = activeView.ParentView();
         GUARD_LOG(parentView, "ERROR: Missing parent view for background")
 
-        SP<WorldNode> viewNode = SCAST<WorldNode>(activeView.owner->shared_from_this());
-        parentView->owner->Remove(*viewNode);
+        auto viewNode = parentView->owner->Move(*activeView.owner);
 
         ViewBuilder vb(*parentView->owner);
         vb.ViewAttachments([=](auto& view) {
@@ -190,12 +192,11 @@ This& ViewBuilder::Background(BuildViewFunc buildBackgroundFunc) {
 This& ViewBuilder::Overlay(BuildViewFunc buildOverlayFunc) {
     // Important: Add Background first or the view order will be wrong
     // FUTURE: make this more intelligent if needed
-    qb->ModifyLatest<View2D>([&](auto& activeView) {
+    QB().ModifyLatest<View2D>([&](auto& activeView) {
         auto parentView = activeView.ParentView();
         GUARD_LOG(parentView, "ERROR: Missing parent view for background")
 
-        SP<WorldNode> viewNode = SCAST<WorldNode>(activeView.owner->shared_from_this());
-        parentView->owner->Remove(*viewNode);
+        auto viewNode = parentView->owner->Move(*activeView.owner);
 
         ViewBuilder vb(*parentView->owner);
         vb.ViewAttachments([=](auto& view) {
@@ -208,7 +209,7 @@ This& ViewBuilder::Overlay(BuildViewFunc buildOverlayFunc) {
 }
 
 This& ViewBuilder::ViewAttachments(BuildConfigFunc<ViewAttachmentsConfig> buildConfigFunc) {
-    qb->And()
+    QB().And()
         .With<View2D>()
         .ModifyLatest<View2D>([&](auto& view) {
             view.buildViewFunc = [=](auto& view) {
@@ -216,7 +217,7 @@ This& ViewBuilder::ViewAttachments(BuildConfigFunc<ViewAttachmentsConfig> buildC
                 GUARD(view.owner)
 
                 auto config = buildConfigFunc(view);
-                view.owner->name = config.name;
+                view.owner->SetName(config.name);
 
                 ViewBuilder vb(*view.owner);
                 vb.AddViewAttachments(view, config);
@@ -237,9 +238,9 @@ This& ViewBuilder::AddViewAttachments(View2D& view, ViewAttachmentsConfig config
     UP<SomeViewLayout> layout = NEW<ViewAttachmentsLayout>();
     view.SetLayout(layout);
 
-    ViewBuilder backgroundViewBuilder(qb->Node());
-    ViewBuilder viewBuilder(qb->Node());
-    ViewBuilder overlayViewBuilder(qb->Node());
+    ViewBuilder backgroundViewBuilder(QB().Node());
+    ViewBuilder viewBuilder(QB().Node());
+    ViewBuilder overlayViewBuilder(QB().Node());
 
     if (config.buildBackgroundFunc) {
         config.buildBackgroundFunc(backgroundViewBuilder);
@@ -250,7 +251,7 @@ This& ViewBuilder::AddViewAttachments(View2D& view, ViewAttachmentsConfig config
     }
 
     if (config.viewNode) {
-        qb->Node().Add(config.viewNode);
+        QB().Node().Add(config.viewNode);
     } else if (config.buildViewFunc) {
         config.buildViewFunc(viewBuilder);
     }
@@ -263,13 +264,13 @@ This& ViewBuilder::AddViewAttachments(View2D& view, ViewAttachmentsConfig config
         }
     }
 
-    qb->Pop();
+    QB().Pop();
 
     return *this;
 }
 
 This& ViewBuilder::Color(BuildConfigFunc<ColorConfig> buildConfigFunc) {
-    qb->And("")
+    QB().And("")
         .With<ColorView>()
         .ModifyLatest<ColorView>([&](auto& view) {
             view.buildViewFunc = [=](auto& view) {
@@ -277,7 +278,7 @@ This& ViewBuilder::Color(BuildConfigFunc<ColorConfig> buildConfigFunc) {
                 GUARD(view.owner)
 
                 auto config = buildConfigFunc(view);
-                view.owner->name = config.name;
+                view.owner->SetName(config.name);
 
                 static_cast<ColorView*>(&view)->SetColor(config.color);
             };
@@ -290,7 +291,7 @@ This& ViewBuilder::Color(BuildConfigFunc<ColorConfig> buildConfigFunc) {
 }
 
 This& ViewBuilder::Text(BuildConfigFunc<TextConfig> buildConfigFunc) {
-    qb->And("")
+    QB().And("")
         .With<TextView>()
         .ModifyLatest<TextView>([&](auto& view) {
             view.buildViewFunc = [=](auto& view) {
@@ -298,7 +299,7 @@ This& ViewBuilder::Text(BuildConfigFunc<TextConfig> buildConfigFunc) {
                 GUARD(view.owner)
 
                 auto config = buildConfigFunc(view);
-                view.owner->name = config.name;
+                view.owner->SetName(config.name);
 
                 auto world = view.owner->World();
                 GUARD(world)
@@ -321,7 +322,7 @@ This& ViewBuilder::Text(BuildConfigFunc<TextConfig> buildConfigFunc) {
 // NOTE: Slider isn't dynamic because we need to know the axis of the slider when we create it
 // FUTURE: add dynamic slider support if needed
 This& ViewBuilder::SliderView(SliderViewConfig config) {
-    qb->And(config.name)
+    QB().And(config.name)
         .Slider({ .axis = config.axis,
                   .valueBinding = config.valueBinding,
                   .trackOrthogonal = config.trackOrthogonal })
@@ -331,7 +332,7 @@ This& ViewBuilder::SliderView(SliderViewConfig config) {
 }
 
 This& ViewBuilder::ButtonView(BuildConfigFunc<ButtonViewConfig> buildConfigFunc) {
-    qb->And("")
+    QB().And("")
         .With<ButtonControl>()
         .ModifyLatest<ButtonControl>([&](auto& view) {
             view.buildViewFunc = [=](auto& view) {
@@ -339,7 +340,7 @@ This& ViewBuilder::ButtonView(BuildConfigFunc<ButtonViewConfig> buildConfigFunc)
                 GUARD(view.owner)
 
                 auto config = buildConfigFunc(view);
-                view.owner->name = config.name;
+                view.owner->SetName(config.name);
 
                 ViewBuilder vb(*view.owner);
                 vb.AddViewAttachments(
@@ -379,7 +380,7 @@ This& ViewBuilder::ButtonView(BuildConfigFunc<ButtonViewConfig> buildConfigFunc)
 }
 
 This& ViewBuilder::ToggleButtonView(BuildConfigFunc<ToggleButtonViewConfig> buildConfigFunc) {
-    qb->And("")
+    QB().And("")
         .With<ToggleButtonControl>()
         .ModifyLatest<ToggleButtonControl>([&](auto& view) {
             view.buildViewFunc = [=](auto& view) {
@@ -387,7 +388,7 @@ This& ViewBuilder::ToggleButtonView(BuildConfigFunc<ToggleButtonViewConfig> buil
                 GUARD(view.owner)
 
                 auto config = buildConfigFunc(view);
-                view.owner->name = config.name;
+                view.owner->SetName(config.name);
 
                 ViewBuilder vb(*view.owner);
                 vb.AddViewAttachments(
@@ -429,22 +430,22 @@ This& ViewBuilder::ToggleButtonView(BuildConfigFunc<ToggleButtonViewConfig> buil
 }
 
 This& ViewBuilder::Immediate(BuildConfigFunc<ImmediateConfig> buildConfigFunc) {
-    qb->And("").With<View2D>();
+    QB().And("").With<View2D>();
 
     AssociateImmediate(buildConfigFunc);
-    qb->Pop();
+    QB().Pop();
 
     return *this;
 }
 
 This& ViewBuilder::AssociateImmediate(BuildConfigFunc<ImmediateConfig> buildConfigFunc) {
-    qb->ModifyLatest<View2D>([&](auto& view) {
+    QB().ModifyLatest<View2D>([&](auto& view) {
         view.buildViewFunc = [=](auto& view) {
             GUARD(buildConfigFunc)
             GUARD(view.owner)
 
             auto config = buildConfigFunc(view);
-            view.owner->name = config.name;
+            view.owner->SetName(config.name);
 
             auto& renderer = view.owner->template AddComponentIfNeeded<ImRenderer>();
 
@@ -471,7 +472,7 @@ This& ViewBuilder::AssociateImmediate(BuildConfigFunc<ImmediateConfig> buildConf
 }
 
 This& ViewBuilder::Pages(BuildConfigFunc<PagesConfig> buildConfigFunc) {
-    qb->And("")
+    QB().And("")
         .With<PageView>(nullptr)
         .ModifyLatest<PageView>([&](auto& view) {
             view.buildViewFunc = [=](auto& view) {
@@ -479,7 +480,7 @@ This& ViewBuilder::Pages(BuildConfigFunc<PagesConfig> buildConfigFunc) {
                 GUARD(view.owner)
 
                 auto config = buildConfigFunc(view);
-                view.owner->name = config.name;
+                view.owner->SetName(config.name);
 
                 auto pageView = static_cast<PageView*>(&view);
 
@@ -512,37 +513,37 @@ This& ViewBuilder::Pages(BuildConfigFunc<PagesConfig> buildConfigFunc) {
 }
 
 This& ViewBuilder::View(ViewConfig config) {
-    qb->And(config.name).With<View2D>().ModifyLatest<View2D>(config.modifyViewFunc).Pop();
+    QB().And(config.name).With<View2D>().ModifyLatest<View2D>(config.modifyViewFunc).Pop();
 
     return *this;
 }
 
 This& ViewBuilder::Spacer() {
-    qb->And("Spacer").With<SpacerView>().Pop();
+    QB().And("Spacer").With<SpacerView>().Pop();
 
     return *this;
 }
 
 This& ViewBuilder::FixedSize(std::optional<float> width, std::optional<float> height) {
-    qb->ModifyLatest<View2D>([&](auto& view) { view.SetFixedSize(width, height); });
+    QB().ModifyLatest<View2D>([&](auto& view) { view.SetFixedSize(width, height); });
 
     return *this;
 }
 
 This& ViewBuilder::Offset(float x, float y) {
-    qb->ModifyLatest<View2D>([&](auto& view) { view.SetOffset(x, y); });
+    QB().ModifyLatest<View2D>([&](auto& view) { view.SetOffset(x, y); });
 
     return *this;
 }
 
 This& ViewBuilder::SetIsIdealSize(bool isX, bool isY) {
-    qb->ModifyLatest<View2D>([&](auto& view) { view.SetIsIdealSize(isX, isY); });
+    QB().ModifyLatest<View2D>([&](auto& view) { view.SetIsIdealSize(isX, isY); });
 
     return *this;
 }
 
 This& ViewBuilder::RootView(Vector2 size, BuildViewFunc buildFunc) {
-    qb->With<View2D>().ModifyLatest<View2D>([=](auto& view) {
+    QB().With<View2D>().ModifyLatest<View2D>([=](auto& view) {
         view.SetFrameSize(size);
 
         view.buildViewFunc = [=](auto& view) {
@@ -558,15 +559,15 @@ This& ViewBuilder::RootView(Vector2 size, BuildViewFunc buildFunc) {
 }
 
 View2D* ViewBuilder::ActiveView() const {
-    return qb->Node().TypeComponent<View2D>();
+    return QB().Node().TypeComponent<View2D>();
 }
 
 World* ViewBuilder::GetWorld() const {
-    return qb->Node().World();
+    return QB().Node().World();
 }
 
 DesignSystem* ViewBuilder::GetDesignSystem() const {
-    return qb->Node().World()->designSystem.get();
+    return QB().Node().World()->designSystem.get();
 }
 
 This& ViewBuilder::RadioButtonGroup(RadioButtonGroupConfig config) {

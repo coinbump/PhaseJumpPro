@@ -12,10 +12,10 @@
 namespace PJ {
     /// Rate limits in patterns
     /// Example: Every few seconds we emit a burst of bullets in a shump game
-    class PatternRateLimiter : public SomeLimiter {
+    class PatternRateLimiter : public Limiter<> {
     public:
+        using Base = Limiter<>;
         using This = PatternRateLimiter;
-        using Base = SomeLimiter;
 
         /// Fires N times at the specified rate, then switches to the next pattern
         class RateCountPattern {

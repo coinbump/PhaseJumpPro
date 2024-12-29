@@ -53,7 +53,7 @@ TEST(ClassRegistry, NewTypeWithArguments) {
     ClassRegistry<TestClassWithArguments> sut;
     sut.Add(testClass);
 
-    SP<TestTypeWithArguments> object = sut.MakeType<TestTypeWithArguments>("test", 10);
+    auto object = sut.MakeType<TestTypeWithArguments>("test", 10);
     ASSERT_NE(nullptr, object);
     
     EXPECT_EQ(10, object->value);

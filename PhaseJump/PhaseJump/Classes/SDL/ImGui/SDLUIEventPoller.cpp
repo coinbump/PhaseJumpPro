@@ -14,6 +14,7 @@ SDLUIEventPoller::SDLUIEventPoller(SDL_Window* window) :
 SomeUIEventPoller::Result SDLUIEventPoller::PollUIEvents() {
     SDL_Event event;
     SDLEventList events;
+
     while (SDL_PollEvent(&event)) {
         ImGui_ImplSDL3_ProcessEvent(&event);
 

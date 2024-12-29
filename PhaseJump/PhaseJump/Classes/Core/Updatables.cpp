@@ -92,3 +92,7 @@ SP<Updatable> Updatables::AddContinue(ContinueOnUpdateFunc onUpdateFunc) {
 
     return result;
 }
+
+void Updatables::RemoveAll() {
+    list.clear();
+}

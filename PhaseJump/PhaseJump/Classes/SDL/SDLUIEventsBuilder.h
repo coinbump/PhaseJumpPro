@@ -7,8 +7,8 @@
 #include <SDL3/SDL.h>
 
 /*
- RATING: 4 stars
- Tested and works. Basic functionality
+ RATING: 5 stars
+ Tested and works
  CODE REVIEW: 12/21/24
  */
 namespace PJ {

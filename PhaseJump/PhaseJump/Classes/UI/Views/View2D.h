@@ -322,12 +322,12 @@ namespace PJ {
         bool TestViewPositionHit(Vector2 viewPosition) const;
 
         Vector2 ToViewPosition(LayoutAnchor2D viewPoint) const;
-        Vector3 ViewToWorldPosition(Vector2 viewPosition) const;
-        Vector3 ViewToLocalPosition(Vector2 viewPosition) const;
-        Vector2 WorldToViewPosition(Vector3 worldPosition) const;
+        Vector3 ViewToWorld(Vector2 viewPosition) const;
+        Vector3 ViewToLocal(Vector2 viewPosition) const;
+        Vector2 WorldToView(Vector3 worldPosition) const;
 
         /// @return Returns a view position, converted from the local position
-        Vector2 LocalToViewPosition(Vector3 localPosition) const;
+        Vector2 LocalToView(Vector3 localPosition) const;
 
         /// @return Returns the top-left local position in this view's node for child views
         Vector3 TopLeftLocalPosition() const;

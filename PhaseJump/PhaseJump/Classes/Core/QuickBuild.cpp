@@ -24,6 +24,8 @@
 #include "SliderControl.h"
 #include "SomeCollider2D.h"
 #include "SomeHoverGestureHandler.h"
+#include "SomePlatformWindow.h"
+#include "SomeUIEvent.h"
 #include "SpriteRenderer.h"
 #include "Theme.h"
 #include "World.h"
@@ -34,12 +36,12 @@ using namespace PJ;
 using This = QuickBuild::This;
 
 This& QuickBuild::WithOnEnable(String id, std::function<void(WorldComponent<>&)> func) {
-    return With<WorldComponent<>>().ModifyLatestAny([=](auto& component) {
+    return With<WorldComponent<>>().ModifyLatest<WorldComponent<>>([=](auto& component) {
         // Disabled by default, so enable func runs
         component.Enable(false);
 
         component.SetId(id);
-        component.onEnabledChangeFunc = [=](SomeWorldComponent& component) {
+        component.onEnabledChangeFunc = [=](auto& component) {
             GUARD(component.IsEnabled())
             func(*(static_cast<WorldComponent<>*>(&component)));
         };
@@ -53,11 +55,55 @@ This& QuickBuild::Repeat(int count, std::function<void(This&)> func) {
 }
 
 This& QuickBuild::OrthoStandard(Color clearColor) {
-    With<OrthoCamera>().With<SimpleRaycaster2D>().ModifyLatest<OrthoCamera>([=](auto& camera) {
-        camera.clearColor = clearColor;
+    return With<OrthoCamera>().With<SimpleRaycaster2D>().ModifyLatest<OrthoCamera>(
+        [=](auto& camera) { camera.clearColor = clearColor; }
+    );
+}
+
+This& QuickBuild::ScaleWithWindow(Vector3 worldSize, float ratio) {
+    return With<WorldComponent<>>().ModifyLatestAny([=](auto& component) {
+        auto sizeFunc = [=](SomeWorldComponent& component) {
+            Vec2I worldPixelSize = component.owner->World()->PixelSize();
+            Vector2 worldPixelSizeF{ (float)worldPixelSize.x, (float)worldPixelSize.y };
+
+            auto maxSize = worldPixelSizeF * ratio;
+            auto scaleCandidates = maxSize / worldSize;
+            auto scale = std::min(scaleCandidates.x, scaleCandidates.y);
+
+            component.owner->SetScale2D(scale);
+        };
+        sizeFunc(component);
+
+        component.template AddSignalHandler<WindowResizeUIEvent>(
+            { .id = SignalId::WindowResize,
+              .func = [sizeFunc](auto& component, auto& event) { sizeFunc(component); } }
+        );
     });
 
     return *this;
+}
+
+This& QuickBuild::SizeWithWindow(Vector2 ratio) {
+    return ModifyLatestAny([=](auto& component) {
+        auto worldSizable = dynamic_cast<WorldSizeable*>(&component);
+        GUARD_LOG(
+            worldSizable && component.owner && component.owner->World(),
+            "ERROR. Must be world sizable"
+        )
+
+        auto sizeFunc = [=](SomeWorldComponent& component) {
+            Vector2 floatPixelSize{ (float)component.owner->World()->PixelSize().x,
+                                    (float)component.owner->World()->PixelSize().y };
+            auto worldPixelSize = floatPixelSize * ratio;
+            worldSizable->SetWorldSize({ (float)worldPixelSize.x, (float)worldPixelSize.y, 0.0f });
+        };
+        sizeFunc(component);
+
+        component.template AddSignalHandler<WindowResizeUIEvent>(
+            { .id = SignalId::WindowResize,
+              .func = [sizeFunc](auto& component, auto& event) { sizeFunc(component); } }
+        );
+    });
 }
 
 This& QuickBuild::Texture(String id) {
@@ -136,7 +182,7 @@ This& QuickBuild::OnDropFiles(OnDropFilesFunc onDropFilesFunc) {
                 { .id = SignalId::DropFiles,
                   .func = [onDropFilesFunc](
                               auto& component, auto& signal
-                          ) { onDropFilesFunc({ component, signal }); } }
+                          ) { onDropFilesFunc({ .component = component, .event = signal }); } }
             );
         });
 
@@ -360,7 +406,7 @@ This& QuickBuild::AnimateScale(float startValue, float endValue) {
 }
 
 This& QuickBuild::RootView(Vector2 size, ViewBuilder::BuildViewFunc buildFunc) {
-    ViewBuilder vb(Node());
+    ViewBuilder vb(*this);
     vb.RootView(size, buildFunc);
 
     return *this;

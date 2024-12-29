@@ -84,7 +84,7 @@ Vector2Int MatrixBoardView::ViewPositionToLocation(Vector2 viewPosition) {
     auto cellSize = CellSize();
 
     // Avoid divide by zero
-    GUARDR(cellSize.x > 0 && cellSize.y > 0, Vector2Int(0, 0))
+    GUARDR(cellSize.x > 0 && cellSize.y > 0, {})
 
     auto column = (int)(viewPosition.x / cellSize.x);
     auto row = (int)(viewPosition.y / cellSize.y);
@@ -95,7 +95,7 @@ Vector2Int MatrixBoardView::ViewPositionToLocation(Vector2 viewPosition) {
 /// @return Returns the node for the cell location, or throws an exception if the location is
 /// invalid
 WorldNode& MatrixBoardView::NodeAt(Vector2Int loc) {
-    auto piece = board.PieceAt(loc);
+    auto piece = board.GetPiece(loc);
     GUARD_THROW(piece && piece->owner, std::out_of_range("No node at loc"))
 
     MatrixPieceHandler* handler = static_cast<MatrixPieceHandler*>(piece->owner);
@@ -133,17 +133,15 @@ Vector3 MatrixBoardView::LocationToLocalPosition(Vector2Int loc) {
 }
 
 std::optional<Vector2Int> MatrixBoardView::LocalPositionToLocation(Vector2 localPosition) {
-    return WorldPositionToLocation(owner->LocalToWorld(localPosition));
+    auto viewPos = LocalToView(localPosition);
+    GUARDR(TestViewPositionHit(viewPos), std::nullopt)
+
+    auto result = ViewPositionToLocation(viewPos);
+    return result;
 }
 
 std::optional<Vector2Int> MatrixBoardView::WorldPositionToLocation(Vector2 worldPosition) {
-    auto topLeft = TopLeftWorldPosition();
-
-    Vector2 viewPosition(worldPosition.x - topLeft.x, std::abs(worldPosition.y - topLeft.y));
-    GUARDR(TestViewPositionHit(viewPosition), std::nullopt)
-
-    auto cell = ViewPositionToLocation(viewPosition);
-    return cell;
+    return LocalPositionToLocation(WorldToLocal(worldPosition));
 }
 
 /// Move the piece from its current location to a new location in the specified direction
@@ -191,7 +189,7 @@ MatrixBoardView::MoveResult MatrixBoardView::Move(
 
     if (makeAnimatorFunc) {
         auto animator = makeAnimatorFunc(node.transform.LocalPosition(), endPosition, node);
-        handler.SetAnimator(animator);
+        handler.SetAnimator(std::move(animator));
     } else {
         node.SetLocalPosition(endPosition);
     }

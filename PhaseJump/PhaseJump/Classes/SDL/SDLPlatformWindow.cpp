@@ -5,11 +5,10 @@ using namespace PJ;
 
 SDLPlatformWindow::SDLPlatformWindow(Config config) :
     config(config) {
-    world = config.world;
+    SetWorld(config.world);
     GUARD_LOG(world, "ERROR. Missing world for window")
 
-    renderEngine = config.renderEngine;
-    GUARD_LOG(renderEngine, "ERROR. Missing render engine for window")
+    GUARD_LOG(world->renderEngine, "ERROR. Missing render engine for window")
 
     // Important: Call window.Go() to create it
 }

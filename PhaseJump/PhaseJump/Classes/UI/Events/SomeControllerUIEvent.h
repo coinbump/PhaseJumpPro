@@ -35,7 +35,7 @@ namespace PJ {
     } // namespace ControllerAxisId
 
     /// An event from an input controller (joystick, gamepad, etc.)
-    class SomeControllerUIEvent : public SomeUIEvent {
+    class SomeControllerUIEvent : public SomeSignal {
     public:
         String controllerId;
 

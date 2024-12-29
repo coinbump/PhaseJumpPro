@@ -150,7 +150,8 @@ namespace PJ {
             return index;
         }
 
-        /// @return Returns the cell if location is valid. If not, throws an exception
+        /// @return Returns the cell if location is valid.
+        /// @throw Throws an exception if c=location is invalid
         Cell& CellAt(Vector2Int loc) {
             auto index = LocToIndex(loc);
             GUARD_THROW(index, std::out_of_range("Invalid cell loc"))
@@ -158,7 +159,8 @@ namespace PJ {
             return cells[*index];
         }
 
-        /// @return Returns the cell if location is valid. If not, throws an exception
+        /// @return Returns the cell if location is valid.
+        /// @throw Throws an exception if c=location is invalid
         Cell const& CellAt(Vector2Int loc) const {
             auto index = LocToIndex(loc);
             GUARD_THROW(index, std::out_of_range("Invalid cell loc"))

@@ -13,7 +13,7 @@ class KaijuImGuiRenderProcessor : public RenderProcessor {
 public:
     using Base = RenderProcessor;
 
-    KaijuWorldSystem& system;
+    KaijuWorldSystem& editorSystem;
 
     SceneClassRegistry sceneClasses;
     bool isWindowConfigured = false;
@@ -21,9 +21,9 @@ public:
     UP<SomeImGuiPainter> windowPainter;
 
     // TODO: re-evaluate all registered render phases, probably don't want to run for each camera
-    KaijuImGuiRenderProcessor(KaijuWorldSystem& system) :
+    KaijuImGuiRenderProcessor(KaijuWorldSystem& editorSystem) :
         Base({ .phases = { RenderPhase::PostClear } }),
-        system(system) {}
+        editorSystem(editorSystem) {}
 
     // MARK: RenderProcessor
 

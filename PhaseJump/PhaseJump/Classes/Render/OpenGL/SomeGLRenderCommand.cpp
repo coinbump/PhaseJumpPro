@@ -13,8 +13,9 @@ UP<SomeGLRenderCommand> GLRenderCommands::SetViewportRender(Vector2Int size) {
 
 UP<SomeGLRenderCommand> GLRenderCommands::ProjectionMatrixLoadOrthographic(Vector2 size) {
     return NEW<GLRenderCommand<Vector2>>(size, [](auto& command, GLRenderEngine& engine) {
-        // TODO: are these 1, -1 values correct
-        engine.projectionMatrix.LoadOrthographic(0, command.core.x, 0, command.core.y, 1, -1);
+        engine.projectionMatrix.LoadOrthographic(
+            0, command.core.x, 0, command.core.y, Vector3::back.z, Vector3::forward.z
+        );
     });
 }
 

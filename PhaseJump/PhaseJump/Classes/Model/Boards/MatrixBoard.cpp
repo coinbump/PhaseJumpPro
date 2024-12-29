@@ -125,7 +125,7 @@ bool MatrixBoard::Put(SP<MatrixPiece> piece, Vector2Int origin) {
     return true;
 }
 
-SP<MatrixPiece> MatrixBoard::PieceAt(Vector2Int location) {
+SP<MatrixPiece> MatrixBoard::GetPiece(Vector2Int location) {
     try {
         auto& cell = matrix.CellAt(location);
         return cell.piece;
@@ -137,11 +137,11 @@ SP<MatrixPiece> MatrixBoard::PieceAt(Vector2Int location) {
 SP<MatrixPiece> MatrixBoard::PieceInDirection(Vector2Int location, MapDirection direction) {
     Vector2Int offset = MapOffset(direction);
     auto checkLocation = location + offset;
-    return PieceAt(checkLocation);
+    return GetPiece(checkLocation);
 }
 
 void MatrixBoard::RemovePieceAt(Vector2Int location) {
-    Remove(PieceAt(location));
+    Remove(GetPiece(location));
 }
 
 void MatrixBoard::Remove(SP<MatrixPiece> piece) {

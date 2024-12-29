@@ -111,6 +111,12 @@ void EventWorldSystem::ProcessUIEvents(UIEventList const& uiEvents) {
             OnDropFiles(*dropFilesEvent, eventNodes);
             continue;
         }
+
+        auto windowResizeEvent = DCAST<WindowResizeUIEvent>(event);
+        if (windowResizeEvent) {
+            DispatchEvent(SignalId::WindowResize, *windowResizeEvent, eventNodes);
+            continue;
+        }
     }
 }
 
@@ -119,6 +125,7 @@ void EventWorldSystem::DispatchEvent(
 ) {
     GUARD(world)
 
+    // TODO: dispatching every event to every node is inefficient and needs to be fixed
     for (auto& node : nodes) {
         DispatchEvent(*node, signalId, signal);
     }
@@ -140,7 +147,7 @@ void EventWorldSystem::OnKeyDown(KeyDownUIEvent const& event, EventNodeList cons
 }
 
 void EventWorldSystem::OnInputAction(
-    SomeUIEvent const& event, String action, EventNodeList const& nodes
+    SomeSignal const& event, String action, EventNodeList const& nodes
 ) {
     // Inputs are dispatched by id. Example: "input.button.north"
     auto actionSignalId = "input." + action;

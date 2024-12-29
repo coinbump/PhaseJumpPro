@@ -7,6 +7,7 @@
 #include "GraphNodeTool.h"
 #include "RenderContextModel.h"
 #include "SomeCamera.h"
+#include "SomePlatformWindow.h"
 #include "SomeRenderEngine.h"
 #include "SomeRenderer.h"
 #include "SomeShaderProgram.h"
@@ -17,13 +18,33 @@
 using namespace std;
 using namespace PJ;
 
+void BuildUpdateList(WorldNode& node, VectorList<WorldNode*>& updateList) {
+    if (node.IsDestroyed()) {
+        node.OnDestroy();
+
+        // FUTURE: send OnDestroy to children if needed (ineffecient)
+
+        GUARD(node.Parent())
+        node.Parent()->Remove(node);
+    } else {
+        GUARD(node.IsEnabled() && node.World())
+
+        updateList.push_back(&node);
+
+        auto childNodes = node.ChildNodes();
+        std::for_each(childNodes.begin(), childNodes.end(), [&](auto& node) {
+            BuildUpdateList(*node, updateList);
+        });
+    }
+}
+
 World::World() {
     root->world = this;
 
     // The render limiter has to keep running while the world is paused, or imGui stops working
     // Wrong: updatables.Add(renderLimiter);
 
-    // Default design system is "ugly duckling" design system,
+    // Default design system is the "ugly duckling" design system,
     // a basic and simple UI
     designSystem = MAKE<DuckDesignSystem>();
 }
@@ -36,9 +57,28 @@ void World::Add(SP<SomeWorldSystem> system) {
 void World::RemoveAllNodes() {
     GUARD(root)
 
-    // This leaves dangling pointers to world, but we assume
-    // that RemoveAll causes all child objects to be de-allocated
+    if (isRemoveNodesLocked) {
+        // If this happens, use Destroy instead
+        PJ::Log("ERROR. Can't remove nodes");
+        return;
+    }
+
+    /*
+     Warning: do not call this for immediate UI
+
+     Warning: This leaves dangling pointers to world, but we assume
+     that RemoveAll causes all child objects to be de-allocated
+     */
     root->RemoveAllChildren();
+}
+
+void World::DestroyAllNodes() {
+    GUARD(root)
+
+    // Mark nodes to be destroyed when it is safe to do so
+    for (auto& child : root->Children()) {
+        child->Destroy();
+    }
 }
 
 void World::RemoveAllSystems() {
@@ -91,7 +131,7 @@ void World::OnGo() {
     std::cout << "PHASE JUMP IS DEBUG";
 #endif
 
-    SomeLimiter::OnFireFunc overrideFunc = [this](auto& limiter) { RenderNow(); };
+    RateLimiter::OnFireFunc overrideFunc = [this](auto& limiter) { RenderNow(); };
     Override(renderLimiter.onFireFunc, overrideFunc);
 }
 
@@ -125,17 +165,15 @@ void World::RenderNow() {
         fpsCheckTimePoint = now;
     }
 
-    // TODO: should we use updateList?
-    VectorList<WorldNode*> nodes;
-    nodes.reserve(updateList.size());
-    std::transform(
-        updateList.begin(), updateList.end(), std::back_inserter(nodes),
-        [](SP<WorldNode> node) { return node.get(); }
-    );
+    VectorList<WorldNode*> updateList;
+    BuildUpdateList(*root, updateList);
+
+    isRemoveNodesLocked = true;
+    Defer defer([&]() { isRemoveNodesLocked = false; });
 
     VectorList<SomeCamera*> optionalCameras;
     std::transform(
-        nodes.begin(), nodes.end(), std::back_inserter(optionalCameras),
+        updateList.begin(), updateList.end(), std::back_inserter(optionalCameras),
         [](WorldNode* node) {
             auto result = node->GetComponent<SomeCamera>();
             return (result && result->IsEnabled()) ? result : nullptr;
@@ -147,9 +185,10 @@ void World::RenderNow() {
         [](SomeCamera* camera) { return camera != nullptr; }
     );
 
-    RenderContextModel contextModel{
-        .renderContext = renderContext.get(), .root = root.get(), .nodes = nodes, .cameras = cameras
-    };
+    RenderContextModel contextModel{ .renderContext = renderContext.get(),
+                                     .root = root.get(),
+                                     .nodes = updateList,
+                                     .cameras = cameras };
 
     int drawCount = 0;
 
@@ -221,36 +260,13 @@ Matrix4x4 World::WorldModelMatrix(WorldNode const& node) {
     return modelMatrix;
 }
 
-// TODO: come back to this
-void UpdateWorld(WorldNode& node, TimeSlice time, WorldNode::NodeList& updateList) {
-    if (node.IsDestroyed()) {
-        node.OnDestroy();
-
-        // TODO: send OnDestroy to children
-        GUARD(node.Parent())
-        node.Parent()->Remove(node);
-    } else {
-        GUARD(node.IsEnabled())
-        // TODO: rethink. Does update need shared points? What if something is removed?
-        updateList.push_back(SCAST<WorldNode>(node.shared_from_this()));
-
-        if (!node.World()->IsPaused()) {
-            // TODO: this isn't correct. All nodes should get CheckedAwake, then all nodes should
-            // get CheckedStart
-            node.CheckedAwake();
-            node.CheckedStart();
-
-            node.OnUpdate(time);
-        }
-
-        auto childNodes = node.ChildNodes();
-        std::for_each(childNodes.begin(), childNodes.end(), [&](SP<WorldNode>& node) {
-            UpdateWorld(*node, time, updateList);
-        });
-    }
-}
-
 void World::OnUpdate(TimeSlice _time) {
+    VectorList<WorldNode*> updateList;
+    BuildUpdateList(*root, updateList);
+
+    isRemoveNodesLocked = true;
+    Defer defer([&]() { isRemoveNodesLocked = false; });
+
 #ifdef PROFILE
     DevProfiler devProfiler("OnUpdate", [](String value) { cout << value; });
 #endif
@@ -278,8 +294,21 @@ void World::OnUpdate(TimeSlice _time) {
         system->OnUpdate(time);
     }
 
-    updateList.clear();
-    UpdateWorld(*root, time, updateList);
+    for (auto& node : updateList) {
+        node->CheckedAwake();
+    }
+
+    for (auto& node : updateList) {
+        node->CheckedStart();
+    }
+
+    for (auto& node : updateList) {
+        node->OnUpdate(time);
+    }
+
+    for (auto& node : updateList) {
+        node->LateUpdate();
+    }
 }
 
 void World::Add(SP<WorldNode> node) {
@@ -291,10 +320,6 @@ void World::Add(SP<WorldNode> node) {
     GUARD(node && parent)
 
     parent->Add(node);
-}
-
-void World::SetRenderContext(SP<SomeRenderContext> renderContext) {
-    this->renderContext = renderContext;
 }
 
 void World::LoadPrefab(String id, WorldNode& node) {
@@ -316,6 +341,11 @@ void World::Pause() {
 
 void World::Play() {
     isPaused = false;
+}
+
+Vector2Int World::PixelSize() const {
+    GUARDR(window, {})
+    return window->PixelSize();
 }
 
 #include "Matrix4x4.h"

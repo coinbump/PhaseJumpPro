@@ -10,7 +10,9 @@ FlowStackViewLayout::FlowStackViewLayout(Axis2D _axis, float _spacing, AlignFunc
     axis(_axis),
     spacing(_spacing),
     alignFunc(alignFunc) {
-    PlanUIFunc planUIFunc = [this](auto& component, String context, UIPlanner& planner) {
+    PlanUIFunc planUIFunc = [this](auto args) {
+        auto& planner = args.planner;
+
         planner.InputFloat({ .label = "Spacing",
                              .binding = { [this]() { return spacing; },
                                           [this](auto& value) { SetSpacing(value); } } });

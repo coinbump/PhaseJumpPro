@@ -45,7 +45,7 @@ TEST(RateLimiter, OverrideOnFire)
     auto sut = MAKE<RateLimiter>(3);
     auto value = MAKE<int>(0);
 
-    SomeLimiter::OnFireFunc overrideFunc = [=](auto& owner) {
+    RateLimiter::OnFireFunc overrideFunc = [=](auto& owner) {
         *value += 1;
     };
 

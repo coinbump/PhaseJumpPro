@@ -27,7 +27,10 @@ namespace PJ {
     /// Used to build views with QuickBuild
     class ViewBuilder {
     protected:
-        /// Builder for target node
+        /// External builder
+        QuickBuild* quickBuild{};
+
+        /// Internal builder
         UP<QuickBuild> qb;
 
     public:
@@ -191,10 +194,11 @@ namespace PJ {
             ModifyViewFunc modifyViewFunc;
         };
 
+        ViewBuilder(QuickBuild& quickBuild);
         ViewBuilder(WorldNode& node);
 
-        QuickBuild& QB() {
-            return *qb;
+        QuickBuild& QB() const {
+            return quickBuild ? *quickBuild : *qb;
         }
 
         World* GetWorld() const;

@@ -4,6 +4,7 @@
 #include "LoadRezOperation.h"
 #include "LoadRTexPackerAtlasOperation.h"
 #include "LoadTexturePackerAtlasOperation.h"
+#include "SDLLoadBitmapOperation.h"
 #include "SDLLoadGLTextureOperation.h"
 
 using namespace std;
@@ -20,6 +21,12 @@ StandardResourceRepositoryModel::StandardResourceRepositoryModel() {
         NEW<Factory<SomeLoadResourcesOperation, ResourceInfo, ResourceRepositoryModel&>>(
             [](ResourceInfo info, ResourceRepositoryModel& repoModel) {
                 return NEW<SDLLoadGLTextureOperation>(info, repoModel);
+            }
+        );
+    operationRegistry.map[ResourceType::Bitmap] =
+        NEW<Factory<SomeLoadResourcesOperation, ResourceInfo, ResourceRepositoryModel&>>(
+            [](ResourceInfo info, ResourceRepositoryModel& repoModel) {
+                return NEW<SDLLoadBitmapOperation>(info, repoModel);
             }
         );
     operationRegistry.map[ResourceType::RTexPackerAtlas] =

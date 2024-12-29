@@ -80,7 +80,7 @@ namespace PJ {
         bool Put(SP<MatrixPiece> piece, Vector2Int origin);
 
         /// @return Returns the piece at the specified location
-        SP<MatrixPiece> PieceAt(Vector2Int location);
+        SP<MatrixPiece> GetPiece(Vector2Int location);
 
         /// @return Returns the piece in the map direction from the original location
         SP<MatrixPiece> PieceInDirection(Vector2Int location, MapDirection direction);

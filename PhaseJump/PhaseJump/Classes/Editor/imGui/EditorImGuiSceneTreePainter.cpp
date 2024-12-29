@@ -48,7 +48,7 @@ void EditorImGuiSceneTreePainter::DrawSceneTree(
         Tags nameCounts;
 
         for (auto& childNode : node.ChildNodes()) {
-            String name = childNode->name.size() > 0 ? childNode->name : "???";
+            String name = childNode->Name().size() > 0 ? childNode->Name() : "???";
 
             auto nameCount = nameCounts.SafeValue<int>(name);
             nameCounts.Set(name, nameCount + 1);

@@ -3,61 +3,44 @@
 /*
  RATING: 5 stars
  Simple type
- CODE REVIEW: 8/3/24
- PORTED TO: C++, C#
+ CODE REVIEW: 12/29/24
  */
 namespace PJ {
     class Void;
 
-    // TODO: once C# is cleaned up, can this be `Transform`?
     /// Wraps a transform func so we can optionally store state
-    template <class Value, class Result = Value>
+    template <class Input, class Output = Input>
     class SomeTransformer {
     public:
         virtual ~SomeTransformer() {}
 
-        virtual Result Transform(Value value) = 0;
+        virtual Output Transform(Input value) = 0;
 
-        Result operator()(Value value) {
+        Output operator()(Input value) {
             return Transform(value);
         }
     };
 
-    /// Wraps a transform func
-    template <class Value, class Result = Value>
-    class Transformer : public SomeTransformer<Value, Result> {
-    public:
-        using Func = std::function<Result(Value value)>;
-
-        Func func;
-
-        Transformer(Func func) :
-            func(func) {}
-
-        Result Transform(Value value) override {
-            GUARDR(func, Result())
-            return func(value);
-        }
-    };
-
     /// Wraps a transform func with state
-    template <class Core, class Value, class Result = Value>
-    class CoreTransformer : public SomeTransformer<Value, Result> {
+    template <class Core, class Input, class Output = Input>
+    class Transformer : public SomeTransformer<Input, Output> {
     public:
-        using This = CoreTransformer<Value, Result, Core>;
-        using Func = std::function<Result(Core& core, Value value)>;
+        using Base = SomeTransformer<Input, Output>;
+        using This = Transformer<Core, Input, Output>;
+
+        using TransformFunc = std::function<Output(This&, Input)>;
 
         Core core{};
 
-        Func func;
+        TransformFunc func;
 
-        CoreTransformer(Func func, Core core = Core()) :
+        Transformer(Core core, TransformFunc func) :
             func(func),
             core(core) {}
 
-        Result Transform(Value value) override {
-            GUARDR(func, Result())
-            return func(core, value);
+        Output Transform(Input value) override {
+            GUARDR(func, {})
+            return func(*this, value);
         }
     };
 } // namespace PJ

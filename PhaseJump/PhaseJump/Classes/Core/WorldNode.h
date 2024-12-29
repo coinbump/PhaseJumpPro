@@ -82,6 +82,9 @@ namespace PJ {
             return (uint64_t)this;
         }
 
+        /// OPTIMIZE: Used to map child nodes by id
+        UnorderedMap<String, This*> childMap;
+
     public:
         NodeTransform transform;
 
@@ -89,9 +92,6 @@ namespace PJ {
         class World* world = nullptr;
 
     public:
-        /// Name for browsing and debugging
-        String name;
-
         /// Core properties
         StandardCore core;
 
@@ -104,6 +104,13 @@ namespace PJ {
         /// Stores timers and animators
         Updatables updatables;
 
+        struct Config {
+            String id;
+
+            String name;
+        };
+
+        WorldNode(Config config);
         WorldNode(String name = "");
 
         virtual ~WorldNode() {}
@@ -122,11 +129,36 @@ namespace PJ {
             return tree.Children();
         }
 
+        /// @return Returns the node's name
+        String Id() const {
+            return core.id;
+        }
+
+        /// Sets the nodes's name
+        void SetId(String value) {
+            core.id = value;
+        }
+
+        /// @return Returns the node's name
+        String Name() const {
+            return core.name;
+        }
+
+        /// Sets the nodes's name
+        void SetName(String value) {
+            core.name = value;
+        }
+
+        /// @return Returns the number of child nodes this node contains
         std::size_t ChildCount();
 
+        /// @return Returns a reference to the world that owns this node
         World* World() const;
 
+        /// @return Returns true if the node has received the Awake event
         bool IsAwake() const;
+
+        /// @return Returns true if the node has received the Start event
         bool IsStarted() const;
 
         /// Send a signal to this node and its components
@@ -315,9 +347,22 @@ namespace PJ {
             return *result;
         }
 
+        /// Moves ownership of this node away from the parent
+        SP<WorldNode> Move(WorldNode& node);
+
+        /// Removes child immediately if allowed. Can fail
         void Remove(WorldNode& node);
+
+        /// Removes all children immediately if allowed. Can fail
         void RemoveAllChildren();
+
+        /// Marks all children to be destroyed when it is safe to do so
+        void DestroyAllChildren();
+
+        /// Removes the specified component
         void Remove(SomeWorldComponent& component);
+
+        /// Removes all components
         void RemoveAllComponents();
 
         /// Removes all components of the specified type
@@ -470,23 +515,47 @@ namespace PJ {
             return result;
         }
 
+        /// @return Returns current scale for node
         Vector3 Scale() const;
+
+        /// Sets the transform scale for the node
         This& SetScale(Vector3 value);
+
+        /// Sets the uniform transform scale for the node
         This& SetScale(float value);
+
+        /// Sets the transform scale for the node and keeps z as 0
         This& SetScale2D(Vector2 value);
+
+        /// Sets the uniform transform scale for the node and keeps z as 0
         This& SetScale2D(float value);
 
+        /// Sets the local transform position for the node
         This& SetLocalPosition(Vector3 position) {
             transform.SetLocalPosition(position);
             return *this;
         }
 
+        /// Sets the world transform position for the node
         This& SetWorldPosition(Vector3 position) {
             transform.SetWorldPosition(position);
             return *this;
         }
 
+        /// Called for update events
         virtual void OnUpdate(TimeSlice time);
+
+        /// Called after every node receives OnUpdate
+        virtual void LateUpdate();
+
+        /// @return Returns the child mapped by id
+        This* operator[](String id) {
+            try {
+                return childMap.at(id);
+            } catch (...) {
+                return {};
+            }
+        }
 
         // MARK: Treeable
 
@@ -499,6 +568,7 @@ namespace PJ {
         }
 
     protected:
+        /// Removes the specified node
         void Remove(SP<WorldNode> node);
     };
 

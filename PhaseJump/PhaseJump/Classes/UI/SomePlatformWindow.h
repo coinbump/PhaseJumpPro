@@ -6,7 +6,7 @@
 
 /*
  RATING: 5 stars
- Simple protocol
+ Tested and works
  CODE REVIEW: 12/21/24
  */
 namespace PJ {
@@ -15,14 +15,12 @@ namespace PJ {
 
     /// Platform-level window that contains a world and render context for renders
     class SomePlatformWindow : public Base {
-    public:
-        using This = SomePlatformWindow;
-
+    protected:
         /// ECS nodes, systems, and components
         SP<World> world;
 
-        /// Renders the world
-        SP<SomeRenderEngine> renderEngine;
+    public:
+        using This = SomePlatformWindow;
 
         SomePlatformWindow() {}
 
@@ -30,9 +28,7 @@ namespace PJ {
             return world;
         }
 
-        void SetWorld(SP<World> world) {
-            this->world = world;
-        }
+        void SetWorld(SP<World> value);
 
         /// @return Returns window's size in points
         virtual Vector2Int Size() const = 0;

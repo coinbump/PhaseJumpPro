@@ -15,22 +15,13 @@ namespace PJ {
     class SomeLimiter : public Updatable {
     public:
         using This = SomeLimiter;
-        using CanFireFunc = std::function<bool(This&)>;
-        using OnFireFunc = std::function<void(This&)>;
-
-        CanFireFunc canFireFunc;
-        OnFireFunc onFireFunc;
 
     protected:
-        virtual void OnFire() {
-            GUARD(onFireFunc)
-            onFireFunc(*this);
-        }
+        virtual void OnFire() = 0;
 
     public:
         virtual bool CanFire() {
-            GUARDR(canFireFunc, false)
-            return canFireFunc(*this);
+            return true;
         }
 
         virtual void Fire() {
@@ -44,6 +35,29 @@ namespace PJ {
     template <class Core = Void>
     class Limiter : public SomeLimiter {
     public:
+        using Base = SomeLimiter;
+        using This = Limiter<Core>;
+
+        using CanFireFunc = std::function<bool(This&)>;
+        using OnFireFunc = std::function<void(This&)>;
+
+        CanFireFunc canFireFunc;
+        OnFireFunc onFireFunc;
+
         Core core{};
+
+    protected:
+        // MARK: public SomeLimiter
+
+        void OnFire() override {
+            GUARD(onFireFunc)
+            onFireFunc(*this);
+        }
+
+    public:
+        bool CanFire() override {
+            GUARDR(canFireFunc, false)
+            return canFireFunc(*this);
+        }
     };
 } // namespace PJ

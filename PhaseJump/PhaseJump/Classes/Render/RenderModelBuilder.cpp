@@ -40,7 +40,7 @@ std::optional<RenderModel> RenderModelBuilder::Build(
     VectorList<SP<SomeTexture>> const& textures
 ) {
     RenderModel renderModel(&material);
-    renderModel.name = node ? node->name : "";
+    renderModel.name = node ? node->Name() : "";
     renderModel.id = node ? MakeString((uint64_t)node) : "";
     renderModel.mesh = mesh;
     renderModel.matrix = node ? node->ModelMatrix() : renderModel.matrix;

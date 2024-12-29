@@ -15,8 +15,9 @@ SDLSurface::SDLSurface(Config config) :
         pixelData = malloc(sizeInBytes);
         memcpy(pixelData, bitmapData, sizeInBytes);
 
+        // SDL uses literal byte order, so ABGR8888 is little endian RGBA
         surface = SDL_CreateSurfaceFrom(
-            bitmap.Size().x, bitmap.Size().y, SDL_PIXELFORMAT_RGBA8888, pixelData,
+            bitmap.Size().x, bitmap.Size().y, SDL_PIXELFORMAT_ABGR8888, pixelData,
             bitmap.Size().x * bitmap.PixelSize()
         );
     }

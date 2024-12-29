@@ -5,8 +5,8 @@
 
 using namespace Example::Life;
 
-MatrixRenderer::MatrixRenderer() :
-    Base({ 1200, 1200, 0 }),
+MatrixRenderer::MatrixRenderer(Vector3 worldSize) :
+    Base(worldSize),
     matrix({ 300, 300 }) {
 
     auto material = MAKE<RenderMaterial>(RenderMaterial::Config{ .shaderId = ShaderId::ColorVary });

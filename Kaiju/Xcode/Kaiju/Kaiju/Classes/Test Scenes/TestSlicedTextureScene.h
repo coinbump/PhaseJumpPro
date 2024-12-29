@@ -12,7 +12,7 @@ public:
     TestSlicedTextureScene() {}
 
     void LoadInto(WorldNode& root) override {
-        root.name = "TestSlicedTextureScene";
+        root.SetName("TestSlicedTextureScene");
 
         World& world = *root.World();
 

@@ -345,7 +345,7 @@ TEST(MatrixBoardView, MoveAnimated) {
         MatrixBoardView::MakeAnimatorFunc func = [](Vector3 start, Vector3 end, WorldNode& target) {
             auto interpolateFunc = InterpolateFuncs::Make(start, end);
             SetBindingFunc<Vector3> binding;
-            return MAKE<Animator<Vector3>>(interpolateFunc, 3, binding);
+            return NEW<Animator<Vector3>>(Animator<Vector3>::Config{ .interpolateFunc = interpolateFunc, .duration = 3, .binding = binding});
         };
         EXPECT_EQ(PJ::MatrixBoardView::MoveResult::Success, sut->Move(handler->piece, MapDirection::South, func));
         EXPECT_TRUE(handler->IsAnimating());

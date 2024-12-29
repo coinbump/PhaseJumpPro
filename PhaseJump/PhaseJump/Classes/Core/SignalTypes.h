@@ -44,6 +44,9 @@ namespace PJ {
         /// Called before render. Sends empty Event
         auto constexpr RenderPrepare = "render.prepare";
 
+        /// Called after window is resized
+        auto constexpr WindowResize = "window.resize";
+
         /*
          UNSUPPORTED SIGNALS
          */

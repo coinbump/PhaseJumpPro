@@ -9,10 +9,15 @@ using namespace PJ;
 
 using This = WorldNode;
 
-WorldNode::WorldNode(String name) :
+WorldNode::WorldNode(Config config) :
     transform(*this),
-    tree(*this),
-    name(name) {}
+    tree(*this) {
+    core.id = config.id;
+    core.name = config.name;
+}
+
+WorldNode::WorldNode(String name) :
+    WorldNode(Config{ .name = name }) {}
 
 void WorldNode::Destroy(float countdown) {
     if (countdown == 0) {
@@ -142,6 +147,13 @@ void WorldNode::Insert(SP<WorldNode> node, size_t index) {
         subNode->world = world;
     }
 
+    // The id map allows us to quickly access identifiable children without constantly
+    // filtering the entire child node list
+    auto id = node->Id();
+    if (!IsEmpty(id)) {
+        childMap.insert_or_assign(id, node.get());
+    }
+
     AddChildNodeEvent childNodeEvent(node);
 
     // Let components know there is a new child node
@@ -151,10 +163,37 @@ void WorldNode::Insert(SP<WorldNode> node, size_t index) {
     }
 }
 
-// TODO: SP-audit
+SP<WorldNode> WorldNode::Move(WorldNode& node) {
+    SP<WorldNode> result = SCAST<WorldNode>(node.shared_from_this());
+
+    tree.Remove(node);
+
+    auto id = node.Id();
+    if (!IsEmpty(id)) {
+        childMap.erase(id);
+    }
+
+    RemoveChildNodeEvent childNodeEvent(result);
+
+    // Let components know we removed a child node
+    // Some components need this information (layouts)
+    for (auto& component : components) {
+        component->Signal(SignalId::RemoveChildNode, childNodeEvent);
+    }
+
+    return result;
+}
+
 void WorldNode::Remove(SP<WorldNode> node) {
     GUARD(node)
     GUARD_LOG(node->Parent() == this, "ERROR. Can't remove un-parented node")
+
+    auto world = World();
+    if (world && world->IsRemoveNodesLocked()) {
+        // If this happens, use Destroy instead
+        PJ::Log("ERROR. Can't remove nodes");
+        return;
+    }
 
     VectorList<WorldNode*> subgraph;
     CollectBreadthFirstTree(node.get(), subgraph);
@@ -163,6 +202,11 @@ void WorldNode::Remove(SP<WorldNode> node) {
     }
 
     tree.Remove(*node);
+
+    auto id = node->Id();
+    if (!IsEmpty(id)) {
+        childMap.erase(id);
+    }
 
     RemoveChildNodeEvent childNodeEvent(node);
 
@@ -174,11 +218,17 @@ void WorldNode::Remove(SP<WorldNode> node) {
 }
 
 void WorldNode::Remove(WorldNode& node) {
-    GUARD_LOG(node.Parent() == this, "ERROR. Can't remove un-parented node")
     Remove(SCAST<WorldNode>(node.shared_from_this()));
 }
 
 void WorldNode::RemoveAllChildren() {
+    auto world = World();
+    if (world && world->IsRemoveNodesLocked()) {
+        // If this happens, use Destroy instead
+        PJ::Log("ERROR. Can't remove nodes");
+        return;
+    }
+
     for (auto& child : tree.Children()) {
         VectorList<WorldNode*> subgraph;
         CollectBreadthFirstTree(child.get(), subgraph);
@@ -187,6 +237,13 @@ void WorldNode::RemoveAllChildren() {
         }
     }
     tree.RemoveAllChildren(true);
+    childMap.clear();
+}
+
+void WorldNode::DestroyAllChildren() {
+    for (auto& child : tree.Children()) {
+        child->Destroy();
+    }
 }
 
 void WorldNode::Remove(SomeWorldComponent& component) {
@@ -262,25 +319,37 @@ void WorldNode::CheckedStart() {
     });
 }
 
+auto iterComponents = [](VectorList<SP<SomeWorldComponent>> const& components,
+                         std::function<void(SomeWorldComponent*)> func) {
+    // Avoid iterate mutation crash
+    auto iterComponents = components;
+    for (auto const& component : iterComponents) {
+        // Skip components that were removed by another component in this loop
+        GUARD_CONTINUE(component->owner)
+
+        // Skip disabled components
+        GUARD_CONTINUE(component->IsEnabled())
+
+        func(component.get());
+    }
+};
+
 void WorldNode::OnUpdate(TimeSlice time) {
     if (destroyCountdown > 0) {
         destroyCountdown -= time.delta;
         if (destroyCountdown <= 0) {
             isDestroyed = true;
+            return;
         }
     }
 
-    // Avoid iterate mutation error
-    auto iterComponents = components;
-    for (auto const& component : iterComponents) {
-        // Skip components that were removed by another component in this loop
-        GUARD_CONTINUE(component->owner)
-        GUARD_CONTINUE(component->IsEnabled())
-
-        component->OnUpdate(time);
-    }
+    iterComponents(components, [&](auto component) { component->OnUpdate(time); });
 
     updatables.OnUpdate(time);
+}
+
+void WorldNode::LateUpdate() {
+    iterComponents(components, [&](auto component) { component->LateUpdate(); });
 }
 
 Vector3 WorldNode::LocalToWorld(Vector3 localPos) {

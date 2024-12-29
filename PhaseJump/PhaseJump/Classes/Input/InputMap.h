@@ -21,7 +21,7 @@ namespace PJ {
     /// Stores information for broadcasting signals from input events
     class InputMap {
     public:
-        using TriggerMap = PJ::TriggerMap<SomeUIEvent, String>;
+        using TriggerMap = PJ::TriggerMap<SomeSignal, String>;
         using FilterFunc = TriggerMap::FilterFunc;
 
         TriggerMap map;

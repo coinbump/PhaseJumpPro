@@ -40,10 +40,12 @@ ImGuiPlanPainter::ImGuiPlanPainter(UIPlan& plan) :
         auto label = model.name;
         String value = model.core.binding;
 
-        if (!IsEmpty(label)) {
-            ImGui::Text("%s", label.c_str());
+        if (!IsEmpty(value)) {
+            if (!IsEmpty(label)) {
+                ImGui::Text("%s", label.c_str());
+            }
+            ImGui::Text("%s", value.c_str());
         }
-        ImGui::Text("%s", value.c_str());
     };
 
     drawModelFuncs[UIModelType::InputFloat] = [](auto& painter, auto& _model) {

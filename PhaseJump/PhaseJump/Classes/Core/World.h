@@ -22,6 +22,7 @@ namespace PJ {
     class DesignSystem;
     class FontSpec;
     class SomeShaderProgram;
+    class SomePlatformWindow;
 
     /**
      Container for the ECS system that drives Phase Jump Pro
@@ -31,7 +32,8 @@ namespace PJ {
      are sent to the render system. Those render models are then processed by the render
      engine into GPU commands
 
-     If you don't want to use ECS, subclass world or create a single node + renderer.
+     As an alternative to the standard ECS tree, create a single node with a component that produces
+     render models. This might be more efficient for certain applications.
      */
     class World : public Base {
     public:
@@ -43,11 +45,8 @@ namespace PJ {
         /// Stores time point to calculate FPS
         std::optional<TimePoint> fpsCheckTimePoint;
 
-        /// For FPS calculation
+        /// Internal. Frame render count for FPS calculation
         uint64_t renderFrameCount{};
-
-        /// Internal, list for update
-        WorldNode::NodeList updateList;
 
         /// Systems attached to this world
         VectorList<SP<SomeWorldSystem>> systems;
@@ -65,7 +64,12 @@ namespace PJ {
         /// node
         SP<WorldNode> root = MAKE<WorldNode>("Root");
 
+        /// If true, we are using a list of node pointers, so removes are locked
+        bool isRemoveNodesLocked{};
+
     public:
+        SomePlatformWindow* window{};
+
         /// Number of pixels per point
         /// Example: on a Retina screen, each point represents 2 pixels, this value would be 2
         float uiScale = 1;
@@ -79,7 +83,10 @@ namespace PJ {
         /// Stores resources loaded for this world
         ResourceCatalog resources;
 
-        /// Main render context attached to the window for this world
+        /// Renders the world
+        SP<SomeRenderEngine> renderEngine;
+
+        /// Render context for this world
         SP<SomeRenderContext> renderContext;
 
         /// Polls for UI events
@@ -107,10 +114,24 @@ namespace PJ {
             return root.get();
         }
 
+        SomePlatformWindow* Window() const {
+            return window;
+        }
+
+        Vector2Int PixelSize() const;
+
+        /// @return Returns true if removing nodes is not allowed
+        bool IsRemoveNodesLocked() const {
+            return isRemoveNodesLocked;
+        }
+
+        /// Sets the limited render rate in frames per second
         void SetRenderRate(float value) {
             renderLimiter.core.rate = 1.0f / value;
         }
 
+        /// Enables or disables limiting the render rate (enabled by default)
+        /// Limit render rates to avoid wasting battery life on portable devices
         void SetIsRenderRateLimited(bool value) {
             isRenderRateLimited = value;
         }
@@ -127,18 +148,22 @@ namespace PJ {
             return DCAST<Type>(*found);
         }
 
+        /// @return Returns the first system that matches the type
+        /// Convenience name
         template <class Type>
         SP<Type> GetSystem() {
             return TypeSystem<Type>();
         }
 
+        /// @return Returns the main camera for this world. This is the camera used to render
+        /// the window's content
         virtual SomeCamera* MainCamera();
 
         /// @return Returns a matrix that transforms this node's vertices in local space (position +
         /// offset + scale + rotation)
         virtual Matrix4x4 LocalModelMatrix(WorldNode const& node);
 
-        /// @return Returns a matrix that transforms this node's vertices into word space
+        /// @return Returns a matrix that transforms this node's vertices into world space
         virtual Matrix4x4 WorldModelMatrix(WorldNode const& node);
 
         /// Sends update event to world
@@ -156,7 +181,7 @@ namespace PJ {
         /// Adds a system
         void Add(SP<SomeWorldSystem> system);
 
-        /// Adds a node with constructor arguments
+        /// Adds a node with arguments
         template <typename... Arguments>
         WorldNode& AddNode(Arguments... args) {
             SP<WorldNode> result = MAKE<WorldNode>(args...);
@@ -211,10 +236,14 @@ namespace PJ {
         void RemoveAllSystems();
 
         /// Remove all nodes except for the root node
+        /// Warning: do not call this for immediate UI
         void RemoveAllNodes();
 
-        void SetRenderContext(SP<SomeRenderContext> renderContext);
+        /// Mark all nodes to be destroyed
+        /// Safe to call for immediate UI
+        void DestroyAllNodes();
 
+        /// Called to process UI events
         virtual void ProcessUIEvents(UIEventList const& uiEvents);
 
     protected:

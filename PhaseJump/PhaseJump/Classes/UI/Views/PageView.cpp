@@ -32,7 +32,7 @@ void PageView::RebuildPage() {
 
     try {
         auto& pageFunc = buildPageFuncs.at(store->selection);
-        owner->RemoveAllChildren();
+        owner->DestroyAllChildren();
         pageFunc(*owner);
     } catch (...) {}
 }

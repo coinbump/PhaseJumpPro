@@ -22,7 +22,7 @@ public:
     TestTextureScene() {}
 
     void LoadInto(WorldNode & root) override {
-        root.name = "TestTextureScene";
+        root.SetName("TestTextureScene");
 
         //        WorldNode& cameraNode = root.And("Camera");
         //        cameraNode.With<OrthoCamera>();//.SetHalfHeight(owner->World()->renderContext->PixelSize().y);

@@ -57,7 +57,7 @@ namespace PJ {
         virtual void OnPointerMove(PointerMoveUIEvent const& event);
         virtual void OnKeyDown(KeyDownUIEvent const& event, EventNodeList const& nodes);
         virtual void
-        OnInputAction(SomeUIEvent const& event, String action, EventNodeList const& nodes);
+        OnInputAction(SomeSignal const& event, String action, EventNodeList const& nodes);
 
         // MARK: SomeWorldSystem
 

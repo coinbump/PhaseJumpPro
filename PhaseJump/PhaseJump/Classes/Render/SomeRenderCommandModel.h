@@ -5,7 +5,7 @@
 /*
  RATING: 5 stars
  Simple type
- CODE REVIEW: 7/17/24
+ CODE REVIEW: 12/29/24
  */
 namespace PJ {
     /// A command that represents a render intent, but is not backed by a
@@ -26,7 +26,7 @@ namespace PJ {
 
         Core core{};
 
-        RenderCommandModel(String id, Core core = Core()) :
+        RenderCommandModel(String id, Core core = {}) :
             Base(id),
             core(core) {}
     };
@@ -37,7 +37,6 @@ namespace PJ {
     } // namespace RenderCommandId
 
     namespace RenderCommandModels {
-        // TODO: should these be SP? Since ownership isn't clear?
         UP<RenderCommandModel<Vector2>> ProjectionMatrixLoadOrthographic(Vector2 size);
         UP<RenderCommandModel<Vector3>> LoadTranslate(Vector3 value);
     } // namespace RenderCommandModels

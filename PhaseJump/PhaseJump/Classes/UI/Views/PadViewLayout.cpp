@@ -6,7 +6,9 @@ using namespace PJ;
 
 PadViewLayout::PadViewLayout(LayoutInsets _insets) :
     insets(_insets) {
-    PlanUIFunc planUIFunc = [this](auto& component, String context, UIPlanner& planner) {
+    PlanUIFunc planUIFunc = [this](auto args) {
+        auto& planner = args.planner;
+
         planner.InputFloat({ .label = "Leading",
                              .binding = { [this]() { return insets.leading; },
                                           [this](auto& value) { SetLeadingInset(value); } } });

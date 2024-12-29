@@ -43,7 +43,7 @@
 #include <PhaseJump/DepthFirstOrderRenderProcessor.h>
 #include <PhaseJump/DesignSystem.h>
 #include <PhaseJump/DirectionKSteering2D.h>
-#include <PhaseJump/Document.h>
+#include <PhaseJump/SomeDocument.h>
 #include <PhaseJump/DocumentBundle.h>
 #include <PhaseJump/DragHandler2D.h>
 #include <PhaseJump/DropFilesUIEvent.h>
@@ -114,6 +114,7 @@
 #include <PhaseJump/SDLPlatformClass.h>
 #include <PhaseJump/SDLPlatformConfig.h>
 #include <PhaseJump/SDLPlatformWindow.h>
+#include <PhaseJump/SDLSurface.h>
 #include <PhaseJump/SDLUIEventPoller.h>
 #include <PhaseJump/SDLWorld.h>
 #include <PhaseJump/Scene.h>

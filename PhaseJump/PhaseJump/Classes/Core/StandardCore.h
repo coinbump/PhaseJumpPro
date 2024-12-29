@@ -9,39 +9,44 @@
 /*
  RATING: 5 stars
  Simple type
- CODE REVIEW: 7/10/24
+ CODE REVIEW: 12/27/24
  */
 namespace PJ {
     /// Standard composable core with common properties
     /// Or you can define your own
     class StandardCore {
     public:
-        // TODO: SP audit
+        // TODO: SP-Audit
         using ClassPtr = SP<Class<>>;
 
     protected:
+        /// Class object that defines metadata properties for this object
         ClassPtr _class;
 
-        /// Used if class is not yet assigned
+        /// Class id to find the class if it hasn't been assigned
         String classId;
 
     public:
+        /// Unique identifier
+        String id;
+
+        /// User facing name for display
+        String name;
+
         /// Custom properties
         Tags tags;
 
-        /// Object attribute types (what kind of object is this?)
+        /// Object attribute types
         TypeTagSet typeTags;
 
-        StandardCore(ClassPtr _class = nullptr, String classId = "") :
-            _class(_class),
-            classId(classId) {}
+        StandardCore() {}
 
-        /// If we have a class object, return its id, otherwise use the id we
-        /// have
+        /// @return Returns the id of the class object attached, or if there is no class object,
+        /// returns the stored class id
         String ClassId() const;
 
         void SetClassId(String value) {
-            this->classId = value;
+            classId = value;
         }
 
         ClassPtr Class() const {

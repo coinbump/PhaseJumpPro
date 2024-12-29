@@ -11,7 +11,7 @@
 
 /*
  RATING: 5 stars
- Utility type
+ Tested and works
  CODE REVIEW: 8/11/24
  */
 namespace PJ {
@@ -36,6 +36,9 @@ namespace PJ {
             ) :
                 resources(resources),
                 loadOperations(loadOperations) {}
+
+            Success(ResourceModel model) :
+                resources{ model } {}
 
             void Add(ResourceModel loadedResource) {
                 resources.push_back(loadedResource);
@@ -90,6 +93,16 @@ namespace PJ {
                 result = successValue->loadOperations;
             }
 
+            return result;
+        }
+
+        /// @return Returns the first loaded resource of the specified type if it exists
+        template <class Type>
+        SP<Type> TypeSuccessFirst() const {
+            auto resources = Resources();
+            GUARDR(!IsEmpty(resources), {})
+
+            auto result = DCAST<Type>(resources[0].resource);
             return result;
         }
 

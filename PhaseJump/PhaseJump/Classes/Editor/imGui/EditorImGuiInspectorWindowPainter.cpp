@@ -40,7 +40,7 @@ EditorImGuiInspectorWindowPainter::EditorImGuiInspectorWindowPainter(EditorWorld
                 auto inspectNode = system.inspectNodeModel->node.lock();
                 auto& node = *inspectNode;
 
-                auto nodeName = IsEmpty(node.name) ? "Node" : node.name.c_str();
+                auto nodeName = IsEmpty(node.Name()) ? "Node" : node.Name().c_str();
                 ImGui::Text("%s", nodeName);
 
                 UIPlan uiPlan;

@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "Signal.h"
+#include "ReceptorSignal.h"
 #include "WorldNode.h"
 #include "Utils.h"
 #include "UnorderedMap.h"
@@ -8,7 +8,7 @@ using namespace PJ;
 using namespace std;
 
 namespace SignalTests {
-    class TestSignal : public Signal<String> {
+    class TestSignal : public ReceptorSignal<String> {
     public:
         TestSignal() {
         }

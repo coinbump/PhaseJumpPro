@@ -11,7 +11,7 @@
  */
 namespace PJ {
     /// Sent when a user drags files into the app window
-    class DropFilesUIEvent : public SomeUIEvent {
+    class DropFilesUIEvent : public SomeSignal {
     public:
         VectorList<FilePath> filePaths;
         ScreenPosition position;

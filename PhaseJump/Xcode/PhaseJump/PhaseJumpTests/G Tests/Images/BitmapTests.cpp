@@ -14,7 +14,7 @@ TEST(Bitmap, TestDataInit)
     uint32_t testValue = 0xEF1fAABB;
     *((uint32_t*)data.Pointer()) = testValue;
 
-    RGBABitmap sut(Vector2Int(1, 1), data.Pointer(), data.Size());
+    RGBABitmap sut({.size = { 1, 1 }, .pixels = data.Pointer(), .pixelsDataSize = data.Size() });
 
     EXPECT_EQ(Vector2Int(1, 1), sut.Size());
     EXPECT_EQ(testValue, *((uint32_t*)sut[0]));
@@ -132,8 +132,8 @@ TEST(Bitmap, FlipV)
     sut.SetPixelColor(Vector2Int(0, 1), Color::blue);
     sut.SetPixelColor(Vector2Int(1, 1), Color::white);
 
-    auto flipVOperation = BitmapOperations::FlipV(sut);
-    flipVOperation->Run();
+    auto flipVOperation = BitmapOperations::FlipV();
+    flipVOperation->Run(sut);
     
     {
         auto scanlineData = sut.ScanLineData(0);

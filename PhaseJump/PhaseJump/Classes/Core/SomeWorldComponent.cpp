@@ -13,8 +13,8 @@ SomeWorldComponent::SomeWorldComponent(String name) :
     _core(*this) {
     _core.name = name;
 
-    PlanUIFunc planUIFunc = [this](auto& component, String context, UIPlanner& planner) {
-        planner.Text([this]() {
+    PlanUIFunc planUIFunc = [this](auto args) {
+        args.planner.Text([this]() {
             VectorList<String> signalNames = _core.SignalHandlerNames();
             auto text = Joined(signalNames, ", ");
 
@@ -28,9 +28,7 @@ This& SomeWorldComponent::Enable(bool value) {
     GUARDR(isEnabled != value, *this)
     isEnabled = value;
 
-    if (onEnabledChangeFunc) {
-        onEnabledChangeFunc(*this);
-    }
+    OnEnabledChange();
     return *this;
 }
 
@@ -66,22 +64,12 @@ UP<UIPlan> SomeWorldComponent::MakeUIPlan(String context) {
         auto result = NEW<UIPlan>();
 
         UIPlanner planner(*result.get());
-        planUIFunc(*this, context, planner);
+        planUIFunc({ .component = *this, .context = context, .planner = planner });
 
         return result;
     } catch (...) {
         return {};
     }
-}
-
-void SomeWorldComponent::Awake() {
-    GUARD(awakeFunc)
-    awakeFunc(*this);
-}
-
-void SomeWorldComponent::Start() {
-    GUARD(startFunc)
-    startFunc(*this);
 }
 
 This& SomeWorldComponent::AddSignalHandler(SignalHandler handler) {
@@ -93,4 +81,11 @@ This& SomeWorldComponent::AddSignalHandler(SignalHandler handler) {
 void SomeWorldComponent::OnAddSignalHandler() {
     GUARD(owner)
     owner->isListener = true;
+}
+
+bool SomeWorldComponent::IsEnabled() const {
+    GUARDR(owner, {})
+    GUARDR(owner->IsEnabled(), {})
+
+    return isEnabled;
 }

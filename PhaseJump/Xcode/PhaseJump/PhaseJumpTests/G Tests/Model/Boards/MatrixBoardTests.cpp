@@ -28,15 +28,15 @@ TEST(MatrixBoard, Test)
     EXPECT_EQ(false, sut.Put(squarePiece, Vector2Int(1, 1)));
     EXPECT_EQ(true, sut.Put(squarePiece, Vector2Int(0, 1)));
 
-    EXPECT_EQ(lPiece, sut.PieceAt(Vector2Int(0, 0)));
-    EXPECT_EQ(lPiece, sut.PieceAt(Vector2Int(1, 0)));
-    EXPECT_EQ(lPiece, sut.PieceAt(Vector2Int(2, 0)));
-    EXPECT_EQ(lPiece, sut.PieceAt(Vector2Int(2, 1)));
+    EXPECT_EQ(lPiece, sut.GetPiece(Vector2Int(0, 0)));
+    EXPECT_EQ(lPiece, sut.GetPiece(Vector2Int(1, 0)));
+    EXPECT_EQ(lPiece, sut.GetPiece(Vector2Int(2, 0)));
+    EXPECT_EQ(lPiece, sut.GetPiece(Vector2Int(2, 1)));
 
-    EXPECT_EQ(squarePiece, sut.PieceAt(Vector2Int(0, 1)));
-    EXPECT_EQ(squarePiece, sut.PieceAt(Vector2Int(1, 1)));
-    EXPECT_EQ(squarePiece, sut.PieceAt(Vector2Int(0, 2)));
-    EXPECT_EQ(squarePiece, sut.PieceAt(Vector2Int(1, 2)));
+    EXPECT_EQ(squarePiece, sut.GetPiece(Vector2Int(0, 1)));
+    EXPECT_EQ(squarePiece, sut.GetPiece(Vector2Int(1, 1)));
+    EXPECT_EQ(squarePiece, sut.GetPiece(Vector2Int(0, 2)));
+    EXPECT_EQ(squarePiece, sut.GetPiece(Vector2Int(1, 2)));
 
     EXPECT_EQ(Vector2Int(0, 1), squarePiece->Origin());
     EXPECT_EQ(Vector2Int(0, 0), lPiece->Origin());

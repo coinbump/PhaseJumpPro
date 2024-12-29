@@ -46,6 +46,7 @@ This& ImRenderer::TemplateImage(String id, Vector2 origin, std::optional<Color> 
     Color itemColor = color ? *color : this->color;
     item.colors = { itemColor };
     item.frame.origin = origin;
+    item.isOpaque = areImagesOpaque;
 
     item.id = id;
     AddPath({ .item = item });
@@ -62,6 +63,7 @@ This& ImRenderer::Image(SP<SomeTexture> texture, Vector2 origin) {
     Color itemColor = Color::white;
     item.colors = { itemColor };
     item.frame.origin = origin;
+    item.isOpaque = areImagesOpaque;
 
     item.texture = texture;
     AddPath({ .item = item });
@@ -289,6 +291,7 @@ void ImRenderer::Configure() {
         auto strokeWidth = item.strokeWidth;
 
         auto colorRenderer = static_cast<ColorRenderer*>(result.get());
+        // TODO: rethink this pattern
         colorRenderer->EnableBlend(!areShapesOpaque);
         colorRenderer->SetBuildMeshFunc([strokeWidth](auto& model) {
             QuadFrameMeshBuilder meshBuilder(model.WorldSize(), { strokeWidth, strokeWidth });
@@ -438,7 +441,10 @@ void ImRenderer::Configure() {
         }
 
         UP<SomeRenderer> result = NEW<SpriteRenderer>(SpriteRenderer::Config{ .texture = texture });
-        static_cast<SpriteRenderer*>(result.get())->SetColor(item.GetColor(0, Color::white));
+        auto spriteRenderer = static_cast<SpriteRenderer*>(result.get());
+
+        spriteRenderer->SetColor(item.GetColor(0, Color::white));
+        spriteRenderer->model.Material()->EnableFeature(RenderFeature::Blend, !areImagesOpaque);
 
         return result;
     };

@@ -42,7 +42,7 @@ EditorImGuiScenesPainter::EditorImGuiScenesPainter(
                             });
 
                         world.Remove(removingSystems);
-                        world.RemoveAllNodes();
+                        world.DestroyAllNodes();
 
                         auto sceneNode = MAKE<WorldNode>();
                         sceneNode->Add(scene);

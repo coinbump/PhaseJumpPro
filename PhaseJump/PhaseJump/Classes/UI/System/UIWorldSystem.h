@@ -19,7 +19,7 @@ namespace PJ {
     class SomeFocusCoordinator;
     class FocusHandler;
 
-    class DragEnterUIEvent : public SomeUIEvent {
+    class DragEnterUIEvent : public SomeSignal {
     public:
         DragModel dragModel;
 
@@ -27,7 +27,7 @@ namespace PJ {
             dragModel(dragModel) {}
     };
 
-    class DragExitUIEvent : public SomeUIEvent {};
+    class DragExitUIEvent : public SomeSignal {};
 
     /// Handled advanced user input like drag and drop, hover, etc.
     class UIWorldSystem : public EventWorldSystem {

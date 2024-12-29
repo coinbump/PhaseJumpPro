@@ -12,7 +12,7 @@
 
 /*
  RATING: 5 stars
- Has unit tests
+ Tested and works
  CODE REVIEW: 12/20/24
  */
 namespace PJ {
@@ -52,7 +52,7 @@ namespace PJ {
             }
         }
 
-        /// @return Returns a set of the resources with the specified ids
+        /// @return Returns a set of the resources with the specified ids and type
         template <class Type>
         UnorderedSet<SP<Type>> TypeSet(String type, UnorderedSet<String> const& ids) const {
             VectorList<SP<Type>> result = TypeList<Type>(type, ids);
@@ -60,13 +60,26 @@ namespace PJ {
             return _result;
         }
 
-        /// @return Returns a list of the resources with the specified ids
+        /// @return Returns a list of the resources with the specified ids and type
         template <class Type>
         VectorList<SP<Type>> TypeList(String type, UnorderedSet<String> const& ids) const {
             VectorList<String> _ids(ids.begin(), ids.end());
             VectorList<SP<Type>> result =
                 CompactMap<SP<Type>>(_ids, [=, this](auto& id) { return Find<Type>(type, id); });
             return result;
+        }
+
+        /// @return Returns the first resources of the correct type
+        template <class Type>
+        SP<Type> TypeFirst(String type) const {
+            try {
+                auto& typeMap = value.Map().at(type);
+                GUARDR(typeMap.size() > 0, {})
+
+                return DCAST<Type>(typeMap.begin()->second.resource);
+            } catch (...) {}
+
+            return {};
         }
 
         SP<SomeTexture> FindTexture(String id) const {

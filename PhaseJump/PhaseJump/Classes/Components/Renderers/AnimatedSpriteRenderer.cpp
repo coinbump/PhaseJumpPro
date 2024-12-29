@@ -117,19 +117,18 @@ AnimatedSpriteRenderer::AnimatedSpriteRenderer(Config config) :
     // Synchronize states
     OnFrameChange();
 
-    PlanUIFunc planUIFunc = [](auto& component, String context, UIPlanner& planner) {
-        auto renderer = static_cast<This*>(&component);
+    PlanUIFunc planUIFunc = [this](auto args) {
+        auto& planner = args.planner;
 
         planner
             .InputBool({ .label = "Flip X",
-                         .binding = { [=]() { return renderer->flipX; },
-                                      [=](auto& value) { renderer->SetFlipX(value); } } })
+                         .binding = { [this]() { return flipX; },
+                                      [this](auto& value) { SetFlipX(value); } } })
             .InputBool({ .label = "Flip Y",
-                         .binding = { [=]() { return renderer->flipY; },
-                                      [=](auto& value) { renderer->SetFlipY(value); } } });
+                         .binding = { [this]() { return flipY; },
+                                      [this](auto& value) { SetFlipY(value); } } });
 
-        FramePlayable* rateFramePlayable =
-            dynamic_cast<FramePlayable*>(renderer->framePlayable.get());
+        FramePlayable* rateFramePlayable = dynamic_cast<FramePlayable*>(framePlayable.get());
         if (rateFramePlayable) {
             VectorList<String> cycleOptions{ "Once", "PingPong", "Loop" };
             planner

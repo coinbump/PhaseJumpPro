@@ -59,6 +59,10 @@ namespace PJ {
     struct KeyModifiers {
         UnorderedSet<String> modifiers;
 
+        bool Contains(String modifier) const {
+            return modifiers.contains(modifier);
+        }
+
         void AddIf(String modifier, bool check) {
             GUARD(check)
             modifiers.insert(modifier);
@@ -66,7 +70,7 @@ namespace PJ {
     };
 
     /// Key related UI event
-    class SomeKeyUIEvent : public SomeUIEvent {
+    class SomeKeyUIEvent : public SomeSignal {
     public:
         /// Scan code of the hardware key that was pressed
         KeyScanCode scanCode;

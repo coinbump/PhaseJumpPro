@@ -20,7 +20,7 @@ namespace Example {
             Matrix<Agent*> matrix;
 
         public:
-            MatrixRenderer();
+            MatrixRenderer(Vector3 worldSize);
 
             void Awake() override;
             void OnUpdate(TimeSlice time) override;

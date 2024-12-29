@@ -111,6 +111,15 @@ namespace PJ {
         /// Converts a cell location to a world position
         Vector3 LocationToWorldPosition(Vector2Int cell);
 
+        template <class Operator>
+        void ForEachPiece(Operator op) {
+            // Avoid iterate mutation crash
+            auto iterPieces = board.Pieces();
+            for (auto& piece : iterPieces) {
+                op(*piece);
+            }
+        }
+
         // MARK: SomeWorldComponent
 
         String TypeName() const override {

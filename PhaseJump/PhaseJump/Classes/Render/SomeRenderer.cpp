@@ -25,13 +25,15 @@ SomeMaterialRenderer::SomeMaterialRenderer(Vector3 worldSize) :
         return result;
     });
 
-    PlanUIFunc planUIFunc = [](auto& component, String context, UIPlanner& planner) {
-        auto renderer = static_cast<SomeMaterialRenderer*>(&component);
-        auto& model = renderer->model;
+    PlanUIFunc planUIFunc = [this](auto args) {
+        args.planner.PickerColor({ .label = "Color",
+                                   .binding = { [this]() { return model.GetColor(); },
+                                                [this](auto& value) { model.SetColor(value); } } });
 
-        planner.PickerColor({ .label = "Color",
-                              .binding = { [&]() { return model.GetColor(); },
-                                           [&](auto& value) { model.SetColor(value); } } });
+        args.planner.Button({ .label = "Rebuild", .func = [this]() {
+                                 model.SetMeshNeedsBuild();
+                                 model.BuildIfNeeded();
+                             } });
     };
     Override(planUIFuncs[UIContextId::Inspector], planUIFunc);
 }

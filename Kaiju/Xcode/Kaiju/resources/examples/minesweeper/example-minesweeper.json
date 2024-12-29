@@ -1,0 +1,52 @@
+{
+    "software": {
+        "name": "rTexPacker v4.0",
+        "url": "https://raylibtech.itch.io/rtexpacker"
+    },
+    "atlas": {
+        "imagePath": "example-mineSweeper.png",
+        "width": 1024,
+        "height": 1024,
+        "spriteCount": 4,
+        "isFont": false,
+        "fontSize": 32
+    },
+    "sprites": [
+        {
+            "nameId": "example-minesweeper-tile-bomb",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 1, "y": 1 },
+            "sourceSize": { "width": 50, "height": 50 },
+            "padding": 0,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 0, "width": 50, "height": 50 }
+        },
+        {
+            "nameId": "example-minesweeper-tile-empty",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 52, "y": 1 },
+            "sourceSize": { "width": 50, "height": 50 },
+            "padding": 0,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 0, "width": 50, "height": 50 }
+        },
+        {
+            "nameId": "example-minesweeper-tile-fill",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 103, "y": 1 },
+            "sourceSize": { "width": 50, "height": 50 },
+            "padding": 0,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 0, "width": 50, "height": 50 }
+        },
+        {
+            "nameId": "example-minesweeper-tile-flag",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 154, "y": 1 },
+            "sourceSize": { "width": 50, "height": 50 },
+            "padding": 0,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 0, "width": 50, "height": 50 }
+        }
+    ]
+}

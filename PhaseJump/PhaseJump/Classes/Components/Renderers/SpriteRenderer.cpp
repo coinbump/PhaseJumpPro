@@ -63,16 +63,14 @@ SpriteRenderer::SpriteRenderer(Config config) :
     });
     Configure();
 
-    PlanUIFunc planUIFunc = [](auto& component, String context, UIPlanner& planner) {
-        auto renderer = static_cast<This*>(&component);
-
-        planner
+    PlanUIFunc planUIFunc = [this](auto args) {
+        args.planner
             .InputBool({ .label = "Flip X",
-                         .binding = { [=]() { return renderer->flipX; },
-                                      [=](auto& value) { renderer->SetFlipX(value); } } })
+                         .binding = { [this]() { return flipX; },
+                                      [this](auto& value) { SetFlipX(value); } } })
             .InputBool({ .label = "Flip Y",
-                         .binding = { [=]() { return renderer->flipY; },
-                                      [=](auto& value) { renderer->SetFlipY(value); } } });
+                         .binding = { [this]() { return flipY; },
+                                      [this](auto& value) { SetFlipY(value); } } });
     };
     Override(planUIFuncs[UIContextId::Inspector], planUIFunc);
 }

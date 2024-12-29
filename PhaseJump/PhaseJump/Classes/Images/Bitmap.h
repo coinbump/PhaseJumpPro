@@ -18,6 +18,16 @@
 namespace PJ {
     enum class ColorComponent { Red, Green, Blue, Alpha };
 
+    enum class BitmapOrientation {
+        /// Default bitmap orientation
+        Standard,
+
+        /// Bitmap is flipped vertically (used for graphics pipelines like OpenGL)
+        Flip
+    };
+
+    BitmapOrientation Flipped(BitmapOrientation value);
+
     namespace PixelFormat {
         struct RGBA8888 {
             using Pixel = RGBAColor;
@@ -45,8 +55,10 @@ namespace PJ {
     }; // namespace PixelFormat
 
     /// Interface to bitmap object
-    class SomeBitmap {
+    class SomeBitmap : public Base {
     public:
+        using This = SomeBitmap;
+
         virtual ~SomeBitmap() {};
 
         virtual void* DataPtr() const = 0;
@@ -59,6 +71,8 @@ namespace PJ {
     template <class PixelFormat = PixelFormat::RGBA8888>
     class Bitmap : public SomeBitmap {
     public:
+        using Base = SomeBitmap;
+        using This = Bitmap;
         using Pixel = typename PixelFormat::Pixel;
 
         // Don't allow copies
@@ -70,22 +84,40 @@ namespace PJ {
         Vector2Int size;
 
     public:
+        BitmapOrientation orientation{};
+
+        struct Config {
+            BitmapOrientation orientation{};
+            Vector2Int size;
+
+            // METHOD: pixels pointer
+            void* pixels{};
+            size_t pixelsDataSize{};
+
+            // METHOD: pixel data
+            PJ::Data<uint32_t> const* data{};
+        };
+
         Bitmap() {}
 
-        Bitmap(Vector2Int size, void* pixels = nullptr, size_t pixelsDataSize = 0) {
+        Bitmap(Config config) :
+            orientation(config.orientation) {
+            size = config.size;
             GUARD(size.x > 0 && size.y > 0)
 
-            this->size = size;
             auto pixelCount = size.x * size.y;
-            this->pixels.resize(pixelCount);
+            pixels.resize(pixelCount);
 
-            GUARD(pixels && pixelsDataSize > 0)
-            auto totalSize = pixelFormat.PixelSize() * this->pixels.size();
-            memcpy(this->pixels.data(), pixels, std::min(totalSize, pixelsDataSize));
+            if (config.data) {
+                config.pixels = config.data->Pointer();
+                config.pixelsDataSize = config.data->Size();
+            }
+
+            if (config.pixels && config.pixelsDataSize > 0) {
+                auto totalSize = pixelFormat.PixelSize() * pixels.size();
+                memcpy(pixels.data(), config.pixels, std::min(totalSize, config.pixelsDataSize));
+            }
         }
-
-        Bitmap(Vector2Int size, PJ::Data<uint32_t> const& data) :
-            Bitmap(size, data.Pointer(), data.Size()) {}
 
         template <class Check>
         bool AnyPixelsOnScanLine(int y, Check check) {

@@ -31,7 +31,7 @@ SimpleAnimationController::SimpleAnimationController() {
     states.OverrideOnStateChangeFunc(onStateChangeFunc);
 
     // Build the renderer once we are in the world
-    Func awakeFunc = [this](auto& component) { states.ForceOnStateChange(); };
+    WorldComponentFunc awakeFunc = [this](auto& component) { states.ForceOnStateChange(); };
     Override(this->awakeFunc, awakeFunc);
 }
 

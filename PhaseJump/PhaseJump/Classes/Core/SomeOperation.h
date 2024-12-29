@@ -27,7 +27,7 @@ namespace PJ {
         using Base = SomeOperation;
         using This = Operation;
 
-        using OperationFunc = std::function<void(Operation&)>;
+        using OperationFunc = std::function<void(This&)>;
 
         Core core{};
 
@@ -42,6 +42,43 @@ namespace PJ {
         void Run() override {
             GUARD(runFunc)
             runFunc(*this);
+        }
+    };
+
+    /// Operation that accepts input and produces output
+    template <class Input, class Output>
+    class SomeResultOperation : public Base {
+    public:
+        virtual Output Run(Input args) = 0;
+    };
+
+    /// Result operation with a core and run func
+    template <class Input, class Output, class Core = Void>
+    class ResultOperation : public SomeResultOperation<Input, Output> {
+    public:
+        using Base = SomeResultOperation<Input, Output>;
+        using This = ResultOperation<Input, Output, Core>;
+
+        using OperationFunc = std::function<Output(This&, Input&)>;
+
+        Core core{};
+
+        struct Config {
+            Core core{};
+            OperationFunc runFunc;
+        };
+
+        ResultOperation(Config config) :
+            core(config.core),
+            runFunc(config.runFunc) {}
+
+        OperationFunc runFunc;
+
+        // MARK: SomeOperation
+
+        Output Run(Input args) override {
+            GUARDR(runFunc, {})
+            return runFunc(*this, args);
         }
     };
 

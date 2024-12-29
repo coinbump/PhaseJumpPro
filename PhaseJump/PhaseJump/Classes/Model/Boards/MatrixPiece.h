@@ -2,6 +2,7 @@
 
 #include "Dev.h"
 #include "Matrix.h"
+#include "Tags.h"
 #include "Vector2.h"
 #include "Void.h"
 
@@ -35,6 +36,9 @@ namespace PJ {
     public:
         /// Board that owns this piece
         MatrixBoard* board{};
+
+        /// Object attribute types
+        TypeTagSet typeTags;
 
         /// (Optional) Object that owns this piece (besides the board)
         void* owner{};

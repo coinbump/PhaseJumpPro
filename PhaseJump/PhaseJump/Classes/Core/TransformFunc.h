@@ -6,27 +6,26 @@
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 7/13/24
- PORTED TO: C++, C#
+ CODE REVIEW: 12/29/24
  */
 namespace PJ {
-    template <class Value, class Result = Value>
-    using TransformFunc = std::function<Result(Value value)>;
+    template <class Input, class Output = Input>
+    using TransformFunc = std::function<Output(Input value)>;
 
     namespace TransformFuncs {
-        template <class Value>
-        TransformFunc<Value> Identity() {
-            return [](Value value) { return value; };
+        template <class Input>
+        TransformFunc<Input> Identity() {
+            return [](Input value) { return value; };
         }
 
-        template <class Value>
-        TransformFunc<Value> Clamp(Value minValue, Value maxValue) {
-            return [=](Value value) { return std::clamp(value, minValue, maxValue); };
+        template <class Input>
+        TransformFunc<Input> Clamp(Input minValue, Input maxValue) {
+            return [=](Input value) { return std::clamp(value, minValue, maxValue); };
         }
 
-        template <class Value>
-        TransformFunc<Value> Multiply(Value factor) {
-            return [=](Value value) { return value * factor; };
+        template <class Input>
+        TransformFunc<Input> Multiply(Input factor) {
+            return [=](Input value) { return value * factor; };
         }
     } // namespace TransformFuncs
 } // namespace PJ

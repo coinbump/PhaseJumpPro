@@ -6,14 +6,14 @@
 /*
  RATING: 5 stars
  Tested and works
- CODE REVIEW: 7/16/24
+ CODE REVIEW: 12/29/24
  */
 namespace PJ {
-    // FUTURE: add commands as needed
     class GLRenderEngine;
 
     /// Interface for OpenGL render command
-    struct SomeGLRenderCommand {
+    class SomeGLRenderCommand {
+    public:
         virtual ~SomeGLRenderCommand() {}
 
         virtual void Run(GLRenderEngine& engine) = 0;

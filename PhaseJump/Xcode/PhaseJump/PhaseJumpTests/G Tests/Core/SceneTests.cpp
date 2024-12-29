@@ -11,7 +11,7 @@ using namespace SceneTests;
 
 TEST(Scene, IsLoaded)
 {
-    SP<Scene> scene = MAKE<Scene>();
+    UP<Scene> scene = NEW<Scene>();
 
     EXPECT_FALSE(scene->IsLoaded());
     scene->Start();

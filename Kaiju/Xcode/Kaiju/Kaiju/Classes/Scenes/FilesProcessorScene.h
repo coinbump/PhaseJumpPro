@@ -17,7 +17,7 @@ namespace Kaiju {
                     FilesProcessor::Settings(FileSearchType::Recursive)
                 );
 
-                auto& event = std::get<1>(args);
+                auto& event = args.event;
                 for (auto& filePath : event.filePaths) {
                     filesProcessor->Scan(filePath);
                 }

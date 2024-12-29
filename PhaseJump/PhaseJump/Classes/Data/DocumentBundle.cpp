@@ -4,9 +4,9 @@
 using namespace std;
 using namespace PJ;
 
-VectorList<Document*> DocumentBundle::ModifiedDocuments() const {
-    VectorList<Document*> result =
-        Map<Document*>(documents, [](auto& document) { return document.get(); });
+VectorList<SomeDocument*> DocumentBundle::ModifiedDocuments() const {
+    VectorList<SomeDocument*> result =
+        Map<SomeDocument*>(documents, [](auto& document) { return document.get(); });
     result = Filter(result, [](auto& document) { return document->IsModified(); });
     return result;
 }
@@ -18,19 +18,12 @@ void DocumentBundle::SaveModified() {
     }
 }
 
-void DocumentBundle::Add(SP<Document> document) {
+void DocumentBundle::Add(SP<SomeDocument> document) {
     GUARD(document)
 
     documents.push_back(document);
-    Document::DocumentFunc onCloseFunc = [this](auto& document) {
-        Remove(document);
-
-        GUARD(this->onCloseFunc)
-        this->onCloseFunc(document);
-    };
-    Override(document->onCloseFunc, onCloseFunc);
 }
 
-void DocumentBundle::Remove(Document& _document) {
+void DocumentBundle::Remove(SomeDocument& _document) {
     documents = Filter(documents, [&](auto& document) { return &_document != document.get(); });
 }

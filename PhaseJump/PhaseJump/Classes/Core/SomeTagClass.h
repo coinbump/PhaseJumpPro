@@ -20,15 +20,20 @@ namespace PJ {
 
         String id;
 
-        VectorList<SP<SomeAttribute>> attributes;
+        VectorList<UP<SomeAttribute>> attributes;
 
         virtual String Type() const = 0;
 
         SomeTagClass(String id) :
             Base(id) {}
 
-        SomeTagClass& Add(SP<SomeAttribute> attribute) {
-            attributes.push_back(attribute);
+        SomeTagClass& Add(UP<SomeAttribute>& attribute) {
+            attributes.push_back(std::move(attribute));
+            return *this;
+        }
+
+        SomeTagClass& Add(UP<SomeAttribute>&& attribute) {
+            attributes.push_back(std::move(attribute));
             return *this;
         }
     };
@@ -36,6 +41,7 @@ namespace PJ {
     template <class T>
     class TagClass : public SomeTagClass {};
 
+    // TODO: rethink this use of polymorphism here. Do we need it?
     template <>
     class TagClass<float> : public SomeTagClass {
     public:

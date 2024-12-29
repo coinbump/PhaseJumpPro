@@ -14,13 +14,11 @@ public:
     SP<RenderMaterial> heartMaterial;
 
     TestEmittersScene() {
-        PlanUIFunc planUIFunc = [](auto& component, String context, UIPlanner& planner) {
-            auto concrete = static_cast<This*>(&component);
-
-            planner.InputFloat({ .label = "Emit delta",
-                                 .binding = {
-                                     [=]() { return concrete->EmitDelta(); },
-                                     [=](auto& value) { concrete->SetEmitDelta(value); } } });
+        PlanUIFunc planUIFunc = [this](auto args) {
+            args.planner.InputFloat({ .label = "Emit delta",
+                                      .binding = { [this]() { return EmitDelta(); },
+                                                   [this](auto& value) { SetEmitDelta(value); } } }
+            );
         };
         Override(planUIFuncs[UIContextId::Editor], planUIFunc);
     }
@@ -45,7 +43,7 @@ public:
     }
 
     void LoadInto(WorldNode& root) override {
-        root.name = "TestEmittersScene";
+        root.SetName("TestEmittersScene");
 
         auto camera = SCAST<SomeCamera>(MAKE<OrthoCamera>());
         auto cameraNode = MAKE<WorldNode>("Camera");

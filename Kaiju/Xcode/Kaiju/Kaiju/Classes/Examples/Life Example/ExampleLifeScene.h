@@ -12,6 +12,8 @@ namespace Example {
         /// "Life" example using the common rules for a basic cellular automata simulation
         class Scene : public PJ::Scene {
         public:
+            Vector3 worldSize{ 1200, 1200, 0 };
+
             Scene() {}
 
             void LoadInto(WorldNode& root) override {
@@ -19,7 +21,8 @@ namespace Example {
                     .Named("ExampleLifeScene")
                     .OrthoStandard(Color::gray)
                     .And("Life Simulation")
-                    .With<MatrixRenderer>();
+                    .With<MatrixRenderer>(worldSize)
+                    .ScaleWithWindow(worldSize, 0.8f);
             }
         };
     } // namespace Life

@@ -26,6 +26,10 @@
         },
         {
             "type": "texture",
+            "path": "art/dev-test.png"
+        },
+        {
+            "type": "texture",
             "path": "art/audio-pad.png"
         },
         {
@@ -59,6 +63,10 @@
         {
             "type": "rtexPacker.atlas",
             "path": "art/TestFont.json"
+        },
+        {
+            "type": "rtexPacker.atlas",
+            "path": "examples/minesweeper/example-minesweeper.json"
         },
         {
             "type": "texturePacker.atlas",

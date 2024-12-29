@@ -8,45 +8,34 @@
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 12/22/24
+ CODE REVIEW: 12/26/24
  */
 namespace PJ {
     /**
-     Stores either a shared vector via span or a modifiable vector copy
+     Stores either a shared list via span or a modifiable vector list
 
-     When dealing with large vectors,  we want to reduce the # of
-     times the data gets copied. This allows a span to be shared
-     until the point in time where we need to copy the vector in order to modify it
-
-     Example: large mesh triangle lists
-     Important: span is just a view into the vector and doesn't hold on to it, make sure you aren't
-     letting the shared vector deallocate.
+     Allows us to either share data from another object to avoid large copies of very large lists
+     or store it ourselves if needed. Also allows us to convert the shared span into a modifiable
+     copy if we need to modify it from the original source of truth.
      */
-    template <class ValueType>
+    template <class ValueType, class SpanValueType = ValueType const>
     class SharedVectorList {
     protected:
-        using SpanType = std::span<ValueType const>;
+        using SpanType = std::span<SpanValueType>;
         using Vector = VectorList<ValueType>;
 
-        // FUTURE: support shared_ptr if needed
         std::variant<SpanType, Vector> value;
 
     public:
         SharedVectorList() {}
 
         SharedVectorList(SpanType span) :
-            value(span) {
-            // PJ::Log("SPAN triangles")
-        }
+            value(span) {}
 
         SharedVectorList(Vector const& vector) :
-            value(vector) {
-            // PJ::Log("COPY triangles");
-        }
+            value(vector) {}
 
-        /// @return Returns a span view into the vector
-        /// Can either be a span a shared vector stored somewhere else or a span for this object's
-        /// vector
+        /// @return Returns a span view into the list
         constexpr SpanType Span() const {
             auto span = std::get_if<SpanType>(&value);
             if (span) {
@@ -61,7 +50,8 @@ namespace PJ {
             return {};
         }
 
-        /// @return Returns true if the stored value is shared
+        /// @return Returns true if the stored value is a shared span and doesn't hold the owning
+        /// list object
         constexpr bool IsShared() const {
             auto span = std::get_if<SpanType>(&value);
             return nullptr != span && nullptr != span->data();
@@ -84,7 +74,7 @@ namespace PJ {
             return Span().size();
         }
 
-        operator std::span<ValueType const>() const {
+        operator SpanType() const {
             return Span();
         }
 

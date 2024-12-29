@@ -181,3 +181,16 @@ TEST(Updatables, AddUpdatableWhileUpdating)
     sut.OnUpdate(TimeSlice(1));
     EXPECT_EQ(2, sut.Count());
 }
+
+TEST(Updatables, RemoveAll)
+{
+    Updatables sut;
+
+    sut.AddContinue([&](auto time) {
+    });
+    
+    EXPECT_EQ(1, sut.Count());
+    sut.RemoveAll();
+
+    EXPECT_EQ(0, sut.Count());
+}

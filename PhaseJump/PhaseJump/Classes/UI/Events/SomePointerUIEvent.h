@@ -20,7 +20,7 @@ namespace PJ {
     } // namespace PointerInputButton
 
     /// Pointer device UI event
-    class SomePointerUIEvent : public SomeUIEvent {
+    class SomePointerUIEvent : public SomeSignal {
     public:
         ScreenPosition screenPos;
 

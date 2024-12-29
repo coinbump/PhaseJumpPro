@@ -15,9 +15,9 @@ TEST(Animator, Animate)
 
     auto interpolator = InterpolateFuncs::Ease(InterpolateFuncs::Make<float>(0.0f, 360.0f));
     SetBindingFunc<float> binding = [&testValue](float value) { testValue = value; };
-    Animator<float> sut(interpolator,
-                        1.0f,
-                        binding);
+    Animator<float> sut({.interpolateFunc = interpolator,
+            .duration = 1.0f,
+        .binding = binding});
 
     sut.OnUpdate(TimeSlice(0.5f));
     EXPECT_EQ(0.5f, sut.Progress());
@@ -36,9 +36,9 @@ TEST(Animator, SetProgress)
 
     auto interpolator = InterpolateFuncs::Ease(InterpolateFuncs::Make<float>(0.0f, 360.0f));
     SetBindingFunc<float> binding = [&testValue](float value) { testValue = value; };
-    Animator<float> sut(interpolator,
-                        1.0f,
-                        binding);
+    Animator<float> sut({.interpolateFunc = interpolator,
+            .duration = 1.0f,
+        .binding = binding});
 
     sut.SetProgress(0.5f);
     EXPECT_EQ(0.5f, sut.Progress());
@@ -60,11 +60,11 @@ TEST(Animator, CycleOnceForward)
 {
     auto testValue = -1.0f;
 
-    Animator<float> sut(
-                             InterpolateFuncs::Make(0.0f, 360.0f),
-                             1.0f,
-                             [&testValue] (float value) { testValue = value; }, AnimationCycleType::Once
-                             );
+    Animator<float> sut({
+        .interpolateFunc = InterpolateFuncs::Make(0.0f, 360.0f),
+        .duration = 1.0f,
+        .binding = [&testValue] (float value) { testValue = value; }, .cycleType = AnimationCycleType::Once
+    });
 
     sut.OnUpdate(TimeSlice(0.5f));
     EXPECT_EQ(0.5f, sut.Progress());
@@ -81,11 +81,11 @@ TEST(Animator, MatchInReverse)
 {
     auto testValue = -1.0f;
 
-    Animator<float> sut(
-                             InterpolateFuncs::Ease(InterpolateFuncs::Make(0.0f, 360.0f), EaseFuncs::inSquared),
-                             1.0f,
-                             [&testValue] (float value) { testValue = value; }, AnimationCycleType::PingPong,
-                             InterpolateFuncs::Ease(InterpolateFuncs::Make(360.0f, 0.0f), EaseFuncs::inSquared));
+    Animator<float> sut({
+        .interpolateFunc = InterpolateFuncs::Ease(InterpolateFuncs::Make(0.0f, 360.0f), EaseFuncs::inSquared),
+        .duration = 1.0f,
+        .binding = [&testValue] (float value) { testValue = value; }, .cycleType = AnimationCycleType::PingPong,
+        .reverseInterpolateFunc = InterpolateFuncs::Ease(InterpolateFuncs::Make(360.0f, 0.0f), EaseFuncs::inSquared)});
 
     sut.OnUpdate(TimeSlice(1.0f));
     EXPECT_EQ(1.0f, sut.Progress());
@@ -99,11 +99,11 @@ TEST(Animator, RewindInReverse)
 {
     auto testValue = -1.0f;
 
-    Animator<float> sut(
-                             InterpolateFuncs::Ease(InterpolateFuncs::Make(0.0f, 360.0f), EaseFuncs::inSquared),
-                             1.0f,
-                             [&testValue] (float value) { testValue = value; }, AnimationCycleType::PingPong
-                             );
+    Animator<float> sut({
+        .interpolateFunc = InterpolateFuncs::Ease(InterpolateFuncs::Make(0.0f, 360.0f), EaseFuncs::inSquared),
+        .duration = 1.0f,
+        .binding = [&testValue] (float value) { testValue = value; }, .cycleType = AnimationCycleType::PingPong
+    });
 
     sut.OnUpdate(TimeSlice(1.0f));
     EXPECT_EQ(1.0f, sut.Progress());

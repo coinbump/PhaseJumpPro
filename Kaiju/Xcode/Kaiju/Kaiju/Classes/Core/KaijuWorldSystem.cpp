@@ -1,7 +1,9 @@
 #include "KaijuWorldSystem.h"
 #include "ExampleCheckersScene.h"
+#include "ExampleGraphsScene.h"
 #include "ExampleLifeScene.h"
 #include "ExampleMatrixBoardViewAnimationScene.h"
+#include "ExampleMinesweeperScene.h"
 #include "FilesProcessorScene.h"
 #include "ImageAppScene.h"
 #include "TestAnimateApp.h"
@@ -30,12 +32,12 @@ KaijuWorldSystem::KaijuWorldSystem() {
 
     auto undoMenuItem = NEW<MenuItem>(
         "Undo", VectorList<KeyboardShortcut>{ { "z", { KeyModifier::Shortcut } } },
-        [this](auto& menuItem) { this->commands.Undo(); }
+        [this](auto& menuItem) { commands.Undo(); }
     );
     auto redoMenuItem = NEW<MenuItem>(
         "Redo",
         VectorList<KeyboardShortcut>{ { "z", { KeyModifier::Shortcut, KeyModifier::Shift } } },
-        [this](auto& menuItem) { this->commands.Redo(); }
+        [this](auto& menuItem) { commands.Redo(); }
     );
 
     undoMenuItem->titleFunc = [this](auto& menuItem) {
@@ -104,6 +106,12 @@ void KaijuWorldSystem::RegisterSceneClasses() {
         "example.matrixBoardViewAnimation", "Example: Matrix board view",
         []() { return NEW<Example::MatrixBoardViewAnimation::Scene>(); }
     ));
+    sceneClasses.Add(NEW<SceneClass>("example.mineSweeper", "Example: Minesweeper", []() {
+        return NEW<Example::Minesweeper::Scene>();
+    }));
+    sceneClasses.Add(NEW<SceneClass>("example.graphs", "Example: Graphs", []() {
+        return NEW<Example::Graphs::Scene>();
+    }));
     sceneClasses.Add(NEW<SceneClass>("example.checkers", "Example: Checkers", []() {
         return NEW<Example::Checkers::Scene>();
     }));
@@ -123,8 +131,10 @@ void KaijuWorldSystem::ProcessUIEvents(UIEventList const& uiEvents) {
         auto keyDownEvent = DCAST<KeyDownUIEvent>(event);
         if (keyDownEvent) {
             switch (keyDownEvent->keyCode.value) {
-            case '\t':
-                isUIVisible = !isUIVisible;
+            case SDLK_TAB:
+                if (keyDownEvent->keyModifiers.Contains(KeyModifier::Control)) {
+                    isUIVisible = !isUIVisible;
+                }
                 break;
             }
         }

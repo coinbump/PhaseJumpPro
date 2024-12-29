@@ -6,14 +6,14 @@
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 7/6/24
+ CODE REVIEW: 12/29/24
  */
 namespace PJ {
     /// A goal that must reach a value target to be complete
-    class ValueTargetGoal : public SomeGoal {
+    class ValueTargetGoal : public Goal<> {
     protected:
-        int valueTarget = 0;
-        int value = 0;
+        int valueTarget{};
+        int value{};
 
     public:
         int ValueTarget() const {
@@ -38,16 +38,15 @@ namespace PJ {
             this->id = id;
         }
 
-        float Progress() const override {
-            return std::clamp((float)value / (float)valueTarget, 0.0f, 1.0f);
+        void Increment() {
+            GUARD(value < valueTarget)
+            SetValue(Value() + 1);
         }
 
-        void Increment() {
-            if (value >= valueTarget) {
-                return;
-            }
+        // MARK: SomeGoal
 
-            SetValue(Value() + 1);
+        float Progress() const override {
+            return std::clamp((float)value / (float)valueTarget, 0.0f, 1.0f);
         }
     };
 } // namespace PJ

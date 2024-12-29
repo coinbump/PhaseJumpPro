@@ -12,11 +12,16 @@ namespace SomeWorldComponentTests {
 
 using namespace SomeWorldComponentTests;
 
-TEST(SomeWorldComponent, TestEnable)
+TEST(WorldComponent, TestEnable)
 {
     int changeCount{};
     
-    WorldComponent sut;
+    WorldNode node;
+    auto _sut = MAKE<WorldComponent<>>("");
+    node.Add(_sut);
+
+    auto& sut = *_sut;
+    
     sut.onEnabledChangeFunc = [&](auto& c) {
         changeCount++;
     };
@@ -27,6 +32,19 @@ TEST(SomeWorldComponent, TestEnable)
     sut.Enable(false);
     EXPECT_FALSE(sut.IsEnabled());
     EXPECT_EQ(1, changeCount);
+}
+
+TEST(WorldComponent, TestIsEnabledOwnerDestroyed)
+{
+    WorldNode node;
+    auto _sut = MAKE<WorldComponent<>>("");
+    node.Add(_sut);
+
+    auto& sut = *_sut;
+    
+    EXPECT_TRUE(sut.IsEnabled());
+    node.Destroy();
+    EXPECT_FALSE(sut.IsEnabled());
 }
 
 TEST(SomeWorldComponent, LifeCycle)

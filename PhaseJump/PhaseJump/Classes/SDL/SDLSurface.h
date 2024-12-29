@@ -16,19 +16,25 @@ namespace PJ {
      `SDL_Surface` doesn't manage the pixel data, we are responsible for freeing it after the
      surface is freed Reference: https://wiki.libsdl.org/SDL3/SDL_CreateSurfaceFrom
      */
-    struct SDLSurface {
+    class SDLSurface {
+    protected:
         SDL_Surface* surface{};
         void* pixelData{};
 
+    public:
         struct Config {
             SDL_Surface* surface{};
             void* pixelData{};
 
-            /// If provided, the surface will be created with this bitmap
-            SomeBitmap* bitmap{};
+            /// Method: create surface with bitmap data
+            RGBABitmap* bitmap{};
         };
 
         SDLSurface(Config config);
+
+        SDL_Surface* Surface() const {
+            return surface;
+        }
 
         ~SDLSurface();
     };

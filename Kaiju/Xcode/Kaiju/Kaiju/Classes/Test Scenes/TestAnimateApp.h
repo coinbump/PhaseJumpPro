@@ -18,7 +18,7 @@ public:
     void LoadInto(WorldNode& root) override {
         QB(root).Named("TestAnimateApp").OrthoStandard().OnDropFiles([](auto args) {
             AnimatedSpriteRenderer::TextureList textures;
-            for (auto& filePath : std::get<1>(args).filePaths) {
+            for (auto& filePath : args.event.filePaths) {
                 ResourceRepositoryModel repoModel;
                 // TODO: use ResourceRepository here
                 ResourceInfo info{ .filePath = filePath, .type = ResourceType::Texture };
@@ -35,7 +35,7 @@ public:
                 textures.push_back(texture);
             }
 
-            QB(*std::get<0>(args).owner)
+            QB(*args.component.owner)
                 .And("Animation")
                 .With<AnimatedTextureRenderer>(textures)
                 .Drag();

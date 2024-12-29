@@ -18,7 +18,7 @@ namespace PJ {
     /// user actions (signals) that can satisfy the request
     template <class Key>
         requires std::equality_comparable<Key>
-    class Signal : public SomeSignal {
+    class ReceptorSignal : public SomeSignal {
     protected:
         UnorderedSet<Key> keys;
 

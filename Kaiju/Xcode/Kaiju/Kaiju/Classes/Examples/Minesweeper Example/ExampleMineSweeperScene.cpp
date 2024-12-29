@@ -1,263 +1,218 @@
-#include "ExampleMineSweeperScene.h"
+#include "ExampleMinesweeperScene.h"
 
-// #if FALSE
-namespace Example {
-    namespace MineSweeper {
-        class Tile : public MatrixPieceHandler {
-        public:
-            enum class TileType { Tile, Bomb, Clear, ClearFlag, BombFlag };
+using namespace std;
+using namespace PJ;
+using namespace Example;
 
-            TileType type = TileType::Tile;
+void Minesweeper::Scene::RevealBombs() {
+    GUARD(boardView)
 
-            bool IsBomb() const {
-                switch (type) {
-                case TileType::Bomb:
-                case TileType::BombFlag:
-                    return true;
-                default:
-                    return false;
-                }
-            }
-        };
+    state = StateType::GameOver;
 
-        /// Uses Matrix Board View to play MineSweeper
-        /// How to Play: Left click to guess at an empty space, right click to flag a potential bomb
-        /// location Failure: when you tap a bomb -> Game Over.
-        class ExampleMineSweeperView : public MatrixBoardView {
-        public:
-            using Base = MatrixBoardView;
+    boardView->ForEachPiece([&](auto& piece) {
+        GUARD(piece.typeTags.contains("bomb"));
+        piece.typeTags.insert("reveal");
+    });
+}
 
-            enum class StateType { Running, GameOver };
+void Minesweeper::Scene::ClearTilesAt(Vec2I loc) {
+    try {
+        auto& node = boardView->NodeAt(loc);
+        auto pieceHandler = node.TypeComponent<MatrixPieceHandler>();
+        GUARD(!pieceHandler->piece->typeTags.contains("clear"));
 
-            StateMachine<StateType> states;
+        pieceHandler->piece->typeTags.insert("clear");
+    } catch (...) {
+        return;
+    }
 
-            //     class BombCountComparer : IComparer<Vector2Int>
-            //     {
-            //         EMSBoardView boardView;
+    if (BombSurroundCount(loc, true) == 0) {
+        ClearTilesAt(Vector2Int(loc.x - 1, loc.y));
+        ClearTilesAt(Vector2Int(loc.x + 1, loc.y));
+        ClearTilesAt(Vector2Int(loc.x, loc.y - 1));
+        ClearTilesAt(Vector2Int(loc.x, loc.y + 1));
+    }
+}
 
-            //         BombCountComparer(EMSBoardView boardView)
-            //         {
-            //             this.boardView = boardView;
-            //         }
+void Minesweeper::Scene::PopulateBoard() {
+    GUARD(owner)
 
-            //         int Compare(Vector2Int lhs, Vector2Int rhs)
-            //         {
-            //             return boardView.BombSurroundCount(lhs, false) <
-            //             boardView.BombSurroundCount(rhs, false) ? -1 : 1;
-            //         }
-            //     }
+    LoadInto(*owner);
+}
 
-            void Start() override {
-                Base::Start();
+void Minesweeper::Scene::Restart() {
+    GUARD(owner)
 
-                PopulateBoard();
-            }
+    owner->DestroyAllChildren();
+    PopulateBoard();
+    state = StateType::Running;
+}
 
-            void PopulateBoard() {
-                Vec2i matrixSize;
-                auto cellCount = matrixSize.x * matrixSize.y;
-                auto bombPercentage = 0.15f;
-                auto bombCount = bombPercentage * cellCount;
+int Minesweeper::Scene::BombSurroundCount(Vector2Int loc, bool skipDiagonals) {
+    auto result = 0;
 
-                VectorList<Vector2Int> emptyCells;
+    for (int y = loc.y - 1; y <= loc.y + 1; y++) {
+        for (int x = loc.x - 1; x <= loc.x + 1; x++) {
+            GUARD_CONTINUE(Vec2I(x, y) != loc)
 
-                for (int y = 0; y < matrixSize.y; y++) {
-                    for (int x = 0; x < matrixSize.x; x++) {
-                        emptyCells.push_back(Vector2Int(x, y));
-                    }
-                }
-
-                for (int i = 0; i < bombCount; i++) {
-                    if (emptyCells.size() == 0) {
-                        break;
-                    }
-                    //                 auto choiceIndex = Random.Range(0, emptyCells.size());
-                    //
-                    //                 auto choice = emptyCells[choiceIndex];
-                    //                 emptyCells.RemoveAt(choiceIndex);
-                    //
-                    //                 auto bombTileObject =
-                    //                 sceneObjectRegistry.InstantiateGameObject("tile",
-                    //                 Vector3.Zero, Quaternion.identity); auto bombTile =
-                    //                 bombTileObject.GetComponent<EMSTile>(); bombTile.type =
-                    //                 Tile::TileType::Bomb; Put(bombTile, choice);
-                }
-
-                for (auto& cell : emptyCells) {
-                    // put tiles and populate
-                    //                 tileObject.GetComponent<EMSTile>(); Put(tile, cell);
-                }
-
-                // Give the player a hint by clearing something for them
-                //             emptyCells.Sort(new BombCountComparer(this));
-                //             ClearTilesAt(emptyCells[0]);
-            }
-
-            void OnPointerClickEvent(PointerClickUIEvent const& event) {
-                //                auto localPressPosition = _event.pressPosition;
-                //                auto cellHit =
-                //                LocalPositionToLocation(localPressPosition.Position);
-
-                //                if (cellHit.value == nullptr) { return; }
-
-                //                auto cellGameObject = NodeAt(cellHit.value);
-                //                auto hitTile = cellGameObject.GetComponent<EMSTile>();
-
-                //                switch (_event.Button)
-                //                {
-                //                    case PointerInputButton.Left:
-                //                    {
-                //                        switch (core.State)
-                //                        {
-                //                            case StateType::Running:
-                //                                if (hitTile.type == Tile::TileType::Bomb)
-                //                                {
-                //                                    RevealBombs();
-                //                                }
-                //                                else
-                //                                {
-                //                                    ClearTilesAt(cellHit.value);
-                //                                }
-                //                                break;
-                //                            case StateType::GameOver:
-                //                                Restart();
-                //                                break;
-                //                        }
-                //                        break;
-                //                    }
-                //                    case PointerInputButton.Right:
-                //                    {
-                //                        switch (hitTile.type)
-                //                        {
-                //                            case Tile::TileType::Tile:
-                //                            {
-                //                                // change to flag
-                //                            }
-                //                            case Tile::TileType::Bomb:
-                //                            {
-                //                                // change to flag
-                //                            }
-                //                            case Tile::TileType::ClearFlag:
-                //                            {
-                //                                // change to clear
-                //                            }
-                //                            case Tile::TileType::BombFlag:
-                //                            {
-                //                                // change to tile
-                //                                break;
-                //                            }
-                //                            default:
-                //                                break;
-                //                        }
-                //                    }
-                //                        break;
-                //                }
-            }
-
-            void RemoveAll() {
-                //
-            }
-
-            void Restart() {
-                RemoveAll();
-                PopulateBoard();
-                states.SetState(StateType::Running);
-            }
-
-            void RevealBombs() {
-                states.SetState(StateType::GameOver);
-
-                Vec2i matrixSize;
-
-                for (int y = 0; y < matrixSize.y; y++) {
-                    for (int x = 0; x < matrixSize.x; x++) {
-                        Vector2Int cell(x, y);
-                        try {
-                            auto& node = NodeAt(cell);
-                            //                            auto tile = node.GetComponent<EMSTile>();
-                            //
-                            //                            if (tile.IsBomb()) {
-                            //                                // change the cell's texture
-                            //                            }
-                        } catch (...) {}
-                    }
+            if (skipDiagonals) {
+                if (x != loc.x && y != loc.y) {
+                    continue;
                 }
             }
 
-            void ClearTilesAt(Vector2Int cell) {
-                ClearUnclearedTileAt(cell);
+            Vector2Int _loc(x, y);
+
+            auto piece = boardView->board.GetPiece(_loc);
+            auto isBomb = piece && piece->typeTags.contains("bomb");
+
+            if (isBomb) {
+                result++;
             }
+        }
+    }
 
-            void ClearUnclearedTileAt(Vector2Int cell) {
-                try {
-                    auto& node = NodeAt(cell);
+    return result;
+}
 
-                    //                    auto tile = node.GetComponent<EMSTile>();
-                    //                    if (tile.type == Tile::TileType::Tile)
-                    {
-                        // change to clear tile texture
-                        //                        auto clearTileObject =
-                        //                        Replace(clearTile, cell);
+void Minesweeper::Scene::LoadInto(WorldNode& root) {
+    QB(root)
+        .Named("Example: Minesweeper")
+        .OrthoStandard(Color32(30, 30, 30))
+        .And("Minesweeper")
+        .ScaleWithWindow(worldSize, 0.8f)
+        .With<MatrixBoardView>(worldSize, matrixSize)
+        .ModifyLatest<MatrixBoardView>([this](auto& _boardView) {
+            this->boardView = &_boardView;
 
-                        auto bombSurroundCount = BombSurroundCount(cell, false);
-                        //                        auto tmp =
-                        //                        clearTile.text.GetComponent<TextMeshPro>();
+            QB(*_boardView.owner).RectCollider(_boardView.WorldSize());
 
-                        Color color = Color::red;
-                        //                        Color::RGBToHSV(color, out float h, out float s,
-                        //                        out float v); h = 1.0f - (Mathf.Min(4.0f,
-                        //                        (float)bombSurroundCount)
-                        //                                    / 4.0f);
+            _boardView.template AddSignalHandler<PointerDownUIEvent>(
+                { .id = SignalId::PointerDown,
+                  .func =
+                      [this](auto& component, auto& event) {
+                          auto screenPos = event.screenPos;
+                          auto localPos = ScreenToLocal(*boardView, screenPos);
+                          auto loc = boardView->LocalPositionToLocation(localPos);
+                          GUARD(loc)
 
-                        //                        tmp.color = Color::HSVToRGB(h, s, v);
-                        //
-                        //                        switch (bombSurroundCount)
-                        //                        {
-                        //                            case 0:
-                        //                                Destroy(clearTile.text);
-                        //                                clearTile.text = nullptr;
-                        //                                break;
-                        //                            default:
-                        //                                tmp.text = bombSurroundCount.ToString();
-                        //                                break;
-                        //                        }
+                          auto piece = boardView->board.GetPiece(*loc);
+                          GUARD(piece)
 
-                        if (BombSurroundCount(cell, true) == 0) {
-                            ClearUnclearedTileAt(Vector2Int(cell.x - 1, cell.y));
-                            ClearUnclearedTileAt(Vector2Int(cell.x + 1, cell.y));
-                            ClearUnclearedTileAt(Vector2Int(cell.x, cell.y - 1));
-                            ClearUnclearedTileAt(Vector2Int(cell.x, cell.y + 1));
-                        }
-                    }
-                } catch (...) {}
-            }
+                          if (PointerInputButton::Left == event.button) {
+                              switch (state) {
+                              case StateType::Running:
+                                  if (piece->typeTags.contains("bomb")) {
+                                      RevealBombs();
+                                  } else {
+                                      ClearTilesAt(*loc);
+                                  }
+                                  break;
+                              case StateType::GameOver:
+                                  Restart();
+                              }
+                          } else {
+                              switch (state) {
+                              case StateType::Running:
+                                  {
+                                      if (!piece->typeTags.contains("clear")) {
+                                          bool isFlag = piece->typeTags.contains("flag");
+                                          if (isFlag) {
+                                              piece->typeTags.erase("flag");
+                                          } else {
+                                              piece->typeTags.insert("flag");
+                                          }
+                                      }
+                                      break;
+                                  }
+                              case StateType::GameOver:
+                                  break;
+                              }
+                          }
+                      } }
+            );
+        })
+        .Repeat(1, [=, this](QuickBuild& qb) {
+            GUARD(boardView)
 
-            int BombSurroundCount(Vector2Int cell, bool skipDiagonals) {
-                auto result = 0;
+            StandardRandom random;
 
-                for (int y = cell.y - 1; y <= cell.y + 1; y++) {
-                    for (int x = cell.x - 1; x <= cell.x + 1; x++) {
-                        GUARD_CONTINUE(Vec2i(x, y) != cell)
+            VectorList<Vec2I> emptyCells;
 
-                        if (skipDiagonals) {
-                            if (x != cell.x && y != cell.y) {
-                                continue;
+            for (int y = 0; y < boardView->BoardSize().y; y++) {
+                for (int x = 0; x < boardView->BoardSize().x; x++) {
+                    Vec2I loc(x, y);
+
+                    auto bombFactor = 0.15f;
+                    bool isBomb = random.Value() < bombFactor;
+
+                    qb.And("Matrix piece")
+                        .With<ImRenderer>(ImRenderer::Config{ .worldSize = tileSize })
+                        .ModifyLatest<ImRenderer>([&](auto& renderer) {
+                            /// Optimize: draw opaque tiles behind text
+                            renderer.SetAreImagesOpaque(true);
+
+                            renderer.AddSignalHandler(
+                                { .id = SignalId::RenderPrepare,
+                                  .func =
+                                      [this](auto& renderer, auto& signal) {
+                                          ImRenderer& im = *(static_cast<ImRenderer*>(&renderer));
+                                          auto pieceHandler =
+                                              renderer.owner
+                                                  ->template TypeComponent<MatrixPieceHandler>();
+                                          GUARD(pieceHandler && pieceHandler->piece)
+
+                                          auto& piece = *pieceHandler->piece;
+
+                                          if (piece.typeTags.contains("bomb") &&
+                                              piece.typeTags.contains("reveal")) {
+                                              im.Image("example-minesweeper-tile-bomb", {});
+                                          } else if (piece.typeTags.contains("clear")) {
+                                              im.Image("example-minesweeper-tile-fill", {});
+
+                                              auto bombSurroundCount = BombSurroundCount(
+                                                  pieceHandler->piece->Origin(), false
+                                              );
+                                              if (bombSurroundCount > 0) {
+                                                  ModelColor hsv;
+                                                  hsv.value = HSVColor(
+                                                      (float)bombSurroundCount / 9.0f, 1, 1, 1
+                                                  );
+                                                  ModelColor rgb = hsv.ToRGB();
+
+                                                  Color color = rgb;
+
+                                                  im.Text(
+                                                      MakeString(bombSurroundCount),
+                                                      Rect{ .size = tileSize }, 32, color
+                                                  );
+                                              }
+                                          } else if (piece.typeTags.contains("flag")) {
+                                              im.Image("example-minesweeper-tile-flag", {});
+                                          } else {
+                                              im.Image("example-minesweeper-tile-empty", {});
+                                          }
+                                      } }
+                            );
+                        })
+                        .With<MatrixPieceHandler>(loc, "*")
+                        .ModifyLatest<MatrixPieceHandler>([&](auto& pieceHandler) {
+                            boardView->Put(pieceHandler, pieceHandler.startOrigin);
+
+                            if (isBomb) {
+                                pieceHandler.piece->typeTags.insert("bomb");
+                            } else {
+                                emptyCells.push_back(loc);
                             }
-                        }
-
-                        //                        auto tileObject = NodeAt(Vector2Int(x, y));
-                        //                        if (nullptr == tileObject) { continue; }
-                        //
-                        //                        auto tile = tileObject.GetComponent<EMSTile>();
-                        //                        if (tile.IsBomb()())
-                        //                        {
-                        //                            result++;
-                        //                        }
-                    }
+                        })
+                        .Pop();
                 }
-
-                return result;
             }
-        };
-    } // namespace MineSweeper
-} // namespace Example
+
+            // Give the player a hint by clearing something for them
+            std::sort(emptyCells.begin(), emptyCells.end(), [this](auto lhs, auto rhs) {
+                return BombSurroundCount(lhs, false) < BombSurroundCount(rhs, false);
+            });
+            ClearTilesAt(emptyCells[0]);
+        });
+}

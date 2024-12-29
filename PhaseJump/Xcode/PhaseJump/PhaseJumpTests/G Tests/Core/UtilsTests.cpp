@@ -26,3 +26,22 @@ TEST(Utils, Is)
     EXPECT_TRUE(Is<A>(a));
     EXPECT_TRUE(Is<A>(b));
 }
+
+TEST(Utils, Defer)
+{
+    int count{};
+    
+    {
+        Defer([&]{
+            count++;
+        });
+        EXPECT_EQ(1, count);
+    }
+    {
+        Defer d([&]{
+            count++;
+        });
+        EXPECT_EQ(1, count);
+    }
+    EXPECT_EQ(2, count);
+}

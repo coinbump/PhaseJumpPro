@@ -2,6 +2,7 @@
 
 #include "Animator.h"
 #include "InterpolateFunc.h"
+#include "Utils.h"
 #include "WorldNode.h"
 
 /*
@@ -29,7 +30,7 @@ namespace PJ {
                     InterpolateFuncs::Make(end, start), reverseEaseFunc ? reverseEaseFunc : easeFunc
                 );
 
-                return MAKE<Animator<Type>>(
+                return NEW<Animator<Type>>(
                     interpolateFunc, duration, makeBinding(target), cycle, reverseInterpolateFunc
                 );
             };

@@ -19,7 +19,7 @@ namespace PJ {
     public:
         Color clearColor = Color::white;
 
-        /// (Optional). Render rate in frames per second
+        /// Render rate in frames per second
         std::optional<float> renderRate;
     };
 

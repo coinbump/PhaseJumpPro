@@ -41,7 +41,7 @@ void OnControllerButtonDown(String controllerId, int button, UIEventList& result
 
     String buttonId = map[button];
     auto event = MAKE<ControllerButtonDownUIEvent>(controllerId, buttonId, button);
-    result.push_back(SCAST<SomeUIEvent>(event));
+    result.push_back(SCAST<SomeSignal>(event));
 }
 
 UIEventList SDLUIEventsBuilder::BuildUIEvents(SDLEventList const& events, float uiScale) {
@@ -51,6 +51,14 @@ UIEventList SDLUIEventsBuilder::BuildUIEvents(SDLEventList const& events, float 
 
     for (auto& sdlEvent : events) {
         switch (sdlEvent.type) {
+        case SDL_EVENT_WINDOW_RESIZED:
+            {
+                int32_t width = sdlEvent.window.data1;
+                int32_t height = sdlEvent.window.data2;
+                auto event = MAKE<WindowResizeUIEvent>(Vector2{ (float)width, (float)height });
+                result.push_back(event);
+                break;
+            }
         // TODO: SDL sends both Joystick and gamepad event for the same event, what to do here?
         //        case SDL_EVENT_JOYSTICK_BUTTON_DOWN:
         //            OnControllerButtonDown(sdlEvent.jbutton.which, sdlEvent.jbutton.button,
@@ -86,7 +94,7 @@ UIEventList SDLUIEventsBuilder::BuildUIEvents(SDLEventList const& events, float 
 
                 auto event =
                     MAKE<ControllerAxisUIEvent>(MakeString((int)which), axisId, normalValue);
-                result.push_back(SCAST<SomeUIEvent>(event));
+                result.push_back(SCAST<SomeSignal>(event));
                 break;
             }
         case SDL_EVENT_PEN_DOWN:
@@ -150,7 +158,7 @@ UIEventList SDLUIEventsBuilder::BuildUIEvents(SDLEventList const& events, float 
 #endif
 
                 auto event = MAKE<KeyDownUIEvent>(scanCode, keyCode, keyModifiers);
-                result.push_back(SCAST<SomeUIEvent>(event));
+                result.push_back(SCAST<SomeSignal>(event));
                 break;
             }
         case SDL_EVENT_KEY_UP:
@@ -159,7 +167,7 @@ UIEventList SDLUIEventsBuilder::BuildUIEvents(SDLEventList const& events, float 
                 KeyCode keyCode(sdlEvent.key.key);
 
                 auto event = MAKE<KeyUpUIEvent>(scanCode, keyCode);
-                result.push_back(SCAST<SomeUIEvent>(event));
+                result.push_back(SCAST<SomeSignal>(event));
                 break;
             }
         case SDL_EVENT_MOUSE_BUTTON_DOWN:
@@ -167,7 +175,7 @@ UIEventList SDLUIEventsBuilder::BuildUIEvents(SDLEventList const& events, float 
                 auto inputButton = PointerInputButtonFromSDLButton(sdlEvent.button.button);
                 auto screenPosition = Vector2(sdlEvent.button.x, sdlEvent.button.y) * uiScale;
                 auto event = MAKE<PointerDownUIEvent>(screenPosition, inputButton);
-                result.push_back(SCAST<SomeUIEvent>(event));
+                result.push_back(SCAST<SomeSignal>(event));
                 break;
             }
         case SDL_EVENT_MOUSE_BUTTON_UP:
@@ -192,7 +200,7 @@ UIEventList SDLUIEventsBuilder::BuildUIEvents(SDLEventList const& events, float 
             AddRange(combinedFilePaths, dropFileEvent->filePaths);
         }
         auto event = MAKE<DropFilesUIEvent>(combinedFilePaths, (*dropFileEvents.begin())->position);
-        result.push_back(SCAST<SomeUIEvent>(event));
+        result.push_back(event);
     }
 
     return result;

@@ -9,7 +9,7 @@
 /*
  RATING: 5 stars
  Simple type
- CODE REVIEW: 9/14/24
+ CODE REVIEW: 12/27/24
  */
 namespace PJ {
     class Base;
@@ -24,11 +24,15 @@ namespace PJ {
 
     /// Used to send signal events from one object to another
     template <class Core = Void>
-    class Event : public SomeSignal {
+    class Signal : public SomeSignal {
     public:
         Core core{};
 
-        Event(Core core = {}) :
+        Signal(Core core = {}) :
             core(core) {}
     };
+
+    /// Convenience name
+    template <class Core = Void>
+    using Event = Signal<Core>;
 } // namespace PJ

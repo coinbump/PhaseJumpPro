@@ -17,7 +17,7 @@ TEST(StringUtils, U32CharToString)
     EXPECT_EQ("a", U32CharToString('a'));
 }
 
-// TODO: fix this, there is no built-in << operator for u32string
+// FUTURE: fix this, there is no built-in << operator for u32string
 //TEST(StringUtils, ToU32String)
 //{
 //    std::u32string u32 = U"a";

@@ -9,6 +9,16 @@ namespace ColorTests {
 
 using namespace ColorTests;
 
+TEST(RGBAColor, InitValue)
+{
+    RGBAColor color32(0xFF000000);
+    
+    EXPECT_EQ(255, color32.a());
+    EXPECT_EQ(0, color32.r());
+    EXPECT_EQ(0, color32.g());
+    EXPECT_EQ(0, color32.b());
+}
+
 TEST(RGBAColor, Init_White)
 {
     RGBAColor color32(255, 255, 255, 255);

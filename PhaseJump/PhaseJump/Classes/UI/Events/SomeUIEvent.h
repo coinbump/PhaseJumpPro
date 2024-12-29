@@ -12,15 +12,16 @@
  CODE REVIEW: 12/22/24
  */
 namespace PJ {
-    /// A user input event object
-    class SomeUIEvent : public SomeSignal {
+    /// Sent after the window is resized
+    class WindowResizeUIEvent : public SomeSignal {
     public:
-        /// Metadata for event
-        Tags tags;
+        /// Logical size (not pixel size) of the window
+        Vector2 size;
 
-        virtual ~SomeUIEvent() {}
+        WindowResizeUIEvent(Vector2 size) :
+            size(size) {}
     };
 
     /// Shared pointer list so we can use filters and make copies
-    using UIEventList = VectorList<SP<SomeUIEvent>>;
+    using UIEventList = VectorList<SP<SomeSignal>>;
 } // namespace PJ

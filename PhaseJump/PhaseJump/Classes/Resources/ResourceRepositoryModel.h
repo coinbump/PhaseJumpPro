@@ -35,22 +35,8 @@ namespace PJ {
     public:
         virtual ~ResourceRepositoryModel() {}
 
-        virtual std::optional<String> TypeForFileExtension(String fileExtension) {
-            auto iterator = fileExtensionMap.find(fileExtension);
-            GUARDR(iterator != fileExtensionMap.end(), std::nullopt)
+        virtual std::optional<String> TypeForFileExtension(String fileExtension);
 
-            return iterator->second;
-        }
-
-        virtual VectorList<SP<SomeLoadResourcesOperation>> MakeLoadOperations(ResourceInfo info) {
-            VectorList<SP<SomeLoadResourcesOperation>> result;
-
-            // FUTURE: support multiple load operations if needed
-            auto operation = operationRegistry.Make(info.type, info, *this);
-            GUARDR(operation, result)
-
-            Add(result, operation);
-            return result;
-        }
+        virtual VectorList<SP<SomeLoadResourcesOperation>> MakeLoadOperations(ResourceInfo info);
     };
 } // namespace PJ

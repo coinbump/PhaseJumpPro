@@ -17,46 +17,17 @@ namespace PJ {
     public:
         using Base = SomeTexture;
 
-        GLTexture(
-            String id, GLuint glId, Vector2Int size, Vector2 normalOrigin, Vector2 normalSize,
-            String alphaMode
-        ) :
-            Base({ .id = id,
-                   .renderId = glId,
-                   .size = size,
-                   .normalOrigin = normalOrigin,
-                   .normalSize = normalSize,
-                   .alphaMode = alphaMode }) {}
+        GLTexture(Config config);
 
-        virtual ~GLTexture() {
-            if (renderId > 0) {
-                glDeleteTextures(1, &renderId);
-            }
-        }
-
-        static GLint GLTextureMagnification(TextureMagnificationType textureMagnification) {
-            OrderedMap<TextureMagnificationType, GLint> map = {
-                { TextureMagnify::Nearest, GL_NEAREST },
-                { TextureMagnify::Linear, GL_LINEAR },
-            };
-            auto i = map.find(textureMagnification);
-            GUARDR(i != map.end(), GL_LINEAR);
-            return i->second;
-        }
-
-        static GLint GLTextureWrap(TextureWrapType textureWrap) {
-            OrderedMap<TextureWrapType, GLint> map = {
-                { TextureWrap::Clamp, GL_CLAMP_TO_EDGE },
-                { TextureWrap::Repeat, GL_REPEAT },
-            };
-            auto i = map.find(textureWrap);
-            GUARDR(i != map.end(), GL_CLAMP_TO_EDGE);
-            return i->second;
-        }
+        virtual ~GLTexture();
 
         // MARK: SomeTexture
 
         void SetTextureMagnification(TextureMagnificationType value) override;
         void SetTextureWrap(TextureWrapType value) override;
     };
+
+    GLint GLTextureMagnificationFor(TextureMagnificationType textureMagnification);
+    GLint GLTextureWrapFor(TextureWrapType textureWrap);
+
 } // namespace PJ

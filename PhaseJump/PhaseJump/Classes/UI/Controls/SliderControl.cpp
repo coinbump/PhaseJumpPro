@@ -51,8 +51,8 @@ SliderControl::SliderControl(Config config) :
 
     value.SetOnValueChangeFunc([this](auto value) { OnValueChange(); });
 
-    PlanUIFunc planUIFunc = [this](auto& component, String context, UIPlanner& planner) {
-        planner.Text([this]() {
+    PlanUIFunc planUIFunc = [this](auto args) {
+        args.planner.Text([this]() {
             return UIPlanner::TextConfig{ .label = "Value",
                                           .text = std::format("{}", value.Value()) };
         });
@@ -157,7 +157,7 @@ float SliderControl::HalfTrackLength(WorldNode& thumb) {
 }
 
 void SliderControl::OnDragUpdate(Vector2 inputWorldPos) {
-    auto viewPos = WorldToViewPosition(inputWorldPos);
+    auto viewPos = WorldToView(inputWorldPos);
 
     float minAxisValue = endCapSize;
     float maxAxisValue = frame.size.AxisValue(axis) - endCapSize;

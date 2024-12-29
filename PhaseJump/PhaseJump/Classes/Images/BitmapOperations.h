@@ -13,7 +13,7 @@ namespace PJ {
     /// Bitmap operations operate exclusively on RGBABitmap.
     /// This allows us to write operations that don't have to worry about supporting all possible
     /// pixel formats
-    using BitmapOperation = Operation<RGBABitmap*>;
+    using BitmapOperation = ResultOperation<RGBABitmap&, Void>;
 
     /// Creates common bitmap operations
     namespace BitmapOperations {
@@ -21,14 +21,14 @@ namespace PJ {
         using PixelFormat = PJ::PixelFormat::RGBA8888;
         using Pixel = PixelFormat::Pixel;
 
-        UP<BitmapOperation> FlipV(BitmapType& bitmap);
+        UP<BitmapOperation> FlipV();
 
     } // namespace BitmapOperations
 
     /// Used to register a type of operation that can be instantiated as needed
-    class BitmapOperationClass : public TypeClass<BitmapOperation, BitmapOperations::BitmapType&> {
+    class BitmapOperationClass : public TypeClass<BitmapOperation> {
     public:
-        using Base = TypeClass<BitmapOperation, BitmapOperations::BitmapType&>;
+        using Base = TypeClass<BitmapOperation>;
 
         BitmapOperationClass(String id, String name, FactoryFunc factoryFunc) :
             Base(id, factoryFunc) {

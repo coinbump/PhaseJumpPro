@@ -186,7 +186,6 @@ namespace PJ {
     // Convenience names
     using Vec2 = Vector2;
     using Vec2I = Vector2Int;
-    using Vec2i = Vector2Int;
 
     // FUTURE: support alternate coordinate systems if needed
     constexpr float vecLeft = -1;

@@ -38,7 +38,13 @@ void KaijuGo() {
 
     SDLPlatformClass _class;
     auto& config = *_class.configs.at(ConfigId::GameEditorGL).get();
+
+#ifdef DEBUG
+    config.windowConfig.title = "Kaiju-Dev";
+#else
     config.windowConfig.title = "Kaiju";
+#endif
+
     config.windowConfig.SetAllowHighDPI(true);
     config.clearColor = Color(.8, .8, .8, 1.0f);
     config.resourcesPath = FilePath("resources");

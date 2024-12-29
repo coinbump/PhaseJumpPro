@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Signal.h"
+#include "ReceptorSignal.h"
 #include "UnorderedSet.h"
 #include <memory>
 
@@ -15,7 +15,7 @@ namespace PJ {
     template <class Key>
     class Receptor {
     protected:
-        virtual void OnSignalMatch(Signal<Key> const& signal) {
+        virtual void OnSignalMatch(ReceptorSignal<Key> const& signal) {
             GUARD(onSignalMatchFunc)
             onSignalMatchFunc(signal);
         }
@@ -23,14 +23,14 @@ namespace PJ {
         UnorderedSet<Key> locks;
 
     public:
-        using OnSignalMatchFunc = std::function<void(Signal<Key> const& signal)>;
+        using OnSignalMatchFunc = std::function<void(ReceptorSignal<Key> const& signal)>;
         OnSignalMatchFunc onSignalMatchFunc;
 
         void AddLockForKey(Key key) {
             locks.insert(key);
         }
 
-        virtual bool IsMatch(Signal<Key> const& signal) {
+        virtual bool IsMatch(ReceptorSignal<Key> const& signal) {
             bool result = false;
 
             for (auto& key : locks) {
@@ -43,7 +43,7 @@ namespace PJ {
             return result;
         }
 
-        void OnSignal(Signal<Key> const& signal) {
+        void OnSignal(ReceptorSignal<Key> const& signal) {
             GUARD(IsMatch(signal))
             OnSignalMatch(signal);
         }

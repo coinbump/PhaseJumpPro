@@ -90,6 +90,9 @@ namespace PJ {
         /// Distance from start angle
         Angle angleDelta;
 
+        /// If true, always render the item without transparency
+        bool isOpaque{};
+
         /// Image texture
         SP<SomeTexture> texture{};
 

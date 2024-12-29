@@ -17,7 +17,6 @@
  CODE REVIEW: 12/22/24
  */
 namespace PJ {
-    class SomeUIEvent;
     class World;
     class RenderContextModel;
 

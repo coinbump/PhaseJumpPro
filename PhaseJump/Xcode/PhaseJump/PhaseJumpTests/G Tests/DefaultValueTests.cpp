@@ -52,7 +52,7 @@ TEST(DefaultValue, Class_OnStack) {
 }
 
 TEST(DefaultValue, Class_OnHeap) {
-    SP<TestClass> sut = MAKE<TestClass>();
+    UP<TestClass> sut = NEW<TestClass>();
 
     // Values without a default are random memory
     EXPECT_EQ(1, sut->valueHasDefault);

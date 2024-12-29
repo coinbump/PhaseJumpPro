@@ -6,6 +6,14 @@ namespace PJ {
     /// Edit image tool app
     class ImageAppScene : public Scene {
     public:
+        class DocumentCore {
+        public:
+            SP<RGBABitmap> bitmap;
+            SP<SomeTexture> texture;
+        };
+
+        using Document = PJ::Document<DocumentCore>;
+
         DocumentBundle documents;
         SP<Document> activeDocument;
         SP<SomeTexture> activeTexture;

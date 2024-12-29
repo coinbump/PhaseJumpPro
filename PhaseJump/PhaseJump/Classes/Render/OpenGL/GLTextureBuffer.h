@@ -77,7 +77,8 @@ namespace PJ {
             data.ResizeCount(size.x * size.y);
             glReadPixels(0, 0, size.x, size.y, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, data.Pointer());
 
-            return MAKE<Bitmap<PixelFormat::RGBA8888>>(size, data);
+            return MAKE<Bitmap<PixelFormat::RGBA8888>>(Bitmap<PixelFormat::RGBA8888>::Config{
+                .size = size, .data = &data });
         }
 
         bool IsValid() const;

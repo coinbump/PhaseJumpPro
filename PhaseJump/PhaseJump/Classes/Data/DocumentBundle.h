@@ -1,26 +1,23 @@
 #pragma once
 
-#include "Document.h"
+#include "SomeDocument.h"
 #include "VectorList.h"
 #include <memory>
 
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 12/23/24
+ CODE REVIEW: 12/26/24
  */
 namespace PJ {
     /// Contains a collection of documents
     /// Usually an application has one document bundle for all open documents
     class DocumentBundle {
     protected:
-        VectorList<SP<Document>> documents;
+        VectorList<SP<SomeDocument>> documents;
 
     public:
-        /// Called when any document is closed
-        Document::DocumentFunc onCloseFunc;
-
-        VectorList<SP<Document>> const& Documents() const {
+        VectorList<SP<SomeDocument>> const& Documents() const {
             return documents;
         }
 
@@ -29,13 +26,13 @@ namespace PJ {
         }
 
         /// Adds the document to the bundle. Does not open it
-        void Add(SP<Document> document);
+        void Add(SP<SomeDocument> document);
 
         /// Removes the document from the bundle. Does not close it
-        void Remove(Document& document);
+        void Remove(SomeDocument& document);
 
         /// @return Returns a list of modified documents
-        VectorList<Document*> ModifiedDocuments() const;
+        VectorList<SomeDocument*> ModifiedDocuments() const;
 
         /// @return Returns true if the bundle contains any modified documents
         bool IsModified() const {
@@ -44,7 +41,7 @@ namespace PJ {
 
         void SaveModified();
 
-        SP<Document> operator[](size_t index) const {
+        SP<SomeDocument> operator[](size_t index) const {
             GUARDR(index >= 0 && index < documents.size(), {});
             return documents[index];
         }

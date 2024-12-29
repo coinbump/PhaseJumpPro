@@ -58,7 +58,7 @@ std::optional<RenderResult> RenderWorldSystem::Render(RenderContextModel& _conte
             GUARD_CONTINUE(node->IsVisible())
 
             VectorList<SomeRenderer*> renderers;
-            node->Signal(SignalId::RenderPrepare, Event{});
+            node->Signal(SignalId::RenderPrepare, Event<>{});
             node->CollectTypeComponents<SomeRenderer>(renderers);
             for (auto& renderer : renderers) {
                 GUARD_CONTINUE(renderer->IsEnabled())

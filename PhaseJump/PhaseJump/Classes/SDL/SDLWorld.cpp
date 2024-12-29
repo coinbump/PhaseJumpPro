@@ -1,5 +1,8 @@
 #include "SDLWorld.h"
 #include "Funcs.h"
+#include "imgui.h"
+#include "imgui_impl_sdl3.h"
+#include "imgui_internal.h"
 
 using namespace std;
 using namespace PJ;
@@ -20,6 +23,18 @@ void SDLWorld::OnGo() {
     GUARD_LOG(renderContext, "ERROR: SDLWorld is missing render context")
 
     uiScale = SDL_GetWindowPixelDensity(window);
+
+    /*
+     Disable Ctrl-Tab shortcuts in ImGui so we can use them
+
+     Reference:
+     https://github.com/ocornut/imgui/issues/3255
+     */
+    if (GImGui) {
+        ImGuiContext& imContext = *GImGui;
+        imContext.ConfigNavWindowingKeyNext = 0;
+        imContext.ConfigNavWindowingKeyPrev = 0;
+    }
 
 #ifdef LAUNCH_PROFILE
     DevLaunchProfile();

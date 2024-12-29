@@ -14,10 +14,10 @@ namespace PJ {
     public:
         using MathType = float;
 
-        /// (Optional). Custom properties
+        /// Custom properties
         Tags tags;
 
-        /// (Optional). Object attribute types (what kind of object is this?)
+        /// Object attribute types
         TypeTagSet typeTags;
 
         virtual ~SomeKeyframe() {}

@@ -280,7 +280,7 @@ TEST(View2D, ChildLocalPosition) {
     EXPECT_EQ(expectedValue, parentView->ChildLocalPosition(frame));
 }
 
-TEST(View2D, ViewToWorldPosition) {
+TEST(View2D, ViewToWorld) {
     World world;
     auto parentNode = MAKE<WorldNode>();
     auto parentView = MAKE<View2D>();
@@ -306,13 +306,13 @@ TEST(View2D, ViewToWorldPosition) {
     // Layout must be applied for transform funcs
     node->SetLocalPosition({-50 + (frame.origin.x + frame.size.x / 2.0f) * vecRight, 50 + (frame.origin.y + frame.size.y / 2.0f) * vecDown, 0});
 
-    EXPECT_EQ(Vector3(50 * vecLeft, 50 * vecUp, 0), parentView->ViewToWorldPosition({0, 0}));
-    EXPECT_EQ(Vector3(0, 0, 0), parentView->ViewToWorldPosition({50, 50}));
-    EXPECT_EQ(Vector3(50 * vecRight, 50 * vecDown, 0), parentView->ViewToWorldPosition({100, 100}));
+    EXPECT_EQ(Vector3(50 * vecLeft, 50 * vecUp, 0), parentView->ViewToWorld({0, 0}));
+    EXPECT_EQ(Vector3(0, 0, 0), parentView->ViewToWorld({50, 50}));
+    EXPECT_EQ(Vector3(50 * vecRight, 50 * vecDown, 0), parentView->ViewToWorld({100, 100}));
     
     Vector3 expectedValue(50 * vecLeft + 10 * vecRight, 50 * vecUp + 10 * vecDown, 0);
-    EXPECT_EQ(expectedValue, view->ViewToWorldPosition({0, 0}));
-    EXPECT_EQ(Vector2(0, 0), view->WorldToViewPosition(expectedValue));
+    EXPECT_EQ(expectedValue, view->ViewToWorld({0, 0}));
+    EXPECT_EQ(Vector2(0, 0), view->WorldToView(expectedValue));
 }
 
 TEST(View2D, TestViewPositionHit) {
@@ -344,7 +344,7 @@ TEST(View2D, TestViewPositionHit) {
     EXPECT_FALSE(view->TestViewPositionHit({21, 5}));
 }
 
-TEST(View2D, LocalToViewPosition) {
+TEST(View2D, LocalToView) {
     World world;
     auto parentNode = MAKE<WorldNode>();
     auto parentView = MAKE<View2D>();
@@ -362,14 +362,14 @@ TEST(View2D, LocalToViewPosition) {
     Rect frame{ .origin = {10, 10}, .size = {20, 20}};
     view->SetFrame(frame);
 
-    EXPECT_EQ(Vector2(frame.size.x/2.0f, frame.size.y/2.0f), view->LocalToViewPosition({0, 0, 0}));
-    EXPECT_EQ(Vector2(0, 0), view->LocalToViewPosition({-10, 10, 3}));
+    EXPECT_EQ(Vector2(frame.size.x/2.0f, frame.size.y/2.0f), view->LocalToView({0, 0, 0}));
+    EXPECT_EQ(Vector2(0, 0), view->LocalToView({-10, 10, 3}));
     
-    EXPECT_EQ(Vector3(0, 0, 0), view->ViewToLocalPosition({frame.size.x/2.0f, frame.size.y/2.0f}));
-    EXPECT_EQ(Vector3(-10, 10, 0), view->ViewToLocalPosition({0, 0}));
+    EXPECT_EQ(Vector3(0, 0, 0), view->ViewToLocal({frame.size.x/2.0f, frame.size.y/2.0f}));
+    EXPECT_EQ(Vector3(-10, 10, 0), view->ViewToLocal({0, 0}));
 }
 
-TEST(View2D, ViewToLocalPosition) {
+TEST(View2D, ViewToLocal) {
     World world;
     auto parentNode = MAKE<WorldNode>();
     auto parentView = MAKE<View2D>();
@@ -385,9 +385,9 @@ TEST(View2D, ViewToLocalPosition) {
     
     parentView->SetFrameSize({100, 100});
     
-    EXPECT_EQ(Vector3(0, 0, 0), parentView->ViewToLocalPosition({50, 50}));
-    EXPECT_EQ(Vector3(10 * vecLeft, 10 * vecUp, 0), parentView->ViewToLocalPosition({40, 40}));
-    EXPECT_EQ(Vector3(10 * vecRight, 10 * vecDown, 0), parentView->ViewToLocalPosition({60, 60}));
+    EXPECT_EQ(Vector3(0, 0, 0), parentView->ViewToLocal({50, 50}));
+    EXPECT_EQ(Vector3(10 * vecLeft, 10 * vecUp, 0), parentView->ViewToLocal({40, 40}));
+    EXPECT_EQ(Vector3(10 * vecRight, 10 * vecDown, 0), parentView->ViewToLocal({60, 60}));
 }
 
 TEST(View2D, TestSetLayout) {

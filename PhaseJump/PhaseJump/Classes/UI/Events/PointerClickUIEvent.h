@@ -43,7 +43,7 @@ namespace PJ {
     };
 
     /// Sent when the pointer moves
-    class PointerMoveUIEvent : public SomeUIEvent {
+    class PointerMoveUIEvent : public SomeSignal {
     public:
         ScreenPosition screenPos;
         Vector2 delta;

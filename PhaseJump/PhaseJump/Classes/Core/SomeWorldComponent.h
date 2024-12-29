@@ -36,8 +36,14 @@ namespace PJ {
     public:
         using This = SomeWorldComponent;
         using NodeTransform = WorldNodeTransform;
-        using Func = std::function<void(This&)>;
-        using PlanUIFunc = std::function<void(This&, String context, UIPlanner&)>;
+
+        struct PlanUIArgs {
+            This& component;
+            String context;
+            UIPlanner& planner;
+        };
+
+        using PlanUIFunc = std::function<void(PlanUIArgs)>;
         using TargetFunc = std::function<WorldNode*(This&)>;
         using AttachmentCore = WorldAttachmentCore<This>;
         using SignalHandler = AttachmentCore::SignalHandler;
@@ -46,7 +52,6 @@ namespace PJ {
         // Don't allow copies
         DELETE_COPY(SomeWorldComponent)
 
-    public:
         AttachmentCore _core;
 
         /// Owner node
@@ -56,21 +61,12 @@ namespace PJ {
         /// Func to make UI plan for custom UI in editor
         UnorderedMap<String, PlanUIFunc> planUIFuncs;
 
-        Func awakeFunc;
-        Func startFunc;
-        Func lateUpdateFunc;
-
         /// Returns the target for this component
         TargetFunc targetFunc;
 
-        /// Called when the componet's enabled state changes
-        Func onEnabledChangeFunc;
-
         SomeWorldComponent(String name = "");
 
-        bool IsEnabled() const {
-            return isEnabled;
-        }
+        bool IsEnabled() const;
 
         This& Enable(bool value);
 
@@ -96,8 +92,8 @@ namespace PJ {
 
         Matrix4x4 ModelMatrix() const;
 
-        Vector3 LocalToWorld(Vector3 worldPos) const;
-        Vector3 WorldToLocal(Vector3 localPos) const;
+        Vector3 LocalToWorld(Vector3 localPos) const;
+        Vector3 WorldToLocal(Vector3 worldPos) const;
 
         // MARK: Lifecycle events
 
@@ -116,10 +112,7 @@ namespace PJ {
         void CheckedStart();
 
         /// Called after OnUpdate
-        virtual void LateUpdate() {
-            GUARD(lateUpdateFunc)
-            lateUpdateFunc(*this);
-        }
+        virtual void LateUpdate() {}
 
         /// Called when node is destroyed
         virtual void OnDestroy() {}
@@ -166,17 +159,22 @@ namespace PJ {
         }
 
     protected:
-        void OnAddSignalHandler();
-
         /// If true, the component should receive events
         bool isEnabled = true;
 
+        /// Internal. Tracks the life cycle (Start, Awake) of this object
         WorldPartLife life;
 
+        /// Called when a signal handler is added. Sets the isListener flag on the owner to true
+        void OnAddSignalHandler();
+
+        /// Called when the enabled state for this object changes
+        virtual void OnEnabledChange() {}
+
         /// Called before Start by CheckedAwake
-        virtual void Awake();
+        virtual void Awake() {};
 
         /// Called after Awake by CheckedStart
-        virtual void Start();
+        virtual void Start() {};
     };
 } // namespace PJ

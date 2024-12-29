@@ -27,7 +27,7 @@ void BoardView::Build() {
         for (int x = 0; x < matrixSize.x; x++) {
             GUARD_CONTINUE(piecesView->IsDarkSquareAt({ x, y }))
 
-            Vec2i loc(x, y);
+            Vec2I loc(x, y);
 
             qb.And("Drop node")
                 .With<MatrixPieceHandler>(loc, "*")

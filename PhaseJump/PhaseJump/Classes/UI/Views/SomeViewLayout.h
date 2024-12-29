@@ -31,7 +31,14 @@ namespace PJ {
     class SomeViewLayout {
     public:
         using This = SomeViewLayout;
-        using PlanUIFunc = std::function<void(This&, String context, UIPlanner&)>;
+
+        struct PlanUIArgs {
+            This& layout;
+            String context;
+            UIPlanner& planner;
+        };
+
+        using PlanUIFunc = std::function<void(PlanUIArgs args)>;
 
         View2D* owner{};
 

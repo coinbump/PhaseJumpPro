@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "Document.h"
+#include "SomeDocument.h"
 
 using namespace PJ;
 using namespace std;
@@ -9,21 +9,8 @@ namespace DocumentTests {
 
 using namespace DocumentTests;
 
-TEST(Document, OnCloseFunc) {
-    int callCount{};
-    Document sut;
-    
-    sut.onCloseFunc = [&](auto& document) {
-        callCount++;
-    };
-    
-    sut.Close();
-    
-    EXPECT_EQ(1, callCount);
-}
-
 TEST(Document, Modify) {
-    Document sut;
+    Document<> sut;
     
     EXPECT_FALSE(sut.IsModified());
     sut.ModifyPush();
@@ -35,7 +22,7 @@ TEST(Document, Modify) {
 TEST(Document, Load) {
     int callCount{};
     int callCount2{};
-    Document sut;
+    Document<> sut;
     
     sut.loadFunc = [&](auto& document) {
         callCount++;
@@ -56,11 +43,11 @@ TEST(Document, Load) {
 TEST(Document, LoadFail) {
     int callCount{};
     int callCount2{};
-    Document sut;
+    Document<> sut;
     
     sut.loadFunc = [&](auto& document) {
         callCount++;
-        return Document::Failure();
+        return SomeDocument::Failure();
     };
     sut.onLoadFunc = [&](auto& document) {
         callCount2++;
@@ -77,7 +64,7 @@ TEST(Document, LoadFail) {
 TEST(Document, Save) {
     int callCount{};
     int callCount2{};
-    Document sut;
+    Document<> sut;
     
     sut.saveFunc = [&](auto& document) {
         callCount++;
@@ -96,11 +83,11 @@ TEST(Document, Save) {
 TEST(Document, SaveFail) {
     int callCount{};
     int callCount2{};
-    Document sut;
+    Document<> sut;
     
     sut.saveFunc = [&](auto& document) {
         callCount++;
-        return Document::Failure();
+        return SomeDocument::Failure();
     };
     sut.onSaveFunc = [&](auto& document) {
         callCount2++;

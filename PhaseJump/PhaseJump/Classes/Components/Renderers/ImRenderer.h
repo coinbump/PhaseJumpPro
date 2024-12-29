@@ -114,6 +114,10 @@ namespace PJ {
         PathCorner pathCorner = PathCorner::Round;
         float strokeWidth = 1;
 
+        /// OPTIMIZE: set this to true to draw images without transparency, which can result in
+        /// faster renders
+        bool areImagesOpaque{};
+
     public:
         /// OPTIMIZE: shapes are drawn with blend mode on by default, so they have proper Z ordering
         /// when drawn with transparent textures If you know that all shapes will be rendered behind
@@ -132,6 +136,12 @@ namespace PJ {
         ImRenderer() :
             ImRenderer(Config{}) {}
 
+        /// Sets the opaque setting for any subsequent images added
+        void SetAreImagesOpaque(bool value) {
+            areImagesOpaque = value;
+        }
+
+        /// Sets the color to be used by the next render option, if a color is not provided
         This& SetColor(Color value) {
             color = value;
             return *this;

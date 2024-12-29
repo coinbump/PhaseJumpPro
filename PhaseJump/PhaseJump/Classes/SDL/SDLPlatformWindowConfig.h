@@ -30,7 +30,6 @@ namespace PJ {
         uint32_t windowFlags{};
         RendererType rendererType{};
         SP<World> world;
-        SP<SomeRenderEngine> renderEngine;
 
         /// Use platform native renderer
         // FUTURE: static Config const native;

@@ -4,29 +4,30 @@ using namespace std;
 using namespace PJ;
 
 ImageAppScene::ImageAppScene() {
-    Document::DocumentFunc onCloseFunc = [this](auto& document) {
-        SetActiveDocument(documents.Count() > 0 ? documents[0] : nullptr);
-    };
-    Override(documents.onCloseFunc, onCloseFunc);
+    RegisterOperationClasses();
 
-    PlanUIFunc planUIFunc = [this](auto& component, String context, UIPlanner& planner) {
+    PlanUIFunc planUIFunc = [this](auto args) {
+        auto& planner = args.planner;
+
         {
             planner.ListSelect([this]() {
                 VectorList<String> options = Map<String>(documents.Documents(), [](auto& document) {
                     return document->name;
                 });
 
-                Binding<int> binding{ [this]() {
-                                         auto result =
-                                             IndexOf(documents.Documents(), activeDocument);
-                                         return result ? *result : -1;
-                                     },
-                                      [=, this](auto& value) {
-                                          GUARD(value >= 0 && value < documents.Count())
-                                          auto document = documents.Documents()[value];
-                                          SetActiveDocument(document);
-                                          ;
-                                      } };
+                Binding<int> binding{
+                    [this]() {
+                        auto result = IndexOfIf(documents.Documents(), [this](auto& document) {
+                            return document.get() == activeDocument.get();
+                        });
+                        return result ? *result : -1;
+                    },
+                    [=, this](auto& value) {
+                        GUARD(value >= 0 && value < documents.Count())
+                        auto document = SCAST<Document>(documents.Documents()[value]);
+                        SetActiveDocument(document);
+                    }
+                };
 
                 return UIPlanner::ListSelectConfig{ .label = "Documents",
                                                     .options = options,
@@ -34,7 +35,7 @@ ImageAppScene::ImageAppScene() {
             });
         }
 
-        {
+        planner.ListSelect([this]() {
             VectorList<BitmapOperationClass*> operationClasses;
             for (auto& operationClass : this->operationClasses.Map()) {
                 operationClasses.push_back(operationClass.second.get());
@@ -45,13 +46,48 @@ ImageAppScene::ImageAppScene() {
 
             Binding<int> binding{ [this]() { return -1; },
                                   [=, this](auto& value) {
+                                      GUARD(activeDocument && activeDocument->core.bitmap)
                                       GUARD(value >= 0 && value < operationClasses.size())
-                                      // TODO: operationClasses[value].NewType(
-                                      ;
+
+                                      auto bitmap = activeDocument->core.bitmap;
+
+                                      auto _class = operationClasses[value];
+                                      auto operation = _class->New();
+                                      GUARD(operation)
+
+                                      //                                      BitmapOperationCommandCore
+                                      //                                      commandCore{ .document
+                                      //                                      = activeDocument,
+                                      //                                      .bitmap =
+                                      //                                      bitmap->Clone(),
+                                      //                                      .operation = operation
+                                      //                                      }; UP<SomeCommand>
+                                      //                                      command =
+                                      //                                      NEW<Command<BitmapOperationCommandCore>>(
+                                      //                                          _class->Core.name,
+                                      //                                          [](auto& command)
+                                      //                                          {
+                                      //                                          command.core.operation(*command.core.bitmap);
+                                      //                                          },
+                                      //                                          [](auto& command)
+                                      //                                          {
+                                      //                                              command.core.document->bitmap
+                                      //                                              =
+                                      //                                              command.core.bitmap
+                                      //                                          }
+                                      //                                      );
+                                      //                                      commands.Run(command);
+
+                                      operation->Run(*bitmap);
+                                      activeDocument->core.texture =
+                                          MAKE<GLTexture>(GLTexture::Config{
+                                              .bitmap = activeDocument->core.bitmap.get() });
                                   } };
 
-            planner.ListSelect({ .label = "Operations", .options = options, .binding = binding });
-        }
+            return UIPlanner::ListSelectConfig{ .label = "Operations",
+                                                .options = options,
+                                                .binding = binding };
+        });
 
         planner.Button({ .label = "Save", .func = [this]() {
                             GUARD(activeDocument);
@@ -60,13 +96,14 @@ ImageAppScene::ImageAppScene() {
 
         planner.Button({ .label = "Close", .func = [this]() {
                             GUARD(activeDocument);
-                            activeDocument->Close();
+                            documents.Remove(*activeDocument);
+                            SetActiveDocument(
+                                documents.Count() > 0 ? SCAST<Document>(documents[0]) : nullptr
+                            );
                         } });
     };
 
     Override(planUIFuncs[UIContextId::Editor], planUIFunc);
-
-    RegisterOperationClasses();
 
     auto dropFilesHandler = [this](SomeWorldComponent& owner, DropFilesUIEvent const& event) {
         for (auto& filePath : event.filePaths) {
@@ -79,13 +116,25 @@ ImageAppScene::ImageAppScene() {
             SP<Document> document = MAKE<Document>(documentConfig);
             ResourceRepository repo(repoModel, document->resources, fm);
 
-            ResourceInfo info{ .id = filePath,
-                               .filePath = filePath,
-                               .type = ResourceType::Texture };
+            document->saveFunc = [](auto& document) {
+                PJ::SDLSurface surface({ .bitmap = document.core.bitmap.get() });
+                IMG_SavePNG(surface.Surface(), document.GetFilePath().string().c_str());
+
+                return Void{};
+            };
+
+            ResourceInfo info{ .id = filePath, .filePath = filePath, .type = ResourceType::Bitmap };
             repo.Load(info);
 
-            documents.Add(document);
-            SetActiveDocument(document);
+            auto bitmap = document->resources.TypeFirst<RGBABitmap>(ResourceType::Bitmap);
+            if (bitmap) {
+                document->core.bitmap = bitmap;
+                document->core.texture =
+                    MAKE<GLTexture>(GLTexture::Config{ .bitmap = bitmap.get() });
+
+                documents.Add(document);
+                SetActiveDocument(document);
+            }
         }
     };
 
@@ -117,12 +166,12 @@ void ImageAppScene::NavigateToPreviousDocument() {
                 indexValue = (int)documents.Count() - 1;
             }
 
-            SetActiveDocument(documents[indexValue]);
+            SetActiveDocument(SCAST<Document>(documents[indexValue]));
             return;
         }
     }
 
-    SetActiveDocument(documents[0]);
+    SetActiveDocument(SCAST<Document>(documents[0]));
 }
 
 void ImageAppScene::NavigateToNextDocument() {
@@ -135,12 +184,12 @@ void ImageAppScene::NavigateToNextDocument() {
             indexValue++;
             indexValue %= (int)documents.Count();
 
-            SetActiveDocument(documents[indexValue]);
+            SetActiveDocument(SCAST<Document>(documents[indexValue]));
             return;
         }
     }
 
-    SetActiveDocument(documents[0]);
+    SetActiveDocument(SCAST<Document>(documents[0]));
 }
 
 void ImageAppScene::LoadInto(WorldNode& root) {
@@ -149,8 +198,9 @@ void ImageAppScene::LoadInto(WorldNode& root) {
     QB(root)
         .Named("Image App")
         .OrthoStandard()
-        .With<ImRenderer>(ImRenderer::Config{ .worldSize = { 1400, 1400 }, .areShapesOpaque = true }
-        )
+        .With<ImRenderer>(ImRenderer::Config{ .worldSize = root.World()->Window()->PixelSize(),
+                                              .areShapesOpaque = true })
+        .SizeWithWindow()
         .ModifyLatest<ImRenderer>([this](auto& renderer) {
             renderer.AddSignalHandler({ .id = SignalId::RenderPrepare,
                                         .func = [this](auto& renderer, auto& signal) {
@@ -163,9 +213,7 @@ void ImageAppScene::LoadInto(WorldNode& root) {
 
                                             GUARD(activeDocument)
 
-                                            auto texture = activeDocument->resources.FindTexture(
-                                                activeDocument->GetFilePath().string()
-                                            );
+                                            auto texture = activeDocument->core.texture;
                                             GUARD(texture)
 
                                             Vector2 textureSize = texture->Size();
@@ -192,8 +240,9 @@ void ImageAppScene::LoadInto(WorldNode& root) {
 }
 
 void ImageAppScene::RegisterOperationClasses() {
-    operationClasses.Add(NEW<BitmapOperationClass>(
-        "flipV", "Flip vertical",
-        [](BitmapOperations::BitmapType& bitmap) { return BitmapOperations::FlipV(bitmap); }
-    ));
+    operationClasses.Add(NEW<BitmapOperationClass>("flipV", "Flip vertical", []() {
+        return BitmapOperations::FlipV();
+    }));
+
+    PJ::Log("Bitmap operations are registered");
 }

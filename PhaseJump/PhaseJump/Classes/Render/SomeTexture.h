@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Base.h"
+#include "Bitmap.h"
 #include "RenderTypes.h"
 #include "Vector2.h"
 
@@ -38,6 +39,8 @@ namespace PJ {
 
         struct Config {
             String id;
+
+            // Method A: prebuilt texture
             uint32_t renderId{};
             Vector2Int origin;
             Vector2Int size;
@@ -46,6 +49,10 @@ namespace PJ {
             Vector2 normalOrigin;
             Vector2 normalSize = Vector2::one;
             String alphaMode = TextureAlphaMode::Standard;
+            String textureMagnification = TextureMagnify::Linear;
+
+            // Method: B: convert from bitmap
+            RGBABitmap* bitmap{};
         };
 
         SomeTexture(Config const& config) :

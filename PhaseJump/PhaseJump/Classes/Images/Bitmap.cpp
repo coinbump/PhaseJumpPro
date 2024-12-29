@@ -15,3 +15,14 @@ using namespace PJ;
 //         memset(pixelData, 0, lineSize);
 //     }
 // }
+
+BitmapOrientation PJ::Flipped(BitmapOrientation value) {
+    switch (value) {
+    case BitmapOrientation::Standard:
+        return BitmapOrientation::Flip;
+        break;
+    case BitmapOrientation::Flip:
+        return BitmapOrientation::Standard;
+        break;
+    }
+}

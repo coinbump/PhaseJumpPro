@@ -25,7 +25,7 @@ TEST(WorldAttachmentCore, Signal) {
         signalCount++;
     }});
     
-    Event event;
+    Signal event;
     sut.Signal("test", event);
     
     ASSERT_EQ(1, signalCount);
@@ -43,7 +43,7 @@ TEST(WorldAttachmentCore, SignalTypeSafe) {
         signalCount++;
     }});
     
-    Event event;
+    Signal event;
     sut.Signal("test", event);
     
     ASSERT_EQ(1, signalCount);
@@ -70,7 +70,7 @@ TEST(WorldAttachmentCore, SignalMultiple)
     add();
     add();
     
-    Event event;
+    Signal event;
     sut.Signal("test", event);
     
     ASSERT_EQ(2, signalCount);

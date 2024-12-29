@@ -10,8 +10,6 @@
  CODE REVIEW: 8/6/24
  */
 namespace PJ {
-    class SomeUIEvent;
-
     /// Abstract interface for object that produces N output results for a given input
     template <class Input, class Output>
     class SomeMultiMap : public SomeTransformer<Input, std::optional<Output>> {
@@ -23,6 +21,7 @@ namespace PJ {
 
         virtual std::optional<Output> FirstOutputFor(Input const& input) = 0;
 
+        // TODO: List vs VectorList audit
         virtual List<Output> OutputsFor(Input const& input) {
             List<Output> result;
 

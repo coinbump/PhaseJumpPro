@@ -40,7 +40,7 @@ void EditorWorldSystem::Add(SP<WorldNode> node, WorldNode* parent, size_t index)
 
     AddNodeCommandCore commandCore{ .node = node, .parent = parent, .index = index };
     UP<SomeCommand> command = NEW<Command<AddNodeCommandCore>>(
-        String("Add ") + node->name, commandCore,
+        String("Add ") + node->Name(), commandCore,
         [](auto& command) {
             command.core.node->Restore();
             command.core.parent->Insert(command.core.node, command.core.index);
@@ -59,7 +59,7 @@ void EditorWorldSystem::Delete(SP<WorldNode> node) {
 
     DeleteNodeCommandCore commandCore{ .node = node, .parent = parent, .index = *index };
     UP<SomeCommand> command = NEW<Command<DeleteNodeCommandCore>>(
-        String("Delete ") + node->name, commandCore,
+        String("Delete ") + node->Name(), commandCore,
         [](auto& command) { command.core.node->Destroy(); },
         [](auto& command) {
             command.core.node->Restore();

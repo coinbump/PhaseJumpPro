@@ -12,12 +12,12 @@ namespace ReceptorTests {
     public:
         UnorderedMap<String, int> matches;
 
-        void OnSignalMatch(Signal<String> const& signal) override {
+        void OnSignalMatch(ReceptorSignal<String> const& signal) override {
             matches[*signal.Keys().begin()] += 1;
         }
     };
 
-    class TestSignal : public Signal<String> {
+    class TestSignal : public ReceptorSignal<String> {
     public:
         TestSignal() {
         }

@@ -59,10 +59,10 @@ TextRenderer::TextRenderer(Config config) :
         this->modifyColorsFunc(*this, colors);
     });
 
-    PlanUIFunc planUIFunc = [this](auto& component, String context, UIPlanner& planner) {
-        planner.InputText({ .label = "Text",
-                            .binding = { [this]() { return text.PlainText(); },
-                                         [this](auto& value) { SetText(value); } } });
+    PlanUIFunc planUIFunc = [this](auto args) {
+        args.planner.InputText({ .label = "Text",
+                                 .binding = { [this]() { return text.PlainText(); },
+                                              [this](auto& value) { SetText(value); } } });
     };
     Override(planUIFuncs[UIContextId::Inspector], planUIFunc);
 }

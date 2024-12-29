@@ -14,6 +14,9 @@ namespace PJ {
         /// Texture atlas created by TexturePacker (by CodeAndWeb)
         auto constexpr TexturePackerAtlas = "texturePacker.atlas";
 
+        /// Image loaded as a 32-bit RGBA Bitmap
+        auto constexpr Bitmap = "bitmap";
+
         /// Font created by BMFont (by AngelCode)
         auto constexpr BitmapFont = "bitmapFont";
 

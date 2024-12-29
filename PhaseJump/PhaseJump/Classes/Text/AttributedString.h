@@ -13,6 +13,15 @@
 namespace PJ {
     class SomeTexture;
 
+    /// Common text style ids
+    namespace TextStyleId {
+        auto constexpr Bold = "bold";
+        auto constexpr Italic = "italic";
+        auto constexpr Underline = "underline";
+        auto constexpr Strikethrough = "strike";
+        auto constexpr Caps = "caps";
+    } // namespace TextStyleId
+
     /// Common text part types
     namespace TextPartType {
         auto constexpr Text = "text";

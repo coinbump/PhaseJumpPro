@@ -50,8 +50,10 @@
 		CD6FEB6C29170AE600F674D3 /* KaijuTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD6FEB6B29170AE600F674D3 /* KaijuTests.mm */; };
 		CD6FEB7629170AE600F674D3 /* KaijuUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6FEB7529170AE600F674D3 /* KaijuUITests.m */; };
 		CD6FEB7829170AE600F674D3 /* KaijuUITestsLaunchTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6FEB7729170AE600F674D3 /* KaijuUITestsLaunchTests.m */; };
-		CD815EE42C9F769000FBB665 /* ExampleMineSweeperScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD815EE32C9F769000FBB665 /* ExampleMineSweeperScene.cpp */; };
-		CD815EE52C9F769000FBB665 /* ExampleMineSweeperScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD815EE32C9F769000FBB665 /* ExampleMineSweeperScene.cpp */; };
+		CD7128832D20F0BA0019A718 /* ExampleGraphsScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD7128812D20F0BA0019A718 /* ExampleGraphsScene.cpp */; };
+		CD7128842D20F0BA0019A718 /* ExampleGraphsScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD7128812D20F0BA0019A718 /* ExampleGraphsScene.cpp */; };
+		CD815EE42C9F769000FBB665 /* ExampleMinesweeperScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD815EE32C9F769000FBB665 /* ExampleMinesweeperScene.cpp */; };
+		CD815EE52C9F769000FBB665 /* ExampleMinesweeperScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD815EE32C9F769000FBB665 /* ExampleMinesweeperScene.cpp */; };
 		CD815EF72C9FE10A00FBB665 /* ExampleCheckersPiecesView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD815EF62C9FE10A00FBB665 /* ExampleCheckersPiecesView.cpp */; };
 		CD815EF82C9FE10A00FBB665 /* ExampleCheckersPiecesView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD815EF62C9FE10A00FBB665 /* ExampleCheckersPiecesView.cpp */; };
 		CD815EFB2C9FE11000FBB665 /* ExampleCheckersBoardView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD815EFA2C9FE11000FBB665 /* ExampleCheckersBoardView.cpp */; };
@@ -165,9 +167,11 @@
 		CD6FEB7129170AE600F674D3 /* KaijuUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KaijuUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CD6FEB7529170AE600F674D3 /* KaijuUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KaijuUITests.m; sourceTree = "<group>"; };
 		CD6FEB7729170AE600F674D3 /* KaijuUITestsLaunchTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KaijuUITestsLaunchTests.m; sourceTree = "<group>"; };
+		CD7128802D20F0BA0019A718 /* ExampleGraphsScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExampleGraphsScene.h; sourceTree = "<group>"; };
+		CD7128812D20F0BA0019A718 /* ExampleGraphsScene.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ExampleGraphsScene.cpp; sourceTree = "<group>"; };
 		CD73D90A2C607D7300C81812 /* TestInput.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestInput.h; sourceTree = "<group>"; };
-		CD815EE22C9F769000FBB665 /* ExampleMineSweeperScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExampleMineSweeperScene.h; sourceTree = "<group>"; };
-		CD815EE32C9F769000FBB665 /* ExampleMineSweeperScene.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ExampleMineSweeperScene.cpp; sourceTree = "<group>"; };
+		CD815EE22C9F769000FBB665 /* ExampleMinesweeperScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExampleMinesweeperScene.h; sourceTree = "<group>"; };
+		CD815EE32C9F769000FBB665 /* ExampleMinesweeperScene.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ExampleMinesweeperScene.cpp; sourceTree = "<group>"; };
 		CD815EF52C9FE10A00FBB665 /* ExampleCheckersPiecesView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExampleCheckersPiecesView.h; sourceTree = "<group>"; };
 		CD815EF62C9FE10A00FBB665 /* ExampleCheckersPiecesView.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ExampleCheckersPiecesView.cpp; sourceTree = "<group>"; };
 		CD815EF92C9FE11000FBB665 /* ExampleCheckersBoardView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExampleCheckersBoardView.h; sourceTree = "<group>"; };
@@ -344,6 +348,15 @@
 			path = KaijuUITests;
 			sourceTree = "<group>";
 		};
+		CD7128822D20F0BA0019A718 /* Graphs Example */ = {
+			isa = PBXGroup;
+			children = (
+				CD7128802D20F0BA0019A718 /* ExampleGraphsScene.h */,
+				CD7128812D20F0BA0019A718 /* ExampleGraphsScene.cpp */,
+			);
+			path = "Graphs Example";
+			sourceTree = "<group>";
+		};
 		CD815F062CA371C600FBB665 /* Core */ = {
 			isa = PBXGroup;
 			children = (
@@ -368,6 +381,7 @@
 		CDDB6F742C8E37660073D3A2 /* Examples */ = {
 			isa = PBXGroup;
 			children = (
+				CD7128822D20F0BA0019A718 /* Graphs Example */,
 				CDEC25EF2C9BD93200FF14A2 /* Matrix Board View Example */,
 				CDDB6F772C8E37830073D3A2 /* Checkers Example */,
 				CDDB6F762C8E37760073D3A2 /* Minesweeper Example */,
@@ -392,8 +406,8 @@
 		CDDB6F762C8E37760073D3A2 /* Minesweeper Example */ = {
 			isa = PBXGroup;
 			children = (
-				CD815EE22C9F769000FBB665 /* ExampleMineSweeperScene.h */,
-				CD815EE32C9F769000FBB665 /* ExampleMineSweeperScene.cpp */,
+				CD815EE22C9F769000FBB665 /* ExampleMinesweeperScene.h */,
+				CD815EE32C9F769000FBB665 /* ExampleMinesweeperScene.cpp */,
 			);
 			path = "Minesweeper Example";
 			sourceTree = "<group>";
@@ -670,12 +684,13 @@
 				CD1D46832C9368BA00839F39 /* AppDelegateBridge.swift in Sources */,
 				CD1D46842C9368BA00839F39 /* main.m in Sources */,
 				CDB7F6C12D1A088400A166F4 /* ImageAppScene.cpp in Sources */,
-				CD815EE52C9F769000FBB665 /* ExampleMineSweeperScene.cpp in Sources */,
+				CD815EE52C9F769000FBB665 /* ExampleMinesweeperScene.cpp in Sources */,
 				CD1D46852C9368BA00839F39 /* SwiftBridge.swift in Sources */,
 				CD372FB62CC6F7C700D79CA5 /* KaijuWorldSystem.cpp in Sources */,
 				CD1D46862C9368BA00839F39 /* ObjCBridge.mm in Sources */,
 				CD815F042CA371AF00FBB665 /* KaijuImGuiRenderProcessor.cpp in Sources */,
 				CD51DBDC2CEAE45300658590 /* TestViewsScene.cpp in Sources */,
+				CD7128842D20F0BA0019A718 /* ExampleGraphsScene.cpp in Sources */,
 				CD1D46872C9368BA00839F39 /* ExampleLifeMatrixRenderer.cpp in Sources */,
 				CD1D46882C9368BA00839F39 /* AppDelegate.mm in Sources */,
 				CDEC25F32C9BD94F00FF14A2 /* ExampleMatrixBoardViewAnimationScene.cpp in Sources */,
@@ -699,12 +714,13 @@
 				CDF0FB7829EE11DA00B9EF1F /* AppDelegateBridge.swift in Sources */,
 				CD6FEB6129170AE600F674D3 /* main.m in Sources */,
 				CDB7F6C22D1A088400A166F4 /* ImageAppScene.cpp in Sources */,
-				CD815EE42C9F769000FBB665 /* ExampleMineSweeperScene.cpp in Sources */,
+				CD815EE42C9F769000FBB665 /* ExampleMinesweeperScene.cpp in Sources */,
 				CD5FB81E291E13D5004F2FB4 /* SwiftBridge.swift in Sources */,
 				CD372FB52CC6F7C700D79CA5 /* KaijuWorldSystem.cpp in Sources */,
 				CD5FB83229200602004F2FB4 /* ObjCBridge.mm in Sources */,
 				CD815F052CA371AF00FBB665 /* KaijuImGuiRenderProcessor.cpp in Sources */,
 				CD51DBDB2CEAE45300658590 /* TestViewsScene.cpp in Sources */,
+				CD7128832D20F0BA0019A718 /* ExampleGraphsScene.cpp in Sources */,
 				CDDB6F7D2C8E51710073D3A2 /* ExampleLifeMatrixRenderer.cpp in Sources */,
 				CD6FEB5729170AE500F674D3 /* AppDelegate.mm in Sources */,
 				CDEC25F22C9BD94F00FF14A2 /* ExampleMatrixBoardViewAnimationScene.cpp in Sources */,

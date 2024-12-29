@@ -9,7 +9,7 @@ public:
     TestZOrderScene() {}
 
     void LoadInto(WorldNode& root) override {
-        root.name = "TestZOrderScene";
+        root.SetName("TestZOrderScene");
 
         root.With<OrthoCamera>();
 

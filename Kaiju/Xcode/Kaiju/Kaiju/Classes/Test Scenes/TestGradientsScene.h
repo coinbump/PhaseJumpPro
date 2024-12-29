@@ -14,7 +14,7 @@ public:
     TestGradientsScene() {}
 
     void LoadInto(WorldNode& root) override {
-        root.name = "TestGradientsScene";
+        root.SetName("TestGradientsScene");
 
         auto camera = SCAST<SomeCamera>(MAKE<OrthoCamera>());
         auto cameraNode = MAKE<WorldNode>("Camera");

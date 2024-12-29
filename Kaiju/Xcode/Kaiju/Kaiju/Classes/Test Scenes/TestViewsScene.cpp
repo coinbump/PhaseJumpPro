@@ -7,7 +7,9 @@ TestViewsScene::TestViewsScene() {
     layouts = { { .id = "1080", .size = { 1920, 1080 } },
                 { .id = "phone", .size = { 750, 1334 } } };
 
-    PlanUIFunc planUIFunc = [this](auto& component, String context, UIPlanner& planner) {
+    PlanUIFunc planUIFunc = [this](auto args) {
+        auto& planner = args.planner;
+
         // TODO: should this be optional<int>? for no selection?
         Binding<int> binding{ [this]() { return LayoutSizeIndex() ? *LayoutSizeIndex() : -1; },
                               [this](auto& value) { SetLayoutSizeIndex(value); } };
@@ -67,7 +69,7 @@ void TestViewsScene::SetLayoutSize(Vector2 size) {
 }
 
 void TestViewsScene::LoadInto(WorldNode& root) {
-    root.name = "TestViewsScene";
+    root.SetName("TestViewsScene");
 
     Vector2 _1080{ 1920, 1080 };
 
@@ -324,16 +326,21 @@ void TestViewsScene::LoadInto(WorldNode& root) {
                        } });
         };
 
-        buildViewModels
-            .push_back({ "Duck", [=](WorldNode& root) {
-                            QB(root).And("Root View").RootView({ 800, 1800 }, [=](auto& vb) {
-                                vb.ZStack({ .buildViewFunc = [=](auto& vb) {
-                                    vb.Surface();
-                                    vb.Pad({ .insets = LayoutInsets::Uniform(20),
-                                             .buildViewFunc = duckUIStack });
-                                } });
-                            });
-                        } });
+        buildViewModels.push_back({ "Duck", [=](WorldNode& root) {
+                                       QB(root)
+                                           .And("Root View")
+                                           .RootView(
+                                               { 800, 1800 },
+                                               [=](auto& vb) {
+                                                   vb.ZStack({ .buildViewFunc = [=](auto& vb) {
+                                                       vb.Surface();
+                                                       vb.Pad({ .insets = LayoutInsets::Uniform(20),
+                                                                .buildViewFunc = duckUIStack });
+                                                   } });
+                                               }
+                                           )
+                                           .SizeWithWindow();
+                                   } });
 
         buildViewModels
             .push_back({ "Color roles", [=](WorldNode& root) {
@@ -1278,7 +1285,7 @@ void TestViewsScene::RebuildTargetView() {
         GUARD(targetView >= 0 && targetView < buildViewModels.size())
         GUARD(owner)
 
-        owner->RemoveAllChildren();
+        owner->DestroyAllChildren();
         buildViewModels[targetView].buildViewFunc(*owner);
         auto rootView = RootView();
         if (rootView) {

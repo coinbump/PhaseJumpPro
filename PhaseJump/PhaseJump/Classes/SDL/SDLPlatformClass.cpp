@@ -64,10 +64,10 @@ SDLConfigPlatformResult SDLPlatformClass::Configure(SDLPlatformConfig& config, S
 
     // FUTURE: support non-OpenGL render SDKs if needed
     SP<GLRenderEngine> glRenderEngine = MAKE<GLRenderEngine>();
+    world->renderEngine = glRenderEngine;
 
     auto windowConfig = config.windowConfig;
     windowConfig.world = world;
-    windowConfig.renderEngine = glRenderEngine;
 
     auto window = MAKE<SDLPlatformWindow>(windowConfig);
     window->Go();

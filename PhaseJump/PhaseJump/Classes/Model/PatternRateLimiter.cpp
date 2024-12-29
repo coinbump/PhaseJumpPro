@@ -28,11 +28,9 @@ PatternRateLimiter::PatternRateLimiter(VectorList<Pattern> _patterns) :
 
     counter.onFinishSequenceFunc = [advancePattern, this](auto& counter) { advancePattern(); };
 
-    canFireFunc = [](auto& _limiter) {
-        auto& limiter = *(static_cast<This*>(&_limiter));
-        GUARDR(limiter.rateLimiter, false)
-
-        return limiter.rateLimiter->CanFire();
+    canFireFunc = [this](auto& _limiter) {
+        GUARDR(rateLimiter, false)
+        return rateLimiter->CanFire();
     };
 
     pattern = patterns[0];

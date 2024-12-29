@@ -114,16 +114,18 @@ public:
 class TestAudioScene : public Scene {
 public:
     TestAudioScene() {
-        PlanUIFunc planUIFunc = [this](auto& component, String context, UIPlanner& planner) {
+        PlanUIFunc planUIFunc = [this](auto args) {
+            auto& planner = args.planner;
+
             planner.Button({ .label = "Pause", .func = [this]() {
                                 for (auto& child : owner->Parent()->Children()) {
-                                    Event event;
+                                    Event<> event;
                                     child->Signal("pause", event);
                                 }
                             } });
             planner.Button({ .label = "Play", .func = [this]() {
                                 for (auto& child : owner->Parent()->Children()) {
-                                    Event event;
+                                    Event<> event;
                                     child->Signal("play", event);
                                 }
                             } });

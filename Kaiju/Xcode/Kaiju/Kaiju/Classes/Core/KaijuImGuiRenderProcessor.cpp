@@ -7,13 +7,16 @@ using namespace PJ;
 // auto positionXItem = ImGuiItems::MakeInputFloatItem("X", {[](})
 
 void KaijuImGuiRenderProcessor::Process(String phase) {
+    GUARD(editorSystem.isUIVisible)
+
     BuildPainters();
 
-    EditorImGuiInspectorWindowPainter(system).Paint();
+    EditorImGuiInspectorWindowPainter(editorSystem).Paint();
 
-    bool isToolsWindowConfigured = system.storage.SafeValue<bool>("window.tools", "isConfigured");
+    bool isToolsWindowConfigured =
+        editorSystem.storage.SafeValue<bool>("window.tools", "isConfigured");
     if (!isToolsWindowConfigured) {
-        system.storage.Set("window.tools", "isConfigured", true);
+        editorSystem.storage.Set("window.tools", "isConfigured", true);
 
         ImGuiIO& io = ImGui::GetIO();
 
@@ -29,25 +32,26 @@ void KaijuImGuiRenderProcessor::Process(String phase) {
 void KaijuImGuiRenderProcessor::BuildPainters() {
     GUARD(nullptr == windowPainter)
 
-    auto world = system.World();
+    auto world = editorSystem.World();
     GUARD(world)
 
     windowPainter = NEW<ImGuiWindowPainter>("Kaiju", &isToolActive);
     UP<SomeImGuiPainter> worldInfoPainter = NEW<EditorImGuiWorldInfoPainter>(*world);
-    UP<SomeImGuiPainter> menuBarPainter = NEW<ImGuiMainMenuBarPainter>(system.menus);
+    UP<SomeImGuiPainter> menuBarPainter = NEW<ImGuiMainMenuBarPainter>(editorSystem.menus);
 
     UP<SomeImGuiPainter> scrollingPainter = NEW<ImGuiChildPainter>("Scrolling");
 
     UP<SomeImGuiPainter> scenesPainter =
-        NEW<EditorImGuiScenesPainter>(system, EditorImGuiScenesPainter::OnSceneSwitchFunc());
+        NEW<EditorImGuiScenesPainter>(editorSystem, EditorImGuiScenesPainter::OnSceneSwitchFunc());
 
-    UP<SomeImGuiPainter> prefabsPainter = NEW<EditorImGuiPrefabsPainter>(system);
-    UP<SomeImGuiPainter> resourcesPainter = NEW<EditorImGuiResourcesPainter>(system);
-    UP<SomeImGuiPainter> sceneTreePainter =
-        NEW<EditorImGuiSceneTreePainter>(system, EditorImGuiSceneTreePainter::OnInspectFunc());
-    UP<SomeImGuiPainter> renderEnginePainter = NEW<EditorImGuiRenderEnginePainter>(system);
+    UP<SomeImGuiPainter> prefabsPainter = NEW<EditorImGuiPrefabsPainter>(editorSystem);
+    UP<SomeImGuiPainter> resourcesPainter = NEW<EditorImGuiResourcesPainter>(editorSystem);
+    UP<SomeImGuiPainter> sceneTreePainter = NEW<EditorImGuiSceneTreePainter>(
+        editorSystem, EditorImGuiSceneTreePainter::OnInspectFunc()
+    );
+    UP<SomeImGuiPainter> renderEnginePainter = NEW<EditorImGuiRenderEnginePainter>(editorSystem);
     UP<SomeImGuiPainter> commandHistoryPainter =
-        NEW<EditorImGuiCommandHistoryPainter>(system.commands);
+        NEW<EditorImGuiCommandHistoryPainter>(editorSystem.commands);
 
     scrollingPainter->tree.Add(scenesPainter);
     scrollingPainter->tree.Add(prefabsPainter);

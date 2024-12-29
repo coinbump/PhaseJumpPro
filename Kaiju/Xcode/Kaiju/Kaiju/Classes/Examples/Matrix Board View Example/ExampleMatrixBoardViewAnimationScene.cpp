@@ -13,6 +13,7 @@ void MatrixBoardViewAnimation::Scene::LoadInto(WorldNode& root) {
     QB(root)
         .OrthoStandard(Color32(31, 36, 84))
         .And("Matrix view")
+        .ScaleWithWindow(worldSize, 0.8f)
         .With<MatrixBoardView>(worldSize, matrixSize)
         .ModifyLatest<MatrixBoardView>([this](auto& boardView) { this->boardView = &boardView; })
         .Grid(worldSize, matrixSize, Color::red, 2)

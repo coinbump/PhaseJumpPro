@@ -12,6 +12,23 @@
  CODE REVIEW: 8/10/24
  */
 namespace PJ {
+    /// Defers code until scope exists
+    /// Important: Defer object must be named and on stack to stay in scope
+    struct Defer {
+    public:
+        using Func = std::function<void()>;
+
+        Func func;
+
+        Defer(Func func) :
+            func(func) {}
+
+        virtual ~Defer() {
+            GUARD(func);
+            func();
+        }
+    };
+
     /// Casts source to dest type
     template <class Dest, class Source>
     Dest* As(Source* source) {

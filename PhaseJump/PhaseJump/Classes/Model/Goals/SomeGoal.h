@@ -4,12 +4,13 @@
 #include "GoalEvents.h"
 #include "StandardCore.h"
 #include "StringUtils.h"
+#include "Void.h"
 #include <memory>
 
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 7/5/24
+ CODE REVIEW: 12/29/24
  */
 namespace PJ {
     /// Goals are common in games to achieve progress.
@@ -28,21 +29,44 @@ namespace PJ {
         }
 
         void SetIsComplete(bool value) {
-            if (isComplete == value) {
-                return;
-            }
+            GUARD(isComplete != value)
+
             isComplete = value;
-            if (isComplete) {
-                OnComplete();
-            }
+            GUARD(isComplete)
+
+            OnComplete();
         }
 
         void Complete() {
             SetIsComplete(true);
         }
 
-        virtual float Progress() const = 0;
+        virtual float Progress() const {
+            return isComplete ? 1 : 0;
+        }
 
         virtual void OnComplete() {}
+    };
+
+    /// Goal with a core and funcs
+    template <class Core = Void>
+    class Goal : public SomeGoal {
+    public:
+        using Base = SomeGoal;
+        using This = Goal<Core>;
+
+        using GoalFunc = std::function<void(This&)>;
+
+        GoalFunc onCompleteFunc;
+
+        Core core{};
+
+        Goal(Core core = {}) :
+            core(core) {}
+
+        void OnComplete() override {
+            GUARD(onCompleteFunc);
+            onCompleteFunc(*this);
+        }
     };
 } // namespace PJ

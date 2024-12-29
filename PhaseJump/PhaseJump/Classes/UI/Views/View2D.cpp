@@ -43,8 +43,10 @@ View2D::View2D() {
                                         static_cast<This*>(&owner)->SetIsHovering(event.isHovering);
                                     } });
 
-    PlanUIFunc planUIFunc = [this](auto& component, String context, UIPlanner& planner) {
-        planner.Text([this]() {
+    PlanUIFunc planUIFunc = [this](auto args) {
+        auto& planner = args.planner;
+
+        args.planner.Text([this]() {
             String frameString = std::format(
                 "Origin: {}, {} \tSize: {}, {}", frame.origin.x, frame.origin.y, frame.size.x,
                 frame.size.y
@@ -98,8 +100,8 @@ View2D::View2D() {
             planner.Text({ .text = layoutLabel });
 
             try {
-                auto planUIFunc = layout->planUIFuncs.at(context);
-                planUIFunc(*layout, context, planner);
+                auto planUIFunc = layout->planUIFuncs.at(args.context);
+                planUIFunc({ .layout = *layout, .context = args.context, .planner = planner });
             } catch (...) {}
         }
 
@@ -179,23 +181,23 @@ Vector3 View2D::TopLeftWorldPosition() const {
     return LocalToWorld(TopLeftLocalPosition());
 }
 
-Vector3 View2D::ViewToWorldPosition(Vector2 viewPosition) const {
-    return LocalToWorld(ViewToLocalPosition(viewPosition));
+Vector3 View2D::ViewToWorld(Vector2 viewPosition) const {
+    return LocalToWorld(ViewToLocal(viewPosition));
 }
 
-Vector3 View2D::ViewToLocalPosition(Vector2 viewPosition) const {
+Vector3 View2D::ViewToLocal(Vector2 viewPosition) const {
     auto local = viewPosition - frame.size / 2.0f;
     local.y *= vecDown;
 
     return local;
 }
 
-Vector2 View2D::WorldToViewPosition(Vector3 worldPosition) const {
+Vector2 View2D::WorldToView(Vector3 worldPosition) const {
     auto localPosition = WorldToLocal(worldPosition);
-    return LocalToViewPosition(localPosition);
+    return LocalToView(localPosition);
 }
 
-Vector2 View2D::LocalToViewPosition(Vector3 localPosition) const {
+Vector2 View2D::LocalToView(Vector3 localPosition) const {
     auto viewX = localPosition.x + frame.size.x / 2.0f;
     auto viewY = frame.size.y / 2.0f - localPosition.y;
 
@@ -261,6 +263,7 @@ void View2D::ApplyLayout() {
         for (int i = 0; i < childViews.size(); i++) {
             auto isTopLevel = i > 0;
             auto child = childViews[i];
+            GUARD_CONTINUE(child->IsEnabled())
 
             // The first child view's layout determines its size
             // Top level views have a fixed size, which must be calculated when the view is
@@ -285,7 +288,7 @@ void View2D::ApplyLayout() {
             }
 
             child->owner->SetLocalPosition(
-                ViewToLocalPosition(child->frame.origin + child->frame.size / 2.0f)
+                ViewToLocal(child->frame.origin + child->frame.size / 2.0f)
             );
 
             layoutRecurse(*child);
@@ -338,6 +341,8 @@ VectorList<ViewProxy> View2D::ChildViewProxies() const {
 
     auto childViews = ChildViews();
     for (auto& child : childViews) {
+        GUARD_CONTINUE(child->IsEnabled())
+
         ViewProxy proxy = child->MakeViewProxy();
         result.push_back(proxy);
     }
@@ -455,7 +460,7 @@ void View2D::Rebuild() {
 
     needsRebuild = false;
 
-    owner->RemoveAllChildren();
+    owner->DestroyAllChildren();
     buildViewFunc(*this);
 
     SetNeedsLayout();

@@ -10,8 +10,6 @@
  CODE REVIEW: 10/20/24
  */
 namespace PJ {
-    class SomeUIEvent;
-
     /// Some world systems use event polling (Example: SDL)
     class SomeUIEventPoller {
     public:

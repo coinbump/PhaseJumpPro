@@ -9,7 +9,7 @@ public:
     TestBulletsScene() {}
 
     void LoadInto(WorldNode& root) override {
-        root.name = "TestBulletsScene";
+        root.SetName("TestBulletsScene");
 
         StandardRandom random;
 
