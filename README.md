@@ -2,7 +2,7 @@
 Game Design Patterns common to all games.
 
 ## Project Goals
-The goal of this project is to establish a library of platform-neutral, language-neutral and engine-neutral design patterns for games. Originally written for Unity, the library has been re-thought and re-written in C+.
+The goal of this project is to establish a library of platform-neutral, language-neutral and engine-neutral design patterns for games. Originally written for Unity, the library has been rethought and rewritten in C++.
 
 The Unity code still works but it is using older code patterns and will need to be updated.
 
