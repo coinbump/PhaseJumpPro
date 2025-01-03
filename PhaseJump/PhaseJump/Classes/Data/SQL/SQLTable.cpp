@@ -298,7 +298,7 @@ bool SQLTable::AddColumn(String colName, String params) {
 }
 
 /**
- OPTIMIZE: this is inefficient to check this every time a SQL value is altered,
+ Optimize: this is inefficient to check this every time a SQL value is altered,
  to optimize SQL, build the table first.
 
  http://stackoverflow.com/questions/2520945/sqlite-if-column-exists

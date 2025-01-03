@@ -1131,6 +1131,8 @@
 		CD7128552D1F60050019A718 /* SomePlatformWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD7128542D1F60050019A718 /* SomePlatformWindow.cpp */; };
 		CD7128562D1F60050019A718 /* SomePlatformWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD7128542D1F60050019A718 /* SomePlatformWindow.cpp */; };
 		CD7128AF2D21A6F40019A718 /* StringConvertibleTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD7128AE2D21A6F40019A718 /* StringConvertibleTests.cpp */; };
+		CD7128B12D25FFBF0019A718 /* MatrixPiece.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD7128B02D25FFBF0019A718 /* MatrixPiece.cpp */; };
+		CD7128B22D25FFBF0019A718 /* MatrixPiece.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD7128B02D25FFBF0019A718 /* MatrixPiece.cpp */; };
 		CD73D8DC2C4DC13B00C81812 /* SomeTagClass.h in Headers */ = {isa = PBXBuildFile; fileRef = CD73D8DB2C4DC13B00C81812 /* SomeTagClass.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CD73D8DE2C4DC15F00C81812 /* TypeClass.h in Headers */ = {isa = PBXBuildFile; fileRef = CD73D8DD2C4DC15F00C81812 /* TypeClass.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CD73D8E02C4DC17F00C81812 /* SomeAttribute.h in Headers */ = {isa = PBXBuildFile; fileRef = CD73D8DF2C4DC17F00C81812 /* SomeAttribute.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -2221,6 +2223,7 @@
 		CD71284F2D1D05480019A718 /* SDLLoadBitmapOperation.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SDLLoadBitmapOperation.cpp; sourceTree = "<group>"; };
 		CD7128542D1F60050019A718 /* SomePlatformWindow.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SomePlatformWindow.cpp; sourceTree = "<group>"; };
 		CD7128AE2D21A6F40019A718 /* StringConvertibleTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StringConvertibleTests.cpp; sourceTree = "<group>"; };
+		CD7128B02D25FFBF0019A718 /* MatrixPiece.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MatrixPiece.cpp; sourceTree = "<group>"; };
 		CD73D8DB2C4DC13B00C81812 /* SomeTagClass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SomeTagClass.h; sourceTree = "<group>"; };
 		CD73D8DD2C4DC15F00C81812 /* TypeClass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TypeClass.h; sourceTree = "<group>"; };
 		CD73D8DF2C4DC17F00C81812 /* SomeAttribute.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SomeAttribute.h; sourceTree = "<group>"; };
@@ -3158,9 +3161,10 @@
 		CD1450D82C1EB48E00B27A2E /* Boards */ = {
 			isa = PBXGroup;
 			children = (
-				CD1450DA2C1EB4A400B27A2E /* MatrixPiece.h */,
-				CDDB6F5B2C8DF1F80073D3A2 /* MatrixBoard.cpp */,
 				CDDB6F5C2C8DF1F80073D3A2 /* MatrixBoard.h */,
+				CDDB6F5B2C8DF1F80073D3A2 /* MatrixBoard.cpp */,
+				CD1450DA2C1EB4A400B27A2E /* MatrixPiece.h */,
+				CD7128B02D25FFBF0019A718 /* MatrixPiece.cpp */,
 			);
 			path = Boards;
 			sourceTree = "<group>";
@@ -5849,6 +5853,7 @@
 				CD1D46082C9367FA00839F39 /* QuadMeshBuilder.cpp in Sources */,
 				CD1D46092C9367FA00839F39 /* GLLoadShaderOperation.cpp in Sources */,
 				CD1D460B2C9367FA00839F39 /* SomeDragGestureHandler2D.cpp in Sources */,
+				CD7128B12D25FFBF0019A718 /* MatrixPiece.cpp in Sources */,
 				CD65A9802D0294CE007DB454 /* FixedGridViewLayout.cpp in Sources */,
 				CD25B48F2CD49AEC00D5FE58 /* ParallelBehavior.cpp in Sources */,
 				CD25B44D2CC9A35A00D5FE58 /* SomeImGuiPainter.cpp in Sources */,
@@ -6155,6 +6160,7 @@
 				CD21C6C72C880A1B004EE116 /* QuadMeshBuilder.cpp in Sources */,
 				CD376DC129E8BD1B00DC7950 /* GLLoadShaderOperation.cpp in Sources */,
 				CDC75B722A3FE5CF00AAAEEF /* SomeDragGestureHandler2D.cpp in Sources */,
+				CD7128B22D25FFBF0019A718 /* MatrixPiece.cpp in Sources */,
 				CD65A9832D0294CE007DB454 /* FixedGridViewLayout.cpp in Sources */,
 				CD25B4912CD49AEC00D5FE58 /* ParallelBehavior.cpp in Sources */,
 				CD25B44B2CC9A35A00D5FE58 /* SomeImGuiPainter.cpp in Sources */,

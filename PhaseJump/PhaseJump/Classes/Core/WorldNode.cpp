@@ -74,7 +74,7 @@ void WorldNode::ToggleEnable() {
 }
 
 bool WorldNode::IsVisible() const {
-    return !isInvisible && !isDestroyed;
+    return !isInvisible && !isDestroyed && IsStarted();
 }
 
 WorldNode& WorldNode::SetIsVisible(bool value) {

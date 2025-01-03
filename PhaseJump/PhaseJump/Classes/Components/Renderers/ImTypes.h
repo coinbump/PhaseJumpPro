@@ -16,6 +16,7 @@
  */
 namespace PJ {
     class SomeTexture;
+    class Font;
 
     namespace ImPathRenderType {
         /// Fill the path with a color
@@ -95,6 +96,9 @@ namespace PJ {
 
         /// Image texture
         SP<SomeTexture> texture{};
+
+        /// Text font
+        SP<Font> font{};
 
         Vector2 GetVector(size_t index, Vector2 defaultValue = {}) {
             return index >= 0 && index < vectors.size() ? vectors[index] : defaultValue;

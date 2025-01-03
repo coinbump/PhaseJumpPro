@@ -18,6 +18,8 @@ namespace Example {
 
             MatrixBoardView* boardView{};
 
+            ImRenderer* imRenderer{};
+
             enum class StateType {
                 Running,
 

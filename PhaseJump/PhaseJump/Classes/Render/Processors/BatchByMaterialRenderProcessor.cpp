@@ -17,6 +17,9 @@ void BatchByMaterialRenderProcessor::Process(RenderCameraModel& cameraModel) {
             std::cout << value;
         });
 #endif
+        // Don't make extra copies if there's nothing to batch
+        GUARD(cameraModel.models.size() > 1)
+
         VectorList<RenderModel> models;
 
         VectorList<RenderModel*> cameraModels;

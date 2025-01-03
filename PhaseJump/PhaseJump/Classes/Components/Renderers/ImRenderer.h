@@ -114,12 +114,18 @@ namespace PJ {
         PathCorner pathCorner = PathCorner::Round;
         float strokeWidth = 1;
 
-        /// OPTIMIZE: set this to true to draw images without transparency, which can result in
-        /// faster renders
+        /// Optimize: set to true to draw images without blending, which can result in
+        /// faster renders, but affects the draw order (non-blended objects are drawn behind blended
+        /// objects)
         bool areImagesOpaque{};
 
+        /// If true, the renderer will continue to render whatever was last rendered
+        /// Optimize: Call Freeze(true) after rendering static content. This improves render
+        /// performance
+        bool isFrozen{};
+
     public:
-        /// OPTIMIZE: shapes are drawn with blend mode on by default, so they have proper Z ordering
+        /// Optimize: shapes are drawn with blend mode on by default, so they have proper Z ordering
         /// when drawn with transparent textures If you know that all shapes will be rendered behind
         /// all transparent textures, you can optimize your renders by setting this flag to true
         bool areShapesOpaque{};
@@ -135,6 +141,10 @@ namespace PJ {
         // https://stackoverflow.com/questions/64138924/struct-with-default-members-initializers-cannot-be-inside-class-and-used-as-defa
         ImRenderer() :
             ImRenderer(Config{}) {}
+
+        void Freeze(bool value) {
+            isFrozen = value;
+        }
 
         /// Sets the opaque setting for any subsequent images added
         void SetAreImagesOpaque(bool value) {

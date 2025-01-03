@@ -19,7 +19,7 @@ namespace PJ {
 
         using EnumClassType = EnumClass<EnumType>;
 
-        EnumType value = EnumType();
+        EnumType value{};
 
         // TODO: SP-Audit
         Enum(SP<EnumClassType> _class) {

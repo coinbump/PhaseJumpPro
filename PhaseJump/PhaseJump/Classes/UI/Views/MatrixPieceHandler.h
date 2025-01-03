@@ -22,26 +22,38 @@ namespace PJ {
         /// Piece shape
         SP<MatrixPiece> piece{};
 
-        MatrixPieceHandler(Vector2Int startOrigin, Vector2Int size) :
-            startOrigin(startOrigin) {
-            piece = MAKE<MatrixPiece>(size);
-            piece->owner = this;
-        }
+        struct Config {
+            Vector2Int origin;
+            Vector2Int size;
 
-        MatrixPieceHandler(Vector2Int startOrigin, VectorList<String> shape) :
-            startOrigin(startOrigin) {
-            piece = MAKE<MatrixPiece>(Vector2Int(0, 0));
-            piece->owner = this;
+            /// Shape is built from a list of rows
+            /// Example: {`*`, `** *`}
+            VectorList<String> shape;
 
-            piece->BuildFromShape(shape);
-        }
+            /// Shape is built from a single string with `&` delimiters between rows
+            /// Example: `**& *`
+            String shapeString;
 
-        MatrixPieceHandler(Vector2Int startOrigin, String shape) :
-            startOrigin(startOrigin) {
-            piece = MAKE<MatrixPiece>(Vector2Int(0, 0));
-            piece->owner = this;
+            /// (Optional). Existing piece object. Use to inject custom types
+            SP<MatrixPiece> piece;
+        };
 
-            piece->BuildFromShape(shape);
+        MatrixPieceHandler(Config config) :
+            startOrigin(config.origin),
+            piece(config.piece) {
+            if (!piece) {
+                piece = MAKE<MatrixPiece>(config.size);
+            }
+
+            if (piece) {
+                piece->owner = this;
+
+                if (!IsEmpty(config.shape)) {
+                    piece->BuildFromShape(config.shape);
+                } else if (!IsEmpty(config.shapeString)) {
+                    piece->BuildFromShape(config.shapeString);
+                }
+            }
         }
 
         /// Stores the animator and keeps it updated for this piece
@@ -61,7 +73,5 @@ namespace PJ {
         String TypeName() const override {
             return "MatrixPieceHandler";
         }
-
-        void OnUpdate(TimeSlice time) override;
     };
 } // namespace PJ

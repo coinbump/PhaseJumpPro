@@ -85,7 +85,61 @@ void Minesweeper::Scene::LoadInto(WorldNode& root) {
         .ModifyLatest<MatrixBoardView>([this](auto& _boardView) {
             this->boardView = &_boardView;
 
-            QB(*_boardView.owner).RectCollider(_boardView.WorldSize());
+            QB(*_boardView.owner)
+                .RectCollider(_boardView.WorldSize())
+                .template With<ImRenderer>(ImRenderer::Config{ .worldSize = worldSize })
+                .template ModifyLatest<ImRenderer>([&](auto& renderer) {
+                    /// Optimize: draw opaque tiles behind text
+                    renderer.SetAreImagesOpaque(true);
+
+                    renderer.AddSignalHandler(
+                        { .id = SignalId::RenderPrepare,
+                          .func =
+                              [this](auto& renderer, auto& signal) {
+                                  ImRenderer& im = *(static_cast<ImRenderer*>(&renderer));
+                                  imRenderer = &im;
+
+                                  boardView->ForEachPiece([&](auto& piece) {
+                                      Vec2I loc = piece.Origin();
+                                      Vector2 origin{ (float)loc.x * tileSize.x * vecRight,
+                                                      im.WorldSize().y + tileSize.y * vecDown +
+                                                          (float)loc.y * tileSize.y * vecDown };
+
+                                      if (piece.typeTags.contains("bomb") &&
+                                          piece.typeTags.contains("reveal")) {
+                                          im.Image("example-minesweeper-tile-bomb", origin);
+                                      } else if (piece.typeTags.contains("clear")) {
+                                          im.Image("example-minesweeper-tile-fill", origin);
+
+                                          auto bombSurroundCount = BombSurroundCount(loc, false);
+                                          if (bombSurroundCount > 0) {
+                                              ModelColor hsv;
+                                              hsv.value = HSVColor(
+                                                  (float)bombSurroundCount / 9.0f, 1, 1, 1
+                                              );
+                                              ModelColor rgb = hsv.ToRGB();
+
+                                              Color color = rgb;
+
+                                              im.Text(
+                                                  MakeString(bombSurroundCount),
+                                                  Rect{ .origin = origin, .size = tileSize }, 32,
+                                                  color
+                                              );
+                                          }
+                                      } else if (piece.typeTags.contains("flag")) {
+                                          im.Image("example-minesweeper-tile-flag", origin);
+                                      } else {
+                                          im.Image("example-minesweeper-tile-empty", origin);
+                                      }
+                                  });
+
+                                  // Optimize: our scene is static, don't re-render until
+                                  // something changes
+                                  im.Freeze(true);
+                              } }
+                    );
+                });
 
             _boardView.template AddSignalHandler<PointerDownUIEvent>(
                 { .id = SignalId::PointerDown,
@@ -129,6 +183,11 @@ void Minesweeper::Scene::LoadInto(WorldNode& root) {
                                   break;
                               }
                           }
+
+                          if (imRenderer) {
+                              // Scene has changed, so allow next render
+                              imRenderer->Freeze(false);
+                          }
                       } }
             );
         })
@@ -147,55 +206,8 @@ void Minesweeper::Scene::LoadInto(WorldNode& root) {
                     bool isBomb = random.Value() < bombFactor;
 
                     qb.And("Matrix piece")
-                        .With<ImRenderer>(ImRenderer::Config{ .worldSize = tileSize })
-                        .ModifyLatest<ImRenderer>([&](auto& renderer) {
-                            /// Optimize: draw opaque tiles behind text
-                            renderer.SetAreImagesOpaque(true);
-
-                            renderer.AddSignalHandler(
-                                { .id = SignalId::RenderPrepare,
-                                  .func =
-                                      [this](auto& renderer, auto& signal) {
-                                          ImRenderer& im = *(static_cast<ImRenderer*>(&renderer));
-                                          auto pieceHandler =
-                                              renderer.owner
-                                                  ->template TypeComponent<MatrixPieceHandler>();
-                                          GUARD(pieceHandler && pieceHandler->piece)
-
-                                          auto& piece = *pieceHandler->piece;
-
-                                          if (piece.typeTags.contains("bomb") &&
-                                              piece.typeTags.contains("reveal")) {
-                                              im.Image("example-minesweeper-tile-bomb", {});
-                                          } else if (piece.typeTags.contains("clear")) {
-                                              im.Image("example-minesweeper-tile-fill", {});
-
-                                              auto bombSurroundCount = BombSurroundCount(
-                                                  pieceHandler->piece->Origin(), false
-                                              );
-                                              if (bombSurroundCount > 0) {
-                                                  ModelColor hsv;
-                                                  hsv.value = HSVColor(
-                                                      (float)bombSurroundCount / 9.0f, 1, 1, 1
-                                                  );
-                                                  ModelColor rgb = hsv.ToRGB();
-
-                                                  Color color = rgb;
-
-                                                  im.Text(
-                                                      MakeString(bombSurroundCount),
-                                                      Rect{ .size = tileSize }, 32, color
-                                                  );
-                                              }
-                                          } else if (piece.typeTags.contains("flag")) {
-                                              im.Image("example-minesweeper-tile-flag", {});
-                                          } else {
-                                              im.Image("example-minesweeper-tile-empty", {});
-                                          }
-                                      } }
-                            );
-                        })
-                        .With<MatrixPieceHandler>(loc, "*")
+                        .With<MatrixPieceHandler>(MatrixPieceHandler::Config{ .origin = loc,
+                                                                              .shapeString = "*" })
                         .ModifyLatest<MatrixPieceHandler>([&](auto& pieceHandler) {
                             boardView->Put(pieceHandler, pieceHandler.startOrigin);
 

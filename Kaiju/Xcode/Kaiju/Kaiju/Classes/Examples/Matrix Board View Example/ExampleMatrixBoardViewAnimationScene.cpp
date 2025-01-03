@@ -27,7 +27,7 @@ void MatrixBoardViewAnimation::Scene::LoadInto(WorldNode& root) {
             auto circleRadius = (shapeChoice + 1) * 10;
 
             qb.And("Matrix piece")
-                .With<MatrixPieceHandler>(Vec2I(0, 0), shape)
+                .With<MatrixPieceHandler>(MatrixPieceHandler::Config{ .shapeString = shape })
                 .Circle(random.VaryFloat(circleRadius, circleRadius * 0.2f), Color::yellow)
                 .ModifyLatest<MatrixPieceHandler>([=, this](auto& handler) {
                     StandardRandom random;

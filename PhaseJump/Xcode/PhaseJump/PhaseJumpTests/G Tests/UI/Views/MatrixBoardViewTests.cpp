@@ -22,7 +22,7 @@ TEST(MatrixBoardView, Init) {
 
 TEST(MatrixBoardView, PieceHandler) {
     VectorList<String> shape{"**", " **"};
-    MatrixPieceHandler sut({3, 4}, shape);
+    MatrixPieceHandler sut({.origin = {3, 4}, .shape = shape});
 
     ASSERT_NE(nullptr, sut.piece);
     EXPECT_EQ(Vec2I(3, 2), sut.Size());
@@ -38,7 +38,7 @@ TEST(MatrixBoardView, Put) {
     {
         auto node = MAKE<WorldNode>();
         world.Add(node);
-        auto handler = MAKE<MatrixPieceHandler>(Vec2I{0, 0}, shape);
+        auto handler = MAKE<MatrixPieceHandler>(MatrixPieceHandler::Config{ .shape = shape });
         node->Add(handler);
 
         ASSERT_NE(nullptr, handler->piece);
@@ -49,7 +49,7 @@ TEST(MatrixBoardView, Put) {
     {
         auto node = MAKE<WorldNode>();
         world.Add(node);
-        auto handler = MAKE<MatrixPieceHandler>(Vec2I{0, 0}, shape);
+        auto handler = MAKE<MatrixPieceHandler>(MatrixPieceHandler::Config{ .shape = shape });
         node->Add(handler);
 
         ASSERT_NE(nullptr, handler->piece);
@@ -60,7 +60,7 @@ TEST(MatrixBoardView, Put) {
     {
         auto node = MAKE<WorldNode>();
         world.Add(node);
-        auto handler = MAKE<MatrixPieceHandler>(Vec2I{0, 0}, shape);
+        auto handler = MAKE<MatrixPieceHandler>(MatrixPieceHandler::Config{ .shape = shape });
         node->Add(handler);
 
         ASSERT_NE(nullptr, handler->piece);
@@ -84,7 +84,7 @@ TEST(MatrixBoardView, NodeAt) {
 
     auto node = MAKE<WorldNode>();
     world.Add(node);
-    auto handler = MAKE<MatrixPieceHandler>(Vec2I{3, 4}, shape);
+    auto handler = MAKE<MatrixPieceHandler>(MatrixPieceHandler::Config{ .shape = shape, .origin = Vec2I{3, 4}});
     node->Add(handler);
     EXPECT_TRUE(sut.Put(*handler, Vec2I(0, 0)));
 
@@ -172,7 +172,7 @@ TEST(MatrixBoardView, NodeLocalPosition) {
     node->Add(sut);
 
     VectorList<String> shape{"**", "* "};
-    auto handler = MAKE<MatrixPieceHandler>(Vec2I{0, 0}, shape);
+    auto handler = MAKE<MatrixPieceHandler>(MatrixPieceHandler::Config{ .shape = shape });
     auto childNode = MAKE<WorldNode>();
     node->Add(childNode);
     childNode->Add(handler);
@@ -191,7 +191,7 @@ TEST(MatrixBoardView, RemoveAtNoDestroy) {
     node->Add(sut);
 
     VectorList<String> shape{"**", "* "};
-    auto handler = MAKE<MatrixPieceHandler>(Vec2I{0, 0}, shape);
+    auto handler = MAKE<MatrixPieceHandler>(MatrixPieceHandler::Config{ .shape = shape });
     auto childNode = MAKE<WorldNode>();
     node->Add(childNode);
     childNode->Add(handler);
@@ -216,7 +216,7 @@ TEST(MatrixBoardView, RemoveAtDestroy) {
     node->Add(sut);
 
     VectorList<String> shape{"**", "* "};
-    auto handler = MAKE<MatrixPieceHandler>(Vec2I{0, 0}, shape);
+    auto handler = MAKE<MatrixPieceHandler>(MatrixPieceHandler::Config{ .shape = shape });
     auto childNode = MAKE<WorldNode>();
     node->Add(childNode);
     childNode->Add(handler);
@@ -238,7 +238,7 @@ TEST(MatrixBoardView, RemoveAll) {
         parentNode->Add(node);
 
         VectorList<String> shape{"*"};
-        auto handler = MAKE<MatrixPieceHandler>(Vec2I{0, 0}, shape);
+        auto handler = MAKE<MatrixPieceHandler>(MatrixPieceHandler::Config{ .shape = shape });
         node->Add(handler);
 
         sut->Put(*handler, handler->startOrigin);
@@ -250,7 +250,7 @@ TEST(MatrixBoardView, RemoveAll) {
         parentNode->Add(node);
 
         VectorList<String> shape{"*"};
-        auto handler = MAKE<MatrixPieceHandler>(Vec2I{1, 1}, shape);
+        auto handler = MAKE<MatrixPieceHandler>(MatrixPieceHandler::Config{ .shape = shape, .origin = {1, 1}});
         node->Add(handler);
 
         sut->Put(*handler, handler->startOrigin);
@@ -275,7 +275,7 @@ TEST(MatrixBoardView, Replace) {
         parentNode->Add(node);
 
         VectorList<String> shape{"**"};
-        auto handler = MAKE<MatrixPieceHandler>(Vec2I{0, 0}, shape);
+        auto handler = MAKE<MatrixPieceHandler>(MatrixPieceHandler::Config{ .shape = shape });
         node->Add(handler);
 
         sut->Put(*handler, handler->startOrigin);
@@ -290,7 +290,7 @@ TEST(MatrixBoardView, Replace) {
         parentNode->Add(node);
 
         VectorList<String> shape{"*"};
-        auto handler = MAKE<MatrixPieceHandler>(Vec2I{0, 0}, shape);
+        auto handler = MAKE<MatrixPieceHandler>(MatrixPieceHandler::Config{ .shape = shape });
         node->Add(handler);
 
         sut->Replace(*handler, handler->startOrigin);
@@ -313,7 +313,7 @@ TEST(MatrixBoardView, Move) {
         parentNode->Add(node);
 
         VectorList<String> shape{"**"};
-        auto handler = MAKE<MatrixPieceHandler>(Vec2I{0, 0}, shape);
+        auto handler = MAKE<MatrixPieceHandler>(MatrixPieceHandler::Config{ .shape = shape });
         node->Add(handler);
 
         sut->Put(*handler, handler->startOrigin);
@@ -337,7 +337,7 @@ TEST(MatrixBoardView, MoveAnimated) {
         parentNode->Add(node);
 
         VectorList<String> shape{"**"};
-        auto handler = MAKE<MatrixPieceHandler>(Vec2I{0, 0}, shape);
+        auto handler = MAKE<MatrixPieceHandler>(MatrixPieceHandler::Config{ .shape = shape });
         node->Add(handler);
 
         sut->Put(*handler, handler->startOrigin);

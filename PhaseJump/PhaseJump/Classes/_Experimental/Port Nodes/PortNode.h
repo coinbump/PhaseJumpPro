@@ -18,6 +18,7 @@ namespace PJ {
     class PortNode : public CyclicGraphNode<PortEdgeCore> {
     public:
         using Base = CyclicGraphNode<PortEdgeCore>;
+        using This = PortNode;
         using EdgeCore = PortEdgeCore;
 
         SP<PortNodeClass> _class;

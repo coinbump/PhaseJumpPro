@@ -34,7 +34,8 @@ void PiecesView::Build() {
 
             qb.And("Black piece")
                 .Circle(pieceRadius, Color::black)
-                .With<MatrixPieceHandler>(loc, "*")
+                .With<MatrixPieceHandler>(MatrixPieceHandler::Config{ .origin = loc,
+                                                                      .shapeString = "*" })
                 .ModifyLatest<MatrixPieceHandler>([](auto& handler) {
                     handler.core.typeTags.insert("black");
                 })
@@ -60,7 +61,8 @@ void PiecesView::Build() {
 
             qb.And("Red piece")
                 .Circle(pieceRadius, Color::red)
-                .With<MatrixPieceHandler>(loc, "*")
+                .With<MatrixPieceHandler>(MatrixPieceHandler::Config{ .origin = loc,
+                                                                      .shapeString = "*" })
                 .ModifyLatest<MatrixPieceHandler>([](auto& handler) {
                     handler.core.typeTags.insert("red");
                 })

@@ -82,7 +82,7 @@ namespace PJ {
             return (uint64_t)this;
         }
 
-        /// OPTIMIZE: Used to map child nodes by id
+        /// Optimize: Used to map child nodes by id
         UnorderedMap<String, This*> childMap;
 
     public:

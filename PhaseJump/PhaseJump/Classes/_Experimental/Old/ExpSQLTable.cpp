@@ -554,7 +554,7 @@
 //    SELECT [column_name] produces the correct results, but this isn't standard
 //    SQL?
 //
-//    OPTIMIZE: This can be very slow. Be careful about overusing it.
+//    Optimize: This can be very slow. Be careful about overusing it.
 //
 //    MUCH FASTER:
 //    void const*    sqldata = sqlite3_column_blob(statement, N);

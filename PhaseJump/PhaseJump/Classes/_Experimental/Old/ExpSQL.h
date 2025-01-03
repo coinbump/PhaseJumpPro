@@ -1,14 +1,13 @@
-#ifndef ExpSQL_h
-#define ExpSQL_h
-#pragma mark - PJ_SQLWrapTransaction
+#pragma once
 
+// TODO: move this out of experimental
 /*
  PJ_SQLWrapTransaction
 
  Wrap Begin/End SQL transaction.
 
- OPTIMIZE: can result in 10x fast SQL transactions. Always wrap batches of SQL
- operations with one of these.
+ Optimize: can result in 10x fast SQL transactions. Always wrap batches of SQL
+ operations with Begin/End transaction.
 
  */
 class PJ_SQLWrapTransaction {
@@ -17,17 +16,12 @@ public:
 
     PJ_SQLWrapTransaction(SQLDatabase* db) :
         db(db) {
-        if (NULL == db) {
-            return;
-        }
+        GUARD(db)
         db->BeginTransaction();
     }
 
     virtual ~PJ_SQLWrapTransaction() {
-        if (NULL == db) {
-            return;
-        }
+        GUARD(db)
         db->EndTransaction();
     }
 };
-#endif /* ExpSQL_h */

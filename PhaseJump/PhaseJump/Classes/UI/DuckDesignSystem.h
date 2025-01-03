@@ -15,7 +15,7 @@ namespace PJ {
      */
     class DuckDesignSystem : public DesignSystem {
     public:
-        /// OPTIMIZE: by default, we assume that all shapes are opaque and behind transparent text
+        /// Optimize: by default, we assume that all shapes are opaque and behind transparent text
         /// with this design system
         bool areShapesOpaque = true;
 

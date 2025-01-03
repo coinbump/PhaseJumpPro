@@ -21,16 +21,17 @@ namespace PJ {
 
      Manages a connection to an SQL database using sqlite.
 
-     USAGE: in general, use PJ::SQLTable for operations on a specific table.
+     Usage: in general, use PJ::SQLTable for operations on a specific table.
 
-     OPTIMIZE: On older devices, SQL selects can cause render slowdowns. Cache
+     Optimize: On older devices, SQL selects can cause render slowdowns. Cache
      values that will be accessed often.
 
-     OPTIMIZE: Always use Begin/EndTransaction when writing values.
+     Optimize: Always use Begin/EndTransaction when writing values.
      This can speed up SQL writes by 10 times.
 
-     OPTIMIZATION REFERENCE:
-     http://stackoverflow.com/questions/1711631/how-do-i-improve-the-performance-of-sqlite
+     Reference:
+
+     - http://stackoverflow.com/questions/1711631/how-do-i-improve-the-performance-of-sqlite
      */
     class SQLDatabase {
     protected:
@@ -58,7 +59,7 @@ namespace PJ {
         int Step(SQLCommand& command);
         void TryRun(SQLStatement statement);
 
-        // OPTIMIZE: use these to speed up data writes to SQL
+        // Optimize: use these to speed up data writes to SQL
         void BeginTransaction();
         void EndTransaction();
 

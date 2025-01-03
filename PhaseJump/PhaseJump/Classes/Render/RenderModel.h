@@ -36,7 +36,7 @@ namespace PJ {
         RenderMaterial* material{};
 
         /// Varying values that are interpolated per-vertex
-        /// OPTIMIZE: Shared so that we can store the colors span from the renderer model without an
+        /// Optimize: Shared so that we can store the colors span from the renderer model without an
         /// extra copy
         SharedVectorList<RenderColor> vertexColors;
 

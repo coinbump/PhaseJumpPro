@@ -55,6 +55,12 @@ TEST(WorldNode, IsVisible)
 {
     WorldNode sut("name");
     EXPECT_EQ(String("name"), sut.Name());
+    EXPECT_FALSE(sut.IsVisible());
+    
+    sut.CheckedAwake();
+    EXPECT_FALSE(sut.IsVisible());
+    
+    sut.CheckedStart();
     EXPECT_TRUE(sut.IsVisible());
     
     sut.ToggleIsVisible();

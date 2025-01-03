@@ -4,10 +4,6 @@
 using namespace std;
 using namespace PJ;
 
-void MatrixPieceHandler::OnUpdate(TimeSlice time) {
-    Base::OnUpdate(time);
-}
-
 void MatrixPieceHandler::SetAnimator(SP<Updatable> value) {
     GUARD(owner)
 

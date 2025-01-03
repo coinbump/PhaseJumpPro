@@ -5,7 +5,7 @@
 /*
  RATING: 5 stars
  Simple type
- CODE REVIEW: 7/21/24
+ CODE REVIEW: 12/31/24
  */
 namespace PJ {
     /// Edge model for port node

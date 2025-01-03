@@ -28,6 +28,8 @@ void ImRenderer::Add(ImPath& path) {
 }
 
 void ImRenderer::AddPath(PathConfig config) {
+    GUARD(!isFrozen)
+
     ImPath path;
     path.renderType = config.renderType;
 
@@ -222,7 +224,21 @@ This& ImRenderer::Text(StringView text, Vector2 pos, float fontSize, std::option
     item.colors = { itemColor };
 
     item.frame.origin = pos;
-    item.frame.size = { FloatMath::maxValue, FloatMath::maxValue };
+
+    GUARDR(owner, *this)
+
+    auto world = owner->World();
+    GUARDR(world, *this)
+
+    item.font = FindFont(world->resources, item.fontSpec);
+    GUARDR(item.font, *this)
+
+    // Calculate the text size
+    TextMeasurer tm(*item.font);
+    auto metrics =
+        tm.Measure(item.text, { FloatMath::maxValue, FloatMath::maxValue }, LineClip::None);
+    item.frame.size = metrics.CalculateSize();
+
     AddPath({ .item = item });
 
     return *this;
@@ -234,6 +250,15 @@ This& ImRenderer::Text(StringView text, Rect rect, float fontSize, std::optional
 
     item.text = text;
     item.fontSpec.size = fontSize;
+
+    GUARDR(owner, *this)
+
+    auto world = owner->World();
+    GUARDR(world, *this)
+
+    item.font = FindFont(world->resources, item.fontSpec);
+    GUARDR(item.font, *this)
+
     Color itemColor = color ? *color : this->color;
     item.colors = { itemColor };
 
@@ -275,7 +300,7 @@ void ImRenderer::Configure() {
             .color = item.GetColor(0), .worldSize = item.frame.size });
 
         // All immediate paths use blend so they batch render together
-        // OPTIMIZE: if you know all shapes are opaque and will be behind all transparent textures,
+        // Optimize: if you know all shapes are opaque and will be behind all transparent textures,
         // you can optimize renders by using opaque render for shapes (Careful: this will result in
         // incorrect Z-order in some cases)
         static_cast<ColorRenderer*>(result.get())->EnableBlend(!areShapesOpaque);
@@ -411,16 +436,8 @@ void ImRenderer::Configure() {
 
     id = String(ImPathItemType::Text) + String(".") + String(ImPathRenderType::Fill);
     buildRendererFuncs[id] = [this](auto& item) -> UP<SomeRenderer> {
-        GUARDR(owner, {})
-
-        auto world = owner->World();
-        GUARDR(world, {})
-
-        SP<Font> font = FindFont(world->resources, item.fontSpec);
-        GUARDR(font, {})
-
         UP<SomeRenderer> result = NEW<TextRenderer>(TextRenderer::Config{
-            .font = font, .text = item.text, .worldSize = item.frame.size });
+            .font = item.font, .text = item.text, .worldSize = item.frame.size });
         static_cast<TextRenderer*>(result.get())->SetColor(item.GetColor(0, Color::white));
         return result;
     };
@@ -478,9 +495,6 @@ void ImRenderer::Configure() {
                     item.frame.size = renderer->WorldSize();
                 }
 
-                // Give the renderer a chance to calculate its preferred size
-                item.frame.size = renderer->CalculateSize(item.frame.size);
-
                 Matrix4x4 matrix;
                 if (translateItemFunc) {
                     matrix = translateItemFunc(*this, item);
@@ -497,7 +511,9 @@ void ImRenderer::Configure() {
         }
 
         paths.clear();
-        model.SetRenderModelsNeedBuild();
+        if (!isFrozen) {
+            model.SetRenderModelsNeedBuild();
+        }
 
         return result;
     });

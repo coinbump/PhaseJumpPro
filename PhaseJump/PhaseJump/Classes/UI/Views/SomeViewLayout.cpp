@@ -12,7 +12,7 @@ void SomeViewLayout::SetNeedsLayout() {
 Vector2 SomeViewLayout::ViewSize(ViewSizeProposal proposal, VectorList<ViewProxy> const& children) {
     GUARDR(owner, {})
 
-    // OPTIMIZE: early exit if this view has fixed size, no need to calculate it
+    // Optimize: early exit if this view has fixed size, no need to calculate it
     auto fixedWidth = owner->FixedWidth();
     auto fixedHeight = owner->FixedHeight();
     if (fixedWidth && fixedHeight) {

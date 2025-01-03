@@ -95,6 +95,8 @@ namespace PJ {
             return matrix.CellAt(loc);
         }
 
+        /// Builds the piece from a string that defines its shape
+        /// Example: `**& *`
         bool BuildFromShape(String pieceShape) {
             return BuildFromShape(ComponentsSeparatedBy(pieceShape, '&'));
         }
@@ -104,36 +106,18 @@ namespace PJ {
         /// *
         /// **
         /// Defines a small L shape
-        bool BuildFromShape(VectorList<String> const& pieceShape) {
-            int height = (int)pieceShape.size();
-            int width = 0;
+        bool BuildFromShape(VectorList<String> const& pieceShape);
+    };
 
-            for (auto& pieceString : pieceShape) {
-                width = std::max(width, (int)pieceString.size());
-            }
+    // MARK: CoreMatrixPiece
 
-            if (height <= 0 || width <= 0) {
-                PJ::Log("Error. Invalid piece shape");
-                return false;
-            }
+    /// Matrix piece with a core
+    template <class Core = Void>
+    class CoreMatrixPiece : public MatrixPiece {
+    public:
+        Core core{};
 
-            matrix.ResizeFast(Vector2Int(width, height));
-            Clear();
-
-            auto y = 0;
-            for (auto& pieceString : pieceShape) {
-                for (int x = 0; x < width && x < pieceString.size(); x++) {
-                    auto character = pieceString[x];
-                    /// Space or `_` can be used to designate empty cells
-                    if (character != ' ' && character != '_') {
-                        matrix.SetCell(Vector2Int(x, y), true);
-                    }
-                }
-
-                y++;
-            }
-
-            return true;
-        }
+        CoreMatrixPiece(Core core = {}) :
+            core(core) {}
     };
 } // namespace PJ

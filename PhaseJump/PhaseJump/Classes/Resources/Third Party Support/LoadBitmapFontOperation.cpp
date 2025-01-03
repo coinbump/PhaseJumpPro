@@ -171,8 +171,8 @@ SomeLoadResourcesOperation::Result LoadBitmapFontOperation::LoadResources() {
             font->glyphs[glyph.value] = glyph;
 
             font->metrics.ascent = commonTags.SafeValue<int>("base");
-            font->metrics.descent = 0; // Descent isn't given by Bitmap Font Generator
             font->metrics.leading = commonTags.SafeValue<int>("lineHeight");
+            font->metrics.descent = font->metrics.leading - font->metrics.ascent;
         }
 
         for (auto& kern : kernLines) {

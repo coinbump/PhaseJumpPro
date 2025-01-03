@@ -7,69 +7,96 @@
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 7/13/24
+ CODE REVIEW: 1/1/25
 
- Conversions are from:
- http://axonflux.com/handy-rgb-to-hsl-and-rgb-to-hsv-color-model-c
+ Reference:
+
+ - http://axonflux.com/handy-rgb-to-hsl-and-rgb-to-hsv-color-model-c
  */
 namespace PJ {
-    enum class ColorModel { RGB, HSL, HSV };
+    enum class ColorModelType { RGB, HSL, HSV };
 
     using RGBColor = Color;
 
+    /// Hue saturation lightness color
     struct HSLColor {
-        float h = 0;
-        float s = 0;
-        float l = 0;
-        float a = 0;
+        float h{};
+        float s{};
+        float l{};
+        float a{};
 
-        HSLColor(float h, float s, float l, float a) :
+        HSLColor(float h = 0, float s = 0, float l = 0, float a = 0) :
             h(h),
             s(s),
             l(l),
             a(a) {}
     };
 
+    /// Hue saturation value color
     struct HSVColor {
-        float h = 0;
-        float s = 0;
-        float v = 0;
-        float a = 0;
+        float h{};
+        float s{};
+        float v{};
+        float a{};
 
-        HSVColor(float h, float s, float v, float a) :
+        HSVColor(float h = 0, float s = 0, float v = 0, float a = 0) :
             h(h),
             s(s),
             v(v),
             a(a) {}
     };
 
-    /// 4 color components, in a specific color model space
+    /// Contains color components, in a specific color model space
     class ModelColor {
     public:
-        // TODO: do we need a guard for std::get? (try/catch?)
         std::variant<RGBColor, HSLColor, HSVColor> value;
 
         ModelColor() {}
 
         ModelColor(Color const& color);
 
-        PJ::ColorModel ColorModel() const;
+        /// @return Returns the color model type currently stored
+        ColorModelType GetColorModelType() const;
 
-        void ToColorModel(PJ::ColorModel colorModel);
+        /// @return Returns this color converted to the specified color model type
+        ModelColor Converted(ColorModelType colorModelType);
+
+        /// @return Returns a RGB model color from this color model
         ModelColor ToRGB() const;
+
+        /// @return Returns a HSL model color from this color model
         ModelColor ToHSL() const;
+
+        /// @return Returns a HSV model color from this color model
         ModelColor ToHSV() const;
 
+        /// @return Returns a safe color value, with a conversion operation if that color type isn't
+        /// being stored
+        template <class ColorType>
+        ColorType SafeColorValue(std::function<ModelColor(ModelColor const&)> converter) const {
+            auto result = std::get_if<ColorType>(&value);
+            if (result) {
+                return *result;
+            }
+            auto convertedModel = converter(*this);
+            result = std::get_if<ColorType>(&convertedModel.value);
+            if (result) {
+                return *result;
+            }
+            return {};
+        }
+
+        /// @return Returns an RGB coolor
         operator RGBColor() const {
-            return std::get<RGBColor>(value);
+            return SafeColorValue<RGBColor>([](auto& color) { return color.ToRGB(); });
         }
 
         operator HSLColor() const {
-            return std::get<HSLColor>(value);
+            return SafeColorValue<HSLColor>([](auto& color) { return color.ToHSL(); });
         }
 
         operator HSVColor() const {
-            return std::get<HSVColor>(value);
+            return SafeColorValue<HSVColor>([](auto& color) { return color.ToHSV(); });
         }
 
     protected:

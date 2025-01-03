@@ -51,7 +51,8 @@ MatrixRenderer::MatrixRenderer(Vector3 worldSize) :
                 Color color = Color::white;
 
                 try {
-                    color = matrix.CellAt(location)->core.isAlive ? Color::blue : Color::white;
+                    auto cell = matrix.CellAt(location);
+                    color = cell->core.isAlive ? Color::blue : Color::white;
                 } catch (...) {}
 
                 colors[i++] = color;

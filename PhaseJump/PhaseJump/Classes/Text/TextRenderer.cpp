@@ -84,23 +84,28 @@ Mesh TextRenderer::BuildMesh() {
     renderChars.clear();
 
     TextMeasurer tm(*font);
-    Vector2 worldSize2 = WorldSize();
-    auto metrics = tm.Measure(text, worldSize2, lineClip);
+    Vector2 worldSize = WorldSize();
+    auto metrics = tm.Measure(text, worldSize, lineClip);
     this->metrics = metrics;
 
     auto& lines = metrics.lines;
 
     auto size = metrics.CalculateSize();
-    float textHeight = size.y;
+
+    float textViewY{};
+    if (textAlignFunc) {
+        textViewY = textAlignFunc(worldSize.y, size.y);
+    }
 
     for (auto& line : lines) {
-        float lineX = 0;
+        float lineViewX = 0;
+
         if (lineAlignFunc) {
-            lineX = lineAlignFunc(size.x, line.size.x);
+            lineViewX = lineAlignFunc(worldSize.x, line.size.x);
         }
 
         /// Character positions are in view coordinates
-        Vector2 viewPos(lineX, line.y);
+        Vector2 viewPos(lineViewX, line.y + textViewY);
 
         auto sourceIndex = line.sourceIndex;
 
@@ -125,14 +130,14 @@ Mesh TextRenderer::BuildMesh() {
 
             auto quadMesh = qm.BuildMesh();
 
-            quadMesh.Offset(
-                Vector2((qm.worldSize.x / 2.0f) * vecRight, (qm.worldSize.y / 2.0f) * vecDown)
+            Vector2 offset(qm.worldSize.x * 0.5f * vecRight, qm.worldSize.y * 0.5f * vecDown);
+
+            offset += Vector2(
+                worldSize.x * 0.5f * vecLeft + (viewPos.x + fontGlyph.offset.x) * vecRight,
+                worldSize.y * 0.5f * vecUp + (viewPos.y + fontGlyph.offset.y) * vecDown
             );
 
-            quadMesh.Offset(Vector2(
-                (size.x / 2.0f) * vecLeft + (viewPos.x + fontGlyph.offset.x) * vecRight,
-                (size.y / 2.0f) * vecUp + (viewPos.y + fontGlyph.offset.y) * vecDown
-            ));
+            quadMesh.Offset(offset);
 
             UVTransformFuncs::textureCoordinates(*atlasTexture, quadMesh.UVs());
 
@@ -145,10 +150,6 @@ Mesh TextRenderer::BuildMesh() {
 
             viewPos.x += cm.advanceX;
         }
-    }
-
-    if (textAlignFunc) {
-        mesh.Offset(Vector3(0, textAlignFunc(size.y, textHeight) * vecDown, 0));
     }
 
     if (modifyVerticesFunc) {

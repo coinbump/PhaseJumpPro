@@ -100,7 +100,7 @@ using namespace PJ;
 //
 //    PJ_String renderMode = mode.mRenderMode;
 //
-//    // OPTIMIZE: Use to auto switch to fastest shader.
+//    // Optimize: Use to auto switch to fastest shader.
 //    // problem: this doesn't work if the alpha is changed *after* the
 //    render mode. if (kRenderModeTextureCopyOrMod == renderMode) {
 //        if (1.0f == GetRenderColor().alpha) {

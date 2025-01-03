@@ -9,35 +9,32 @@ ModelColor::ModelColor(Color const& color) {
     value = color;
 }
 
-PJ::ColorModel ModelColor::ColorModel() const {
+PJ::ColorModelType ModelColor::GetColorModelType() const {
     if (std::holds_alternative<RGBColor>(value)) {
-        return ColorModel::RGB;
+        return ColorModelType::RGB;
     } else if (std::holds_alternative<HSLColor>(value)) {
-        return ColorModel::HSL;
+        return ColorModelType::HSL;
     } else if (std::holds_alternative<HSVColor>(value)) {
-        return ColorModel::HSV;
+        return ColorModelType::HSV;
     }
 
-    return ColorModel::RGB;
+    return ColorModelType::RGB;
 }
 
-void ModelColor::ToColorModel(PJ::ColorModel colorModel) {
+ModelColor ModelColor::Converted(PJ::ColorModelType colorModel) {
     switch (colorModel) {
-    case ColorModel::RGB:
-        ToRGB();
-        break;
-    case ColorModel::HSL:
-        ToHSL();
-        break;
-    case ColorModel::HSV:
-        ToHSV();
-        break;
+    case ColorModelType::RGB:
+        return ToRGB();
+    case ColorModelType::HSL:
+        return ToHSL();
+    case ColorModelType::HSV:
+        return ToHSV();
     }
 }
 
 ModelColor ModelColor::ToHSV() const {
-    switch (ColorModel()) {
-    case ColorModel::RGB:
+    switch (GetColorModelType()) {
+    case ColorModelType::RGB:
         {
             auto rgb = std::get<RGBColor>(value);
             auto r = rgb.r;
@@ -69,14 +66,14 @@ ModelColor ModelColor::ToHSV() const {
             return result;
             break;
         }
-    case ColorModel::HSL:
+    case ColorModelType::HSL:
         {
             auto rgb = ToRGB();
             auto result = rgb.ToHSL();
             return result;
             break;
         }
-    case ColorModel::HSV:
+    case ColorModelType::HSV:
         break;
     }
 
@@ -84,8 +81,8 @@ ModelColor ModelColor::ToHSV() const {
 }
 
 ModelColor ModelColor::ToRGB() const {
-    switch (ColorModel()) {
-    case ColorModel::HSL:
+    switch (GetColorModelType()) {
+    case ColorModelType::HSL:
         {
             auto hsl = std::get<HSLColor>(value);
 
@@ -106,7 +103,7 @@ ModelColor ModelColor::ToRGB() const {
             return result;
             break;
         }
-    case ColorModel::HSV:
+    case ColorModelType::HSV:
         {
             auto hsv = std::get<HSVColor>(value);
             auto h = hsv.h;
@@ -159,7 +156,7 @@ ModelColor ModelColor::ToRGB() const {
             return result;
             break;
         }
-    case ColorModel::RGB:
+    case ColorModelType::RGB:
         break;
     }
 
@@ -181,8 +178,8 @@ float ModelColor::HueToRGB(float p, float q, float t) const {
 }
 
 ModelColor ModelColor::ToHSL() const {
-    switch (ColorModel()) {
-    case ColorModel::RGB:
+    switch (GetColorModelType()) {
+    case ColorModelType::RGB:
         {
             auto rgb = std::get<RGBColor>(value);
 
@@ -214,13 +211,13 @@ ModelColor ModelColor::ToHSL() const {
             return result;
             break;
         }
-    case ColorModel::HSV:
+    case ColorModelType::HSV:
         {
             auto rgb = ToRGB();
             auto result = rgb.ToHSL();
             return result;
         }
-    case ColorModel::HSL:
+    case ColorModelType::HSL:
         break;
     }
 

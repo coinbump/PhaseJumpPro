@@ -7,6 +7,7 @@
 /*
  RATING: 4 stars
  Useful, with unit tests. Could use more features
+ TODO: problem with new MakeType pattern, since these use the base type
  CODE REVIEW: 7/6/24
  */
 namespace PJ {

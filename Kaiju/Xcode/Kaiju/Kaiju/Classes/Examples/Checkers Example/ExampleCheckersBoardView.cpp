@@ -30,7 +30,8 @@ void BoardView::Build() {
             Vec2I loc(x, y);
 
             qb.And("Drop node")
-                .With<MatrixPieceHandler>(loc, "*")
+                .With<MatrixPieceHandler>(MatrixPieceHandler::Config{ .origin = loc,
+                                                                      .shapeString = "*" })
                 .With<SomeDropTarget>()
                 .SquareCollider(CellSize().x)
                 .SquareFrame(CellSize().x, Color::white, 2)
