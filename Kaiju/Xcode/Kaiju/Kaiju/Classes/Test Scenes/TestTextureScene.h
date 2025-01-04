@@ -29,11 +29,22 @@ public:
 #define BUFFER
 #ifdef BUFFER
         // TODO: use OrthoStandard here(?)
-        auto& bufferCamera = root.With<OrthoCamera>();
-        auto textureBuffer = world.renderContext->renderEngine.MakeTextureBuffer();
-        textureBuffer->Build(Vector2Int(2000, 1000));
+        SomeCamera* bufferCamera{};
+        QB(root).With<OrthoCamera>().ModifyLatest<OrthoCamera>([&](auto& camera) {
+            bufferCamera = &camera;
+
+            auto showMeshRenderProcessor = MAKE<ShowMeshRenderProcessor>();
+            showMeshRenderProcessor->Enable(true);
+            // camera.processingModel.Add(showMeshRenderProcessor);
+
+            auto batchRenderProcessor = MAKE<BatchByMaterialRenderProcessor>();
+            camera.processingModel.Add(batchRenderProcessor);
+        });
+
+        auto textureBuffer = world.renderEngine->MakeTextureBuffer();
+        textureBuffer->Build({ 1920 * 2, 1080 * 2 });
         //        textureBuffer->clearColor = Color::blue;
-        bufferCamera.renderContext = textureBuffer;
+        bufferCamera->renderContext = textureBuffer;
 
         auto& bufferRenderNode = root.And("Buffer render");
         auto& spriteRenderer = bufferRenderNode.With<SpriteRenderer>(textureBuffer->Texture());
