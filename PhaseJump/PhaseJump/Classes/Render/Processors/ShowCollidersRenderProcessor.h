@@ -16,15 +16,10 @@ namespace PJ {
     public:
         using Base = RenderProcessor;
 
-        //        PROPERTY_CONTAINER
-        //        PROPERTY_COLOR(color);
-        //        PropertyWrapper<Color> color2(propertyWrappers);
         Color color;
 
-        // TODO: re-evaluate all registered render phases, probably don't want to run for each
-        // camera
         ShowCollidersRenderProcessor(Color color = Color::blue) :
-            Base({ .name = "Show colliders", .phases = { RenderPhase::Camera } }),
+            Base({ .name = "Show colliders", .phases = { RenderPhase::DrawPrepare } }),
             color(color) {}
 
         // MARK: RenderProcessor

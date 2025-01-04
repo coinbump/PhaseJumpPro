@@ -1,3 +1,4 @@
+#if FALSE
 #pragma once
 
 #include "RenderProcessor.h"
@@ -15,13 +16,12 @@ namespace PJ {
     public:
         using Base = RenderProcessor;
 
-        // TODO: re-evaluate all registered render phases, probably don't want to run for each
-        // camera
         DepthFirstOrderRenderProcessor() :
-            Base({ .name = "Depth first order", .phases = { RenderPhase::Camera } }) {}
+            Base({ .name = "Depth first order", .phases = { RenderPhase::DrawPrepare } }) {}
 
         // MARK: RenderProcessor
 
         void Process(RenderCameraModel& cameraModel) override;
     };
 } // namespace PJ
+#endif

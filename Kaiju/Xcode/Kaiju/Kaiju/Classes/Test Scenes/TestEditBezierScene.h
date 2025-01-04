@@ -17,8 +17,7 @@ public:
     void LoadInto(WorldNode& root) override {
         root.SetName("TestEditBezierScene");
 
-        auto& camera = root.With<OrthoCamera>();
-        camera.owner->With<SimpleRaycaster2D>();
+        QB(root).OrthoStandard();
 
         auto& bezierNode = root.And();
         bezierLayout = bezierNode.WithPtr<BezierPathLayout>();

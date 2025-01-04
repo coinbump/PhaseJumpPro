@@ -31,7 +31,6 @@ namespace PJ {
             return processors;
         }
 
-        void ProcessPhase(String phase);
-        void ProcessPhase(RenderCameraModel& cameraModel, String phase);
+        void ProcessPhase(String phase, RenderCameraModel* cameraModel);
     };
 } // namespace PJ

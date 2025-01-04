@@ -38,7 +38,6 @@ namespace PJ {
         void DrawArrays(GLenum drawMode, GLint drawFirst, GLsizei drawCount) override;
         void DrawElements(GLenum mode, GLsizei count, GLenum type, const void* indices) override;
 
-        void SetLineWidth(float lineWidth) override;
         void EnableFeature(String featureId, bool isEnabled) override;
         void SetViewport(GLint x, GLint y, GLsizei width, GLsizei height) override;
         void BindFrameBuffer(GLuint id) override;
@@ -69,7 +68,7 @@ namespace PJ {
         // FUTURE: Implement as needed
         void LoadMatrix() override {}
 
-        void RenderStart(RenderContextModel& contextModel) override;
+        void RenderStart(SomeRenderContext* context) override;
         void RenderDraw(RenderDrawModel const& drawModel) override;
         void RenderDrawPlans(VectorList<SP<GLRenderPlan>> const& renderPlans);
 

@@ -6,8 +6,9 @@ using namespace PJ;
 
 // auto positionXItem = ImGuiItems::MakeInputFloatItem("X", {[](})
 
-void KaijuImGuiRenderProcessor::Process(String phase) {
+void KaijuImGuiRenderProcessor::Process(Phase phase) {
     GUARD(editorSystem.isUIVisible)
+    GUARD_LOG(nullptr == phase.cameraModel, "ERROR. Don't process imGui for each camera")
 
     BuildPainters();
 

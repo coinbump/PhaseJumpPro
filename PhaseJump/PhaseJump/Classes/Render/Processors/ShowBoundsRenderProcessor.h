@@ -17,10 +17,8 @@ namespace PJ {
 
         Color color;
 
-        // TODO: re-evaluate all registered render phases, probably don't want to run for each
-        // camera
         ShowBoundsRenderProcessor(Color color = Color::green) :
-            Base({ .name = "Show bounds", .phases = { RenderPhase::Camera } }),
+            Base({ .name = "Show bounds", .phases = { RenderPhase::DrawPrepare } }),
             color(color) {}
 
         // MARK: RenderProcessor

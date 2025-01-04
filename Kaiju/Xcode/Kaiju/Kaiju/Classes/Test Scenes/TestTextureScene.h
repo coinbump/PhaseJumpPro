@@ -24,14 +24,11 @@ public:
     void LoadInto(WorldNode & root) override {
         root.SetName("TestTextureScene");
 
-        //        WorldNode& cameraNode = root.And("Camera");
-        //        cameraNode.With<OrthoCamera>();//.SetHalfHeight(owner->World()->renderContext->PixelSize().y);
-        //        cameraNode.With<SimpleRaycaster2D>();
-
         World& world = *root.World();
 
 #define BUFFER
 #ifdef BUFFER
+        // TODO: use OrthoStandard here(?)
         auto& bufferCamera = root.With<OrthoCamera>();
         auto textureBuffer = world.renderContext->renderEngine.MakeTextureBuffer();
         textureBuffer->Build(Vector2Int(2000, 1000));

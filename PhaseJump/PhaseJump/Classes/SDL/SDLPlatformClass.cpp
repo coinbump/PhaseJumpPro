@@ -158,21 +158,5 @@ SDLConfigPlatformResult SDLPlatformClass::Configure(SDLPlatformConfig& config, S
     auto imGuiRenderProcessor = MAKE<ImGuiGLRenderProcessor>(renderContext->ImGuiContext());
     renderSystem->Add(imGuiRenderProcessor);
 
-    auto showMeshRenderProcessor = MAKE<ShowMeshRenderProcessor>();
-    showMeshRenderProcessor->Enable(false);
-    renderSystem->Add(showMeshRenderProcessor);
-
-    auto showCollidersRenderProcessor = MAKE<ShowCollidersRenderProcessor>();
-    showCollidersRenderProcessor->Enable(false);
-    renderSystem->Add(showCollidersRenderProcessor);
-
-    auto showBoundsRenderProcessor = MAKE<ShowBoundsRenderProcessor>();
-    showBoundsRenderProcessor->Enable(false);
-    renderSystem->Add(showBoundsRenderProcessor);
-
-    // Important: always batch process, or renders will be slow
-    auto batchRenderProcessor = MAKE<BatchByMaterialRenderProcessor>();
-    renderSystem->Add(batchRenderProcessor);
-
     return { window };
 }

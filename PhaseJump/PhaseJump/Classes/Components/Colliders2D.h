@@ -11,19 +11,23 @@
 namespace PJ {
     /// 2D polygon collider
     class PolygonCollider2D : public SomeCollider2D {
-    public:
+    protected:
+        /// Stores the collider shape
         Polygon poly;
 
-        auto& SetPoly(Polygon const& value) {
-            poly = value;
-            return *this;
-        }
+        /// Stores the collider size. We don't resize the polygon itself because if the polygon was
+        /// ever resized to zero, it would become locked at size zero (can't scale a zero size
+        /// object)
+        Vector2 size;
+
+    public:
+        using This = PolygonCollider2D;
+
+        This& SetPolygon(Polygon const& value);
 
         // MARK: SomeCollider2D
 
-        bool TestHit(Vector2 position) override {
-            return poly.TestHit(position);
-        }
+        bool TestHit(Vector2 position) override;
 
         // MARK: SomeWorldComponent
 

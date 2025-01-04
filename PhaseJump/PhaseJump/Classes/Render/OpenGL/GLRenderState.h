@@ -44,7 +44,7 @@ namespace PJ {
 
         UnorderedSet<uint32_t> clearedContexts;
 
-        void ResetForRenderPass() {
+        void RenderPassStart() {
             clearedContexts.clear();
         }
 

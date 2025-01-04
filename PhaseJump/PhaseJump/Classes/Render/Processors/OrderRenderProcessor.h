@@ -20,10 +20,8 @@ namespace PJ {
 
         SortFunc sortFunc;
 
-        // TODO: re-evaluate all registered render phases, probably don't want to run for each
-        // camera
         OrderRenderProcessor(SortFunc sortFunc) :
-            Base({ .name = "Order", .phases = { RenderPhase::Camera } }),
+            Base({ .name = "Order", .phases = { RenderPhase::DrawPrepare } }),
             sortFunc(sortFunc) {}
 
         // MARK: RenderProcessor

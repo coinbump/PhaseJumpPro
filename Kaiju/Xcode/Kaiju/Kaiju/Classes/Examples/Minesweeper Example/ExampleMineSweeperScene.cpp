@@ -86,7 +86,7 @@ void Minesweeper::Scene::LoadInto(WorldNode& root) {
             this->boardView = &_boardView;
 
             QB(*_boardView.owner)
-                .RectCollider(_boardView.WorldSize())
+                .RectCollider()
                 .template With<ImRenderer>(ImRenderer::Config{ .worldSize = worldSize })
                 .template ModifyLatest<ImRenderer>([&](auto& renderer) {
                     /// Optimize: draw opaque tiles behind text

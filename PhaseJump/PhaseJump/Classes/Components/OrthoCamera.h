@@ -76,7 +76,7 @@ namespace PJ {
 
         Vector2 WorldToScreen(Vector3 position) override;
         Vector3 ScreenToWorld(Vector2 position) override;
-        void PreRender(RenderContextModel const& contextModel) override;
+        void RenderStart(SomeRenderContext* context) override;
         bool IsCulled(Mesh const& mesh) override;
 
         // MARK: SomeWorldComponent

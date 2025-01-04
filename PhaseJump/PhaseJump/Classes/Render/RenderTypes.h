@@ -23,16 +23,19 @@ namespace PJ {
 
     /// The render processing pipeline is broken up into phases
     namespace RenderPhase {
-        auto constexpr PrepareBind = "bind.prepare";
-        auto constexpr PostBind = "bind.post";
-        auto constexpr PostClear = "clear.post";
-        auto constexpr Camera = "camera";
-        auto constexpr PreparePresent = "present.prepare";
-        auto constexpr PostPresent = "present.post";
-        auto constexpr PrepareCameraDraw = "camera.draw.prepare";
-        auto constexpr PostCameraDraw = "camera.draw.post";
-        auto constexpr PrepareCamera = "camera.prepare";
-        auto constexpr PostCamera = "camera.post";
+        /// Render events (sent once for render pass of all cameras)
+        auto constexpr RenderPassStartPrepare = "renderPass.start.prepare";
+        auto constexpr RenderPassStartPost = "renderPass.start.post";
+        auto constexpr RenderPassPresentPrepare = "renderPass.present.prepare";
+        auto constexpr RenderPassPresentPost = "renderPass.present.post";
+
+        /// Camera events (sent once for each camera)
+        auto constexpr BindPrepare = "bind.prepare";
+        auto constexpr BindPost = "bind.post";
+        auto constexpr ClearPrepare = "clear.prepare";
+        auto constexpr ClearPost = "clear.post";
+        auto constexpr DrawPrepare = "draw.prepare";
+        auto constexpr DrawPost = "draw.post";
     } // namespace RenderPhase
 
     enum class RenderFeatureState {

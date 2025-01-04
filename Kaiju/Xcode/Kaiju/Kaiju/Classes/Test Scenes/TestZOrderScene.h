@@ -11,7 +11,7 @@ public:
     void LoadInto(WorldNode& root) override {
         root.SetName("TestZOrderScene");
 
-        root.With<OrthoCamera>();
+        QB(root).OrthoStandard();
 
         auto& n1 = root.And();
         auto& n11 = n1.AddNodeAt(Vector3(-100, 0, 0), "n11");

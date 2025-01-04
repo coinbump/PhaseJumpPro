@@ -16,10 +16,6 @@ void SomeGLRenderEngine::SetViewport(GLint x, GLint y, GLsizei width, GLsizei he
     renderState.viewport = GLRenderState::Viewport(x, y, width, height);
 }
 
-void SomeGLRenderEngine::SetLineWidth(float lineWidth) {
-    renderState.lineWidth = lineWidth;
-}
-
 void SomeGLRenderEngine::BindFrameBuffer(GLuint fb) {
     renderState.boundFrameBuffer = fb;
 }

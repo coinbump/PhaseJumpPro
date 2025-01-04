@@ -19,10 +19,8 @@ namespace PJ {
         // FUTURE: Create override material processor if needed
         UnorderedMap<String, RenderFeatureState> map;
 
-        // TODO: re-evaluate all registered render phases, probably don't want to run for each
-        // camera
         OverrideFeaturesRenderProcessor() :
-            Base({ .name = "Override features", .phases = { RenderPhase::Camera } }) {}
+            Base({ .name = "Override features", .phases = { RenderPhase::DrawPrepare } }) {}
 
         // MARK: RenderProcessor
 

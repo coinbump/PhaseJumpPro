@@ -11,11 +11,7 @@ public:
     void LoadInto(WorldNode& root) override {
         QB qb(root);
 
-        qb.Named("TestThemeScene")
-            .With<OrthoCamera>()
-            .With<SimpleRaycaster2D>()
-            .And("Layout")
-            .With<HFlow>(50);
+        qb.Named("TestThemeScene").OrthoStandard().And("Layout").With<HFlow>(50);
 
         for (auto& color : Themes::fruit.Colors()) {
             qb.And("Theme color").Circle(20, color.second).Pop();

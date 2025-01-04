@@ -9,10 +9,10 @@ void OrderRenderProcessor::Process(RenderCameraModel& cameraModel) {
     GUARD(sortFunc)
 
     // Sort the models
-    std::sort(cameraModel.models.begin(), cameraModel.models.end(), sortFunc);
+    std::sort(cameraModel.renderModels.begin(), cameraModel.renderModels.end(), sortFunc);
 
     // Paint the order
-    for (uint32_t i = 0; i < cameraModel.models.size(); i++) {
-        cameraModel.models[i].order = i;
+    for (uint32_t i = 0; i < cameraModel.renderModels.size(); i++) {
+        cameraModel.renderModels[i].order = i;
     }
 }

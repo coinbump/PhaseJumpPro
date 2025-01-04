@@ -1,6 +1,7 @@
 #include "QuickBuild.h"
 #include "AnimatedSpriteRenderer.h"
 #include "AnimateFuncs.h"
+#include "BatchByMaterialRenderProcessor.h"
 #include "Colliders2D.h"
 #include "ColorRenderer.h"
 #include "ComponentsController.h"
@@ -18,6 +19,9 @@
 #include "QuadFrameMeshBuilder.h"
 #include "RenderFeature.h"
 #include "RotateKSteering2D.h"
+#include "ShowBoundsRenderProcessor.h"
+#include "ShowCollidersRenderProcessor.h"
+#include "ShowMeshRenderProcessor.h"
 #include "SimpleAnimationController.h"
 #include "SimpleRaycaster2D.h"
 #include "Slice9TextureRenderer.h"
@@ -55,9 +59,26 @@ This& QuickBuild::Repeat(int count, std::function<void(This&)> func) {
 }
 
 This& QuickBuild::OrthoStandard(Color clearColor) {
-    return With<OrthoCamera>().With<SimpleRaycaster2D>().ModifyLatest<OrthoCamera>(
-        [=](auto& camera) { camera.clearColor = clearColor; }
-    );
+    return With<OrthoCamera>().With<SimpleRaycaster2D>().ModifyLatest<OrthoCamera>([=](auto& camera
+                                                                                   ) {
+        camera.clearColor = clearColor;
+
+        auto showMeshRenderProcessor = MAKE<ShowMeshRenderProcessor>();
+        showMeshRenderProcessor->Enable(false);
+        camera.processingModel.Add(showMeshRenderProcessor);
+
+        auto showCollidersRenderProcessor = MAKE<ShowCollidersRenderProcessor>();
+        showCollidersRenderProcessor->Enable(false);
+        camera.processingModel.Add(showCollidersRenderProcessor);
+
+        auto showBoundsRenderProcessor = MAKE<ShowBoundsRenderProcessor>();
+        showBoundsRenderProcessor->Enable(false);
+        camera.processingModel.Add(showBoundsRenderProcessor);
+
+        // Important: always batch process, or renders will be slow
+        auto batchRenderProcessor = MAKE<BatchByMaterialRenderProcessor>();
+        camera.processingModel.Add(batchRenderProcessor);
+    });
 }
 
 This& QuickBuild::ScaleWithWindow(Vector3 worldSize, float ratio) {
@@ -197,8 +218,8 @@ This& QuickBuild::RectCollider(Vector2 size) {
     return With<PolygonCollider2D>().ModifyLatest<PolygonCollider2D>([=](auto& collider) {
         // A zero sized rect polygon can't be resized later for views, so make sure this has some
         // size
-        collider.poly =
-            Polygon::MakeRect({ std::max(0.00001f, size.x), std::max(0.00001f, size.y) });
+        collider.SetPolygon(Polygon::MakeRect({ std::max(0.00001f, size.x),
+                                                std::max(0.00001f, size.y) }));
     });
 }
 
@@ -242,7 +263,7 @@ void QuickBuild::AddSlider(
     sliderControl.SetEndCapSize(endCapSize).SetFrame(PJ::Rect({ 0, 0 }, config.worldSize));
 
     auto& thumbNode = parent.AddNode("Slider thumb");
-    thumbNode.AddComponent<PolygonCollider2D>().SetPoly(Polygon::MakeRect(thumbTexture->size));
+    thumbNode.AddComponent<PolygonCollider2D>().SetPolygon(Polygon::MakeRect(thumbTexture->size));
     thumbNode.AddComponent<SpriteRenderer>(thumbTexture);
 
     sliderControl.SetTrack(SCAST<WorldNode>(trackNode.shared_from_this()));

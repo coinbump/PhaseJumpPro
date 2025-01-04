@@ -43,20 +43,7 @@ public:
     }
 
     void LoadInto(WorldNode& root) override {
-        root.SetName("TestEmittersScene");
-
-        auto camera = SCAST<SomeCamera>(MAKE<OrthoCamera>());
-        auto cameraNode = MAKE<WorldNode>("Camera");
-        cameraNode->Add(camera);
-        root.Add(cameraNode);
-
-        // #define ADD_RAYCASTER
-
-#ifdef ADD_RAYCASTER
-        auto raycaster = MAKE<SimpleRaycaster2D>();
-        cameraNode->Add(raycaster);
-        root.Add(cameraNode);
-#endif
+        QB(root).Named("TestEmittersScene").OrthoStandard();
 
         World& world = *root.World();
 

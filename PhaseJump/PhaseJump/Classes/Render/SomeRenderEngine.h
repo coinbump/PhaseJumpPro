@@ -26,7 +26,7 @@ namespace PJ {
     } // namespace RenderPhaseId
 
     struct RenderDrawModel {
-        VectorList<RenderModel> models;
+        VectorList<RenderModel> const& models;
     };
 
     /// A render engine should be able to perform standard render operations
@@ -36,10 +36,9 @@ namespace PJ {
         /// Flag enables us to A/B benchmark with this on/off
         bool optimizeStateSwitches = true;
 
-        virtual void RenderStart(RenderContextModel& contextModel) = 0;
+        virtual void RenderStart(SomeRenderContext* context) = 0;
         virtual void RenderDraw(RenderDrawModel const& drawModel) = 0;
 
-        virtual void SetLineWidth(float lineWidth) = 0;
         virtual void EnableFeature(String featureId, bool isEnabled) = 0;
 
         virtual void ProjectionMatrixLoadOrthographic(Vector2 size) = 0;
@@ -49,7 +48,7 @@ namespace PJ {
         virtual UnorderedSet<String> EnabledFeatures() = 0;
 
         /// Called once for each render pass
-        virtual void ResetForRenderPass() = 0;
+        virtual void RenderPassStart() = 0;
         virtual bool IsContextCleared(uint32_t id) = 0;
         virtual void SetIsContextCleared(uint32_t id, bool value) = 0;
     };

@@ -14,11 +14,9 @@ EditorImGuiRenderEnginePainter::EditorImGuiRenderEnginePainter(EditorWorldSystem
 
         if (ImGui::CollapsingHeader("Render Engine", ImGuiTreeNodeFlags_DefaultOpen)) {
             auto& renderEngine = world.renderContext->renderEngine;
-            if (ImGui::Checkbox(
-                    "Optimize state switches", &system.renderEnginePaintModel.optimizeStateSwitches
-                )) {
-                renderEngine.optimizeStateSwitches =
-                    system.renderEnginePaintModel.optimizeStateSwitches;
+            bool optimizeStateSwitches = renderEngine.optimizeStateSwitches;
+            if (ImGui::Checkbox("Optimize state switches", &optimizeStateSwitches)) {
+                renderEngine.optimizeStateSwitches = optimizeStateSwitches;
             }
 
             ImGui::Text("Enabled features");
@@ -26,27 +24,34 @@ EditorImGuiRenderEnginePainter::EditorImGuiRenderEnginePainter(EditorWorldSystem
                 ImGui::Text("%s", enabledFeature.c_str());
             }
 
+            auto drawRenderProcessors = [&](String label,
+                                            VectorList<SP<RenderProcessor>> const& processors) {
+                if (!IsEmpty(label)) {
+                    ImGui::Text("%s", label.c_str());
+                }
+
+                for (auto& processor : processors) {
+                    GUARD_CONTINUE(processor->name.size() > 0)
+
+                    bool value = processor->IsEnabled();
+
+                    if (ImGui::Checkbox(processor->name.c_str(), &value)) {
+                        processor->Enable(value);
+                    }
+                }
+            };
+
             if (ImGui::CollapsingHeader("Render Pipeline", ImGuiTreeNodeFlags_DefaultOpen)) {
                 auto renderSystem = world.GetSystem<RenderWorldSystem>();
                 GUARD(renderSystem)
 
-                ImGui::Text("Render pipeline");
+                drawRenderProcessors("Render Pass", renderSystem->Processors());
+            }
 
-                auto const& processors = renderSystem->Processors();
-                auto& switches = system.renderEnginePaintModel.renderProcessorSwitches;
-                switches.resize(processors.size());
-                for (size_t i = 0; i < processors.size(); i++) {
-                    switches[i] = processors[i]->IsEnabled();
-                }
-
-                for (size_t i = 0; i < processors.size(); i++) {
-                    auto& processor = processors[i];
-                    GUARD_CONTINUE(processor->name.size() > 0)
-
-                    if (ImGui::Checkbox(processor->name.c_str(), (bool*)&switches[i])) {
-                        processor->Enable(switches[i]);
-                    }
-                }
+            // FUTURE: show render options for other cameras
+            auto mainCamera = world.MainCamera();
+            if (mainCamera) {
+                drawRenderProcessors("Main Camera", mainCamera->processingModel.Processors());
             }
         }
     };

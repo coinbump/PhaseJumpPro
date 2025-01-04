@@ -39,7 +39,7 @@ namespace PJ {
         /// Use when rendering into a texture buffer
         SP<SomeRenderContext> renderContext;
 
-        virtual void PreRender(RenderContextModel const& contextModel) {}
+        virtual void RenderStart(SomeRenderContext* context) {}
 
         virtual bool IsCulled(Mesh const& mesh) = 0;
     };

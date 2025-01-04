@@ -87,12 +87,12 @@ Vector3 OrthoCamera::ScreenToWorld(Vector2 position) {
     return worldPosition;
 }
 
-void OrthoCamera::PreRender(RenderContextModel const& contextModel) {
-    Base::PreRender(contextModel);
+void OrthoCamera::RenderStart(SomeRenderContext* context) {
+    Base::RenderStart(context);
 
     GUARD(owner)
 
-    auto renderContext = contextModel.renderContext;
+    auto renderContext = context;
     GUARD(renderContext)
 
     auto worldPosition = owner->transform.WorldPosition();

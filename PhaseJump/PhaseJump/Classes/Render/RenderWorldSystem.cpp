@@ -12,92 +12,90 @@
 using namespace std;
 using namespace PJ;
 
-std::optional<RenderResult> RenderWorldSystem::Render(RenderContextModel& _contextModel) {
-    auto context = _contextModel.renderContext;
-    GUARDR(context && world, std::nullopt);
-
-    model.phaseModel.onPhaseChangeFunc = [&](auto& phaseModel, auto phase) {
-        model.processingModel.ProcessPhase(phase);
+RenderWorldSystem::RenderWorldSystem(String name) :
+    Base(name) {
+    model.phaseModel.onPhaseChangeFunc = [this](auto& phaseModel, auto phase) {
+        // Shared render pipeline for all cameras
+        model.processingModel.ProcessPhase(phase, {});
     };
+}
 
-    context->renderEngine.ResetForRenderPass();
+std::optional<RenderResult> RenderWorldSystem::Render(RenderContextModel& _contextModel) {
+    auto mainContext = _contextModel.renderContext;
+    GUARDR(mainContext && world, {});
 
-    auto mainCamera = world->MainCamera();
+    model.phaseModel.SetPhase(RenderPhase::RenderPassStartPrepare);
 
-    model.phaseModel.SetPhase(RenderPhase::PrepareBind);
-    context->Bind();
-    model.phaseModel.SetPhase(RenderPhase::PostBind);
+    auto& renderEngine = mainContext->renderEngine;
+    renderEngine.RenderPassStart();
 
-    if (mainCamera) {
-        context->clearColor = mainCamera->clearColor;
-    }
-    context->Clear();
-
-    context->renderEngine.SetIsContextCleared(context->renderId, true);
-    model.phaseModel.SetPhase(RenderPhase::PostClear);
+    model.phaseModel.SetPhase(RenderPhase::RenderPassStartPost);
 
     int drawCount{};
-
-    auto& renderEngine = context->renderEngine;
-
-    VectorList<RenderModel> models;
-    models.reserve(_contextModel.nodes.size());
-
-    {
-#ifdef PROFILE
-        DevProfiler devProfiler("System- Make RenderModels", [](String value) {
-            std::cout << value;
-        });
-
-        cout << "Profile: Nodes count: " << contextModel.nodes.size() << std::endl;
-#endif
-
-        // FUTURE: can this be done on parallel threads?
-        for (auto& node : _contextModel.nodes) {
-            // Skip hidden nodes
-            GUARD_CONTINUE(node->IsVisible())
-
-            VectorList<SomeRenderer*> renderers;
-            node->Signal(SignalId::RenderPrepare, Event<>{});
-            node->CollectTypeComponents<SomeRenderer>(renderers);
-            for (auto& renderer : renderers) {
-                GUARD_CONTINUE(renderer->IsEnabled())
-
-                /// Most renderers produce render models, for a list of draw calls to be sent to the
-                /// GPU by the graphics engine
-                auto thisRenderModels = renderer->RenderModels();
-                auto thisRenderModelCount = thisRenderModels.size();
-
-                GUARD_CONTINUE(thisRenderModelCount > 0)
-
-                // Don't add junk models, it can break the render
-                GUARD_CONTINUE(thisRenderModels[0].IsValid())
-
-                AddRange(models, thisRenderModels);
-            }
-        }
-    }
 
     auto& cameras = _contextModel.cameras;
 
     // Execute a complete render pass for each camera
-    // Example: Camera A renders moving content, camera B renders fixed UI
-    // FUTURE: support limiting which nodes are rendered for each camera,
-    // either by using frustrum culling or a filter
+    // FUTURE: support limiting which nodes are rendered for each camera
     // FUTURE: support occlusion filtering for nodes based on camera view
     for (auto& camera : cameras) {
         GUARD_CONTINUE(camera)
 
-        RenderContextModel contextModel = _contextModel;
+        // Rendered nodes are sent to render processors to add custom render models
+        // Example: show colliders render processor
+        VectorList<WorldNode*> nodes;
+        nodes.reserve(_contextModel.nodes.size());
 
-        RenderCameraModel cameraModel(contextModel, *camera, models);
+        // Render models are sent to render engine
+        VectorList<RenderModel> renderModels;
+        renderModels.reserve(_contextModel.nodes.size());
+
+        {
+#ifdef PROFILE
+            DevProfiler devProfiler("System- Make RenderModels", [](String value) {
+                std::cout << value;
+            });
+
+            PJ::Log("Profile: Nodes count: ", contextModel.nodes.size());
+#endif
+
+            // FUTURE: can this be done on parallel threads?
+            for (auto& node : _contextModel.nodes) {
+                // Skip hidden nodes
+                GUARD_CONTINUE(node->IsVisible())
+
+                VectorList<SomeRenderer*> renderers;
+                node->CollectTypeComponents<SomeRenderer>(renderers);
+                for (auto& renderer : renderers) {
+                    GUARD_CONTINUE(renderer->IsEnabled())
+
+                    // Give renderer a chance to prepare. Used for immediate renderers
+                    renderer->Signal(SignalId::RenderPrepare, Event<>{});
+
+                    // A renderer produces render models to be sent to the render engine
+                    auto thisRenderModels = renderer->RenderModels();
+                    auto thisRenderModelCount = thisRenderModels.size();
+                    GUARD_CONTINUE(thisRenderModelCount > 0)
+
+                    // Don't add junk models, it can break the render
+                    GUARD_CONTINUE(thisRenderModels[0].IsValid())
+
+                    AddRange(renderModels, thisRenderModels);
+                    nodes.push_back(node);
+                }
+            }
+        }
+
+        // Offscreen (viewport) cameras define their own render context
+        SomeRenderContext* context =
+            camera->renderContext ? camera->renderContext.get() : mainContext;
+
+        RenderCameraModel cameraModel(
+            { .camera = *camera, .renderModels = renderModels, .context = context, .nodes = nodes }
+        );
         cameraModel.phaseModel.onPhaseChangeFunc = [&](auto& phaseModel, auto phase) {
-            // TODO: prepend "camera." for phase here?
-            // Render pipeline shared by all cameras
-            model.processingModel.ProcessPhase(cameraModel, phase);
-
             // Each camera can have its own render pipeline
-            camera->processingModel.ProcessPhase(cameraModel, phase);
+            camera->processingModel.ProcessPhase(phase, &cameraModel);
         };
 
         auto SetPhase = [&](String phase) {
@@ -105,38 +103,44 @@ std::optional<RenderResult> RenderWorldSystem::Render(RenderContextModel& _conte
             cameraModel.phaseModel.SetPhase(phase);
         };
 
-        SetPhase(RenderPhase::PrepareCamera);
+        SetPhase(RenderPhase::BindPrepare);
+        context->Bind();
+        SetPhase(RenderPhase::BindPost);
 
-        cameraModel.renderContext->Bind();
+        context->clearColor = camera->clearColor;
 
+        // FUTURE: add programmable pipeline that sets phase to prepare and post for each action
+        SetPhase(RenderPhase::ClearPrepare);
+
+        // If multiple cameras share the same render context, make sure we only clear it for the
+        // first camera
         if (!context->renderEngine.IsContextCleared(cameraModel.renderContext->renderId)) {
             cameraModel.renderContext->Clear();
             context->renderEngine.SetIsContextCleared(cameraModel.renderContext->renderId, true);
         }
 
-        renderEngine.RenderStart(contextModel);
-        camera->PreRender(contextModel);
+        SetPhase(RenderPhase::ClearPost);
 
-        SetPhase(RenderPhase::Camera);
+        renderEngine.RenderStart(context);
+        camera->RenderStart(context);
 
 #ifdef PROFILE
         DevProfiler devProfilerRenderCamera("Render- Camera", [](String value) { cout << value; });
 #endif
 
-        RenderDrawModel drawModel;
-        drawModel.models = cameraModel.models;
+        SetPhase(RenderPhase::DrawPrepare);
+
+        RenderDrawModel drawModel{ .models = cameraModel.renderModels };
         drawCount += (int)drawModel.models.size();
 
-        SetPhase(RenderPhase::PrepareCameraDraw);
         renderEngine.RenderDraw(drawModel);
-        SetPhase(RenderPhase::PostCameraDraw);
 
-        SetPhase(RenderPhase::PostCamera);
+        SetPhase(RenderPhase::DrawPost);
     }
 
-    model.phaseModel.SetPhase(RenderPhase::PreparePresent);
-    context->Present();
-    model.phaseModel.SetPhase(RenderPhase::PostPresent);
+    model.phaseModel.SetPhase(RenderPhase::RenderPassPresentPrepare);
+    mainContext->Present();
+    model.phaseModel.SetPhase(RenderPhase::RenderPassPresentPost);
 
     RenderResult result;
     result.tags.Set(RenderStatId::DrawCount, drawCount);
@@ -154,14 +158,11 @@ RenderWorldSystem::ProcessorList const& RenderWorldSystem::Processors() const {
 
 // MARK: RenderCameraModel
 
-RenderCameraModel::RenderCameraModel(
-    RenderContextModel& contextModel, SomeCamera& camera, VectorList<RenderModel> models
-) :
-    renderContext(camera.renderContext ? camera.renderContext.get() : contextModel.renderContext),
-    root(contextModel.root),
-    nodes(contextModel.nodes),
-    camera(&camera),
-    models(models) {}
+RenderCameraModel::RenderCameraModel(RenderCameraModel::Config config) :
+    renderContext(config.camera.renderContext ? config.camera.renderContext.get() : config.context),
+    camera(&config.camera),
+    nodes(config.nodes),
+    renderModels(config.renderModels) {}
 
 void RenderCameraModel::SetPhase(String value) {
     phaseModel.SetPhase(value);

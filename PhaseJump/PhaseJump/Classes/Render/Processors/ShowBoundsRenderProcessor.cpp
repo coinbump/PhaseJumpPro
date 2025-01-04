@@ -15,7 +15,7 @@ void ShowBoundsRenderProcessor::Process(RenderCameraModel& cameraModel) {
     auto boundsMaterial = ColorRenderer::MakeMaterial(RenderOpacityTypeFor(color));
     cameraModel.materials.push_back(boundsMaterial);
 
-    cameraModel.models.reserve(cameraModel.models.size() + cameraModel.nodes.size());
+    cameraModel.renderModels.reserve(cameraModel.renderModels.size() + cameraModel.nodes.size());
 
     // FUTURE: this can be optimized
     for (auto& node : cameraModel.nodes) {
@@ -38,7 +38,7 @@ void ShowBoundsRenderProcessor::Process(RenderCameraModel& cameraModel) {
 
             renderer->owner = node;
             auto debugRenderModels = renderer->RenderModels();
-            AddRange(cameraModel.models, debugRenderModels);
+            AddRange(cameraModel.renderModels, debugRenderModels);
             break;
         }
     }

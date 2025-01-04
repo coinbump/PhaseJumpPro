@@ -17,7 +17,7 @@ void ShowMeshRenderProcessor::Process(RenderCameraModel& cameraModel) {
     Mesh finalMesh;
 
     VectorList<RenderModel> renderModels;
-    for (auto& renderModel : cameraModel.models) {
+    for (auto& renderModel : cameraModel.renderModels) {
         auto const& vertices = renderModel.mesh.Vertices();
         auto const& indices = renderModel.mesh.Triangles();
 
@@ -48,5 +48,5 @@ void ShowMeshRenderProcessor::Process(RenderCameraModel& cameraModel) {
     AddRange(renderModels, thisRenderModels);
 
     // Replace the existing models and only show the mesh
-    cameraModel.models = renderModels;
+    cameraModel.renderModels = renderModels;
 }

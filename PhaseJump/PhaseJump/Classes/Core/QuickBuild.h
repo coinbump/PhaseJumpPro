@@ -217,7 +217,7 @@ namespace PJ {
         This& SquareCollider(float size);
 
         /// Add a rect collider
-        This& RectCollider(Vector2 size);
+        This& RectCollider(Vector2 size = { 1, 1 });
 
         /// Add a circle collider
         This& CircleCollider(float radius);

@@ -27,7 +27,7 @@ void AddOverlay(
 
     renderer->owner = node;
     auto debugRenderModels = renderer->RenderModels();
-    AddRange(cameraModel.models, debugRenderModels);
+    AddRange(cameraModel.renderModels, debugRenderModels);
 }
 
 void ShowCollidersRenderProcessor::Process(RenderCameraModel& cameraModel) {
@@ -41,7 +41,7 @@ void ShowCollidersRenderProcessor::Process(RenderCameraModel& cameraModel) {
             auto polyCollider = As<PolygonCollider2D>(collider);
 
             if (polyCollider) {
-                Vector2 overlaySize(polyCollider->poly.Width(), polyCollider->poly.Height());
+                Vector2 overlaySize(polyCollider->WorldSize().x, polyCollider->WorldSize().y);
                 AddOverlay(cameraModel, node, colliderMaterial, color, overlaySize);
                 continue;
             }

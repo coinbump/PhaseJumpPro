@@ -18,8 +18,7 @@ public:
 
         QB(root)
             .Named("TestUIScene")
-            .With<OrthoCamera>()
-            .With<SimpleRaycaster2D>()
+            .OrthoStandard()
             .And("Drag Gesture")
             .Circle(20)
             .CircleCollider(20)

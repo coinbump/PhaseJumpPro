@@ -18,10 +18,8 @@ namespace PJ {
     public:
         using Base = RenderProcessor;
 
-        // TODO: re-evaluate all registered render phases, probably don't want to run for each
-        // camera
         BatchByMaterialRenderProcessor() :
-            Base({ .name = "Batch by material", .phases = { RenderPhase::Camera } }) {}
+            Base({ .name = "Batch by material", .phases = { RenderPhase::DrawPrepare } }) {}
 
         std::optional<RenderModel> Combine(VectorList<RenderModel*>& renderModels);
 

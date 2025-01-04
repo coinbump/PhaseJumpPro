@@ -17,10 +17,8 @@ namespace PJ {
     public:
         using Base = RenderProcessor;
 
-        // TODO: re-evaluate all registered render phases, probably don't want to run for each
-        // camera
         CameraCullRenderProcessor() :
-            Base({ .name = "Camera cull", .phases = { RenderPhase::Camera } }) {}
+            Base({ .name = "Camera cull", .phases = { RenderPhase::DrawPrepare } }) {}
 
         // MARK: RenderProcessor
 

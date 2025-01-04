@@ -6,17 +6,18 @@
 using namespace std;
 using namespace PJ;
 
-void ImGuiGLRenderProcessor::Process(String phase) {
+void ImGuiGLRenderProcessor::Process(Phase phase) {
     GUARD_LOG(imGuiContext, "Missing imGuiContext")
+    GUARD_LOG(nullptr == phase.cameraModel, "ERROR. Don't process imGui for each camera")
 
-    if (phase == RenderPhase::PrepareBind) {
+    if (phase.id == RenderPhase::RenderPassStartPrepare) {
         ImGui::SetCurrentContext(imGuiContext);
 
         // Start the imGui frame
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplSDL3_NewFrame();
         ImGui::NewFrame();
-    } else if (phase == RenderPhase::PreparePresent) {
+    } else if (phase.id == RenderPhase::RenderPassPresentPrepare) {
         // Render the imGui frame
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

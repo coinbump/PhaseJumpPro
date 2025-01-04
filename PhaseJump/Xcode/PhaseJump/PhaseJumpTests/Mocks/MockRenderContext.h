@@ -15,10 +15,9 @@ using namespace PJ;
  */
 namespace PJTest {
     class MockRenderEngine : public PJ::SomeRenderEngine {
-        virtual void RenderStart(RenderContextModel& contextModel) {}
+        virtual void RenderStart(SomeRenderContext* context) {}
         virtual void RenderDraw(RenderDrawModel const& drawModel) {}
 
-        virtual void SetLineWidth(float lineWidth) {}
         virtual void EnableFeature(String featureId, bool isEnabled) {}
 
         virtual void ProjectionMatrixLoadOrthographic(Vector2 size) {}
@@ -28,7 +27,7 @@ namespace PJTest {
         virtual UnorderedSet<String> EnabledFeatures() { return {}; }
 
         /// Called once for each render pass
-        virtual void ResetForRenderPass() {}
+        virtual void RenderPassStart() {}
         virtual bool IsContextCleared(uint32_t id) { return {}; }
         virtual void SetIsContextCleared(uint32_t id, bool value) {}
     };

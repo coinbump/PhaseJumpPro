@@ -12,7 +12,7 @@ void OverrideFeaturesRenderProcessor::Process(RenderCameraModel& cameraModel) {
     }
 #endif
 
-    for (auto& model : cameraModel.models) {
+    for (auto& model : cameraModel.renderModels) {
         auto modelMaterial = model.Material();
         GUARD_CONTINUE(modelMaterial)
 

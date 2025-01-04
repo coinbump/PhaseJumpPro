@@ -12,7 +12,7 @@ public:
     void LoadInto(WorldNode& root) override {
         root.SetName("TestMeshPathScene");
 
-        QB(root).And("Camera").With<OrthoCamera>().AndPrefab("archer");
+        QB(root).And("Camera").OrthoStandard().AndPrefab("archer");
 
         foo1(root);
         foo2(root);

@@ -157,14 +157,13 @@ namespace PJ {
         // MARK: - SomeRenderEngine
 
         void EnableFeature(String featureId, bool isEnabled) override;
-        void SetLineWidth(float lineWidth) override;
 
         UnorderedSet<String> EnabledFeatures() override {
             return renderState.enabledFeatures;
         }
 
-        void ResetForRenderPass() override {
-            renderState.ResetForRenderPass();
+        void RenderPassStart() override {
+            renderState.RenderPassStart();
         }
 
         bool IsContextCleared(uint32_t id) override {

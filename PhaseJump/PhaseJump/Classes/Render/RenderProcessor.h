@@ -25,20 +25,13 @@ namespace PJ {
         /// The system that owns this processor, if any
         RenderWorldSystem* system{};
 
-        /// Called for system render phases
-        using ProcessFunc = std::function<void(String phase)>;
-
-        /// Called for camera render phases
-        using ProcessCameraFunc = std::function<void(RenderCameraModel&)>;
+        using ProcessFunc = std::function<void(String phase, RenderCameraModel*)>;
 
         /// Use facing name, for browsing
         String name;
 
-        /// Called for system render phases
+        /// Called for render phases
         ProcessFunc processFunc;
-
-        /// Called for camera render phases
-        ProcessCameraFunc processCameraFunc;
 
         /// Each processor must register to run for specific render phases
         UnorderedSet<String> phases;
@@ -46,6 +39,14 @@ namespace PJ {
         struct Config {
             String name;
             UnorderedSet<String> phases;
+        };
+
+        struct Phase {
+            /// Phase id (render start, render draw, etc.)
+            String id;
+
+            /// Camera model if we're processing for a specific camera
+            RenderCameraModel* cameraModel{};
         };
 
         RenderProcessor(Config config) :
@@ -62,14 +63,16 @@ namespace PJ {
             this->isEnabled = value;
         }
 
-        virtual void Process(String phase) {
-            GUARD(processFunc)
-            processFunc(phase);
+        virtual void Process(Phase phase) {
+            if (processFunc) {
+                processFunc(phase.id, phase.cameraModel);
+            }
+
+            if (phase.cameraModel) {
+                Process(*phase.cameraModel);
+            }
         }
 
-        virtual void Process(RenderCameraModel& cameraModel) {
-            GUARD(processCameraFunc)
-            processCameraFunc(cameraModel);
-        }
+        virtual void Process(RenderCameraModel& cameraModel) {}
     };
 } // namespace PJ

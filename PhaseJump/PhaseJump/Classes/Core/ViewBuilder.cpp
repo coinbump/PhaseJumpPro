@@ -364,7 +364,7 @@ This& ViewBuilder::ButtonView(BuildConfigFunc<ButtonViewConfig> buildConfigFunc)
                         button.owner->Add(collider);
                     }
                 } else if (nullptr == currentCollider) {
-                    QuickBuild(*button.owner).RectCollider({ 1, 1 });
+                    QuickBuild(*button.owner).RectCollider();
                 }
 
                 if (config.modifyViewFunc) {
@@ -410,7 +410,7 @@ This& ViewBuilder::ToggleButtonView(BuildConfigFunc<ToggleButtonViewConfig> buil
                         button.owner->Add(collider);
                     }
                 } else if (nullptr == currentCollider) {
-                    QuickBuild(*button.owner).RectCollider({ 1, 1 });
+                    QuickBuild(*button.owner).RectCollider();
                 }
 
                 if (config.isOnBinding.IsValid()) {
@@ -720,7 +720,7 @@ This& ViewBuilder::AddToolTip(ToolTipConfig config) {
 
     // Add a collider if needed
     if (nullptr == activeView->owner->TypeComponent<SomeCollider2D>()) {
-        QuickBuild(*activeView->owner).RectCollider(activeView->Frame().size);
+        QuickBuild(*activeView->owner).RectCollider();
     }
 
     activeView->AddSignalHandler<HoverUIEvent>(

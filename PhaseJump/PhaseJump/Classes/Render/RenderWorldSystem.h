@@ -58,17 +58,14 @@ namespace PJ {
         /// Pointer, not reference for model copies
         SomeRenderContext* renderContext{};
 
-        /// Root node, used for z-order sorting
-        WorldNode* root{};
-
-        /// Nodes to be rendered
-        VectorList<WorldNode*> nodes;
-
         /// Camera being rendered
         SomeCamera* camera{};
 
+        /// Nodes to render
+        VectorList<WorldNode*>& nodes;
+
         /// Models to render
-        VectorList<RenderModel> models;
+        VectorList<RenderModel>& renderModels;
 
         /// Model groups (grouping should be done as a final step)
         // FUTURE: VectorList<RenderModelGroup> modelGroups;
@@ -97,9 +94,14 @@ namespace PJ {
             return lhs.order < rhs.order;
         };
 
-        RenderCameraModel(
-            RenderContextModel& contextModel, SomeCamera& camera, VectorList<RenderModel> models
-        );
+        struct Config {
+            SomeRenderContext* context{};
+            SomeCamera& camera;
+            VectorList<RenderModel>& renderModels;
+            VectorList<WorldNode*>& nodes;
+        };
+
+        RenderCameraModel(Config config);
 
         /// @return Returns the override material for this model if one exists
         SP<RenderMaterial> OverrideMaterial(RenderModel const& model);
@@ -128,8 +130,7 @@ namespace PJ {
         Model model;
 
     public:
-        RenderWorldSystem(String name = "Render") :
-            Base(name) {}
+        RenderWorldSystem(String name = "Render");
 
         virtual ~RenderWorldSystem() {}
 

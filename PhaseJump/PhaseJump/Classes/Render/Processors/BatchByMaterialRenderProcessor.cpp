@@ -9,7 +9,7 @@ void BatchByMaterialRenderProcessor::Process(RenderCameraModel& cameraModel) {
     // Force z order based on model order (used by opaque objects to optimize renders by using the
     // depth buffer)
     float z = 0;
-    float zStep = 1.0f / cameraModel.models.size();
+    float zStep = 1.0f / cameraModel.renderModels.size();
 
     {
 #ifdef PROFILE
@@ -18,14 +18,14 @@ void BatchByMaterialRenderProcessor::Process(RenderCameraModel& cameraModel) {
         });
 #endif
         // Don't make extra copies if there's nothing to batch
-        GUARD(cameraModel.models.size() > 1)
+        GUARD(cameraModel.renderModels.size() > 1)
 
         VectorList<RenderModel> models;
 
         VectorList<RenderModel*> cameraModels;
         std::transform(
-            cameraModel.models.begin(), cameraModel.models.end(), std::back_inserter(cameraModels),
-            [](auto& model) { return &model; }
+            cameraModel.renderModels.begin(), cameraModel.renderModels.end(),
+            std::back_inserter(cameraModels), [](auto& model) { return &model; }
         );
 
         // Opaque objects are rendered behind blended render models
@@ -105,7 +105,7 @@ void BatchByMaterialRenderProcessor::Process(RenderCameraModel& cameraModel) {
         processModels(noBlendRenderModels);
         processModels(blendRenderModels);
 
-        cameraModel.models = models;
+        cameraModel.renderModels = models;
     }
 }
 

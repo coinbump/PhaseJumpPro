@@ -29,16 +29,6 @@ namespace PJ {
             }
         };
 
-        /// Model for painting render engine info and render processors
-        struct RenderEnginePaintModel {
-            bool optimizeStateSwitches = true;
-
-            // Don't use bool vector, it is specialized by C++
-            VectorList<char> renderProcessorSwitches;
-
-            RenderEnginePaintModel() {}
-        };
-
         /// If true, the editor imGui UI is visible
         bool isUIVisible = true;
 
@@ -66,8 +56,6 @@ namespace PJ {
 
         /// Current menus
         VectorList<UP<Menu>> menus;
-
-        RenderEnginePaintModel renderEnginePaintModel;
 
         EditorWorldSystem(int commandHistorySize = 100);
     };

@@ -75,7 +75,7 @@ WorldNode* SliderControl::Track() const {
 void SliderControl::Awake() {
     Base::Awake();
 
-    QB(*this->owner).RectCollider({ 1, 1 });
+    QB(*this->owner).RectCollider();
 
     dragHandler = owner->AddComponentPtr<SomeDragGestureHandler2D>();
     dragHandler->onDragGestureUpdateFunc = [this](auto update) {

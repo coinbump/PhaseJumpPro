@@ -1,3 +1,4 @@
+#if FALSE
 #include "DepthFirstOrderRenderProcessor.h"
 #include "RenderWorldSystem.h"
 #include "WorldNode.h"
@@ -39,3 +40,4 @@ void DepthFirstOrderRenderProcessor::Process(RenderCameraModel& cameraModel) {
 
     std::sort(cameraModel.models.begin(), cameraModel.models.end(), cameraModel.modelSortFunc);
 }
+#endif

@@ -19,11 +19,12 @@ namespace PJ {
 
         ImGuiGLRenderProcessor(ImGuiContext* imGuiContext) :
             // Unnamed, so it doesn't show up in render processor list
-            Base({ .phases = { RenderPhase::PrepareBind, RenderPhase::PreparePresent } }),
+            Base({ .phases = { RenderPhase::RenderPassStartPrepare,
+                               RenderPhase::RenderPassPresentPrepare } }),
             imGuiContext(imGuiContext) {}
 
         // MARK: RenderProcessor
 
-        void Process(String phase) override;
+        void Process(Phase phase) override;
     };
 } // namespace PJ

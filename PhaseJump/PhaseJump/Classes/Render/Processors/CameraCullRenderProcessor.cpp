@@ -10,14 +10,14 @@ using namespace PJ;
 void CameraCullRenderProcessor::Process(RenderCameraModel& cameraModel) {
     GUARD(cameraModel.camera)
 
-    auto beforeCullCount = cameraModel.models.size();
+    auto beforeCullCount = cameraModel.renderModels.size();
 
-    RemoveIf(cameraModel.models, [&](RenderModel const& model) {
+    RemoveIf(cameraModel.renderModels, [&](RenderModel const& model) {
         Mesh mesh = model.mesh * model.matrix;
         return cameraModel.camera->IsCulled(mesh);
     });
 
-    auto afterCullCount = cameraModel.models.size();
+    auto afterCullCount = cameraModel.renderModels.size();
     if (beforeCullCount > afterCullCount) {
         cout << "Culled: " << beforeCullCount - afterCullCount << std::endl;
     }

@@ -105,12 +105,6 @@ void GLRenderEngine::EnableFeature(String featureId, bool isEnabled) {
     }
 }
 
-void GLRenderEngine::SetLineWidth(float lineWidth) {
-    Base::SetLineWidth(lineWidth);
-
-    glLineWidth(lineWidth);
-}
-
 void GLRenderEngine::BindFrameBuffer(GLuint id) {
     Base::BindFrameBuffer(id);
 
@@ -274,7 +268,7 @@ void GLRenderEngine::LoadTranslate(Vector3 value) {
     viewMatrix.LoadTranslate(value);
 }
 
-void GLRenderEngine::RenderStart(RenderContextModel& contextModel) {
+void GLRenderEngine::RenderStart(SomeRenderContext* context) {
     renderPlans.clear();
 
     //    auto& proxyCommands = contextModel.phasedProxyCommands;

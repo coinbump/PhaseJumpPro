@@ -20,14 +20,13 @@ public:
     bool isToolActive = false;
     UP<SomeImGuiPainter> windowPainter;
 
-    // TODO: re-evaluate all registered render phases, probably don't want to run for each camera
     KaijuImGuiRenderProcessor(KaijuWorldSystem& editorSystem) :
-        Base({ .phases = { RenderPhase::PostClear } }),
+        Base({ .phases = { RenderPhase::RenderPassStartPost } }),
         editorSystem(editorSystem) {}
 
     // MARK: RenderProcessor
 
-    void Process(String phase) override;
+    void Process(Phase phase) override;
 
 protected:
     void BuildPainters();
