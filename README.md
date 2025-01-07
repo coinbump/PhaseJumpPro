@@ -10,12 +10,20 @@ The Unity code still works but it is using older design patterns and needs to be
 - Clone the repository and submodules
 
 ### Install SDL3.framework
-- Open the SDL Xcode project and archive the framework.
-- Show the archive in the Finder, right click and show package contents. Copy `SDL3.framework` to `Library/Frameworks`
+- Open the SDL Xcode project
+- Switch to the framework target (SDL3 with yellow toolbox icon)
+- Archive the framework
+- Show the archive in the Finder, right click and show package contents
+- Find `SDL3.framework` in `Products/Library/Frameworks`
+- Copy `SDL3.framework` to `/Library/Frameworks`
 
 ### Install SDL3_image.framework
-- Open the SDL_image Xcode project and archive the framework
-- Show the archive in the Finder, right click and show package contents. Copy `SDL3_image.framework` to `Library/Frameworks`
+- Open the SDL_image Xcode project
+- Switch to the framework target (SDL3_image with yellow toolbox icon)
+- Archive the framework
+- Show the archive in the Finder, right click and show package contents
+- Find `SDL3_image.framework` in `Products/Library/Frameworks`
+- Copy `SDL3_image.framework` to `/Library/Frameworks`
 
 ### Run Kaiju app
 - Open the Kaiju.workspace file and run the `Kaiju` or `Kaiju-Dev` target
