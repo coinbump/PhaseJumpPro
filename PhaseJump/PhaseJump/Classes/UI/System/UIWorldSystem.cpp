@@ -6,24 +6,11 @@
 using namespace std;
 using namespace PJ;
 
-UIWorldSystem* UIWorldSystem::shared;
-
 SomeCamera* UIWorldSystem::Camera() const {
-    return World()->MainCamera();
-}
+    auto world = World();
+    GUARDR(world, {})
 
-void UIWorldSystem::ProcessUIEvents(UIEventList const& uiEvents) {
-    Base::ProcessUIEvents(uiEvents);
-}
-
-void UIWorldSystem::Awake() {
-    Base::Awake();
-
-    if (nullptr != shared) {
-        PJ::Log("ERROR. Only 1 UISystem supported");
-        return;
-    }
-    shared = this;
+    return world->MainCamera();
 }
 
 void UIWorldSystem::OnUpdate(TimeSlice time) {
@@ -35,7 +22,6 @@ void UIWorldSystem::OnUpdate(TimeSlice time) {
 void UIWorldSystem::UpdateActiveHover(VectorList<PJ::LocalHit> hits) {
     GUARD(!IsEmpty(hits))
     auto& node = hits[0].node;
-    // TODO: SP audit
     SetActiveHover(SCAST<WorldNode>(node.shared_from_this()));
 }
 
@@ -81,14 +67,11 @@ void UIWorldSystem::OnPointerMove(PointerMoveUIEvent const& event) {
 
         // Nothing was hit, send pointer exit events
         for (auto& node : pointerEnterNodes) {
-            GUARD_CONTINUE(!node.expired())
-
             // cout << "Log: Pointer Exit: " <<
             // pointerMotionEvent->position.ToString() << std::endl;
 
-            auto _node = node.lock();
             PointerExitUIEvent event;
-            DispatchEvent(*_node, SignalId::PointerExit, event);
+            DispatchEvent(*node, SignalId::PointerExit, event);
         }
         pointerEnterNodes.clear();
     } else {
@@ -99,12 +82,7 @@ void UIWorldSystem::OnPointerMove(PointerMoveUIEvent const& event) {
 
         bool isHitInPointerEnterNodes = false;
         for (auto& node : pointerEnterNodes) {
-            if (node.expired()) {
-                continue;
-            }
-
-            auto _node = node.lock();
-            if (_node.get() == &hitNode) {
+            if (node.get() == &hitNode) {
                 isHitInPointerEnterNodes = true;
                 continue;
             }
@@ -112,11 +90,11 @@ void UIWorldSystem::OnPointerMove(PointerMoveUIEvent const& event) {
             // cout << "Log: Pointer Exit: " <<
             // pointerMotionEvent->position.ToString() << std::endl;
             PointerExitUIEvent event;
-            DispatchEvent(*_node, SignalId::PointerExit, event);
+            DispatchEvent(*node, SignalId::PointerExit, event);
         }
         pointerEnterNodes.clear();
 
-        Add(pointerEnterNodes, SCAST<WorldNode>(hitNode.shared_from_this()));
+        pointerEnterNodes.insert(SCAST<WorldNode>(hitNode.shared_from_this()));
 
         // The hit node already received a pointer enter event
         if (!isHitInPointerEnterNodes) {
@@ -143,21 +121,19 @@ void UIWorldSystem::OnPointerDown(PointerDownUIEvent const& pointerDownEvent) {
 
     // cout << "Log: OnPointerDown\n";
 
-    auto screenPos = pointerDownEvent.screenPos;
     auto hits = TestScreenHit(pointerDownEvent.screenPos);
     for (auto& hit : hits) {
-        // TODO: only send pointer event to the topmost hit that also supports pointer down signals
-        // cout << "Log: HIT: OnPointerDown\n";
+        // FUTURE: only send pointer event to the topmost hit that also supports pointer down
+        // signals cout << "Log: HIT: OnPointerDown\n";
 
         // Send mouse down event to node components
-        // TODO: we aren't converting to local pos here
-        auto localPointerDownEvent = PointerDownUIEvent(screenPos, pointerDownEvent.button);
         auto& hitNode = hit.node;
-        DispatchEvent(hitNode, SignalId::PointerDown, localPointerDownEvent);
+        DispatchEvent(hitNode, SignalId::PointerDown, pointerDownEvent);
 
         pointerDownNodesMap[pointerDownEvent.button].clear();
-        Add(pointerDownNodesMap[pointerDownEvent.button],
-            SCAST<WorldNode>(hitNode.shared_from_this()));
+        pointerDownNodesMap[pointerDownEvent.button].insert(
+            SCAST<WorldNode>(hitNode.shared_from_this())
+        );
     }
 }
 
@@ -178,12 +154,6 @@ void UIWorldSystem::OnPointerUp(PointerUpUIEvent const& pointerUpEvent) {
 
     auto iterNodes = pointerDownNodesMap[pointerUpEvent.button];
     for (auto& node : iterNodes) {
-        auto _node = node.lock();
-        GUARD_CONTINUE(_node)
-
-        // Send event to node components
-        // TODO: we aren't converting to local pos here
-        auto localPointerUpEvent = PointerUpUIEvent(pointerUpEvent.button);
-        DispatchEvent(*_node, SignalId::PointerUp, localPointerUpEvent);
+        DispatchEvent(*node, SignalId::PointerUp, pointerUpEvent);
     }
 }

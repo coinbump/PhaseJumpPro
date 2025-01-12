@@ -2,6 +2,7 @@
 #include <PhaseJump/Agent.h>
 #include <PhaseJump/AgentGroup.h>
 #include <PhaseJump/AgentSystem.h>
+#include <PhaseJump/App.h>
 #include <PhaseJump/CycleHueEffect.h>
 #include <PhaseJump/AnimatedSpriteRenderer.h>
 #include <PhaseJump/AudioStreamPlayer.h>

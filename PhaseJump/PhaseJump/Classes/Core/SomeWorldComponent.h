@@ -78,6 +78,10 @@ namespace PJ {
             return _core.name.size() > 0 ? _core.name : TypeName();
         }
 
+        void SetName(String value) {
+            _core.name = value;
+        }
+
         String Id() const {
             return _core.id;
         }

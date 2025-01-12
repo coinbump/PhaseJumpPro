@@ -15,7 +15,7 @@
  CODE REVIEW: 10/22/24
  */
 namespace PJ {
-    /// Standard properties and functionality for an ECS editor-based app
+    /// Standard properties and functionality for an editor-based app
     class EditorWorldSystem : public SomeWorldSystem {
     public:
         /// Model for node inspection

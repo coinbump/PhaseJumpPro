@@ -31,6 +31,9 @@ namespace PJ {
      buffers. All render model types must be non-polymorphic to allow this
      */
     struct RenderModel {
+    public:
+        using This = RenderModel;
+
     protected:
         /// Material used to render mesh. Sharing materials between objects allows batching
         RenderMaterial* material{};
@@ -40,36 +43,37 @@ namespace PJ {
         /// extra copy
         SharedVectorList<RenderColor> vertexColors;
 
-    public:
-        using This = RenderModel;
+        /// Mesh to be rendered
+        Mesh mesh;
 
+        /// Mesh pointer to be rendered
+        /// Optimize: use this to avoid unnecessary copies
+        Mesh const* meshPtr{};
+
+    public:
         /// @return Returns the material
         RenderMaterial* Material() const {
             return material;
         }
 
-        void SetMaterial(RenderMaterial* material) {
-            this->material = material;
+        void SetMaterial(RenderMaterial* value) {
+            material = value;
         }
 
         /// Unique id of object that generated this model
-        /// Used for render order, and z order sorting
         String id;
 
         /// User-readable name for debugging
         String name;
 
-        /// Mesh to be rendered
-        Mesh mesh;
-
         /// Z layer for render, allows object renders to be grouped in layers
-        /// NOTE: currently zIndex is ignored
+        /// (Doesn't work currently)
         uint32_t zIndex{};
 
-        /// Custom properties and render hints for render system
+        /// Custom properties and render hints
         Tags tags;
 
-        /// Allows model to pass render hints to render processors
+        /// Typed render hints
         TypeTagSet typeTags;
 
         /// Relative render order
@@ -80,7 +84,7 @@ namespace PJ {
         /// Painted on to the model by a render processor for Z-ordering in ortho camera space
         float z{};
 
-        /// Matrix for transform from model-local to world space
+        /// Matrix for transform from model to world space
         Matrix4x4 matrix;
 
         /// Allows us to pre-emptively resize vectors with default elements
@@ -89,8 +93,28 @@ namespace PJ {
         RenderModel(RenderMaterial* material) :
             material(material) {}
 
+        Mesh& ModifiableMesh() {
+            if (meshPtr) {
+                mesh = *meshPtr;
+                meshPtr = {};
+            }
+            return mesh;
+        }
+
+        Mesh const& GetMesh() const {
+            return meshPtr ? *meshPtr : mesh;
+        }
+
+        void SetMesh(Mesh const& value) {
+            mesh = value;
+        }
+
+        void SetMeshPtr(Mesh const* value) {
+            meshPtr = value;
+        }
+
         bool IsValid() const {
-            return mesh.Vertices().size() > 0;
+            return GetMesh().Vertices().size() > 0;
         }
 
         std::span<RenderColor const> VertexColors() const {

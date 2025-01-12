@@ -1,52 +1,44 @@
+{"frames": [
+
 {
-    "software": {
-        "name": "rTexPacker v4.0",
-        "url": "https://raylibtech.itch.io/rtexpacker"
-    },
-    "atlas": {
-        "imagePath": "example-mineSweeper.png",
-        "width": 1024,
-        "height": 1024,
-        "spriteCount": 4,
-        "isFont": false,
-        "fontSize": 32
-    },
-    "sprites": [
-        {
-            "nameId": "example-minesweeper-tile-bomb",
-            "origin": { "x": 0, "y": 0 },
-            "position": { "x": 1, "y": 1 },
-            "sourceSize": { "width": 50, "height": 50 },
-            "padding": 0,
-            "trimmed": false,
-            "trimRec": { "x": 0, "y": 0, "width": 50, "height": 50 }
-        },
-        {
-            "nameId": "example-minesweeper-tile-empty",
-            "origin": { "x": 0, "y": 0 },
-            "position": { "x": 52, "y": 1 },
-            "sourceSize": { "width": 50, "height": 50 },
-            "padding": 0,
-            "trimmed": false,
-            "trimRec": { "x": 0, "y": 0, "width": 50, "height": 50 }
-        },
-        {
-            "nameId": "example-minesweeper-tile-fill",
-            "origin": { "x": 0, "y": 0 },
-            "position": { "x": 103, "y": 1 },
-            "sourceSize": { "width": 50, "height": 50 },
-            "padding": 0,
-            "trimmed": false,
-            "trimRec": { "x": 0, "y": 0, "width": 50, "height": 50 }
-        },
-        {
-            "nameId": "example-minesweeper-tile-flag",
-            "origin": { "x": 0, "y": 0 },
-            "position": { "x": 154, "y": 1 },
-            "sourceSize": { "width": 50, "height": 50 },
-            "padding": 0,
-            "trimmed": false,
-            "trimRec": { "x": 0, "y": 0, "width": 50, "height": 50 }
-        }
-    ]
+	"filename": "example-minesweeper-tile-bomb.png",
+	"frame": {"x":1,"y":1,"w":50,"h":50},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":50,"h":50},
+	"sourceSize": {"w":50,"h":50}
+},
+{
+	"filename": "example-minesweeper-tile-empty.png",
+	"frame": {"x":53,"y":1,"w":50,"h":50},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":50,"h":50},
+	"sourceSize": {"w":50,"h":50}
+},
+{
+	"filename": "example-minesweeper-tile-fill.png",
+	"frame": {"x":105,"y":1,"w":50,"h":50},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":50,"h":50},
+	"sourceSize": {"w":50,"h":50}
+},
+{
+	"filename": "example-minesweeper-tile-flag.png",
+	"frame": {"x":157,"y":1,"w":50,"h":50},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":50,"h":50},
+	"sourceSize": {"w":50,"h":50}
+}],
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "example-mineSweeper.png",
+	"format": "RGBA8888",
+	"size": {"w":208,"h":52},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:5508b39b2f52ffa81b1e4be37bf3c55d:175c90ecff8bf4ae177aafc1ae5b7a83:79baf3b5cd11d8509a063a8561e62d11$"
+}
 }

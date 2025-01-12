@@ -128,7 +128,7 @@ void World::OnGo() {
     Base::OnGo();
 
 #ifdef DEBUG
-    std::cout << "PHASE JUMP IS DEBUG";
+    std::cout << "PHASE JUMP IS DEBUG" << std::endl;
 #endif
 
     RateLimiter::OnFireFunc overrideFunc = [this](auto& limiter) { RenderNow(); };

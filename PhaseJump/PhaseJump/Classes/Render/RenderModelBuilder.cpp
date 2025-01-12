@@ -26,7 +26,7 @@ RenderModelBuilder::Build(SomeMaterialRenderer& renderer, RendererModel& model) 
     GUARDR_LOG(material, {}, "ERROR. Missing material")
 
     auto& materialTextures = material->Textures();
-    auto result = Build(renderer.owner, model.Mesh(), *material, materialTextures);
+    auto result = Build(renderer.owner, model.GetMesh(), *material, materialTextures);
     GUARDR(result, {})
 
     // NOTE: currently zIndex is ignored
@@ -42,7 +42,9 @@ std::optional<RenderModel> RenderModelBuilder::Build(
     RenderModel renderModel(&material);
     renderModel.name = node ? node->Name() : "";
     renderModel.id = node ? MakeString((uint64_t)node) : "";
-    renderModel.mesh = mesh;
+
+    renderModel.SetMeshPtr(&mesh);
+
     renderModel.matrix = node ? node->ModelMatrix() : renderModel.matrix;
 
     return renderModel;

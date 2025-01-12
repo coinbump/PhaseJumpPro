@@ -12,23 +12,19 @@ using namespace std;
 using namespace PJ;
 
 VectorList<RaycastHit2D> SimpleRaycaster2D::Raycast(Vector2 worldPosition, Vector2 direction) {
+    // NOTE: true collision support will come later. This is just a brute force approach to get the
+    // UI working
     VectorList<RaycastHit2D> result;
     GUARDR(owner && owner->World(), result)
 
-    auto owner = this->owner;
-    GUARDR(owner, result)
-    auto ownerNode = owner;
+    auto world = owner->World();
 
-    auto camera = ownerNode->GetComponent<SomeCamera>();
+    auto camera = owner->GetComponent<SomeCamera>();
     if (nullptr == camera) {
         PJ::Log("ERROR. Raycaster requires camera.");
         return result;
     }
 
-    auto world = owner->World();
-    GUARDR(world, result)
-
-    // This is a brute force solution and not efficient
     // FUTURE: find more optimal raycast solutions as needed
     auto root = world->Root();
 

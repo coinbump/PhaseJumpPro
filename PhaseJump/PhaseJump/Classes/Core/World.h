@@ -25,15 +25,12 @@ namespace PJ {
     class SomePlatformWindow;
 
     /**
-     Container for the ECS system that drives Phase Jump Pro
+     Container for the system that drives Phase Jump Pro
 
      Each window has a world. Each world contains a node tree with nodes. Each node contains
      components that implement specific behavior. A renderer component produces render models, which
      are sent to the render system. Those render models are then processed by the render
      engine into GPU commands
-
-     As an alternative to the standard ECS tree, create a single node with a component that produces
-     render models. This might be more efficient for certain applications.
      */
     class World : public Base {
     public:
@@ -60,7 +57,7 @@ namespace PJ {
         /// Rate limits renders
         RateLimiter renderLimiter{ 1.0f / 240.0f };
 
-        /// ECS root node. Child nodes add components that implement specific behaviors for each
+        /// Root node. Child nodes add components that implement specific behaviors for each
         /// node
         SP<WorldNode> root = MAKE<WorldNode>("Root");
 

@@ -30,7 +30,6 @@ SP<Font> PJ::FindFont(ResourceCatalog const& resources, FontSpec spec) {
 
         GUARDR(!IsEmpty(candidates), nullptr)
 
-        // TODO: needs unit test
         std::sort(
             candidates.begin(), candidates.end(),
             [&](SP<Font> const& lhs, SP<Font> const& rhs) {

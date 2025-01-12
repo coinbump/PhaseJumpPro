@@ -19,7 +19,7 @@ namespace PJ {
     /**
      Immediate mode renderer
 
-     As opposed to the traditional ECS model of creating persistent renderers, this pattern allows
+     As opposed to the traditional model of creating persistent renderers, this pattern allows
      you to draw in immediate mode. This can make building certain types of apps easier
 
      Perform the immediate render by using the RenderPrepare signal

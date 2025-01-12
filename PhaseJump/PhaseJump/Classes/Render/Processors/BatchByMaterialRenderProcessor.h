@@ -19,7 +19,7 @@ namespace PJ {
         using Base = RenderProcessor;
 
         BatchByMaterialRenderProcessor() :
-            Base({ .name = "Batch by material", .phases = { RenderPhase::DrawPrepare } }) {}
+            Base({ .name = "Batch by material", .phases = { RenderPhaseId::DrawPrepare } }) {}
 
         std::optional<RenderModel> Combine(VectorList<RenderModel*>& renderModels);
 

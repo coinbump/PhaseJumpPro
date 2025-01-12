@@ -16,7 +16,7 @@ namespace PJ {
     /// Platform-level window that contains a world and render context for renders
     class SomePlatformWindow : public Base {
     protected:
-        /// ECS nodes, systems, and components
+        /// Nodes, systems, and components
         SP<World> world;
 
     public:

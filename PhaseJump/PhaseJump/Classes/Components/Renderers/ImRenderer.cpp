@@ -501,7 +501,7 @@ void ImRenderer::Configure() {
                 }
 
                 for (auto& renderModel : renderModels) {
-                    renderModel.mesh *= matrix;
+                    renderModel.ModifiableMesh() *= matrix;
                 }
                 AddRange(result, renderModels);
 

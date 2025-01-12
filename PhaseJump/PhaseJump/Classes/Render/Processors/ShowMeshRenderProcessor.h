@@ -18,7 +18,7 @@ namespace PJ {
         Color color;
 
         ShowMeshRenderProcessor(Color color = Color::blue) :
-            Base({ .name = "Show mesh", .phases = { RenderPhase::DrawPrepare } }),
+            Base({ .name = "Show mesh", .phases = { RenderPhaseId::DrawPrepare } }),
             color(color) {}
 
         // MARK: RenderProcessor

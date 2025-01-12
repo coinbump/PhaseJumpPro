@@ -14,6 +14,8 @@ using namespace PJ;
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
     KaijuGo();
     
+    // Example: App::New().qb.Circle(100, Color::red);
+    
 //    SQLDatabase db;
 //
 //    NSString* libraryPath;

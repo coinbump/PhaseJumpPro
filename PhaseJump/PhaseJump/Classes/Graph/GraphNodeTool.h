@@ -3,8 +3,9 @@
 #include "SomeGraphNode.h"
 
 /*
- TODO: this doesn't make sense for acyclic
- CODE REVIEW: /23
+ RATING: 5 stars
+ Has unit tests
+ CODE REVIEW: 1/9/25
  */
 namespace PJ {
     template <class EdgeCore = StandardEdgeCore>
@@ -26,7 +27,6 @@ namespace PJ {
             return CollectEdgeNodesTo(fromNode, nodes, searchedNodes, true);
         }
 
-        // TODO: should NodeList be a template parameter type?
         /// Collects depth-first ordered graph
         /// NOTE: may not work as expected when loops exist in the graph
         NodeList CollectDepthFirstGraph(SP<Node> fromNode) {
@@ -111,9 +111,7 @@ namespace PJ {
 
         void
         CollectDepthFirstChildren(NodeList& nodes, NodeSharedPtr fromNode, NodeSet& searchedNodes) {
-            if (nullptr == fromNode) {
-                return;
-            }
+            GUARD(fromNode)
 
             for (auto& edge : fromNode->Edges()) {
                 auto& toNode = edge->toNode;

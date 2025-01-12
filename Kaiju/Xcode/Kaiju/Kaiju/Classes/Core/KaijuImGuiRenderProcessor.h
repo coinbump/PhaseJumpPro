@@ -21,7 +21,7 @@ public:
     UP<SomeImGuiPainter> windowPainter;
 
     KaijuImGuiRenderProcessor(KaijuWorldSystem& editorSystem) :
-        Base({ .phases = { RenderPhase::RenderPassStartPost } }),
+        Base({ .phases = { RenderPhaseId::RenderPassStartPost } }),
         editorSystem(editorSystem) {}
 
     // MARK: RenderProcessor

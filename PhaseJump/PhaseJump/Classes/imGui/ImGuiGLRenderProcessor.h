@@ -19,8 +19,8 @@ namespace PJ {
 
         ImGuiGLRenderProcessor(ImGuiContext* imGuiContext) :
             // Unnamed, so it doesn't show up in render processor list
-            Base({ .phases = { RenderPhase::RenderPassStartPrepare,
-                               RenderPhase::RenderPassPresentPrepare } }),
+            Base({ .phases = { RenderPhaseId::RenderPassStartPrepare,
+                               RenderPhaseId::RenderPassPresentPrepare } }),
             imGuiContext(imGuiContext) {}
 
         // MARK: RenderProcessor

@@ -26,7 +26,6 @@ namespace PJ {
         using BuildRenderModelsFunc = std::function<VectorList<RenderModel>(RendererModel& model)>;
 
     protected:
-        using MeshType = PJ::Mesh;
         using ColorType = PJ::Color;
 
         bool meshNeedsBuild = true;
@@ -40,7 +39,7 @@ namespace PJ {
         VectorList<RenderColor> vertexColors;
 
         /// Mesh used for render
-        MeshType mesh;
+        Mesh mesh;
 
         /// Renderer size in world space
         Vector3 worldSize;
@@ -61,10 +60,10 @@ namespace PJ {
         RendererFunc onColorsChangeFunc;
 
     public:
-        /// (Optional). Specifies z layer group for render
+        /// Specifies z layer group for render
         int zIndex = 0;
 
-        /// (Optional). Material for render
+        /// Material for render
         SP<RenderMaterial> material;
 
         RendererModel(Vector3 worldSize);
@@ -153,7 +152,7 @@ namespace PJ {
             return vertexColors;
         }
 
-        MeshType const& Mesh() {
+        Mesh const& GetMesh() {
             BuildIfNeeded();
             return mesh;
         }

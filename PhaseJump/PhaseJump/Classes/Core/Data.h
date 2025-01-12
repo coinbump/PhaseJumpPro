@@ -70,6 +70,14 @@ namespace PJ {
             }
         }
 
+        Data(std::span<Type const> span) {
+            auto byteSize = span.size_bytes();
+            auto resizeResult = ResizeBytes(byteSize);
+            if (resizeResult == byteSize) {
+                memcpy(data, span.data(), byteSize);
+            }
+        }
+
         virtual ~Data() {
             if (data) {
                 free(data);

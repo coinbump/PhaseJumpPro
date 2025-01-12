@@ -40,6 +40,8 @@ namespace PJ {
             String label = "##Button##";
             ButtonControl::OnPressFunc onPressFunc;
             ModifyViewFunc modifyViewFunc;
+
+            // FUTURE: isElastic flag
         };
 
         /// Collapsing header config

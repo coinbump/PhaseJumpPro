@@ -20,6 +20,10 @@ SomeWorldComponent::SomeWorldComponent(String name) :
 
             return UIPlanner::TextConfig{ .label = "Signals", .text = text };
         });
+
+        args.planner.InputBool({ .label = "Is Enabled",
+                                 .binding = { [this]() { return IsEnabled(); },
+                                              [this](auto& value) { Enable(value); } } });
     };
     Override(planUIFuncs[UIContextId::Inspector], planUIFunc);
 }

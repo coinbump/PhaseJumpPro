@@ -213,7 +213,7 @@ namespace PJ {
         /// Adds a component
         void Add(SP<SomeWorldComponent> component);
 
-        /// Adds an associate component (implementation depends on single vs multiple component ECS)
+        /// Adds an associate component (implementation depends on single vs multiple component)
         void AddAssociate(SP<SomeWorldComponent> component);
 
         /// Adds a component based on type and arguments

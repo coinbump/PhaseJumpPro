@@ -12,17 +12,15 @@
 #include "VectorList.h"
 
 /*
- RATING: 4 stars
+ RATING: 5 stars
  Tested and works
- Missing some functionality (Render line, lineLoop, etc.)
+ CODE REVIEW: 1/12/25
  */
 namespace PJ {
     class GLVertexBuffer;
     class GLIndexBuffer;
     class GLShaderProgram;
     class Vector3;
-
-    enum class RenderStep { PreRender };
 
     enum class ColorFormat {
         // Send colors as a 4-component float color
@@ -34,90 +32,119 @@ namespace PJ {
 
     /// Plan for building a GL vertex buffer
     struct GLVertexBufferPlan {
-        struct Item {
+        /// A vertex buffer consists of item groups like vertices, colors, etc.
+        /// This defines the data, count, and size for each VBO item group
+        class SomeItem {
+        public:
             String attributeId;
-            uint32_t componentCount;
-            uint32_t componentSize;
-            GLenum glType;
-            bool normalize;
-
-            // TODO: use SharedVector to save on copies
-            SP<Data<>> data;
+            uint32_t componentCount{};
+            uint32_t componentSize{};
+            GLenum glType{};
+            bool normalize{};
+            void* dataPtr{};
 
             uint32_t Size() const {
                 return componentSize * componentCount;
             }
+        };
 
-            // TODO: use std::span here
+        /// Stores the typed-span for a VBO item
+        template <class Type>
+        struct Item : public SomeItem {
+            std::span<Type const> data;
+
             Item(
                 String attributeId, uint32_t componentCount, uint32_t componentSize, GLenum glType,
-                void* data, bool normalize = false
+                std::span<Type const> data, bool normalize = false
             ) :
-                attributeId(attributeId),
-                componentCount(componentCount),
-                componentSize(componentSize),
-                glType(glType),
-                normalize(normalize) {
-                this->data = MAKE<Data<>>();
-                this->data->CopyIn((int8_t*)data, componentCount * componentSize);
+                data(data) {
+                this->attributeId = attributeId;
+                this->componentCount = componentCount;
+                this->componentSize = componentSize;
+                this->glType = glType;
+                this->normalize = normalize;
+                this->dataPtr = (void*)(data.data());
             }
         };
 
-        VectorList<Item> items;
+        /// Stores the typed-span for a VBO item with a copy of the data
+        template <class Type>
+        struct StorageItem : public SomeItem {
+            Data<Type> data;
 
-        template <class T>
+            StorageItem(
+                String attributeId, uint32_t componentCount, uint32_t componentSize, GLenum glType,
+                std::span<Type const> _data, bool normalize = false
+            ) :
+                data(_data) {
+                this->attributeId = attributeId;
+                this->componentCount = componentCount;
+                this->componentSize = componentSize;
+                this->glType = glType;
+                this->normalize = normalize;
+                this->dataPtr = (void*)(data.Pointer());
+            }
+        };
+
+        /// Items that tell the render engine how to build the VBO
+        VectorList<UP<SomeItem>> items;
+
+        /// Adds a new plan item
+        template <class Type>
         void
-        Add(String attributeId, std::span<T const> collection, GLenum glType,
+        Add(String attributeId, std::span<Type const> collection, GLenum glType,
             bool normalize = false) {
-            PJ::Add(
-                items, Item(
-                           attributeId, (uint32_t)collection.size(),
-                           (uint32_t)(collection.size_bytes() / collection.size()), glType,
-                           (void*)collection.data(), normalize
-                       )
-            );
+            items.push_back(NEW<Item<Type>>(
+                attributeId, (uint32_t)collection.size(),
+                (uint32_t)(collection.size_bytes() / collection.size()), glType, collection,
+                normalize
+            ));
         }
 
-        void Add(String attributeId, std::span<Vector3 const> components) {
-            Add(attributeId, components, GL_FLOAT);
-        }
-
-        void Add(String attributeId, std::span<Color const> components) {
-            Add(attributeId, components, GL_FLOAT);
-        }
-
-        void Add(String attributeId, std::span<RGBAColor const> components) {
-            Add(attributeId, components, GL_UNSIGNED_BYTE, true);
-        }
-
-        void Add(String attributeId, std::span<Vector2 const> components) {
-            Add(attributeId, components, GL_FLOAT);
+        /// Adds a new plan storage item
+        template <class Type>
+        void AddStorage(
+            String attributeId, std::span<Type const> collection, GLenum glType,
+            bool normalize = false
+        ) {
+            items.push_back(NEW<StorageItem<Type>>(
+                attributeId, (uint32_t)collection.size(),
+                (uint32_t)(collection.size_bytes() / collection.size()), glType, collection,
+                normalize
+            ));
         }
     };
 
+    /// Stores a render model, and a plan for building the VBO for that render model
     struct GLRenderPlan {
-        RenderModel model;
-        GLVertexBufferPlan vboPlan;
+        RenderModel const& model;
+        UP<GLVertexBufferPlan> vboPlan;
 
-        GLRenderPlan(RenderModel model, GLVertexBufferPlan vboPlan) :
+        GLRenderPlan(RenderModel const& model, UP<GLVertexBufferPlan>& vboPlan) :
             model(model),
-            vboPlan(vboPlan) {}
+            vboPlan(std::move(vboPlan)) {}
     };
 
     /**
      Abstracts OpenGL render commands to allow for a subclass to implement
-     actual renders. Example: OpenGL and OpenGLES are similar, but slightly different
+     actual renders.
+
+     Needed because OpenGL and OpenGL ES diverge
      */
     class SomeGLRenderEngine : public SomeRenderEngine {
     protected:
+        // FUTURE: Support OpengL ES if needed
+        /// Stores the active render state (work in progress)
         GLRenderState renderState;
+
+        /// Render plans for each render model
+        VectorList<UP<GLRenderPlan>> renderPlans;
 
     public:
         Matrix4x4 viewMatrix;
         Matrix4x4 projectionMatrix;
 
-        VectorList<SP<GLRenderPlan>> renderPlans;
-
+        /// Color format for sending colors to OpenGL
         ColorFormat colorFormat = ColorFormat::Byte;
 
         SomeGLRenderEngine();
@@ -125,33 +152,56 @@ namespace PJ {
         virtual void SetViewport(GLint x, GLint y, GLsizei width, GLsizei height);
         virtual void BindFrameBuffer(GLuint fb);
 
-        /// Load current matrix for rendering
+        /// Loads current matrix for rendering
         virtual void LoadMatrix() = 0;
+
+        /// Binds a shader program
         virtual void Use(GLShaderProgram& program) = 0;
-        virtual SP<GLVertexBuffer> BuildVertexBuffer(GLVertexBufferPlan const& plan) = 0;
-        virtual SP<GLIndexBuffer> BuildIndexBuffer(std::span<uint32_t const> indices) = 0;
+
+        /// Buids a vertex buffer from a plan
+        virtual UP<GLVertexBuffer> BuildVertexBuffer(GLVertexBufferPlan const& plan) = 0;
+
+        /// Builds an index buffer
+        virtual UP<GLIndexBuffer> BuildIndexBuffer(std::span<uint32_t const> indices) = 0;
+
+        /// Binds the specified vertex buffer
         virtual void BindVertexBuffer(GLuint vbo);
+
+        /// Binds the specified index buffer
         virtual void BindIndexBuffer(GLuint ibo);
+
+        /// Binds the specified VAO
         virtual void BindVertexArray(GLuint vao);
 
-        void BindIndexBuffer(GLIndexBuffer ibo);
-        void BindVertexBuffer(GLVertexBuffer vbo);
-
+        /// Enables the specified vertex attribute array
         virtual void EnableVertexAttributeArray(GLuint index, bool isEnabled);
+
+        /// Disables all vertex attribute arrays
         virtual void DisableAllVertexAttributeArrays();
+
+        /// Enables only the specified set of vertex attribute arrays
         virtual void EnableOnlyVertexAttributeArrays(UnorderedSet<GLuint> attributeLocations);
 
-        virtual void UniformMatrix4fv(GLint location, const GLfloat* value);
+        /// Specifies a uniform matrix value for the current shader
+        virtual void UniformMatrix4fv(GLint location, GLfloat const* value);
 
         // IMPORTANT: the pointer parameter does not represent a pointer in
-        // modern OpenGL Instead it is an offset into the Vertex Buffer
+        // modern OpenGL. Instead it is an offset into the vertex buffer
         virtual void VertexAttributePointer(
             GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride,
             const GLvoid* pointer
         ) = 0;
+
+        /// Draws arrays
         virtual void DrawArrays(GLenum drawMode, GLint drawFirst, GLsizei drawCount) = 0;
+
+        /// Draws elements
         virtual void DrawElements(GLenum mode, GLsizei count, GLenum type, const void* indices) = 0;
+
+        /// Runs an OpenGL command, with logging
         virtual void RunGL(std::function<void()> command, String name) = 0;
+
+        /// Sets the blend mode
         virtual void SetBlendMode(GLBlendMode blendMode);
 
         // MARK: - SomeRenderEngine

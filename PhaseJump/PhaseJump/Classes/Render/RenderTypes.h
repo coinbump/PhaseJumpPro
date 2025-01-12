@@ -22,7 +22,7 @@ namespace PJ {
 #endif
 
     /// The render processing pipeline is broken up into phases
-    namespace RenderPhase {
+    namespace RenderPhaseId {
         /// Render events (sent once for render pass of all cameras)
         auto constexpr RenderPassStartPrepare = "renderPass.start.prepare";
         auto constexpr RenderPassStartPost = "renderPass.start.post";
@@ -36,7 +36,7 @@ namespace PJ {
         auto constexpr ClearPost = "clear.post";
         auto constexpr DrawPrepare = "draw.prepare";
         auto constexpr DrawPost = "draw.post";
-    } // namespace RenderPhase
+    } // namespace RenderPhaseId
 
     enum class RenderFeatureState {
         Enable,

@@ -54,7 +54,6 @@ String Matrix4x4::ToString() const {
     return s.str();
 }
 
-// Load the identity matrix
 void Matrix4x4::LoadIdentity() {
     (*this)[0] = 1.0f;
     (*this)[1] = 0.0f;
@@ -78,7 +77,6 @@ void Matrix4x4::LoadIdentity() {
 }
 
 void Matrix4x4::LoadScale(Vector3 scale) {
-    // Tested and works
     (*this)[0] = scale[0];
     (*this)[1] = 0.0f;
     (*this)[2] = 0.0f;
@@ -150,12 +148,6 @@ void Matrix4x4::LoadYRadRotation(float radians) {
     (*this)[15] = 1.0f;
 }
 
-/*
-    Matrix4x4::LoadZRadRotation
-
-    Applies a scaling transformation to the matrix.
-
- */
 void Matrix4x4::LoadZRadRotation(float radians) {
     float cosrad = cosf(radians);
     float sinrad = sinf(radians);
@@ -181,7 +173,6 @@ void Matrix4x4::LoadZRadRotation(float radians) {
     (*this)[15] = 1.0f;
 }
 
-/// Load a translation matrix
 void Matrix4x4::LoadTranslate(Vector3 translate) {
     (*this)[0] = 1.0f;
     (*this)[1] = 0.0f;
@@ -204,15 +195,6 @@ void Matrix4x4::LoadTranslate(Vector3 translate) {
     (*this)[15] = 1.0f;
 }
 
-/**
-    Matrix4x4::LoadPerspective
-
-    Parameters:
-    `fov_radians`: field of view in the y direction
-    `aspect`: aspect ratio in the x direction (height)
-    `zNear`: distance from viewer to the near clipping plane (always positive)
-    `zFar`: distance from viewer to the far clipping plane (always positive)
- */
 void Matrix4x4::LoadPerspective(float fov_radians, float aspect, float zNear, float zFar) {
     float f = 1.0f / tanf(fov_radians / 2.0f);
 
@@ -237,19 +219,9 @@ void Matrix4x4::LoadPerspective(float fov_radians, float aspect, float zNear, fl
     (*this)[15] = 0.0f;
 }
 
-/**
-    Loads an orthogonal matrix for 2D projection of a 3D space.
-
-    WIN32: far, near are reserved in Visual Studio. Use zNear/zFar for
-   portability.
-
-    https://www.scratchapixel.com/lessons/3d-basic-rendering/perspective-and-orthographic-projection-matrix/orthographic-projection-matrix.html
-
- */
 void Matrix4x4::LoadOrthographic(
     float left, float right, float bottom, float top, float zNear, float zFar
 ) {
-    // TODO: is this correct? far and near might be switched? (create scene to test)
     float r_l = right - left;
     float t_b = top - bottom;
     float f_n = zFar - zNear;
@@ -326,10 +298,10 @@ Vector3 Matrix4x4::MultiplyPoint(Vector3 point) const {
 
     auto result = tsTransform * tsPoint;
     return Vector3(result.x, result.y, result.z);
-} // Tested
+}
 
 void Matrix4x4::Inverse() {
     Terathon::Transform3D tsTransform = *this;
     tsTransform = Terathon::Inverse(tsTransform);
     *this = tsTransform;
-} // Tested
+}

@@ -31,6 +31,8 @@ EditorImGuiInspectorWindowPainter::EditorImGuiInspectorWindowPainter(EditorWorld
             system.storage.Set("window.inspector", "isVisible", isInspectorWindowVisible);
 
             if (system.sceneUIPlan) {
+                ImGuiPushId push("scene");
+
                 if (ImGui::CollapsingHeader("Scene", ImGuiTreeNodeFlags_DefaultOpen)) {
                     ImGuiPlanPainter(*system.sceneUIPlan).Paint();
                 }
@@ -40,66 +42,79 @@ EditorImGuiInspectorWindowPainter::EditorImGuiInspectorWindowPainter(EditorWorld
                 auto inspectNode = system.inspectNodeModel->node.lock();
                 auto& node = *inspectNode;
 
-                auto nodeName = IsEmpty(node.Name()) ? "Node" : node.Name().c_str();
-                ImGui::Text("%s", nodeName);
+                {
+                    ImGuiPushId push("node");
 
-                UIPlan uiPlan;
-                UIPlanner planner(uiPlan);
+                    String nodeName = IsEmpty(node.Name()) ? "Node" : node.Name();
+                    ImGui::Text("%s", nodeName.c_str());
 
-                planner.InputFloat({ .label = "X",
-                                     .binding = Binding<float>(
-                                         [&]() { return node.transform.LocalPosition().x; },
-                                         [&](auto& value) {
-                                             node.transform.SetAxisPosition(Axis::X, value);
-                                         }
-                                     ) });
-                planner.InputFloat({ .label = "Y",
-                                     .binding = Binding<float>(
-                                         [&]() { return node.transform.LocalPosition().y; },
-                                         [&](auto& value) {
-                                             node.transform.SetAxisPosition(Axis::Y, value);
-                                         }
-                                     ) });
-                planner.InputFloat({ .label = "Z",
-                                     .binding = Binding<float>(
-                                         [&]() { return node.transform.LocalPosition().z; },
-                                         [&](auto& value) {
-                                             node.transform.SetAxisPosition(Axis::Z, value);
-                                         }
-                                     ) });
+                    UIPlan uiPlan;
+                    UIPlanner planner(uiPlan);
 
-                ImGuiPlanPainter(uiPlan).Paint();
+                    planner.InputFloat({ .label = "X",
+                                         .binding = Binding<float>(
+                                             [&]() { return node.transform.LocalPosition().x; },
+                                             [&](auto& value) {
+                                                 node.transform.SetAxisPosition(Axis::X, value);
+                                             }
+                                         ) });
+                    planner.InputFloat({ .label = "Y",
+                                         .binding = Binding<float>(
+                                             [&]() { return node.transform.LocalPosition().y; },
+                                             [&](auto& value) {
+                                                 node.transform.SetAxisPosition(Axis::Y, value);
+                                             }
+                                         ) });
+                    planner.InputFloat({ .label = "Z",
+                                         .binding = Binding<float>(
+                                             [&]() { return node.transform.LocalPosition().z; },
+                                             [&](auto& value) {
+                                                 node.transform.SetAxisPosition(Axis::Z, value);
+                                             }
+                                         ) });
 
-                // FUTURE: add 3D support if needed
-                float rotation = -node.transform.Rotation().z;
-                if (ImGui::SliderFloat("Rotation", &rotation, 0, 360.0f)) {
-                    node.transform.SetRotation({ 0, 0, -rotation });
+                    ImGuiPlanPainter(uiPlan).Paint();
+
+                    // FUTURE: add 3D support if needed
+                    float rotation = -node.transform.Rotation().z;
+                    if (ImGui::SliderFloat("Rotation", &rotation, 0, 360.0f)) {
+                        node.transform.SetRotation({ 0, 0, -rotation });
+                    }
+
+                    // FUTURE: add 3D support if needed
+                    float scaleUniform = node.transform.Scale().x;
+                    if (ImGui::SliderFloat("Scale", &scaleUniform, 0.5f, 5.0f)) {
+                        node.transform.SetScale({ scaleUniform, scaleUniform, 1 });
+                    }
+
+                    auto scaleString = MakeString(
+                        "X: ", node.transform.Scale().x, " Y: ", node.transform.Scale().y,
+                        " Z: ", node.transform.Scale().z
+                    );
+                    ImGui::Text("%s", scaleString.c_str());
                 }
 
-                // FUTURE: add 3D support if needed
-                float scaleUniform = node.transform.Scale().x;
-                if (ImGui::SliderFloat("Scale", &scaleUniform, 0.5f, 5.0f)) {
-                    node.transform.SetScale({ scaleUniform, scaleUniform, 1 });
-                }
+                {
+                    ImGuiPushId push("components");
 
-                auto scaleString = MakeString(
-                    "X: ", node.transform.Scale().x, " Y: ", node.transform.Scale().y,
-                    " Z: ", node.transform.Scale().z
-                );
-                ImGui::Text("%s", scaleString.c_str());
+                    ImGui::Text("Components");
 
-                ImGui::Text("Components");
-                for (auto& component : inspectNode->Components()) {
-                    auto name = component->Name();
-                    GUARD_CONTINUE(!IsEmpty(name))
+                    for (auto& component : inspectNode->Components()) {
+                        auto name = component->Name();
+                        GUARD_CONTINUE(!IsEmpty(name))
 
-                    auto uiPlan = component->MakeUIPlan(UIContextId::Inspector);
-                    if (uiPlan) {
-                        if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
-                            ImGuiPlanPainter(*uiPlan.get()).Paint();
+                        ImGuiPushId push(component.get());
+
+                        auto uiPlan = component->MakeUIPlan(UIContextId::Inspector);
+                        if (uiPlan) {
+                            if (ImGui::CollapsingHeader(
+                                    name.c_str(), ImGuiTreeNodeFlags_DefaultOpen
+                                )) {
+                                ImGuiPlanPainter(*uiPlan.get()).Paint();
+                            }
+                        } else {
+                            ImGui::Text("%s", component->Name().c_str());
                         }
-                    } else {
-                        ImGui::Text("%s", component->Name().c_str());
                     }
                 }
             }

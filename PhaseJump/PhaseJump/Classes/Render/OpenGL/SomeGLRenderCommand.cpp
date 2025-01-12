@@ -12,15 +12,13 @@ UP<SomeGLRenderCommand> GLRenderCommands::SetViewportRender(Vector2Int size) {
 }
 
 UP<SomeGLRenderCommand> GLRenderCommands::ProjectionMatrixLoadOrthographic(Vector2 size) {
-    return NEW<GLRenderCommand<Vector2>>(size, [](auto& command, GLRenderEngine& engine) {
-        engine.projectionMatrix.LoadOrthographic(
-            0, command.core.x, 0, command.core.y, Vector3::back.z, Vector3::forward.z
-        );
+    return NEW<GLRenderCommand<Vector2>>(size, [size](auto& command, GLRenderEngine& engine) {
+        engine.ProjectionMatrixLoadOrthographic(size);
     });
 }
 
 UP<SomeGLRenderCommand> GLRenderCommands::LoadTranslate(Vector3 value) {
     return NEW<GLRenderCommand<Vector3>>(value, [](auto& command, GLRenderEngine& engine) {
-        engine.viewMatrix.LoadTranslate(command.core);
+        engine.LoadTranslate(command.core);
     });
 }

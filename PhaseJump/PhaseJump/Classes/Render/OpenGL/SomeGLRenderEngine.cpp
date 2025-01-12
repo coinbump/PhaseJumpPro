@@ -9,6 +9,7 @@ SomeGLRenderEngine::SomeGLRenderEngine() {
 }
 
 void SomeGLRenderEngine::RunRender(std::function<void()> render) {
+    GUARD(render)
     render();
 }
 
@@ -72,14 +73,6 @@ void SomeGLRenderEngine::EnableOnlyVertexAttributeArrays(UnorderedSet<GLuint> at
     for (auto& location : attributeLocations) {
         EnableVertexAttributeArray(location, true);
     }
-}
-
-void SomeGLRenderEngine::BindVertexBuffer(GLVertexBuffer vbo) {
-    BindVertexBuffer(vbo.glId);
-}
-
-void SomeGLRenderEngine::BindIndexBuffer(GLIndexBuffer ibo) {
-    BindIndexBuffer(ibo.glId);
 }
 
 void SomeGLRenderEngine::BindVertexBuffer(GLuint vbo) {

@@ -24,4 +24,23 @@ namespace PJ {
 
         ImGuiPlanPainter(UIPlan& plan);
     };
+
+    /// Pushes and pops an imGui id
+    struct ImGuiPushId {
+        ImGuiPushId(String value) {
+            ImGui::PushID(value.c_str());
+        }
+
+        ImGuiPushId(int value) {
+            ImGui::PushID(value);
+        }
+
+        ImGuiPushId(void* obj) {
+            ImGui::PushID(obj);
+        }
+
+        ~ImGuiPushId() {
+            ImGui::PopID();
+        }
+    };
 } // namespace PJ

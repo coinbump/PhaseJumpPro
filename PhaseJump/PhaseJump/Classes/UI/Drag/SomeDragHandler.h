@@ -25,7 +25,7 @@ namespace PJ {
         /// drag handle for something else.
         WP<SomeDragHandler> dragTarget;
 
-        std::function<UIWorldSystem*()> uiSystemResolver = []() { return UIWorldSystem::shared; };
+        std::function<UIWorldSystem*()> uiSystemResolver;
 
         virtual UIWorldSystem* UISystem() const {
             GUARDR(uiSystemResolver, nullptr)

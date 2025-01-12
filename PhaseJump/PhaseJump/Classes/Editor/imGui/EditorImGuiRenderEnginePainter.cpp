@@ -45,7 +45,7 @@ EditorImGuiRenderEnginePainter::EditorImGuiRenderEnginePainter(EditorWorldSystem
                 auto renderSystem = world.GetSystem<RenderWorldSystem>();
                 GUARD(renderSystem)
 
-                drawRenderProcessors("Render Pass", renderSystem->Processors());
+                drawRenderProcessors("Render Processors", renderSystem->Processors());
             }
 
             // FUTURE: show render options for other cameras
@@ -53,6 +53,40 @@ EditorImGuiRenderEnginePainter::EditorImGuiRenderEnginePainter(EditorWorldSystem
             if (mainCamera) {
                 drawRenderProcessors("Main Camera", mainCamera->processingModel.Processors());
             }
+        }
+    };
+}
+
+// MARK: - EditorImGuiRenderPipelinePainter
+
+EditorImGuiRenderPipelinePainter::EditorImGuiRenderPipelinePainter(
+    World& _world, RenderProcessingModel::ProcessorList& processors
+) :
+    world(_world),
+    processors(processors) {
+    drawFunc = [this](auto& painter) {
+        auto drawRenderProcessors = [&](String label,
+                                        VectorList<SP<RenderProcessor>> const& processors) {
+            if (!IsEmpty(label)) {
+                ImGui::Text("%s", label.c_str());
+            }
+
+            for (auto& processor : processors) {
+                GUARD_CONTINUE(processor->name.size() > 0)
+
+                bool value = processor->IsEnabled();
+
+                if (ImGui::Checkbox(processor->name.c_str(), &value)) {
+                    processor->Enable(value);
+                }
+            }
+        };
+
+        if (ImGui::CollapsingHeader("Render Pipeline", ImGuiTreeNodeFlags_DefaultOpen)) {
+            auto renderSystem = world.GetSystem<RenderWorldSystem>();
+            GUARD(renderSystem)
+
+            drawRenderProcessors("Render Processors", renderSystem->Processors());
         }
     };
 }

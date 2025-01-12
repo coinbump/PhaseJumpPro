@@ -4,7 +4,7 @@
 using namespace std;
 using namespace PJ;
 
-void UIWorldSystem::SetSelection(OrderedSet<SP<SelectHandler>> const& value) {
+void UIWorldSystem::SetSelection(UnorderedSet<SP<SelectHandler>> const& value) {
     auto removedSelectHandlers = selection - value;
 
     for (auto& selectHandler : removedSelectHandlers) {

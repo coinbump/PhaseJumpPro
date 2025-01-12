@@ -24,12 +24,12 @@ std::optional<RenderResult> RenderWorldSystem::Render(RenderContextModel& _conte
     auto mainContext = _contextModel.renderContext;
     GUARDR(mainContext && world, {});
 
-    model.phaseModel.SetPhase(RenderPhase::RenderPassStartPrepare);
+    model.phaseModel.SetPhase(RenderPhaseId::RenderPassStartPrepare);
 
     auto& renderEngine = mainContext->renderEngine;
     renderEngine.RenderPassStart();
 
-    model.phaseModel.SetPhase(RenderPhase::RenderPassStartPost);
+    model.phaseModel.SetPhase(RenderPhaseId::RenderPassStartPost);
 
     int drawCount{};
 
@@ -103,14 +103,14 @@ std::optional<RenderResult> RenderWorldSystem::Render(RenderContextModel& _conte
             cameraModel.phaseModel.SetPhase(phase);
         };
 
-        SetPhase(RenderPhase::BindPrepare);
+        SetPhase(RenderPhaseId::BindPrepare);
         context->Bind();
-        SetPhase(RenderPhase::BindPost);
+        SetPhase(RenderPhaseId::BindPost);
 
         context->clearColor = camera->clearColor;
 
         // FUTURE: add programmable pipeline that sets phase to prepare and post for each action
-        SetPhase(RenderPhase::ClearPrepare);
+        SetPhase(RenderPhaseId::ClearPrepare);
 
         // If multiple cameras share the same render context, make sure we only clear it for the
         // first camera
@@ -119,7 +119,7 @@ std::optional<RenderResult> RenderWorldSystem::Render(RenderContextModel& _conte
             context->renderEngine.SetIsContextCleared(cameraModel.renderContext->renderId, true);
         }
 
-        SetPhase(RenderPhase::ClearPost);
+        SetPhase(RenderPhaseId::ClearPost);
 
         renderEngine.RenderStart(context);
         camera->RenderStart(context);
@@ -128,19 +128,19 @@ std::optional<RenderResult> RenderWorldSystem::Render(RenderContextModel& _conte
         DevProfiler devProfilerRenderCamera("Render- Camera", [](String value) { cout << value; });
 #endif
 
-        SetPhase(RenderPhase::DrawPrepare);
+        SetPhase(RenderPhaseId::DrawPrepare);
 
-        RenderDrawModel drawModel{ .models = cameraModel.renderModels };
-        drawCount += (int)drawModel.models.size();
+        RenderDrawModel drawModel{ .renderModels = cameraModel.renderModels };
+        drawCount += (int)drawModel.renderModels.size();
 
         renderEngine.RenderDraw(drawModel);
 
-        SetPhase(RenderPhase::DrawPost);
+        SetPhase(RenderPhaseId::DrawPost);
     }
 
-    model.phaseModel.SetPhase(RenderPhase::RenderPassPresentPrepare);
+    model.phaseModel.SetPhase(RenderPhaseId::RenderPassPresentPrepare);
     mainContext->Present();
-    model.phaseModel.SetPhase(RenderPhase::RenderPassPresentPost);
+    model.phaseModel.SetPhase(RenderPhaseId::RenderPassPresentPost);
 
     RenderResult result;
     result.tags.Set(RenderStatId::DrawCount, drawCount);

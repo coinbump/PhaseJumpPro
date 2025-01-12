@@ -16,13 +16,20 @@ SomeLoadResourcesOperation::Result SDLLoadBitmapOperation::LoadResources() {
 
     SDLSurface _surface{ { .surface = IMG_Load(path.string().c_str()) } };
     if (!_surface.Surface()) {
-        PJ::Log("ERROR. Can't load GL texture at: ", path.string());
+        PJ::Log(std::format("ERROR. Can't load image at: {}", path.string()));
         return Failure();
     }
 
-    auto surface = _surface.Surface();
+    // Use ABGR here because on little endian systems, byte order is reversed
+    SDLSurface convertedSurface{
+        { .surface = SDL_ConvertSurface(_surface.Surface(), SDL_PIXELFORMAT_ABGR8888) }
+    };
+    if (!_surface.Surface()) {
+        PJ::Log("ERROR. Can't convert image");
+        return Failure();
+    }
 
-    // FUTURE: evaluate using SDL_CreateTexture instead
+    auto surface = convertedSurface.Surface();
 
     auto pixelFormatDetails = SDL_GetPixelFormatDetails(surface->format);
     GUARDR(pixelFormatDetails, Failure())
@@ -61,31 +68,12 @@ SomeLoadResourcesOperation::Result SDLLoadBitmapOperation::LoadResources() {
     SDLPixelFormat pixelFormat(pixelFormatDetails);
 
     auto pixelCount = surface->w * surface->h;
-
-    // FUTURE: support non 32-bit color formats
-    if (pixelFormat.PixelSize() != sizeof(uint32_t)) {
-        PJ::Log("ERROR. Only 32-bit images supported");
-        return Failure();
-    }
-
-    auto surfaceColorSchema = pixelFormat.MakeColorSchema();
     auto rgbaPixelsDataSize = sizeof(uint32_t) * pixelCount;
-    uint32_t* rgbaPixels = (uint32_t*)malloc(rgbaPixelsDataSize);
     uint32_t* surfacePixel = (uint32_t*)surface->pixels;
-    uint32_t* rgbaPixel = rgbaPixels;
-
-    for (int i = 0; i < pixelCount; i++) {
-        *rgbaPixel = ComponentColor32(*surfacePixel).ConvertTo<RGBAColor>(surfaceColorSchema).value;
-        surfacePixel++;
-        rgbaPixel++;
-    }
 
     auto rgbaBitmap = MAKE<RGBABitmap>(RGBABitmap::Config{ .size = { surface->w, surface->h },
-                                                           .pixels = rgbaPixels,
+                                                           .pixels = surfacePixel,
                                                            .pixelsDataSize = rgbaPixelsDataSize });
-
-    // Pixels are copied into Bitmap, free the original
-    free(rgbaPixels);
 
     SDLFileManager fm;
     String id = fm.FileName(path, false);

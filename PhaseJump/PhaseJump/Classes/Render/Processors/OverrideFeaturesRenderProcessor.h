@@ -20,7 +20,7 @@ namespace PJ {
         UnorderedMap<String, RenderFeatureState> map;
 
         OverrideFeaturesRenderProcessor() :
-            Base({ .name = "Override features", .phases = { RenderPhase::DrawPrepare } }) {}
+            Base({ .name = "Override features", .phases = { RenderPhaseId::DrawPrepare } }) {}
 
         // MARK: RenderProcessor
 

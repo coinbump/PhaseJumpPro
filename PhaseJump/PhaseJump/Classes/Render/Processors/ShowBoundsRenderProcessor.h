@@ -18,7 +18,7 @@ namespace PJ {
         Color color;
 
         ShowBoundsRenderProcessor(Color color = Color::green) :
-            Base({ .name = "Show bounds", .phases = { RenderPhase::DrawPrepare } }),
+            Base({ .name = "Show bounds", .phases = { RenderPhaseId::DrawPrepare } }),
             color(color) {}
 
         // MARK: RenderProcessor

@@ -116,7 +116,7 @@ void WorldNode::Add(SP<SomeWorldComponent> component) {
     }
 }
 
-// Keep for testing single component ECS system for compatibility with Godot
+// Keep for testing single component system for compatibility with Godot
 // #define PJ_ECS_SINGLE_COMPONENT
 
 void WorldNode::AddAssociate(SP<SomeWorldComponent> component) {

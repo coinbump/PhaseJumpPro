@@ -7,21 +7,14 @@
 using namespace std;
 using namespace PJ;
 
-// TODO: move to mouse motion event?
 void UIWorldSystem::OnDragUpdate() {
-    if (!IsDragging()) {
-        return;
-    }
-    if (nullptr == mouseDevice || !mouseDevice->IsAvailable()) {
-        return;
-    }
+    GUARD(IsDragging())
+    GUARD(mouseDevice && mouseDevice->IsAvailable())
 
     auto isMouseButtonDown = mouseDevice->IsButtonDown(PointerInputButton::Left);
 
     if (isMouseButtonDown || dragState == DragState::LockDragMouseUp) {
-        if (nullptr == dragModel) {
-            return;
-        }
+        GUARD(dragModel)
 
         auto dragged = dragModel->DragHandler();
         GUARD(dragged)
@@ -74,7 +67,9 @@ void UIWorldSystem::StartDrag(SP<DragModel> dragModel) {
         break;
     }
 
+    // End the previous drag
     OnDragEnd();
+
     this->dragModel = dragModel;
 
     dragState = lockDrag ? DragState::LockDragMouseDown : DragState::Drag;

@@ -13,7 +13,7 @@ void CameraCullRenderProcessor::Process(RenderCameraModel& cameraModel) {
     auto beforeCullCount = cameraModel.renderModels.size();
 
     RemoveIf(cameraModel.renderModels, [&](RenderModel const& model) {
-        Mesh mesh = model.mesh * model.matrix;
+        auto mesh = model.GetMesh() * model.matrix;
         return cameraModel.camera->IsCulled(mesh);
     });
 

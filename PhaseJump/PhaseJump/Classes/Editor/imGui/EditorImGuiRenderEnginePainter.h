@@ -1,6 +1,7 @@
 #pragma once
 
 #include "EditorWorldSystem.h"
+#include "RenderProcessingModel.h"
 #include "SomeImGuiPainter.h"
 
 /*
@@ -15,5 +16,16 @@ namespace PJ {
         EditorWorldSystem& system;
 
         EditorImGuiRenderEnginePainter(EditorWorldSystem& _system);
+    };
+
+    /// Draws information about the render processor pipeline
+    class EditorImGuiRenderPipelinePainter : public SomeImGuiPainter {
+    public:
+        World& world;
+        RenderProcessingModel::ProcessorList& processors;
+
+        EditorImGuiRenderPipelinePainter(
+            World& world, RenderProcessingModel::ProcessorList& processors
+        );
     };
 } // namespace PJ

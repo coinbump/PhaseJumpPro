@@ -31,7 +31,7 @@ IncludeBlocks: Merge
 IndentCaseBlocks: true
 IndentCaseLabels: false
 IndentWidth: 4
-InsertNewlineAtEOF: true
+#InsertNewlineAtEOF: true
 NamespaceIndentation: All
 DerivePointerAlignment: false
 PackConstructorInitializers: Never
@@ -40,7 +40,7 @@ PointerAlignment: Left
 ReferenceAlignment: Left
 SeparateDefinitionBlocks: Always
 SortIncludes: CaseInsensitive
-SortUsingDeclarations: Never
+#SortUsingDeclarations: Never
 SpaceAfterCStyleCast: false
 SpaceAfterLogicalNot: false
 SpaceAfterTemplateKeyword: true

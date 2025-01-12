@@ -18,7 +18,7 @@ namespace PJ {
         using Base = RenderProcessor;
 
         CameraCullRenderProcessor() :
-            Base({ .name = "Camera cull", .phases = { RenderPhase::DrawPrepare } }) {}
+            Base({ .name = "Camera cull", .phases = { RenderPhaseId::DrawPrepare } }) {}
 
         // MARK: RenderProcessor
 

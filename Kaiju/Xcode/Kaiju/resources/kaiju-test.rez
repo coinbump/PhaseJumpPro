@@ -65,7 +65,7 @@
             "path": "art/TestFont.json"
         },
         {
-            "type": "rtexPacker.atlas",
+            "type": "texturePacker.atlas",
             "path": "examples/minesweeper/example-minesweeper.json"
         },
         {

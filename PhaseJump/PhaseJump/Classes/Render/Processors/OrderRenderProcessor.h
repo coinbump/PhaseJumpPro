@@ -21,7 +21,7 @@ namespace PJ {
         SortFunc sortFunc;
 
         OrderRenderProcessor(SortFunc sortFunc) :
-            Base({ .name = "Order", .phases = { RenderPhase::DrawPrepare } }),
+            Base({ .name = "Order", .phases = { RenderPhaseId::DrawPrepare } }),
             sortFunc(sortFunc) {}
 
         // MARK: RenderProcessor

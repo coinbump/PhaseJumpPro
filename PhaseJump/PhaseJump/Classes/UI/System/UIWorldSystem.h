@@ -10,15 +10,17 @@
 #include <memory>
 
 /*
- Needs unit tests
+ RATING: 5 stars
+ Tested and works
+ CODE REVIEW: 1/9/25
  */
-// CODE REVIEW: 5/9/23
 namespace PJ {
     class SomeUIEvent;
     class SomeMouseDevice;
     class SomeFocusCoordinator;
     class FocusHandler;
 
+    /// Sent when a drag enters a drop area
     class DragEnterUIEvent : public SomeSignal {
     public:
         DragModel dragModel;
@@ -27,72 +29,79 @@ namespace PJ {
             dragModel(dragModel) {}
     };
 
+    /// Sent when a drag exits a drop area
     class DragExitUIEvent : public SomeSignal {};
 
-    /// Handled advanced user input like drag and drop, hover, etc.
+    /// Handles advanced user input like drag and drop, hover, etc.
     class UIWorldSystem : public EventWorldSystem {
     public:
         using Base = EventWorldSystem;
+        using This = UIWorldSystem;
 
-        // TODO: fix this, it's causing problems when switching scenes
-        static UIWorldSystem* shared;
-
-        ScreenPosition mousePosition;
-        bool hasMousePosition{};
-
+    protected:
+        /// Active hover node. Only 1 node can have hover status at a time
         WP<WorldNode> activeHover;
+
+        /// Active drop target during a drag. Only 1 drop target can be active at a time
         WP<WorldNode> activeDropTarget;
 
+        /// Active focus. Focus takes keyboard input
+        WP<WorldNode> focus;
+
+    public:
+        /// @return Returns the camera that defines the projection for this system
         virtual SomeCamera* Camera() const;
 
-        void ProcessUIEvents(UIEventList const& uiEvents) override;
-
+        /// @return Returns the active hover node
         SP<WorldNode> ActiveHover();
+
+        /// Sets the active hover node
         void SetActiveHover(SP<WorldNode> component);
+
+        /// Updates the active hover node based on collision hits
         void UpdateActiveHover(VectorList<PJ::LocalHit> hits);
 
-        // *****************
         // MARK: - Selection
 
     protected:
-        OrderedSet<SP<SelectHandler>> selection;
+        /// Collection of select handler components that define the current object selection
+        UnorderedSet<SP<SelectHandler>> selection;
 
         /// Collection of nodes that received a pointer down event so they can receive a pointer up
         /// event later, even if the pointer is no longer inside their bounds. This is used for
         /// button tracking
-        UnorderedMap<PointerInputButtonType, VectorList<WP<WorldNode>>> pointerDownNodesMap;
+        UnorderedMap<PointerInputButtonType, UnorderedSet<SP<WorldNode>>> pointerDownNodesMap;
 
         /// Nodes that received a pointer enter event so they can receive a pointer leave event
         /// later
-        List<WP<WorldNode>> pointerEnterNodes;
+        UnorderedSet<SP<WorldNode>> pointerEnterNodes;
 
     public:
-        WP<FocusHandler> focus;
-
         UIWorldSystem(String name = "UI") :
             Base(name) {}
 
-        virtual ~UIWorldSystem() {
-            GUARD(shared == this);
-            shared = nullptr;
-        }
+        virtual ~UIWorldSystem() {}
 
-        OrderedSet<SP<SelectHandler>> const& Selection() const {
+        /// @return Returns the current selection
+        UnorderedSet<SP<SelectHandler>> const& Selection() const {
             return selection;
         }
 
-        void SetSelection(OrderedSet<SP<SelectHandler>> const& value);
+        /// Sets the selection
+        void SetSelection(UnorderedSet<SP<SelectHandler>> const& value);
+
+        /// Updates the selection for a handler
         void UpdateSelectionFor(SP<SelectHandler> selectHandler);
 
+        /// Called to start a drag objects gesture
         virtual void StartDrag(SP<DragModel> dragModel);
-        virtual void OnDragEnd();
-        virtual void CheckDropTargets(ScreenPosition screenPos);
-        virtual void OnDragUpdate();
 
+        /// @return Returns the drag objects gesture model
         DragModel* DraggedItems() const {
             return dragModel.get();
         }
 
+        /// @return Returns true if a drag objects gesture is active
         bool IsDragging() const {
             return dragState != DragState::Default;
         }
@@ -104,26 +113,29 @@ namespace PJ {
         void OnPointerDown(PointerDownUIEvent const& pointerDownEvent) override;
 
     protected:
-        void Awake() override;
-        void OnUpdate(TimeSlice time) override;
+        // MARK: SomeWorldComponent
 
-        // ****************************************
-        // MARK: - UISystem+Drag
-        // ****************************************
+        void OnUpdate(TimeSlice time) override;
 
         enum class DragState { Default, Drag, LockDragMouseDown, LockDragMouseUp };
 
         /// If true, a click will start the drag, and a click will end it
-        bool lockDrag = false;
+        bool lockDrag{};
 
         /// Model that defines a drag in progress
         SP<DragModel> dragModel;
 
-        /// Object that a drag is over
-        WP<WorldNode> dropTargetOverObject;
-
         /// State of drag in progress
         DragState dragState = DragState::Default;
         SP<SomeMouseDevice> mouseDevice = MAKE<SDLMouseDevice>();
+
+        /// Called to finalize drag objects gesture
+        virtual void OnDragEnd();
+
+        /// Called up to date active drop targets
+        virtual void CheckDropTargets(ScreenPosition screenPos);
+
+        /// Called during drag objects gesture
+        virtual void OnDragUpdate();
     };
 } // namespace PJ

@@ -18,8 +18,8 @@ void ShowMeshRenderProcessor::Process(RenderCameraModel& cameraModel) {
 
     VectorList<RenderModel> renderModels;
     for (auto& renderModel : cameraModel.renderModels) {
-        auto const& vertices = renderModel.mesh.Vertices();
-        auto const& indices = renderModel.mesh.Triangles();
+        auto const& vertices = renderModel.GetMesh().Vertices();
+        auto const& indices = renderModel.GetMesh().Triangles();
 
         // Check: Size is: 3, i is 0, size - 2 is 1, 0 < 1, i + 2 is 2, which is a valid index
         for (size_t i = 0; (i + 2) < indices.size(); i += 3) {

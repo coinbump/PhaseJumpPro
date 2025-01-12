@@ -31,11 +31,12 @@ public:
         // TODO: use OrthoStandard here(?)
         SomeCamera* bufferCamera{};
         QB(root).With<OrthoCamera>().ModifyLatest<OrthoCamera>([&](auto& camera) {
+            camera.SetName("Buffer camera");
             bufferCamera = &camera;
 
             auto showMeshRenderProcessor = MAKE<ShowMeshRenderProcessor>();
-            showMeshRenderProcessor->Enable(true);
-            // camera.processingModel.Add(showMeshRenderProcessor);
+            showMeshRenderProcessor->Enable(false);
+            camera.processingModel.Add(showMeshRenderProcessor);
 
             auto batchRenderProcessor = MAKE<BatchByMaterialRenderProcessor>();
             camera.processingModel.Add(batchRenderProcessor);
@@ -256,9 +257,9 @@ public:
 #endif
 
             WorldNode& cameraNode = meshNode.And("Camera");
-            auto camera = cameraNode.WithPtr<OrthoCamera>();
-            camera->SetHalfHeight(owner->World()->renderContext->PixelSize().y / 2.0f);
-            cameraNode.With<SimpleRaycaster2D>();
+            QB(cameraNode).OrthoStandard().ModifyLatest<OrthoCamera>([&](auto& camera) {
+                camera.SetHalfHeight(owner->World()->renderContext->PixelSize().y / 2.0f);
+            });
 
             //            updatables.Add([camera](TimeSlice time) {
             //                GUARDR(camera->halfHeight, FinishType::Continue)
@@ -281,12 +282,12 @@ public:
 //                GUARD(camera->halfHeight)
 //                camera->SetHalfHeight(*camera->halfHeight + 10.0f * time.delta);
 //            });
-                           GetUpdatables().AddTimed(3, [camera](TimeSlice time) {
-                GUARDR(camera->halfHeight, FinishType::Continue)
-                camera->SetHalfHeight(*camera->halfHeight + 50.0f * time.delta);
-
-                return FinishType::Continue;
-           });
+//                           GetUpdatables().AddTimed(3, [camera](TimeSlice time) {
+//                GUARDR(camera->halfHeight, FinishType::Continue)
+//                camera->SetHalfHeight(*camera->halfHeight + 50.0f * time.delta);
+//
+//                return FinishType::Continue;
+//           });
 
             auto maxTextureTrueSize = textureAtlas->MaxTextureTrueSize();
 //            auto frameRenderer = MAKE<SimpleGradientRenderer>(Color::red, Color::blue, Vector2(maxTextureTrueSize.x, maxTextureTrueSize.y));

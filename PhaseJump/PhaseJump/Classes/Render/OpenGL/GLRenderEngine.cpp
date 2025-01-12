@@ -54,9 +54,9 @@ void GLRenderEngine::Use(GLShaderProgram& program) {
 
     // Enable attributes for vertex shader
     /*
-        IMPORTANT: Permissive enabling works fine on Mac/OS, but crashes on
-       Windows. Windows OpenGL requires that only the correct arrays are enabled
-       for the shader.
+     IMPORTANT: Permissive enabling works fine on Mac OS, but crashes on
+     Windows. Windows OpenGL requires that only the correct arrays are enabled
+     for the shader.
      */
     UnorderedSet<GLuint> activeAttributeLocations;
     for (auto& keyValue : program.attributeLocations) {
@@ -79,11 +79,12 @@ void GLRenderEngine::SetViewport(GLint x, GLint y, GLsizei width, GLsizei height
 }
 
 std::optional<GLenum> GLRenderEngine::FeatureIdToGLFeatureId(String featureId) {
-    if (featureIdToGLFeatureIdMap.find(featureId) == featureIdToGLFeatureIdMap.end()) {
-        return std::nullopt;
+    try {
+        auto& result = featureIdToGLFeatureIdMap.at(featureId);
+        return result;
+    } catch (...) {
+        return {};
     }
-
-    return std::make_optional(featureIdToGLFeatureIdMap[featureId]);
 }
 
 void GLRenderEngine::EnableFeature(String featureId, bool isEnabled) {
@@ -124,7 +125,7 @@ void GLRenderEngine::RunGL(std::function<void()> command, String name) {
     command();
 
     while (auto error = glGetError()) {
-        PJ::Log("ERROR: ", name, " id: ", error);
+        PJ::Log(std::format("ERROR: {}, id: {}", name, error));
     }
 }
 
@@ -151,7 +152,7 @@ void GLRenderEngine::OnGo() {
     featureIdToGLFeatureIdMap[RenderFeature::MultiSample] = GL_MULTISAMPLE;
 
     // https://learnopengl.com/Advanced-OpenGL/Face-culling
-    // Our mesh code is shared with Unity, which uses Clockwise vertex ordering
+    // Our mesh code matches Unity, which uses Clockwise vertex ordering
     EnableFeature(RenderFeature::CullFace, true);
     glCullFace(GL_BACK);
     glFrontFace(GL_CW);
@@ -176,10 +177,10 @@ void GLRenderEngine::BindVertexArray(GLuint vao) {
     RunGL([=]() { glBindVertexArray(vao); }, "glBindVertexArray");
 }
 
-SP<GLVertexBuffer> GLRenderEngine::BuildVertexBuffer(GLVertexBufferPlan const& plan) {
+UP<GLVertexBuffer> GLRenderEngine::BuildVertexBuffer(GLVertexBufferPlan const& plan) {
     GLsizei totalSize = 0;
     for (auto& item : plan.items) {
-        uint32_t itemSize = item.Size();
+        uint32_t itemSize = item->Size();
         totalSize += itemSize;
     }
 
@@ -195,18 +196,17 @@ SP<GLVertexBuffer> GLRenderEngine::BuildVertexBuffer(GLVertexBufferPlan const& p
 
     RunGL([&]() { glBufferData(GL_ARRAY_BUFFER, totalSize, nullptr, GL_STATIC_DRAW); }, "VBO Data");
 
-    auto result = MAKE<GLVertexBuffer>(VBO);
+    auto result = NEW<GLVertexBuffer>(VBO);
 
     for (auto& item : plan.items) {
-        auto itemSize = item.Size();
+        auto itemSize = item->Size();
         RunGL(
-            [&]() { glBufferSubData(GL_ARRAY_BUFFER, offset, itemSize, item.data->Pointer()); },
-            "VBO Data"
+            [&]() { glBufferSubData(GL_ARRAY_BUFFER, offset, itemSize, item->dataPtr); }, "VBO Data"
         );
 
-        result->attributes[item.attributeId].offset = offset;
-        result->attributes[item.attributeId].glType = item.glType;
-        result->attributes[item.attributeId].normalize = item.normalize;
+        result->attributes[item->attributeId].offset = offset;
+        result->attributes[item->attributeId].glType = item->glType;
+        result->attributes[item->attributeId].normalize = item->normalize;
 
         offset += itemSize;
     }
@@ -214,7 +214,7 @@ SP<GLVertexBuffer> GLRenderEngine::BuildVertexBuffer(GLVertexBufferPlan const& p
     return result;
 }
 
-SP<GLIndexBuffer> GLRenderEngine::BuildIndexBuffer(std::span<uint32_t const> indices) {
+UP<GLIndexBuffer> GLRenderEngine::BuildIndexBuffer(std::span<uint32_t const> indices) {
     GLuint IBO;
     RunGL([&]() { glGenBuffers(1, &IBO); }, "Gen IBO");
     RunGL([&]() { glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO); }, "Bind IBO");
@@ -228,7 +228,7 @@ SP<GLIndexBuffer> GLRenderEngine::BuildIndexBuffer(std::span<uint32_t const> ind
         "IBO Data"
     );
 
-    return MAKE<GLIndexBuffer>(IBO);
+    return NEW<GLIndexBuffer>(IBO);
 }
 
 void GLRenderEngine::BindVertexBuffer(GLuint vbo) {
@@ -243,8 +243,8 @@ void GLRenderEngine::BindIndexBuffer(GLuint ibo) {
     RunGL([=]() { glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo); }, "Bind IBO");
 }
 
-SP<SomeGLRenderCommand> GLRenderEngine::BuildRenderCommand(SomeRenderCommandModel& proxyCommand) {
-    // TODO: replace with a map and factories
+UP<SomeGLRenderCommand> GLRenderEngine::BuildRenderCommand(SomeRenderCommandModel& proxyCommand) {
+    // FUTURE: replace with a map and factories
     if (proxyCommand.id == RenderCommandId::ProjectionMatrixLoadOrthographic) {
         auto command = As<RenderCommandModel<Vector2>>(&proxyCommand);
         GUARDR(command, nullptr)
@@ -259,9 +259,8 @@ SP<SomeGLRenderCommand> GLRenderEngine::BuildRenderCommand(SomeRenderCommandMode
 }
 
 void GLRenderEngine::ProjectionMatrixLoadOrthographic(Vector2 size) {
-    // TODO: are these 1, -1 values correct? Should we use values from the camera?
-    // TODO: should we be using glOrtho/glMatrixMode instead?
-    projectionMatrix.LoadOrthographic(0, size.x, 0, size.y, 1, -1);
+    // Far/near are flipped in OpenGL
+    projectionMatrix.LoadOrthographic(0, size.x, 0, size.y, Vector3::forward.z, Vector3::back.z);
 }
 
 void GLRenderEngine::LoadTranslate(Vector3 value) {
@@ -270,32 +269,10 @@ void GLRenderEngine::LoadTranslate(Vector3 value) {
 
 void GLRenderEngine::RenderStart(SomeRenderContext* context) {
     renderPlans.clear();
-
-    //    auto& proxyCommands = contextModel.phasedProxyCommands;
-    //    auto thisPhaseProxyCommands = proxyCommands.find(RenderPhase::Start);
-    //    if (thisPhaseProxyCommands != proxyCommands.end() &&
-    //    !IsEmpty(thisPhaseProxyCommands->second)) {
-    //        for (auto& proxyCommandI : thisPhaseProxyCommands->second) {
-    //            auto& proxyCommandUP = proxyCommandI;
-    //
-    //            if (auto renderCommand = BuildRenderCommand(*proxyCommandUP)) {
-    //                renderCommand->Run(*this);
-    //            }
-    //        }
-    //    } else {
-    //        // If no projection commands are specified, use orthographic-cartesian
-    //        // projection
-    //        projectionMatrix.LoadOrthographic(
-    //            0, renderState.viewport.width, 0, renderState.viewport.height, 1, -1
-    //        );
-    //        viewMatrix.LoadTranslate(
-    //            Vector3(renderState.viewport.width / 2.0f, renderState.viewport.height / 2.0f, 0)
-    //        );
-    //    }
 }
 
 void GLRenderEngine::RenderProcess(RenderDrawModel const& drawModel) {
-    for (auto& renderModel : drawModel.models) {
+    for (auto& renderModel : drawModel.renderModels) {
 #ifdef PROFILE
         DevProfiler devProfilerRenderProcess("Render- Process", [](String value) {
             cout << value;
@@ -315,95 +292,68 @@ void GLRenderEngine::RenderProcess(RenderModel const& model) {
         return;
     }
 
-    auto vertices = model.mesh.Vertices();
-    auto uvs = model.mesh.UVs();
-    auto vertexCount = vertices.size();
+    auto& mesh = model.GetMesh();
+    auto& vertices = mesh.Vertices();
+    auto& uvs = mesh.UVs();
 
-    VectorList<Color> colors_float(vertexCount);
-    VectorList<RGBAColor> colors_byte(vertexCount);
-    VectorList<Vector2> texCoords(vertexCount);
+    auto _vboPlan = NEW<GLVertexBufferPlan>();
+    auto& vboPlan = *_vboPlan.get();
 
-    // First pass of this is very inefficient. We'll create an IBO, VBO, etc.
-    // for each render pass. FUTURE: optimize as needed
-    GLVertexBufferPlan vboPlan;
-    vboPlan.Add("a_position", vertices);
+    std::span<Vector3 const> verticesSpan(vertices);
+    vboPlan.Add("a_position", verticesSpan, GL_FLOAT);
 
-    auto modelColors = model.VertexColors();
-
-    // For now we'll take the easy route and use float colors
-    // FUTURE: evaluate converting colors to 32 bit single values for efficiency
     auto hasColorAttribute = glProgram->HasVertexAttribute("a_color");
     if (hasColorAttribute) {
-        auto isColorsEmpty = modelColors.size() == 0;
-        for (int i = 0; i < vertices.size(); i++) {
-            auto color = Color::white;
-            if (!isColorsEmpty) {
-                auto colorIndex = i % modelColors.size();
-                color = modelColors[colorIndex];
-            }
+        auto vertexColors = model.VertexColors();
 
-            switch (colorFormat) {
-            case ColorFormat::Float:
-                colors_float[i] = color;
-                break;
-            case ColorFormat::Byte:
-                colors_byte[i] = (RGBAColor)color;
-                break;
-            }
-        }
-
-        switch (colorFormat) {
-        case ColorFormat::Float:
-            vboPlan.Add("a_color", colors_float);
-            break;
-        case ColorFormat::Byte:
-            vboPlan.Add("a_color", colors_byte);
-            break;
-        }
-    }
-
-    auto hasTextureCoordAttribute = glProgram->HasVertexAttribute("a_texCoord");
-    if (hasTextureCoordAttribute) {
-        if (uvs.size() != vertices.size()) {
-            PJ::Log("ERROR. UVs size does not match vertices size for render");
+        if (vertexColors.size() != vertices.size()) {
+            PJ::Log("ERROR. Colors size does not match vertices size");
             return;
         }
 
-        texCoords = VectorList<Vector2>(uvs.begin(), uvs.end());
-
-        vboPlan.Add("a_texCoord", texCoords);
+        vboPlan.Add("a_color", model.VertexColors(), GL_UNSIGNED_BYTE, true);
     }
 
-    auto renderPlan = MAKE<GLRenderPlan>(model, vboPlan);
-    Add(renderPlans, renderPlan);
+    // TODO: we shouldn't be copying texture coordinates if we're not using them
+    auto hasTextureCoordAttribute = glProgram->HasVertexAttribute("a_texCoord");
+    if (hasTextureCoordAttribute) {
+        if (uvs.size() != vertices.size()) {
+            PJ::Log("ERROR. UVs size does not match vertices size");
+            return;
+        }
+
+        // AddStorage (copy data) is faster than Add (no copy). Not sure why
+        std::span<Vector2 const> texCoordsSpan(uvs);
+        vboPlan.AddStorage("a_texCoord", texCoordsSpan, GL_FLOAT);
+    }
+
+    auto renderPlan = NEW<GLRenderPlan>(model, _vboPlan);
+    renderPlans.push_back(std::move(renderPlan));
 }
 
 void GLRenderEngine::RenderDraw(RenderDrawModel const& drawModel) {
     RenderProcess(drawModel);
 
-    VectorList<SP<GLRenderPlan>> noBlendRenderPlans;
+    VectorList<GLRenderPlan*> renderPlanPointers =
+        Map<GLRenderPlan*>(renderPlans, [](auto& plan) { return plan.get(); });
+
+    VectorList<GLRenderPlan*> noBlendRenderPlans;
     std::copy_if(
-        renderPlans.begin(), renderPlans.end(), std::back_inserter(noBlendRenderPlans),
-        [&](SP<GLRenderPlan> const& plan) {
-            return !plan->model.IsFeatureEnabled(RenderFeature::Blend);
-        }
+        renderPlanPointers.begin(), renderPlanPointers.end(),
+        std::back_inserter(noBlendRenderPlans),
+        [&](auto& plan) { return !plan->model.IsFeatureEnabled(RenderFeature::Blend); }
     );
 
-    VectorList<SP<GLRenderPlan>> blendRenderPlans;
+    VectorList<GLRenderPlan*> blendRenderPlans;
     std::copy_if(
-        renderPlans.begin(), renderPlans.end(), std::back_inserter(blendRenderPlans),
-        [&](SP<GLRenderPlan> const& plan) {
-            return plan->model.IsFeatureEnabled(RenderFeature::Blend);
-        }
+        renderPlanPointers.begin(), renderPlanPointers.end(), std::back_inserter(blendRenderPlans),
+        [&](auto& plan) { return plan->model.IsFeatureEnabled(RenderFeature::Blend); }
     );
 
     // Sort opaque front-to-back
-    std::sort(
-        noBlendRenderPlans.begin(), noBlendRenderPlans.end(),
-        [](SP<GLRenderPlan> const& lhs, SP<GLRenderPlan> const& rhs) {
-            return lhs->model.z < rhs->model.z;
-        }
-    );
+    std::sort(noBlendRenderPlans.begin(), noBlendRenderPlans.end(), [](auto& lhs, auto& rhs) {
+        return lhs->model.z > rhs->model.z;
+    });
 
     EnableFeature(RenderFeature::DepthTest, true);
     RenderDrawPlans(noBlendRenderPlans);
@@ -411,28 +361,26 @@ void GLRenderEngine::RenderDraw(RenderDrawModel const& drawModel) {
     EnableFeature(RenderFeature::DepthTest, false);
     RenderDrawPlans(blendRenderPlans);
 
-    EnableFeature(RenderFeature::DepthTest, true);
-
-    // FUTURE: support batching, logging
     renderPlans.clear();
 }
 
-void GLRenderEngine::RenderDrawPlans(VectorList<SP<GLRenderPlan>> const& renderPlans) {
+void GLRenderEngine::RenderDrawPlans(VectorList<GLRenderPlan*> const& renderPlans) {
     for (auto& rp : renderPlans) {
-        auto vboPlan = rp->vboPlan;
-        auto model = rp->model;
+        auto& vboPlan = *rp->vboPlan.get();
+        auto& model = rp->model;
         auto modelMaterial = model.Material();
         GUARD_CONTINUE(modelMaterial)
 
         auto glProgram = As<GLShaderProgram>(modelMaterial->ShaderProgram());
         GUARD(glProgram);
 
-        auto modelMatrix = model.matrix;
+        auto& modelMatrix = model.matrix;
 
         auto vbo = BuildVertexBuffer(vboPlan);
         GUARD(vbo)
 
-        auto ibo = BuildIndexBuffer(model.mesh.Triangles());
+        auto& mesh = model.GetMesh();
+        auto ibo = BuildIndexBuffer(mesh.Triangles());
         GUARD(ibo)
 
         auto hasColorAttribute = glProgram->HasVertexAttribute("a_color");
@@ -443,11 +391,10 @@ void GLRenderEngine::RenderDrawPlans(VectorList<SP<GLRenderPlan>> const& renderP
         Use(*glProgram);
 
         for (auto& texture : model.Material()->Textures()) {
-            // ? glActiveTexture is causing VBO errors. Investigate
-            //        glActiveTexture(GL_TEXTURE0 + i);
+            // glActiveTexture is causing VBO errors. Investigate
+            // glActiveTexture(GL_TEXTURE0 + i);
             glBindTexture(GL_TEXTURE_2D, texture->RenderId());
         }
-        //    glActiveTexture(0);
 
         if (glProgram->uniformLocations.find("u_mvpMatrix") != glProgram->uniformLocations.end()) {
             Matrix4x4 viewProjectionMatrix = projectionMatrix * viewMatrix;
@@ -457,7 +404,6 @@ void GLRenderEngine::RenderDrawPlans(VectorList<SP<GLRenderPlan>> const& renderP
             UniformMatrix4fv(location, modelViewProjection.data());
         }
 
-        // TODO: These can be optimized by not using the has check, or has returns something
         if (glProgram->HasUniform("u_float")) {
             float value = 1.0f;
             if (modelMaterial->UniformFloats().size() > 0) {
@@ -512,13 +458,9 @@ void GLRenderEngine::RenderDrawPlans(VectorList<SP<GLRenderPlan>> const& renderP
             }
         }
 
-        DrawElements(
-            GL_TRIANGLES, (GLsizei)model.mesh.Triangles().size(), GL_UNSIGNED_INT, nullptr
-        );
+        DrawElements(GL_TRIANGLES, (GLsizei)mesh.Triangles().size(), GL_UNSIGNED_INT, nullptr);
     }
 }
-
-// CODE REVIEWED BELOW:
 
 void GLRenderEngine::ScanGLExtensions() {
     OrderedSet<String> glExtensions;

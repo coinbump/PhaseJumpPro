@@ -11,10 +11,9 @@ namespace Terathon {
 
 /*
  RATING: 4 stars
- Needs unit tests
- CODE REVIEW: 4/14/23
+ Tested and works
+ CODE REVIEW: 1/9/25
  */
-// TODO: need unit tests
 namespace PJ {
     /// A column-major 4x4 matrix
     struct Matrix4x4 {
@@ -33,34 +32,66 @@ namespace PJ {
             return value.data();
         }
 
-        float const& operator[](size_t index) const {
+        float ModValue(size_t index) const {
             return value[index >= 0 && index < size ? index : index % size];
         }
 
-        float& operator[](size_t index) {
+        float& ModValue(size_t index) {
             return value[index >= 0 && index < size ? index : index % size];
+        }
+
+        float operator[](size_t index) const {
+            GUARDR(index >= 0 && index < size, 0.0f)
+            return value[index];
+        }
+
+        float& operator[](size_t index) {
+            GUARDR(index >= 0 && index < size, value[0])
+            return value[index];
         }
 
         bool operator==(Matrix4x4 const& rhs) const {
             return value == rhs.value;
         }
 
-        void LoadIdentity(); // Loads identity matrix.
+        /// Loads identity matrix
+        void LoadIdentity();
+
+        /// Loads scale matrix
         void LoadScale(Vector3 scale);
+
+        /// Loads translation matrix
         void LoadTranslate(Vector3 translate);
+
+        /**
+            Loads a perspective transformation matrix
+
+         @param fov_radians Field of view in the y direction
+         @param aspect Aspect ratio in the x direction (height)
+         @param zNear Distance from viewer to the near clipping plane (always positive)
+         @param zFar Distance from viewer to the far clipping plane (always positive)
+         */
         void LoadPerspective(float fov_radians, float aspect, float zNear, float zFar);
+
+        /**
+            Loads an orthogonal projection matrix
+
+            Note: `far`, `near` are reserved in Visual Studio. Use `zNear`, `zFar` for portability.
+         */
         void
         LoadOrthographic(float left, float right, float bottom, float top, float zNear, float zFar);
 
-        // Rotate matrix around a given axis
-        // For 2D orthogonal rotation, rotate around the Z axis.
+        /// Loads a X axis rotational matrix
         void LoadXRadRotation(float radians);
+
+        /// Loads a Y axis rotational matrix
         void LoadYRadRotation(float radians);
+
+        /// Loads a Z axis rotational matrix (use for 2D rotation with orthographic camera)
         void LoadZRadRotation(float radians);
 
+        /// Inverts the matrix
         void Inverse();
-
-        // FUTURE: void Load3RadRotation(float radians, Vector3 rotate);
 
         operator Terathon::Matrix4D() const;
         operator Terathon::Transform3D() const;

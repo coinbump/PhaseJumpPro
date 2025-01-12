@@ -19,7 +19,7 @@ namespace PJ {
         Color color;
 
         ShowCollidersRenderProcessor(Color color = Color::blue) :
-            Base({ .name = "Show colliders", .phases = { RenderPhase::DrawPrepare } }),
+            Base({ .name = "Show colliders", .phases = { RenderPhaseId::DrawPrepare } }),
             color(color) {}
 
         // MARK: RenderProcessor
