@@ -1,0 +1,44 @@
+{
+    "nodes": [
+        {
+            "id": "welcome",
+            "text": "We've been looking for the man who stole the gem. You wouldn't know anything about that would you?",
+            "edges": [
+                {
+                    "id": "welcome-to-noidea",
+                    "title": "No Idea"
+                },
+                {
+                    "id": "welcome-to-itookit",
+                    "title": "I took it"
+                }
+            ]
+        },
+        {
+            "id": "welcome-to-noidea",
+            "text": "Ok, we'll give you the benefit of the doubt. But this gem is worth a lot of money."
+        },
+        {
+            "id": "welcome-to-itookit",
+            "text": "Give it back, or else",
+            "edges": [
+                {
+                    "id": "itookit-to-swingsword",
+                    "title": "Swing a sword"
+                },
+                {
+                    "id": "itookit-to-runaway",
+                    "title": "Run Away"
+                }
+            ]
+        },
+        {
+            "id": "itookit-to-swingsword",
+            "text": "You swing a sword, but they block it with their mighty shield. You have been arrested for theft."
+        },
+        {
+            "id": "itookit-to-runaway",
+            "text": "You run as fast as you can, but you end up at a dead end in the alley. They quickly catch up. One yells at you, he's quite angry."
+        }
+    ]
+}
