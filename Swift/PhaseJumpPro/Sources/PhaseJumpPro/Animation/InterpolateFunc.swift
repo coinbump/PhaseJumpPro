@@ -27,7 +27,7 @@ enum InterpolateFuncs {
 //    }
     
     /// @return Returns an interpolation func that interpolates in reverse (from end to start)
-    InterpolateFunc<T> Reverse<T>(_func: InterpolateFunc<T>) {
+    InterpolateFunc<T> reverse<T>(_func: InterpolateFunc<T>) {
         { (progress: Double) in
             _func(1.0 - progress)
         }
