@@ -10,7 +10,6 @@ import Foundation
 public enum FinishType {
     /// Keep running the updatable
     case `continue`
-
     /// Complete the updatable
     case finish
 }
