@@ -1,6 +1,6 @@
 import Foundation
 
-public class Timer: SomeUpdatable {
+public actor Timer: SomeUpdatable {
     
     // TODO: finish
 #if false
