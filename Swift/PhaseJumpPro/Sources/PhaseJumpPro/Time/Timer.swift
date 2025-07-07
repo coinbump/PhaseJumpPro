@@ -1,9 +1,16 @@
 import Foundation
 
+/*
+ RATING: 5 stars
+ Has unit tests
+ CODE REVIEW: 7/6/25
+ */
+
 public func clamp<T>(_ value: T, minValue: T, maxValue: T) -> T where T : Comparable {
     return min(max(value, minValue), maxValue)
 }
 
+/// Runs for a specified duration, then finishes or repeats
 public final class Timer: SomeUpdatable {
     public typealias Func = (Timer) -> Void
 
@@ -46,12 +53,13 @@ public final class Timer: SomeUpdatable {
     }
     
     var progress: Double {
-        clamp(state / duration, minValue: 0.0, maxValue: 1.0)
-    }
-    
-    func setProgress(_ progress: Double) {
-        let progress = clamp(progress, minValue: 0.0, maxValue: 1.0)
-        state = self.progress * duration
+        get {
+            clamp(state / duration, minValue: 0.0, maxValue: 1.0)
+        }
+        set {
+            let progress = clamp(newValue, minValue: 0.0, maxValue: 1.0)
+            state = duration * progress
+        }
     }
     
     func onFinish() {
@@ -60,6 +68,7 @@ public final class Timer: SomeUpdatable {
     
     // MARK: SomeUpdatable
     
+    @discardableResult
     public func onUpdate(time: TimeSlice) -> FinishType {
         if isFinished || duration <= 0 {
             return .finish

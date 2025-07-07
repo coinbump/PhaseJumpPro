@@ -15,7 +15,7 @@ public enum RunType {
 }
 
 /// Manages logic for running an updatable that when it finishes, either repeats or finishes
-public struct Runner {
+public final class Runner {
     public typealias OnResetFunc = () -> Void
     public typealias OnFinishFunc = () -> Void
 
@@ -44,11 +44,11 @@ public struct Runner {
         self.runType = runType
     }
 
-    public mutating func finish() {
+    public func finish() {
         isFinished = true
     }
     
-    public mutating func reset() {
+    public func reset() {
         guard isFinished else { return }
         isFinished = false
 

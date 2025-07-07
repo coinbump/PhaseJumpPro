@@ -1,7 +1,6 @@
 import Foundation
 import Testing
 @testable import PhaseJumpPro
-import XCTest
 
 struct RunnerTests {
     class Counter {
