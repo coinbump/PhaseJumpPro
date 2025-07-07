@@ -7,8 +7,8 @@
 /// An object that receives time update events
 /// Finish the updatable when it's finished so it can be removed
 public final class Updatable: SomeUpdatable {
-    public typealias OnUpdateFunc = (Updatable, TimeSlice) -> FinishType
-    public typealias Func = (Updatable) -> Void
+    public typealias OnUpdateFunc = (TimeSlice) -> FinishType
+    public typealias Func = () -> Void
     
     /// If true, this updatable is finished running and will be removed
     public var isFinished: Bool = false {
@@ -16,7 +16,7 @@ public final class Updatable: SomeUpdatable {
             guard isFinished != oldValue,
                   isFinished else { return }
             
-            onFinishFunc?(self)
+            onFinishFunc?()
         }
     }
     
@@ -44,7 +44,7 @@ public final class Updatable: SomeUpdatable {
     public func onUpdate(time: TimeSlice) -> FinishType {
         guard !isFinished else { return .finish }
         
-        let result = onUpdateFunc?(self, time) ?? .continue
+        let result = onUpdateFunc?(time) ?? .continue
         isFinished = result == .finish
 
         return result

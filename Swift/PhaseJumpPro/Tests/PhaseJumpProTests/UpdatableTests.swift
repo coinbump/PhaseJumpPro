@@ -14,10 +14,10 @@ struct UpdatableTests {
         let counter = Counter()
         let sut = Updatable()
         
-        sut.onFinishFunc = { _ in
+        sut.onFinishFunc = {
             counter.didFinish = true
         }
-        sut.onUpdateFunc = { _, _ in
+        sut.onUpdateFunc = { _ in
             .finish
         }
         
@@ -32,7 +32,7 @@ struct UpdatableTests {
         let counter = Counter()
         let sut = Updatable()
         
-        sut.onFinishFunc = { _ in
+        sut.onFinishFunc = {
             counter.didFinish = true
         }
         #expect(false == sut.isFinished)
@@ -46,7 +46,7 @@ struct UpdatableTests {
         let counter = Counter()
         let sut = Updatable()
         
-        sut.onUpdateFunc = { _, time in
+        sut.onUpdateFunc = { time in
             counter.timeValue += time.delta
             return .continue
         }
@@ -61,7 +61,7 @@ struct UpdatableTests {
         let counter = Counter()
         let sut = Updatable()
         
-        sut.onUpdateFunc = { _, time in
+        sut.onUpdateFunc = { time in
             counter.timeValue += time.delta
             return .continue
         }
