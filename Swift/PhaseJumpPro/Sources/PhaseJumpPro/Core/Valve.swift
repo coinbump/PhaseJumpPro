@@ -46,7 +46,7 @@ public final class Valve: SomeUpdatable {
     private var timer: Timer?
     private let updatable = Updatable()
     
-    init(isOn: Bool = false) {
+    public init(isOn: Bool = false) {
         state = isOn ? .on : .off
         
         updatable.onUpdateFunc = { [weak self] (time: TimeSlice) -> FinishType in
@@ -82,7 +82,7 @@ public final class Valve: SomeUpdatable {
         timer?.progress ?? 0
     }
     
-    var value: Double {
+    public var value: Double {
         switch state {
         case .on:
             1
@@ -100,7 +100,7 @@ public final class Valve: SomeUpdatable {
      If we are interrupting a previous animation, the actual duration will be proportional to
      the distance left
      */
-    func turnOn(duration: Double) {
+    public func turnOn(duration: Double) {
         guard !isOn else { return }
         
         if duration <= 0 {
@@ -122,7 +122,7 @@ public final class Valve: SomeUpdatable {
      If we are interrupting a previous animation, the actual duration will be proportional to
      the distance left
      */
-    func turnOff(duration: Double) {
+    public func turnOff(duration: Double) {
         guard !isOff else { return }
 
         if duration <= 0 {
@@ -139,15 +139,15 @@ public final class Valve: SomeUpdatable {
         self.timer = timer
     }
 
-    var isOn: Bool {
+    public var isOn: Bool {
         state == .on
     }
 
-    var isOff: Bool {
+    public var isOff: Bool {
         state == .off
     }
     
-    func onValveUpdate() {
+    public func onValveUpdate() {
         onValveUpdateFunc?(self)
     }
     

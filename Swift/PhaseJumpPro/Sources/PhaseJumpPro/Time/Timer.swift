@@ -39,20 +39,20 @@ public final class Timer: SomeUpdatable {
         runner.onResetFunc = { self.onReset() }
     }
     
-    func stop() {
+    public func stop() {
         runner.runType = .once
         runner.isFinished = true
     }
     
-    func reset() {
+    public func reset() {
         runner.reset()
     }
     
-    func onReset() {
+    public func onReset() {
         state = 0
     }
     
-    var progress: Double {
+    public var progress: Double {
         get {
             clamp(state / duration, minValue: 0.0, maxValue: 1.0)
         }
@@ -62,7 +62,7 @@ public final class Timer: SomeUpdatable {
         }
     }
     
-    func onFinish() {
+    public func onFinish() {
         onFinishFunc?(self)
     }
     
@@ -87,7 +87,7 @@ public final class Timer: SomeUpdatable {
         return isFinished ? .finish : .continue
     }
     
-    func timeDelta(for time: TimeSlice) -> Double {
+    private func timeDelta(for time: TimeSlice) -> Double {
         time.delta
     }
     
