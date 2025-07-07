@@ -1,5 +1,11 @@
 import Foundation
 
+/*
+ RATING: 5 stars
+ Has unit tests
+ CODE REVIEW: 7/7/25
+ */
+
 /**
  Common design pattern for interactive media
  A valve transitions between two states over time, usually with an animation
