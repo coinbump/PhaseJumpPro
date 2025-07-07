@@ -2,9 +2,9 @@ import Foundation
 import Testing
 import XCTest
 
-class Test: XCTestCase {
-    func foo() {
-        XCTAssertTrue(true)
+final class MyLibraryTests: XCTestCase {
+    func testExample() {
+        XCTAssertEqual(2 + 2, 4)
     }
 }
 

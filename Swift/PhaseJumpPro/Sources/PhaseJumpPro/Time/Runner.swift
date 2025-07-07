@@ -1,6 +1,6 @@
 import Foundation
 
-public enum class RunType {
+public enum RunType {
     /// Run one time
     case once
 
@@ -9,7 +9,7 @@ public enum class RunType {
 }
 
 /// Manages logic for running an updatable that when it finishes, either repeats or finishes
-public struct Runner {
+public actor Runner {
     public typealias OnResetFunc = () -> Void
     public typealias OnFinishFunc = () -> Void
 
@@ -21,7 +21,7 @@ public struct Runner {
     /// If true, we are finished running
     public var isFinished = false {
         didSet {
-            guard newValue != oldValue, isFinished else { return }
+            guard isFinished != oldValue, isFinished else { return }
             
             onFinishFunc?()
 
@@ -34,7 +34,6 @@ public struct Runner {
         }
     }
 
-public:
     public init(runType: RunType) {
         self.runType = runType
     }
