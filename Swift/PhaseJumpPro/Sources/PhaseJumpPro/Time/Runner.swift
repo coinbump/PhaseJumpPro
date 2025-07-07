@@ -10,20 +10,20 @@ public enum class RunType {
 
 /// Manages logic for running an updatable that when it finishes, either repeats or finishes
 public struct Runner {
-    typealias OnResetFunc = () -> Void
-    typealias OnFinishFunc = () -> Void
+    public typealias OnResetFunc = () -> Void
+    public typealias OnFinishFunc = () -> Void
 
-    private var runType: RunType
+    public var runType: RunType
 
-    public OnResetFunc onResetFunc
-    public OnFinishFunc onFinishFunc
+    public var onResetFunc: OnResetFunc?
+    public var onFinishFunc: OnFinishFunc?
 
     /// If true, we are finished running
     public var isFinished = false {
         didSet {
             guard newValue != oldValue, isFinished else { return }
             
-            onFinishFunc()
+            onFinishFunc?()
 
             switch runType {
             case .repeat:
@@ -43,6 +43,6 @@ public:
         guard isFinished else { return }
         isFinished = false
 
-        onResetFunc()
+        onResetFunc?()
     }
 }
