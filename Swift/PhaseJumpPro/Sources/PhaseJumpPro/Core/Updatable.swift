@@ -2,7 +2,7 @@ import Foundation
 
 /// An object that receives time update events
 /// Finish the updatable when it's finished so it can be removed
-public actor Updatable: SomeUpdatable {
+public struct Updatable: SomeUpdatable {
     /// If true, this updatable is finished running and will be removed
     public var isFinished: Bool {
         didSet {

@@ -9,25 +9,25 @@ public enum class RunType {
 }
 
 /// Manages logic for running an updatable that when it finishes, either repeats or finishes
-public actor Runner {
-    typealias OnResetFunc = (Self) -> Void
-    typealias OnFinishFunc = (Self) -> Void
+public struct Runner {
+    typealias OnResetFunc = () -> Void
+    typealias OnFinishFunc = () -> Void
 
     private var runType: RunType
 
-    public OnResetFunc onResetFunc;
-    public OnFinishFunc onFinishFunc;
+    public OnResetFunc onResetFunc
+    public OnFinishFunc onFinishFunc
 
     /// If true, we are finished running
     public var isFinished = false {
         didSet {
             guard newValue != oldValue, isFinished else { return }
             
-            onFinishFunc(self)
+            onFinishFunc()
 
             switch runType {
             case .repeat:
-                Reset()
+                reset()
             default:
                 break
             }
@@ -39,10 +39,10 @@ public:
         self.runType = runType
     }
 
-    func Reset() {
+    func reset() {
         guard isFinished else { return }
         isFinished = false
 
-        onResetFunc(self)
+        onResetFunc()
     }
-};
+}
