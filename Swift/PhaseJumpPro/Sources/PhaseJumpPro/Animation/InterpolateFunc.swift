@@ -10,11 +10,11 @@ public enum InterpolateFuncs {
     /**
      @return Returns the standard func for interpolating between start and end values
      */
-    public InterpolateFunc<T> make<T>(start: T, end: T) {
-        { (progress: Double) in
-            start + (end - start) * progress
-        }
-    }
+//    public func make<T>(start: T, end: T) -> InterpolateFunc<T> where T: Numeric {
+//        { (progress: Double) in
+//            start + (end - start) * progress
+//        }
+//    }
     
     /// @return Returns an interpolation func that applies an ease curve to the progress
     /// parameter
@@ -27,9 +27,9 @@ public enum InterpolateFuncs {
 //    }
     
     /// @return Returns an interpolation func that interpolates in reverse (from end to start)
-    public InterpolateFunc<T> reverse<T>(_func: InterpolateFunc<T>) {
-        { (progress: Double) in
-            _func(1.0 - progress)
+    public func reverse<T>(_func: @escaping InterpolateFunc<T>) -> InterpolateFunc<T> {
+        {
+            _func(1.0 - $0)
         }
     }
     

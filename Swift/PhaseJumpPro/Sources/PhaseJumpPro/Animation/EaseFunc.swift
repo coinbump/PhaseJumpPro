@@ -1,34 +1,34 @@
 import Foundation
 
 /// Transforms a normalized progress value (0-1.0) to a new normalized progress value (0-1.0)
-public typealias EaseFunc = (Double) -> Double
+public typealias EaseFunc = @Sendable (Double) -> Double
 
 public enum EaseFuncs {
-    public let linear: EaseFunc = {
+    public static let linear: EaseFunc = {
         $0
     }
-    public let inSquared: EaseFunc = {
+    public static let inSquared: EaseFunc = {
         pow($0, 2)
     }
-    public let inCubed: EaseFunc = {
-        po2($0, 3)
+    public static let inCubed: EaseFunc = {
+        pow($0, 3)
     }
-    public let outSquared: EaseFunc = {
+    public static let outSquared: EaseFunc = {
         1.0 - pow($0, 2)
     }
-    public let outCubed: EaseFunc = {
+    public static let outCubed: EaseFunc = {
         1.0 - pow($0, 3)
     }
     
     // FUTURE: port from C++ as needed
     /*
-    public let outElastic: EaseFunc = {
+    public static let outElastic: EaseFunc = {
     }
-    public let inBack: EaseFunc = {
+    public static let inBack: EaseFunc = {
     }
-    public let outBack: EaseFunc = {
+    public static let outBack: EaseFunc = {
     }
-    public let inOutBack: EaseFunc = {
+    public static let inOutBack: EaseFunc = {
     }
      */
 } // namespace EaseFuncs
