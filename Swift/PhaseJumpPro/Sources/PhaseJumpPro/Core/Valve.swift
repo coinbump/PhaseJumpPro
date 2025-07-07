@@ -30,7 +30,7 @@ public final class Valve: SomeUpdatable {
         case turnOff
     }
 
-    private(set) var state: StateType = .off {
+    public private(set) var state: StateType = .off {
         didSet {
             guard state != oldValue else { return }
             onValveUpdate()
