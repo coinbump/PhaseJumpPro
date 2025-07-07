@@ -1,5 +1,6 @@
 import Foundation
 import Testing
+@testable import PhaseJumpPro
 import XCTest
 
 final class MyLibraryTests: XCTestCase {
@@ -18,43 +19,43 @@ struct RunnerTests {
     
     @Test
     func runOnce() async throws {
-        let sut = Runner(runType: .once)
+        var sut = Runner(runType: .once)
         let counter = Counter()
         
-        sut.onFinishFunc = { counter.finishCount++ }
-        sut.onResetFunc = { counter.resetCount++ }
+        sut.onFinishFunc = { counter.finishCount += 1 }
+        sut.onResetFunc = { counter.resetCount += 1 }
 
         #expect(false == sut.isFinished)
-        sut.isFinished = false
+        sut.reset()
         #expect(false == sut.isFinished)
         #expect(0 == counter.finishCount)
-        sut.isFinished = true
+        sut.finish()
         #expect(1 == counter.finishCount)
         #expect(0 == counter.resetCount)
 
-        sut.isFinished = true
+        sut.finish()
         #expect(1 == counter.finishCount)
         #expect(0 == counter.resetCount)
     }
 
     @Test
-    func repeat() async throws {
-        let sut = Runner(runType: .repeat)
+    func testRepeat() async throws {
+        var sut = Runner(runType: .repeat)
         let counter = Counter()
         
-        sut.onFinishFunc = { counter.finishCount++ }
-        sut.onResetFunc = { counter.resetCount++ }
+        sut.onFinishFunc = { counter.finishCount += 1 }
+        sut.onResetFunc = { counter.resetCount += 1 }
 
         #expect(false == sut.isFinished)
-        sut.isFinished = false
+        sut.reset()
         #expect(false == sut.isFinished)
         #expect(0 == counter.finishCount)
-        sut.isFinished = true
+        sut.finish()
         #expect(1 == counter.finishCount)
         #expect(1 == counter.resetCount)
         #expect(false == sut.isFinished)
 
-        sut.isFinished = true
+        sut.finish()
         #expect(2 == counter.finishCount)
         #expect(2 == counter.resetCount)
         #expect(false == sut.isFinished)
