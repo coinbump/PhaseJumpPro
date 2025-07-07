@@ -18,7 +18,7 @@ public enum FinishType {
 /// Lightweight updatable, with no stored properties
 public protocol SomeUpdatable {
     /// Handle time update event
-    func onUpdate(time: TimeSlice) -> FinishType
+    mutating func onUpdate(time: TimeSlice) -> FinishType
 
     /// Allows for cleanup of old updatables
     var isFinished: Bool { get set }
