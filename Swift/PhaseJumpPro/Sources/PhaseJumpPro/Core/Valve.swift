@@ -9,6 +9,7 @@ import Foundation
  */
 public final class Valve: SomeUpdatable {
     public typealias OnValveUpdateFunc = (Valve) -> Void
+    
     public enum StateType {
         /// Valve is off
         case off
@@ -71,7 +72,7 @@ public final class Valve: SomeUpdatable {
         }
     }
 
-    var progress: Double {
+    private var timerProgress: Double {
         timer?.progress ?? 0
     }
     
@@ -82,9 +83,9 @@ public final class Valve: SomeUpdatable {
         case .off:
             0
         case .turnOn:
-            progress
+            timerProgress
         case .turnOff:
-            1.0 - progress
+            1.0 - timerProgress
         }
     }
 
