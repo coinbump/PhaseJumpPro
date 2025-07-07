@@ -13,8 +13,8 @@ public actor Updatable: SomeUpdatable {
         }
     }
 
-    public typealias OnUpdateFunc = (Updatable, TimeSlice) -> FinishType
-    public typealias Func = (Updatable) -> Void
+    public typealias OnUpdateFunc = (Self, TimeSlice) -> FinishType
+    public typealias Func = (Self) -> Void
     
     /// (Optional). Called for update events
     public var onUpdateFunc: OnUpdateFunc?
