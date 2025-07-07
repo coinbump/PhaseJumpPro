@@ -8,7 +8,7 @@ import PhaseJumpPro
  */
 
 /// Return type for a finishing updatable func
-enum FinishType {
+public enum FinishType {
     /// Keep running the updatable
     case `continue`
 
@@ -17,7 +17,7 @@ enum FinishType {
 }
 
 /// Lightweight updatable, with no stored properties
-protocol SomeUpdatable {
+public protocol SomeUpdatable {
     /// Handle time update event
     func onUpdate(time: TimeSlice) -> FinishType
 
