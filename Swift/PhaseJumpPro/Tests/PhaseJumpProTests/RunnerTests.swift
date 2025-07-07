@@ -3,14 +3,6 @@ import Testing
 @testable import PhaseJumpPro
 import XCTest
 
-final class MyLibraryTests: XCTestCase {
-    func testExample() {
-        XCTAssertEqual(2 + 2, 4)
-    }
-}
-
-// TODO: Can't get these tests to run, no way to verify (yet)
-
 struct RunnerTests {
     class Counter {
         var finishCount = 0

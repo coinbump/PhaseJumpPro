@@ -1,5 +1,11 @@
 import Foundation
 
+/*
+ RATING: 5 stars
+ Has unit tests
+ CODE REVIEW: 7/6/25
+ */
+
 public enum RunType {
     /// Run one time
     case once

@@ -1,5 +1,4 @@
 import Foundation
-import PhaseJumpPro
 
 /*
  RATING: 5 stars
