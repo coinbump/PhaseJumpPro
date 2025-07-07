@@ -147,6 +147,7 @@ public final class Valve: SomeUpdatable {
     
     // MARK: SomeUpdatable
     
+    @discardableResult
     public func onUpdate(time: TimeSlice) -> FinishType {
         updatable.onUpdate(time: time)
     }
