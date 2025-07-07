@@ -2,15 +2,15 @@ import Foundation
 
 /// Function that returns a value between [start, end] based on progress
 /// Progress value is usually 0-1.0, but can overflow for elastic animations
-typealias InterpolateFunc<T> = (_ progress: Double) -> T
+public typealias InterpolateFunc<T> = (_ progress: Double) -> T
 
 // TODO: finish port
 
-enum InterpolateFuncs {
+public enum InterpolateFuncs {
     /**
      @return Returns the standard func for interpolating between start and end values
      */
-    InterpolateFunc<T> make<T>(start: T, end: T) {
+    public InterpolateFunc<T> make<T>(start: T, end: T) {
         { (progress: Double) in
             start + (end - start) * progress
         }
@@ -27,7 +27,7 @@ enum InterpolateFuncs {
 //    }
     
     /// @return Returns an interpolation func that interpolates in reverse (from end to start)
-    InterpolateFunc<T> reverse<T>(_func: InterpolateFunc<T>) {
+    public InterpolateFunc<T> reverse<T>(_func: InterpolateFunc<T>) {
         { (progress: Double) in
             _func(1.0 - progress)
         }
