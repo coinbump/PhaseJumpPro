@@ -15,17 +15,21 @@ namespace PJ {
         using Base = BehaviorNode;
         using This = UpdatableBehavior;
 
-        using BuildFunc = std::function<UP<Updatable>(This&)>;
+        using BuildFunc = std::function<UP<SomeUpdatable>(This&)>;
 
     protected:
         /// Behavior runs the updatable until it is finished
-        UP<Updatable> updatable;
+        UP<SomeUpdatable> childUpdatable;
 
     public:
         /// Called to build the updatable dynamically
         BuildFunc buildFunc;
 
         UpdatableBehavior(BuildFunc buildFunc);
+
+        SomeUpdatable* GetChildUpdatable() const {
+            return childUpdatable.get();
+        }
 
         // MARK: BehaviorNode
 

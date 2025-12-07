@@ -36,7 +36,7 @@ PatternRateLimiter::PatternRateLimiter(VectorList<Pattern> _patterns) :
     pattern = patterns[0];
     buildRateLimiter();
 
-    onUpdateFunc = [advancePattern, this](auto& updatable, auto time) {
+    updatable.onUpdateFunc = [advancePattern, this](auto& updatable, auto time) {
         GUARDR(!IsEmpty(patterns), FinishType::Finish);
 
         auto delayPattern = std::get_if<DelayPattern>(&pattern);

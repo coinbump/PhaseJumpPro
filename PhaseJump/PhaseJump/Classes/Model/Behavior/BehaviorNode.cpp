@@ -6,6 +6,24 @@ using namespace PJ;
 
 using This = BehaviorNode;
 
+ostream& PJ::operator<<(ostream& os, BehaviorState const& value) {
+    switch (value) {
+    case BehaviorState::Initial:
+        os << "initial";
+        break;
+    case BehaviorState::Run:
+        os << "run";
+        break;
+    case BehaviorState::Success:
+        os << "success";
+        break;
+    case BehaviorState::Failure:
+        os << "failure";
+        break;
+    }
+    return os;
+}
+
 BehaviorNode::BehaviorNode(String _name, RunType runType) :
     tree(*this),
     name(_name) {
@@ -18,7 +36,7 @@ BehaviorNode::BehaviorNode(String _name, RunType runType) :
         break;
     }
 
-    onFinishFunc = [this](auto& updatable) {
+    updatable.onFinishFunc = [this](auto& updatable) {
         if (name.length() > 0) {
             PJ::LogIf(_diagnose, "Behavior- OnFinish: ", name);
         }
@@ -29,7 +47,7 @@ BehaviorNode::BehaviorNode(String _name, RunType runType) :
     states.SetOnStateChangeFunc([this](auto& sm) {
         switch (sm.State()) {
         case BehaviorState::Initial:
-            SetIsFinished(false);
+            updatable.SetIsFinished(false);
             break;
         case BehaviorState::Run:
             OnRun();
@@ -56,19 +74,19 @@ VectorList<BehaviorNode*> BehaviorNode::Targets() {
     return { target };
 }
 
-void BehaviorNode::OnUpdate(TimeSlice time) {
-    GUARD(!IsFinished())
+FinishType BehaviorNode::OnUpdate(TimeSlice time) {
+    GUARDR(!IsFinished(), FinishType::Finish)
 
     // Kickstart run if needed, which sets initial behavior states
     states.SetState(BehaviorState::Run);
 
     // Check if starting run failed
-    GUARD(!IsFinished())
+    GUARDR(!IsFinished(), FinishType::Finish)
 
     // Target is determined before the update (Example: delay, timer)
     auto targets = Targets();
 
-    Base::OnUpdate(time);
+    updatable.OnUpdate(time);
 
     VectorList<BehaviorNode*> unfinishedTargets;
 
@@ -98,16 +116,18 @@ void BehaviorNode::OnUpdate(TimeSlice time) {
         }
     }
 
-    GUARD(tree.ChildCount() > 0)
+    GUARDR(tree.ChildCount() > 0, FinishType::Continue)
 
     auto firstUnfinishedChild =
         std::find_if(tree.Children().begin(), tree.Children().end(), [](auto& child) {
             return !child->IsFinished();
         });
-    GUARD(firstUnfinishedChild == tree.Children().end())
+    GUARDR(firstUnfinishedChild == tree.Children().end(), FinishType::Continue)
 
-    GUARD(onAllChildrenFinishFunc)
+    GUARDR(onAllChildrenFinishFunc, FinishType::Continue)
     onAllChildrenFinishFunc(*this);
+
+    return FinishType::Continue;
 }
 
 void BehaviorNode::OnRun() {

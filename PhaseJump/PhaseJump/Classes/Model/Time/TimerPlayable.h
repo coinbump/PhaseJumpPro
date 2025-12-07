@@ -7,7 +7,7 @@
 
 /*
  RATING: 5 stars
- Has unit tests (via Timer)
+ Has unit tests (via PlayableTimer)
  CODE REVIEW: 10/5/24
  */
 namespace PJ {
@@ -29,18 +29,15 @@ namespace PJ {
         TimerPlayable(float duration, RunType runType) :
             runner(runType),
             duration(duration) {
-            runner.onFinishFunc = [this](Runner& runner) { this->OnFinish(); };
-            runner.onResetFunc = [this](Runner& runner) { this->OnReset(); };
+            runner.onFinishFunc = [this]() { updatable.SetIsFinished(true); };
+            runner.onResetFunc = [this]() { this->OnReset(); };
         }
 
         virtual ~TimerPlayable() {}
 
-        virtual void OnFinish() {
-            GUARD(onFinishFunc);
-            (onFinishFunc)(*this);
+        virtual void OnReset() {
+            updatable.SetIsFinished(false);
         }
-
-        virtual void OnReset() {}
 
         float TimeDeltaFor(TimeSlice time) {
             GUARDR(IsPlaying(), 0)
@@ -58,10 +55,10 @@ namespace PJ {
             return runner.IsFinished();
         }
 
-        void OnUpdate(TimeSlice time) override {
-            GUARD(IsPlaying());
+        FinishType OnUpdate(TimeSlice time) override {
+            GUARDR(IsPlaying(), FinishType::Continue);
 
-            Base::OnUpdate(TimeSlice(TimeDeltaFor(time)));
+            return Base::OnUpdate(TimeSlice(TimeDeltaFor(time)));
         }
 
         // MARK: - Playable

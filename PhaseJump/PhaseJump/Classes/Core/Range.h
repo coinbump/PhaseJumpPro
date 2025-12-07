@@ -3,7 +3,7 @@
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 7/6/24
+ CODE REVIEW: 12/6/25
  */
 namespace PJ {
     /// Specifies a range of values
@@ -34,7 +34,7 @@ namespace PJ {
             return Range<T>(start, end, Evaluate::Inside, Evaluate::Inside);
         }
 
-        bool IsInside(T value) {
+        bool IsInside(T value) const {
             auto startResult = false;
             auto endResult = false;
 

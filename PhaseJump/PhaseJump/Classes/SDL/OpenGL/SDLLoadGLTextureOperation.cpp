@@ -36,7 +36,7 @@ SomeLoadResourcesOperation::Result SDLLoadGLTextureOperation::LoadResources() {
     // TODO: even though we aren't flipping the bitmap, it still works, so something is incorrect
 
     SDLFileManager fm;
-    String id = fm.FileName(path, false);
+    String id = fm.FileName(path, FileManager::FileNameFormat::NoExtension);
 
     auto texture = MAKE<GLTexture>(GLTexture::Config{ .id = id, .bitmap = rgbaBitmap.get() });
 

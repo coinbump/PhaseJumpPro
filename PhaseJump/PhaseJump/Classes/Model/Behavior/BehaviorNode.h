@@ -26,13 +26,17 @@ namespace PJ {
         Failure
     };
 
+    // MARK: Stream friend operators
+
+    std::ostream& operator<<(std::ostream& os, BehaviorState const& value);
+
     /**
      Node in a behavior tree
 
      Reference:
      https://docs.nvidia.com/holoscan/sdk-user-guide/gxf/doc/behavior_tree/behavior_trees.html
      */
-    class BehaviorNode : public Treeable<BehaviorNode>, public Updatable {
+    class BehaviorNode : public Treeable<BehaviorNode>, public SomeUpdatable {
     public:
         // FUTURE: add ParallelBehavior if needed
         using Base = Updatable;
@@ -51,6 +55,8 @@ namespace PJ {
     public:
         /// Used to enable extra logging for this object
         DiagnoseModel _diagnose;
+
+        Updatable updatable;
 
         Tree tree;
 
@@ -79,11 +85,20 @@ namespace PJ {
             return states.State();
         }
 
+        /// @return Returns the list of child nodes
+        auto const& Children() const {
+            return tree.Children();
+        }
+
         bool IsRunning() const {
             return states.State() == BehaviorState::Run;
         }
 
-        void Reset() {
+        void Finish() {
+            updatable.Finish();
+        }
+
+        void Reset() override {
             states.SetState(BehaviorState::Initial);
         }
 
@@ -99,10 +114,6 @@ namespace PJ {
         /// @return Returns a list of child nodes to target
         virtual VectorList<BehaviorNode*> Targets();
 
-        // MARK: Updatable
-
-        void OnUpdate(TimeSlice time) override;
-
         // MARK: Treeable
 
         This* Parent() const override {
@@ -111,6 +122,14 @@ namespace PJ {
 
         void SetParent(This* value) override {
             tree.SetParent(value);
+        }
+
+        // MARK: SomeUpdatable
+
+        FinishType OnUpdate(TimeSlice time) override;
+
+        bool IsFinished() const override {
+            return updatable.IsFinished();
         }
     };
 } // namespace PJ

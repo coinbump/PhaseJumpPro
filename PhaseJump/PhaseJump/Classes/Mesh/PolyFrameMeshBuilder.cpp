@@ -174,9 +174,11 @@ Mesh PolyFrameMeshBuilder::BuildMesh() {
             break;
         }
     case PathCorner::Bevel:
+        // FUTURE: support bevel path corners
         Log("ERROR. Unsupported path corner");
         break;
     case PathCorner::Miter:
+        // FUTURE: support miter path corners
         Log("ERROR. Unsupported path corner");
         break;
     }

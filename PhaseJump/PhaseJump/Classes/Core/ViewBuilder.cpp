@@ -5,7 +5,7 @@
 #include "Font.h"
 #include "ImRenderer.h"
 #include "PadViewLayout.h"
-#include "QuickBuild.h"
+#include "QuickBuilder.h"
 #include "SliderControl.h"
 #include "SomeCollider2D.h"
 #include "SomeHoverGestureHandler.h"
@@ -23,11 +23,11 @@ using namespace PJ;
 
 using This = ViewBuilder;
 
-ViewBuilder::ViewBuilder(QuickBuild& quickBuild) :
-    quickBuild(&quickBuild) {}
+ViewBuilder::ViewBuilder(QuickBuilder& quickBuilder) :
+    quickBuilder(&quickBuilder) {}
 
 ViewBuilder::ViewBuilder(WorldNode& node) {
-    qb = NEW<QuickBuild>(node);
+    qb = NEW<QuickBuilder>(node);
 }
 
 This& ViewBuilder::Pad(BuildConfigFunc<PadConfig> buildConfigFunc) {
@@ -364,7 +364,7 @@ This& ViewBuilder::ButtonView(BuildConfigFunc<ButtonViewConfig> buildConfigFunc)
                         button.owner->Add(collider);
                     }
                 } else if (nullptr == currentCollider) {
-                    QuickBuild(*button.owner).RectCollider();
+                    QuickBuilder(*button.owner).RectCollider();
                 }
 
                 if (config.modifyViewFunc) {
@@ -410,7 +410,7 @@ This& ViewBuilder::ToggleButtonView(BuildConfigFunc<ToggleButtonViewConfig> buil
                         button.owner->Add(collider);
                     }
                 } else if (nullptr == currentCollider) {
-                    QuickBuild(*button.owner).RectCollider();
+                    QuickBuilder(*button.owner).RectCollider();
                 }
 
                 if (config.isOnBinding.IsValid()) {
@@ -720,7 +720,7 @@ This& ViewBuilder::AddToolTip(ToolTipConfig config) {
 
     // Add a collider if needed
     if (nullptr == activeView->owner->TypeComponent<SomeCollider2D>()) {
-        QuickBuild(*activeView->owner).RectCollider();
+        QuickBuilder(*activeView->owner).RectCollider();
     }
 
     activeView->AddSignalHandler<HoverUIEvent>(

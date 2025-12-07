@@ -11,7 +11,7 @@ namespace FilesProcessorTests {
 using namespace FilesProcessorTests;
 
 TEST(FilesProcessor, Process) {
-    FilesProcessor sut({}, FilesProcessor::Settings(FileSearchType::Directory));
+    FilesProcessor sut({}, FilesProcessor::Config(FileSearchType::Directory));
     sut.Scan(FilePath(""));
     sut.Scan(FilePath(""));
     sut.Scan(FilePath(""));

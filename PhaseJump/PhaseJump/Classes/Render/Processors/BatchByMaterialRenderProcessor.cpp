@@ -1,5 +1,6 @@
 #include "BatchByMaterialRenderProcessor.h"
 #include "RenderWorldSystem.h"
+#include <stack>
 
 using namespace std;
 using namespace PJ;

@@ -58,7 +58,7 @@ TEST(BehaviorNode, OnRun) {
     BehaviorNode sut;
 
     float parentRunTime{};
-    sut.onUpdateFunc = [&](auto& updatable, TimeSlice time) {
+    sut.updatable.onUpdateFunc = [&](auto& updatable, TimeSlice time) {
         parentRunTime += time.delta;
 
         return FinishType::Continue;
@@ -73,7 +73,7 @@ TEST(BehaviorNode, OnRun) {
     childPtr->onRunFunc = [&](auto& behavior) {
         runCount++;
     };
-    childPtr->onUpdateFunc = [&](auto& updatable, TimeSlice time) {
+    childPtr->updatable.onUpdateFunc = [&](auto& updatable, TimeSlice time) {
         runTime += time.delta;
 
         return FinishType::Continue;
@@ -92,7 +92,7 @@ TEST(BehaviorNode, OnFinish) {
 
     float parentRunTime{};
     float targetFinishCount{};
-    sut.onUpdateFunc = [&](auto& updatable, TimeSlice time) {
+    sut.updatable.onUpdateFunc = [&](auto& updatable, TimeSlice time) {
         parentRunTime += time.delta;
 
         return FinishType::Continue;
@@ -111,7 +111,7 @@ TEST(BehaviorNode, OnFinish) {
     childPtr->onRunFunc = [&](auto& behavior) {
         runCount++;
     };
-    childPtr->onUpdateFunc = [&](auto& updatable, TimeSlice time) {
+    childPtr->updatable.onUpdateFunc = [&](auto& updatable, TimeSlice time) {
         GUARDR(runTime == 0, FinishType::Finish)
 
         runTime += time.delta;
@@ -121,7 +121,7 @@ TEST(BehaviorNode, OnFinish) {
     Updatable::Func onFinishFunc = [&](auto& behavior) {
         finishCount++;
     };
-    Override(childPtr->onFinishFunc, onFinishFunc);
+    Override(childPtr->updatable.onFinishFunc, onFinishFunc);
     childPtr->finishState = BehaviorState::Failure;
 
     sut.OnUpdate({3});

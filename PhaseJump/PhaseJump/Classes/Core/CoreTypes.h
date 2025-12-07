@@ -2,4 +2,5 @@
 
 #include <optional>
 
-using Optional = std::optional;
+template <class Type>
+using Optional = std::optional<Type>;

@@ -18,6 +18,7 @@ namespace PJ {
     protected:
         /// Seconds left in timer
         float time{};
+        float timeMax{};
 
     public:
         /// Returns time value in seconds
@@ -25,6 +26,14 @@ namespace PJ {
 
         TimedBehavior(TimeValueFunc timeValueFunc);
         TimedBehavior(float time);
+
+        float TimeMax() const {
+            return timeMax;
+        }
+
+        float TimeRemainder() const {
+            return time;
+        }
 
         // MARK: BehaviorNode
 

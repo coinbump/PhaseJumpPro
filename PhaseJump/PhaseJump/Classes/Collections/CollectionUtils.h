@@ -242,9 +242,8 @@ namespace PJ {
     /**
      Collects a tree in BFS order.
 
-     Makes some assumptions. That Children() is implemented, and nodes are pointers
+     Assumptions: Children() must be implemented, and nodes are pointers
      */
-    // TODO: improve with Treeable protocol
     template <class Node, class NodeList>
     void CollectBreadthFirstTree(Node* fromNode, NodeList& result) {
         result.clear();
@@ -257,6 +256,33 @@ namespace PJ {
                 result.push_back(child.get());
             }
             for (auto& child : fromNode->Children()) {
+                collectFunc(result, child.get());
+            }
+        };
+
+        collectFunc(result, fromNode);
+    }
+
+    /**
+     Collects a tree in BFS order.
+
+     Assumptions: Children() must be implemented, and nodes are pointers
+     */
+    template <class Node, class NodeList, class UnaryPred>
+    void CollectBreadthFirstTreeIf(Node* fromNode, NodeList& result, UnaryPred check) {
+        result.clear();
+        GUARD(fromNode)
+        GUARD(check(fromNode))
+
+        result.push_back(fromNode);
+
+        std::function<void(NodeList&, Node*)> collectFunc = [&](NodeList& result, Node* fromNode) {
+            for (auto& child : fromNode->Children()) {
+                GUARD_CONTINUE(check(child.get()))
+                result.push_back(child.get());
+            }
+            for (auto& child : fromNode->Children()) {
+                GUARD_CONTINUE(check(child.get()))
                 collectFunc(result, child.get());
             }
         };

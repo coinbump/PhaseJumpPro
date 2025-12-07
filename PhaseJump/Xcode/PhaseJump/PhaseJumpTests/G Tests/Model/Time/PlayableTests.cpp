@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 #include "Playable.h"
-#include "Timer.h"
+#include "PlayableTimer.h"
 
 #include <memory>
 
@@ -13,7 +13,7 @@ namespace PlayableTests {
     public:
         using Base = Playable;
         
-        Timer timer;
+        PlayableTimer timer;
 
         TestControllerPlayable() : timer(10, RunType::Once) {
             controller = &timer;
@@ -137,4 +137,13 @@ TEST(Playable, ControllerReset) {
     EXPECT_EQ(0, sut.PlayTime());
     EXPECT_FALSE(sut.IsPaused());
     EXPECT_FALSE(sut.IsFinished());
+}
+
+TEST(Playable, OnUpdateWithControllerReturnsValue) {
+    TestControllerPlayable sut;
+    sut.Play();
+    EXPECT_TRUE(sut.IsPlaying());
+    EXPECT_EQ(FinishType::Continue, sut.OnUpdate({3}));
+    EXPECT_EQ(FinishType::Finish, sut.OnUpdate({7}));
+    EXPECT_EQ(FinishType::Finish, sut.OnUpdate({1}));
 }

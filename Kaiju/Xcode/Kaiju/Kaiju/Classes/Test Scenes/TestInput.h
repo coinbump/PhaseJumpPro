@@ -20,7 +20,7 @@ class TestInput : public WorldComponent<> {
         //        }
     }
 
-    void OnUpdate(TimeSlice time) override {
+    FinishType OnUpdate(TimeSlice time) override {
         // support reading from any controller
         //        {
         //            auto value = Input::FirstAxisValue(ControllerAxisId::LeftX);
@@ -42,6 +42,8 @@ class TestInput : public WorldComponent<> {
         //                owner->TypeComponent<AnimatedSpriteRenderer>()->flipX = true;
         //            }
         //        }
+
+        return FinishType::Continue;
     }
 
     // MARK: SomeWorldComponent

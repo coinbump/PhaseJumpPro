@@ -19,9 +19,10 @@ void DelayBehavior::OnRun() {
 
     GUARD(delayValueFunc)
     delay = delayValueFunc();
+    delayMax = delay;
 
-    onUpdateFunc = [](auto& updatable, auto time) {
-        This& behavior = *(static_cast<This*>(&updatable));
+    updatable.onUpdateFunc = [this](auto& updatable, auto time) {
+        This& behavior = *this;
 
         GUARDR(behavior.delay > 0, FinishType::Continue)
         behavior.delay -= time.delta;

@@ -13,14 +13,25 @@
 namespace PJ {
     /// A simulation contains agents, each agent is responsible for its own localized logic
     /// For convenience, agents can be divided into Agent Groups
-    class AgentSystem : public Updatable {
+    class AgentSystem : public SomeUpdatable {
     public:
         using GroupList = VectorList<SP<SomeAgentGroup>>;
 
     protected:
         GroupList groups;
+        Updatable updatable;
 
     public:
+        AgentSystem() {
+            updatable.onUpdateFunc = [this](auto& updatable, auto time) {
+                for (auto& group : groups) {
+                    group->OnUpdate(time);
+                }
+
+                return FinishType::Continue;
+            };
+        }
+
         GroupList const& Groups() const {
             return groups;
         }
@@ -33,12 +44,14 @@ namespace PJ {
             group->system = this;
         }
 
-        // MARK: Updatable
+        // MARK: SomeUpdatable
 
-        void OnUpdate(TimeSlice time) override {
-            for (auto& group : groups) {
-                group->OnUpdate(time);
-            }
+        FinishType OnUpdate(TimeSlice time) override {
+            return updatable.OnUpdate(time);
+        }
+
+        bool IsFinished() const override {
+            return updatable.IsFinished();
         }
     };
 } // namespace PJ

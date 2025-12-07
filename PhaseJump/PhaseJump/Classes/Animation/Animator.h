@@ -21,7 +21,7 @@ namespace PJ {
      Example: animate a character from positions start to end
      */
     template <class T>
-    class Animator : public Updatable {
+    class Animator : public SomeUpdatable {
     protected:
         AnimationCycleTimer timer;
 
@@ -45,10 +45,12 @@ namespace PJ {
             InterpolateFunc<T> reverseInterpolateFunc;
         };
 
+        Updatable updatable;
+
         Animator(Config config) :
             timer(config.duration, config.cycleType) {
-            onUpdateFunc = [=](auto& updatable, TimeSlice time) {
-                This& animator = *(static_cast<This*>(&updatable));
+            updatable.onUpdateFunc = [=, this](auto& updatable, TimeSlice time) {
+                This& animator = *this;
 
                 animator.timer.OnUpdate(time);
 
@@ -71,7 +73,7 @@ namespace PJ {
                     config.binding(curveValue);
                 }
 
-                return animator.timer.GetFinishType();
+                return animator.timer.IsFinished() ? FinishType::Finish : FinishType::Continue;
             };
         }
 
@@ -95,7 +97,19 @@ namespace PJ {
             timer.SetProgress(value);
 
             // Sync binding state
-            isFinished = onUpdateFunc(*this, { 0 }) == FinishType::Finish;
+            updatable.SetIsFinished(
+                updatable.onUpdateFunc(updatable, TimeSlice(0)) == FinishType::Finish
+            );
+        }
+
+        // MARK: SomeUpdatable
+
+        FinishType OnUpdate(TimeSlice time) override {
+            return updatable.OnUpdate(time);
+        }
+
+        bool IsFinished() const override {
+            return updatable.IsFinished();
         }
     };
 

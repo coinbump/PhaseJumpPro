@@ -152,7 +152,7 @@ namespace PJ {
 
         // MARK: WorldComponent
 
-        void OnUpdate(TimeSlice time) override;
+        FinishType OnUpdate(TimeSlice time) override;
 
     protected:
         virtual void OnFrameChange();

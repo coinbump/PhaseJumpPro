@@ -74,24 +74,35 @@ namespace PJ {
     };
 
     /// Stores delay progress for delayed emit
-    class DelayedEmitModel : public Updatable {
+    class DelayedEmitModel : public SomeUpdatable {
     public:
         EmitModel model;
+        Updatable updatable;
 
         /// Used by emitter to track delay progress
         float delay = 0;
 
-        DelayedEmitModel(EmitModel model, float delay) :
+        DelayedEmitModel(EmitModel model, float _delay) :
             model(model),
-            delay(delay) {}
+            delay(_delay) {
+            updatable.onUpdateFunc = [this](auto& updatable, auto time) {
+                GUARDR(delay > 0, FinishType::Continue)
 
-        // MARK: Updatable
+                delay -= time.delta;
+                delay = std::max(0.0f, delay);
 
-        void OnUpdate(TimeSlice time) override {
-            GUARD(delay > 0)
+                return FinishType::Continue;
+            };
+        }
 
-            delay -= time.delta;
-            delay = std::max(0.0f, delay);
+        // MARK: SomeUpdatable
+
+        FinishType OnUpdate(TimeSlice time) override {
+            return updatable.OnUpdate(time);
+        }
+
+        bool IsFinished() const override {
+            return updatable.IsFinished();
         }
     };
 } // namespace PJ

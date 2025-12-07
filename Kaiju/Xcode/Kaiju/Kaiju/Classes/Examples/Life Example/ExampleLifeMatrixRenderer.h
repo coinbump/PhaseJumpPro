@@ -23,7 +23,7 @@ namespace Example {
             MatrixRenderer(Vector3 worldSize);
 
             void Awake() override;
-            void OnUpdate(TimeSlice time) override;
+            FinishType OnUpdate(TimeSlice time) override;
 
             void PostStep() {
                 model.SetVertexColorsNeedsBuild();

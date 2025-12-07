@@ -328,7 +328,7 @@ public:
 //            }
             meshNode.transform.SetWorldPosition(Vector3(200, 0, -0.2f));
 
-                       QuickBuild(meshNode)
+                       QuickBuilder(meshNode)
                             .Drag();
         }
     }

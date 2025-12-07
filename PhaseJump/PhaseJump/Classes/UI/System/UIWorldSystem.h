@@ -115,7 +115,7 @@ namespace PJ {
     protected:
         // MARK: SomeWorldComponent
 
-        void OnUpdate(TimeSlice time) override;
+        FinishType OnUpdate(TimeSlice time) override;
 
         enum class DragState { Default, Drag, LockDragMouseDown, LockDragMouseUp };
 

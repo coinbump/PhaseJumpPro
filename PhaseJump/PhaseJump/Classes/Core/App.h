@@ -1,23 +1,27 @@
 #pragma once
 
-#include "QuickBuild.h"
+#include "QuickBuilder.h"
 #include "SDLWorld.h"
 
-// REVIEW: /td
+// TODO: REVIEW. Don't use inheritance(?)
 namespace PJ {
     /**
-     Provides access to a quick builder object when the app is created
+     Exends QuickBuilder for building new apps
 
-     Usage: App::New().qb.Circle(100, Color::red);
+     Usage: App::New().Circle(100, Color::red).Go();
      */
-    class AppBuilder {
+    class AppBuilder : public QuickBuilder {
     public:
-        World* world{};
+        using Base = QuickBuilder;
+        using This = AppBuilder;
 
-        QuickBuild& qb;
-        UP<QuickBuild> _qb;
+        AppBuilder(WorldNode& node) :
+            Base(node) {}
 
-        ~AppBuilder();
+    protected:
+        // MARK: Base
+
+        void OnGo() override;
     };
 
     /**

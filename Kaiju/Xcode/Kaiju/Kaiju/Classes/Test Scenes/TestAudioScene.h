@@ -86,7 +86,7 @@ public:
                         auto thumbMaterial = spriteRenderer->model.material;
                         thumbMaterial->EnableFeature(RenderFeature::Blend, true);
 
-                        QuickBuild(*playerNode).Drag();
+                        QuickBuilder(*playerNode).Drag();
 
                         auto audioPad = MAKE<TestAudioPad>(player);
                         playerNode->Add(audioPad);

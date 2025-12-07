@@ -12,10 +12,11 @@ namespace TimerBehaviorTests {
 
         float runTime = 0;
 
-        void OnUpdate(TimeSlice time) override {
+        FinishType OnUpdate(TimeSlice time) override {
             Base::OnUpdate(time);
 
             runTime += time.delta;
+            return FinishType::Continue;
         }
     };
 
@@ -29,10 +30,11 @@ namespace TimerBehaviorTests {
         TestTimerBehavior(float duration = 3) : Base(duration) {
         }
 
-        void OnUpdate(TimeSlice time) override {
+        FinishType OnUpdate(TimeSlice time) override {
             Base::OnUpdate(time);
 
             runTime += time.delta;
+            return FinishType::Continue;
         }
     };
 }
@@ -61,7 +63,7 @@ TEST(TimedBehavior, Test) {
     Updatable::Func onFinishFunc = [&](auto& behavior) {
         finishCount++;
     };
-    Override(childPtr->onFinishFunc, onFinishFunc);
+    Override(childPtr->updatable.onFinishFunc, onFinishFunc);
     childPtr->finishState = BehaviorState::Failure;
 
     sut.OnUpdate({2});

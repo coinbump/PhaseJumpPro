@@ -17,9 +17,11 @@ namespace UpdatablesTests {
         TestUpdatable(float finishTime) : finishTime(finishTime) {
         }
 
-        void OnUpdate(TimeSlice time) override {
+        FinishType OnUpdate(TimeSlice time) override {
             this->time += time.delta;
             isFinished = this->time >= finishTime;
+            
+            return isFinished ? FinishType::Finish : FinishType::Continue;
         }
     };
 }

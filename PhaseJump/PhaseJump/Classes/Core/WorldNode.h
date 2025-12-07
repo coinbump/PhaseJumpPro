@@ -543,7 +543,7 @@ namespace PJ {
         }
 
         /// Called for update events
-        virtual void OnUpdate(TimeSlice time);
+        virtual FinishType OnUpdate(TimeSlice time);
 
         /// Called after every node receives OnUpdate
         virtual void LateUpdate();

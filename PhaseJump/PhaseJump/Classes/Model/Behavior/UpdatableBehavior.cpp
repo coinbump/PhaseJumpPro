@@ -5,11 +5,10 @@ using namespace PJ;
 
 UpdatableBehavior::UpdatableBehavior(BuildFunc buildFunc) :
     buildFunc(buildFunc) {
-    onUpdateFunc = [this](auto& _updatable, auto time) {
-        GUARDR(updatable, FinishType::Finish);
+    updatable.onUpdateFunc = [this](auto& _updatable, auto time) {
+        GUARDR(childUpdatable, FinishType::Finish);
 
-        updatable->OnUpdate(time);
-        return updatable->GetFinishType();
+        return childUpdatable->OnUpdate(time);
     };
 }
 
@@ -17,7 +16,7 @@ void UpdatableBehavior::OnRun() {
     Base::OnRun();
 
     if (buildFunc) {
-        updatable = buildFunc(*this);
+        childUpdatable = buildFunc(*this);
     } else {
         finishState = BehaviorState::Failure;
         Finish();

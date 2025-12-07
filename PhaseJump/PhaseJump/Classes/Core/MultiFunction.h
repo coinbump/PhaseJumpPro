@@ -1,14 +1,14 @@
 #pragma once
 
 #include "Function.h"
-#include "List.h"
 #include "Utils.h"
+#include "VectorList.h"
 #include <algorithm>
 
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 7/10/24
+ CODE REVIEW: 12/6/25
  */
 namespace PJ {
     template <typename Result, typename... Arguments>
@@ -23,7 +23,7 @@ namespace PJ {
         using Func = std::function<Result(Arguments... args)>;
         using Reducer = std::function<Result(Result const&, Result)>;
 
-        List<Func> funcs;
+        VectorList<Func> funcs;
         std::optional<Reducer> reducer;
 
         MultiFunction() {}
@@ -67,7 +67,7 @@ namespace PJ {
     public:
         using Func = std::function<void(Arguments... args)>;
 
-        List<Func> funcs;
+        VectorList<Func> funcs;
 
         MultiFunction() {}
 
@@ -80,7 +80,7 @@ namespace PJ {
         }
 
         void operator()(Arguments... args) {
-            return Run(args...);
+            Run(args...);
         }
 
         // MARK: Convenience

@@ -16,17 +16,11 @@ Updatable::Updatable() {}
 Updatable::Updatable(OnUpdateFunc onUpdateFunc) :
     onUpdateFunc(onUpdateFunc) {}
 
-void Updatable::Finish() {
-    SetIsFinished(true);
-}
+FinishType Updatable::OnUpdate(TimeSlice time) {
+    GUARDR(!isFinished, FinishType::Finish)
+    GUARDR(onUpdateFunc, FinishType::Continue)
+    auto result = onUpdateFunc(*this, time);
+    SetIsFinished(result == FinishType::Finish);
 
-FinishType Updatable::Update(TimeSlice time) {
-    OnUpdate(time);
-    return isFinished ? FinishType::Finish : FinishType::Continue;
-}
-
-void Updatable::OnUpdate(TimeSlice time) {
-    GUARD(!isFinished)
-    GUARD(onUpdateFunc)
-    SetIsFinished(onUpdateFunc(*this, time) == FinishType::Finish);
+    return result;
 }

@@ -19,18 +19,18 @@ namespace PJ {
         VelocityKSteering(Vector3 velocity = {}) :
             velocity(velocity) {}
 
-        // MARK: Updatable
+        // MARK: SomeWorldComponent
 
-        void OnUpdate(TimeSlice time) override {
+        FinishType OnUpdate(TimeSlice time) override {
             Base::OnUpdate(time);
 
-            GUARD(owner)
+            GUARDR(owner, FinishType::Continue)
 
             auto moveDelta = velocity * time.delta;
             owner->transform.SetLocalPosition(owner->transform.LocalPosition() + moveDelta);
-        }
 
-        // MARK: SomeWorldComponent
+            return FinishType::Continue;
+        }
 
         String TypeName() const override {
             return "VelocityKSteering";

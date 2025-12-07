@@ -138,10 +138,8 @@ namespace PJ {
             PutChildPieces();
         }
 
-        // MARK: Updatable
-
-        void OnUpdate(TimeSlice time) override {
-            Base::OnUpdate(time);
+        FinishType OnUpdate(TimeSlice time) override {
+            return Base::OnUpdate(time);
 
             // FUTURE: support mouse hover if needed
             // OnUpdateMouseInput();

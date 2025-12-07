@@ -26,7 +26,18 @@ namespace PJ {
 
         void Flush();
 
-        // MARK: Playable
+        // MARK: SomeUpdatable
+
+        virtual FinishType OnUpdate(TimeSlice time) override {
+            return FinishType::Continue;
+        }
+
+        /// Allows for cleanup of old updatables
+        bool IsFinished() const override {
+            return false;
+        }
+
+        // MARK: SomePlayable
 
         void Play() override;
 
@@ -61,6 +72,11 @@ namespace PJ {
         bool IsPaused() const override {
             GUARDR(stream, false)
             return SDL_AudioDevicePaused(SDL_GetAudioStreamDevice(stream));
+        }
+
+        /// @return Returns true if the playable is playing
+        bool IsPlaying() const override {
+            return !IsPaused();
         }
     };
 } // namespace PJ

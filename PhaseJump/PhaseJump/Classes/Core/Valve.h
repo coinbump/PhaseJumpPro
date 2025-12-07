@@ -10,6 +10,7 @@
  RATING: 5 stars
  Has unit tests
  CODE REVIEW: 9/22/24
+ PORTED TO: C++, Swift
  */
 namespace PJ {
     /**
@@ -19,7 +20,7 @@ namespace PJ {
      If you need more complex animations (time on hold, time off hold), use the driver pattern to
      drive the valve's states
      */
-    class Valve : public Updatable {
+    class Valve : public SomeUpdatable {
     public:
         using Base = Updatable;
         using This = Valve;
@@ -43,6 +44,7 @@ namespace PJ {
         StateType state{};
         SP<Timer> timer;
         OnValveUpdateFunc onValveUpdateFunc;
+        Updatable updatable;
 
     public:
         Valve(bool isOn = false);
@@ -82,6 +84,16 @@ namespace PJ {
 
         OnValveUpdateFunc GetOnValveUpdateFunc() const {
             return onValveUpdateFunc;
+        }
+
+        // MARK: SomeUpdatable
+
+        FinishType OnUpdate(TimeSlice time) override {
+            return updatable.OnUpdate(time);
+        }
+
+        bool IsFinished() const override {
+            return updatable.IsFinished();
         }
 
     protected:

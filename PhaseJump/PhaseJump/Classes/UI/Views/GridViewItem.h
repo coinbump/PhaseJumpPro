@@ -1,6 +1,8 @@
 #pragma once
 #include "Alignment2D.h"
 
+#if FALSE
+
 // Experimental
 namespace PJ {
     struct GridViewItem {
@@ -30,3 +32,5 @@ namespace PJ {
             alignment(alignment) {}
     };
 } // namespace PJ
+
+#endif

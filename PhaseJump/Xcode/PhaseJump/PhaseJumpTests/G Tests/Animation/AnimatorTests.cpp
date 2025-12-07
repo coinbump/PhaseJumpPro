@@ -35,7 +35,9 @@ TEST(Animator, SetProgress)
     auto testValue = -1.0f;
 
     auto interpolator = InterpolateFuncs::Ease(InterpolateFuncs::Make<float>(0.0f, 360.0f));
-    SetBindingFunc<float> binding = [&testValue](float value) { testValue = value; };
+    SetBindingFunc<float> binding = [&testValue](float value) {
+        testValue = value;
+    };
     Animator<float> sut({.interpolateFunc = interpolator,
             .duration = 1.0f,
         .binding = binding});

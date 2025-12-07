@@ -41,9 +41,6 @@ namespace PJ {
         // MARK: SomeWorldComponent
 
         void Awake() override;
-
-        // MARK: Updatable
-
-        void OnUpdate(TimeSlice time) override;
+        FinishType OnUpdate(TimeSlice time) override;
     };
 } // namespace PJ

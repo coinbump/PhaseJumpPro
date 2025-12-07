@@ -11,7 +11,7 @@
 namespace PJ {
     /// Samples values in update and keeps the most recent samples, discarding the old ones
     template <class Type>
-    class ValueSampler : public Updatable {
+    class ValueSampler : public SomeUpdatable {
     public:
         using GetFunc = std::function<Type()>;
 
@@ -31,6 +31,8 @@ namespace PJ {
         std::deque<Sample> samples;
         float samplesDuration{};
 
+        Updatable updatable;
+
     public:
         std::deque<Sample> const& Samples() const {
             return samples;
@@ -39,7 +41,7 @@ namespace PJ {
         ValueSampler(float _maxSampleDuration, GetFunc _getFunc) :
             maxSampleDuration(_maxSampleDuration),
             getFunc(_getFunc) {
-            onUpdateFunc = [this](auto& updatable, auto time) {
+            updatable.onUpdateFunc = [this](auto& updatable, auto time) {
                 if (getFunc) {
                     Sample sample;
                     sample.value = getFunc();
@@ -56,6 +58,16 @@ namespace PJ {
 
                 return FinishType::Continue;
             };
+        }
+
+        // MARK: SomeUpdatable
+
+        FinishType OnUpdate(TimeSlice time) override {
+            return updatable.OnUpdate(time);
+        }
+
+        bool IsFinished() const override {
+            return updatable.IsFinished();
         }
     };
 } // namespace PJ

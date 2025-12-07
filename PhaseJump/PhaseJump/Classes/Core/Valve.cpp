@@ -5,8 +5,8 @@ using namespace PJ;
 
 Valve::Valve(bool isOn) :
     state(isOn ? StateType::On : StateType::Off) {
-    onUpdateFunc = [](auto& updatable, TimeSlice time) {
-        This& valve = *(static_cast<This*>(&updatable));
+    updatable.onUpdateFunc = [this](auto& updatable, TimeSlice time) {
+        This& valve = *this;
         GUARDR(valve.timer, FinishType::Continue);
 
         valve.timer->OnUpdate(time);

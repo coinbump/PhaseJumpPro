@@ -7,7 +7,7 @@ using namespace PJ;
 VelocityTracker::VelocityTracker(PositionFunc _positionFunc) :
     positionFunc(_positionFunc),
     sampler(0.3f, [=]() { return _positionFunc(); }) {
-    onUpdateFunc = [this](auto& updatable, auto time) {
+    updatable.onUpdateFunc = [this](auto& updatable, auto time) {
         sampler.OnUpdate(time);
         return FinishType::Continue;
     };

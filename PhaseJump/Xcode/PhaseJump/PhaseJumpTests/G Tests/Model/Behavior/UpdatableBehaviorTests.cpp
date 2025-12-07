@@ -15,10 +15,11 @@ namespace UpdatableBehaviorTests {
         TestUpdatableBehavior(BuildFunc buildFunc) : Base(buildFunc) {
         }
 
-        void OnUpdate(TimeSlice time) override {
+        FinishType OnUpdate(TimeSlice time) override {
             Base::OnUpdate(time);
 
             runTime += time.delta;
+            return FinishType::Continue;
         }
     };
 }

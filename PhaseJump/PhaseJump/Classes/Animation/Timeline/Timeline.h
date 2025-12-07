@@ -109,10 +109,10 @@ namespace PJ {
 
         // MARK: Updatable
 
-        void OnUpdate(TimeSlice time) override {
-            Base::OnUpdate(time);
-
+        FinishType OnUpdate(TimeSlice time) override {
             PJ::LogIf(_diagnose, "Timeline time: ", MakeString(PlayTime()));
+
+            return Base::OnUpdate(time);
         }
     };
 } // namespace PJ

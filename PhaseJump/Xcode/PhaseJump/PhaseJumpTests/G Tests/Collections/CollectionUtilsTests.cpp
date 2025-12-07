@@ -250,6 +250,29 @@ TEST(CollectionUtils, CollectBreadthFirstTree) {
     EXPECT_EQ("rootabcdd1d2e", os.str());
 }
 
+TEST(CollectionUtils, CollectBreadthFirstTreeIf) {
+    auto root = MAKE<StringNode>("root");
+    auto a = root->push_back("r1");
+    auto b = root->push_back("r2");
+    auto c = root->push_back("c");
+    auto d = a->push_back("r3");
+    auto d1 = d->push_back("d1");
+    auto d2 = d->push_back("d2");
+    auto e = b->push_back("r4");
+
+    VectorList<StringNode*> nodes;
+    CollectBreadthFirstTreeIf(root.get(), nodes, [](StringNode* node) {
+        return StartsWith(node->value, "r");
+    });
+
+    ostringstream os;
+    for (auto& node : nodes) {
+        os << node->value;
+    }
+
+    EXPECT_EQ("rootr1r2r3r4", os.str());
+}
+
 TEST(CollectionUtils, IsValidIndex) {
     vector<int> sut;
 

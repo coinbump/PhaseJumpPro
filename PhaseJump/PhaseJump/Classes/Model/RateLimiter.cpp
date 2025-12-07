@@ -18,11 +18,9 @@ RateLimiter::RateLimiter(float minDelta) {
         return limiter.core.timer >= limiter.core.rate;
     };
 
-    onUpdateFunc = [](auto& owner, TimeSlice time) {
-        auto limiter = static_cast<This*>(&owner);
-
-        GUARDR(limiter->core.didFire, FinishType::Continue)
-        limiter->core.timer += time.delta;
+    updatable.onUpdateFunc = [this](auto& owner, TimeSlice time) {
+        GUARDR(this->core.didFire, FinishType::Continue)
+        this->core.timer += time.delta;
 
         return FinishType::Continue;
     };

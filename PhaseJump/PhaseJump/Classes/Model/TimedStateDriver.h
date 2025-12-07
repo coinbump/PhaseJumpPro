@@ -12,7 +12,7 @@
 namespace PJ {
     /// Drives the states in a state machine by giving each state a duration
     template <class StateType>
-    class TimedStateDriver : public Updatable {
+    class TimedStateDriver : public SomeUpdatable {
     protected:
         /// Time in the current state since the last state transition
         float timeInState = 0;
@@ -33,6 +33,7 @@ namespace PJ {
         Target& target;
         OnStateFinishFunc onStateFinishFunc;
         float defaultDuration{};
+        Updatable updatable;
 
         TimedStateDriver(Target& target) :
             target(target) {
@@ -42,6 +43,20 @@ namespace PJ {
 
                 SetStateDuration(defaultDuration);
             });
+
+            updatable.onUpdateFunc = [this](auto& updatable, auto time) {
+                if (stateCountdown > 0) {
+                    stateCountdown -= time.delta;
+                    if (stateCountdown <= 0) {
+                        if (onStateFinishFunc) {
+                            onStateFinishFunc(*this);
+                        }
+                    }
+                }
+                timeInState += time.delta;
+
+                return FinishType::Continue;
+            };
         }
 
         float TimeInState() const {
@@ -65,20 +80,14 @@ namespace PJ {
             return result;
         }
 
-        // MARK: Updatable
+        // MARK: SomeUpdatable
 
-        void OnUpdate(TimeSlice time) override {
-            Base::OnUpdate(time);
+        FinishType OnUpdate(TimeSlice time) override {
+            return updatable.OnUpdate(time);
+        }
 
-            if (stateCountdown > 0) {
-                stateCountdown -= time.delta;
-                if (stateCountdown <= 0) {
-                    if (onStateFinishFunc) {
-                        onStateFinishFunc(*this);
-                    }
-                }
-            }
-            timeInState += time.delta;
+        bool IsFinished() const override {
+            return updatable.IsFinished();
         }
     };
 } // namespace PJ

@@ -10,20 +10,6 @@ namespace Kaiju {
     public:
         FilesProcessorScene() {}
 
-        void LoadInto(WorldNode& root) override {
-            QB(root).Named("Files processor").OrthoStandard().OnDropFiles([](auto args) {
-                auto filesProcessor = MAKE<FilesProcessor>(
-                    [](auto filePath) { PJ_Dev::IncludeAliasFileProcessor().Process(filePath); },
-                    FilesProcessor::Settings(FileSearchType::Recursive)
-                );
-
-                auto& event = args.event;
-                for (auto& filePath : event.filePaths) {
-                    filesProcessor->Scan(filePath);
-                }
-
-                while (filesProcessor->ProcessNext() == FinishType::Continue) {}
-            });
-        }
+        void LoadInto(WorldNode& root) override;
     };
 } // namespace Kaiju

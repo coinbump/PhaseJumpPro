@@ -19,8 +19,8 @@ namespace PJ {
     /// Manages logic for running an updatable that when it finishes, either repeats or finishes
     class Runner {
     public:
-        using OnResetFunc = std::function<void(Runner&)>;
-        using OnFinishFunc = std::function<void(Runner&)>;
+        using OnResetFunc = std::function<void()>;
+        using OnFinishFunc = std::function<void()>;
 
         RunType runType;
 
@@ -35,8 +35,12 @@ namespace PJ {
         Runner(RunType runType) :
             runType(runType) {}
 
-        bool IsFinished() const {
-            return isFinished;
+        void Reset() {
+            GUARD(isFinished)
+            isFinished = false;
+
+            GUARD(onResetFunc)
+            onResetFunc();
         }
 
         void SetIsFinished(bool value) {
@@ -45,7 +49,7 @@ namespace PJ {
 
             GUARD(isFinished)
             if (onFinishFunc) {
-                onFinishFunc(*this);
+                onFinishFunc();
             }
 
             switch (runType) {
@@ -57,12 +61,8 @@ namespace PJ {
             }
         }
 
-        void Reset() {
-            GUARD(isFinished)
-            isFinished = false;
-
-            GUARD(onResetFunc)
-            onResetFunc(*this);
+        bool IsFinished() const {
+            return isFinished;
         }
     };
 } // namespace PJ

@@ -14,7 +14,7 @@ namespace PJ {
     class AgentSystem;
 
     /// Allows templated agent groups to be stored in collections
-    class SomeAgentGroup : public Updatable {
+    class SomeAgentGroup : public SomeUpdatable {
     protected:
         float stepTimer = 0;
 
@@ -36,6 +36,7 @@ namespace PJ {
 
     protected:
         AgentPool agents;
+        Updatable updatable;
 
     public:
         AgentPool const& Agents() const {
@@ -43,7 +44,24 @@ namespace PJ {
         }
 
         AgentGroup(size_t size = 100) :
-            agents(size, 0) {}
+            agents(size, 0) {
+            updatable.onUpdateFunc = [this](auto& updatable, auto time) {
+                // Give all agents update delta
+                RunAgentsAction([=](auto& agent) { agent.OnUpdate(time); });
+
+                // For step-based simulation give all agents steps
+                if (stepTime > 0) {
+                    stepTimer += time.delta;
+                    while (stepTimer >= stepTime) {
+                        RunAgentsAction([](auto& agent) { agent.OnStep(); });
+                        PostStep();
+                        stepTimer -= stepTime;
+                    }
+                }
+
+                return FinishType::Continue;
+            };
+        }
 
         /// Adds agent to the pool or reuses it
         /// Important: don't store pointers to objects inside resizable pools, memory will move
@@ -71,21 +89,14 @@ namespace PJ {
         /// (Optional). After each step, do any needed logic
         virtual void PostStep() {}
 
-        // MARK: Updatable
+        // MARK: SomeUpdatable
 
-        void OnUpdate(TimeSlice time) override {
-            // Give all agents update delta
-            RunAgentsAction([=](auto& agent) { agent.OnUpdate(time); });
+        FinishType OnUpdate(TimeSlice time) override {
+            return updatable.OnUpdate(time);
+        }
 
-            // For step-based simulation give all agents steps
-            if (stepTime > 0) {
-                stepTimer += time.delta;
-                while (stepTimer >= stepTime) {
-                    RunAgentsAction([](auto& agent) { agent.OnStep(); });
-                    PostStep();
-                    stepTimer -= stepTime;
-                }
-            }
+        bool IsFinished() const override {
+            return updatable.IsFinished();
         }
     };
 } // namespace PJ

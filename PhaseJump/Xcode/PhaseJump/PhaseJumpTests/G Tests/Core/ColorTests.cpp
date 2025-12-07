@@ -79,3 +79,25 @@ TEST(Color, ColorToColor32)
     EXPECT_EQ(127, color32.b());
     EXPECT_EQ(255, color32.a());
 }
+
+TEST(RGBAColor, WithComponents)
+{
+    Color color(0, 0, 0, 0);
+    EXPECT_EQ(Color(0.5f, 0.0f, 0.0f, 0.0f), color.WithRed(0.5f));
+    EXPECT_EQ(Color(0.0f, 0.5f, 0.0f, 0.0f), color.WithGreen(0.5f));
+    EXPECT_EQ(Color(0.0f, 0.0f, 0.5f, 0.0f), color.WithBlue(0.5f));
+    EXPECT_EQ(Color(0.0f, 0.0f, 0.0f, 0.5f), color.WithAlpha(0.5f));
+}
+
+TEST(RGBAColor, SetComponents)
+{
+    Color color(0, 0, 0, 0);
+    color.SetRed(0.5f);
+    EXPECT_EQ(Color(0.5f, 0.0f, 0.0f, 0.0f), color);
+    color.SetGreen(0.5f);
+    EXPECT_EQ(Color(0.5f, 0.5f, 0.0f, 0.0f), color);
+    color.SetBlue(0.5f);
+    EXPECT_EQ(Color(0.5f, 0.5f, 0.5f, 0.0f), color);
+    color.SetAlpha(0.5f);
+    EXPECT_EQ(Color(0.5f, 0.5f, 0.5f, 0.5f), color);
+}

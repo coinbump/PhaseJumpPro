@@ -32,13 +32,14 @@ namespace PJ {
     class Module : public Base {
     public:
         using This = Module;
+        using ClassRegistry = PJ::ClassRegistry<TypeClass<Base>>;
 
         using ConfigureFunc = std::function<void(This&)>;
 
     protected:
-        ClassRegistry<>& classRegistry;
+        ClassRegistry& classRegistry;
 
-        List<ModuleSharedPtr> dependencies;
+        VectorList<ModuleSharedPtr> dependencies;
 
         virtual void Configure() {
             GUARD(configureFunc)
@@ -48,7 +49,7 @@ namespace PJ {
     public:
         ConfigureFunc configureFunc;
 
-        Module(ClassRegistry<>& classRegistry = PJ::classRegistry) :
+        Module(ClassRegistry& classRegistry) :
             classRegistry(classRegistry) {}
 
         virtual ~Module() {}
@@ -58,6 +59,8 @@ namespace PJ {
         void OnGo() override {
             Base::OnGo();
 
+            // Dependency classes are registered first, then the parent module
+            // can override them
             for (auto& dependency : dependencies) {
                 if (dependency.get()) {
                     dependency->Go();

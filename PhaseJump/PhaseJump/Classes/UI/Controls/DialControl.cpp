@@ -1,5 +1,5 @@
 #include "DialControl.h"
-#include "QuickBuild.h"
+#include "QuickBuilder.h"
 #include "SomeDragGestureHandler2D.h"
 
 using namespace std;

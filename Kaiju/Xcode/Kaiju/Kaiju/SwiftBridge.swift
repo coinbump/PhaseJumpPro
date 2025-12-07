@@ -1,4 +1,6 @@
 import Foundation
+#if false
+
 import AppKit
 import SwiftUI
 
@@ -13,3 +15,4 @@ import SwiftUI
         return result
     }
 }
+#endif

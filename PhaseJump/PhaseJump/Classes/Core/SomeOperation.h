@@ -43,6 +43,13 @@ namespace PJ {
             GUARD(runFunc)
             runFunc(*this);
         }
+
+        // MARK: StringConvertible
+
+        /// @return Returns description for logs
+        String ToString() const override {
+            return "Operation";
+        }
     };
 
     /// Operation that accepts input and produces output

@@ -64,7 +64,7 @@ TEST(SwitchBehavior, AllChildrenFinish) {
 
     UP<BehaviorNode> child1 = NEW<BehaviorNode>();
     BehaviorNode* childPtr1 = child1.get();
-    childPtr1->onUpdateFunc = [](auto& updatable, auto time) {
+    childPtr1->updatable.onUpdateFunc = [](auto& updatable, auto time) {
         return FinishType::Finish;
     };
     sut.tree.Add(child1);
@@ -82,7 +82,7 @@ TEST(SwitchBehavior, OneChildFinish) {
 
     UP<BehaviorNode> child1 = NEW<BehaviorNode>();
     BehaviorNode* childPtr1 = child1.get();
-    childPtr1->onUpdateFunc = [](auto& updatable, auto time) {
+    childPtr1->updatable.onUpdateFunc = [](auto& updatable, auto time) {
         return FinishType::Finish;
     };
     sut.tree.Add(child1);

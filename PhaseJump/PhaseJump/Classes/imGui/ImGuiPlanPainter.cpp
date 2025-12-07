@@ -1,4 +1,5 @@
 #include "ImGuiPlanPainter.h"
+#include "UIPlanner.h"
 
 using namespace std;
 using namespace PJ;
@@ -45,6 +46,28 @@ ImGuiPlanPainter::ImGuiPlanPainter(UIPlan& plan) :
                 ImGui::Text("%s", label.c_str());
             }
             ImGui::Text("%s", value.c_str());
+        }
+    };
+
+    drawModelFuncs[UIModelType::TreeNode] = [this](auto& painter, auto& _model) {
+        auto ptr = dynamic_cast<ValueUIModel<UIPlanner::TreeNodeConfig>*>(&_model);
+        GUARD(ptr);
+        auto& model = *ptr;
+        auto config = model.core.binding.getFunc();
+        auto label = config.label;
+
+        if (ImGui::TreeNodeEx(
+                label.c_str(), config.isOpenDefault ? ImGuiTreeNodeFlags_DefaultOpen : 0
+            )) {
+            if (config.planUIFunc) {
+                UIPlan childPlan;
+                UIPlanner childPlanner(childPlan);
+                config.planUIFunc(childPlanner);
+                ImGuiPlanPainter childPainter(childPlan);
+                childPainter.Draw();
+            }
+
+            ImGui::TreePop();
         }
     };
 

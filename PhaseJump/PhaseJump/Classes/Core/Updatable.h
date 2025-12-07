@@ -7,8 +7,8 @@
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 12/22/24
- PORTED TO: C++, C#
+ CODE REVIEW: 12/2/25
+ FUTURE: C#/Swift ports need updates to new pattern
  */
 namespace PJ {
     /// Return type for a finishing updatable func
@@ -26,15 +26,20 @@ namespace PJ {
         virtual ~SomeUpdatable() {}
 
         /// Handle time update event
-        virtual void OnUpdate(TimeSlice time) = 0;
+        virtual FinishType OnUpdate(TimeSlice time) = 0;
 
         /// Allows for cleanup of old updatables
         virtual bool IsFinished() const = 0;
 
-        /// @return Returns the finish type for this updatable
-        FinishType GetFinishType() const {
-            return IsFinished() ? FinishType::Finish : FinishType::Continue;
+        /// Optionally sets the finished value
+        virtual void SetIsFinished(bool value) {}
+
+        void Finish() {
+            SetIsFinished(true);
         }
+
+        /// Optionally resets the updatable to its initial state
+        virtual void Reset() {}
     };
 
     /// An object that receives time update events
@@ -43,8 +48,6 @@ namespace PJ {
     protected:
         /// If true, this updatable is finished running and will be removed
         bool isFinished{};
-
-        void SetIsFinished(bool value);
 
     public:
         using This = Updatable;
@@ -62,17 +65,15 @@ namespace PJ {
 
         virtual ~Updatable() {}
 
-        /// Finishes the updatable. After calling this it will not receive any more time updates
-        void Finish();
-
-        /// @return Updates and returns finish type
-        FinishType Update(TimeSlice time);
+        // MARK: SomeUpdatable
 
         /// Called for each time delta event
-        virtual void OnUpdate(TimeSlice time);
+        FinishType OnUpdate(TimeSlice time) override;
+
+        void SetIsFinished(bool value) override;
 
         /// @return Returns true when this updatable is finished running and can be safely removed
-        virtual bool IsFinished() const {
+        bool IsFinished() const override {
             return isFinished;
         }
     };

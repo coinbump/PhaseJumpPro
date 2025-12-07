@@ -1,16 +1,16 @@
-#include "QuickTimeline.h"
+#include "TimelineBuilder.h"
 #include "StandardRandom.h"
 
 using namespace std;
 using namespace PJ;
 
-using This = QuickTimeline;
+using This = TimelineBuilder;
 
-QuickTimeline::QuickTimeline(Timeline& timeline, WorldNode& node) :
+TimelineBuilder::TimelineBuilder(Timeline& timeline, WorldNode& node) :
     timeline(timeline),
     node(node) {}
 
-This& QuickTimeline::ScaleAxis(Axis axis, VectorList<float> const& keys) {
+This& TimelineBuilder::ScaleAxis(Axis axis, VectorList<float> const& keys) {
     String trackId;
     switch (axis) {
     case Axis::X:
@@ -39,7 +39,7 @@ This& QuickTimeline::ScaleAxis(Axis axis, VectorList<float> const& keys) {
     });
 }
 
-This& QuickTimeline::Offset(VectorList<Vector3> const& keys, KeyedTimeType keyedTimeType) {
+This& TimelineBuilder::Offset(VectorList<Vector3> const& keys, KeyedTimeType keyedTimeType) {
     String trackId{ "offset" };
 
     TimeTrack<Vector3>::Config trackConfig{ .id = trackId, .keyedTimeType = keyedTimeType };
@@ -53,7 +53,7 @@ This& QuickTimeline::Offset(VectorList<Vector3> const& keys, KeyedTimeType keyed
     });
 }
 
-This& QuickTimeline::MoveAxis(
+This& TimelineBuilder::MoveAxis(
     Axis axis, VectorList<float> const& _keys, AnimatePositionType positionType
 ) {
     String trackId;
@@ -88,31 +88,31 @@ This& QuickTimeline::MoveAxis(
     });
 }
 
-This& QuickTimeline::MoveX(VectorList<float> const& keys, AnimatePositionType positionType) {
+This& TimelineBuilder::MoveX(VectorList<float> const& keys, AnimatePositionType positionType) {
     return MoveAxis(Axis::X, keys, positionType);
 }
 
-This& QuickTimeline::MoveY(VectorList<float> const& keys, AnimatePositionType positionType) {
+This& TimelineBuilder::MoveY(VectorList<float> const& keys, AnimatePositionType positionType) {
     return MoveAxis(Axis::Y, keys, positionType);
 }
 
-This& QuickTimeline::MoveZ(VectorList<float> const& keys, AnimatePositionType positionType) {
+This& TimelineBuilder::MoveZ(VectorList<float> const& keys, AnimatePositionType positionType) {
     return MoveAxis(Axis::Z, keys, positionType);
 }
 
-This& QuickTimeline::ScaleX(VectorList<float> const& keys) {
+This& TimelineBuilder::ScaleX(VectorList<float> const& keys) {
     return ScaleAxis(Axis::X, keys);
 }
 
-This& QuickTimeline::ScaleY(VectorList<float> const& keys) {
+This& TimelineBuilder::ScaleY(VectorList<float> const& keys) {
     return ScaleAxis(Axis::Y, keys);
 }
 
-This& QuickTimeline::ScaleZ(VectorList<float> const& keys) {
+This& TimelineBuilder::ScaleZ(VectorList<float> const& keys) {
     return ScaleAxis(Axis::Z, keys);
 }
 
-This& QuickTimeline::Wobble2D(float baseScale, float scaleDelta) {
+This& TimelineBuilder::Wobble2D(float baseScale, float scaleDelta) {
     float minScale = baseScale - scaleDelta;
     float maxScale = baseScale + scaleDelta;
 
@@ -120,7 +120,7 @@ This& QuickTimeline::Wobble2D(float baseScale, float scaleDelta) {
         .ScaleY({ maxScale, baseScale, minScale, baseScale, maxScale });
 }
 
-This& QuickTimeline::Shake2D(int count, float maxDistance) {
+This& TimelineBuilder::Shake2D(int count, float maxDistance) {
     VectorList<Vector3> keys;
 
     StandardRandom random;

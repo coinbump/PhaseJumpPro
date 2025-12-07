@@ -1,4 +1,4 @@
-#include "QuickBuild.h"
+#include "QuickBuilder.h"
 #include "AnimatedSpriteRenderer.h"
 #include "AnimateFuncs.h"
 #include "BatchByMaterialRenderProcessor.h"
@@ -37,9 +37,9 @@
 using namespace std;
 using namespace PJ;
 
-using This = QuickBuild::This;
+using This = QuickBuilder::This;
 
-This& QuickBuild::WithOnEnable(String id, std::function<void(WorldComponent<>&)> func) {
+This& QuickBuilder::WithOnEnable(String id, std::function<void(WorldComponent<>&)> func) {
     return With<WorldComponent<>>().ModifyLatest<WorldComponent<>>([=](auto& component) {
         // Disabled by default, so enable func runs
         component.Enable(false);
@@ -52,13 +52,13 @@ This& QuickBuild::WithOnEnable(String id, std::function<void(WorldComponent<>&)>
     });
 }
 
-This& QuickBuild::Repeat(int count, std::function<void(This&)> func) {
+This& QuickBuilder::Repeat(int count, std::function<void(This&)> func) {
     PJ::Repeat(count, [&]() { func(*this); });
 
     return *this;
 }
 
-This& QuickBuild::OrthoStandard(Color clearColor) {
+This& QuickBuilder::OrthoStandard(Color clearColor) {
     return With<OrthoCamera>().With<SimpleRaycaster2D>().ModifyLatest<OrthoCamera>([=](auto& camera
                                                                                    ) {
         camera.clearColor = clearColor;
@@ -81,7 +81,7 @@ This& QuickBuild::OrthoStandard(Color clearColor) {
     });
 }
 
-This& QuickBuild::ScaleWithWindow(Vector3 worldSize, float ratio) {
+This& QuickBuilder::ScaleWithWindow(Vector3 worldSize, float ratio) {
     return With<WorldComponent<>>().ModifyLatestAny([=](auto& component) {
         auto sizeFunc = [=](SomeWorldComponent& component) {
             Vec2I worldPixelSize = component.owner->World()->PixelSize();
@@ -104,7 +104,7 @@ This& QuickBuild::ScaleWithWindow(Vector3 worldSize, float ratio) {
     return *this;
 }
 
-This& QuickBuild::SizeWithWindow(Vector2 ratio) {
+This& QuickBuilder::SizeWithWindow(Vector2 ratio) {
     return ModifyLatestAny([=](auto& component) {
         auto worldSizable = dynamic_cast<WorldSizeable*>(&component);
         GUARD_LOG(
@@ -127,11 +127,11 @@ This& QuickBuild::SizeWithWindow(Vector2 ratio) {
     });
 }
 
-This& QuickBuild::Texture(String id) {
+This& QuickBuilder::Texture(String id) {
     return With<SpriteRenderer>(Node().World()->resources.FindTexture(id));
 }
 
-This& QuickBuild::Circle(float radius, Color color) {
+This& QuickBuilder::Circle(float radius, Color color) {
     return With<ColorRenderer>(ColorRenderer::Config{
                                    .color = color, .worldSize = Vector2(radius * 2, radius * 2) })
         .ModifyLatest<ColorRenderer>([](auto& renderer) {
@@ -141,11 +141,11 @@ This& QuickBuild::Circle(float radius, Color color) {
         });
 }
 
-This& QuickBuild::Rect(Vector2 size, Color color) {
+This& QuickBuilder::Rect(Vector2 size, Color color) {
     return With<ColorRenderer>(ColorRenderer::Config{ .color = color, .worldSize = size });
 }
 
-This& QuickBuild::RectFrame(Vector2 size, Color color, float strokeWidth) {
+This& QuickBuilder::RectFrame(Vector2 size, Color color, float strokeWidth) {
     return With<ColorRenderer>(ColorRenderer::Config{ .color = color, .worldSize = size })
         .ModifyLatest<ColorRenderer>([=](auto& renderer) {
             renderer.SetBuildMeshFunc([=](RendererModel const& model) {
@@ -155,11 +155,11 @@ This& QuickBuild::RectFrame(Vector2 size, Color color, float strokeWidth) {
         });
 }
 
-This& QuickBuild::SquareFrame(float size, Color color, float strokeWidth) {
+This& QuickBuilder::SquareFrame(float size, Color color, float strokeWidth) {
     return RectFrame({ size, size }, color, strokeWidth);
 }
 
-This& QuickBuild::Grid(Vector2 worldSize, Vec2I gridSize, Color color, float strokeWidth) {
+This& QuickBuilder::Grid(Vector2 worldSize, Vec2I gridSize, Color color, float strokeWidth) {
     return With<ColorRenderer>(ColorRenderer::Config{ .color = color, .worldSize = worldSize })
         .ModifyLatest<ColorRenderer>([=](auto& renderer) {
             renderer.SetBuildMeshFunc([=](RendererModel const& model) {
@@ -171,7 +171,7 @@ This& QuickBuild::Grid(Vector2 worldSize, Vec2I gridSize, Color color, float str
         });
 }
 
-This& QuickBuild::Drag(OnDragUpdateFunc onDragUpdateFunc) {
+This& QuickBuilder::Drag(OnDragUpdateFunc onDragUpdateFunc) {
     auto component = &Node().AddComponent<DragHandler2D>().SetOnDragUpdateFunc(onDragUpdateFunc);
 
     components.push_back(component);
@@ -188,7 +188,7 @@ This& QuickBuild::Drag(OnDragUpdateFunc onDragUpdateFunc) {
     return *this;
 }
 
-This& QuickBuild::DragSnapBack(OnDragUpdateFunc onDragUpdateFunc) {
+This& QuickBuilder::DragSnapBack(OnDragUpdateFunc onDragUpdateFunc) {
     Drag(onDragUpdateFunc).ModifyLatest<DragHandler2D>([](auto& dragHandler) {
         dragHandler.InOnDropSnapBack();
     });
@@ -196,7 +196,7 @@ This& QuickBuild::DragSnapBack(OnDragUpdateFunc onDragUpdateFunc) {
     return *this;
 }
 
-This& QuickBuild::OnDropFiles(OnDropFilesFunc onDropFilesFunc) {
+This& QuickBuilder::OnDropFiles(OnDropFilesFunc onDropFilesFunc) {
     With<WorldComponent<>>("Drop files")
         .ModifyLatestAny([onDropFilesFunc](SomeWorldComponent& component) {
             component.AddSignalHandler<DropFilesUIEvent>(
@@ -210,11 +210,11 @@ This& QuickBuild::OnDropFiles(OnDropFilesFunc onDropFilesFunc) {
     return *this;
 }
 
-This& QuickBuild::SquareCollider(float size) {
+This& QuickBuilder::SquareCollider(float size) {
     return RectCollider({ size, size });
 }
 
-This& QuickBuild::RectCollider(Vector2 size) {
+This& QuickBuilder::RectCollider(Vector2 size) {
     return With<PolygonCollider2D>().ModifyLatest<PolygonCollider2D>([=](auto& collider) {
         // A zero sized rect polygon can't be resized later for views, so make sure this has some
         // size
@@ -223,11 +223,11 @@ This& QuickBuild::RectCollider(Vector2 size) {
     });
 }
 
-This& QuickBuild::CircleCollider(float radius) {
+This& QuickBuilder::CircleCollider(float radius) {
     return With<CircleCollider2D>(radius);
 }
 
-void QuickBuild::AddSlider(
+void QuickBuilder::AddSlider(
     World& world, WorldNode& parent, DesignSystem& designSystem, SP<SomeTexture> trackTexture,
     SP<SomeTexture> thumbTexture, SliderConfig config
 ) {
@@ -270,7 +270,7 @@ void QuickBuild::AddSlider(
     sliderControl.SetThumb(SCAST<WorldNode>(thumbNode.shared_from_this()));
 }
 
-This& QuickBuild::Slider(SliderConfig config) {
+This& QuickBuilder::Slider(SliderConfig config) {
     if (config.axis == Axis2D::Y) {
         return SliderVertical(config);
     }
@@ -291,7 +291,7 @@ This& QuickBuild::Slider(SliderConfig config) {
     return *this;
 }
 
-This& QuickBuild::SliderVertical(SliderConfig config) {
+This& QuickBuilder::SliderVertical(SliderConfig config) {
     auto world = Node().World();
     GUARDR(world, *this)
 
@@ -309,7 +309,7 @@ This& QuickBuild::SliderVertical(SliderConfig config) {
     return *this;
 }
 
-This& QuickBuild::AndPrefab(String id) {
+This& QuickBuilder::AndPrefab(String id) {
     auto world = Node().World();
     GUARDR(world, *this)
 
@@ -324,29 +324,29 @@ This& QuickBuild::AndPrefab(String id) {
 
 // MARK: - Animate
 
-This& QuickBuild::SetAnimateDuration(float value) {
+This& QuickBuilder::SetAnimateDuration(float value) {
     AnimateState().duration = value;
     return *this;
 }
 
-This& QuickBuild::SetAnimateEase(EaseFunc value) {
+This& QuickBuilder::SetAnimateEase(EaseFunc value) {
     AnimateState().easeFunc = value;
     return *this;
 }
 
-This& QuickBuild::SetAnimateDelay(float value) {
+This& QuickBuilder::SetAnimateDelay(float value) {
     AnimateState().delay = value;
     return *this;
 }
 
-This& QuickBuild::SetValveDurations(float turnOnDuration, float turnOffDuration) {
+This& QuickBuilder::SetValveDurations(float turnOnDuration, float turnOffDuration) {
     AnimateState().valveTurnOnDuration = turnOnDuration;
     AnimateState().valveTurnOffDuration = turnOffDuration;
 
     return *this;
 }
 
-This& QuickBuild::HoverScaleTo(float endValue) {
+This& QuickBuilder::HoverScaleTo(float endValue) {
     float startValue = Node().transform.Scale().x;
 
     return With<ValveHoverGestureHandler>(
@@ -374,7 +374,7 @@ This& QuickBuild::HoverScaleTo(float endValue) {
         });
 }
 
-This& QuickBuild::HoverScaleToPingPong(float endValue) {
+This& QuickBuilder::HoverScaleToPingPong(float endValue) {
     auto& animateState = AnimateState();
 
     HoverScaleTo(endValue).ModifyLatest<ValveHoverGestureHandler>([&](auto& handler) {
@@ -402,7 +402,7 @@ This& QuickBuild::HoverScaleToPingPong(float endValue) {
     return *this;
 }
 
-This& QuickBuild::AnimateMove(Vector3 startValue, Vector3 endValue) {
+This& QuickBuilder::AnimateMove(Vector3 startValue, Vector3 endValue) {
     return AnimateStartEnd<Vector3>(
         startValue, endValue,
         AnimateFuncs::PositionMaker(AnimateState().duration, AnimateState().easeFunc)
@@ -410,38 +410,38 @@ This& QuickBuild::AnimateMove(Vector3 startValue, Vector3 endValue) {
 }
 
 /// Add a position animation with a start value
-This& QuickBuild::MoveIn(Vector3 startValue) {
+This& QuickBuilder::MoveIn(Vector3 startValue) {
     return AnimateMove(startValue, Node().transform.LocalPosition());
 }
 
 /// Add a position animation with an end value
-This& QuickBuild::MoveTo(Vector3 endValue) {
+This& QuickBuilder::MoveTo(Vector3 endValue) {
     return AnimateMove(Node().transform.LocalPosition(), endValue);
 }
 
-This& QuickBuild::AnimateScale(float startValue, float endValue) {
+This& QuickBuilder::AnimateScale(float startValue, float endValue) {
     return AnimateStartEnd<float>(
         startValue, endValue,
         AnimateFuncs::UniformScaleMaker2D(AnimateState().duration, AnimateState().easeFunc)
     );
 }
 
-This& QuickBuild::RootView(Vector2 size, ViewBuilder::BuildViewFunc buildFunc) {
+This& QuickBuilder::RootView(Vector2 size, ViewBuilder::BuildViewFunc buildFunc) {
     ViewBuilder vb(*this);
     vb.RootView(size, buildFunc);
 
     return *this;
 }
 
-This& QuickBuild::ScaleIn(float startValue) {
+This& QuickBuilder::ScaleIn(float startValue) {
     return AnimateScale(startValue, 1);
 }
 
-This& QuickBuild::ScaleTo(float endValue) {
+This& QuickBuilder::ScaleTo(float endValue) {
     return AnimateScale(Node().transform.Scale().x, endValue);
 }
 
-This& QuickBuild::ScaleToPingPong(float endValue) {
+This& QuickBuilder::ScaleToPingPong(float endValue) {
     // FUTURE: Add reverse ease func
     MakeAnimatorFunc<float, WorldNode&> maker = AnimateFuncs::UniformScaleMaker2D(
         AnimateState().duration, AnimateState().easeFunc, AnimationCycleType::PingPong
@@ -450,18 +450,18 @@ This& QuickBuild::ScaleToPingPong(float endValue) {
     return AnimateCycle(Node().transform.Scale().x, endValue, maker);
 }
 
-This& QuickBuild::AnimateRotate(Angle startValue, Angle endValue) {
+This& QuickBuilder::AnimateRotate(Angle startValue, Angle endValue) {
     return AnimateStartEnd<float>(
         startValue.Degrees(), endValue.Degrees(),
         AnimateFuncs::RotateMaker(AnimateState().duration, AnimateState().easeFunc)
     );
 }
 
-This& QuickBuild::RotateTo(Angle endValue) {
+This& QuickBuilder::RotateTo(Angle endValue) {
     return AnimateRotate(Angle::WithDegrees(-Node().transform.Rotation().z), endValue);
 }
 
-This& QuickBuild::RotateToPingPong(Angle endValue) {
+This& QuickBuilder::RotateToPingPong(Angle endValue) {
     // FUTURE: Add reverse ease func
     MakeAnimatorFunc<float, WorldNode&> maker = AnimateFuncs::RotateMaker(
         AnimateState().duration, AnimateState().easeFunc, AnimationCycleType::PingPong
@@ -470,11 +470,11 @@ This& QuickBuild::RotateToPingPong(Angle endValue) {
     return AnimateCycle(-Node().transform.Rotation().z, endValue.Degrees(), maker);
 }
 
-This& QuickBuild::RotateIn(Angle startValue) {
+This& QuickBuilder::RotateIn(Angle startValue) {
     return AnimateRotate(startValue, Angle::WithDegrees(0));
 }
 
-This& QuickBuild::RotateContinue(Angle value) {
+This& QuickBuilder::RotateContinue(Angle value) {
     auto& node = Node();
 
     node.updatables.AddContinue([=, &node](auto time) {
@@ -486,57 +486,57 @@ This& QuickBuild::RotateContinue(Angle value) {
     return *this;
 }
 
-This& QuickBuild::CycleHueEffect(String id, SwitchState switchState, float cycleTime) {
+This& QuickBuilder::CycleHueEffect(String id, SwitchState switchState, float cycleTime) {
     return WithId<PJ::CycleHueEffect>(id, switchState, cycleTime);
 }
 
-This& QuickBuild::AnimateOpacity(float startValue, float endValue) {
+This& QuickBuilder::AnimateOpacity(float startValue, float endValue) {
     return AnimateStartEnd<float>(
         startValue, endValue,
         AnimateFuncs::OpacityMaker(AnimateState().duration, AnimateState().easeFunc)
     );
 }
 
-This& QuickBuild::OpacityIn(float startValue) {
+This& QuickBuilder::OpacityIn(float startValue) {
     return AnimateOpacity(startValue, 1);
 }
 
-This& QuickBuild::OpacityOut() {
+This& QuickBuilder::OpacityOut() {
     return AnimateOpacity(Node().Opacity(), 0);
 }
 
-This& QuickBuild::OpacityTo(float endValue) {
+This& QuickBuilder::OpacityTo(float endValue) {
     return AnimateOpacity(Node().Opacity(), endValue);
 }
 
-This& QuickBuild::Turn(Angle speed) {
+This& QuickBuilder::Turn(Angle speed) {
     return With<RotateKSteering2D>(speed).ModifyLatest<RotateKSteering2D>([=](auto& component) {
         component.Turn(speed);
     });
 }
 
-This& QuickBuild::Destroy(float time) {
+This& QuickBuilder::Destroy(float time) {
     Node().Destroy(time);
     return *this;
 }
 
-This& QuickBuild::DestroyAfterAnimate() {
+This& QuickBuilder::DestroyAfterAnimate() {
     return Destroy(AnimateState().duration);
 }
 
-This& QuickBuild::PushAnimateSettings() {
+This& QuickBuilder::PushAnimateSettings() {
     animateStates.push_back(AnimateState());
     return *this;
 }
 
-This& QuickBuild::PopAnimateSettings() {
+This& QuickBuilder::PopAnimateSettings() {
     if (animateStates.size() > 1) {
         animateStates.erase(animateStates.begin() + (animateStates.size() - 1));
     }
     return *this;
 }
 
-This& QuickBuild::AnimateSprite(VectorList<String> const& textureNames) {
+This& QuickBuilder::AnimateSprite(VectorList<String> const& textureNames) {
     using KeyframeModel = AnimatedSpriteRenderer::KeyframeModel;
 
     VectorList<KeyframeModel> keyframeModels =
@@ -550,7 +550,7 @@ This& QuickBuild::AnimateSprite(VectorList<String> const& textureNames) {
     return *this;
 }
 
-This& QuickBuild::SetAnimationState(String value) {
+This& QuickBuilder::SetAnimationState(String value) {
     auto simpleAnimationController = Node().TypeComponent<SimpleAnimationController>();
     GUARDR_LOG(simpleAnimationController, *this, "ERROR. Missing animation controller");
 
@@ -559,7 +559,7 @@ This& QuickBuild::SetAnimationState(String value) {
     return *this;
 }
 
-This& QuickBuild::CharacterStateBehavior(
+This& QuickBuilder::CharacterStateBehavior(
     String state, CharacterController::BuildBehaviorFunc func
 ) {
     return WithIfNeeded<CharacterController>().ModifyLatest<CharacterController>(
@@ -567,7 +567,7 @@ This& QuickBuild::CharacterStateBehavior(
     );
 }
 
-This& QuickBuild::SetCharacterState(String value) {
+This& QuickBuilder::SetCharacterState(String value) {
     auto characterController = Node().TypeComponent<CharacterController>();
     GUARDR_LOG(characterController, *this, "ERROR. Missing character controller");
 
@@ -576,7 +576,7 @@ This& QuickBuild::SetCharacterState(String value) {
     return *this;
 }
 
-This& QuickBuild::AnimationStateRenderer(
+This& QuickBuilder::AnimationStateRenderer(
     String state, SimpleAnimationController::BuildRendererFunc buildRendererFunc
 ) {
     auto simpleAnimationController = Node().TypeComponent<SimpleAnimationController>();
@@ -587,7 +587,7 @@ This& QuickBuild::AnimationStateRenderer(
     return *this;
 }
 
-This& QuickBuild::AnimationStateFrames(
+This& QuickBuilder::AnimationStateFrames(
     String state, VectorList<AnimatedSpriteRenderer::KeyframeModel> const& models
 ) {
     auto frameRate = this->frameRate;
@@ -599,7 +599,7 @@ This& QuickBuild::AnimationStateFrames(
     return AnimationStateRenderer(state, buildRendererFunc);
 }
 
-This& QuickBuild::SetComponentsState(String value) {
+This& QuickBuilder::SetComponentsState(String value) {
     auto componentsController = Node().TypeComponent<ComponentsController>();
     GUARDR_LOG(componentsController, *this, "ERROR. Missing components controller");
 
@@ -607,13 +607,13 @@ This& QuickBuild::SetComponentsState(String value) {
     return *this;
 }
 
-This& QuickBuild::ComponentsState(String state, UnorderedSet<String> const& ids) {
+This& QuickBuilder::ComponentsState(String state, UnorderedSet<String> const& ids) {
     return WithIfNeeded<ComponentsController>().ModifyLatest<ComponentsController>(
         [&](auto& controller) { controller.AddEnableComponentsById(state, ids); }
     );
 }
 
-This& QuickBuild::AnimationStateTransitions(VectorList<StateTransitionModel> const& transitions) {
+This& QuickBuilder::AnimationStateTransitions(VectorList<StateTransitionModel> const& transitions) {
     auto simpleAnimationController = Node().TypeComponent<SimpleAnimationController>();
     GUARDR_LOG(simpleAnimationController, *this, "ERROR. Missing animation controller");
 
@@ -630,7 +630,7 @@ This& QuickBuild::AnimationStateTransitions(VectorList<StateTransitionModel> con
     return *this;
 }
 
-This& QuickBuild::AnimationInput(String value) {
+This& QuickBuilder::AnimationInput(String value) {
     auto simpleAnimationController = Node().TypeComponent<SimpleAnimationController>();
     GUARDR_LOG(simpleAnimationController, *this, "ERROR. Missing animation controller");
 

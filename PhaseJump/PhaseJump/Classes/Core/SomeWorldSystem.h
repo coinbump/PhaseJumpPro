@@ -124,8 +124,8 @@ namespace PJ {
             return *this;
         }
 
-        virtual void OnUpdate(TimeSlice time) {
-            _core.OnUpdate(time);
+        virtual FinishType OnUpdate(TimeSlice time) {
+            return _core.OnUpdate(time);
         }
     };
 } // namespace PJ

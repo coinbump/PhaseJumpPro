@@ -210,3 +210,19 @@ TEST(AnimationCycleTimer, TestResetAfterReverse)
     EXPECT_EQ(0, sut.PlayTime());
     EXPECT_FALSE(sut.IsReversed());
 }
+
+TEST(AnimationCycleTimer, OnUpdateReturnsForOnce)
+{
+    AnimationCycleTimer sut(10, AnimationCycleType::Once);
+    EXPECT_EQ(FinishType::Continue, sut.OnUpdate({1}));
+    EXPECT_EQ(FinishType::Finish, sut.OnUpdate({9}));
+    EXPECT_EQ(FinishType::Finish, sut.OnUpdate({1}));
+}
+
+TEST(AnimationCycleTimer, OnUpdateReturnsForLoop)
+{
+    AnimationCycleTimer sut(10, AnimationCycleType::Loop);
+    EXPECT_EQ(FinishType::Continue, sut.OnUpdate({1}));
+    EXPECT_EQ(FinishType::Continue, sut.OnUpdate({9}));
+    EXPECT_EQ(FinishType::Continue, sut.OnUpdate({1}));
+}

@@ -30,6 +30,14 @@ namespace PJ {
             String text;
         };
 
+        struct TreeNodeConfig {
+            using PlanUIFunc = std::function<void(UIPlanner&)>;
+
+            String label;
+            bool isOpenDefault{};
+            PlanUIFunc planUIFunc;
+        };
+
         struct InputFloatConfig {
             String label;
             Binding<float> binding;
@@ -78,6 +86,14 @@ namespace PJ {
         /// Adds text to UI
         This& Text(TextConfig config) {
             return Text([=]() { return config; });
+        }
+
+        /// Adds dynamic tree node to UI
+        This& TreeNode(std::function<TreeNodeConfig()> configFunc);
+
+        /// Adds tree node to UI
+        This& TreeNode(TreeNodeConfig config) {
+            return TreeNode([=]() { return config; });
         }
 
         /// Adds float input field to UI

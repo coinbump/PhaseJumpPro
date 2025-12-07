@@ -27,11 +27,9 @@ namespace PJ {
             turnSpeed = value;
         }
 
-        // MARK: Updatable
-
-        void OnUpdate(TimeSlice time) override;
-
         // MARK: SomeWorldComponent
+
+        FinishType OnUpdate(TimeSlice time) override;
 
         String TypeName() const override {
             return "RotateKSteering2D";

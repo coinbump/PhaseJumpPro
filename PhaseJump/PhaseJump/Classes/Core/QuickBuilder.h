@@ -40,9 +40,9 @@ namespace PJ {
 
     /// Convenience methods for adding common components
     /// Use to quickly build scenes for rapid prototyping
-    class QuickBuild {
+    class QuickBuilder : public Base {
     public:
-        using This = QuickBuild;
+        using This = QuickBuilder;
 
         struct OnDropFilesArgs {
             SomeWorldComponent& component;
@@ -96,7 +96,7 @@ namespace PJ {
     public:
         VectorList<std::reference_wrapper<WorldNode>> nodes;
 
-        QuickBuild(WorldNode& node) {
+        QuickBuilder(WorldNode& node) {
             nodes.push_back(node);
         }
 
@@ -543,6 +543,6 @@ namespace PJ {
         This& DestroyAfterAnimate();
     };
 
-    using QB = QuickBuild;
+    using QB = QuickBuilder;
 
 } // namespace PJ

@@ -20,8 +20,8 @@ namespace PJ {
 
         DirectionKSteering2D(float velocity = 10, float acceleration = 0, float maxVelocity = 0);
 
-        // MARK: Updatable
+        // MARK: SomeWorldComponent
 
-        void OnUpdate(TimeSlice time) override;
+        FinishType OnUpdate(TimeSlice time) override;
     };
 } // namespace PJ

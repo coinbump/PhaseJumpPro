@@ -17,6 +17,16 @@ This& UIPlanner::Text(std::function<TextConfig()> configFunc) {
     return *this;
 }
 
+This& UIPlanner::TreeNode(std::function<TreeNodeConfig()> configFunc) {
+    GUARDR(configFunc, *this)
+
+    plan.Add([=]() {
+        Binding<TreeNodeConfig> binding([=]() { return configFunc(); }, {});
+        return NEW<ValueUIModel<TreeNodeConfig>>(UIModelType::TreeNode, "", ValueUICore{ binding });
+    });
+    return *this;
+}
+
 This& UIPlanner::Button(std::function<ButtonConfig()> configFunc) {
     GUARDR(configFunc, *this)
 

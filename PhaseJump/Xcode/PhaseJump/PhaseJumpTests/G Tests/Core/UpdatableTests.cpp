@@ -51,7 +51,7 @@ TEST(Updatable, Update)
     };
     EXPECT_FALSE(sut.IsFinished());
     
-    sut.Update({3});
+    sut.OnUpdate({3});
     EXPECT_EQ(3, timeValue);
 }
 
@@ -68,6 +68,6 @@ TEST(Updatable, UpdateAfterFinish)
     sut.Finish();
     EXPECT_TRUE(sut.IsFinished());
     
-    sut.Update({3});
+    sut.OnUpdate({3});
     EXPECT_EQ(0, timeValue);
 }

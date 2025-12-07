@@ -7,7 +7,7 @@
 /*
  RATING: 5 stars
  Simple types
- CODE REVIEW: 7/21/24
+ CODE REVIEW: 12/6/25
  */
 namespace PJ {
     /// Class properties for a specific tag
@@ -17,8 +17,6 @@ namespace PJ {
     public:
         using Base = Class<>;
         using This = SomeTagClass;
-
-        String id;
 
         VectorList<UP<SomeAttribute>> attributes;
 
@@ -41,12 +39,13 @@ namespace PJ {
     template <class T>
     class TagClass : public SomeTagClass {};
 
-    // TODO: rethink this use of polymorphism here. Do we need it?
     template <>
     class TagClass<float> : public SomeTagClass {
     public:
         TagClass(String id) :
             SomeTagClass(id) {}
+
+        // MARK: SomeTagClass
 
         String Type() const override {
             return TagClassId::Float;
@@ -59,6 +58,8 @@ namespace PJ {
         TagClass(String id) :
             SomeTagClass(id) {}
 
+        // MARK: SomeTagClass
+
         String Type() const override {
             return TagClassId::Int;
         }
@@ -69,6 +70,8 @@ namespace PJ {
     public:
         TagClass(String id) :
             SomeTagClass(id) {}
+
+        // MARK: SomeTagClass
 
         String Type() const override {
             return TagClassId::String;

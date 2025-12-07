@@ -13,7 +13,7 @@ TEST(SelectorBehavior, FinishSuccess) {
     SelectorBehavior sut;
 
     float parentRunTime{};
-    sut.onUpdateFunc = [&](auto& updatable, TimeSlice time) {
+    sut.updatable.onUpdateFunc = [&](auto& updatable, TimeSlice time) {
         parentRunTime += time.delta;
 
         return FinishType::Continue;
@@ -22,7 +22,7 @@ TEST(SelectorBehavior, FinishSuccess) {
     UP<BehaviorNode> child1 = NEW<BehaviorNode>();
     float runTime1{};
     child1->finishState = BehaviorState::Success;
-    child1->onUpdateFunc = [&](auto& updatable, auto time) {
+    child1->updatable.onUpdateFunc = [&](auto& updatable, auto time) {
         runTime1 += time.delta;
         return FinishType::Finish;
     };
@@ -32,7 +32,7 @@ TEST(SelectorBehavior, FinishSuccess) {
     UP<BehaviorNode> child2 = NEW<BehaviorNode>();
     float runTime2{};
     child2->finishState = BehaviorState::Success;
-    child2->onUpdateFunc = [&](auto& updatable, auto time) {
+    child2->updatable.onUpdateFunc = [&](auto& updatable, auto time) {
         runTime2 += time.delta;
         return FinishType::Finish;
     };
@@ -53,7 +53,7 @@ TEST(SelectorBehavior, FinishFailureFirst) {
     SelectorBehavior sut;
 
     float parentRunTime{};
-    sut.onUpdateFunc = [&](auto& updatable, TimeSlice time) {
+    sut.updatable.onUpdateFunc = [&](auto& updatable, TimeSlice time) {
         parentRunTime += time.delta;
 
         return FinishType::Continue;
@@ -62,7 +62,7 @@ TEST(SelectorBehavior, FinishFailureFirst) {
     UP<BehaviorNode> child1 = NEW<BehaviorNode>();
     float runTime1{};
     child1->finishState = BehaviorState::Failure;
-    child1->onUpdateFunc = [&](auto& updatable, auto time) {
+    child1->updatable.onUpdateFunc = [&](auto& updatable, auto time) {
         runTime1 += time.delta;
         return FinishType::Finish;
     };
@@ -72,7 +72,7 @@ TEST(SelectorBehavior, FinishFailureFirst) {
     UP<BehaviorNode> child2 = NEW<BehaviorNode>();
     float runTime2{};
     child2->finishState = BehaviorState::Success;
-    child2->onUpdateFunc = [&](auto& updatable, auto time) {
+    child2->updatable.onUpdateFunc = [&](auto& updatable, auto time) {
         runTime2 += time.delta;
         return FinishType::Finish;
     };
@@ -106,7 +106,7 @@ TEST(SelectorBehavior, FinishFailureAll) {
     SelectorBehavior sut;
 
     float parentRunTime{};
-    sut.onUpdateFunc = [&](auto& updatable, TimeSlice time) {
+    sut.updatable.onUpdateFunc = [&](auto& updatable, TimeSlice time) {
         parentRunTime += time.delta;
 
         return FinishType::Continue;
@@ -115,7 +115,7 @@ TEST(SelectorBehavior, FinishFailureAll) {
     UP<BehaviorNode> child1 = NEW<BehaviorNode>();
     float runTime1{};
     child1->finishState = BehaviorState::Failure;
-    child1->onUpdateFunc = [&](auto& updatable, auto time) {
+    child1->updatable.onUpdateFunc = [&](auto& updatable, auto time) {
         runTime1 += time.delta;
         return FinishType::Finish;
     };
@@ -125,7 +125,7 @@ TEST(SelectorBehavior, FinishFailureAll) {
     UP<BehaviorNode> child2 = NEW<BehaviorNode>();
     float runTime2{};
     child2->finishState = BehaviorState::Failure;
-    child2->onUpdateFunc = [&](auto& updatable, auto time) {
+    child2->updatable.onUpdateFunc = [&](auto& updatable, auto time) {
         runTime2 += time.delta;
         return FinishType::Finish;
     };

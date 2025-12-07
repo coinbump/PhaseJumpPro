@@ -11,10 +11,10 @@ void CycleHueEffect::Awake() {
     UpdateEffect();
 }
 
-void CycleHueEffect::OnUpdate(TimeSlice time) {
+FinishType CycleHueEffect::OnUpdate(TimeSlice time) {
     Base::OnUpdate(time);
 
-    GUARD(IsEnabled());
+    GUARDR(IsEnabled(), FinishType::Continue);
 
     auto newHue = hue;
     newHue += time.delta / cycleTime;
@@ -22,6 +22,8 @@ void CycleHueEffect::OnUpdate(TimeSlice time) {
 
     hue = newHue;
     UpdateEffect();
+
+    return FinishType::Continue;
 }
 
 void CycleHueEffect::UpdateEffect() {

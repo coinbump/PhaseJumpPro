@@ -6,12 +6,11 @@
 
 /*
  RATING: 4 stars
- Useful, with unit tests. Could use more features
- TODO: problem with new MakeType pattern, since these use the base type
- CODE REVIEW: 7/6/24
+ Some unit tests, limited functionality
+ CODE REVIEW: 12/6/25
  */
 namespace PJ {
-    // Demonstration class for modules (not a real class)
+    /// Demonstration class for modules (not a real class)
     class _Foo : public Base {
     public:
         using RootBaseType = Base;
@@ -21,26 +20,30 @@ namespace PJ {
         virtual ~_Foo() {}
     };
 
-    // Demonstration class for modules (not a real class)
+    /// Demonstration class for modules (not a real class)
     class _MacFoo : public _Foo {
     public:
         _MacFoo() {}
     };
 
-    // Demonstration class for modules (not a real class)
-    class _FooClass : public TypeClass<_Foo> {
+    /// Demonstration class for modules (not a real class)
+    class _FooClass : public TypeClass<Base> {
     public:
+        using Base = TypeClass<PJ::Base>;
+
         _FooClass() :
-            TypeClass<_Foo>(ClassId::Foo, []() { return NEW<_Foo>(); }) {}
+            Base(ClassId::Foo, []() { return NEW<_Foo>(); }) {}
 
         virtual ~_FooClass() {}
     };
 
     // Demonstration class for modules (not a real class)
-    class _MacFooClass : public TypeClass<_MacFoo> {
+    class _MacFooClass : public TypeClass<Base> {
     public:
+        using Base = TypeClass<PJ::Base>;
+
         _MacFooClass() :
-            TypeClass<_MacFoo>(ClassId::Foo, []() { return NEW<_MacFoo>(); }) {}
+            Base(ClassId::Foo, []() { return NEW<_MacFoo>(); }) {}
     };
 
     /// Registers class objects for core types (platform neutral)
@@ -53,7 +56,7 @@ namespace PJ {
         }
 
     public:
-        CoreModule(ClassRegistry<>& classRegistry = PJ::classRegistry) :
+        CoreModule(ClassRegistry& classRegistry) :
             Module(classRegistry) {}
     };
 
@@ -67,9 +70,9 @@ namespace PJ {
         }
 
     public:
-        MacPlatformModule(ClassRegistry<>& classRegistry = PJ::classRegistry) :
+        MacPlatformModule(ClassRegistry& classRegistry) :
             Module(classRegistry) {
-            dependencies.push_back(ModuleSharedPtr(new CoreModule(classRegistry)));
+            dependencies.push_back(MAKE<CoreModule>(classRegistry));
         }
     };
 } // namespace PJ

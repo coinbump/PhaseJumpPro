@@ -31,7 +31,7 @@ Emitter::Emitter(SpawnFunc spawnFunc, UP<SomeDriver>& fireDriver) :
     spawnFunc(spawnFunc),
     driver(std::move(fireDriver)) {}
 
-void Emitter::OnUpdate(TimeSlice time) {
+FinishType Emitter::OnUpdate(TimeSlice time) {
     Base::OnUpdate(time);
 
     EmitList finishedEmits;
@@ -48,8 +48,8 @@ void Emitter::OnUpdate(TimeSlice time) {
     delayedEmits = unfinishedEmits;
     EmitWithEmits(finishedEmits);
 
-    GUARD(driver);
-    driver->OnUpdate(time);
+    GUARDR(driver, FinishType::Continue);
+    return driver->OnUpdate(time);
 }
 
 bool Emitter::CanSpawn() {

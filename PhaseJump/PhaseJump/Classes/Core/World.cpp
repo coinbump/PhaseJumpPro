@@ -260,7 +260,7 @@ Matrix4x4 World::WorldModelMatrix(WorldNode const& node) {
     return modelMatrix;
 }
 
-void World::OnUpdate(TimeSlice _time) {
+FinishType World::OnUpdate(TimeSlice _time) {
     VectorList<WorldNode*> updateList;
     BuildUpdateList(*root, updateList);
 
@@ -275,7 +275,7 @@ void World::OnUpdate(TimeSlice _time) {
     // This allows immediate renders to work (Example: imGUI)
     renderLimiter.OnUpdate(_time);
 
-    GUARD(!isPaused)
+    GUARDR(!isPaused, FinishType::Continue)
 
     auto time = _time * timeScale;
 
@@ -309,6 +309,8 @@ void World::OnUpdate(TimeSlice _time) {
     for (auto& node : updateList) {
         node->LateUpdate();
     }
+
+    return FinishType::Continue;
 }
 
 void World::Add(SP<WorldNode> node) {

@@ -122,8 +122,8 @@ namespace PJ {
         virtual void OnDestroy() {}
 
         /// Called in game loop for time delta update events
-        virtual void OnUpdate(TimeSlice time) {
-            _core.OnUpdate(time);
+        virtual FinishType OnUpdate(TimeSlice time) {
+            return _core.OnUpdate(time);
         }
 
         /// @return Returns the target node that this component operates on

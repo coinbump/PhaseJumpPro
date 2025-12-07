@@ -18,9 +18,9 @@ namespace PJ {
     };
 
     /// Tool to quickly build a timeline that animates a node
-    class QuickTimeline {
+    class TimelineBuilder {
     public:
-        using This = QuickTimeline;
+        using This = TimelineBuilder;
 
     protected:
         Timeline& timeline;
@@ -47,7 +47,7 @@ namespace PJ {
         }
 
     public:
-        QuickTimeline(Timeline& timeline, WorldNode& node);
+        TimelineBuilder(Timeline& timeline, WorldNode& node);
 
         /// Moves the node's axis position based on keyframes
         This&

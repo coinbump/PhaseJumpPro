@@ -30,6 +30,7 @@ void RepeatBehavior::OnRun() {
 
     GUARD(repeatValueFunc)
     repeats = repeatValueFunc();
+    repeatMax = repeats;
 
     GUARD(repeats <= 0)
     finishState = BehaviorState::Failure;

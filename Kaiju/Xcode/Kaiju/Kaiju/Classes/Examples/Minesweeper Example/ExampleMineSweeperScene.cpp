@@ -191,7 +191,7 @@ void Minesweeper::Scene::LoadInto(WorldNode& root) {
                       } }
             );
         })
-        .Repeat(1, [=, this](QuickBuild& qb) {
+        .Repeat(1, [=, this](QuickBuilder& qb) {
             GUARD(boardView)
 
             StandardRandom random;

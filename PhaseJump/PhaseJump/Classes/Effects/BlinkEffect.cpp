@@ -38,8 +38,5 @@ BlinkEffect::BlinkEffect(
         }
     };
 
-    GetUpdatables().Add([this](TimeSlice time) {
-        timeTrack.OnUpdate(time);
-        return timeTrack.GetFinishType();
-    });
+    GetUpdatables().Add([this](TimeSlice time) { return timeTrack.OnUpdate(time); });
 }

@@ -210,16 +210,18 @@ Vector2 AnimatedSpriteRenderer::Size() const {
     return Vector2(textureSize.x, textureSize.y);
 }
 
-void AnimatedSpriteRenderer::OnUpdate(TimeSlice time) {
+FinishType AnimatedSpriteRenderer::OnUpdate(TimeSlice time) {
     Base::OnUpdate(time);
 
-    GUARD(!IsEmpty(frames))
-    GUARD(framePlayable)
+    GUARDR(!IsEmpty(frames), FinishType::Continue)
+    GUARDR(framePlayable, FinishType::Continue)
 
     framePlayable->OnUpdate(time);
     auto frame = framePlayable->Frame();
 
     SetFrame(frame);
+
+    return FinishType::Continue;
 }
 
 void AnimatedSpriteRenderer::SetFrame(int value) {

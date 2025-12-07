@@ -52,67 +52,40 @@ namespace PJ {
         using This = FilesProcessor;
         using ProcessFileFunc = std::function<void(FilePath)>;
 
-        struct Settings {
+        struct Config {
             FileSearchType fileSearchType;
-
-            Settings(FileSearchType fileSearchType) :
-                fileSearchType(fileSearchType) {}
         };
 
     protected:
-        Settings settings;
+        Config config;
         size_t processedCount{};
 
     public:
         ProcessFileFunc processFileFunc;
 
-        FilesProcessor(ProcessFileFunc processFileFunc, Settings settings) :
-            processFileFunc(processFileFunc),
-            settings(settings) {}
+        FilesProcessor(ProcessFileFunc processFileFunc, Config config);
 
         virtual ~FilesProcessor() {}
 
         bool IsRecursive() const {
-            return settings.fileSearchType == FileSearchType::Recursive;
+            return config.fileSearchType == FileSearchType::Recursive;
         }
 
         int64_t UnfinishedCount() const {
             return input.size() - processedCount;
         }
 
-        virtual void Scan(FilePath path) {
-            if (fs::is_directory(path)) {
-                if (IsRecursive()) {
-                    for (auto& path : fs::recursive_directory_iterator{ path }) {
-                        AddFile(path);
-                    }
-                } else {
-                    for (auto& path : fs::directory_iterator{ path }) {
-                        AddFile(path);
-                    }
-                }
-            } else {
-                AddFile(path);
-            }
-        }
+        /// Scans for files to be processed
+        virtual void Scan(FilePath path);
 
-        virtual void AddFile(FilePath path) {
-            Add(input, path);
-        }
+        /// Adds a file to be processed
+        virtual void AddFile(FilePath path);
 
-        virtual void Process(FilePath path) {
-            GUARD(processFileFunc)
-            processFileFunc(path);
-        }
+        /// Processes the specified file
+        virtual void Process(FilePath path);
 
-        virtual FinishType ProcessNext() {
-            if (processedCount >= 0 && processedCount < input.size()) {
-                Process(input[processedCount]);
-                processedCount++;
-            }
-
-            return processedCount < input.size() ? FinishType::Continue : FinishType::Finish;
-        }
+        /// Processes the next file in the list
+        virtual FinishType ProcessNext();
 
         // MARK: SomeProcessor
 

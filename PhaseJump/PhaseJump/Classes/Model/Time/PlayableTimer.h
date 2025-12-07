@@ -1,0 +1,86 @@
+#pragma once
+
+#include "StringUtils.h"
+#include "TimerPlayable.h"
+#include <algorithm>
+
+/*
+ RATING: 5 stars
+ Has unit tests
+ CODE REVIEW: 10/5/24
+ */
+namespace PJ {
+    /// Runs for N seconds, then triggers OnFinish
+    class PlayableTimer : public TimerPlayable {
+    protected:
+        /// Time state
+        float state = 0;
+
+    public:
+        using Base = TimerPlayable;
+
+        PlayableTimer(float duration, RunType runType) :
+            Base(duration, runType) {}
+
+        // Copy properties, not compose funcs (storing captured this)
+        PlayableTimer(PlayableTimer const& rhs) :
+            Base(rhs.duration, rhs.runner.runType) {}
+
+        float State() const {
+            return state;
+        }
+
+        void SetState(float value) {
+            GUARD(state != value)
+            state = std::clamp(value, 0.0f, duration);
+            runner.SetIsFinished(state >= duration);
+
+            OnPlayTimeChange();
+        }
+
+        void OnReset() override {
+            TimerPlayable::OnReset();
+
+            SetState(0);
+        }
+
+        // MARK: Playable
+
+        float Progress() const override {
+            return std::clamp(state / duration, 0.0f, 1.0f);
+        }
+
+        float PlayTime() const override {
+            return state;
+        }
+
+        void SetPlayTime(float time) override {
+            SetState(time);
+        }
+
+        void SetProgress(float progress) override {
+            progress = std::clamp(progress, 0.0f, 1.0f);
+            SetState(progress * duration);
+        }
+
+        FinishType OnUpdate(TimeSlice time) override {
+            Base::OnUpdate(time);
+
+            if (IsFinished() || duration <= 0) {
+                return FinishType::Finish;
+            }
+
+            auto delta = TimeDeltaFor(time);
+            if (delta <= 0) {
+                return FinishType::Continue;
+            }
+
+            // We can't break down large deltas here because events will get compressed
+            // Example: an event happens every 3 seconds, we get a 9 second delta,
+            // they should be 3 seconds apart but are 0 seconds apart instead
+            SetState(state + delta);
+
+            return IsFinished() ? FinishType::Finish : FinishType::Continue;
+        }
+    };
+} // namespace PJ

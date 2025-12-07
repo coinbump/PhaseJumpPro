@@ -4,7 +4,7 @@
 using namespace std;
 using namespace PJ;
 
-void MatrixPieceHandler::SetAnimator(SP<Updatable> value) {
+void MatrixPieceHandler::SetAnimator(SP<SomeUpdatable> value) {
     GUARD(owner)
 
     if (animator) {

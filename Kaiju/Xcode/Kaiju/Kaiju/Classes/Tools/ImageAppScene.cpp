@@ -111,8 +111,10 @@ ImageAppScene::ImageAppScene() {
             StandardResourceRepositoryModel repoModel;
             SDLFileManager fm;
 
-            Document::Config documentConfig{ .filePath = filePath,
-                                             .name = fm.FileName(filePath, false) };
+            Document::Config documentConfig{
+                .filePath = filePath,
+                .name = fm.FileName(filePath, FileManager::FileNameFormat::NoExtension)
+            };
             SP<Document> document = MAKE<Document>(documentConfig);
             ResourceRepository repo(repoModel, document->resources, fm);
 

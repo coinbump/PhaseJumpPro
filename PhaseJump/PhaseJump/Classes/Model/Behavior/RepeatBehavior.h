@@ -18,6 +18,7 @@ namespace PJ {
 
     protected:
         int repeats{};
+        int repeatMax{};
 
     public:
         /// Returns the number of repeats
@@ -25,6 +26,14 @@ namespace PJ {
 
         RepeatBehavior(RepeatValueFunc repeatValueFunc);
         RepeatBehavior(int repeat);
+
+        int RepeatMax() const {
+            return repeatMax;
+        }
+
+        int RepeatCount() const {
+            return repeatMax - repeats;
+        }
 
         // MARK: BehaviorNode
 

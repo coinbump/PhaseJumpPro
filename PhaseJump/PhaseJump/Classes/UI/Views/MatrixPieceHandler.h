@@ -13,7 +13,7 @@ namespace PJ {
     /// Keeps track of the animator for move animations for that piece
     class MatrixPieceHandler : public WorldComponent<> {
     protected:
-        SP<Updatable> animator;
+        SP<SomeUpdatable> animator;
 
     public:
         /// Initial position for piece in matrix
@@ -58,7 +58,7 @@ namespace PJ {
 
         /// Stores the animator and keeps it updated for this piece
         /// Replaces the existing animator if it is currently animating
-        void SetAnimator(SP<Updatable> value);
+        void SetAnimator(SP<SomeUpdatable> value);
 
         bool IsAnimating() const {
             return animator && !animator->IsFinished();

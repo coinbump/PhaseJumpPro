@@ -1,5 +1,5 @@
 #include "App.h"
-#include "QuickBuild.h"
+#include "QuickBuilder.h"
 #include "SDLPlatformClass.h"
 #include "SDLWorld.h"
 
@@ -33,17 +33,18 @@ AppBuilder App::New() {
     newFunc();
 
     // Add a scene and standard camera
-    UP<QuickBuild> qb = NEW<QuickBuild>(*App::world->Root());
-    qb->And("Scene").OrthoStandard();
+    AppBuilder ab(*App::world->Root());
+    ab.And("Scene").OrthoStandard();
 
-    auto qbPtr = qb.get();
-
-    return AppBuilder{ .world = App::world.get(), .qb = *qbPtr, ._qb = std::move(qb) };
+    return ab;
 }
 
 // MARK: - AppBuilder
 
-AppBuilder::~AppBuilder() {
+void AppBuilder::OnGo() {
+    Base::OnGo();
+
+    auto world = Node().World();
     GUARD(world)
     world->Go();
 }

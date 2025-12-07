@@ -164,7 +164,7 @@ namespace PJ {
         virtual Matrix4x4 WorldModelMatrix(WorldNode const& node);
 
         /// Sends update event to world
-        void OnUpdate(TimeSlice time);
+        FinishType OnUpdate(TimeSlice time);
 
         /// Renders if the rate limiter allows it
         virtual void Render();

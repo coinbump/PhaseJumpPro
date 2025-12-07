@@ -12,7 +12,7 @@
 namespace PJ {
     /// Limits action by a canFireFunc
     /// Owner must send update events for timers to work
-    class SomeLimiter : public Updatable {
+    class SomeLimiter : public SomeUpdatable {
     public:
         using This = SomeLimiter;
 
@@ -20,6 +20,8 @@ namespace PJ {
         virtual void OnFire() = 0;
 
     public:
+        Updatable updatable;
+
         virtual bool CanFire() {
             return true;
         }
@@ -28,6 +30,16 @@ namespace PJ {
             GUARD(CanFire());
 
             OnFire();
+        }
+
+        // MARK: SomeUpdatable
+
+        FinishType OnUpdate(TimeSlice time) override {
+            return updatable.OnUpdate(time);
+        }
+
+        bool IsFinished() const override {
+            return updatable.IsFinished();
         }
     };
 

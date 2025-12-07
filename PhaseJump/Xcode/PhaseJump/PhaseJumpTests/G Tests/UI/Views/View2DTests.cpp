@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
 #include "View2D.h"
 #include "World.h"
-#include "QuickBuild.h"
+#include "QuickBuilder.h"
 #include "WorldNode.h"
 #include "PadViewLayout.h"
 #include "ViewBuilder.h"

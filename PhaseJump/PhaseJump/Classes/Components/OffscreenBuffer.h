@@ -2,6 +2,7 @@
 
 #include "WorldComponent.h"
 
+#if FALSE
 // Unimplemented. Future feature (see Godo: Viewport)
 namespace PJ {
     /// Acts as storage and a render hint in the node graph for building
@@ -12,5 +13,6 @@ namespace PJ {
         Vector2Int size;
 
         SP<RenderContext> bufferContext;
-    }
+    };
 } // namespace PJ
+#endif

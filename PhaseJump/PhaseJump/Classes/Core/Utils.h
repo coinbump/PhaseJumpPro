@@ -105,11 +105,15 @@ SP<T> LOCK(WP<T> const& value) {
 //    return NEW<Type>(std::forward<Args>(args)...);
 //}
 
-template <class _Tp, class... _Args>
-inline _LIBCPP_HIDE_FROM_ABI _LIBCPP_CONSTEXPR_SINCE_CXX23
-    typename std::__unique_if<_Tp>::__unique_single
-    NEW(_Args&&... __args) {
-    return std::unique_ptr<_Tp>(new _Tp(std::forward<_Args>(__args)...));
+template <class T>
+struct is_unique_ptr : std::false_type {};
+
+template <class U, class Deleter>
+struct is_unique_ptr<std::unique_ptr<U, Deleter>> : std::true_type {};
+
+template <class T, class... Args, std::enable_if_t<!is_unique_ptr<T>::value, int> = 0>
+inline _LIBCPP_HIDE_FROM_ABI _LIBCPP_CONSTEXPR_SINCE_CXX23 std::unique_ptr<T> NEW(Args&&... args) {
+    return std::make_unique<T>(std::forward<Args>(args)...);
 }
 
 #ifdef _WIN32

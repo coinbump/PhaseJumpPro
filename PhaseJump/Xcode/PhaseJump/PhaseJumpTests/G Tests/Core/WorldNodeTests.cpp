@@ -18,8 +18,9 @@ namespace WorldNodeTests {
             destroyCount++;
         }
 
-        void OnUpdate(TimeSlice time) override {
+        FinishType OnUpdate(TimeSlice time) override {
             updateTime += time.delta;
+            return FinishType::Continue;
         }
     };
 }

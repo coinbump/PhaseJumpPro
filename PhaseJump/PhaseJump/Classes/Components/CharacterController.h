@@ -43,6 +43,6 @@ namespace PJ {
 
         // MARK: SomeUpdatable
 
-        void OnUpdate(TimeSlice time) override;
+        FinishType OnUpdate(TimeSlice time) override;
     };
 } // namespace PJ

@@ -1,7 +1,7 @@
 #include "EditorImGuiResourcesPainter.h"
 #include "EditorWorldSystem.h"
 #include "imgui.h"
-#include "QuickBuild.h"
+#include "QuickBuilder.h"
 #include "SpriteRenderer.h"
 #include "World.h"
 

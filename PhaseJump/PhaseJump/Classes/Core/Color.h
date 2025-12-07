@@ -8,7 +8,7 @@
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 6/8/24
+ CODE REVIEW: 12/3/25
  */
 namespace PJ {
     /// Stores RGBA as normalized float components (0-1.0)
@@ -48,6 +48,26 @@ namespace PJ {
             return a >= 1.0f;
         }
 
+        constexpr This& SetRed(float value, bool clamp = true) {
+            r = clamp ? std::clamp(value, 0.0f, 1.0f) : value;
+            return *this;
+        }
+
+        constexpr This& SetGreen(float value, bool clamp = true) {
+            g = clamp ? std::clamp(value, 0.0f, 1.0f) : value;
+            return *this;
+        }
+
+        constexpr This& SetBlue(float value, bool clamp = true) {
+            b = clamp ? std::clamp(value, 0.0f, 1.0f) : value;
+            return *this;
+        }
+
+        constexpr This& SetAlpha(float value, bool clamp = true) {
+            a = clamp ? std::clamp(value, 0.0f, 1.0f) : value;
+            return *this;
+        }
+
         /// @return Returns this color with a modified color value
         constexpr This WithRed(float value, bool clamp = true) const {
             This result = *this;
@@ -76,7 +96,7 @@ namespace PJ {
             return result;
         }
 
-        /// Multiple the colors by value and optionally clamp the result
+        /// Multiply the colors by value and optionally clamp the result
         This WithColorsMult(float value, bool clamp = true) const {
             This result = *this;
             result = result.WithRed(result.r * value, clamp);
@@ -90,8 +110,6 @@ namespace PJ {
         String ToString() const {
             return std::format("Red: {}, Green: {}, Blue: {}, Alpha: {}", r, g, b, a);
         }
-
-        friend std::ostream& operator<<(std::ostream&, Color const& value);
 
         /*
          ADDITIONAL COLOR REFERENCES:

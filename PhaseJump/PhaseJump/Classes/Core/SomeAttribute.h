@@ -6,7 +6,7 @@
 /*
  RATING: 5 stars
  Simple types
- CODE REVIEW: 7/21/24
+ CODE REVIEW: 12/6/25
  */
 namespace PJ {
     /// Defines additional custom attributes for an object
@@ -18,15 +18,16 @@ namespace PJ {
             id(id) {}
     };
 
-    template <class Core = Void>
+    /// Attribute with a value
+    template <class Type = Void>
     class Attribute : public SomeAttribute {
     public:
         using Base = SomeAttribute;
 
-        Core core{};
+        Type value{};
 
-        Attribute(String id, Core core = Core()) :
+        Attribute(String id, Type value = Type()) :
             Base(id),
-            core(core) {}
+            value(value) {}
     };
 } // namespace PJ

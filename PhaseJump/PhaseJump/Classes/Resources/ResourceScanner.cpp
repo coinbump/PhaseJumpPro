@@ -14,7 +14,7 @@ ResourceRepositoryPlan ResourceScanner::ScanAt(FilePath path, FileSearchType sea
     ResourceRepositoryPlan result;
 
     // This doesn't do anything meaningful, but it's a first test of async code
-    auto pathsFuture = fm.PathListAsync(path, searchType);
+    auto pathsFuture = fm.FilePathListAsync(path, searchType);
     pathsFuture.wait();
     auto paths = pathsFuture.get();
 
@@ -34,7 +34,7 @@ std::optional<ResourceInfo> ResourceScanner::ScanFile(FilePath path) {
         return std::nullopt;
     }
 
-    auto fileExtension = fm.FileExtension(path, false);
+    auto fileExtension = fm.FileExtension(path, FileManager::FileExtensionFormat::NoDot);
     auto type = scanModel.TypeForFileExtension(fileExtension);
 
     // Unrecognized file extension
@@ -42,7 +42,7 @@ std::optional<ResourceInfo> ResourceScanner::ScanFile(FilePath path) {
 
     ResourceInfo result;
     result.type = *type;
-    result.id = fm.FileName(path, false);
+    result.id = fm.FileName(path, FileManager::FileNameFormat::NoExtension);
     result.filePath = path;
 
     return result;

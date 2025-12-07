@@ -18,7 +18,7 @@ void MatrixBoardViewAnimation::Scene::LoadInto(WorldNode& root) {
         .ModifyLatest<MatrixBoardView>([this](auto& boardView) { this->boardView = &boardView; })
         .Grid(worldSize, matrixSize, Color::red, 2)
         .CycleHueEffect("", SwitchState::On, 200)
-        .Repeat(count, [=, this](QuickBuild& qb) {
+        .Repeat(count, [=, this](QuickBuilder& qb) {
             VectorList<String> shapes{ "*", "**&**" };
 
             StandardRandom random;

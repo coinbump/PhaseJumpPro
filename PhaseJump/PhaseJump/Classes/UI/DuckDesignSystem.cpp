@@ -1,7 +1,7 @@
 #include "DuckDesignSystem.h"
 #include "DialControl.h"
 #include "ImRenderer.h"
-#include "QuickBuild.h"
+#include "QuickBuilder.h"
 #include "SliderControl.h"
 #include "ToggleButtonControl.h"
 #include "ViewBuilder.h"

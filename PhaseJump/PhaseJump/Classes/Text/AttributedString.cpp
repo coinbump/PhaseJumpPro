@@ -1,4 +1,5 @@
 #include "AttributedString.h"
+#include <stack>
 
 using namespace std;
 using namespace PJ;

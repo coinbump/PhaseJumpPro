@@ -6,7 +6,6 @@
 #include "OrderedSet.h"
 #include "SomeDriver.h"
 #include "StandardRandom.h"
-#include "Timer.h"
 #include "WorldComponent.h"
 #include "WorldNode.h"
 #include <memory>
@@ -114,8 +113,8 @@ namespace PJ {
         virtual void OnEmit(EmitList const& spawns) {}
 
     public:
-        // MARK: Updatable
+        // MARK: SomeWorldComponent
 
-        void OnUpdate(TimeSlice time) override;
+        FinishType OnUpdate(TimeSlice time) override;
     };
 } // namespace PJ

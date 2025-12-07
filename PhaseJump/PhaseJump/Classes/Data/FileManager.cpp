@@ -12,10 +12,13 @@ bool FileManager::IsDirectory(FilePath filePath) {
     return filesystem::is_directory(filePath, errorCode);
 }
 
-String FileManager::FileExtension(FilePath filePath, bool withDot) {
+String FileManager::FileExtension(FilePath filePath, FileExtensionFormat extensionFormat) {
     auto result = String(filePath.extension().string());
 
-    if (!withDot) {
+    switch (extensionFormat) {
+    case FileExtensionFormat::WithDot:
+        return result;
+    case FileExtensionFormat::NoDot:
         if (!IsEmpty(result) && '.' == result[0]) {
             result = Suffix(result, result.size() - 1);
         }
@@ -24,9 +27,13 @@ String FileManager::FileExtension(FilePath filePath, bool withDot) {
     return result;
 }
 
-String FileManager::FileName(FilePath filePath, bool includeExtension) {
-    return includeExtension ? String(filePath.filename().string())
-                            : String(filePath.stem().string());
+String FileManager::FileName(FilePath filePath, FileNameFormat nameFormat) {
+    return nameFormat == FileNameFormat::WithExtension ? String(filePath.filename().string())
+                                                       : String(filePath.stem().string());
+}
+
+String FileManager::ParentPath(FilePath path) {
+    return path.parent_path();
 }
 
 void FileManager::CreateDirectories(FilePath filePath) {
@@ -34,7 +41,7 @@ void FileManager::CreateDirectories(FilePath filePath) {
     filesystem::create_directories(filePath, errorCode);
 }
 
-VectorList<FilePath> FileManager::PathList(FilePath path, FileSearchType searchType) {
+VectorList<FilePath> FileManager::FilePathList(FilePath path, FileSearchType searchType) {
     // Careful: avoid using this for large file lists on the main thread
     VectorList<FilePath> result;
 

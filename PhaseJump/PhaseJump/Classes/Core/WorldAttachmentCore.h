@@ -91,9 +91,11 @@ namespace PJ {
         }
 
         /// Called in main loop for time delta update events
-        void OnUpdate(TimeSlice time) {
+        FinishType OnUpdate(TimeSlice time) {
             updatable.OnUpdate(time);
             updatables.OnUpdate(time);
+
+            return FinishType::Continue;
         }
 
         /// Adds a signal handler for the specified signal

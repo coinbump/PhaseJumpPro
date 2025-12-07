@@ -334,18 +334,19 @@ auto iterComponents = [](VectorList<SP<SomeWorldComponent>> const& components,
     }
 };
 
-void WorldNode::OnUpdate(TimeSlice time) {
+FinishType WorldNode::OnUpdate(TimeSlice time) {
     if (destroyCountdown > 0) {
         destroyCountdown -= time.delta;
         if (destroyCountdown <= 0) {
             isDestroyed = true;
-            return;
+            return FinishType::Continue;
         }
     }
 
     iterComponents(components, [&](auto component) { component->OnUpdate(time); });
 
     updatables.OnUpdate(time);
+    return FinishType::Continue;
 }
 
 void WorldNode::LateUpdate() {

@@ -6,12 +6,11 @@
 /*
  RATING: 5 stars
  Simple type
- CODE REVIEW: 7/17/24
+ CODE REVIEW: 12/6/25
  */
 namespace PJ {
-    // TODO: re-evaluate use of multiple inheritance here (use SomePlayable + Playable() getter?)
-    /// An audio stream is a source for playable audio
-    class SomeAudioStream : public Base, public Playable {
+    /// Source for playable audio
+    class SomeAudioStream : public Base, public SomePlayable {
     public:
         virtual ~SomeAudioStream() {}
     };

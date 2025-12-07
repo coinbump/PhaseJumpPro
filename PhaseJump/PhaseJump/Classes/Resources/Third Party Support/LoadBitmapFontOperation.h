@@ -8,7 +8,6 @@
  CODE REVIEW: 12/20/24
  */
 namespace PJ {
-    // TODO: text baselines are not correct when we render
     /// Load a texture atlas .fnt file created by Bitmap Font Generator
     class LoadBitmapFontOperation : public SomeLoadResourcesOperation {
     public:

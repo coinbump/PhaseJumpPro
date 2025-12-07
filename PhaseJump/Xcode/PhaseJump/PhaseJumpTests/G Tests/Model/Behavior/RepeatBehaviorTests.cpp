@@ -12,11 +12,13 @@ namespace RepeatBehaviorTests {
 
         float runTime = 0;
 
-        void OnUpdate(TimeSlice time) override {
+        FinishType OnUpdate(TimeSlice time) override {
             Base::OnUpdate(time);
 
             runTime += time.delta;
             Finish();
+            
+            return FinishType::Finish;
         }
     };
 
@@ -30,11 +32,12 @@ namespace RepeatBehaviorTests {
         TestRepeatBehavior(int repeat = 2) : Base(repeat) {
         }
 
-        void OnUpdate(TimeSlice time) override {
-            GUARD(!IsFinished())
+        FinishType OnUpdate(TimeSlice time) override {
+            GUARDR(!IsFinished(), FinishType::Finish)
             Base::OnUpdate(time);
 
             runTime += time.delta;
+            return FinishType::Continue;
         }
     };
 }
@@ -48,7 +51,7 @@ TEST(RepeatBehavior, Test) {
     Updatable::Func parentOnFinishFunc = [&](auto& updatable) {
         parentFinishCount++;
     };
-    Override(sut.onFinishFunc, parentOnFinishFunc);
+    Override(sut.updatable.onFinishFunc, parentOnFinishFunc);
 
     float targetFinishCount{};
     sut.onTargetFinishFunc = [&](auto& behavior, auto& target) {
@@ -69,7 +72,7 @@ TEST(RepeatBehavior, Test) {
     Updatable::Func onFinishFunc = [&](auto& behavior) {
         finishCount++;
     };
-    Override(childPtr->onFinishFunc, onFinishFunc);
+    Override(childPtr->updatable.onFinishFunc, onFinishFunc);
     childPtr->finishState = BehaviorState::Failure;
 
     sut.OnUpdate({2});
@@ -126,7 +129,7 @@ TEST(RepeatBehavior, ResetRoot) {
     Updatable::Func parentOnFinishFunc = [&](auto& updatable) {
         parentFinishCount++;
     };
-    Override(sut.onFinishFunc, parentOnFinishFunc);
+    Override(sut.updatable.onFinishFunc, parentOnFinishFunc);
 
     float targetFinishCount{};
     sut.onTargetFinishFunc = [&](auto& behavior, auto& target) {
@@ -147,7 +150,7 @@ TEST(RepeatBehavior, ResetRoot) {
     Updatable::Func onFinishFunc = [&](auto& behavior) {
         finishCount++;
     };
-    Override(childPtr->onFinishFunc, onFinishFunc);
+    Override(childPtr->updatable.onFinishFunc, onFinishFunc);
     childPtr->finishState = BehaviorState::Failure;
 
     // First repeat

@@ -14,12 +14,12 @@ AnimationCycleTimer::AnimationCycleTimer(float duration, AnimationCycleType cycl
     });
 }
 
-void AnimationCycleTimer::OnUpdate(TimeSlice time) {
-    GUARD(!timer.IsFinished())
+FinishType AnimationCycleTimer::OnUpdate(TimeSlice time) {
+    GUARDR(!timer.IsFinished(), FinishType::Finish)
 
     timer.OnUpdate(time);
 
-    GUARD(timer.IsFinished())
+    GUARDR(timer.IsFinished(), FinishType::Continue)
 
     switch (cycleType) {
     case AnimationCycleType::Once:
@@ -40,6 +40,8 @@ void AnimationCycleTimer::OnUpdate(TimeSlice time) {
         }
         break;
     }
+
+    return IsFinished() ? FinishType::Finish : FinishType::Continue;
 }
 
 // MARK: - Playable

@@ -2,7 +2,7 @@
 
 #include "AnimationCycleTypes.h"
 #include "Playable.h"
-#include "Timer.h"
+#include "PlayableTimer.h"
 
 /*
  RATING: 5 stars
@@ -19,7 +19,7 @@ namespace PJ {
         using OnCycleFunc = std::function<void(This&)>;
 
     protected:
-        Timer timer;
+        PlayableTimer timer;
 
         AnimationCycleType cycleType;
         AnimationCycleState cycleState;
@@ -68,7 +68,7 @@ namespace PJ {
 
         // MARK: Updatable
 
-        void OnUpdate(TimeSlice time) override;
+        FinishType OnUpdate(TimeSlice time) override;
 
         // MARK: - Playable
 

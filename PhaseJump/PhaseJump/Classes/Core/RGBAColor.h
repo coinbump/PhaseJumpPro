@@ -7,7 +7,7 @@
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 7/5/24
+ CODE REVIEW: 12/6/24
  */
 namespace PJ {
     /// Specifies the mask and bitshift schema for an N byte-color
@@ -67,7 +67,7 @@ namespace PJ {
             return value;
         }
 
-        Type
+        static Type
         ValueFromRGBA(ComponentColorSchema const& schema, int red, int green, int blue, int alpha) {
             return ((Type)red << schema.redShift) | ((Type)green << schema.greenShift) |
                    ((Type)blue << schema.blueShift) | ((Type)alpha << schema.alphaShift);

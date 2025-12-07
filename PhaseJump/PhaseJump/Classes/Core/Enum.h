@@ -8,7 +8,7 @@
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 7/21/24
+ CODE REVIEW: 12/6/25
  */
 namespace PJ {
     /// Uses EnumClass to map enum <-> String/name for serialization and display
@@ -21,7 +21,6 @@ namespace PJ {
 
         EnumType value{};
 
-        // TODO: SP-Audit
         Enum(SP<EnumClassType> _class) {
             core.SetClass(_class);
         }

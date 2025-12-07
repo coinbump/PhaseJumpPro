@@ -142,7 +142,7 @@ This& QuickBehavior::AnimationState(String value) {
         // We might be repeating the same animation state, so reset the animation
         simpleAnimationController->SetState(value, PublishValueCondition::Always);
     };
-    behavior->onUpdateFunc = [&node](auto& updatable, auto time) {
+    behavior->updatable.onUpdateFunc = [&node](auto& updatable, auto time) {
         auto renderer = node.TypeComponent<SomeRenderer>();
         GUARDR(renderer, FinishType::Finish)
 
@@ -163,7 +163,7 @@ This& QuickBehavior::AnimationInput(String value) {
         // finish early. Always use AnimationState to set the initial state for a sequence
         simpleAnimationController->states.Input(value);
     };
-    behavior->onUpdateFunc = [&node](auto& updatable, auto time) {
+    behavior->updatable.onUpdateFunc = [&node](auto& updatable, auto time) {
         auto renderer = node.TypeComponent<SomeRenderer>();
         GUARDR(renderer, FinishType::Finish)
 

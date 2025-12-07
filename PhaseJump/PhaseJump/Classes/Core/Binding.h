@@ -25,10 +25,19 @@ namespace PJ {
         using GetFunc = GetFunc<T>;
         using SetFunc = SetBindingFunc<T>;
 
+        struct Config {
+            GetFunc getFunc;
+            SetFunc setFunc;
+        };
+
         GetFunc getFunc;
         SetFunc setFunc;
 
         Binding() {}
+
+        Binding(Config const& config) :
+            getFunc(config.getFunc),
+            setFunc(config.setFunc) {}
 
         Binding(GetFunc getFunc, SetFunc setFunc) :
             getFunc(getFunc),

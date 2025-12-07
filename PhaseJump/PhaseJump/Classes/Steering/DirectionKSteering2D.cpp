@@ -9,10 +9,10 @@ DirectionKSteering2D::DirectionKSteering2D(float velocity, float acceleration, f
     acceleration(acceleration),
     maxVelocity(maxVelocity) {}
 
-void DirectionKSteering2D::OnUpdate(TimeSlice time) {
+FinishType DirectionKSteering2D::OnUpdate(TimeSlice time) {
     Base::OnUpdate(time);
 
-    GUARD(owner)
+    GUARDR(owner, FinishType::Continue)
 
     velocity += acceleration * time.delta;
     if (maxVelocity > 0) {
@@ -23,4 +23,6 @@ void DirectionKSteering2D::OnUpdate(TimeSlice time) {
     float moveDeltaValue = velocity * time.delta;
     Vector2 moveDelta = moveVector * moveDeltaValue;
     owner->transform.SetLocalPosition(owner->transform.LocalPosition() + moveDelta);
+
+    return FinishType::Continue;
 }

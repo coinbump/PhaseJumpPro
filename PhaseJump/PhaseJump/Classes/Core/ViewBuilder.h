@@ -18,26 +18,26 @@
  CODE REVIEW: 12/4/24
  */
 namespace PJ {
-    class QuickBuild;
+    class QuickBuilder;
     class WorldNode;
     class SomeCollider2D;
     class ImRenderer;
     class DesignSystem;
 
-    /// Used to build views with QuickBuild
+    /// Used to build views with QuickBuilder
     class ViewBuilder {
     protected:
         /// External builder
-        QuickBuild* quickBuild{};
+        QuickBuilder* quickBuilder{};
 
         /// Internal builder
-        UP<QuickBuild> qb;
+        UP<QuickBuilder> qb;
 
     public:
         using This = ViewBuilder;
 
         using BuildViewFunc = std::function<void(This&)>;
-        using AddViewFunc = std::function<void(QuickBuild&)>;
+        using AddViewFunc = std::function<void(QuickBuilder&)>;
         using MakeColliderFunc = std::function<SP<SomeCollider2D>()>;
 
         template <class Config>
@@ -194,11 +194,11 @@ namespace PJ {
             ModifyViewFunc modifyViewFunc;
         };
 
-        ViewBuilder(QuickBuild& quickBuild);
+        ViewBuilder(QuickBuilder& quickBuilder);
         ViewBuilder(WorldNode& node);
 
-        QuickBuild& QB() const {
-            return quickBuild ? *quickBuild : *qb;
+        QuickBuilder& QB() const {
+            return quickBuilder ? *quickBuilder : *qb;
         }
 
         World* GetWorld() const;

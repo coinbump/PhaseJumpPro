@@ -92,7 +92,9 @@ void MatrixRenderer::Awake() {
     }
 }
 
-void MatrixRenderer::OnUpdate(TimeSlice time) {
+FinishType MatrixRenderer::OnUpdate(TimeSlice time) {
     Base::OnUpdate(time);
     system.OnUpdate(time);
+
+    return FinishType::Continue;
 }

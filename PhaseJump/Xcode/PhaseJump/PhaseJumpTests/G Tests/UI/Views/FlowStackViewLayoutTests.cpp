@@ -5,7 +5,7 @@
 #include "WorldNode.h"
 #include "SpacerView.h"
 #include "ViewBuilder.h"
-#include "QuickBuild.h"
+#include "QuickBuilder.h"
 
 using namespace std;
 using namespace PJ;

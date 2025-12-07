@@ -10,7 +10,7 @@ using namespace PJ_Dev;
 
 void IncludeAliasFileProcessor::Process(FilePath filePath) {
     SDLFileManager fm;
-    auto extension = fm.FileExtension(filePath, false);
+    auto extension = fm.FileExtension(filePath, FileManager::FileExtensionFormat::NoDot);
     if ("h" == extension) {
         String pathString = filePath.string();
         VectorList<std::string> pathComponents =

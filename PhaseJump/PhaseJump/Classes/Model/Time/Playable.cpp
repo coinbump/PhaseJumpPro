@@ -124,15 +124,27 @@ void Playable::OnPlayTimeChange() {
     onPlayTimeChangeFunc(*this);
 }
 
-void Playable::OnUpdate(TimeSlice time) {
+FinishType Playable::OnUpdate(TimeSlice time) {
     if (HasController()) {
-        Dispatch([=](auto& controller) { controller.OnUpdate(time); });
+        return DispatchResult<FinishType>([=](auto& controller) {
+            return controller.OnUpdate(time);
+        });
     } else {
-        Base::OnUpdate(time);
+        return updatable.OnUpdate(time);
     }
+
+    return FinishType::Continue;
 }
 
 bool Playable::IsFinished() const {
-    GUARDR(!Base::IsFinished(), true);
+    GUARDR(!updatable.IsFinished(), true);
     return DispatchResult<bool>([](Playable& controller) { return controller.IsFinished(); });
+}
+
+void Playable::SetIsFinished(bool value) {
+    if (controller) {
+        Dispatch([=](auto& controller) { controller.SetIsFinished(value); });
+    } else {
+        updatable.SetIsFinished(value);
+    }
 }

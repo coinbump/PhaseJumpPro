@@ -13,10 +13,12 @@ SomeCamera* UIWorldSystem::Camera() const {
     return world->MainCamera();
 }
 
-void UIWorldSystem::OnUpdate(TimeSlice time) {
+FinishType UIWorldSystem::OnUpdate(TimeSlice time) {
     Base::OnUpdate(time);
 
     OnDragUpdate();
+
+    return FinishType::Continue;
 }
 
 void UIWorldSystem::UpdateActiveHover(VectorList<PJ::LocalHit> hits) {

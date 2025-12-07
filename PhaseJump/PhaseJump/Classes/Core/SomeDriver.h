@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Timer.h"
+#include "PlayableTimer.h"
 #include "Updatable.h"
 
 /*
@@ -13,15 +13,26 @@ namespace PJ {
 
     /// Used to drive events. Example: emit something after N seconds
     /// Allows us to compose complex behavior for triggering events
-    class SomeDriver : public Updatable {
+    class SomeDriver : public SomeUpdatable {
     public:
         using This = SomeDriver;
         using ActionFunc = std::function<void()>;
 
         ActionFunc action;
+        Updatable updatable;
 
         SomeDriver(ActionFunc action) :
             action(action) {}
+
+        // MARK: SomeUpdatable
+
+        FinishType OnUpdate(TimeSlice time) override {
+            return updatable.OnUpdate(time);
+        }
+
+        bool IsFinished() const override {
+            return updatable.IsFinished();
+        }
     };
 
     /// Used to drive events. Example: emit something after N seconds
@@ -40,14 +51,14 @@ namespace PJ {
     };
 
     /// Drives an event based on a timer
-    class TimerDriver : public Driver<Timer> {
+    class TimerDriver : public Driver<PlayableTimer> {
     public:
-        using Base = Driver<Timer>;
+        using Base = Driver<PlayableTimer>;
 
         TimerDriver(float duration, RunType runType, ActionFunc action) :
-            Base(Timer(duration, runType), action) {
+            Base(PlayableTimer(duration, runType), action) {
 
-            core.onFinishFunc = [this](auto& timedPlayable) {
+            core.updatable.onFinishFunc = [this](auto& timedPlayable) {
                 GUARD(this->action);
                 this->action();
             };
@@ -67,8 +78,8 @@ namespace PJ {
             return core.IsFinished();
         }
 
-        void OnUpdate(TimeSlice time) override {
-            core.OnUpdate(time);
+        FinishType OnUpdate(TimeSlice time) override {
+            return core.OnUpdate(time);
         }
     };
 } // namespace PJ

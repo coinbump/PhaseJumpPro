@@ -24,6 +24,7 @@ namespace PJ {
         auto constexpr ListSelect = "list.select";
         auto constexpr PickerColor = "picker.color";
         auto constexpr Text = "text";
+        auto constexpr TreeNode = "tree.node";
         auto constexpr Button = "button";
     } // namespace UIModelType
 

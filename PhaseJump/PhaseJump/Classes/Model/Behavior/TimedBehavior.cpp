@@ -14,9 +14,10 @@ void TimedBehavior::OnRun() {
 
     GUARD(timeValueFunc);
     time = timeValueFunc();
+    timeMax = time;
 
-    onUpdateFunc = [](auto& updatable, auto time) {
-        This& behavior = *(static_cast<This*>(&updatable));
+    updatable.onUpdateFunc = [this](auto& updatable, auto time) {
+        This& behavior = *this;
         behavior.time -= time.delta;
 
         return behavior.time > 0 ? FinishType::Continue : FinishType::Finish;

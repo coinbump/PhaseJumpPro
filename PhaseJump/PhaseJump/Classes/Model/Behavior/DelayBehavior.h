@@ -18,6 +18,7 @@ namespace PJ {
     protected:
         /// Seconds left in delay
         float delay{};
+        float delayMax{};
 
     public:
         /// Returns delay value in seconds
@@ -25,6 +26,18 @@ namespace PJ {
 
         DelayBehavior(std::function<float()> delayValueFunc);
         DelayBehavior(float delay);
+
+        float DelayMax() const {
+            return delayMax;
+        }
+
+        float DelayState() const {
+            return delayMax - delay;
+        }
+
+        float DelayRemainder() const {
+            return delay;
+        }
 
         // MARK: BehaviorNode
 

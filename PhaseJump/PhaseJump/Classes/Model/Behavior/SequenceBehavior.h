@@ -18,6 +18,10 @@ namespace PJ {
         using Base = BehaviorNode;
         using This = SequenceBehavior;
 
+        size_t TargetIndex() const {
+            return targetIndex;
+        }
+
         // MARK: BehaviorNode
 
         BehaviorNode* Target() override;

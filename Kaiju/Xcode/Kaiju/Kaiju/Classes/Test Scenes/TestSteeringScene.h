@@ -13,7 +13,7 @@ public:
 
         StandardRandom random;
 
-        QB(root).OrthoStandard().Repeat(20, [&](QuickBuild& qb) {
+        QB(root).OrthoStandard().Repeat(20, [&](QuickBuilder& qb) {
             qb.And("Steering")
                 .Texture("heart-full")
                 .With<DirectionKSteering2D>(random.IntValue(40, 60), 100, 800)
