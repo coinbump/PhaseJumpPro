@@ -22,20 +22,6 @@ namespace PJ {
         bool isEnabled = true;
 
     public:
-        /// The system that owns this processor, if any
-        RenderWorldSystem* system{};
-
-        using ProcessFunc = std::function<void(String phase, RenderCameraModel*)>;
-
-        /// Use facing name, for browsing
-        String name;
-
-        /// Called for render phases
-        ProcessFunc processFunc;
-
-        /// Each processor must register to run for specific render phases
-        UnorderedSet<String> phases;
-
         struct Config {
             String name;
             UnorderedSet<String> phases;
@@ -48,6 +34,20 @@ namespace PJ {
             /// Camera model if we're processing for a specific camera
             RenderCameraModel* cameraModel{};
         };
+
+        /// The system that owns this processor, if any
+        RenderWorldSystem* system{};
+
+        using ProcessFunc = std::function<void(Phase const& phase)>;
+
+        /// Use facing name, for browsing
+        String name;
+
+        /// Called for render phases
+        ProcessFunc processFunc;
+
+        /// Each processor must register to run for specific render phases
+        UnorderedSet<String> phases;
 
         RenderProcessor(Config config) :
             name(config.name),
@@ -65,7 +65,7 @@ namespace PJ {
 
         virtual void Process(Phase phase) {
             if (processFunc) {
-                processFunc(phase.id, phase.cameraModel);
+                processFunc(phase);
             }
 
             if (phase.cameraModel) {

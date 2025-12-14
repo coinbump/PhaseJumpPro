@@ -57,8 +57,8 @@ DuckDesignSystem::DuckDesignSystem() :
 
     // MARK: Surface
 
-    buildViewFuncs[UIItemId::Surface] = [this](auto _config, auto& vb) {
-        SurfaceConfig& config = *(static_cast<SurfaceConfig*>(_config));
+    buildViewFuncs[UIItemId::Surface] = [this](auto* _config, auto& vb) {
+        SurfaceConfig const& config = *(static_cast<SurfaceConfig const*>(_config));
         Color surfaceColor = Color::white;
 
         bool areShapesOpaque = this->areShapesOpaque;
@@ -77,8 +77,8 @@ DuckDesignSystem::DuckDesignSystem() :
 
     // MARK: Button
 
-    buildViewFuncs[UIItemId::Button] = [this](auto _config, auto& vb) {
-        ButtonConfig& config = *(static_cast<ButtonConfig*>(_config));
+    buildViewFuncs[UIItemId::Button] = [this](auto* _config, auto& vb) {
+        ButtonConfig const& config = *(static_cast<ButtonConfig const*>(_config));
 
         Color surfaceColor = theme->ThemeColor(UIElementId::SurfaceInteractive, Color::gray);
         Color pressColor = theme->ThemeColor(UIElementId::SurfaceInteractivePress, Color::blue);
@@ -123,8 +123,8 @@ DuckDesignSystem::DuckDesignSystem() :
 
     // MARK: Slider
 
-    buildViewFuncs[UIItemId::Slider] = [this](auto _config, auto& vb) {
-        SliderConfig& config = *(static_cast<SliderConfig*>(_config));
+    buildViewFuncs[UIItemId::Slider] = [this](auto* _config, auto& vb) {
+        SliderConfig const& config = *(static_cast<SliderConfig const*>(_config));
 
         Color trackColor = theme->ThemeColor(UIElementId::SurfaceInteractive, Color::gray);
         Color trackPrimaryColor = theme->ThemeColor(UIElementId::PrimaryContainer, Color::gray);
@@ -242,8 +242,8 @@ DuckDesignSystem::DuckDesignSystem() :
 
     // MARK: Segment toggle
 
-    buildViewFuncs[UIItemId::SegmentToggle] = [this](auto _config, auto& vb) {
-        ToggleButtonConfig& config = *(static_cast<ToggleButtonConfig*>(_config));
+    buildViewFuncs[UIItemId::SegmentToggle] = [this](auto* _config, auto& vb) {
+        ToggleButtonConfig const& config = *(static_cast<ToggleButtonConfig const*>(_config));
 
         Color surfaceColor = theme->ThemeColor(UIElementId::SurfaceToggleOff, Color::gray);
         Color pressColor = theme->ThemeColor(UIElementId::SurfaceToggleOffPress, Color::yellow);
@@ -326,8 +326,8 @@ DuckDesignSystem::DuckDesignSystem() :
 
     // MARK: ImageToggle
 
-    buildViewFuncs[UIItemId::ImageToggle] = [this](auto _config, auto& vb) {
-        ToggleButtonConfig& config = *(static_cast<ToggleButtonConfig*>(_config));
+    buildViewFuncs[UIItemId::ImageToggle] = [this](auto* _config, auto& vb) {
+        ToggleButtonConfig const& config = *(static_cast<ToggleButtonConfig const*>(_config));
 
         Color surfaceColor = theme->ThemeColor(UIElementId::SurfaceToggleOff, Color::gray);
         Color pressColor = theme->ThemeColor(UIElementId::SurfaceToggleOffPress, Color::yellow);
@@ -384,8 +384,8 @@ DuckDesignSystem::DuckDesignSystem() :
 
     // MARK: SwitchToggle
 
-    buildViewFuncs[UIItemId::SwitchToggle] = [this](auto _config, auto& vb) {
-        ToggleButtonConfig& config = *(static_cast<ToggleButtonConfig*>(_config));
+    buildViewFuncs[UIItemId::SwitchToggle] = [this](auto* _config, auto& vb) {
+        ToggleButtonConfig const& config = *(static_cast<ToggleButtonConfig const*>(_config));
 
         Color primaryColor = theme->ThemeColor(UIElementId::Primary, Color::gray);
         Color pressColor = theme->ThemeColor(UIElementId::SurfaceInteractivePress, Color::yellow);
@@ -441,11 +441,11 @@ DuckDesignSystem::DuckDesignSystem() :
     // MARK: buildCheckTypeButtonFunc
 
     auto buildCheckTypeButtonFunc = [this](
-                                        void* _config, ViewBuilder& vb,
+                                        auto* _config, ViewBuilder& vb,
                                         std::function<void(ImRenderer&, Rect)> drawFill,
                                         std::function<void(ImRenderer&, Rect, float)> drawFrame
                                     ) {
-        ToggleButtonConfig& config = *(static_cast<ToggleButtonConfig*>(_config));
+        ToggleButtonConfig const& config = *(static_cast<ToggleButtonConfig const*>(_config));
 
         Color surfaceColor = theme->ThemeColor(UIElementId::SurfaceToggleOff, Color::gray);
         Color pressColor = theme->ThemeColor(UIElementId::SurfaceToggleOffPress, Color::yellow);
@@ -514,7 +514,7 @@ DuckDesignSystem::DuckDesignSystem() :
     // MARK: Check button
 
     buildViewFuncs[UIItemId::CheckButton] = [buildCheckTypeButtonFunc,
-                                             this](auto _config, auto& vb) {
+                                             this](auto* _config, auto& vb) {
         buildCheckTypeButtonFunc(
             _config, vb, [](auto& renderer, auto frame) { renderer.FillRect(frame); },
             [](auto& renderer, auto frame, auto strokeWidth) {
@@ -527,7 +527,7 @@ DuckDesignSystem::DuckDesignSystem() :
     // MARK: Radio button
 
     buildViewFuncs[UIItemId::RadioButton] = [buildCheckTypeButtonFunc,
-                                             this](auto _config, auto& vb) {
+                                             this](auto* _config, auto& vb) {
         buildCheckTypeButtonFunc(
             _config, vb, [](auto& renderer, auto frame) { renderer.FillEllipse(frame); },
             [](auto& renderer, auto frame, auto strokeWidth) {
@@ -539,8 +539,8 @@ DuckDesignSystem::DuckDesignSystem() :
 
     // MARK: Progress bar
 
-    buildViewFuncs[UIItemId::ProgressBar] = [this](auto _config, auto& vb) {
-        ProgressBarConfig& config = *(static_cast<ProgressBarConfig*>(_config));
+    buildViewFuncs[UIItemId::ProgressBar] = [this](auto* _config, auto& vb) {
+        ProgressBarConfig const& config = *(static_cast<ProgressBarConfig const*>(_config));
 
         Color backColor = theme->ThemeColor(UIElementId::Secondary, Color::gray);
         Color barColor = config.progressColor
@@ -570,8 +570,8 @@ DuckDesignSystem::DuckDesignSystem() :
 
     // MARK: Progress Circle
 
-    buildViewFuncs[UIItemId::ProgressCircle] = [this](auto _config, auto& vb) {
-        ProgressBarConfig& config = *(static_cast<ProgressBarConfig*>(_config));
+    buildViewFuncs[UIItemId::ProgressCircle] = [this](auto* _config, auto& vb) {
+        ProgressBarConfig const& config = *(static_cast<ProgressBarConfig const*>(_config));
 
         Color backColor = theme->ThemeColor(UIElementId::Secondary, Color::gray);
         Color barColor = config.progressColor
@@ -609,8 +609,8 @@ DuckDesignSystem::DuckDesignSystem() :
 
     // MARK: Dial
 
-    buildViewFuncs[UIItemId::Dial] = [this](auto _config, auto& vb) {
-        DialConfig& config = *(static_cast<DialConfig*>(_config));
+    buildViewFuncs[UIItemId::Dial] = [this](auto* _config, auto& vb) {
+        DialConfig const& config = *(static_cast<DialConfig const*>(_config));
 
         Color surfaceColor = config.surfaceColor
                                  ? *config.surfaceColor
@@ -661,8 +661,8 @@ DuckDesignSystem::DuckDesignSystem() :
 
     // MARK: Label
 
-    buildViewFuncs[UIItemId::Label] = [this](auto _config, auto& vb) {
-        LabelConfig& config = *(static_cast<LabelConfig*>(_config));
+    buildViewFuncs[UIItemId::Label] = [this](auto* _config, auto& vb) {
+        LabelConfig const& config = *(static_cast<LabelConfig const*>(_config));
 
         float frameHeight = theme->ElementSize(UIElementId::ControlFrame, { 0, 30 }).y;
         Color color;
@@ -680,8 +680,8 @@ DuckDesignSystem::DuckDesignSystem() :
 
     // MARK: Toast
 
-    buildViewFuncs[UIItemId::Toast] = [this](auto _config, auto& vb) {
-        LabelConfig& config = *(static_cast<LabelConfig*>(_config));
+    buildViewFuncs[UIItemId::Toast] = [this](auto* _config, auto& vb) {
+        LabelConfig const& config = *(static_cast<LabelConfig const*>(_config));
 
         Color surfaceColor = theme->ThemeColor(UIElementId::SurfaceContainerHighTertiary);
 
@@ -696,8 +696,8 @@ DuckDesignSystem::DuckDesignSystem() :
 
     // MARK: ToolTip
 
-    buildViewFuncs[UIItemId::ToolTip] = [this](auto _config, auto& vb) {
-        ToolTipConfig& config = *(static_cast<ToolTipConfig*>(_config));
+    buildViewFuncs[UIItemId::ToolTip] = [this](auto* _config, auto& vb) {
+        ToolTipConfig const& config = *(static_cast<ToolTipConfig const*>(_config));
 
         Color surfaceColor = theme->ThemeColor(UIElementId::SurfaceContainerLowTertiary);
 

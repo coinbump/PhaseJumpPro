@@ -7,9 +7,18 @@
  CODE REVIEW: 10/22/24
  */
 namespace PJ {
+    /// Paints on demand. Example: immediate mode rendering
+    class SomePainter {
+    public:
+        virtual ~SomePainter() {};
+
+        /// Draws this node and its children
+        virtual void Paint() = 0;
+    };
+
     /// Protocol for an object that renders imGui UI elements
     /// Used to build a tree of imGui elements and re-arrange them as needed
-    class SomeImGuiPainter : public Treeable<SomeImGuiPainter> {
+    class SomeImGuiPainter : public Treeable<SomeImGuiPainter>, public SomePainter {
     public:
         using This = SomeImGuiPainter;
         using Func = std::function<void(This&)>;
@@ -30,10 +39,12 @@ namespace PJ {
         SomeImGuiPainter() :
             tree(*this) {}
 
-        virtual ~SomeImGuiPainter() {}
+        ~SomeImGuiPainter() override {};
+
+        // MARK: SomePainter
 
         /// Draws this node and its children
-        virtual void Paint();
+        void Paint() override;
 
         // MARK: Treeable
 

@@ -16,7 +16,7 @@ namespace PJ {
 
         // MARK: SomeMouseDevice
 
-        ScreenPosition Position() const override;
+        ScreenPosition GetScreenPosition() const override;
 
         bool IsAvailable() override {
             return true;

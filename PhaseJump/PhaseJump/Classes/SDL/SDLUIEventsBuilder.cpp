@@ -114,7 +114,7 @@ UIEventList SDLUIEventsBuilder::BuildUIEvents(SDLEventList const& events, float 
                 auto droppedFile = sdlEvent.drop.data;
                 auto event = MAKE<DropFilesUIEvent>(
                     VectorList<FilePath>{ FilePath(droppedFile) },
-                    Vector2(sdlEvent.drop.x, sdlEvent.drop.y) * uiScale
+                    Vector2(sdlEvent.drop.x, sdlEvent.drop.y)
                 );
                 dropFileEvents.push_back(event);
                 break;
@@ -173,7 +173,7 @@ UIEventList SDLUIEventsBuilder::BuildUIEvents(SDLEventList const& events, float 
         case SDL_EVENT_MOUSE_BUTTON_DOWN:
             {
                 auto inputButton = PointerInputButtonFromSDLButton(sdlEvent.button.button);
-                auto screenPosition = Vector2(sdlEvent.button.x, sdlEvent.button.y) * uiScale;
+                auto screenPosition = Vector2(sdlEvent.button.x, sdlEvent.button.y);
                 auto event = MAKE<PointerDownUIEvent>(screenPosition, inputButton);
                 result.push_back(SCAST<SomeSignal>(event));
                 break;
@@ -186,7 +186,7 @@ UIEventList SDLUIEventsBuilder::BuildUIEvents(SDLEventList const& events, float 
             }
         case SDL_EVENT_MOUSE_MOTION:
             {
-                auto screenPosition = Vector2(sdlEvent.motion.x, sdlEvent.motion.y) * uiScale;
+                auto screenPosition = Vector2(sdlEvent.motion.x, sdlEvent.motion.y);
                 auto delta = Vector2(sdlEvent.motion.xrel, sdlEvent.motion.yrel);
                 result.push_back(MAKE<PointerMoveUIEvent>(screenPosition, delta));
                 break;

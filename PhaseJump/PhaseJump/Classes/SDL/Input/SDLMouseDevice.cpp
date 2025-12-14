@@ -5,11 +5,11 @@
 using namespace std;
 using namespace PJ;
 
-ScreenPosition SDLMouseDevice::Position() const {
+ScreenPosition SDLMouseDevice::GetScreenPosition() const {
     float x, y;
     SDL_GetMouseState(&x, &y);
 
-    return ScreenPosition(Vector2(x, y));
+    return { x, y };
 }
 
 bool SDLMouseDevice::IsButtonDown(PointerInputButtonType button) {

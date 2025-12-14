@@ -2,6 +2,8 @@
 
 #include <memory>
 #include "UnorderedMap.h"
+#include "OrderedMap.h"
+#include "CollectionUtils.h"
 
 using namespace std;
 using namespace PJ;
@@ -28,12 +30,12 @@ TEST(UnorderedMap, ContainsKeyWhere) {
 
     using Pair = pair<std::string, int>;
 
-    auto value = MapContainsIf<Map, int>(sut, [](int value) -> bool { return value == 1; });
+    auto value = ContainsIf(sut, [](auto& pair) -> bool { return pair.second == 1; });
     EXPECT_TRUE(value);
 
-    value = MapContainsIf<Map, int>(sut, [](int value) -> bool { return value == 100; });
+    value = ContainsIf(sut, [](auto& pair) -> bool { return pair.second == 100; });
     EXPECT_TRUE(value);
 
-    value = MapContainsIf<Map, int>(sut, [](int value) -> bool { return value == 90; });
+    value = ContainsIf(sut, [](auto& pair) -> bool { return pair.second == 90; });
     EXPECT_FALSE(value);
 }

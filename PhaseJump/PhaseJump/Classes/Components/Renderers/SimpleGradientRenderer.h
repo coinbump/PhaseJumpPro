@@ -16,10 +16,16 @@ namespace PJ {
     public:
         using Base = SomeMaterialRenderer;
 
+        struct Config {
+            Color startColor;
+            Color endColor;
+            Vector2 worldSize;
+        };
+
         Color startColor;
         Color endColor;
 
-        SimpleGradientRenderer(Color startColor, Color endColor, Vector2 worldSize);
+        SimpleGradientRenderer(Config config);
 
         // MARK: SomeWorldComponent
 

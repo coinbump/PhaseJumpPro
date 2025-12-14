@@ -11,7 +11,7 @@ void MatrixBoardViewAnimation::Scene::LoadInto(WorldNode& root) {
     auto count = std::min(matrixSize.x * matrixSize.y, this->count);
 
     QB(root)
-        .OrthoStandard(Color32(31, 36, 84))
+        .OrthoStandard(QuickBuilder::OrthoStandardConfig{ .clearColor = Color32(31, 36, 84) })
         .And("Matrix view")
         .ScaleWithWindow(worldSize, 0.8f)
         .With<MatrixBoardView>(worldSize, matrixSize)

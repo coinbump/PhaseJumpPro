@@ -76,7 +76,7 @@ namespace PJ {
 /// MARK: - Shared pointer aliases
 
 /**
- Use aliases for shared pointers to have the flexibility of introducing a faster
+ Use aliases for shared pointers to have the flexibility of introducing an alternate
  memory model in the future
  */
 template <class T>

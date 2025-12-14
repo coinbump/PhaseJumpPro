@@ -19,7 +19,7 @@ namespace Example {
             void LoadInto(WorldNode& root) override {
                 QB(root)
                     .Named("ExampleLifeScene")
-                    .OrthoStandard(Color::gray)
+                    .OrthoStandard(QuickBuilder::OrthoStandardConfig{ .clearColor = Color::gray })
                     .And("Life Simulation")
                     .With<MatrixRenderer>(worldSize)
                     .ScaleWithWindow(worldSize, 0.8f);

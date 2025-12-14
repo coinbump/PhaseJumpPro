@@ -25,7 +25,7 @@ namespace PJ {
         using This = DesignSystem;
         using BuildViewFunc = std::function<void(ViewBuilder&)>;
         using ModifyViewFunc = std::function<void(View2D&)>;
-        using BuildConfigViewFunc = std::function<void(void* config, ViewBuilder&)>;
+        using BuildConfigViewFunc = std::function<void(void const* config, ViewBuilder&)>;
 
         /// Surface config
         struct SurfaceConfig {

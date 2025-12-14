@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CommandHistory.h"
-#include "ImGuiPlanPainter.h"
+#include "ImGuiUIPlanPainter.h"
 #include "Menu.h"
 #include "Scene.h"
 #include "SomeWorldSystem.h"

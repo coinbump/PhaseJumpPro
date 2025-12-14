@@ -11,6 +11,8 @@
 #include "EaseFunc.h"
 #include "Font.h"
 #include "LayoutInsets.h"
+#include "NodeHandler.h"
+#include "RenderProcessor.h"
 #include "SimpleAnimationController.h"
 #include "Switchable.h"
 #include "ViewBuilder.h"
@@ -166,8 +168,15 @@ namespace PJ {
 
         This& Repeat(int count, std::function<void(This&)> func);
 
+        struct OrthoStandardConfig {
+            Color clearColor = Color::white;
+            bool isImGuiEnabled = true;
+        };
+
         /// Add standard orthographic camera and associated components
-        This& OrthoStandard(Color clearColor = Color::white);
+        This& OrthoStandard(
+            OrthoStandardConfig config = { .clearColor = Color::white, .isImGuiEnabled = true }
+        );
 
         /// Scales a node with a fixed size to keep it proportional to the size of the window
         This& ScaleWithWindow(Vector3 worldSize, float ratio = 1.0f);
@@ -469,6 +478,14 @@ namespace PJ {
             node.updatables.AddDelay(std::max(0.0f, AnimateState().delay), std::move(animator));
             return *this;
         }
+
+        // MARK: imGui
+
+        using PaintImmediateNodeHandler = PJ::NodeHandler<PJ::RenderProcessor::Phase>;
+        using PaintImmediateFunc = std::function<void()>;
+
+        /// Attach an imGui window to this node, with a paint func
+        This& ImGui(StringView title, PaintImmediateFunc paintFunc);
 
         // MARK: Move animations
 

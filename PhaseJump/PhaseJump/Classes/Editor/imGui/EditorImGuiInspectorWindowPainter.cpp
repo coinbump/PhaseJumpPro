@@ -34,7 +34,7 @@ EditorImGuiInspectorWindowPainter::EditorImGuiInspectorWindowPainter(EditorWorld
                 ImGuiPushId push("scene");
 
                 if (ImGui::CollapsingHeader("Scene", ImGuiTreeNodeFlags_DefaultOpen)) {
-                    ImGuiPlanPainter(*system.sceneUIPlan).Paint();
+                    ImGuiUIPlanPainter(*system.sceneUIPlan).Paint();
                 }
             }
 
@@ -73,7 +73,7 @@ EditorImGuiInspectorWindowPainter::EditorImGuiInspectorWindowPainter(EditorWorld
                                              }
                                          ) });
 
-                    ImGuiPlanPainter(uiPlan).Paint();
+                    ImGuiUIPlanPainter(uiPlan).Paint();
 
                     // FUTURE: add 3D support if needed
                     float rotation = -node.transform.Rotation().z;
@@ -110,7 +110,7 @@ EditorImGuiInspectorWindowPainter::EditorImGuiInspectorWindowPainter(EditorWorld
                             if (ImGui::CollapsingHeader(
                                     name.c_str(), ImGuiTreeNodeFlags_DefaultOpen
                                 )) {
-                                ImGuiPlanPainter(*uiPlan.get()).Paint();
+                                ImGuiUIPlanPainter(*uiPlan.get()).Paint();
                             }
                         } else {
                             ImGui::Text("%s", component->Name().c_str());

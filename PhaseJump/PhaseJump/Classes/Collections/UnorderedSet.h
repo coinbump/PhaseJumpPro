@@ -10,12 +10,13 @@
  CODE REVIEW: 8/3/24
  */
 namespace PJ {
-    /// Alias for std so can build an alternate implementation if needed
+    /// Alias for standard type so you can build an alternate implementation if needed
     template <
         class Type, class _Hash = std::hash<Type>, class _Pred = std::equal_to<Type>,
         class _Alloc = std::allocator<Type>>
     using UnorderedSet = std::unordered_set<Type, _Hash, _Pred, _Alloc>;
 
+    // TODO: use std::requires
     template <
         class Set, class Type,
         std::enable_if_t<std::is_same<

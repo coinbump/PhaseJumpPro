@@ -6,7 +6,7 @@
 /*
  RATING: 5 stars
  Simple type
- CODE REVIEW: 8/9/24
+ CODE REVIEW: 12/14/25
  */
 namespace PJ {
     class AudioStreamPlayer : public WorldComponent<> {
@@ -25,7 +25,7 @@ namespace PJ {
 
         // MARK: SomeWorldComponent
 
-        String TypeName() const {
+        String TypeName() const override {
             return "AudioStreamPlayer";
         }
     };

@@ -7,7 +7,7 @@
 /*
  RATING: 5 stars
  Simple type
- CODE REVIEW: 8/9/24
+ CODE REVIEW: 12/13/25
  */
 namespace PJ {
     class SQLTable;

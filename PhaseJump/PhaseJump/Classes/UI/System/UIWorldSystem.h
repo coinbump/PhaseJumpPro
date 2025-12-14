@@ -112,10 +112,14 @@ namespace PJ {
         void OnPointerUp(PointerUpUIEvent const& pointerUpEvent) override;
         void OnPointerDown(PointerDownUIEvent const& pointerDownEvent) override;
 
-    protected:
+        SP<SomeMouseDevice> mouseDevice = MAKE<SDLMouseDevice>();
+
         // MARK: SomeWorldComponent
 
         FinishType OnUpdate(TimeSlice time) override;
+
+    protected:
+        // MARK: SomeWorldComponent
 
         enum class DragState { Default, Drag, LockDragMouseDown, LockDragMouseUp };
 
@@ -127,7 +131,6 @@ namespace PJ {
 
         /// State of drag in progress
         DragState dragState = DragState::Default;
-        SP<SomeMouseDevice> mouseDevice = MAKE<SDLMouseDevice>();
 
         /// Called to finalize drag objects gesture
         virtual void OnDragEnd();

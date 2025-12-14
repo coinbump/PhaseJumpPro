@@ -13,7 +13,10 @@
 #include "FramePlayable.h"
 #include "Funcs.h"
 #include "GridMeshBuilder.h"
+#include "imgui.h"
 #include "Matrix4x4.h"
+#include "NodeHandler.h"
+#include "NodesRenderProcessor.h"
 #include "OrthoCamera.h"
 #include "PadViewLayout.h"
 #include "QuadFrameMeshBuilder.h"
@@ -58,10 +61,10 @@ This& QuickBuilder::Repeat(int count, std::function<void(This&)> func) {
     return *this;
 }
 
-This& QuickBuilder::OrthoStandard(Color clearColor) {
+This& QuickBuilder::OrthoStandard(OrthoStandardConfig config) {
     return With<OrthoCamera>().With<SimpleRaycaster2D>().ModifyLatest<OrthoCamera>([=](auto& camera
                                                                                    ) {
-        camera.clearColor = clearColor;
+        camera.clearColor = config.clearColor;
 
         auto showMeshRenderProcessor = MAKE<ShowMeshRenderProcessor>();
         showMeshRenderProcessor->Enable(false);
@@ -78,6 +81,18 @@ This& QuickBuilder::OrthoStandard(Color clearColor) {
         // Important: always batch process, or renders will be slow
         auto batchRenderProcessor = MAKE<BatchByMaterialRenderProcessor>();
         camera.processingModel.Add(batchRenderProcessor);
+
+        if (config.isImGuiEnabled) {
+            RenderProcessor::Config renderProcessorConfig{ .name = "Nodes imGui",
+                                                           .phases = { RenderPhaseId::DrawPost } };
+            auto nodesImGuiRenderProcessor = MAKE<NodesRenderProcessor>(
+                NodesRenderProcessor::Config{
+                    .type = "render.immediate",
+                },
+                renderProcessorConfig
+            );
+            camera.processingModel.Add(nodesImGuiRenderProcessor);
+        }
     });
 }
 
@@ -635,6 +650,30 @@ This& QuickBuilder::AnimationInput(String value) {
     GUARDR_LOG(simpleAnimationController, *this, "ERROR. Missing animation controller");
 
     simpleAnimationController->states.Input(value);
+
+    return *this;
+}
+
+This& QuickBuilder::ImGui(StringView title, PaintImmediateFunc paintFunc) {
+    auto nodeHandlerFunc = [=](auto& node, auto phase) {
+        bool isVisible = true;
+        auto screenPos = WorldToScreen(node);
+        ImGui::SetNextWindowPos(ImVec2(screenPos.x, screenPos.y));
+
+        ImGui::Begin(
+            String(title).c_str(), &isVisible,
+            ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove
+        );
+
+        if (paintFunc) {
+            paintFunc();
+        }
+
+        ImGui::End();
+    };
+
+    Node().With<PaintImmediateNodeHandler>(PaintImmediateNodeHandler::Config{
+        .type = "render.immediate", .func = nodeHandlerFunc });
 
     return *this;
 }

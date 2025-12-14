@@ -13,7 +13,7 @@ void Checkers::Scene::LoadInto(WorldNode& root) {
 
     QB(root)
         .Named("Checkers scene")
-        .OrthoStandard(Color::gray)
+        .OrthoStandard(QuickBuilder::OrthoStandardConfig{ .clearColor = Color::gray })
         .And("Scaler")
         .ScaleWithWindow(worldSize, 0.8f)
         .And("Animator")

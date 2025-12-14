@@ -78,7 +78,7 @@ int Minesweeper::Scene::BombSurroundCount(Vector2Int loc, bool skipDiagonals) {
 void Minesweeper::Scene::LoadInto(WorldNode& root) {
     QB(root)
         .Named("Example: Minesweeper")
-        .OrthoStandard(Color32(30, 30, 30))
+        .OrthoStandard(QuickBuilder::OrthoStandardConfig{ .clearColor = Color32(30, 30, 30) })
         .And("Minesweeper")
         .ScaleWithWindow(worldSize, 0.8f)
         .With<MatrixBoardView>(worldSize, matrixSize)

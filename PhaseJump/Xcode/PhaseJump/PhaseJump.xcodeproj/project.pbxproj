@@ -767,10 +767,10 @@
 		CD25B4682CCD8F7A00D5FE58 /* TextureAtlas.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD25B4662CCD8F7A00D5FE58 /* TextureAtlas.cpp */; };
 		CD25B46A2CCD8F9500D5FE58 /* AtlasTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD25B4692CCD8F9500D5FE58 /* AtlasTexture.cpp */; };
 		CD25B46B2CCD8F9500D5FE58 /* AtlasTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD25B4692CCD8F9500D5FE58 /* AtlasTexture.cpp */; };
-		CD25B46E2CCDDE4400D5FE58 /* QuickBehavior.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD25B46D2CCDDE4400D5FE58 /* QuickBehavior.cpp */; };
-		CD25B46F2CCDDE4400D5FE58 /* QuickBehavior.h in Headers */ = {isa = PBXBuildFile; fileRef = CD25B46C2CCDDE4400D5FE58 /* QuickBehavior.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		CD25B4702CCDDE4400D5FE58 /* QuickBehavior.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD25B46D2CCDDE4400D5FE58 /* QuickBehavior.cpp */; };
-		CD25B4712CCDDE4400D5FE58 /* QuickBehavior.h in Headers */ = {isa = PBXBuildFile; fileRef = CD25B46C2CCDDE4400D5FE58 /* QuickBehavior.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CD25B46E2CCDDE4400D5FE58 /* BehaviorBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD25B46D2CCDDE4400D5FE58 /* BehaviorBuilder.cpp */; };
+		CD25B46F2CCDDE4400D5FE58 /* BehaviorBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = CD25B46C2CCDDE4400D5FE58 /* BehaviorBuilder.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CD25B4702CCDDE4400D5FE58 /* BehaviorBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD25B46D2CCDDE4400D5FE58 /* BehaviorBuilder.cpp */; };
+		CD25B4712CCDDE4400D5FE58 /* BehaviorBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = CD25B46C2CCDDE4400D5FE58 /* BehaviorBuilder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CD25B4732CCDE99800D5FE58 /* Timeline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD25B4722CCDE99800D5FE58 /* Timeline.cpp */; };
 		CD25B4742CCDE99800D5FE58 /* Timeline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD25B4722CCDE99800D5FE58 /* Timeline.cpp */; };
 		CD25B47A2CCE8E7100D5FE58 /* TimelineBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = CD25B4782CCE8E7100D5FE58 /* TimelineBuilder.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1186,6 +1186,24 @@
 		CD73D90C2C630F0D00C81812 /* InputMap.h in Headers */ = {isa = PBXBuildFile; fileRef = CD73D90B2C630F0D00C81812 /* InputMap.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CD73D90E2C63126900C81812 /* TriggerMap.h in Headers */ = {isa = PBXBuildFile; fileRef = CD73D90D2C63126900C81812 /* TriggerMap.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CD73D9102C6312AC00C81812 /* TriggerMapTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD73D90F2C6312AC00C81812 /* TriggerMapTests.cpp */; };
+		CD8050472EE730FC000240D4 /* ComponentsHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD8050462EE730FC000240D4 /* ComponentsHandler.cpp */; };
+		CD8050482EE730FC000240D4 /* ComponentsHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = CD8050452EE730FC000240D4 /* ComponentsHandler.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CD8050492EE730FC000240D4 /* ComponentsHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = CD8050452EE730FC000240D4 /* ComponentsHandler.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CD80504A2EE730FC000240D4 /* ComponentsHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD8050462EE730FC000240D4 /* ComponentsHandler.cpp */; };
+		CD80504D2EE73277000240D4 /* ComponentsHandlerTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD80504C2EE73277000240D4 /* ComponentsHandlerTests.cpp */; };
+		CD8050502EE73F58000240D4 /* NodesRenderProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = CD80504E2EE73F58000240D4 /* NodesRenderProcessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CD8050512EE73F58000240D4 /* NodesRenderProcessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD80504F2EE73F58000240D4 /* NodesRenderProcessor.cpp */; };
+		CD8050522EE73F58000240D4 /* NodesRenderProcessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD80504F2EE73F58000240D4 /* NodesRenderProcessor.cpp */; };
+		CD8050532EE73F58000240D4 /* NodesRenderProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = CD80504E2EE73F58000240D4 /* NodesRenderProcessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CD8050562EE74051000240D4 /* RenderCameraModel.h in Headers */ = {isa = PBXBuildFile; fileRef = CD8050542EE74051000240D4 /* RenderCameraModel.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CD8050572EE74051000240D4 /* RenderCameraModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD8050552EE74051000240D4 /* RenderCameraModel.cpp */; };
+		CD8050582EE74051000240D4 /* RenderCameraModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD8050552EE74051000240D4 /* RenderCameraModel.cpp */; };
+		CD8050592EE74051000240D4 /* RenderCameraModel.h in Headers */ = {isa = PBXBuildFile; fileRef = CD8050542EE74051000240D4 /* RenderCameraModel.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CD80505C2EE751E0000240D4 /* NodeHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD80505B2EE751E0000240D4 /* NodeHandler.cpp */; };
+		CD80505D2EE751E0000240D4 /* NodeHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = CD80505A2EE751E0000240D4 /* NodeHandler.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CD80505E2EE751E0000240D4 /* NodeHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = CD80505A2EE751E0000240D4 /* NodeHandler.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CD80505F2EE751E0000240D4 /* NodeHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD80505B2EE751E0000240D4 /* NodeHandler.cpp */; };
+		CD8050612EE751FC000240D4 /* NodeHandlerTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD8050602EE751FC000240D4 /* NodeHandlerTests.cpp */; };
 		CD815EFE2CA102FC00FBB665 /* Valve.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD815EFD2CA102FC00FBB665 /* Valve.cpp */; };
 		CD815EFF2CA102FC00FBB665 /* Valve.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD815EFD2CA102FC00FBB665 /* Valve.cpp */; };
 		CD815F092CA3BCB500FBB665 /* PlayStateController.h in Headers */ = {isa = PBXBuildFile; fileRef = CD815F072CA3BCB500FBB665 /* PlayStateController.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1213,10 +1231,10 @@
 		CD815F8D2CA91BFC00FBB665 /* UIPlanner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD815F8B2CA91BFC00FBB665 /* UIPlanner.cpp */; };
 		CD815F8E2CA91BFC00FBB665 /* UIPlanner.h in Headers */ = {isa = PBXBuildFile; fileRef = CD815F8A2CA91BFC00FBB665 /* UIPlanner.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CD815F8F2CA91BFC00FBB665 /* UIPlanner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD815F8B2CA91BFC00FBB665 /* UIPlanner.cpp */; };
-		CD815F922CA91C5D00FBB665 /* ImGuiPlanPainter.h in Headers */ = {isa = PBXBuildFile; fileRef = CD815F902CA91C5D00FBB665 /* ImGuiPlanPainter.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		CD815F932CA91C5D00FBB665 /* ImGuiPlanPainter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD815F912CA91C5D00FBB665 /* ImGuiPlanPainter.cpp */; };
-		CD815F942CA91C5D00FBB665 /* ImGuiPlanPainter.h in Headers */ = {isa = PBXBuildFile; fileRef = CD815F902CA91C5D00FBB665 /* ImGuiPlanPainter.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		CD815F952CA91C5D00FBB665 /* ImGuiPlanPainter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD815F912CA91C5D00FBB665 /* ImGuiPlanPainter.cpp */; };
+		CD815F922CA91C5D00FBB665 /* ImGuiUIPlanPainter.h in Headers */ = {isa = PBXBuildFile; fileRef = CD815F902CA91C5D00FBB665 /* ImGuiUIPlanPainter.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CD815F932CA91C5D00FBB665 /* ImGuiUIPlanPainter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD815F912CA91C5D00FBB665 /* ImGuiUIPlanPainter.cpp */; };
+		CD815F942CA91C5D00FBB665 /* ImGuiUIPlanPainter.h in Headers */ = {isa = PBXBuildFile; fileRef = CD815F902CA91C5D00FBB665 /* ImGuiUIPlanPainter.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CD815F952CA91C5D00FBB665 /* ImGuiUIPlanPainter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD815F912CA91C5D00FBB665 /* ImGuiUIPlanPainter.cpp */; };
 		CD815FDB2CB22E0100FBB665 /* SequenceCounter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD815FD92CB22DF400FBB665 /* SequenceCounter.cpp */; };
 		CD815FDC2CB22E0100FBB665 /* SequenceCounter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD815FD92CB22DF400FBB665 /* SequenceCounter.cpp */; };
 		CD815FDD2CB22E0800FBB665 /* SequenceCounter.h in Headers */ = {isa = PBXBuildFile; fileRef = CD815FD82CB22DF400FBB665 /* SequenceCounter.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1393,6 +1411,7 @@
 		CD9A0C442C67BBAE00616815 /* Utils.h in Headers */ = {isa = PBXBuildFile; fileRef = CD9A0C432C67BBAE00616815 /* Utils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CD9A0C452C67BBAE00616815 /* Utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD9A0C422C67BBAE00616815 /* Utils.cpp */; };
 		CD9A0C472C67BC7900616815 /* UtilsTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD9A0C462C67BC7900616815 /* UtilsTests.cpp */; };
+		CD9A54AA2EEF5075002E277E /* UIWorldSystemTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD9A54A92EEF5075002E277E /* UIWorldSystemTests.cpp */; };
 		CD9AB5612CD6F638008CE997 /* ComponentsController.h in Headers */ = {isa = PBXBuildFile; fileRef = CD9AB55F2CD6F638008CE997 /* ComponentsController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CD9AB5622CD6F638008CE997 /* ComponentsController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD9AB5602CD6F638008CE997 /* ComponentsController.cpp */; };
 		CD9AB5632CD6F638008CE997 /* ComponentsController.h in Headers */ = {isa = PBXBuildFile; fileRef = CD9AB55F2CD6F638008CE997 /* ComponentsController.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1977,8 +1996,8 @@
 		CD25B4632CCC3F8D00D5FE58 /* InputMap.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InputMap.cpp; sourceTree = "<group>"; };
 		CD25B4662CCD8F7A00D5FE58 /* TextureAtlas.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TextureAtlas.cpp; sourceTree = "<group>"; };
 		CD25B4692CCD8F9500D5FE58 /* AtlasTexture.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AtlasTexture.cpp; sourceTree = "<group>"; };
-		CD25B46C2CCDDE4400D5FE58 /* QuickBehavior.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QuickBehavior.h; sourceTree = "<group>"; };
-		CD25B46D2CCDDE4400D5FE58 /* QuickBehavior.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = QuickBehavior.cpp; sourceTree = "<group>"; };
+		CD25B46C2CCDDE4400D5FE58 /* BehaviorBuilder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BehaviorBuilder.h; sourceTree = "<group>"; };
+		CD25B46D2CCDDE4400D5FE58 /* BehaviorBuilder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BehaviorBuilder.cpp; sourceTree = "<group>"; };
 		CD25B4722CCDE99800D5FE58 /* Timeline.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Timeline.cpp; sourceTree = "<group>"; };
 		CD25B4782CCE8E7100D5FE58 /* TimelineBuilder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TimelineBuilder.h; sourceTree = "<group>"; };
 		CD25B4792CCE8E7100D5FE58 /* TimelineBuilder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TimelineBuilder.cpp; sourceTree = "<group>"; };
@@ -2297,6 +2316,16 @@
 		CD73D90B2C630F0D00C81812 /* InputMap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InputMap.h; sourceTree = "<group>"; };
 		CD73D90D2C63126900C81812 /* TriggerMap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TriggerMap.h; sourceTree = "<group>"; };
 		CD73D90F2C6312AC00C81812 /* TriggerMapTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TriggerMapTests.cpp; sourceTree = "<group>"; };
+		CD8050452EE730FC000240D4 /* ComponentsHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ComponentsHandler.h; sourceTree = "<group>"; };
+		CD8050462EE730FC000240D4 /* ComponentsHandler.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ComponentsHandler.cpp; sourceTree = "<group>"; };
+		CD80504C2EE73277000240D4 /* ComponentsHandlerTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ComponentsHandlerTests.cpp; sourceTree = "<group>"; };
+		CD80504E2EE73F58000240D4 /* NodesRenderProcessor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NodesRenderProcessor.h; sourceTree = "<group>"; };
+		CD80504F2EE73F58000240D4 /* NodesRenderProcessor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NodesRenderProcessor.cpp; sourceTree = "<group>"; };
+		CD8050542EE74051000240D4 /* RenderCameraModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderCameraModel.h; sourceTree = "<group>"; };
+		CD8050552EE74051000240D4 /* RenderCameraModel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RenderCameraModel.cpp; sourceTree = "<group>"; };
+		CD80505A2EE751E0000240D4 /* NodeHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NodeHandler.h; sourceTree = "<group>"; };
+		CD80505B2EE751E0000240D4 /* NodeHandler.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NodeHandler.cpp; sourceTree = "<group>"; };
+		CD8050602EE751FC000240D4 /* NodeHandlerTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NodeHandlerTests.cpp; sourceTree = "<group>"; };
 		CD815EFD2CA102FC00FBB665 /* Valve.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Valve.cpp; sourceTree = "<group>"; };
 		CD815F072CA3BCB500FBB665 /* PlayStateController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlayStateController.h; sourceTree = "<group>"; };
 		CD815F082CA3BCB500FBB665 /* SomePlayStateController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SomePlayStateController.cpp; sourceTree = "<group>"; };
@@ -2312,8 +2341,8 @@
 		CD815F852CA91BF200FBB665 /* UIPlan.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UIPlan.cpp; sourceTree = "<group>"; };
 		CD815F8A2CA91BFC00FBB665 /* UIPlanner.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UIPlanner.h; sourceTree = "<group>"; };
 		CD815F8B2CA91BFC00FBB665 /* UIPlanner.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UIPlanner.cpp; sourceTree = "<group>"; };
-		CD815F902CA91C5D00FBB665 /* ImGuiPlanPainter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImGuiPlanPainter.h; sourceTree = "<group>"; };
-		CD815F912CA91C5D00FBB665 /* ImGuiPlanPainter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ImGuiPlanPainter.cpp; sourceTree = "<group>"; };
+		CD815F902CA91C5D00FBB665 /* ImGuiUIPlanPainter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImGuiUIPlanPainter.h; sourceTree = "<group>"; };
+		CD815F912CA91C5D00FBB665 /* ImGuiUIPlanPainter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ImGuiUIPlanPainter.cpp; sourceTree = "<group>"; };
 		CD815FD82CB22DF400FBB665 /* SequenceCounter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SequenceCounter.h; sourceTree = "<group>"; };
 		CD815FD92CB22DF400FBB665 /* SequenceCounter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SequenceCounter.cpp; sourceTree = "<group>"; };
 		CD815FDF2CB22EB800FBB665 /* SequenceCounterTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SequenceCounterTests.cpp; sourceTree = "<group>"; };
@@ -2456,6 +2485,7 @@
 		CD9A0C432C67BBAE00616815 /* Utils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Utils.h; sourceTree = "<group>"; };
 		CD9A0C462C67BC7900616815 /* UtilsTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UtilsTests.cpp; sourceTree = "<group>"; };
 		CD9A0C482C67CBD200616815 /* AtlasTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AtlasTexture.h; sourceTree = "<group>"; };
+		CD9A54A92EEF5075002E277E /* UIWorldSystemTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UIWorldSystemTests.cpp; sourceTree = "<group>"; };
 		CD9AB55F2CD6F638008CE997 /* ComponentsController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ComponentsController.h; sourceTree = "<group>"; };
 		CD9AB5602CD6F638008CE997 /* ComponentsController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ComponentsController.cpp; sourceTree = "<group>"; };
 		CD9AB5652CD7238D008CE997 /* AnimationCycleTimer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AnimationCycleTimer.cpp; sourceTree = "<group>"; };
@@ -2813,8 +2843,8 @@
 				CD0643EB2C9688990011483E /* ImGuiMainMenuBarPainter.h */,
 				CD0643EE2C974D1B0011483E /* ImGuiGLRenderProcessor.h */,
 				CD0643EF2C974D1B0011483E /* ImGuiGLRenderProcessor.cpp */,
-				CD815F902CA91C5D00FBB665 /* ImGuiPlanPainter.h */,
-				CD815F912CA91C5D00FBB665 /* ImGuiPlanPainter.cpp */,
+				CD815F902CA91C5D00FBB665 /* ImGuiUIPlanPainter.h */,
+				CD815F912CA91C5D00FBB665 /* ImGuiUIPlanPainter.cpp */,
 				CD25B4492CC9A35A00D5FE58 /* SomeImGuiPainter.h */,
 				CD25B44A2CC9A35A00D5FE58 /* SomeImGuiPainter.cpp */,
 			);
@@ -2900,6 +2930,7 @@
 		CD0A842329189FE70074CA4F /* G Tests */ = {
 			isa = PBXGroup;
 			children = (
+				CD9A54A82EEF5068002E277E /* System */,
 				CD1E7CD329458CC900001DB9 /* AcyclicGraphNodeTests.hpp */,
 				CD1E7CBB293656B300001DB9 /* AngleTests.cpp */,
 				CDDD3FF8294E81FD00361C67 /* Animation */,
@@ -3529,6 +3560,10 @@
 				CD837DDE29FB7AD600467542 /* SomeRaycaster.h */,
 				CD837DE229FB7ADF00467542 /* SomeRaycaster2D.h */,
 				CD837DE129FB7ADF00467542 /* SomeRaycaster2D.cpp */,
+				CD8050452EE730FC000240D4 /* ComponentsHandler.h */,
+				CD8050462EE730FC000240D4 /* ComponentsHandler.cpp */,
+				CD80505A2EE751E0000240D4 /* NodeHandler.h */,
+				CD80505B2EE751E0000240D4 /* NodeHandler.cpp */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -3541,6 +3576,8 @@
 				CD376C6F29E32DE600DC7950 /* OrthoCameraTests.cpp */,
 				CD65A98D2D051111007DB454 /* Slice3TextureRendererTests.cpp */,
 				CD181CEA2A02B0A700478C25 /* Slice9TextureRendererTests.cpp */,
+				CD80504C2EE73277000240D4 /* ComponentsHandlerTests.cpp */,
+				CD8050602EE751FC000240D4 /* NodeHandlerTests.cpp */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -3715,6 +3752,10 @@
 				CDC2EB212C68860000A85053 /* TextureAtlas.h */,
 				CD25B4662CCD8F7A00D5FE58 /* TextureAtlas.cpp */,
 				CD181CE82A0290A100478C25 /* UVRect.h */,
+				CD80504E2EE73F58000240D4 /* NodesRenderProcessor.h */,
+				CD80504F2EE73F58000240D4 /* NodesRenderProcessor.cpp */,
+				CD8050542EE74051000240D4 /* RenderCameraModel.h */,
+				CD8050552EE74051000240D4 /* RenderCameraModel.cpp */,
 			);
 			path = Render;
 			sourceTree = "<group>";
@@ -3976,8 +4017,8 @@
 				CD8160592CC0D56200FBB665 /* UpdatableBehavior.cpp */,
 				CD81605E2CC41FD700FBB665 /* SelectorBehavior.h */,
 				CD81605F2CC41FD700FBB665 /* SelectorBehavior.cpp */,
-				CD25B46C2CCDDE4400D5FE58 /* QuickBehavior.h */,
-				CD25B46D2CCDDE4400D5FE58 /* QuickBehavior.cpp */,
+				CD25B46C2CCDDE4400D5FE58 /* BehaviorBuilder.h */,
+				CD25B46D2CCDDE4400D5FE58 /* BehaviorBuilder.cpp */,
 			);
 			path = Behavior;
 			sourceTree = "<group>";
@@ -4164,6 +4205,14 @@
 				CD9649C029A1F5E900662285 /* SomeRandomChoiceTests.cpp */,
 			);
 			path = Random;
+			sourceTree = "<group>";
+		};
+		CD9A54A82EEF5068002E277E /* System */ = {
+			isa = PBXGroup;
+			children = (
+				CD9A54A92EEF5075002E277E /* UIWorldSystemTests.cpp */,
+			);
+			path = System;
 			sourceTree = "<group>";
 		};
 		CDA98A42291898FB00B9B961 /* Frameworks */ = {
@@ -4803,6 +4852,7 @@
 				CDB7F66F2D136C2300A166F4 /* LayoutTypes.h in Headers */,
 				CD1D448B2C9367FA00839F39 /* SomePathLayout.h in Headers */,
 				CD1D448C2C9367FA00839F39 /* RGBAColor.h in Headers */,
+				CD8050502EE73F58000240D4 /* NodesRenderProcessor.h in Headers */,
 				CD1D448E2C9367FA00839F39 /* SomeCancellable.h in Headers */,
 				CD1D448F2C9367FA00839F39 /* SomeSimplePublisher.h in Headers */,
 				CD1D44912C9367FA00839F39 /* imgui_internal.h in Headers */,
@@ -4877,6 +4927,7 @@
 				CD1D44CB2C9367FA00839F39 /* SomeRenderEngine.h in Headers */,
 				CD65A99E2D05338C007DB454 /* ImTypes.h in Headers */,
 				CD1D44CC2C9367FA00839F39 /* SQLWhereArguments.h in Headers */,
+				CD8050562EE74051000240D4 /* RenderCameraModel.h in Headers */,
 				CD1C7F1D2EE1E924006FD363 /* StreamReader.h in Headers */,
 				CD687EBD2EE51641006FEEFC /* Date.h in Headers */,
 				CD1D44CD2C9367FA00839F39 /* SomeTagClass.h in Headers */,
@@ -4885,7 +4936,7 @@
 				CD1D44D02C9367FA00839F39 /* SomeRandomChoice.h in Headers */,
 				CD1D44D12C9367FA00839F39 /* StandardEventCore.h in Headers */,
 				CD1D44D22C9367FA00839F39 /* TSAlgebra.h in Headers */,
-				CD25B4712CCDDE4400D5FE58 /* QuickBehavior.h in Headers */,
+				CD25B4712CCDDE4400D5FE58 /* BehaviorBuilder.h in Headers */,
 				CD1D44D32C9367FA00839F39 /* SomeFramePlayable.h in Headers */,
 				CD1D44D42C9367FA00839F39 /* PhaseJump-Dev.h in Headers */,
 				CD1D44D52C9367FA00839F39 /* ResourceRepositoryPlan.h in Headers */,
@@ -4917,6 +4968,7 @@
 				CDDA27082CFBC6C800888251 /* ObservedValue.h in Headers */,
 				CD1D44EE2C9367FA00839F39 /* WorldComponent.h in Headers */,
 				CDB7F65F2D126A7100A166F4 /* AttributedString.h in Headers */,
+				CD80505E2EE751E0000240D4 /* NodeHandler.h in Headers */,
 				CD0643DD2C9630130011483E /* CommandHistory.h in Headers */,
 				CD1D44EF2C9367FA00839F39 /* Font.h in Headers */,
 				CD1D44F02C9367FA00839F39 /* SomeLayout2D.h in Headers */,
@@ -5001,7 +5053,7 @@
 				CD1D452F2C9367FA00839F39 /* RenderProcessor.h in Headers */,
 				CD1D45302C9367FA00839F39 /* SomeRaycaster2D.h in Headers */,
 				CD1D45312C9367FA00839F39 /* OrthoCamera.h in Headers */,
-				CD815F942CA91C5D00FBB665 /* ImGuiPlanPainter.h in Headers */,
+				CD815F942CA91C5D00FBB665 /* ImGuiUIPlanPainter.h in Headers */,
 				CD1D45322C9367FA00839F39 /* View2D.h in Headers */,
 				CD1D45332C9367FA00839F39 /* EventWorldSystem.h in Headers */,
 				CD1D45342C9367FA00839F39 /* RenderModelBuilder.h in Headers */,
@@ -5050,6 +5102,7 @@
 				CD8160762CC49C2800FBB665 /* QuickCharacter.h in Headers */,
 				CD1D455F2C9367FA00839F39 /* PointerClickUIEvent.h in Headers */,
 				CD1D45602C9367FA00839F39 /* PropertyWrapper.h in Headers */,
+				CD8050492EE730FC000240D4 /* ComponentsHandler.h in Headers */,
 				CD1D45612C9367FA00839F39 /* SomeAudioStream.h in Headers */,
 				CD1D45622C9367FA00839F39 /* DropFilesUIEvent.h in Headers */,
 				CD1D45632C9367FA00839F39 /* CenterPolyFrameMeshBuilder.h in Headers */,
@@ -5185,7 +5238,7 @@
 				CDC2EB262C688BAC00A85053 /* LoadRTexPackerAtlasOperation.h in Headers */,
 				CDF9D9E42925A91D00C912E9 /* StrongReference.h in Headers */,
 				CD5FB83529200BFB004F2FB4 /* SomeProcessor.h in Headers */,
-				CD815F922CA91C5D00FBB665 /* ImGuiPlanPainter.h in Headers */,
+				CD815F922CA91C5D00FBB665 /* ImGuiUIPlanPainter.h in Headers */,
 				CDDA27032CFAAEE400888251 /* ViewAttachmentsLayout.h in Headers */,
 				CDD71C732BFC2FC100BA868A /* TSVector4D.h in Headers */,
 				CD815F0F2CA44DFA00FBB665 /* Runner.h in Headers */,
@@ -5195,6 +5248,7 @@
 				CD87CA862A32D8560080E599 /* SomeUIEvent.h in Headers */,
 				CD380EE42C75ACF200464CB3 /* RenderContextModel.h in Headers */,
 				CD0A845E2918A1F00074CA4F /* InterpolateFunc.h in Headers */,
+				CD80505D2EE751E0000240D4 /* NodeHandler.h in Headers */,
 				CDF9DA0E2932597A00C912E9 /* VectorList.h in Headers */,
 				CD815F0B2CA3BCB500FBB665 /* PlayStateController.h in Headers */,
 				CD376D9829E7B70C00DC7950 /* imstb_truetype.h in Headers */,
@@ -5294,6 +5348,7 @@
 				CD38115D2C83FC3600464CB3 /* PropertyMirror.h in Headers */,
 				CDD71C522BFC2FC100BA868A /* TSConformal2D.h in Headers */,
 				CD0A84612918A1F00074CA4F /* StringUtils.h in Headers */,
+				CD8050592EE74051000240D4 /* RenderCameraModel.h in Headers */,
 				CD1FF41A29D78C59006426E2 /* SDLFileManager.h in Headers */,
 				CD334F642C97D4800001846C /* SDLSurface.h in Headers */,
 				CD0643E22C9670A60011483E /* Menu.h in Headers */,
@@ -5332,6 +5387,7 @@
 				CD86A74129F0D7500015BFCE /* SDLUIEventPoller.h in Headers */,
 				CD376C9429E5042200DC7950 /* LinePathLayout.h in Headers */,
 				CD9649B029A138F800662285 /* Weight.h in Headers */,
+				CD8050532EE73F58000240D4 /* NodesRenderProcessor.h in Headers */,
 				CD184027295E552F003459C4 /* MockRandom.h in Headers */,
 				CD376C9229E5042200DC7950 /* HFlow.h in Headers */,
 				CDD71C6D2BFC2FC100BA868A /* TSSimd.h in Headers */,
@@ -5364,6 +5420,7 @@
 				CD2A6A8329D67E560076BB3F /* SQLWhereArguments.h in Headers */,
 				CD73D8DC2C4DC13B00C81812 /* SomeTagClass.h in Headers */,
 				CD87CA8C2A34D7030080E599 /* SpacerView.h in Headers */,
+				CD8050482EE730FC000240D4 /* ComponentsHandler.h in Headers */,
 				CD9649BE29A1EECA00662285 /* SomeRandomChoice.h in Headers */,
 				CD1450E52C39F05400B27A2E /* StandardEventCore.h in Headers */,
 				CDD71C4E2BFC2FC100BA868A /* TSAlgebra.h in Headers */,
@@ -5474,7 +5531,7 @@
 				CD380F5C2C7EDDE600464CB3 /* RenderWorldSystem.h in Headers */,
 				CD380F5D2C7EDDE600464CB3 /* RenderProcessor.h in Headers */,
 				CD837DE429FB7ADF00467542 /* SomeRaycaster2D.h in Headers */,
-				CD25B46F2CCDDE4400D5FE58 /* QuickBehavior.h in Headers */,
+				CD25B46F2CCDDE4400D5FE58 /* BehaviorBuilder.h in Headers */,
 				CD376C6D29E32CCF00DC7950 /* OrthoCamera.h in Headers */,
 				CDF7592C2A0A02F700C15C73 /* View2D.h in Headers */,
 				CD837E0329FDCB1D00467542 /* EventWorldSystem.h in Headers */,
@@ -5814,6 +5871,7 @@
 				CD1D45B02C9367FA00839F39 /* SDLMouseDevice.cpp in Sources */,
 				CD81606F2CC4554000FBB665 /* SimpleAnimationController.cpp in Sources */,
 				CD1D45B12C9367FA00839F39 /* SomeUIEventPoller.cpp in Sources */,
+				CD80505F2EE751E0000240D4 /* NodeHandler.cpp in Sources */,
 				CD1D45B22C9367FA00839F39 /* StringUtils.cpp in Sources */,
 				CD1D45B32C9367FA00839F39 /* Matrix.cpp in Sources */,
 				CDDA27052CFAAEE400888251 /* ViewAttachmentsLayout.cpp in Sources */,
@@ -5849,7 +5907,7 @@
 				CD1D45CC2C9367FA00839F39 /* TSFlector3D.cpp in Sources */,
 				CD1D45CD2C9367FA00839F39 /* Slice9TextureRenderer.cpp in Sources */,
 				CD1D45CE2C9367FA00839F39 /* Angle.cpp in Sources */,
-				CD815F952CA91C5D00FBB665 /* ImGuiPlanPainter.cpp in Sources */,
+				CD815F952CA91C5D00FBB665 /* ImGuiUIPlanPainter.cpp in Sources */,
 				CD25B4622CCBE0B800D5FE58 /* SomeLayout.cpp in Sources */,
 				CD1D45CF2C9367FA00839F39 /* TransformFunc.cpp in Sources */,
 				CD1D45D02C9367FA00839F39 /* SDLUIEventPoller.cpp in Sources */,
@@ -5980,6 +6038,7 @@
 				CDEC25C52C9A697000FF14A2 /* MatrixBoardView.cpp in Sources */,
 				CD1D46242C9367FA00839F39 /* Vector2.cpp in Sources */,
 				CDB7F6B12D19FFD500A166F4 /* File.cpp in Sources */,
+				CD8050512EE73F58000240D4 /* NodesRenderProcessor.cpp in Sources */,
 				CD1D46252C9367FA00839F39 /* LoadResourceInfo.cpp in Sources */,
 				CD1D46262C9367FA00839F39 /* imgui_impl_sdl3.cpp in Sources */,
 				CD1D46272C9367FA00839F39 /* StandardCore.cpp in Sources */,
@@ -5990,7 +6049,7 @@
 				CD815FF52CB2521700FBB665 /* DirectionKSteering2D.cpp in Sources */,
 				CD1D462A2C9367FA00839F39 /* TSConformal3D.cpp in Sources */,
 				CD1D462B2C9367FA00839F39 /* FileManager.cpp in Sources */,
-				CD25B4702CCDDE4400D5FE58 /* QuickBehavior.cpp in Sources */,
+				CD25B4702CCDDE4400D5FE58 /* BehaviorBuilder.cpp in Sources */,
 				CD1D462C2C9367FA00839F39 /* MeshRenderer.cpp in Sources */,
 				CDB7F6AB2D19F7CE00A166F4 /* AnimateFuncs.cpp in Sources */,
 				CD25B4642CCC3F8D00D5FE58 /* InputMap.cpp in Sources */,
@@ -6019,6 +6078,7 @@
 				CD1D46372C9367FA00839F39 /* SomeGLRenderCommand.cpp in Sources */,
 				CD1D46382C9367FA00839F39 /* RectPositioner2D.cpp in Sources */,
 				CD65A99D2D05338C007DB454 /* ImTypes.cpp in Sources */,
+				CD8050572EE74051000240D4 /* RenderCameraModel.cpp in Sources */,
 				CDB7F6BD2D19FFE900A166F4 /* DocumentBundle.cpp in Sources */,
 				CD53AC282D3411530068DF35 /* App.cpp in Sources */,
 				CD1D46392C9367FA00839F39 /* LoadResourcesPlan.cpp in Sources */,
@@ -6054,6 +6114,7 @@
 				CD1D46512C9367FA00839F39 /* SomeResolver.cpp in Sources */,
 				CD1D46522C9367FA00839F39 /* RenderProcessingModel.cpp in Sources */,
 				CD1D46532C9367FA00839F39 /* DependencyContainer.cpp in Sources */,
+				CD80504A2EE730FC000240D4 /* ComponentsHandler.cpp in Sources */,
 				CD25B4A42CD67DA300D5FE58 /* VelocityTracker.cpp in Sources */,
 				CD1D46542C9367FA00839F39 /* SomeGLShader.cpp in Sources */,
 				CD1D46552C9367FA00839F39 /* ResourceRepository.cpp in Sources */,
@@ -6128,6 +6189,7 @@
 				CDF7591F2A09A11800C15C73 /* SDLMouseDevice.cpp in Sources */,
 				CD8160712CC4554000FBB665 /* SimpleAnimationController.cpp in Sources */,
 				CD86A74429F0D7D20015BFCE /* SomeUIEventPoller.cpp in Sources */,
+				CD80505C2EE751E0000240D4 /* NodeHandler.cpp in Sources */,
 				CD380EE22C758FEB00464CB3 /* StringUtils.cpp in Sources */,
 				2674501C2A8986E000F243B0 /* Matrix.cpp in Sources */,
 				CDDA27022CFAAEE400888251 /* ViewAttachmentsLayout.cpp in Sources */,
@@ -6163,7 +6225,7 @@
 				CDD71C582BFC2FC100BA868A /* TSFlector3D.cpp in Sources */,
 				CD837E4C2A00AF2F00467542 /* Slice9TextureRenderer.cpp in Sources */,
 				CD1E7CB82936549000001DB9 /* Angle.cpp in Sources */,
-				CD815F932CA91C5D00FBB665 /* ImGuiPlanPainter.cpp in Sources */,
+				CD815F932CA91C5D00FBB665 /* ImGuiUIPlanPainter.cpp in Sources */,
 				CD25B4612CCBE0B800D5FE58 /* SomeLayout.cpp in Sources */,
 				CD08CF002C42EDB900BF159A /* TransformFunc.cpp in Sources */,
 				CD86A74029F0D7500015BFCE /* SDLUIEventPoller.cpp in Sources */,
@@ -6294,6 +6356,7 @@
 				CDEC25C62C9A697000FF14A2 /* MatrixBoardView.cpp in Sources */,
 				CD420B0C295BF1B500C5D3E1 /* Vector2.cpp in Sources */,
 				CDB7F6AE2D19FFD500A166F4 /* File.cpp in Sources */,
+				CD8050522EE73F58000240D4 /* NodesRenderProcessor.cpp in Sources */,
 				CD837E1D29FEBAB300467542 /* LoadResourceInfo.cpp in Sources */,
 				CDD71C842BFC36C800BA868A /* imgui_impl_sdl3.cpp in Sources */,
 				CD2A6A4529D0FDC20076BB3F /* StandardCore.cpp in Sources */,
@@ -6304,7 +6367,7 @@
 				CD815FF42CB2521700FBB665 /* DirectionKSteering2D.cpp in Sources */,
 				CDD71C532BFC2FC100BA868A /* TSConformal3D.cpp in Sources */,
 				CD2A6A7229D5297C0076BB3F /* FileManager.cpp in Sources */,
-				CD25B46E2CCDDE4400D5FE58 /* QuickBehavior.cpp in Sources */,
+				CD25B46E2CCDDE4400D5FE58 /* BehaviorBuilder.cpp in Sources */,
 				CDCA12BF29F30D13000F2694 /* MeshRenderer.cpp in Sources */,
 				CDB7F6AA2D19F7CE00A166F4 /* AnimateFuncs.cpp in Sources */,
 				CD25B4652CCC3F8D00D5FE58 /* InputMap.cpp in Sources */,
@@ -6333,6 +6396,7 @@
 				CD3D0C982C1E8BE700A81D60 /* SomeGLRenderCommand.cpp in Sources */,
 				CDC2EB582C6EEF6500A85053 /* RectPositioner2D.cpp in Sources */,
 				CD65A9A02D05338C007DB454 /* ImTypes.cpp in Sources */,
+				CD8050582EE74051000240D4 /* RenderCameraModel.cpp in Sources */,
 				CDB7F6BA2D19FFE900A166F4 /* DocumentBundle.cpp in Sources */,
 				CD53AC2A2D3411530068DF35 /* App.cpp in Sources */,
 				CD837E1929FEBAA900467542 /* LoadResourcesPlan.cpp in Sources */,
@@ -6368,6 +6432,7 @@
 				CD87CA912A3554C30080E599 /* SomeResolver.cpp in Sources */,
 				CDDB6FA52C8EA5540073D3A2 /* RenderProcessingModel.cpp in Sources */,
 				CD3BA4482C6853AE00D7FBDB /* DependencyContainer.cpp in Sources */,
+				CD8050472EE730FC000240D4 /* ComponentsHandler.cpp in Sources */,
 				CD25B4A32CD67DA300D5FE58 /* VelocityTracker.cpp in Sources */,
 				CD376DBB29E8B63200DC7950 /* SomeGLShader.cpp in Sources */,
 				CD837E0929FEBA8400467542 /* ResourceRepository.cpp in Sources */,
@@ -6386,6 +6451,7 @@
 			files = (
 				CDB7F5E32D0E21BE00A166F4 /* PolyFrameMeshBuilderTests.cpp in Sources */,
 				CD380E402C7102EB00464CB3 /* SceneTests.cpp in Sources */,
+				CD80504D2EE73277000240D4 /* ComponentsHandlerTests.cpp in Sources */,
 				CD2A6A7A29D547090076BB3F /* SQLDatabaseTests.cpp in Sources */,
 				CDDA15ED2C912D88003CB1B7 /* SharedVectorListTests.cpp in Sources */,
 				CD81602C2CBF5FF700FBB665 /* DelayBehaviorTests.cpp in Sources */,
@@ -6412,6 +6478,7 @@
 				CD08CEFA2C42DBA100BF159A /* InterpolateFuncTests.cpp in Sources */,
 				CD1E7CD429458CC900001DB9 /* AcyclicGraphNodeTests.cpp in Sources */,
 				CDCA12E829F380B2000F2694 /* BitmapTests.cpp in Sources */,
+				CD9A54AA2EEF5075002E277E /* UIWorldSystemTests.cpp in Sources */,
 				CD73D8FC2C5ED69900C81812 /* TimeSliceTests.cpp in Sources */,
 				CD1E7CF129465E6B00001DB9 /* GeoTransform.cpp in Sources */,
 				CDD0D26E2BF01DE1001C4A5B /* ValueSimpleSubjectTests.cpp in Sources */,
@@ -6455,6 +6522,7 @@
 				CDDD403C29514BF200361C67 /* RangeTests.cpp in Sources */,
 				CD0A842629189FE70074CA4F /* FloatMultiplyTransformTests.cpp in Sources */,
 				CD08CEE62C3B42E800BF159A /* MultiFunctionTests.cpp in Sources */,
+				CD8050612EE751FC000240D4 /* NodeHandlerTests.cpp in Sources */,
 				CD0A84A3291DF5310074CA4F /* ClassRegistryTests.cpp in Sources */,
 				CD3BA44A2C68545500D7FBDB /* DependencyContainerTests.cpp in Sources */,
 				CD9649C129A1F5E900662285 /* SomeRandomChoiceTests.cpp in Sources */,

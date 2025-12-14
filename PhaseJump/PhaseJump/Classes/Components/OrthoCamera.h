@@ -7,7 +7,7 @@
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 9/2/24
+ CODE REVIEW: 12/14/25
  */
 namespace PJ {
     class Mesh;
@@ -16,31 +16,18 @@ namespace PJ {
     /// increases up
     class OrthoCamera : public SomeCamera {
     public:
-        enum class Frustrum {
-            /// Z position isn't take into account when culling objects for render
-            /// Useful when using a single camera
-            None,
-
-            /// Only objects inside the camera frustrum will be rendered
-            /// Useful when using multiple cameras
-            Enabled
-        };
-
         using Base = SomeCamera;
 
         /// Specifies the half height of the camera, otherwise the exact screen dimensions are used
         std::optional<float> halfHeight;
 
-        // TODO: this doesn't make sense, OpenGL always uses a frustrum. Rethink this
-        Frustrum frustrum = Frustrum::None;
-
         float farClip = 1.0f * Vector3::forward.z;
         float nearClip = 1.0f * Vector3::back.z;
 
-        OrthoCamera(Frustrum frustrum = Frustrum::Enabled) :
-            frustrum(frustrum) {}
+        OrthoCamera() {}
 
         Vector2 RenderContextSize() const;
+        Vector2 RenderContextPixelSize() const;
         Vector2 RenderContextExtents() const;
         Vector2 CameraExtents() const;
         Vector2 CameraSize() const;
@@ -59,7 +46,7 @@ namespace PJ {
 
         /// Sets the content scaling for the camera (2 means objects appear twice the size)
         OrthoCamera& SetContentScale(float value) {
-            float contextExtent = RenderContextSize().y / 2.0f;
+            float contextExtent = RenderContextPixelSize().y / 2.0f;
 
             SetHalfHeight(contextExtent / value);
 

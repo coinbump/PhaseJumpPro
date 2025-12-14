@@ -13,13 +13,13 @@ namespace PJ {
     /// Some device that sends pointer inputs (mouse, stylus)
     class SomePointerDevice : public SomeInputDevice {
     protected:
-        ScreenPosition position;
+        ScreenPosition screenPos;
 
     public:
         SomePointerDevice() {}
 
-        virtual ScreenPosition Position() const {
-            return position;
+        virtual ScreenPosition GetScreenPosition() const {
+            return screenPos;
         }
 
         virtual bool IsButtonDown(PointerInputButtonType button) {

@@ -9,10 +9,15 @@
  CODE REVIEW: 8/31/24
  */
 namespace PJ {
-    /// Wraps access to a property with funcs
-    /// Example: write properties to local storage as they change, or notify another object
-    /// Example: clamp the returned value of a number
-    /// Careful: don't store references to objects that might go out of scope
+    /**
+     Wraps access to a property with funcs. Unlike a binding, it stores the value internally
+
+     Examples:
+     - Write properties to local storage as they change, or notify another object
+     - Clamp the returned value of a number
+
+     Careful: don't store references to objects that might go out of scope
+     */
     template <class T>
     class PropertyWrapper {
     protected:
@@ -20,22 +25,22 @@ namespace PJ {
 
     public:
         using GetFunc = std::function<T(T const& value)>;
-        using UpdateFunc = std::function<T(T const& newValue)>;
+        using SetFunc = std::function<T(T const& newValue)>;
 
         GetFunc getFunc;
-        UpdateFunc updateFunc;
+        SetFunc setFunc;
 
-        PropertyWrapper(GetFunc getFunc, UpdateFunc updateFunc) :
+        PropertyWrapper(GetFunc getFunc, SetFunc setFunc) :
             getFunc(getFunc),
-            updateFunc(updateFunc) {}
+            setFunc(setFunc) {}
 
         operator T() const {
             return getFunc ? getFunc(value) : value;
         }
 
         PropertyWrapper& operator=(T const& b) {
-            if (updateFunc) {
-                value = updateFunc(b);
+            if (setFunc) {
+                value = setFunc(b);
             }
             return *this;
         }

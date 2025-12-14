@@ -25,6 +25,9 @@ void BuildUpdateList(WorldNode& node, VectorList<WorldNode*>& updateList) {
         // FUTURE: send OnDestroy to children if needed (ineffecient)
 
         GUARD(node.Parent())
+
+        // TODO: should we be removing and looping at the same time? (ok for now with SP copy, but
+        // what if that changes?)
         node.Parent()->Remove(node);
     } else {
         GUARD(node.IsEnabled() && node.World())
@@ -99,12 +102,19 @@ void World::Remove(VectorList<SP<SomeWorldSystem>> systems) {
     }
 }
 
-SomeCamera* World::MainCamera() {
+SomeCamera* World::MainCamera() const {
 #ifdef PROFILE
     DevProfiler devProfiler("MainCamera", [](String value) { cout << value; });
 #endif
 
-    GUARDR(mainCamera.expired(), mainCamera.lock().get())
+    if (!mainCamera.expired()) {
+        auto cameraResult = mainCamera.lock().get();
+
+        // Even if we have a reference to a camera, make sure it is valid
+        if (cameraResult->owner && cameraResult->owner->World()) {
+            return cameraResult;
+        }
+    }
 
     VectorList<WorldNode*> graph;
     CollectBreadthFirstTree(root.get(), graph);
@@ -357,7 +367,16 @@ Vector2Int World::PixelSize() const {
 
 using namespace PJ;
 
-WorldPosition PJ::ScreenToWorld(SomeWorldComponent& component, ScreenPosition screenPos) {
+ScreenPosition World::WorldToScreen(WorldPosition worldPos) const {
+    auto camera = MainCamera();
+    GUARDR(camera, {})
+
+    // TODO: this isn't taking into account the hiDp world scale
+    auto result = camera->WorldToScreen(worldPos);
+    return result;
+}
+
+WorldPosition PJ::ScreenToWorld(SomeWorldComponent const& component, ScreenPosition screenPos) {
     auto owner = component.owner;
     GUARDR(owner, {})
 
@@ -372,7 +391,7 @@ WorldPosition PJ::ScreenToWorld(SomeWorldComponent& component, ScreenPosition sc
     return result;
 }
 
-LocalPosition PJ::ScreenToLocal(SomeWorldComponent& component, ScreenPosition screenPos) {
+LocalPosition PJ::ScreenToLocal(SomeWorldComponent const& component, ScreenPosition screenPos) {
     LocalPosition result;
 
     auto owner = component.owner;
@@ -394,4 +413,25 @@ LocalPosition PJ::ScreenToLocal(SomeWorldComponent& component, ScreenPosition sc
     result = LocalPosition(localPosition.x, localPosition.y, 0);
 
     return result;
+}
+
+ScreenPosition PJ::LocalToScreen(SomeWorldComponent const& component, LocalPosition localPos) {
+    return WorldToScreen(component, component.LocalToWorld(localPos));
+}
+
+ScreenPosition PJ::WorldToScreen(SomeWorldComponent const& component, WorldPosition worldPos) {
+    auto owner = component.owner;
+    GUARDR(owner, {})
+
+    auto world = owner->World();
+    GUARDR(world, {})
+
+    return world->WorldToScreen(worldPos);
+}
+
+ScreenPosition PJ::WorldToScreen(WorldNode const& node) {
+    auto world = node.World();
+    GUARDR(world, {})
+
+    return world->WorldToScreen(node.transform.WorldPosition());
 }

@@ -25,7 +25,7 @@ Graphs::Scene::Scene() {
 void Graphs::Scene::LoadInto(WorldNode& root) {
     QB(root)
         .Named("Example: Graphs")
-        .OrthoStandard(Color::black)
+        .OrthoStandard(QuickBuilder::OrthoStandardConfig{ .clearColor = Color::black })
         .And("Graphs")
         .RootView(
             worldSize,

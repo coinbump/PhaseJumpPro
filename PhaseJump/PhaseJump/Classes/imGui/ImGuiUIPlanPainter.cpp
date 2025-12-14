@@ -1,10 +1,10 @@
-#include "ImGuiPlanPainter.h"
+#include "ImGuiUIPlanPainter.h"
 #include "UIPlanner.h"
 
 using namespace std;
 using namespace PJ;
 
-ImGuiPlanPainter::ImGuiPlanPainter(UIPlan& plan) :
+ImGuiUIPlanPainter::ImGuiUIPlanPainter(UIPlan& plan) :
     plan(plan) {
     drawFunc = [this](auto& painter) {
         for (auto& modelFunc : this->plan.ModelFuncs()) {
@@ -63,7 +63,7 @@ ImGuiPlanPainter::ImGuiPlanPainter(UIPlan& plan) :
                 UIPlan childPlan;
                 UIPlanner childPlanner(childPlan);
                 config.planUIFunc(childPlanner);
-                ImGuiPlanPainter childPainter(childPlan);
+                ImGuiUIPlanPainter childPainter(childPlan);
                 childPainter.Draw();
             }
 

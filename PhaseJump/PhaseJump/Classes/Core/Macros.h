@@ -5,6 +5,7 @@
 // MARK: - Template Specialization
 
 /// Enable a function if Type is the same as CheckType
+// TODO: use std::requires
 #define SPECIALIZE_IS_BASE_OF(TemplateType, BaseType) \
     template <                                        \
         typename _Type = TemplateType,                \

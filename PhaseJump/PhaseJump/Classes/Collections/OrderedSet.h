@@ -10,7 +10,7 @@
  CODE REVIEW: 8/3/24
  */
 namespace PJ {
-    /// Alias for std so can build an alternate implementation if needed
+    /// Alias for standard type so you can build an alternate implementation if needed
     template <class Type, class _Compare = std::less<Type>, class _Allocator = std::allocator<Type>>
     using OrderedSet = std::set<Type, _Compare, _Allocator>;
 
@@ -30,13 +30,12 @@ namespace PJ {
         return result;
     }
 
-    template <
-        class Set, class Type,
-        std::enable_if_t<std::is_same<
-            std::set<
-                typename Set::key_type, typename Set::key_compare, typename Set::allocator_type>,
-            Set>::value>* = nullptr>
-    void AddOrRemove(Set& set, Type const& value, bool add) {
+    template <class Set>
+    concept IsStdSet = std::is_same_v<Set, std::set<typename Set::value_type>>;
+
+    template <class Set>
+        requires IsStdSet<Set>
+    void AddOrRemove(Set& set, typename Set::value_type const& value, bool add) {
         if (add) {
             set.insert(value);
         } else {

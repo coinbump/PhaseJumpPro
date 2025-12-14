@@ -38,13 +38,18 @@ namespace PJTest {
         using Base = PJ::SomeRenderContext;
 
         Vector2 size;
+        Vector2Int pixelSize;
         VectorList<RenderContextModel> renderHistory;
         MockRenderEngine renderEngine;
         
-        MockRenderContext(Vector2 size = Vector2(400, 200)) : Base(renderEngine), size(size) {
+        struct Config {
+            Vector2 size{400, 200};
+            Vector2Int pixelSize{400, 200};
+        };
+        
+        MockRenderContext(Config config) : Base(renderEngine), size(config.size), pixelSize(config.pixelSize) {
         }
 
-        // Make context current, for renders
         void Bind() override {}
         void Clear() override {}
         void Present() override {}
@@ -56,7 +61,7 @@ namespace PJTest {
 
         Vector2Int PixelSize() const override
         {
-            return Vector2Int(size.x, size.y);
+            return pixelSize;
         }
     };
 }

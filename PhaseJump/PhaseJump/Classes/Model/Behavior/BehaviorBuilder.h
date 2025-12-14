@@ -13,9 +13,9 @@ namespace PJ {
     class WorldNode;
 
     /// Tool to quickly build a behavior tree
-    class QuickBehavior {
+    class BehaviorBuilder {
     public:
-        using This = QuickBehavior;
+        using This = BehaviorBuilder;
 
         using BuildTimelineFunc = std::function<UP<Timeline>()>;
         using OnRunFunc = BehaviorNode::Func;
@@ -27,7 +27,7 @@ namespace PJ {
         bool _diagnose{};
 
     public:
-        QuickBehavior(BehaviorNode& root, WorldNode& node);
+        BehaviorBuilder(BehaviorNode& root, WorldNode& node);
 
         /// @return Returns the top behavior, if any
         BehaviorNode* TopBehavior() const;

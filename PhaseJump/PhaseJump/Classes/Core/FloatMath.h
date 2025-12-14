@@ -17,6 +17,7 @@ namespace PJ {
         static constexpr Type DegreesToRadians = (Type)M_PI / (Type)180.0f;
         static constexpr Type RadiansToDegrees = 180.0f / (Type)M_PI;
 
+        // TODO: use std::requires
         template <
             typename Floating,
             std::enable_if_t<std::is_floating_point<Floating>::value, bool> = true>

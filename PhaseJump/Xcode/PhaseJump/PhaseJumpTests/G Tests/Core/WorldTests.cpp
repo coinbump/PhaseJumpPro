@@ -10,6 +10,11 @@ using namespace std;
 using namespace PJ;
 using namespace PJTest;
 
+namespace WorldTests {
+}
+
+using namespace WorldTests;
+
 TEST(World, TestNodePositionsAtRoot) {
     UP<World> world = NEW<World>();
 
@@ -45,33 +50,3 @@ TEST(World, TestNodePositionsAsChild) {
     EXPECT_EQ(Vector3(1, 1, 0), node->transform.LocalPosition());
     EXPECT_EQ(Vector3(11, 11, 0), node->transform.WorldPosition());
 }
-
-//TEST(World, TestRender_ChildInsideParent) {
-//    auto camera = MAKE<ReadingCamera>();
-//    auto cameraNode = MAKE<WorldNode>();
-//    cameraNode->Add(SCAST<SomeWorldComponent>(camera));
-//
-//    auto parentNode = MAKE<WorldNode>();
-//    auto childNode = MAKE<WorldNode>();
-//    parentNode->AddEdge(childNode);
-//
-//    parentNode->transform.position = Vector3(10, 10, 0);
-//    childNode->transform.position = Vector3(1, 1, 0);
-//    auto mockRenderer = MAKE<MockRenderer>();
-//    childNode->Add(SCAST<SomeWorldComponent>(mockRenderer));
-//
-//    auto sut = MAKE<World>();
-//    sut->camera = camera;
-//
-//    sut->root->AddEdge(parentNode);
-//
-//    auto renderContext = MAKE<MockRenderContext>();
-//    sut->renderContext = renderContext;
-//    sut->Render();
-//
-//    EXPECT_EQ(1, renderContext->renderHistory.size());
-//    EXPECT_EQ(1, mockRenderer->renderHistory.size());
-//
-//    EXPECT_EQ(Vector3(11, 11, 0), mockRenderer->renderHistory[0].position);
-//}
-

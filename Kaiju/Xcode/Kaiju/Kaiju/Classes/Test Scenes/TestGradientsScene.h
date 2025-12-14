@@ -23,10 +23,10 @@ public:
 
         for (int i = 0; i < 1; i++) {
             auto gradientNode = MAKE<WorldNode>("Gradient");
-            auto gradientRenderer = MAKE<SimpleGradientRenderer>(
-                Color::white, Color::black.WithAlpha(1), Vector2(400, 400)
-
-            );
+            auto gradientRenderer = MAKE<SimpleGradientRenderer>(SimpleGradientRenderer::Config{
+                .startColor = Color::white,
+                .endColor = Color::black.WithAlpha(1),
+                .worldSize = Vector2(400, 400) });
             //            auto gradientRenderer = MAKE<SimpleGradientRenderer>(Color::black,
             //            Color::black.WithAlpha(1), Vector2(400, 400));
 
@@ -35,39 +35,41 @@ public:
 
             auto& ac = gradientNode->AddComponent<SimpleAnimationController>();
 
-            auto quadFrameRenderer = MAKE<SimpleGradientRenderer>(
-                Color::white, Color::black.WithAlpha(1), Vector2(400, 400)
-            );
-            quadFrameRenderer->model.SetBuildMeshFunc([](RendererModel const& model) {
+            auto quadFrameRenderer = MAKE<SimpleGradientRenderer>(SimpleGradientRenderer::Config{
+                .startColor = Color::white,
+                .endColor = Color::black.WithAlpha(1),
+                .worldSize = Vector2(400, 400) });
+            quadFrameRenderer->model.SetBuildMeshFunc([](auto& model) {
                 QuadFrameMeshBuilder meshBuilder(model.WorldSize(), Vector2(20, 20));
                 return meshBuilder.BuildMesh();
             });
 
             ac.Add("0", [](auto& controller) {
-                auto quadRenderer = MAKE<SimpleGradientRenderer>(
-                    Color::white, Color::black.WithAlpha(1), Vector2(400, 400)
-                );
-                quadRenderer->model.SetBuildMeshFunc([](RendererModel const& model) {
+                auto quadRenderer = MAKE<SimpleGradientRenderer>(SimpleGradientRenderer::Config{
+                    .startColor = Color::white,
+                    .endColor = Color::black.WithAlpha(1),
+                    .worldSize = Vector2(400, 400) });
+                quadRenderer->model.SetBuildMeshFunc([](auto& model) {
                     QuadMeshBuilder meshBuilder(model.WorldSize());
                     return meshBuilder.BuildMesh();
                 });
 
-                auto renderer = MAKE<ColorRenderer>(ColorRenderer::Config{
-                    .color = Color::black, .worldSize = { 400, 400 } });
-                renderer->model.SetBuildMeshFunc([](RendererModel const& model) {
-                    RoundCornersMeshBuilder meshBuilder(
-                        { .worldSize = model.WorldSize(), .corners = RoundCorners::WithRadius(40) }
-                    );
-                    return meshBuilder.BuildMesh();
-                });
+                //                auto renderer = MAKE<ColorRenderer>(ColorRenderer::Config{
+                //                    .color = Color::black, .worldSize = { 400, 400 } });
+                //                renderer->model.SetBuildMeshFunc([](RendererModel const& model) {
+                //                    RoundCornersMeshBuilder meshBuilder(
+                //                        { .worldSize = model.WorldSize(), .corners =
+                //                        RoundCorners::WithRadius(40) }
+                //                    );
+                //                    return meshBuilder.BuildMesh();
+                //                });
 
-                return renderer; // quadRenderer;
+                return quadRenderer;
             });
             ac.Add("1", [](auto& controller) {
-                auto renderer = MAKE<SimpleGradientRenderer>(
-                    Color::white, Color::black.WithAlpha(1), Vector2(400, 400)
-                );
-                renderer->model.SetBuildMeshFunc([](RendererModel const& model) {
+                auto renderer = MAKE<ColorRenderer>(ColorRenderer::Config{
+                    .color = Color::blue, .worldSize = { 400, 400 } });
+                renderer->model.SetBuildMeshFunc([](auto& model) {
                     QuadFrameMeshBuilder meshBuilder(model.WorldSize(), Vector2(20, 20));
                     return meshBuilder.BuildMesh();
                 });

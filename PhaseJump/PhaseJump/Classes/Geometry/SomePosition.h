@@ -5,18 +5,18 @@
 /*
  RATING: 5 stars
  Simple type
- CODE REVIEW: 9/21/24
+ CODE REVIEW: 12/13/25
  */
 namespace PJ {
-    // FUTURE: needs conversion logic
     class WorldNode;
 
-    /// World position. Use when Vector type doesn't make the context clear
+    /// World position. Use to clarify context for vector type
     using WorldPosition = Vector3;
 
-    /// Local position. Use when Vector type doesn't make the context clear
+    /// Local position. Use to clarify context for vector type
     using LocalPosition = Vector3;
 
-    /// Screen position. Use when Vector type doesn't make the context clear
+    /// Screen position with reading coordinates.
+    /// Top-left is (0, 0), bottom-right is (maxX, maxY)
     using ScreenPosition = Vector2;
 } // namespace PJ

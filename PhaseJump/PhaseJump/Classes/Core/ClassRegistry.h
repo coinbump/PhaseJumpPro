@@ -48,6 +48,7 @@ namespace PJ {
             Add(_class);
         }
 
+        // TODO: use std::requires
         template <
             class Type, typename... Arguments, typename _Type = ClassType,
             std::enable_if_t<std::is_base_of<TypeClass<Type, Arguments...>, _Type>::value>* =

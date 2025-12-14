@@ -10,12 +10,10 @@
 using namespace std;
 using namespace PJ;
 
-SimpleGradientRenderer::SimpleGradientRenderer(
-    Color startColor, Color endColor, Vector2 worldSize
-) :
-    Base(worldSize),
-    startColor(startColor),
-    endColor(endColor) {
+SimpleGradientRenderer::SimpleGradientRenderer(Config config) :
+    Base(config.worldSize),
+    startColor(config.startColor),
+    endColor(config.endColor) {
     model.material =
         MAKE<RenderMaterial>(RenderMaterial::Config{ .shaderId = ShaderId::ColorVary });
 
@@ -24,7 +22,7 @@ SimpleGradientRenderer::SimpleGradientRenderer(
         return builder.BuildMesh();
     });
 
-    model.SetBuildVertexColorsFunc([=](auto& model, auto& colors) {
+    model.SetBuildVertexColorsFunc([this](auto& model, auto& colors) {
         colors.clear();
         Add(colors, startColor);
         Add(colors, endColor);

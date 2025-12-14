@@ -249,6 +249,9 @@ public:
             meshNode.Add(renderer);
             meshNode.SetScale2D(0.5);
 
+            QuickBuilder qb(meshNode);
+            qb.ImGui("Test", []() { ImGui::Text("hello"); });
+
 // #define BLINK
 #ifdef BLINK
             VectorList<float> offTimes{ 0, 0.2f, 0.4f };

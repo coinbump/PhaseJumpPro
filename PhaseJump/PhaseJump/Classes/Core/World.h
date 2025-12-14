@@ -49,7 +49,7 @@ namespace PJ {
         VectorList<SP<SomeWorldSystem>> systems;
 
         /// Main camera for this world
-        WP<SomeCamera> mainCamera;
+        mutable WP<SomeCamera> mainCamera;
 
         /// If true, the world will not receive update events
         bool isPaused = false;
@@ -65,6 +65,7 @@ namespace PJ {
         bool isRemoveNodesLocked{};
 
     public:
+        /// Window that corresponds to this world
         SomePlatformWindow* window{};
 
         /// Number of pixels per point
@@ -154,7 +155,7 @@ namespace PJ {
 
         /// @return Returns the main camera for this world. This is the camera used to render
         /// the window's content
-        virtual SomeCamera* MainCamera();
+        virtual SomeCamera* MainCamera() const;
 
         /// @return Returns a matrix that transforms this node's vertices in local space (position +
         /// offset + scale + rotation)
@@ -211,6 +212,9 @@ namespace PJ {
             return systems;
         }
 
+        /// @return Returns the screen position for the world position
+        ScreenPosition WorldToScreen(WorldPosition worldPos) const;
+
         /// @return Returns true if the world is paused
         bool IsPaused() const;
 
@@ -250,9 +254,17 @@ namespace PJ {
     };
 
     /// @return Returns the local position in this component's owner space for the screen position
-    LocalPosition ScreenToLocal(SomeWorldComponent& component, ScreenPosition screenPos);
+    LocalPosition ScreenToLocal(SomeWorldComponent const& component, ScreenPosition screenPos);
 
     /// @return Returns the world positionin this component's owner space for the screen position
-    WorldPosition ScreenToWorld(SomeWorldComponent& component, ScreenPosition screenPos);
+    WorldPosition ScreenToWorld(SomeWorldComponent const& component, ScreenPosition screenPos);
 
+    /// @return Returns the screen position for the local position
+    ScreenPosition LocalToScreen(SomeWorldComponent const& component, LocalPosition localPos = {});
+
+    /// @return Returns the screen position for the world position
+    ScreenPosition WorldToScreen(SomeWorldComponent const& component, WorldPosition worldPos);
+
+    /// @return Returns the screen position for the node's world position
+    ScreenPosition WorldToScreen(WorldNode const& node);
 } // namespace PJ

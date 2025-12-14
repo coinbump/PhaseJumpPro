@@ -92,6 +92,6 @@ namespace PJ {
     /// Operation queue
     class OperationQueue : public Base {
     public:
-        VectorList<SP<SomeOperation>> operations;
+        VectorList<UP<SomeOperation>> operations;
     };
 } // namespace PJ

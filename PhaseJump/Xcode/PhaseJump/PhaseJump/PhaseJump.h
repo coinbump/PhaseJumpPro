@@ -20,6 +20,7 @@
 #include <PhaseJump/Axis.h>
 #include <PhaseJump/Base.h>
 #include <PhaseJump/BatchByMaterialRenderProcessor.h>
+#include <PhaseJump/BehaviorBuilder.h>
 #include <PhaseJump/BehaviorNode.h>
 #include <PhaseJump/BezierPath.h>
 #include <PhaseJump/BezierPathLayout.h>
@@ -52,6 +53,7 @@
 #include <PhaseJump/Command.h>
 #include <PhaseJump/CommandHistory.h>
 #include <PhaseJump/ComponentsController.h>
+#include <PhaseJump/ComponentsHandler.h>
 #include <PhaseJump/ControllerBoard.h>
 #include <PhaseJump/CoreTypes.h>
 #include <PhaseJump/CycleHueEffect.h>
@@ -129,7 +131,7 @@
 #include <PhaseJump/Identifiable.h>
 #include <PhaseJump/ImGuiGLRenderProcessor.h>
 #include <PhaseJump/ImGuiMainMenuBarPainter.h>
-#include <PhaseJump/ImGuiPlanPainter.h>
+#include <PhaseJump/ImGuiUIPlanPainter.h>
 #include <PhaseJump/ImRenderer.h>
 #include <PhaseJump/ImTypes.h>
 #include <PhaseJump/IncludeAliasFileProcessor.h>
@@ -159,6 +161,7 @@
 #include <PhaseJump/MatrixBoardView.h>
 #include <PhaseJump/MatrixPiece.h>
 #include <PhaseJump/MatrixPieceHandler.h>
+#include <PhaseJump/MediaFilesAtoms.h>
 #include <PhaseJump/Menu.h>
 #include <PhaseJump/Mesh.h>
 #include <PhaseJump/MeshRenderer.h>
@@ -166,6 +169,8 @@
 #include <PhaseJump/ModelColor.h>
 #include <PhaseJump/ModifierFunc.h>
 #include <PhaseJump/MultiFunction.h>
+#include <PhaseJump/NodeHandler.h>
+#include <PhaseJump/NodesRenderProcessor.h>
 #include <PhaseJump/ObservedValue.h>
 #include <PhaseJump/OffscreenBuffer.h>
 #include <PhaseJump/OffscreenBufferRenderer.h>
@@ -181,6 +186,7 @@
 #include <PhaseJump/PlaneMeshBuilder.h>
 #include <PhaseJump/PlayStateController.h>
 #include <PhaseJump/Playable.h>
+#include <PhaseJump/PlayableTimer.h>
 #include <PhaseJump/PointerClickUIEvent.h>
 #include <PhaseJump/PolyFrameMeshBuilder.h>
 #include <PhaseJump/Polygon.h>
@@ -191,10 +197,8 @@
 #include <PhaseJump/PublishedValue.h>
 #include <PhaseJump/QuadFrameMeshBuilder.h>
 #include <PhaseJump/QuadMeshBuilder.h>
-#include <PhaseJump/QuickBehavior.h>
 #include <PhaseJump/QuickBuilder.h>
 #include <PhaseJump/QuickCharacter.h>
-#include <PhaseJump/TimelineBuilder.h>
 #include <PhaseJump/RGBAColor.h>
 #include <PhaseJump/RTexPackerAtlasModel.h>
 #include <PhaseJump/Range.h>
@@ -203,6 +207,7 @@
 #include <PhaseJump/ReceptorSignal.h>
 #include <PhaseJump/Rect.h>
 #include <PhaseJump/RectPositioner2D.h>
+#include <PhaseJump/RenderCameraModel.h>
 #include <PhaseJump/RenderContextModel.h>
 #include <PhaseJump/RenderFeature.h>
 #include <PhaseJump/RenderMaterial.h>
@@ -369,7 +374,8 @@
 #include <PhaseJump/TimedBehavior.h>
 #include <PhaseJump/TimedStateDriver.h>
 #include <PhaseJump/Timeline.h>
-#include <PhaseJump/PlayableTimer.h>
+#include <PhaseJump/TimelineBuilder.h>
+#include <PhaseJump/Timer.h>
 #include <PhaseJump/TimerPlayable.h>
 #include <PhaseJump/ToggleButtonControl.h>
 #include <PhaseJump/TransformFunc.h>

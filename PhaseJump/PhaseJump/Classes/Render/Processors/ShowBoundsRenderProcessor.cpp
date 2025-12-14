@@ -29,7 +29,6 @@ void ShowBoundsRenderProcessor::Process(RenderCameraModel& cameraModel) {
             auto renderer = MAKE<ColorRenderer>(ColorRenderer::Config{
                 .material = boundsMaterial, .color = color, .worldSize = worldSize });
             renderer->model.SetBuildMeshFunc([=](RendererModel const& model) {
-                // TODO: mesh.Resize(model.WorldSize());
                 QuadFrameMeshBuilder builder(model.WorldSize(), Vector2(2, 2));
                 Mesh mesh = builder.BuildMesh();
                 return mesh;

@@ -12,11 +12,23 @@ using namespace PJ;
 OrthoCamera::~OrthoCamera() {}
 
 Vector2 OrthoCamera::RenderContextSize() const {
-    GUARDR(owner && owner->World() && owner->World()->renderContext, {})
+    GUARDR(owner, {})
+    auto world = owner->World();
 
-    // FUTURE: re-evaluate Size vs PixelSize with hi-DP screens
-    auto contextSize = owner->World()->renderContext->PixelSize();
-    return Vector2(contextSize.x, contextSize.y);
+    GUARDR(world && world->renderContext, {})
+
+    auto contextSize = world->renderContext->Size();
+    return contextSize;
+}
+
+Vector2 OrthoCamera::RenderContextPixelSize() const {
+    GUARDR(owner, {})
+    auto world = owner->World();
+
+    GUARDR(world && world->renderContext, {})
+
+    auto contextPixelSize = owner->World()->renderContext->PixelSize();
+    return contextPixelSize;
 }
 
 Vector2 OrthoCamera::RenderContextExtents() const {
@@ -24,7 +36,7 @@ Vector2 OrthoCamera::RenderContextExtents() const {
 }
 
 Vector2 OrthoCamera::CameraExtents() const {
-    auto contextSize = RenderContextSize();
+    auto contextSize = RenderContextPixelSize();
     Vector2 result(contextSize.x / 2.0f, contextSize.y / 2.0f);
     float heightToWidth = result.x / result.y;
 
@@ -111,35 +123,18 @@ void OrthoCamera::RenderStart(SomeRenderContext* context) {
 }
 
 bool OrthoCamera::IsCulled(Mesh const& mesh) {
+    // TODO: needs unit tests
     auto halfSize = CameraExtents();
 
     bool result = false;
 
-    switch (frustrum) {
-    case Frustrum::None:
-        {
-            Vector3 cameraExtents(halfSize.x, halfSize.y, 0);
-            Bounds cameraBounds2D({}, cameraExtents);
-            Vector3 meshCenter2D(mesh.GetBounds().center.x, mesh.GetBounds().center.y, 0);
-            Vector3 meshExtents2D(mesh.GetBounds().extents.x, mesh.GetBounds().extents.y, 0);
-            Bounds meshBounds2D(meshCenter2D, meshExtents2D);
+    Vector3 cameraExtents(halfSize.x, halfSize.y, 0);
+    Bounds cameraBounds2D({}, cameraExtents);
+    Vector3 meshCenter2D(mesh.GetBounds().center.x, mesh.GetBounds().center.y, 0);
+    Vector3 meshExtents2D(mesh.GetBounds().extents.x, mesh.GetBounds().extents.y, 0);
+    Bounds meshBounds2D(meshCenter2D, meshExtents2D);
 
-            result = !cameraBounds2D.TestCollide(meshBounds2D);
-            break;
-        }
-    case Frustrum::Enabled:
-        {
-            // TODO: this doesn't make sense. OpenGL always has a frustrum. Rethink this (is this
-            // just for debugging culls?)
-            Vector3 frustrumExtents(halfSize.x, halfSize.y, abs(farClip - nearClip) / 2.0f);
-            Vector3 frustrumCenter(0, 0, nearClip + frustrumExtents.z * Vector3::forward.z);
-
-            Bounds frustrumBounds(frustrumCenter, frustrumExtents);
-            Bounds meshBounds = mesh.GetBounds();
-            result = !frustrumBounds.TestCollide(meshBounds);
-            break;
-        }
-    }
+    result = !cameraBounds2D.TestCollide(meshBounds2D);
 
     return result;
 }

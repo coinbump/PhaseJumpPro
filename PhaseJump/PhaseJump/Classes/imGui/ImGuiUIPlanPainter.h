@@ -14,7 +14,7 @@
  */
 namespace PJ {
     /// Paints a UI plan into imGui
-    class ImGuiPlanPainter : public SomeImGuiPainter {
+    class ImGuiUIPlanPainter : public SomeImGuiPainter {
     public:
         using DrawModelFunc = std::function<void(This&, SomeUIModel&)>;
 
@@ -22,7 +22,7 @@ namespace PJ {
 
         UnorderedMap<String, DrawModelFunc> drawModelFuncs;
 
-        ImGuiPlanPainter(UIPlan& plan);
+        ImGuiUIPlanPainter(UIPlan& plan);
     };
 
     /// Pushes and pops an imGui id

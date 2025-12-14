@@ -19,7 +19,7 @@ void UIWorldSystem::OnDragUpdate() {
         auto dragged = dragModel->DragHandler();
         GUARD(dragged)
 
-        auto inputScreenPosition = mouseDevice->Position() * world->uiScale;
+        auto inputScreenPosition = mouseDevice->GetScreenPosition();
         auto inputWorldPosition =
             PJ::WorldPosition(Camera()->ScreenToWorld(Vector3(inputScreenPosition)));
         dragged->OnDragUpdate(WorldPosition(inputWorldPosition));

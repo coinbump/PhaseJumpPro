@@ -1,4 +1,4 @@
-#include "QuickBehavior.h"
+#include "BehaviorBuilder.h"
 #include "ComponentsController.h"
 #include "DelayBehavior.h"
 #include "ParallelBehavior.h"
@@ -16,18 +16,18 @@
 using namespace std;
 using namespace PJ;
 
-using This = QuickBehavior;
+using This = BehaviorBuilder;
 
-QuickBehavior::QuickBehavior(BehaviorNode& root, WorldNode& node) :
+BehaviorBuilder::BehaviorBuilder(BehaviorNode& root, WorldNode& node) :
     root(root),
     node(node) {}
 
-BehaviorNode* QuickBehavior::TopBehavior() const {
+BehaviorNode* BehaviorBuilder::TopBehavior() const {
     GUARDR(!IsEmpty(behaviors), &root)
     return behaviors[behaviors.size() - 1];
 }
 
-This& QuickBehavior::Pop(int count) {
+This& BehaviorBuilder::Pop(int count) {
     while (count > 0) {
         GUARDR(!IsEmpty(behaviors), *this)
         behaviors.erase(behaviors.begin() + behaviors.size() - 1);
@@ -37,14 +37,14 @@ This& QuickBehavior::Pop(int count) {
     return *this;
 }
 
-This& QuickBehavior::AndRandom(String name) {
+This& BehaviorBuilder::AndRandom(String name) {
     UP<BehaviorNode> behavior = NEW<SwitchBehavior>([](auto& behavior) {
         return StandardRandom().Choice((int)behavior.tree.ChildCount());
     });
     return And(behavior, name);
 }
 
-This& QuickBehavior::AndRandomWeighted(String name, VectorList<float> const& weights) {
+This& BehaviorBuilder::AndRandomWeighted(String name, VectorList<float> const& weights) {
     UP<BehaviorNode> behavior = NEW<SwitchBehavior>([weights](auto& behavior) {
         WeightedRandomChoice<int> weightedChoice;
         size_t index = 0;
@@ -60,17 +60,17 @@ This& QuickBehavior::AndRandomWeighted(String name, VectorList<float> const& wei
     return And(behavior, name);
 }
 
-This& QuickBehavior::AndRepeat(String name, int count) {
+This& BehaviorBuilder::AndRepeat(String name, int count) {
     UP<BehaviorNode> behavior = NEW<RepeatBehavior>(count);
     return And(behavior, name);
 }
 
-This& QuickBehavior::AndSequence(String name) {
+This& BehaviorBuilder::AndSequence(String name) {
     UP<BehaviorNode> behavior = NEW<SequenceBehavior>();
     return And(behavior, name);
 }
 
-This& QuickBehavior::Action(String name, OnRunFunc onRunFunc) {
+This& BehaviorBuilder::Action(String name, OnRunFunc onRunFunc) {
     UP<BehaviorNode> behavior = NEW<BehaviorNode>();
     behavior->onRunFunc = [=](auto& behavior) {
         onRunFunc(behavior);
@@ -83,7 +83,7 @@ This& QuickBehavior::Action(String name, OnRunFunc onRunFunc) {
     return *this;
 }
 
-This& QuickBehavior::AndUniformTimedSequence(
+This& BehaviorBuilder::AndUniformTimedSequence(
     float duration, VectorList<OnRunFunc> const& onRunFuncs
 ) {
     AndSequence();
@@ -98,30 +98,30 @@ This& QuickBehavior::AndUniformTimedSequence(
     return *this;
 }
 
-This& QuickBehavior::AndDelay(String name, float delay) {
+This& BehaviorBuilder::AndDelay(String name, float delay) {
     return AndDelay(name, [=]() { return delay; });
 }
 
-This& QuickBehavior::AndDelay(String name, std::function<float()> delayValueFunc) {
+This& BehaviorBuilder::AndDelay(String name, std::function<float()> delayValueFunc) {
     UP<BehaviorNode> behavior = NEW<DelayBehavior>(delayValueFunc);
     return And(behavior, name);
 }
 
-This& QuickBehavior::AndParallel(String name, int successThreshold, int failureThreshold) {
+This& BehaviorBuilder::AndParallel(String name, int successThreshold, int failureThreshold) {
     UP<BehaviorNode> behavior = NEW<ParallelBehavior>(successThreshold, failureThreshold);
     return And(behavior, name);
 }
 
-This& QuickBehavior::AndTimed(String name, float duration) {
+This& BehaviorBuilder::AndTimed(String name, float duration) {
     return AndTimed(name, [=]() { return duration; });
 }
 
-This& QuickBehavior::AndTimed(String name, std::function<float()> durationValueFunc) {
+This& BehaviorBuilder::AndTimed(String name, std::function<float()> durationValueFunc) {
     UP<BehaviorNode> behavior = NEW<TimedBehavior>(durationValueFunc);
     return And(behavior, name);
 }
 
-This& QuickBehavior::Timeline(String name, BuildTimelineFunc buildTimelineFunc) {
+This& BehaviorBuilder::Timeline(String name, BuildTimelineFunc buildTimelineFunc) {
     GUARDR(buildTimelineFunc, *this);
 
     BehaviorNode* topBehavior = TopBehavior();
@@ -132,7 +132,7 @@ This& QuickBehavior::Timeline(String name, BuildTimelineFunc buildTimelineFunc) 
     return With(behavior, name);
 }
 
-This& QuickBehavior::AnimationState(String value) {
+This& BehaviorBuilder::AnimationState(String value) {
     UP<BehaviorNode> behavior = NEW<BehaviorNode>();
     auto& node = this->node;
     behavior->onRunFunc = [&node, value](auto& behavior) {
@@ -152,7 +152,7 @@ This& QuickBehavior::AnimationState(String value) {
     return With(behavior, "Animation State: " + value);
 }
 
-This& QuickBehavior::AnimationInput(String value) {
+This& BehaviorBuilder::AnimationInput(String value) {
     UP<BehaviorNode> behavior = NEW<BehaviorNode>();
     auto& node = this->node;
     behavior->onRunFunc = [&node, value](auto& behavior) {
@@ -173,16 +173,16 @@ This& QuickBehavior::AnimationInput(String value) {
     return With(behavior, "Animation Input: " + value);
 }
 
-This& QuickBehavior::Delay(String name, float delay) {
+This& BehaviorBuilder::Delay(String name, float delay) {
     return Delay(name, [=]() { return delay; });
 }
 
-This& QuickBehavior::Delay(String name, std::function<float()> delayValueFunc) {
+This& BehaviorBuilder::Delay(String name, std::function<float()> delayValueFunc) {
     UP<BehaviorNode> behavior = NEW<DelayBehavior>(delayValueFunc);
     return With(behavior, name);
 }
 
-This& QuickBehavior::ComponentsState(String value) {
+This& BehaviorBuilder::ComponentsState(String value) {
     auto& node = this->node;
 
     return Action("Components State: " + value, [value, &node](auto& behavior) {

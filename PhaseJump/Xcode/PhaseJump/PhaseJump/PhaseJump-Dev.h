@@ -20,6 +20,7 @@
 #include <PhaseJump-Dev/Axis.h>
 #include <PhaseJump-Dev/Base.h>
 #include <PhaseJump-Dev/BatchByMaterialRenderProcessor.h>
+#include <PhaseJump-Dev/BehaviorBuilder.h>
 #include <PhaseJump-Dev/BehaviorNode.h>
 #include <PhaseJump-Dev/BezierPath.h>
 #include <PhaseJump-Dev/BezierPathLayout.h>
@@ -52,6 +53,7 @@
 #include <PhaseJump-Dev/Command.h>
 #include <PhaseJump-Dev/CommandHistory.h>
 #include <PhaseJump-Dev/ComponentsController.h>
+#include <PhaseJump-Dev/ComponentsHandler.h>
 #include <PhaseJump-Dev/ControllerBoard.h>
 #include <PhaseJump-Dev/CoreTypes.h>
 #include <PhaseJump-Dev/CycleHueEffect.h>
@@ -129,7 +131,7 @@
 #include <PhaseJump-Dev/Identifiable.h>
 #include <PhaseJump-Dev/ImGuiGLRenderProcessor.h>
 #include <PhaseJump-Dev/ImGuiMainMenuBarPainter.h>
-#include <PhaseJump-Dev/ImGuiPlanPainter.h>
+#include <PhaseJump-Dev/ImGuiUIPlanPainter.h>
 #include <PhaseJump-Dev/ImRenderer.h>
 #include <PhaseJump-Dev/ImTypes.h>
 #include <PhaseJump-Dev/IncludeAliasFileProcessor.h>
@@ -159,6 +161,7 @@
 #include <PhaseJump-Dev/MatrixBoardView.h>
 #include <PhaseJump-Dev/MatrixPiece.h>
 #include <PhaseJump-Dev/MatrixPieceHandler.h>
+#include <PhaseJump-Dev/MediaFilesAtoms.h>
 #include <PhaseJump-Dev/Menu.h>
 #include <PhaseJump-Dev/Mesh.h>
 #include <PhaseJump-Dev/MeshRenderer.h>
@@ -166,6 +169,8 @@
 #include <PhaseJump-Dev/ModelColor.h>
 #include <PhaseJump-Dev/ModifierFunc.h>
 #include <PhaseJump-Dev/MultiFunction.h>
+#include <PhaseJump-Dev/NodeHandler.h>
+#include <PhaseJump-Dev/NodesRenderProcessor.h>
 #include <PhaseJump-Dev/ObservedValue.h>
 #include <PhaseJump-Dev/OffscreenBuffer.h>
 #include <PhaseJump-Dev/OffscreenBufferRenderer.h>
@@ -181,6 +186,7 @@
 #include <PhaseJump-Dev/PlaneMeshBuilder.h>
 #include <PhaseJump-Dev/PlayStateController.h>
 #include <PhaseJump-Dev/Playable.h>
+#include <PhaseJump-Dev/PlayableTimer.h>
 #include <PhaseJump-Dev/PointerClickUIEvent.h>
 #include <PhaseJump-Dev/PolyFrameMeshBuilder.h>
 #include <PhaseJump-Dev/Polygon.h>
@@ -191,10 +197,8 @@
 #include <PhaseJump-Dev/PublishedValue.h>
 #include <PhaseJump-Dev/QuadFrameMeshBuilder.h>
 #include <PhaseJump-Dev/QuadMeshBuilder.h>
-#include <PhaseJump-Dev/QuickBehavior.h>
 #include <PhaseJump-Dev/QuickBuilder.h>
 #include <PhaseJump-Dev/QuickCharacter.h>
-#include <PhaseJump-Dev/TimelineBuilder.h>
 #include <PhaseJump-Dev/RGBAColor.h>
 #include <PhaseJump-Dev/RTexPackerAtlasModel.h>
 #include <PhaseJump-Dev/Range.h>
@@ -203,6 +207,7 @@
 #include <PhaseJump-Dev/ReceptorSignal.h>
 #include <PhaseJump-Dev/Rect.h>
 #include <PhaseJump-Dev/RectPositioner2D.h>
+#include <PhaseJump-Dev/RenderCameraModel.h>
 #include <PhaseJump-Dev/RenderContextModel.h>
 #include <PhaseJump-Dev/RenderFeature.h>
 #include <PhaseJump-Dev/RenderMaterial.h>
@@ -369,7 +374,8 @@
 #include <PhaseJump-Dev/TimedBehavior.h>
 #include <PhaseJump-Dev/TimedStateDriver.h>
 #include <PhaseJump-Dev/Timeline.h>
-#include <PhaseJump-Dev/PlayableTimer.h>
+#include <PhaseJump-Dev/TimelineBuilder.h>
+#include <PhaseJump-Dev/Timer.h>
 #include <PhaseJump-Dev/TimerPlayable.h>
 #include <PhaseJump-Dev/ToggleButtonControl.h>
 #include <PhaseJump-Dev/TransformFunc.h>
