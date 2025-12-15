@@ -11,7 +11,7 @@
  CODE REVIEW: 9/2/24
  */
 namespace PJ {
-    class SomeDragGestureHandler2D;
+    class DragGestureHandler2D;
 
     /**
      Slider UI control
@@ -70,7 +70,7 @@ namespace PJ {
             Binding<float> valueBinding;
         };
 
-        SliderControl(Config config);
+        SliderControl(Config const& config);
 
         /// @return Returns true if the slider is tracking a drag gesture
         bool IsDragging() const;
@@ -114,7 +114,7 @@ namespace PJ {
         Vector2 dragStartInputWorldPos;
 
         /// Drag gesture handler for slider tracking
-        SP<SomeDragGestureHandler2D> dragHandler;
+        SP<DragGestureHandler2D> dragHandler;
 
         Vector2 RendererSize(WorldNode& target) const;
 

@@ -47,7 +47,7 @@ namespace PJTest {
             Vector2Int pixelSize{400, 200};
         };
         
-        MockRenderContext(Config config) : Base(renderEngine), size(config.size), pixelSize(config.pixelSize) {
+        MockRenderContext(Config const& config) : Base(renderEngine), size(config.size), pixelSize(config.pixelSize) {
         }
 
         void Bind() override {}

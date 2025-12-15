@@ -87,7 +87,7 @@ This& QuickBuilder::OrthoStandard(OrthoStandardConfig config) {
                                                            .phases = { RenderPhaseId::DrawPost } };
             auto nodesImGuiRenderProcessor = MAKE<NodesRenderProcessor>(
                 NodesRenderProcessor::Config{
-                    .type = "render.immediate",
+                    .signalId = "render.immediate",
                 },
                 renderProcessorConfig
             );
@@ -655,7 +655,7 @@ This& QuickBuilder::AnimationInput(String value) {
 }
 
 This& QuickBuilder::ImGui(StringView title, PaintImmediateFunc paintFunc) {
-    auto nodeHandlerFunc = [=](auto& node, auto phase) {
+    auto nodeHandlerFunc = [=](auto& node) {
         bool isVisible = true;
         auto screenPos = WorldToScreen(node);
         ImGui::SetNextWindowPos(ImVec2(screenPos.x, screenPos.y));
@@ -672,8 +672,12 @@ This& QuickBuilder::ImGui(StringView title, PaintImmediateFunc paintFunc) {
         ImGui::End();
     };
 
-    Node().With<PaintImmediateNodeHandler>(PaintImmediateNodeHandler::Config{
-        .type = "render.immediate", .func = nodeHandlerFunc });
+    Node().With<WorldComponent<>>().AddSignalHandler({ .id = "render.immediate",
+                                                       .func = [=](auto& component, auto& signal) {
+                                                           GUARD(component.owner)
+
+                                                           nodeHandlerFunc(*component.owner);
+                                                       } });
 
     return *this;
 }

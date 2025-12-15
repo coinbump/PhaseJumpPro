@@ -15,8 +15,9 @@ namespace OrthoCameraTests {
 
 TEST(OrthoCamera, RenderContextSize) {
     auto world = MAKE<World>();
-    auto renderContext = MAKE<MockRenderContext>(MockRenderContext::Config { .size = {400, 200}, .pixelSize = {400, 200}});
-    world->renderContext = renderContext;
+    auto _renderContext = NEW<MockRenderContext>(MockRenderContext::Config { .size = {400, 200}, .pixelSize = {400, 200}});
+    auto renderContext = _renderContext.get();
+    world->renderContext = std::move(_renderContext);
 
     auto& sut = world->AddNode().AddComponent<OrthoCamera>();
     EXPECT_EQ(Vector2(400, 200), sut.RenderContextSize());
@@ -25,8 +26,9 @@ TEST(OrthoCamera, RenderContextSize) {
 
 TEST(OrthoCamera, RenderContextPixelSize) {
     auto world = MAKE<World>();
-    auto renderContext = MAKE<MockRenderContext>(MockRenderContext::Config { .size = {200, 100}, .pixelSize = {400, 200}});
-    world->renderContext = renderContext;
+    auto _renderContext = NEW<MockRenderContext>(MockRenderContext::Config { .size = {200, 100}, .pixelSize = {400, 200}});
+    auto renderContext = _renderContext.get();
+    world->renderContext = std::move(_renderContext);
 
     auto& sut = world->AddNode().AddComponent<OrthoCamera>();
     EXPECT_EQ(Vector2(200, 100), sut.RenderContextSize());
@@ -35,8 +37,9 @@ TEST(OrthoCamera, RenderContextPixelSize) {
 
 TEST(OrthoCamera, RenderContextExtents) {
     auto world = MAKE<World>();
-    auto renderContext = MAKE<MockRenderContext>(MockRenderContext::Config { .size = {200, 100}, .pixelSize = {400, 200}});
-    world->renderContext = renderContext;
+    auto _renderContext = NEW<MockRenderContext>(MockRenderContext::Config { .size = {200, 100}, .pixelSize = {400, 200}});
+    auto renderContext = _renderContext.get();
+    world->renderContext = std::move(_renderContext);
 
     auto& sut = world->AddNode().AddComponent<OrthoCamera>();
     EXPECT_EQ(Vector2(100, 50), sut.RenderContextExtents());
@@ -44,8 +47,9 @@ TEST(OrthoCamera, RenderContextExtents) {
 
 TEST(OrthoCamera, CameraExtents) {
     auto world = MAKE<World>();
-    auto renderContext = MAKE<MockRenderContext>(MockRenderContext::Config { .size = {200, 100}, .pixelSize = {400, 200}});
-    world->renderContext = renderContext;
+    auto _renderContext = NEW<MockRenderContext>(MockRenderContext::Config { .size = {200, 100}, .pixelSize = {400, 200}});
+    auto renderContext = _renderContext.get();
+    world->renderContext = std::move(_renderContext);
 
     auto& sut = world->AddNode().AddComponent<OrthoCamera>();
     EXPECT_EQ(Vector2(200, 100), sut.CameraExtents());
@@ -53,8 +57,9 @@ TEST(OrthoCamera, CameraExtents) {
 
 TEST(OrthoCamera, CameraExtentsWithHalfHeight) {
     auto world = MAKE<World>();
-    auto renderContext = MAKE<MockRenderContext>(MockRenderContext::Config { .size = {200, 100}, .pixelSize = {400, 200}});
-    world->renderContext = renderContext;
+    auto _renderContext = NEW<MockRenderContext>(MockRenderContext::Config { .size = {200, 100}, .pixelSize = {400, 200}});
+    auto renderContext = _renderContext.get();
+    world->renderContext = std::move(_renderContext);
 
     auto& sut = world->AddNode().AddComponent<OrthoCamera>();
     sut.SetHalfHeight(50);
@@ -64,8 +69,9 @@ TEST(OrthoCamera, CameraExtentsWithHalfHeight) {
 
 TEST(OrthoCamera, SetContentScale) {
     auto world = MAKE<World>();
-    auto renderContext = MAKE<MockRenderContext>(MockRenderContext::Config { .size = {400, 200}, .pixelSize = {400, 200}});
-    world->renderContext = renderContext;
+    auto _renderContext = NEW<MockRenderContext>(MockRenderContext::Config { .size = {400, 200}, .pixelSize = {400, 200}});
+    auto renderContext = _renderContext.get();
+    world->renderContext = std::move(_renderContext);
 
     auto& sut = world->AddNode().AddComponent<OrthoCamera>();
     EXPECT_EQ(Vector2(400, 200), sut.CameraSize());
@@ -76,8 +82,9 @@ TEST(OrthoCamera, SetContentScale) {
 
 TEST(OrthoCamera, WorldToScreenScaleSameSize) {
     auto world = MAKE<World>();
-    auto renderContext = MAKE<MockRenderContext>(MockRenderContext::Config { .size = {400, 200}, .pixelSize = {400, 200}});
-    world->renderContext = renderContext;
+    auto _renderContext = NEW<MockRenderContext>(MockRenderContext::Config { .size = {400, 200}, .pixelSize = {400, 200}});
+    auto renderContext = _renderContext.get();
+    world->renderContext = std::move(_renderContext);
 
     auto& sut = world->AddNode().AddComponent<OrthoCamera>();
     EXPECT_EQ(Vector2(1.0f, 1.0f), sut.WorldToScreenScale());
@@ -85,8 +92,9 @@ TEST(OrthoCamera, WorldToScreenScaleSameSize) {
 
 TEST(OrthoCamera, WorldToScreenScale) {
     auto world = MAKE<World>();
-    auto renderContext = MAKE<MockRenderContext>(MockRenderContext::Config { .size = {200, 100}, .pixelSize = {400, 200}});
-    world->renderContext = renderContext;
+    auto _renderContext = NEW<MockRenderContext>(MockRenderContext::Config { .size = {200, 100}, .pixelSize = {400, 200}});
+    auto renderContext = _renderContext.get();
+    world->renderContext = std::move(_renderContext);
 
     auto& sut = world->AddNode().AddComponent<OrthoCamera>();
     EXPECT_EQ(Vector2(0.5f, 0.5f), sut.WorldToScreenScale());
@@ -94,8 +102,9 @@ TEST(OrthoCamera, WorldToScreenScale) {
 
 TEST(OrthoCamera, WorldToScreenSameSize) {
     auto world = MAKE<World>();
-    auto renderContext = MAKE<MockRenderContext>(MockRenderContext::Config { .size = {400, 200}, .pixelSize = {400, 200}});
-    world->renderContext = renderContext;
+    auto _renderContext = NEW<MockRenderContext>(MockRenderContext::Config { .size = {400, 200}, .pixelSize = {400, 200}});
+    auto renderContext = _renderContext.get();
+    world->renderContext = std::move(_renderContext);
 
     auto& sut = world->AddNode().AddComponent<OrthoCamera>();
 
@@ -113,8 +122,9 @@ TEST(OrthoCamera, WorldToScreenSameSize) {
 
 TEST(OrthoCamera, WorldToScreenScaled) {
     auto world = MAKE<World>();
-    auto renderContext = MAKE<MockRenderContext>(MockRenderContext::Config { .size = {200, 100}, .pixelSize = {400, 200}});
-    world->renderContext = renderContext;
+    auto _renderContext = NEW<MockRenderContext>(MockRenderContext::Config { .size = {200, 100}, .pixelSize = {400, 200}});
+    auto renderContext = _renderContext.get();
+    world->renderContext = std::move(_renderContext);
 
     auto& sut = world->AddNode().AddComponent<OrthoCamera>();
 
@@ -132,8 +142,9 @@ TEST(OrthoCamera, WorldToScreenScaled) {
 
 TEST(OrthoCamera, WorldToScreenWithHalfHeight) {
     auto world = MAKE<World>();
-    auto renderContext = MAKE<MockRenderContext>(MockRenderContext::Config { .size = {400, 200}, .pixelSize = {400, 200}});
-    world->renderContext = renderContext;
+    auto _renderContext = NEW<MockRenderContext>(MockRenderContext::Config { .size = {400, 200}, .pixelSize = {400, 200}});
+    auto renderContext = _renderContext.get();
+    world->renderContext = std::move(_renderContext);
 
     auto& sut = world->AddNode().AddComponent<OrthoCamera>();
     sut.SetHalfHeight(50);
@@ -154,8 +165,9 @@ TEST(OrthoCamera, WorldToScreenWithHalfHeight) {
 
 TEST(OrthoCamera, ScreenToWorld) {
     auto world = MAKE<World>();
-    auto renderContext = MAKE<MockRenderContext>(MockRenderContext::Config { .size = {400, 200}, .pixelSize = {400, 200}});
-    world->renderContext = renderContext;
+    auto _renderContext = NEW<MockRenderContext>(MockRenderContext::Config { .size = {400, 200}, .pixelSize = {400, 200}});
+    auto renderContext = _renderContext.get();
+    world->renderContext = std::move(_renderContext);
 
     auto& sut = world->AddNode().AddComponent<OrthoCamera>();
 
@@ -173,8 +185,9 @@ TEST(OrthoCamera, ScreenToWorld) {
 
 TEST(OrthoCamera, ScreenToWorldScaled) {
     auto world = MAKE<World>();
-    auto renderContext = MAKE<MockRenderContext>(MockRenderContext::Config { .size = {200, 100}, .pixelSize = {400, 200}});
-    world->renderContext = renderContext;
+    auto _renderContext = NEW<MockRenderContext>(MockRenderContext::Config { .size = {200, 100}, .pixelSize = {400, 200}});
+    auto renderContext = _renderContext.get();
+    world->renderContext = std::move(_renderContext);
 
     auto& sut = world->AddNode().AddComponent<OrthoCamera>();
 
@@ -192,8 +205,9 @@ TEST(OrthoCamera, ScreenToWorldScaled) {
 
 TEST(OrthoCamera, ScreenToWorldWithHalfHeight) {
     auto world = MAKE<World>();
-    auto renderContext = MAKE<MockRenderContext>(MockRenderContext::Config { .size = {400, 200}, .pixelSize = {400, 200}});
-    world->renderContext = renderContext;
+    auto _renderContext = NEW<MockRenderContext>(MockRenderContext::Config { .size = {400, 200}, .pixelSize = {400, 200}});
+    auto renderContext = _renderContext.get();
+    world->renderContext = std::move(_renderContext);
 
     auto& sut = world->AddNode().AddComponent<OrthoCamera>();
     sut.SetHalfHeight(50);

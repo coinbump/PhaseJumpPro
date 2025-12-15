@@ -45,6 +45,7 @@ namespace PJ {
         }
     };
 
+    // TODO: can this just be a mutable lambda?
     /// A function that stores persistent state
     template <typename Core, typename Result, typename... Arguments>
     class CoreFunction : public SomeFunction<Result(Arguments...)> {

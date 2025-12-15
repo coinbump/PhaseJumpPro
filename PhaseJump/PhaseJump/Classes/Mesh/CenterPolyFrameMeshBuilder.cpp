@@ -4,7 +4,7 @@
 using namespace std;
 using namespace PJ;
 
-CenterPolyFrameMeshBuilder::CenterPolyFrameMeshBuilder(Config config) :
+CenterPolyFrameMeshBuilder::CenterPolyFrameMeshBuilder(Config const& config) :
     worldSize(config.worldSize),
     strokeWidth(config.strokeWidth),
     model(config.model),

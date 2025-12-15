@@ -74,7 +74,7 @@ namespace PJ {
 
     class Environments {
     protected:
-        List<SP<Environment>> stack;
+        VectorList<SP<Environment>> stack;
         std::mutex stackMutex;
 
         static SP<Environments> shared;

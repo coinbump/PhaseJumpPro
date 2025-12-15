@@ -106,16 +106,18 @@ SomeLoadResourcesOperation::Result LoadTexturePackerAtlasOperation::LoadResource
             //                break;
             //            }
 
-            AtlasTexture::Config config{ .base = { .id = atlasTextureId,
-                                                   .origin = origin,
-                                                   .size = size,
-                                                   .trimOrigin = trimOrigin,
-                                                   .untrimmedSize = untrimmedSize,
-                                                   .alphaMode = alphaMode,
-                                                   .normalOrigin = { normalOriginX, normalOriginY },
-                                                   .normalSize = { normalSizeX, normalSizeY } },
-                                         .parent = textureAtlas.get(),
-                                         .orientation = orientation };
+            AtlasTexture::Config const& config{
+                .base = { .id = atlasTextureId,
+                          .origin = origin,
+                          .size = size,
+                          .trimOrigin = trimOrigin,
+                          .untrimmedSize = untrimmedSize,
+                          .alphaMode = alphaMode,
+                          .normalOrigin = { normalOriginX, normalOriginY },
+                          .normalSize = { normalSizeX, normalSizeY } },
+                .parent = textureAtlas.get(),
+                .orientation = orientation
+            };
             auto atlasTexture = MAKE<AtlasTexture>(config);
 
             ResourceModel loadedResource{ .resource = SCAST<PJ::Base>(atlasTexture),

@@ -443,7 +443,7 @@ TEST(WorldNode, CollectDescendantTypeComponents)
     auto component2 = MAKE<TestComponent>();
     child2->Add(component2);
     VectorList<TestComponent*> components;
-    sut->CollectDescendantTypeComponents<TestComponent>(components);
+    sut->CollectDescendantTypeComponentsIf<TestComponent>(components, [](auto& e) { return true; });
 
     EXPECT_EQ(2, components.size());
     EXPECT_EQ(component.get(), *components.begin());
@@ -467,7 +467,7 @@ TEST(WorldNode, CollectDescendantTypeComponentsWithFilter)
     auto component2 = MAKE<TestComponent>();
     child2->Add(component2);
     VectorList<TestComponent*> components;
-    sut->CollectDescendantTypeComponents<TestComponent>(components, [&](auto& component) {
+    sut->CollectDescendantTypeComponentsIf<TestComponent>(components, [&](auto& component) {
         return &component == component2.get();
     });
 
@@ -494,7 +494,7 @@ TEST(WorldNode, CollectChildTypeComponents)
     auto component2 = MAKE<TestComponent>();
     child2->Add(component2);
     VectorList<TestComponent*> components;
-    sut->CollectChildTypeComponents<TestComponent>(components);
+    sut->CollectChildTypeComponentsIf<TestComponent>(components, [](auto& e) { return true; });
 
     ASSERT_EQ(1, components.size());
     EXPECT_EQ(component1.get(), *components.begin());
@@ -520,7 +520,7 @@ TEST(WorldNode, CollectChildTypeComponentsWithFilter)
     child->Add(component2);
     
     VectorList<TestComponent*> components;
-    sut->CollectChildTypeComponents<TestComponent>(components, [&](auto& component) {
+    sut->CollectChildTypeComponentsIf<TestComponent>(components, [&](auto& component) {
         return &component == component2.get();
     });
 
@@ -547,7 +547,7 @@ TEST(WorldNode, CollectAssociateTypeComponents)
     auto component2 = MAKE<TestComponent>();
     child2->Add(component2);
     VectorList<TestComponent*> components;
-    sut->CollectAssociateTypeComponents<TestComponent>(components);
+    sut->CollectAssociateTypeComponentsIf<TestComponent>(components, [](auto& e) { return true; });
 
     ASSERT_EQ(2, components.size());
     EXPECT_EQ(component.get(), *components.begin());
@@ -573,7 +573,7 @@ TEST(WorldNode, CollectAssociateTypeComponentsWithFilter)
     auto component2 = MAKE<TestComponent>();
     child2->Add(component2);
     VectorList<TestComponent*> components;
-    sut->CollectAssociateTypeComponents<TestComponent>(components, [&](auto& component) {
+    sut->CollectAssociateTypeComponentsIf<TestComponent>(components, [&](auto& component) {
         return &component == component1.get();
     });
 

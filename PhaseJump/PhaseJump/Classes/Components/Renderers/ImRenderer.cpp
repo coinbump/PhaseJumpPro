@@ -15,7 +15,7 @@ using namespace PJ;
 
 using This = ImRenderer;
 
-ImRenderer::ImRenderer(Config config) :
+ImRenderer::ImRenderer(Config const& config) :
     model(config.worldSize),
     areShapesOpaque(config.areShapesOpaque) {
     Configure();

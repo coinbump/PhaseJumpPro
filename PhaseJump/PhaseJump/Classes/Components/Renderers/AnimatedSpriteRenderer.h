@@ -83,7 +83,7 @@ namespace PJ {
             AnimationCycleType cycleType = AnimationCycleType::Loop;
         };
 
-        AnimatedSpriteRenderer(Config config);
+        AnimatedSpriteRenderer(Config const& config);
         AnimatedSpriteRenderer(
             TextureList const& textures, float frameRate = DefaultFrameRate,
             AnimationCycleType cycleType = AnimationCycleType::Loop

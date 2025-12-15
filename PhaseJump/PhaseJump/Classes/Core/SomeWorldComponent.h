@@ -52,7 +52,7 @@ namespace PJ {
         // Don't allow copies
         DELETE_COPY(SomeWorldComponent)
 
-        AttachmentCore _core;
+        AttachmentCore attachmentCore;
 
         /// Owner node
         /// Node is responsible for setting this to null when the component is removed
@@ -75,19 +75,19 @@ namespace PJ {
         }
 
         String Name() const {
-            return _core.name.size() > 0 ? _core.name : TypeName();
+            return attachmentCore.name.size() > 0 ? attachmentCore.name : TypeName();
         }
 
         void SetName(String value) {
-            _core.name = value;
+            attachmentCore.name = value;
         }
 
         String Id() const {
-            return _core.id;
+            return attachmentCore.id;
         }
 
         This& SetId(String value) {
-            _core.id = value;
+            attachmentCore.id = value;
             return *this;
         }
 
@@ -123,7 +123,7 @@ namespace PJ {
 
         /// Called in game loop for time delta update events
         virtual FinishType OnUpdate(TimeSlice time) {
-            return _core.OnUpdate(time);
+            return attachmentCore.OnUpdate(time);
         }
 
         /// @return Returns the target node that this component operates on
@@ -137,11 +137,11 @@ namespace PJ {
         virtual UP<UIPlan> MakeUIPlan(String context);
 
         Updatable& GetUpdatable() {
-            return _core.updatable;
+            return attachmentCore.updatable;
         }
 
         Updatables& GetUpdatables() {
-            return _core.updatables;
+            return attachmentCore.updatables;
         }
 
         /// Adds a signal handler for the specified signal
@@ -152,14 +152,14 @@ namespace PJ {
 
         template <class Signal>
         This& AddSignalHandler(SignalHandlerConfig<Signal> config) {
-            _core.AddSignalHandler<Signal>(config);
+            attachmentCore.AddSignalHandler<Signal>(config);
             OnAddSignalHandler();
             return *this;
         }
 
         /// Sends a signal to registered signal handlers
         void Signal(String id, SomeSignal const& signal) {
-            _core.Signal(id, signal);
+            attachmentCore.Signal(id, signal);
         }
 
     protected:

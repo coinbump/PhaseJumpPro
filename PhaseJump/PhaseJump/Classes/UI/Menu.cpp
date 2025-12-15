@@ -11,7 +11,7 @@ String KeyboardShortcut::ToString() const {
     GUARDR(!IsEmpty(modifiers), "")
 
     String modifierString;
-    List<String> modifierStrings;
+    VectorList<String> modifierStrings;
     std::for_each(modifiers.begin(), modifiers.end(), [&](auto& modifier) {
         if (modifier == KeyModifier::Shortcut) {
 #ifdef _WIN32

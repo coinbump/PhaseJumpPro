@@ -4,5 +4,5 @@
 using namespace std;
 using namespace PJ;
 
-DesignSystem::DesignSystem(Config config) :
+DesignSystem::DesignSystem(Config const& config) :
     theme(config.theme) {}

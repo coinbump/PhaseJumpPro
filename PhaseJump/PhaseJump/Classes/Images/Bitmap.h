@@ -100,8 +100,9 @@ namespace PJ {
 
         Bitmap() {}
 
-        Bitmap(Config config) :
-            orientation(config.orientation) {
+        Bitmap(Config const& _config) :
+            orientation(_config.orientation) {
+            auto config = _config;
             size = config.size;
             GUARD(size.x > 0 && size.y > 0)
 

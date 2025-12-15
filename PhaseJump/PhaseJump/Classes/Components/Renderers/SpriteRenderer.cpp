@@ -13,7 +13,7 @@
 using namespace std;
 using namespace PJ;
 
-SpriteRenderer::SpriteRenderer(Config config) :
+SpriteRenderer::SpriteRenderer(Config const& config) :
     Base(Vector3{}) {
 
     if (config.texture) {

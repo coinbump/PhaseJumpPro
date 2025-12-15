@@ -28,7 +28,7 @@ namespace PJ {
             SP<RenderMaterial> material;
         };
 
-        ColorRenderer(Config config);
+        ColorRenderer(Config const& config);
         ColorRenderer(Color color, Vector2 worldSize);
 
         /// Disable dynamic blend mode changes

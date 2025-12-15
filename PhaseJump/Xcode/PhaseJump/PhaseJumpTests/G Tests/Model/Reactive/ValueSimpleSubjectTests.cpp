@@ -20,7 +20,7 @@ TEST(ValueSimpleSubject, Test_Lifecycle)
     sut->Send(12);
     EXPECT_EQ(12, sut->Value());
 
-    List<int> values;
+    VectorList<int> values;
 
     auto subscription = sut->Receive([&values](int const& value) {
         values.push_back(value);
@@ -31,7 +31,7 @@ TEST(ValueSimpleSubject, Test_Lifecycle)
     sut->Send(2);
     EXPECT_EQ(2, sut->Value());
 
-    List<int> expectedValues{12, 1, 2};
+    VectorList<int> expectedValues{12, 1, 2};
     EXPECT_EQ(expectedValues, values);
 
     sut->Complete();
@@ -45,7 +45,7 @@ TEST(ValueSimpleSubject, Test_SubscriptionExpired)
 {
     auto sut = MAKE<ValueSimpleSubject<int>>(10);
 
-    List<int> values;
+    VectorList<int> values;
 
     auto subscription = sut->Receive([&values](int const& value) {
         values.push_back(value);
@@ -62,7 +62,7 @@ TEST(ValueSimpleSubject, Test_SubscriptionExpired)
     sut->Send(1);
     EXPECT_EQ(1, sut->Value());
 
-    List<int> expectedValues{10};
+    VectorList<int> expectedValues{10};
     EXPECT_EQ(expectedValues, values);
 }
 
@@ -70,7 +70,7 @@ TEST(ValueSimpleSubject, Test_SubscriptionCancelled)
 {
     auto sut = MAKE<ValueSimpleSubject<int>>(10);
 
-    List<int> values;
+    VectorList<int> values;
 
     auto subscription = sut->Receive([&values](int const& value) {
         values.push_back(value);

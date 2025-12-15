@@ -27,7 +27,7 @@ namespace PJ {
     public:
         using Base = SomePlatformWindow;
 
-        SDLPlatformWindow(Config config);
+        SDLPlatformWindow(Config const& config);
 
         virtual ~SDLPlatformWindow() {
             SDL_DestroyWindow(window);

@@ -73,7 +73,7 @@ namespace PJ {
             float endInset{};
         };
 
-        Slice3TextureRenderer(Config config);
+        Slice3TextureRenderer(Config const& config);
 
         BuildModel MakeBuildModel(Vector3 worldSize) const;
 

@@ -21,7 +21,7 @@ SomeLoadResourcesOperation::Result LoadRezOperation::LoadResources() {
         json j;
         file >> j;
 
-        List<json::value_type> resources = j["resources"];
+        VectorList<json::value_type> resources = j["resources"];
 
         Success result;
 

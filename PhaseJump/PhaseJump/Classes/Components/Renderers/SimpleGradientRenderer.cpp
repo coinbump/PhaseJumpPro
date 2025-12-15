@@ -10,7 +10,7 @@
 using namespace std;
 using namespace PJ;
 
-SimpleGradientRenderer::SimpleGradientRenderer(Config config) :
+SimpleGradientRenderer::SimpleGradientRenderer(Config const& config) :
     Base(config.worldSize),
     startColor(config.startColor),
     endColor(config.endColor) {

@@ -63,8 +63,9 @@ SDLConfigPlatformResult SDLPlatformClass::Configure(SDLPlatformConfig& config, S
     }
 
     // FUTURE: support non-OpenGL render SDKs if needed
-    SP<GLRenderEngine> glRenderEngine = MAKE<GLRenderEngine>();
-    world->renderEngine = glRenderEngine;
+    UP<GLRenderEngine> _glRenderEngine = NEW<GLRenderEngine>();
+    auto glRenderEngine = _glRenderEngine.get();
+    world->renderEngine = std::move(_glRenderEngine);
 
     auto windowConfig = config.windowConfig;
     windowConfig.world = world;
@@ -82,7 +83,8 @@ SDLConfigPlatformResult SDLPlatformClass::Configure(SDLPlatformConfig& config, S
     PJ::Log("SDL: Is Joystick Enabled?: ", SDL_JoystickEventsEnabled());
     PJ::Log("SDL: Is Gamepad Enabled?: ", SDL_GamepadEventsEnabled());
 
-    auto renderContext = MAKE<SDLGLRenderContext>(*glRenderEngine);
+    auto _renderContext = NEW<SDLGLRenderContext>(*glRenderEngine);
+    auto renderContext = _renderContext.get();
     renderContext->clearColor = config.clearColor;
     renderContext->Configure(window->SDLWindow());
 
@@ -90,7 +92,7 @@ SDLConfigPlatformResult SDLPlatformClass::Configure(SDLPlatformConfig& config, S
     glRenderEngine->Go();
 
     // Connect the world
-    world->Configure(window->SDLWindow(), renderContext);
+    world->Configure(window->SDLWindow(), std::move(_renderContext));
 
     // Poll for UI events
     world->uiEventPoller = NEW<SDLUIEventPoller>(window->SDLWindow());

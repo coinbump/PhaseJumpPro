@@ -21,9 +21,8 @@ namespace PJ {
 
         virtual std::optional<Output> FirstOutputFor(Input const& input) = 0;
 
-        // TODO: List vs VectorList audit
-        virtual List<Output> OutputsFor(Input const& input) {
-            List<Output> result;
+        virtual VectorList<Output> OutputsFor(Input const& input) {
+            VectorList<Output> result;
 
             auto first = FirstOutputFor(input);
             if (first) {
@@ -45,7 +44,7 @@ namespace PJ {
     class TriggerMap : public SomeMultiMap<Trigger, Action> {
     public:
         using FilterFunc = std::function<bool(Trigger const&)>;
-        using FilterList = List<FilterFunc>;
+        using FilterList = VectorList<FilterFunc>;
 
         struct Item {
             Action action;
@@ -56,7 +55,7 @@ namespace PJ {
                 filters(filters) {}
         };
 
-        using ItemList = List<Item>;
+        using ItemList = VectorList<Item>;
 
     protected:
         ItemList items;
@@ -97,8 +96,8 @@ namespace PJ {
         }
 
         /// @return Returns a list of all actions that are activated by this trigger
-        List<Action> ActionsFor(Trigger const& event) {
-            List<Action> result;
+        VectorList<Action> ActionsFor(Trigger const& event) {
+            VectorList<Action> result;
 
             for (auto& item : items) {
                 for (auto& filter : item.filters) {
@@ -117,7 +116,7 @@ namespace PJ {
             return FirstActionFor(input);
         }
 
-        List<Action> OutputsFor(Trigger const& input) override {
+        VectorList<Action> OutputsFor(Trigger const& input) override {
             return ActionsFor(input);
         }
     };

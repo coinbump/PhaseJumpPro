@@ -125,7 +125,7 @@ namespace PJ {
 
         SP<Theme> theme;
 
-        DesignSystem(Config config);
+        DesignSystem(Config const& config);
 
         virtual ~DesignSystem() {}
 
@@ -144,7 +144,7 @@ namespace PJ {
         }
 
         template <class Config>
-        This& BuildView(String elementId, Config config, ViewBuilder& vb) {
+        This& BuildView(String elementId, Config const& config, ViewBuilder& vb) {
             GUARDR_LOG(theme, *this, "ERROR: Missing theme")
 
             try {

@@ -26,7 +26,7 @@ namespace PJ {
         /// Func to run for each component
         Func func;
 
-        ComponentsHandler(Config config) :
+        ComponentsHandler(Config const& config) :
             type(config.type),
             func(config.func) {}
 

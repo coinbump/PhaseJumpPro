@@ -145,6 +145,10 @@ std::shared_ptr<_Tp> SCAST(const std::shared_ptr<_Up>& __r) _NOEXCEPT {
     return std::static_pointer_cast<_Tp>(__r);
 }
 
+/*
+ Optimize: Avoid using DCAST or dynamic_pointer_cast. It creates a shared pointer copy, which is
+ slow Use dynamic_cast<Type*>(sharedPointer.get()) instead
+ */
 template <class _Tp, class _Up>
 std::shared_ptr<_Tp> DCAST(const std::shared_ptr<_Up>& __r) _NOEXCEPT {
     return std::dynamic_pointer_cast<_Tp>(__r);

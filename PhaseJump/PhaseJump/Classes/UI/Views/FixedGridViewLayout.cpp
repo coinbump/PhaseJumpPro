@@ -5,7 +5,7 @@
 using namespace std;
 using namespace PJ;
 
-FixedGridViewLayout::FixedGridViewLayout(Config config) :
+FixedGridViewLayout::FixedGridViewLayout(Config const& config) :
     gridSize(config.gridSize),
     cellSize(config.cellSize),
     alignment(config.alignment),

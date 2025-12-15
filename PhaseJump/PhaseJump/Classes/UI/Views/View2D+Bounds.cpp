@@ -46,7 +46,7 @@ void View2D::UpdateFrameComponents() {
     // Update all other components attached to this node to match the view size
     // Keeps meshes, layouts, etc. in sync with view
     VectorList<WorldSizeable*> worldSizables;
-    owner->CollectTypeComponents<WorldSizeable>(worldSizables, [this](auto& component) {
+    owner->CollectTypeComponentsIf<WorldSizeable>(worldSizables, [this](auto& component) {
         return &component != this;
     });
     for (auto& worldSizable : worldSizables) {

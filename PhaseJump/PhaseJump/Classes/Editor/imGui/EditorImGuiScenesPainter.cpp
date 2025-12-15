@@ -41,7 +41,12 @@ EditorImGuiScenesPainter::EditorImGuiScenesPainter(
                                 return !system->typeTags.contains(EditorTypeTag::Persist);
                             });
 
-                        world.Remove(removingSystems);
+                        auto mappedSystems =
+                            Map<SomeWorldSystem*>(removingSystems, [](auto& system) {
+                                return system.get();
+                            });
+
+                        world.Remove(mappedSystems);
                         world.DestroyAllNodes();
 
                         auto sceneNode = MAKE<WorldNode>();

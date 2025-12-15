@@ -76,43 +76,43 @@ void EventWorldSystem::ProcessUIEvents(UIEventList const& uiEvents) {
             }
         }
 
-        auto controllerAxisEvent = DCAST<ControllerAxisUIEvent>(event);
+        auto controllerAxisEvent = dynamic_cast<ControllerAxisUIEvent*>(event.get());
         if (controllerAxisEvent) {
             Input::Update(*controllerAxisEvent);
             continue;
         }
 
-        auto pointerDownEvent = DCAST<PointerDownUIEvent>(event);
+        auto pointerDownEvent = dynamic_cast<PointerDownUIEvent*>(event.get());
         if (pointerDownEvent) {
             OnPointerDown(*pointerDownEvent);
             continue;
         }
 
-        auto pointerUpEvent = DCAST<PointerUpUIEvent>(event);
+        auto pointerUpEvent = dynamic_cast<PointerUpUIEvent*>(event.get());
         if (pointerUpEvent) {
             OnPointerUp(*pointerUpEvent);
             continue;
         }
 
-        auto pointerMotionEvent = DCAST<PointerMoveUIEvent>(event);
+        auto pointerMotionEvent = dynamic_cast<PointerMoveUIEvent*>(event.get());
         if (pointerMotionEvent) {
             OnPointerMove(*pointerMotionEvent);
             continue;
         }
 
-        auto keyDownEvent = DCAST<KeyDownUIEvent>(event);
+        auto keyDownEvent = dynamic_cast<KeyDownUIEvent*>(event.get());
         if (keyDownEvent && collectEventNodesFunc) {
             OnKeyDown(*keyDownEvent, eventNodes);
             continue;
         }
 
-        auto dropFilesEvent = DCAST<DropFilesUIEvent>(event);
+        auto dropFilesEvent = dynamic_cast<DropFilesUIEvent*>(event.get());
         if (dropFilesEvent) {
             OnDropFiles(*dropFilesEvent, eventNodes);
             continue;
         }
 
-        auto windowResizeEvent = DCAST<WindowResizeUIEvent>(event);
+        auto windowResizeEvent = dynamic_cast<WindowResizeUIEvent*>(event.get());
         if (windowResizeEvent) {
             DispatchEvent(SignalId::WindowResize, *windowResizeEvent, eventNodes);
             continue;

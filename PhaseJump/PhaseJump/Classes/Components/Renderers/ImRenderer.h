@@ -135,7 +135,7 @@ namespace PJ {
             bool areShapesOpaque{};
         };
 
-        ImRenderer(Config config);
+        ImRenderer(Config const& config);
 
         // Fix for Clang compile bug:
         // https://stackoverflow.com/questions/64138924/struct-with-default-members-initializers-cannot-be-inside-class-and-used-as-defa

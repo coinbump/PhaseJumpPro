@@ -27,7 +27,6 @@ namespace PJ {
         return stream.str();
     }
 
-    // TODO: rename to BuildString?
     template <class... Arguments>
     String MakeString(Arguments&&... args) {
         std::stringstream stream;

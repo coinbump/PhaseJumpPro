@@ -47,7 +47,7 @@ namespace PJ {
 
         Updatable updatable;
 
-        Animator(Config config) :
+        Animator(Config const& config) :
             timer(config.duration, config.cycleType) {
             updatable.onUpdateFunc = [=, this](auto& updatable, TimeSlice time) {
                 This& animator = *this;

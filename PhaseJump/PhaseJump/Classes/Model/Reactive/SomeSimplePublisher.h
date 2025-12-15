@@ -15,7 +15,7 @@ namespace PJ {
     struct SomeSimplePublisher {
         using Subscription = SomeSimpleSubscription<Output>;
         using ReceiveFunc = std::function<void(Output const&)>;
-        using SubscriptionList = List<WP<Subscription>>;
+        using SubscriptionList = VectorList<WP<Subscription>>;
 
     protected:
         bool isComplete = false;

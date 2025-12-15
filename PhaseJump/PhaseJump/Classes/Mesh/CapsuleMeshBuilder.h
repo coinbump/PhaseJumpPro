@@ -23,7 +23,7 @@ namespace PJ {
             Angle angleStep = Angle::WithDegrees(10);
         };
 
-        CapsuleMeshBuilder(Config config);
+        CapsuleMeshBuilder(Config const& config);
 
         float CapRadius() const {
             return worldSize.AxisValueOrthogonal(axis) / 2.0f;

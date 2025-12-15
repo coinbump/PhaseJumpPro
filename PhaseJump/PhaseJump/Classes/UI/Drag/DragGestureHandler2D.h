@@ -8,9 +8,8 @@
  CODE REVIEW: 9/4/24
  */
 namespace PJ {
-    // TODO: remove some? (because of funcs)
     /// Updates with deltas of the drag while it is in progress
-    class SomeDragGestureHandler2D : public SomeDragHandler {
+    class DragGestureHandler2D : public SomeDragHandler {
     public:
         struct Update {
             enum class Type {
@@ -24,14 +23,12 @@ namespace PJ {
                 End
             };
 
-            SomeDragGestureHandler2D& handler;
+            DragGestureHandler2D& handler;
             Type type;
             Vector2 worldPosition;
             Vector2 delta;
 
-            Update(
-                SomeDragGestureHandler2D& gesture, Type type, Vector2 worldPosition, Vector2 delta
-            ) :
+            Update(DragGestureHandler2D& gesture, Type type, Vector2 worldPosition, Vector2 delta) :
                 handler(gesture),
                 type(type),
                 worldPosition(worldPosition),
@@ -69,7 +66,7 @@ namespace PJ {
         // MARK: SomeWorldComponent
 
         String TypeName() const override {
-            return "SomeDragGestureHandler2D";
+            return "DragGestureHandler2D";
         }
     };
 } // namespace PJ

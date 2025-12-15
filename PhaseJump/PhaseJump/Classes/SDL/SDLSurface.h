@@ -30,7 +30,7 @@ namespace PJ {
             RGBABitmap* bitmap{};
         };
 
-        SDLSurface(Config config);
+        SDLSurface(Config const& config);
 
         SDL_Surface* Surface() const {
             return surface;

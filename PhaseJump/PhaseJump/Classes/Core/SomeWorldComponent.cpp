@@ -10,12 +10,12 @@ using namespace PJ;
 using This = SomeWorldComponent;
 
 SomeWorldComponent::SomeWorldComponent(String name) :
-    _core(*this) {
-    _core.name = name;
+    attachmentCore(*this) {
+    attachmentCore.name = name;
 
     PlanUIFunc planUIFunc = [this](auto args) {
         args.planner.Text([this]() {
-            VectorList<String> signalNames = _core.SignalHandlerNames();
+            VectorList<String> signalNames = attachmentCore.SignalHandlerNames();
             auto text = Joined(signalNames, ", ");
 
             return UIPlanner::TextConfig{ .label = "Signals", .text = text };
@@ -77,7 +77,7 @@ UP<UIPlan> SomeWorldComponent::MakeUIPlan(String context) {
 }
 
 This& SomeWorldComponent::AddSignalHandler(SignalHandler handler) {
-    _core.AddSignalHandler(handler);
+    attachmentCore.AddSignalHandler(handler);
     OnAddSignalHandler();
     return *this;
 }

@@ -101,7 +101,7 @@ namespace PJ {
             return lhs.order < rhs.order;
         };
 
-        RenderCameraModel(Config config);
+        RenderCameraModel(Config const& config);
 
         /// @return Returns the override material for this model if one exists
         SP<RenderMaterial> OverrideMaterial(RenderModel const& model);

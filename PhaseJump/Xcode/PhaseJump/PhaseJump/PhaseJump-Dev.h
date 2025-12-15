@@ -132,6 +132,7 @@
 #include <PhaseJump-Dev/ImGuiGLRenderProcessor.h>
 #include <PhaseJump-Dev/ImGuiMainMenuBarPainter.h>
 #include <PhaseJump-Dev/ImGuiUIPlanPainter.h>
+#include <PhaseJump-Dev/ImGuiView.h>
 #include <PhaseJump-Dev/ImRenderer.h>
 #include <PhaseJump-Dev/ImTypes.h>
 #include <PhaseJump-Dev/IncludeAliasFileProcessor.h>
@@ -288,7 +289,7 @@
 #include <PhaseJump-Dev/SomeCollider2D.h>
 #include <PhaseJump-Dev/SomeControllerUIEvent.h>
 #include <PhaseJump-Dev/SomeDocument.h>
-#include <PhaseJump-Dev/SomeDragGestureHandler2D.h>
+#include <PhaseJump-Dev/DragGestureHandler2D.h>
 #include <PhaseJump-Dev/SomeDragHandler.h>
 #include <PhaseJump-Dev/SomeDriver.h>
 #include <PhaseJump-Dev/SomeDropTarget.h>

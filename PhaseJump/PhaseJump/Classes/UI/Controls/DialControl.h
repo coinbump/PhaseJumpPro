@@ -31,7 +31,7 @@ namespace PJ {
             Binding<float> valueBinding;
         };
 
-        DialControl(Config config);
+        DialControl(Config const& config);
 
         // MARK: SomeWorldComponent
 

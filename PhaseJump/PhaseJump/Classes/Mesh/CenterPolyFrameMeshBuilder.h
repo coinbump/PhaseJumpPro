@@ -29,7 +29,7 @@ namespace PJ {
         PathCap startCap = PathCap::Flat;
         PathCap endCap = PathCap::Flat;
 
-        CenterPolyFrameMeshBuilder(Config config);
+        CenterPolyFrameMeshBuilder(Config const& config);
 
         // MARK: SomeMeshBuilder
 

@@ -3,7 +3,7 @@
 using namespace std;
 using namespace PJ;
 
-GLTexture::GLTexture(Config config) :
+GLTexture::GLTexture(Config const& config) :
     Base(config) {
     if (config.bitmap) {
         auto& bitmap = *config.bitmap;

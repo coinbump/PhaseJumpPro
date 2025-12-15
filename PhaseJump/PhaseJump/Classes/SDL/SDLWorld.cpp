@@ -22,8 +22,6 @@ void SDLWorld::OnGo() {
     GUARD_LOG(window, "ERROR: SDLWorld is missing window")
     GUARD_LOG(renderContext, "ERROR: SDLWorld is missing render context")
 
-    uiScale = SDL_GetWindowPixelDensity(window);
-
     /*
      Disable Ctrl-Tab shortcuts in ImGui so we can use them
 

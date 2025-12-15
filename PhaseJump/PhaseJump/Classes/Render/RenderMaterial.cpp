@@ -7,7 +7,7 @@
 using namespace std;
 using namespace PJ;
 
-RenderMaterial::RenderMaterial(Config config) {
+RenderMaterial::RenderMaterial(Config const& config) {
     if (config.texture) {
         SetTexture(config.texture);
     }
@@ -32,7 +32,7 @@ String RenderMaterial::BuildPropertyId() const {
     builder.AddCollection("uniformColors", uniformColors);
     builder.AddCollection("uniformFloats", uniformFloats);
 
-    List<uint32_t> textureIds;
+    VectorList<uint32_t> textureIds;
     std::transform(
         textures.cbegin(), textures.cend(), std::back_inserter(textureIds),
         [](SP<SomeTexture> texture) { return texture->RenderId(); }

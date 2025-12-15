@@ -12,7 +12,7 @@
 using namespace std;
 using namespace PJ;
 
-TextRenderer::TextRenderer(Config config) :
+TextRenderer::TextRenderer(Config const& config) :
     Base(config.worldSize),
     font(config.font),
     text(config.text) {

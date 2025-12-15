@@ -4,7 +4,7 @@
 using namespace std;
 using namespace PJ;
 
-PolyFrameMeshBuilder::PolyFrameMeshBuilder(Config config) :
+PolyFrameMeshBuilder::PolyFrameMeshBuilder(Config const& config) :
     poly(config.poly),
     polyClose(config.polyClose),
     strokeWidth(config.strokeWidth),

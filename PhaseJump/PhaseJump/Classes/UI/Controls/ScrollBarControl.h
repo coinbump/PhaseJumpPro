@@ -8,7 +8,7 @@
 // Future feature. Unimplemented
 #if FALSE
 namespace PJ {
-    class SomeDragGestureHandler2D;
+    class DragGestureHandler2D;
 
     /**
      ScrollBar UI control is used with scroll views
@@ -56,7 +56,7 @@ namespace PJ {
 
         Vector2 dragStartInputPosition;
         Vector3 thumbStartLocalPosition;
-        SP<SomeDragGestureHandler2D> thumbDragHandler;
+        SP<DragGestureHandler2D> thumbDragHandler;
 
         Rect TrackFrame() const;
         std::optional<Rect> ThumbFrame() const;

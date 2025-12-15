@@ -63,7 +63,7 @@ namespace PJ {
     public:
         ProcessFileFunc processFileFunc;
 
-        FilesProcessor(ProcessFileFunc processFileFunc, Config config);
+        FilesProcessor(ProcessFileFunc processFileFunc, Config const& config);
 
         virtual ~FilesProcessor() {}
 

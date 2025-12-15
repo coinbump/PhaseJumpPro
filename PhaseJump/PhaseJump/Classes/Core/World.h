@@ -1,11 +1,13 @@
 #pragma once
 
+#include "DesignSystem.h"
 #include "EventWorldSystem.h"
 #include "OrthoCamera.h"
 #include "Prefab.h"
 #include "RateLimiter.h"
 #include "ResourceCatalog.h"
 #include "SomeRenderContext.h"
+#include "SomeRenderEngine.h"
 #include "SomeUIEventPoller.h"
 #include "Updatable.h"
 #include "Utils.h"
@@ -31,6 +33,17 @@ namespace PJ {
      components that implement specific behavior. A renderer component produces render models, which
      are sent to the render system. Those render models are then processed by the render
      engine into GPU commands
+
+     Architecture Decisions
+     - Shared pointer vs unique pointer. Shared pointer for core collections was chosen for
+     convenience. Unique pointer is more performant but requires more work to use properly. Shared
+     pointer mimics modern reference counted languages like C# and Swift.
+
+     Best practices:
+     - Optimize: Avoid copying shared pointers (slow)
+     - Optimize: Avoid dynamic_pointer_cast or DCAST, use dynamic_cast instead
+     - Vector lists are usually preferred over linked lists
+     - Use unique pointer over shared pointer to indicate single ownership
      */
     class World : public Base {
     public:
@@ -38,6 +51,7 @@ namespace PJ {
 
     protected:
         using TimePoint = std::chrono::time_point<std::chrono::steady_clock>;
+        using SystemList = VectorList<SP<SomeWorldSystem>>;
 
         /// Stores time point to calculate FPS
         std::optional<TimePoint> fpsCheckTimePoint;
@@ -46,9 +60,9 @@ namespace PJ {
         uint64_t renderFrameCount{};
 
         /// Systems attached to this world
-        VectorList<SP<SomeWorldSystem>> systems;
+        SystemList systems;
 
-        /// Main camera for this world
+        /// Cached main camera for this world
         mutable WP<SomeCamera> mainCamera;
 
         /// If true, the world will not receive update events
@@ -68,10 +82,6 @@ namespace PJ {
         /// Window that corresponds to this world
         SomePlatformWindow* window{};
 
-        /// Number of pixels per point
-        /// Example: on a Retina screen, each point represents 2 pixels, this value would be 2
-        float uiScale = 1;
-
         /// Stores objects that need time updates
         Updatables updatables;
 
@@ -82,17 +92,17 @@ namespace PJ {
         ResourceCatalog resources;
 
         /// Renders the world
-        SP<SomeRenderEngine> renderEngine;
+        UP<SomeRenderEngine> renderEngine;
 
         /// Render context for this world
-        SP<SomeRenderContext> renderContext;
+        UP<SomeRenderContext> renderContext;
 
         /// Polls for UI events
         UP<SomeUIEventPoller> uiEventPoller;
 
         /// Design system for quick build UI
         /// Allows us to add theme components with ViewBuilder
-        SP<DesignSystem> designSystem;
+        UP<DesignSystem> designSystem;
 
         /// Render materials that can be shared between objects
         UnorderedMap<String, SP<RenderMaterial>> renderMaterials;
@@ -136,20 +146,19 @@ namespace PJ {
 
         /// @return Returns the first system that matches the type
         template <class Type>
-        SP<Type> TypeSystem() {
-            auto found =
-                std::find_if(systems.begin(), systems.end(), [](SP<SomeWorldSystem> system) {
-                    return DCAST<Type>(system) != nullptr;
-                });
+        Type* TypeSystem() {
+            auto found = std::find_if(systems.begin(), systems.end(), [](auto& system) {
+                return dynamic_cast<Type*>(system.get()) != nullptr;
+            });
 
             GUARDR(found != systems.end(), nullptr)
-            return DCAST<Type>(*found);
+            return dynamic_cast<Type*>(found->get());
         }
 
         /// @return Returns the first system that matches the type
         /// Convenience name
         template <class Type>
-        SP<Type> GetSystem() {
+        Type* GetSystem() {
             return TypeSystem<Type>();
         }
 
@@ -174,10 +183,10 @@ namespace PJ {
         virtual void RenderNow();
 
         /// Adds a node to the root node
-        void Add(SP<WorldNode> node);
+        void Add(SP<WorldNode> const& node);
 
         /// Adds a system
-        void Add(SP<SomeWorldSystem> system);
+        void Add(SP<SomeWorldSystem> const& system);
 
         /// Adds a node with arguments
         template <typename... Arguments>
@@ -203,12 +212,12 @@ namespace PJ {
         }
 
         /// @return Returns the list of systems attached to this world
-        VectorList<SP<SomeWorldSystem>>& Systems() {
+        SystemList& Systems() {
             return systems;
         }
 
         /// @return Returns the list of systems attached to this world
-        VectorList<SP<SomeWorldSystem>> const& Systems() const {
+        SystemList const& Systems() const {
             return systems;
         }
 
@@ -231,7 +240,7 @@ namespace PJ {
         void Remove(SomeWorldSystem& system);
 
         /// Removes a list of systems
-        void Remove(VectorList<SP<SomeWorldSystem>> systems);
+        void Remove(VectorList<SomeWorldSystem*> const& systems);
 
         /// Removes all systems
         void RemoveAllSystems();

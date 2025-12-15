@@ -6,7 +6,7 @@ using namespace PJ;
 
 using This = AttributedString;
 
-AttributedString::AttributedString(Config config) {
+AttributedString::AttributedString(Config const& config) {
     parts.push_back({ .text = config.text });
 }
 

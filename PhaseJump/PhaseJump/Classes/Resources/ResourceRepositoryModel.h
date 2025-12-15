@@ -33,10 +33,12 @@ namespace PJ {
             operationRegistry;
 
     public:
+        using LoadResourcesOperationList = VectorList<SP<SomeLoadResourcesOperation>>;
+
         virtual ~ResourceRepositoryModel() {}
 
         virtual std::optional<String> TypeForFileExtension(String fileExtension);
 
-        virtual VectorList<SP<SomeLoadResourcesOperation>> MakeLoadOperations(ResourceInfo info);
+        virtual LoadResourcesOperationList MakeLoadOperations(ResourceInfo info);
     };
 } // namespace PJ

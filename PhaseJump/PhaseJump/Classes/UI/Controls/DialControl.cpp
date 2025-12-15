@@ -1,11 +1,11 @@
 #include "DialControl.h"
+#include "DragGestureHandler2D.h"
 #include "QuickBuilder.h"
-#include "SomeDragGestureHandler2D.h"
 
 using namespace std;
 using namespace PJ;
 
-DialControl::DialControl(Config config) :
+DialControl::DialControl(Config const& config) :
     radius(config.radius),
     fullDragDelta(config.fullDragDelta),
     valueBinding(config.valueBinding) {
@@ -17,17 +17,17 @@ void DialControl::Awake() {
 
     QB(*owner)
         .CircleCollider(radius)
-        .With<SomeDragGestureHandler2D>()
-        .ModifyLatest<SomeDragGestureHandler2D>([](auto& handler) {
+        .With<DragGestureHandler2D>()
+        .ModifyLatest<DragGestureHandler2D>([](auto& handler) {
             handler.onDragGestureUpdateFunc = [=](auto update) {
                 auto dial = update.handler.owner->template TypeComponent<DialControl>();
                 GUARD(dial);
 
                 switch (update.type) {
-                case SomeDragGestureHandler2D::Update::Type::Start:
+                case DragGestureHandler2D::Update::Type::Start:
                     dial->dragStartValue = dial->valueBinding.Value();
                     break;
-                case SomeDragGestureHandler2D::Update::Type::Update:
+                case DragGestureHandler2D::Update::Type::Update:
                     {
                         float value = dial->dragStartValue;
                         auto delta = update.delta;
@@ -36,7 +36,7 @@ void DialControl::Awake() {
                         dial->valueBinding.SetValue(value);
                         break;
                     }
-                case SomeDragGestureHandler2D::Update::Type::End:
+                case DragGestureHandler2D::Update::Type::End:
                     break;
                 }
             };

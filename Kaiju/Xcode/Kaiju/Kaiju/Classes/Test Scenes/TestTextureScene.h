@@ -250,7 +250,17 @@ public:
             meshNode.SetScale2D(0.5);
 
             QuickBuilder qb(meshNode);
-            qb.ImGui("Test", []() { ImGui::Text("hello"); });
+            //            qb.ImGui("Test", []() { ImGui::Text("hello"); });
+
+            SP<ImGuiView> igv =
+                MAKE<ImGuiView>(ImGuiView::Config{ .title = "##Test", .paintFunc = []() {
+                                                      ImGui::Text("hello");
+                                                      ImGui::Button("Button");
+                                                      ImGui::Button("Button2");
+                                                      ImGui::Button("Button3");
+                                                  } });
+            igv->SetFrame({ .origin = { 0, 0 }, .size = { 400, 400 } });
+            meshNode.Add(igv);
 
 // #define BLINK
 #ifdef BLINK

@@ -27,7 +27,7 @@ public:
         GUARDR(owner, 0)
 
         VectorList<Emitter*> emitters;
-        owner->CollectChildTypeComponents<Emitter>(emitters);
+        owner->CollectChildTypeComponentsIf<Emitter>(emitters, [](auto& element) { return true; });
         if (!IsEmpty(emitters)) {
             return static_cast<TimerDriver*>(emitters[0]->driver.get())->Duration();
         }
@@ -36,7 +36,7 @@ public:
 
     void SetEmitDelta(float value) {
         VectorList<Emitter*> emitters;
-        owner->CollectChildTypeComponents<Emitter>(emitters);
+        owner->CollectChildTypeComponentsIf<Emitter>(emitters, [](auto& element) { return true; });
         if (!IsEmpty(emitters)) {
             static_cast<TimerDriver*>(emitters[0]->driver.get())->SetDuration(value);
         }

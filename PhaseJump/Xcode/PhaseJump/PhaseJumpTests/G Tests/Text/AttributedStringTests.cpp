@@ -8,7 +8,7 @@ using namespace std;
 namespace AttributedStringTests {
     class TestAttributedString : public AttributedString {
     public:
-        TestAttributedString(Config config = {}) : AttributedString(config) {
+        TestAttributedString(Config const& config = {}) : AttributedString(config) {
         }
 
         void AddTextPart(String value) {

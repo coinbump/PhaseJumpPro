@@ -280,7 +280,7 @@ namespace PJ {
         }
 
         void SetWorldSize(Vector3 value) override {
-            SetFrame({ frame.origin, { value.x, value.y } });
+            SetFrame({ .origin = frame.origin, .size = { value.x, value.y } });
         }
 
         // MARK: SomeWorldComponent

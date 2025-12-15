@@ -7,7 +7,7 @@
 using namespace std;
 using namespace PJ;
 
-Slice3TextureRenderer::Slice3TextureRenderer(Config config) :
+Slice3TextureRenderer::Slice3TextureRenderer(Config const& config) :
     Base({}),
     texture(config.texture),
     axis(config.axis),

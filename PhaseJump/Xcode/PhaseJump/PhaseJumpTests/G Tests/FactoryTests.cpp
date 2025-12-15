@@ -33,7 +33,7 @@ using namespace FactoryTests;
 TEST(Factory, FactoryNew) {
     Factory<TestClass> factory([]() { return NEW<TestClass>(); });
     EXPECT_NE(factory.Make(), nullptr);
-    EXPECT_NE(DCAST<TestClass>(factory.Make()), nullptr);
+    EXPECT_NE(dynamic_cast<TestClass*>(factory.Make().get()), nullptr);
 }
 
 TEST(Factory, Factory) {
@@ -41,7 +41,7 @@ TEST(Factory, Factory) {
 
     Factory<TestClass> factory(constructor);
     EXPECT_NE(factory.Make(), nullptr);
-    EXPECT_NE(DCAST<TestClass>(factory.Make()), nullptr);
+    EXPECT_NE(dynamic_cast<TestClass*>(factory.Make().get()), nullptr);
 }
 
 TEST(Factory, FactoryNewWithArgs) {
@@ -53,5 +53,5 @@ TEST(Factory, FactoryNewWithArgs) {
     EXPECT_EQ(10, value->intValue);
     EXPECT_EQ("t", value->stringValue);
 
-    EXPECT_NE(DCAST<TestClassWithArgs>(factory.MakeBase(11, "y")), nullptr);
+    EXPECT_NE(dynamic_cast<TestClassWithArgs*>(factory.MakeBase(11, "y").get()), nullptr);
 }

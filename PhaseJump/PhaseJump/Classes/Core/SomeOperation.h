@@ -75,7 +75,7 @@ namespace PJ {
             OperationFunc runFunc;
         };
 
-        ResultOperation(Config config) :
+        ResultOperation(Config const& config) :
             core(config.core),
             runFunc(config.runFunc) {}
 

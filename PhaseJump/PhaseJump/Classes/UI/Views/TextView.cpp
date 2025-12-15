@@ -48,7 +48,7 @@ TextView::TextView() {
     SetIdealSizeFunc(idealSizeFunc);
 }
 
-TextView::TextView(Config config) :
+TextView::TextView(Config const& config) :
     TextView() {
     this->config = config;
 }

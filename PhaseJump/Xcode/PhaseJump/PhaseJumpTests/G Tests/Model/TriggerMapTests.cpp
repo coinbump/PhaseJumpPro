@@ -24,6 +24,6 @@ TEST(TriggerMap, Test)
     EXPECT_EQ(10, sut.FirstActionFor(1).value());
 
     auto actions = sut.ActionsFor(2);
-    List<int> expectedValues{10, 4};
+    VectorList<int> expectedValues{10, 4};
     EXPECT_EQ(expectedValues, actions);
 }

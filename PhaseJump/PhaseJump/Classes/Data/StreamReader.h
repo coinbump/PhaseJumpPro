@@ -23,7 +23,7 @@ namespace PJ {
 
         Config config;
 
-        StreamReader(Config config) :
+        StreamReader(Config const& config) :
             config(config) {}
 
         template <typename Type>

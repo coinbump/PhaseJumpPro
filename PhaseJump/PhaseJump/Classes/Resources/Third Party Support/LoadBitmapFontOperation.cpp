@@ -84,8 +84,8 @@ SomeLoadResourcesOperation::Result LoadBitmapFontOperation::LoadResources() {
         Tags pageTags = ReadLine(file);
         Tags charsTags = ReadLine(file);
 
-        List<Tags> charLines;
-        List<Tags> kernLines;
+        VectorList<Tags> charLines;
+        VectorList<Tags> kernLines;
 
         String line;
         while (getline(file, line)) {
@@ -146,15 +146,17 @@ SomeLoadResourcesOperation::Result LoadBitmapFontOperation::LoadResources() {
             float normalSizeX = (float)size.x / (float)texture->size.x;
             float normalSizeY = (float)size.y / (float)texture->size.y;
 
-            AtlasTexture::Config config{ .base = { .id = MakeString(id),
-                                                   .origin = origin,
-                                                   .size = size,
-                                                   .trimOrigin = Vector2Int::zero,
-                                                   .untrimmedSize = size,
-                                                   .normalOrigin = { normalOriginX, normalOriginY },
-                                                   .normalSize = { normalSizeX, normalSizeY },
-                                                   .alphaMode = alphaMode },
-                                         .parent = textureAtlas.get() };
+            AtlasTexture::Config const& config{
+                .base = { .id = MakeString(id),
+                          .origin = origin,
+                          .size = size,
+                          .trimOrigin = Vector2Int::zero,
+                          .untrimmedSize = size,
+                          .normalOrigin = { normalOriginX, normalOriginY },
+                          .normalSize = { normalSizeX, normalSizeY },
+                          .alphaMode = alphaMode },
+                .parent = textureAtlas.get()
+            };
             auto atlasTexture = MAKE<AtlasTexture>(config);
 
             textureAtlas->Add(atlasTexture);

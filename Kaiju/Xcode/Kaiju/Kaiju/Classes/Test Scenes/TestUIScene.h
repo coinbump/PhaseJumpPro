@@ -22,22 +22,22 @@ public:
             .And("Drag Gesture")
             .Circle(20)
             .CircleCollider(20)
-            .With<SomeDragGestureHandler2D>()
+            .With<DragGestureHandler2D>()
             .And("label")
             .With<TextRenderer>(TextRenderer::Config{
                 .font = font, .text = "Delta:", .worldSize = { 400, 400 } })
             .SetLocalPosition({ 0, -30, 0 })
-            .ModifyLatest<SomeDragGestureHandler2D>([](SomeDragGestureHandler2D& c) {
+            .ModifyLatest<DragGestureHandler2D>([](DragGestureHandler2D& c) {
                 auto childComponents = c.owner->GetDescendantComponents<TextRenderer>();
                 GUARD(!IsEmpty(childComponents))
                 auto textRenderer = childComponents[0];
 
-                c.onDragGestureUpdateFunc = [=](SomeDragGestureHandler2D::Update update) {
+                c.onDragGestureUpdateFunc = [=](DragGestureHandler2D::Update update) {
                     switch (update.type) {
-                    case SomeDragGestureHandler2D::Update::Type::Start:
+                    case DragGestureHandler2D::Update::Type::Start:
                         std::cout << "Drag start" << std::endl;
                         break;
-                    case SomeDragGestureHandler2D::Update::Type::End:
+                    case DragGestureHandler2D::Update::Type::End:
                         std::cout << "Drag end" << std::endl;
                         break;
                     default:

@@ -49,10 +49,13 @@ World::World() {
 
     // Default design system is the "ugly duckling" design system,
     // a basic and simple UI
-    designSystem = MAKE<DuckDesignSystem>();
+    designSystem = std::make_unique<DuckDesignSystem>();
 }
 
-void World::Add(SP<SomeWorldSystem> system) {
+void World::Add(SP<SomeWorldSystem> const& system) {
+    GUARD(system)
+    GUARD_LOG(system->World() == nullptr, "ERROR. Can't add owned system to world")
+
     system->SetWorld(this);
     systems.push_back(system);
 }
@@ -85,7 +88,9 @@ void World::DestroyAllNodes() {
 }
 
 void World::RemoveAllSystems() {
-    Remove(systems);
+    auto mappedSystems = Map<SomeWorldSystem*>(systems, [](auto& system) { return system.get(); });
+
+    Remove(mappedSystems);
 }
 
 void World::Remove(SomeWorldSystem& system) {
@@ -95,8 +100,7 @@ void World::Remove(SomeWorldSystem& system) {
     RemoveFirstIf(systems, [&](auto& i) { return i.get() == &system; });
 }
 
-// List is passed as copy to prevent iteration-mutation crash
-void World::Remove(VectorList<SP<SomeWorldSystem>> systems) {
+void World::Remove(VectorList<SomeWorldSystem*> const& systems) {
     for (auto& system : systems) {
         Remove(*system);
     }
@@ -110,7 +114,7 @@ SomeCamera* World::MainCamera() const {
     if (!mainCamera.expired()) {
         auto cameraResult = mainCamera.lock().get();
 
-        // Even if we have a reference to a camera, make sure it is valid
+        // Make sure the cached reference isn't an orphan
         if (cameraResult->owner && cameraResult->owner->World()) {
             return cameraResult;
         }
@@ -323,7 +327,7 @@ FinishType World::OnUpdate(TimeSlice _time) {
     return FinishType::Continue;
 }
 
-void World::Add(SP<WorldNode> node) {
+void World::Add(SP<WorldNode> const& node) {
 #ifdef PROFILE
     DevProfiler devProfiler("Add", [](String value) { cout << value; });
 #endif
@@ -371,7 +375,6 @@ ScreenPosition World::WorldToScreen(WorldPosition worldPos) const {
     auto camera = MainCamera();
     GUARDR(camera, {})
 
-    // TODO: this isn't taking into account the hiDp world scale
     auto result = camera->WorldToScreen(worldPos);
     return result;
 }

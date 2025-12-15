@@ -28,7 +28,7 @@ namespace PJ {
         Angle() :
             value(0) {}
 
-        Angle(Config config) :
+        Angle(Config const& config) :
             value(config.degrees) {}
 
         float Degrees() const {

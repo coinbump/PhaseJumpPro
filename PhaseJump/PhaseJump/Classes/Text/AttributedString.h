@@ -74,7 +74,7 @@ namespace PJ {
             String text;
         };
 
-        AttributedString(Config config = {});
+        AttributedString(Config const& config = {});
 
         AttributedString(String value) :
             AttributedString({ .text = value }) {}

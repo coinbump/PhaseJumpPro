@@ -10,13 +10,15 @@ using namespace std;
 using namespace PJ;
 namespace fs = std::filesystem;
 
+using LoadResourcesOperationList = ResourceRepository::LoadResourcesOperationList;
+
 void ResourceRepository::Load(ResourceInfo info) {
     // Important: don't use this in a shipping app. This blocks the main thread
     auto operations = MakeLoadOperations(info);
     Run(operations);
 }
 
-void ResourceRepository::Run(VectorList<SP<SomeLoadResourcesOperation>> const& operations) {
+void ResourceRepository::Run(LoadResourcesOperationList const& operations) {
     // FUTURE: support loading on background thread
     // FUTURE: support both main + background operations (load image on
     // background thread -> create OpenGL texture on main thread)
@@ -53,8 +55,7 @@ void ResourceRepository::Run(VectorList<SP<SomeLoadResourcesOperation>> const& o
     }
 }
 
-VectorList<SP<SomeLoadResourcesOperation>> ResourceRepository::MakeLoadOperations(ResourceInfo info
-) {
+LoadResourcesOperationList ResourceRepository::MakeLoadOperations(ResourceInfo info) {
     auto operations = repoModel.MakeLoadOperations(info);
     if (IsEmpty(operations)) {
         PJ::Log("ERROR. No load operations for type: ", info.type);
@@ -64,9 +65,8 @@ VectorList<SP<SomeLoadResourcesOperation>> ResourceRepository::MakeLoadOperation
     return operations;
 }
 
-VectorList<SP<SomeLoadResourcesOperation>>
-ResourceRepository::MakeLoadOperations(ResourceRepositoryPlan plan) {
-    VectorList<SP<SomeLoadResourcesOperation>> result;
+LoadResourcesOperationList ResourceRepository::MakeLoadOperations(ResourceRepositoryPlan plan) {
+    LoadResourcesOperationList result;
 
     for (auto& info : plan.infos) {
         auto operations = MakeLoadOperations(info);

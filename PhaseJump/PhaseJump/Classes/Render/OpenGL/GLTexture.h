@@ -17,7 +17,7 @@ namespace PJ {
     public:
         using Base = SomeTexture;
 
-        GLTexture(Config config);
+        GLTexture(Config const& config);
 
         virtual ~GLTexture();
 

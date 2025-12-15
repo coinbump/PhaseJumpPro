@@ -38,7 +38,7 @@ namespace PJ {
         // FUTURE: WORK IN PROGRESS (unfinished)
         PathCorner corner = PathCorner::None;
 
-        PolyFrameMeshBuilder(Config config);
+        PolyFrameMeshBuilder(Config const& config);
 
         // MARK: SomeMeshBuilder
 

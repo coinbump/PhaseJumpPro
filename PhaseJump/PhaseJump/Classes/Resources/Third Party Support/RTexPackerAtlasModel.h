@@ -37,6 +37,6 @@ namespace PJ {
         };
 
         Atlas atlas;
-        List<Sprite> sprites;
+        VectorList<Sprite> sprites;
     };
 } // namespace PJ

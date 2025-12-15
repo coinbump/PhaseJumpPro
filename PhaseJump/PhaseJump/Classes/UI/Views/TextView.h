@@ -42,7 +42,7 @@ namespace PJ {
 
     public:
         TextView();
-        TextView(Config config);
+        TextView(Config const& config);
 
         void Configure(Config value);
     };

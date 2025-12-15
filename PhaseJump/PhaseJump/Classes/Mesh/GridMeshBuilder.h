@@ -22,7 +22,7 @@ namespace PJ {
             float strokeWidth = 1;
         };
 
-        GridMeshBuilder(Config config) :
+        GridMeshBuilder(Config const& config) :
             worldSize(config.worldSize),
             gridSize(config.gridSize),
             strokeWidth(config.strokeWidth) {};

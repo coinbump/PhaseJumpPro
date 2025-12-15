@@ -158,7 +158,7 @@ RenderWorldSystem::ProcessorList const& RenderWorldSystem::Processors() const {
 
 // MARK: RenderCameraModel
 
-RenderCameraModel::RenderCameraModel(RenderCameraModel::Config config) :
+RenderCameraModel::RenderCameraModel(RenderCameraModel::Config const& config) :
     renderContext(config.camera.renderContext ? config.camera.renderContext.get() : config.context),
     camera(&config.camera),
     nodes(config.nodes),

@@ -35,7 +35,7 @@ namespace PJ {
             FeatureStateMap features = { { RenderFeature::Blend, RenderFeatureState::Enable } };
         };
 
-        SpriteRenderer(Config config);
+        SpriteRenderer(Config const& config);
         SpriteRenderer(SP<SomeTexture> texture);
         SpriteRenderer(SP<RenderMaterial> material);
 

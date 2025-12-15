@@ -100,8 +100,8 @@ namespace PJ {
     }
 
     /// @return Returns the index of the item that where check returns true
-    template <class Collection, class Predicate>
-    std::optional<size_t> constexpr IndexOfIf(Collection const& collection, Predicate check) {
+    template <class Collection, class UnaryPred>
+    std::optional<size_t> constexpr IndexOfIf(Collection const& collection, UnaryPred check) {
         auto i = std::find_if(collection.begin(), collection.end(), [&](auto& item) {
             return check(item);
         });

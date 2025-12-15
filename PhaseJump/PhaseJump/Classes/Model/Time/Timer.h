@@ -36,7 +36,7 @@ namespace PJ {
             Func onFinishFunc;
         };
 
-        Timer(Config config) :
+        Timer(Config const& config) :
             Timer(config.duration, config.runType, config.onFinishFunc) {}
 
         Timer(float duration, RunType runType, Func onFinishFunc = {}) :

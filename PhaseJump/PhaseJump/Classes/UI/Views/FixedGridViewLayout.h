@@ -48,7 +48,7 @@ namespace PJ {
         void CalculateFrames(Vector2 boundsSize, VectorList<ViewProxy> const& children) override;
 
     public:
-        FixedGridViewLayout(Config config);
+        FixedGridViewLayout(Config const& config);
 
         // MARK: SomeViewLayout:
 

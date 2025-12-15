@@ -54,7 +54,8 @@ void KaijuGo() {
     // Store SDL objects statically so they don't get destroyed
     static auto configResult = _class.Configure(config, world);
 
-    auto designSystem = MAKE<DuckDesignSystem>();
+    auto _designSystem = NEW<DuckDesignSystem>();
+    auto designSystem = _designSystem.get();
     designSystem->AddElementTexture(
         UIElementId::SliderTrack, world->resources.FindTexture("slider-track")
     );
@@ -73,7 +74,7 @@ void KaijuGo() {
                                            .bottomRightInsets = { 10, 10 } }
     );
     designSystem->theme->SetElementTag(UIElementId::SliderTrack, UITag::EndCapSize, 20.0f);
-    world->designSystem = designSystem;
+    world->designSystem = std::move(_designSystem);
 
     auto kaijuSystem = MAKE<KaijuWorldSystem>();
     world->Add(kaijuSystem);

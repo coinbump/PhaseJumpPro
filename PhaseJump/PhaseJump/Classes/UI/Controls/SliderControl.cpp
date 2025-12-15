@@ -1,7 +1,7 @@
 #include "SliderControl.h"
 #include "Dev.h"
+#include "DragGestureHandler2D.h"
 #include "QuickBuilder.h"
-#include "SomeDragGestureHandler2D.h"
 #include "SomeRenderer.h"
 #include "UIPlanner.h"
 
@@ -10,7 +10,7 @@ using namespace PJ;
 
 using This = SliderControl;
 
-SliderControl::SliderControl(Config config) :
+SliderControl::SliderControl(Config const& config) :
     axis(config.axis),
     minValue(config.minValue),
     maxValue(config.maxValue),
@@ -77,16 +77,16 @@ void SliderControl::Awake() {
 
     QB(*this->owner).RectCollider();
 
-    dragHandler = owner->AddComponentPtr<SomeDragGestureHandler2D>();
+    dragHandler = owner->AddComponentPtr<DragGestureHandler2D>();
     dragHandler->onDragGestureUpdateFunc = [this](auto update) {
         switch (update.type) {
-        case SomeDragGestureHandler2D::Update::Type::Start:
+        case DragGestureHandler2D::Update::Type::Start:
             OnDragStart(update.worldPosition);
             break;
-        case SomeDragGestureHandler2D::Update::Type::End:
+        case DragGestureHandler2D::Update::Type::End:
             OnDragEnd();
             break;
-        case SomeDragGestureHandler2D::Update::Type::Update:
+        case DragGestureHandler2D::Update::Type::Update:
             OnDragUpdate(update.worldPosition);
             break;
         }

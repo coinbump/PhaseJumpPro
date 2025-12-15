@@ -3,7 +3,7 @@
 
 using namespace PJ;
 
-SDLPlatformWindow::SDLPlatformWindow(Config config) :
+SDLPlatformWindow::SDLPlatformWindow(Config const& config) :
     config(config) {
     SetWorld(config.world);
     GUARD_LOG(world, "ERROR. Missing world for window")

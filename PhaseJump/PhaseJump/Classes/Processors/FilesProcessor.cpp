@@ -3,7 +3,7 @@
 using namespace std;
 using namespace PJ;
 
-FilesProcessor::FilesProcessor(ProcessFileFunc processFileFunc, Config config) :
+FilesProcessor::FilesProcessor(ProcessFileFunc processFileFunc, Config const& config) :
     processFileFunc(processFileFunc),
     config(config) {}
 

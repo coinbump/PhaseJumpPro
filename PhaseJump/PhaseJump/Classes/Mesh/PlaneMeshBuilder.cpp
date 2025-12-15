@@ -3,7 +3,7 @@
 using namespace std;
 using namespace PJ;
 
-PlaneMeshBuilder::PlaneMeshBuilder(Config config) :
+PlaneMeshBuilder::PlaneMeshBuilder(Config const& config) :
     meshSize(config.meshSize),
     worldSize(config.worldSize),
     faceAxis(config.faceAxis) {}

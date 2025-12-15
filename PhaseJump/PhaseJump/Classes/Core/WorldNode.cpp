@@ -9,7 +9,7 @@ using namespace PJ;
 
 using This = WorldNode;
 
-WorldNode::WorldNode(Config config) :
+WorldNode::WorldNode(Config const& config) :
     transform(*this),
     tree(*this) {
     core.id = config.id;
@@ -111,7 +111,7 @@ void WorldNode::Add(SP<SomeWorldComponent> component) {
         component->CheckedStart();
     }
 
-    if (!IsEmpty(component->_core.SignalHandlers())) {
+    if (!IsEmpty(component->attachmentCore.SignalHandlers())) {
         isListener = true;
     }
 }

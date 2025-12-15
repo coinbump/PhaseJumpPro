@@ -17,7 +17,9 @@ namespace PJ {
         /// Used for composed update functions when we don't care about the updatable object
         using ContinueOnUpdateFunc = std::function<void(TimeSlice)>;
         using SimpleOnUpdateFunc = std::function<FinishType(TimeSlice)>;
-        using UpdatableList = List<SP<SomeUpdatable>>;
+
+        /// Shared pointer so multiple objects can observe object
+        using UpdatableList = VectorList<SP<SomeUpdatable>>;
 
     protected:
         UpdatableList list;

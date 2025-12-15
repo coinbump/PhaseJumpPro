@@ -13,7 +13,7 @@ SomeDragHandler::SomeDragHandler() {
                                                static_cast<This*>(&component)->OnPointerDown(event);
                                            } });
 
-    uiSystemResolver = [this]() { return owner->World()->TypeSystem<UIWorldSystem>().get(); };
+    uiSystemResolver = [this]() { return owner->World()->TypeSystem<UIWorldSystem>(); };
 }
 
 bool SomeDragHandler::IsDragging() const {

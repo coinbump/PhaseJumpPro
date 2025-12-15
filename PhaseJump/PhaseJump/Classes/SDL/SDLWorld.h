@@ -56,9 +56,9 @@ namespace PJ {
         }
 
         /// Called before Go to associate types
-        virtual void Configure(SDL_Window* window, SP<SomeRenderContext> renderContext) {
+        virtual void Configure(SDL_Window* window, UP<SomeRenderContext> renderContext) {
             this->window = window;
-            this->renderContext = renderContext;
+            this->renderContext = std::move(renderContext);
         }
 
     protected:

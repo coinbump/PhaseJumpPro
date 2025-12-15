@@ -3,6 +3,8 @@
 using namespace std;
 using namespace PJ;
 
+using LoadResourcesOperationList = ResourceRepositoryModel::LoadResourcesOperationList;
+
 std::optional<String> ResourceRepositoryModel::TypeForFileExtension(String fileExtension) {
     auto iterator = fileExtensionMap.find(fileExtension);
     GUARDR(iterator != fileExtensionMap.end(), std::nullopt)
@@ -10,9 +12,8 @@ std::optional<String> ResourceRepositoryModel::TypeForFileExtension(String fileE
     return iterator->second;
 }
 
-VectorList<SP<SomeLoadResourcesOperation>>
-ResourceRepositoryModel::MakeLoadOperations(ResourceInfo info) {
-    VectorList<SP<SomeLoadResourcesOperation>> result;
+LoadResourcesOperationList ResourceRepositoryModel::MakeLoadOperations(ResourceInfo info) {
+    LoadResourcesOperationList result;
 
     // FUTURE: support multiple load operations if needed
     auto operation = operationRegistry.Make(info.type, info, *this);

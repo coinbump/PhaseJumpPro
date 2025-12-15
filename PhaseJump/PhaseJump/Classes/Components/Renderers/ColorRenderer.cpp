@@ -10,7 +10,7 @@
 using namespace std;
 using namespace PJ;
 
-ColorRenderer::ColorRenderer(Config config) :
+ColorRenderer::ColorRenderer(Config const& config) :
     Base(config.worldSize) {
 
     model.material =

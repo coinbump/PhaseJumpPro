@@ -1,6 +1,6 @@
 #include "ScrollBarControl.h"
 #include "Dev.h"
-#include "SomeDragGestureHandler2D.h"
+#include "DragGestureHandler2D.h"
 #include "SomeRenderer.h"
 
 using namespace std;
@@ -36,19 +36,19 @@ void ScrollBarControl::Awake() {
 
     WP<This> weakThis = SCAST<This>(shared_from_this());
 
-    thumbDragHandler = thumbLock->AddComponentPtr<SomeDragGestureHandler2D>();
+    thumbDragHandler = thumbLock->AddComponentPtr<DragGestureHandler2D>();
     thumbDragHandler->onDragGestureUpdateFunc = [weakThis](auto update) {
         GUARD(!weakThis.expired())
         auto target = weakThis.lock();
 
         switch (update.type) {
-        case SomeDragGestureHandler2D::Update::Type::Start:
+        case DragGestureHandler2D::Update::Type::Start:
             target->OnDragThumbStart(*update.handler.owner, update.worldPosition);
             break;
-        case SomeDragGestureHandler2D::Update::Type::End:
+        case DragGestureHandler2D::Update::Type::End:
             target->OnDragThumbEnd();
             break;
-        case SomeDragGestureHandler2D::Update::Type::Update:
+        case DragGestureHandler2D::Update::Type::Update:
             target->OnDragThumbUpdate(*update.handler.owner, update.worldPosition);
             break;
         }

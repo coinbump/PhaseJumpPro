@@ -49,7 +49,7 @@ namespace PJ {
         /// Each processor must register to run for specific render phases
         UnorderedSet<String> phases;
 
-        RenderProcessor(Config config) :
+        RenderProcessor(Config const& config) :
             name(config.name),
             phases(config.phases) {}
 

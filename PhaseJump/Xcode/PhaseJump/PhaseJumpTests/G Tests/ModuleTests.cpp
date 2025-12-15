@@ -12,8 +12,8 @@ TEST(Module, Core_Foo) {
 
     auto value = ContainsKey(classRegistry.Map(), ClassId::Foo);
     EXPECT_TRUE(value);
-    EXPECT_NE(nullptr, DCAST<_Foo>(classRegistry.MakeType<Base>(ClassId::Foo)));
-    EXPECT_EQ(nullptr, DCAST<_MacFoo>(classRegistry.MakeType<Base>(ClassId::Foo)));
+    EXPECT_NE(nullptr, dynamic_cast<_Foo*>(classRegistry.MakeType<Base>(ClassId::Foo).get()));
+    EXPECT_EQ(nullptr, dynamic_cast<_MacFoo*>(classRegistry.MakeType<Base>(ClassId::Foo).get()));
 }
 
 TEST(Module, MacPlatform_Foo) {
@@ -23,6 +23,6 @@ TEST(Module, MacPlatform_Foo) {
 
     auto value = ContainsKey(classRegistry.Map(), ClassId::Foo);
     EXPECT_TRUE(value);
-    EXPECT_NE(nullptr, DCAST<_Foo>(classRegistry.MakeType<Base>(ClassId::Foo)));
-    EXPECT_NE(nullptr, DCAST<_MacFoo>(classRegistry.MakeType<Base>(ClassId::Foo)));
+    EXPECT_NE(nullptr, dynamic_cast<_Foo*>(classRegistry.MakeType<Base>(ClassId::Foo).get()));
+    EXPECT_NE(nullptr, dynamic_cast<_MacFoo*>(classRegistry.MakeType<Base>(ClassId::Foo).get()));
 }

@@ -72,7 +72,7 @@ namespace PJ {
         /// Optional. Sets the max # of characters to be rendered, for reveal-type animations
         // FUTURE: std::optional<size_t> revealCount;
 
-        TextRenderer(Config config);
+        TextRenderer(Config const& config);
 
         SP<Font> GetFont() const {
             return font;

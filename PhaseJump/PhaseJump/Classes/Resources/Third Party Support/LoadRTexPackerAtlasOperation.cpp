@@ -68,15 +68,17 @@ SomeLoadResourcesOperation::Result LoadRTexPackerAtlasOperation::LoadResources()
             float normalSizeX = (float)size.x / (float)texture->size.x;
             float normalSizeY = (float)size.y / (float)texture->size.y;
 
-            AtlasTexture::Config config{ .base = { .id = sprite.nameId,
-                                                   .origin = origin,
-                                                   .size = size,
-                                                   .trimOrigin = sprite.trimOrigin,
-                                                   .untrimmedSize = sprite.sourceSize,
-                                                   .normalOrigin = { normalOriginX, normalOriginY },
-                                                   .normalSize = { normalSizeX, normalSizeY },
-                                                   .alphaMode = alphaMode },
-                                         .parent = textureAtlas.get() };
+            AtlasTexture::Config const& config{
+                .base = { .id = sprite.nameId,
+                          .origin = origin,
+                          .size = size,
+                          .trimOrigin = sprite.trimOrigin,
+                          .untrimmedSize = sprite.sourceSize,
+                          .normalOrigin = { normalOriginX, normalOriginY },
+                          .normalSize = { normalSizeX, normalSizeY },
+                          .alphaMode = alphaMode },
+                .parent = textureAtlas.get()
+            };
             auto atlasTexture = MAKE<AtlasTexture>(config);
 
             if (sprite._char) {

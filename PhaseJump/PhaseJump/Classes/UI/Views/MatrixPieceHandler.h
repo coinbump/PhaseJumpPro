@@ -38,7 +38,7 @@ namespace PJ {
             SP<MatrixPiece> piece;
         };
 
-        MatrixPieceHandler(Config config) :
+        MatrixPieceHandler(Config const& config) :
             startOrigin(config.origin),
             piece(config.piece) {
             if (!piece) {

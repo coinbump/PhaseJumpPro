@@ -75,7 +75,6 @@ namespace PJ {
         bool isInvisible{};
 
         WorldPartLife life;
-        // TODO: SP-Audit
         TreeNode<This, SP<This>> tree;
 
         uint64_t IntIdImpl() const {
@@ -110,7 +109,7 @@ namespace PJ {
             String name;
         };
 
-        WorldNode(Config config);
+        WorldNode(Config const& config);
         WorldNode(String name = "");
 
         virtual ~WorldNode() {}
@@ -383,10 +382,10 @@ namespace PJ {
         template <class Type>
         Type* TypeComponent() const {
             for (auto& component : components) {
-                auto typeComponent = DCAST<Type>(component);
+                auto typeComponent = dynamic_cast<Type*>(component.get());
                 GUARD_CONTINUE(typeComponent)
 
-                return typeComponent.get();
+                return typeComponent;
             }
 
             return nullptr;
@@ -412,18 +411,23 @@ namespace PJ {
         }
 
         /// Collects all components of the specified type
-        template <class Type, class ComponentList>
-        void
-        CollectTypeComponents(ComponentList& result, std::function<bool(Type&)> filter = {}) const {
+        template <class Type, class ResultList>
+        void CollectTypeComponents(ResultList& result) const {
             for (auto& component : components) {
-                auto typeComponent = DCAST<Type>(component);
+                auto typeComponent = dynamic_cast<Type*>(component.get());
                 GUARD_CONTINUE(typeComponent)
+                result.push_back(typeComponent);
+            }
+        }
 
-                if (filter) {
-                    GUARD_CONTINUE(filter(*typeComponent))
-                }
-
-                result.push_back(typeComponent.get());
+        /// Collects all components of the specified type, based on a predicate check
+        template <class Type, class ResultList, class UnaryPred>
+        void CollectTypeComponentsIf(ResultList& result, UnaryPred filter) const {
+            for (auto& component : components) {
+                auto typeComponent = dynamic_cast<Type*>(component.get());
+                GUARD_CONTINUE(typeComponent)
+                GUARD_CONTINUE(filter(*typeComponent))
+                result.push_back(typeComponent);
             }
         }
 
@@ -445,34 +449,29 @@ namespace PJ {
         }
 
         /// Collects components of the specified type in all descendant nodes
-        template <class Type, class ComponentList>
-        void CollectDescendantTypeComponents(
-            ComponentList& result, std::function<bool(Type&)> filter = {}
-        ) {
+        template <class Type, class ResultList, class UnaryPred>
+        void CollectDescendantTypeComponentsIf(ResultList& result, UnaryPred filter) {
             VectorList<WorldNode*> graph;
             CollectBreadthFirstTree(this, graph);
 
             for (auto& node : graph) {
-                node->CollectTypeComponents<Type>(result, filter);
+                node->CollectTypeComponentsIf<Type>(result, filter);
             }
         }
 
         /// Collects components of the specified type in direct child nodes
-        template <class Type, class ComponentList>
-        void
-        CollectChildTypeComponents(ComponentList& result, std::function<bool(Type&)> filter = {}) {
+        template <class Type, class ResultList, class UnaryPred>
+        void CollectChildTypeComponentsIf(ResultList& result, UnaryPred filter) {
             for (auto& node : tree.Children()) {
-                node->CollectTypeComponents<Type>(result, filter);
+                node->CollectTypeComponentsIf<Type>(result, filter);
             }
         }
 
         /// Collects components of the specified type in node and direct child nodes
-        template <class Type, class ComponentList>
-        void CollectAssociateTypeComponents(
-            ComponentList& result, std::function<bool(Type&)> filter = {}
-        ) {
-            CollectTypeComponents<Type>(result, filter);
-            CollectChildTypeComponents<Type>(result, filter);
+        template <class Type, class ResultList, class UnaryPred>
+        void CollectAssociateTypeComponentsIf(ResultList& result, UnaryPred filter) {
+            CollectTypeComponentsIf<Type>(result, filter);
+            CollectChildTypeComponentsIf<Type>(result, filter);
         }
 
         /// @return Returns converted local point in world coordinates
@@ -511,7 +510,7 @@ namespace PJ {
         template <class Type>
         VectorList<Type*> GetDescendantComponents() {
             VectorList<Type*> result;
-            CollectDescendantTypeComponents<Type>(result);
+            CollectDescendantTypeComponentsIf<Type>(result, [](auto& element) { return true; });
             return result;
         }
 
@@ -578,7 +577,7 @@ namespace PJ {
         GUARDR(component.owner, {})
 
         VectorList<Type*> result;
-        component.owner->CollectTypeComponents<Type>(result, [&](Type& sibling) {
+        component.owner->CollectTypeComponentsIf<Type>(result, [&](Type& sibling) {
             return &sibling != &component;
         });
 

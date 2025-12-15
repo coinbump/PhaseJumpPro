@@ -25,8 +25,8 @@ namespace UIWorldSystemTests {
 
         TestUIWorldSystem(MockRenderContext::Config mockRenderContextConfig) {
             world = MAKE<PJ::World>();
-            auto renderContext = MAKE<MockRenderContext>(mockRenderContextConfig);
-            world->renderContext = renderContext;
+            auto _renderContext = NEW<MockRenderContext>(mockRenderContextConfig);
+            world->renderContext = std::move(_renderContext);
 
             camera = &world->AddNode().AddComponent<OrthoCamera>();
         }

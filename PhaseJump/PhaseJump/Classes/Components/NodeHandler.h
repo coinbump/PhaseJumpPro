@@ -25,7 +25,7 @@ namespace PJ {
         /// Func to run for owner node
         Func func;
 
-        NodeHandler(Config config) :
+        NodeHandler(Config const& config) :
             type(config.type),
             func(config.func) {}
 

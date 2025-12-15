@@ -81,7 +81,7 @@ namespace PJ {
             float size{};
         };
 
-        Font(Config config) :
+        Font(Config const& config) :
             name(config.name),
             size(config.size) {}
 

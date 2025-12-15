@@ -5,7 +5,7 @@
 using namespace std;
 using namespace PJ;
 
-RoundCornersMeshBuilder::RoundCornersMeshBuilder(Config config) :
+RoundCornersMeshBuilder::RoundCornersMeshBuilder(Config const& config) :
     corners(config.corners),
     worldSize(config.worldSize),
     angleStep(config.angleStep) {}

@@ -55,7 +55,7 @@ namespace PJ {
             FeatureStateMap features = { { RenderFeature::Blend, RenderFeatureState::Disable } };
         };
 
-        RenderMaterial(Config config);
+        RenderMaterial(Config const& config);
 
         RenderMaterial() {}
 

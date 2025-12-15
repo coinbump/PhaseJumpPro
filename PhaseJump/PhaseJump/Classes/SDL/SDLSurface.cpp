@@ -3,7 +3,7 @@
 using namespace std;
 using namespace PJ;
 
-SDLSurface::SDLSurface(Config config) :
+SDLSurface::SDLSurface(Config const& config) :
     surface(config.surface),
     pixelData(config.pixelData) {
     if (config.bitmap) {

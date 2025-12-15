@@ -25,7 +25,7 @@ namespace PJ {
         Color startColor;
         Color endColor;
 
-        SimpleGradientRenderer(Config config);
+        SimpleGradientRenderer(Config const& config);
 
         // MARK: SomeWorldComponent
 

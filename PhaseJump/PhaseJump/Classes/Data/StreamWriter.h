@@ -22,7 +22,7 @@ namespace PJ {
 
         Config config;
 
-        StreamWriter(Config config) :
+        StreamWriter(Config const& config) :
             config(config) {}
 
         template <typename Type>

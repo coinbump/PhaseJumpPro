@@ -50,7 +50,7 @@ void AnimatedSpriteRenderer::SetTextures(VectorList<SP<SomeTexture>> const& text
     );
 }
 
-AnimatedSpriteRenderer::AnimatedSpriteRenderer(Config config) :
+AnimatedSpriteRenderer::AnimatedSpriteRenderer(Config const& config) :
     Base({}) {
 
     model.material =
@@ -256,10 +256,10 @@ void AnimatedSpriteRenderer::SetFrames(VectorList<KeyframeModel> models) {
     VectorList<SP<SomeTexture>> textureList(textures.begin(), textures.end());
     SetTextures(textureList);
 
-    TimeTrack<int>::Config config{ .id = "frame.playable",
-                                   .duration = 0,
-                                   .cycleType = CycleType(),
-                                   .keyedTimeType = KeyedTimeType::Discrete };
+    TimeTrack<int>::Config const& config{ .id = "frame.playable",
+                                          .duration = 0,
+                                          .cycleType = CycleType(),
+                                          .keyedTimeType = KeyedTimeType::Discrete };
     auto track = NEW<TimeTrack<int>>(config);
 
     float frameTime = 1.0f / frameRate;

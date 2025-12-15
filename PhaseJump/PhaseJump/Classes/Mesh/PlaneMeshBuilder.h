@@ -24,7 +24,7 @@ namespace PJ {
             Axis faceAxis = Axis::Z;
         };
 
-        PlaneMeshBuilder(Config config);
+        PlaneMeshBuilder(Config const& config);
 
         // MARK: SomeMeshBuilder
 

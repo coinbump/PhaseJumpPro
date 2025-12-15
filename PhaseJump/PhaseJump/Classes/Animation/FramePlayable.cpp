@@ -8,10 +8,10 @@ FramePlayable::FramePlayable(int frameCount, float frameRate, AnimationCycleType
     GUARD(frameRate > 0)
 
     auto duration = frameCount * (1.0f / frameRate);
-    TimeTrack<int>::Config config{ .id = "frame.playable",
-                                   .duration = duration,
-                                   .cycleType = AnimationCycleType::Loop,
-                                   .keyedTimeType = KeyedTimeType::Discrete };
+    TimeTrack<int>::Config const& config{ .id = "frame.playable",
+                                          .duration = duration,
+                                          .cycleType = AnimationCycleType::Loop,
+                                          .keyedTimeType = KeyedTimeType::Discrete };
     track = NEW<TimeTrack<int>>(config);
     controller = track.get();
     SetCycleType(cycleType);

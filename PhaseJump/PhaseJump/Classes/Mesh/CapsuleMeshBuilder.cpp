@@ -5,7 +5,7 @@
 using namespace std;
 using namespace PJ;
 
-CapsuleMeshBuilder::CapsuleMeshBuilder(Config config) :
+CapsuleMeshBuilder::CapsuleMeshBuilder(Config const& config) :
     axis(config.axis),
     worldSize(config.worldSize),
     angleStep(config.angleStep) {}

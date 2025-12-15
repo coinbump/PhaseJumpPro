@@ -38,7 +38,7 @@ namespace PJ {
             Angle angleStep = Angle::WithDegrees(10);
         };
 
-        RoundCornersMeshBuilder(Config config);
+        RoundCornersMeshBuilder(Config const& config);
 
         // MARK: SomeMeshBuilder
 

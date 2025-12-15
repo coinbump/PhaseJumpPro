@@ -41,7 +41,7 @@ namespace PJ {
             FilePath filePath;
         };
 
-        SomeDocument(Config config = {}) :
+        SomeDocument(Config const& config = {}) :
             name(config.name),
             description(config.name),
             filePath(config.filePath) {}
@@ -119,7 +119,7 @@ namespace PJ {
         /// Called after the document is saved
         DocumentFunc onSaveFunc;
 
-        Document(Config config = {}) :
+        Document(Config const& config = {}) :
             Base({ .name = config.name,
                    .description = config.description,
                    .filePath = config.filePath }),

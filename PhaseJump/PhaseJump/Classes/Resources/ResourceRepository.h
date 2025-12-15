@@ -21,20 +21,22 @@ namespace PJ {
     /// Interface to an object that loads resources
     class SomeResourceRepository {
     public:
+        using LoadResourcesOperationList = VectorList<SP<SomeLoadResourcesOperation>>;
+
         virtual ~SomeResourceRepository() {}
 
-        virtual VectorList<SP<SomeLoadResourcesOperation>> MakeLoadOperations(ResourceInfo info
-        ) = 0;
-        virtual VectorList<SP<SomeLoadResourcesOperation>>
-        MakeLoadOperations(ResourceRepositoryPlan plan) = 0;
+        virtual LoadResourcesOperationList MakeLoadOperations(ResourceInfo info) = 0;
+        virtual LoadResourcesOperationList MakeLoadOperations(ResourceRepositoryPlan plan) = 0;
     };
 
     /// Loads resources
     class ResourceRepository : public SomeResourceRepository {
     protected:
-        void Run(VectorList<SP<SomeLoadResourcesOperation>> const& operations);
+        void Run(LoadResourcesOperationList const& operations);
 
     public:
+        using LoadResourcesOperationList = VectorList<SP<SomeLoadResourcesOperation>>;
+
         /// Contains registered factories to create load resource operations
         ResourceRepositoryModel& repoModel;
 
@@ -56,8 +58,7 @@ namespace PJ {
 
         // MARK: SomeResourceRepository
 
-        VectorList<SP<SomeLoadResourcesOperation>> MakeLoadOperations(ResourceInfo info) override;
-        VectorList<SP<SomeLoadResourcesOperation>> MakeLoadOperations(ResourceRepositoryPlan plan
-        ) override;
+        LoadResourcesOperationList MakeLoadOperations(ResourceInfo info) override;
+        LoadResourcesOperationList MakeLoadOperations(ResourceRepositoryPlan plan) override;
     };
 } // namespace PJ
