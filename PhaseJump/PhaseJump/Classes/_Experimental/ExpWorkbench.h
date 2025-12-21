@@ -119,7 +119,7 @@ namespace PJ {
             SP<Bitmap> bitmap;
 
             /// Texture to render the image
-            SP<SomeTexture> texture;
+            SP<Texture> texture;
         };
 
         /// Tool that operates on a canvas

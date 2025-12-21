@@ -8,16 +8,14 @@
 
 /*
  RATING: 5 stars
- Simple type
- CODE REVIEW: 12/27/24
+ Simple types
+ CODE REVIEW: 12/17/25
  */
 namespace PJ {
-    /// Standard composable core with common properties
-    /// Or you can define your own
+    /// Standard core with common properties
     class StandardCore {
     public:
-        // TODO: SP-Audit
-        using ClassPtr = SP<Class<>>;
+        using ClassPtr = SP<Class>;
 
     protected:
         /// Class object that defines metadata properties for this object

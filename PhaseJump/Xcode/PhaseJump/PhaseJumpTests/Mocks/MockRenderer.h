@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SomeRenderer.h"
+#include "Renderer.h"
 #include "VectorList.h"
 
 namespace PJTest
@@ -9,7 +9,7 @@ namespace PJTest
 //    public:
 //        VectorList<RenderContextModel> renderHistory;
 //        
-//        // MARK: SomeRenderer
+//        // MARK: Renderer
 //
 //        VectorList<RenderModel> MakeRenderModels() override {
 //            VectorList<RenderModel> result;

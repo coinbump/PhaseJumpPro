@@ -1,13 +1,13 @@
 #include "EventWorldSystem.h"
+#include "Camera.h"
 #include "DropFilesUIEvent.h"
 #include "Input.h"
 #include "Matrix4x4.h"
+#include "Raycaster2D.h"
 #include "SignalTypes.h"
-#include "SomeCamera.h"
 #include "SomeControllerUIEvent.h"
 #include "SomeKeyUIEvent.h"
 #include "SomePosition.h"
-#include "SomeRaycaster2D.h"
 #include "World.h"
 #include "WorldNode.h"
 #include <iostream>
@@ -23,7 +23,7 @@ EventWorldSystem::EventWorldSystem(String name) :
         GUARD(system.world && system.world->Root())
 
         CollectBreadthFirstTree(system.world->Root(), nodes);
-        nodes = Filter(nodes, [](auto& node) { return node->isListener; });
+        nodes = Filter(nodes, [](auto& node) { return node->IsListener(); });
     }) {}
 
 VectorList<PJ::LocalHit> EventWorldSystem::TestScreenHit(ScreenPosition screenPosition) {
@@ -32,7 +32,7 @@ VectorList<PJ::LocalHit> EventWorldSystem::TestScreenHit(ScreenPosition screenPo
     auto camera = world->MainCamera();
     GUARDR_LOG(camera, {}, "ERROR: Camera required for TestScreenHit")
 
-    auto raycaster = camera->owner->GetComponent<SomeRaycaster2D>();
+    auto raycaster = camera->owner->GetComponent<Raycaster2D>();
     GUARDR_LOG(raycaster, {}, "ERROR: Raycaster required for TestScreenHit")
 
     auto worldPosition = camera->ScreenToWorld(screenPosition);
@@ -139,7 +139,7 @@ void EventWorldSystem::DispatchEvent(
 }
 
 void EventWorldSystem::OnDropFiles(DropFilesUIEvent const& event, EventNodeList const& nodes) {
-    DispatchEvent(SignalId::DropFiles, event, nodes);
+    DispatchEvent(SignalId::FilesDrop, event, nodes);
 }
 
 void EventWorldSystem::OnKeyDown(KeyDownUIEvent const& event, EventNodeList const& nodes) {
@@ -157,7 +157,5 @@ void EventWorldSystem::OnInputAction(
 void EventWorldSystem::OnPointerMove(PointerMoveUIEvent const& event) {}
 
 void EventWorldSystem::DispatchEvent(WorldNode& node, String signalId, SomeSignal const& signal) {
-    GUARD(node.IsEnabled());
-
     node.Signal(signalId, signal);
 }

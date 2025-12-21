@@ -12,7 +12,7 @@ namespace PJ {
     /// When run, it is given all of a node's components except this one
     /// Run must be called manually
     template <typename... Arguments>
-    class ComponentsHandler : public WorldComponent<> {
+    class ComponentsHandler : public WorldComponent {
     public:
         using Func = std::function<FinishType(SomeWorldComponent&, Arguments...)>;
 

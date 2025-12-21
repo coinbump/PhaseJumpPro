@@ -1,5 +1,5 @@
 #include "SomePointerDevice.h"
-#include "SomeCamera.h"
+#include "Camera.h"
 
 using namespace std;
 using namespace PJ;

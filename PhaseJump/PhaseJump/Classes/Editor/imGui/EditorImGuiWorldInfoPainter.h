@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SomeImGuiPainter.h"
+#include "ImGuiPainter.h"
 
 /*
  RATING: 5 stars
@@ -11,7 +11,7 @@ namespace PJ {
     class World;
 
     /// Draws standard world info
-    class EditorImGuiWorldInfoPainter : public SomeImGuiPainter {
+    class EditorImGuiWorldInfoPainter : public ImGuiPainter {
     public:
         World& world;
 

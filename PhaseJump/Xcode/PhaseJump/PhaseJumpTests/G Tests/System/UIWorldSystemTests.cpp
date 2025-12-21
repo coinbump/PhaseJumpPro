@@ -2,14 +2,15 @@
 #include "UIWorldSystem.h"
 #include "MockRenderContext.h"
 #include "World.h"
-#include "SomeDragHandler.h"
+#include "DragHandler.h"
+#include "Camera.h"
 
 using namespace PJ;
 using namespace PJTest;
 using namespace std;
 
 namespace UIWorldSystemTests {
-    class TestDragHandler : public SomeDragHandler {
+    class TestDragHandler : public DragHandler {
     public:
         WorldPosition lastPosition{ -1000, -1000, -1000 };
         
@@ -21,7 +22,7 @@ namespace UIWorldSystemTests {
     class TestUIWorldSystem : public UIWorldSystem {
     public:
         SP<PJ::World> world;
-        SomeCamera* camera{};
+        Camera* camera{};
 
         TestUIWorldSystem(MockRenderContext::Config mockRenderContextConfig) {
             world = MAKE<PJ::World>();
@@ -31,7 +32,7 @@ namespace UIWorldSystemTests {
             camera = &world->AddNode().AddComponent<OrthoCamera>();
         }
         
-        SomeCamera* Camera() const override {
+        Camera* GetCamera() const override {
             return camera;
         }
     };

@@ -9,9 +9,9 @@
  */
 namespace PJ {
     /// Kinematic steering. Moves node in the direction it is facing
-    class DirectionKSteering2D : public WorldComponent<> {
+    class DirectionKSteering2D : public WorldComponent {
     public:
-        using Base = WorldComponent<>;
+        using Base = WorldComponent;
         using This = DirectionKSteering2D;
 
         float velocity = 10;

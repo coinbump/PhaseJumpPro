@@ -29,7 +29,7 @@ namespace PJ {
         Core core{};
         RunFunc runFunc;
 
-        GLRenderCommand(Core core, RunFunc runFunc) :
+        GLRenderCommand(Core const& core, RunFunc runFunc) :
             core(core),
             runFunc(runFunc) {}
 

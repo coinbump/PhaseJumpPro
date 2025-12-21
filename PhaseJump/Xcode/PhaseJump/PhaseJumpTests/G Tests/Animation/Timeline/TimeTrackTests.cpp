@@ -174,7 +174,7 @@ TEST(TimeTrack, KeyframeBefore)
 {
     TimeTrack<float> sut({.duration = 10});
     sut.makeKeyframeFunc = [](auto& track) {
-        UP<ValueKeyframe<float>> result = NEW<Keyframe<float>>();
+        UP<ValueKeyframe<float>> result = NEW<ValueKeyframe<float>>();
         return result;
     };
 
@@ -192,7 +192,7 @@ TEST(TimeTrack, OnUpdateNoEase)
 {
     TimeTrack<float> sut({.duration = 10});
     sut.makeKeyframeFunc = [](auto& track) {
-        UP<ValueKeyframe<float>> result = NEW<Keyframe<float>>();
+        UP<ValueKeyframe<float>> result = NEW<ValueKeyframe<float>>();
         return result;
     };
 
@@ -213,12 +213,12 @@ TEST(TimeTrack, OnUpdateInEase)
 {
     TimeTrack<float> sut({.duration = 10});
     sut.makeKeyframeFunc = [](auto& track) {
-        UP<ValueKeyframe<float>> result = NEW<Keyframe<float>>();
+        UP<ValueKeyframe<float>> result = NEW<ValueKeyframe<float>>();
         return result;
     };
 
     sut.AddAt(0)->value = 10;
-    auto i2 = static_cast<Keyframe<float>*>(sut.AddAt(10));
+    auto i2 = static_cast<ValueKeyframe<float>*>(sut.AddAt(10));
     i2->value = 20;
     i2->inEaseFunc = [](auto value) { return value * value; };
 
@@ -236,11 +236,11 @@ TEST(TimeTrack, OnUpdateOutEase)
 {
     TimeTrack<float> sut({.duration = 10});
     sut.makeKeyframeFunc = [](auto& track) {
-        UP<ValueKeyframe<float>> result = NEW<Keyframe<float>>();
+        UP<ValueKeyframe<float>> result = NEW<ValueKeyframe<float>>();
         return result;
     };
 
-    auto i1 = static_cast<Keyframe<float>*>(sut.AddAt(0));
+    auto i1 = static_cast<ValueKeyframe<float>*>(sut.AddAt(0));
     i1->value = 10;
     i1->outEaseFunc = [](auto value) { return value * value; };
     auto i2 = sut.AddAt(10);
@@ -292,7 +292,7 @@ TEST(TimeTrack, PingPong)
 {
     TimeTrack<float> sut({ .duration = 3, .cycleType = AnimationCycleType::PingPong });
     sut.makeKeyframeFunc = [](auto& track) {
-        UP<ValueKeyframe<float>> result = NEW<Keyframe<float>>();
+        UP<ValueKeyframe<float>> result = NEW<ValueKeyframe<float>>();
         return result;
     };
 

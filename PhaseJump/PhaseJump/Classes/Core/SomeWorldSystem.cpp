@@ -10,8 +10,8 @@ using namespace nlohmann;
 
 using This = SomeWorldSystem;
 
-SomeWorldSystem::SomeWorldSystem(String name) :
-    _core(*this) {
+WorldSystem::WorldSystem(String name) :
+    attachmentCore(*this) {
     _core.name = name;
 
     AddSignalHandler<KeyDownUIEvent>(
@@ -29,10 +29,10 @@ SomeWorldSystem::SomeWorldSystem(String name) :
                           ss >> j;
 
                           int keyCode = j["keyCode"];
-                          GUARD(event.keyCode.value == keyCode);
+                          GUARD(event.KeyCodeValue() == keyCode);
 
                           auto eventModifiers =
-                              Filter(event.keyModifiers.modifiers, [](auto& modifier) {
+                              Filter(event.core.keyModifiers.modifiers, [](auto& modifier) {
 #ifdef _WIN32
                                   return modifier == KeyModifier::Shift ||
                                          modifier == KeyModifier::Alt ||
@@ -57,7 +57,7 @@ SomeWorldSystem::SomeWorldSystem(String name) :
     );
 }
 
-void SomeWorldSystem::AddKeyFunc(int keyCode, VectorList<String> modifiers, Func func) {
+void WorldSystem::AddKeyFunc(int keyCode, VectorList<String> modifiers, Func func) {
     PropertyIdBuilder builder;
     builder.Add("keyCode", keyCode);
     builder.AddCollection("modifiers", modifiers);

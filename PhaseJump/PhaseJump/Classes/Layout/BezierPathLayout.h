@@ -1,7 +1,7 @@
 #pragma once
 
 #include "BezierPath.h"
-#include "SomePathLayout.h"
+#include "PathLayout.h"
 #include "Vector3.h"
 #include "VectorList.h"
 #include <memory>
@@ -13,7 +13,7 @@
  */
 namespace PJ {
     /// Distribute objects along a bezier path
-    class BezierPathLayout : public SomePathLayout {
+    class BezierPathLayout : public PathLayout {
     protected:
         VectorList<Vector3> controlPoints;
 
@@ -40,7 +40,7 @@ namespace PJ {
             return *this;
         }
 
-        // MARK: SomePathLayout
+        // MARK: PathLayout
 
         UP<SomePath> BuildPath() override {
             return NEW<BezierPath>(controlPoints);

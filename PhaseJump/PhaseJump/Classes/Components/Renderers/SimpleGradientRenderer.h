@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Mesh.h"
+#include "Renderer.h"
 #include "RGBAColor.h"
-#include "SomeRenderer.h"
 #include "Vector2.h"
 
 /*
@@ -12,9 +12,9 @@
  */
 namespace PJ {
     /// Renders between start and end color
-    class SimpleGradientRenderer : public SomeMaterialRenderer {
+    class SimpleGradientRenderer : public MaterialRenderer {
     public:
-        using Base = SomeMaterialRenderer;
+        using Base = MaterialRenderer;
 
         struct Config {
             Color startColor;

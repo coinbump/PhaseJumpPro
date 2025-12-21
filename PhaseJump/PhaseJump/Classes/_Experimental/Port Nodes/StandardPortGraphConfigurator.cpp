@@ -3,6 +3,6 @@
 using namespace std;
 using namespace PJ;
 
-SP<SomeAttribute> PortGraphAttributes::HidePortAttribute() {
-    return MAKE<Attribute<Void>>(PortGraphAttributeId::NoPort);
+SP<Attribute> PortGraphAttributes::HidePortAttribute() {
+    return MAKE<ValueAttribute<Void>>(PortGraphAttributeId::NoPort);
 }

@@ -1,11 +1,11 @@
 #pragma once
 
 #include "FilePath.h"
+#include "LoadResourcesOperation.h"
 #include "OrderedMap.h"
 #include "ResourceCatalog.h"
 #include "ResourceRepositoryPlan.h"
 #include "Result.h"
-#include "SomeLoadResourcesOperation.h"
 #include "StringUtils.h"
 
 /*
@@ -21,7 +21,7 @@ namespace PJ {
     /// Interface to an object that loads resources
     class SomeResourceRepository {
     public:
-        using LoadResourcesOperationList = VectorList<SP<SomeLoadResourcesOperation>>;
+        using LoadResourcesOperationList = VectorList<SP<LoadResourcesOperation>>;
 
         virtual ~SomeResourceRepository() {}
 
@@ -35,7 +35,7 @@ namespace PJ {
         void Run(LoadResourcesOperationList const& operations);
 
     public:
-        using LoadResourcesOperationList = VectorList<SP<SomeLoadResourcesOperation>>;
+        using LoadResourcesOperationList = VectorList<SP<LoadResourcesOperation>>;
 
         /// Contains registered factories to create load resource operations
         ResourceRepositoryModel& repoModel;

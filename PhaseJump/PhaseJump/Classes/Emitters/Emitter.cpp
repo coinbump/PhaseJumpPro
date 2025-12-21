@@ -27,7 +27,7 @@ Emitter::Emitter(SpawnFunc spawnFunc, float fireTime) :
     driver = NEW<TimerDriver>(fireTime, RunType::Repeat, [this]() { this->Fire(); });
 }
 
-Emitter::Emitter(SpawnFunc spawnFunc, UP<SomeDriver>& fireDriver) :
+Emitter::Emitter(SpawnFunc spawnFunc, UP<Driver>& fireDriver) :
     spawnFunc(spawnFunc),
     driver(std::move(fireDriver)) {}
 

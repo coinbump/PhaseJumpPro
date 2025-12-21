@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SomeRenderer.h"
+#include "Renderer.h"
 #include <memory>
 
 /*
@@ -13,9 +13,9 @@ namespace PJ {
     struct Mesh;
 
     /// Renders a mesh
-    class MeshRenderer : public SomeMaterialRenderer {
+    class MeshRenderer : public MaterialRenderer {
     public:
-        using Base = SomeMaterialRenderer;
+        using Base = MaterialRenderer;
 
         MeshRenderer(Vector3 worldSize);
 

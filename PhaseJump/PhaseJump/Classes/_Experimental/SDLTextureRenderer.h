@@ -2,10 +2,10 @@
 #define SpriteRenderer_h
 
 #include "RenderContextModel.h"
+#include "Renderer.h"
 #include "SDLColorBuilder.h"
 #include "SDLGLRenderContext.h"
 #include "SDLLoadSDLTextureOperation.h"
-#include "SomeRenderer.h"
 #include "VectorList.h"
 #include <iostream>
 #include <memory>
@@ -15,7 +15,7 @@
 namespace PJ {
     class Mesh;
 
-    //    class SDLTextureRenderer : public SomeRenderer
+    //    class SDLTextureRenderer : public Renderer
     //    {
     //    public:
     //        SP<SDLTexture> texture;

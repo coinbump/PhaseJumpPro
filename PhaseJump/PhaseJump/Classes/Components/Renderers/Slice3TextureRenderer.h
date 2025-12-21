@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Axis.h"
-#include "SomeRenderer.h"
-#include "SomeTexture.h"
+#include "Renderer.h"
+#include "Texture.h"
 #include "UVRect.h"
 #include <array>
 #include <memory>
@@ -17,12 +17,12 @@ namespace PJ {
     struct Mesh;
 
     /// Renders a single texture as a 3-slice (start, middle, end)
-    class Slice3TextureRenderer : public SomeMaterialRenderer {
+    class Slice3TextureRenderer : public MaterialRenderer {
     public:
-        using Base = SomeMaterialRenderer;
+        using Base = MaterialRenderer;
 
     protected:
-        SP<SomeTexture> texture;
+        SP<Texture> texture;
 
         /// Which axis of the texture we're slicing
         Axis2D axis{};
@@ -58,11 +58,12 @@ namespace PJ {
         };
 
         struct Config {
-            SP<SomeTexture> texture;
+            SP<Texture> texture;
 
             /// Which axis of the texture we're slicing
             Axis2D axis{};
 
+            // TODO: re-evaluate this. Why are we setting the world Size internal to the renderer?
             /// Length of rendered texture along the axis
             float axisLength = 100;
 

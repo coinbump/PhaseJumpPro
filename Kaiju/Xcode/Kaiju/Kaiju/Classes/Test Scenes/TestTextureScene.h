@@ -16,7 +16,7 @@ AddSlider(Axis2D::X, "slider-track", {{12, 12}, {12, 12}}, "slider-thumb", 10)
 
 class TestTextureScene : public Scene {
 public:
-    SP<SomeTexture> texture;
+    SP<Texture> texture;
     SP<SomeSimpleSubscription<float>> valueSubscription;
 
     TestTextureScene() {}
@@ -28,8 +28,8 @@ public:
 
 #define BUFFER
 #ifdef BUFFER
-        // TODO: use OrthoStandard here(?)
-        SomeCamera* bufferCamera{};
+        // ?: use OrthoStandard here(?)
+        Camera* bufferCamera{};
         QB(root).With<OrthoCamera>().ModifyLatest<OrthoCamera>([&](auto& camera) {
             camera.SetName("Buffer camera");
             bufferCamera = &camera;
@@ -48,11 +48,11 @@ public:
         bufferCamera->renderContext = textureBuffer;
 
         auto& bufferRenderNode = root.And("Buffer render");
-        auto& spriteRenderer = bufferRenderNode.With<SpriteRenderer>(textureBuffer->Texture());
+        auto& spriteRenderer = bufferRenderNode.With<SpriteRenderer>(textureBuffer->GetTexture());
 
-        auto program = SomeShaderProgram::registry.find("chromaticAberrationSimple");
-        //        auto program = SomeShaderProgram::registry.find("texture.uniform");
-        if (program != SomeShaderProgram::registry.end()) {
+        auto program = ShaderProgram::registry.find("chromaticAberrationSimple");
+        //        auto program = ShaderProgram::registry.find("texture.uniform");
+        if (program != ShaderProgram::registry.end()) {
             spriteRenderer.model.material->SetShaderProgram(program->second);
         }
 
@@ -184,7 +184,7 @@ public:
         }
 
         // Test multi camera render
-        //        auto camera2 = SCAST<SomeCamera>(MAKE<OrthoCamera>());
+        //        auto camera2 = SCAST<Camera>(MAKE<OrthoCamera>());
         //        auto cameraNode2 = MAKE<WorldNode>();
         //        cameraNode2->Add(camera2);
         //        cameraNode2->transform.SetWorldPosition(Vector3(10, 10, 0));
@@ -224,7 +224,7 @@ public:
 #endif
 
         //        texture =
-        //        DCAST<SomeTexture>(world.resourceCatalog->map[ResourceType::Texture]["man_run0015"].resource);
+        //        DCAST<Texture>(world.resourceCatalog->map[ResourceType::Texture]["man_run0015"].resource);
         //        GUARD(texture)
 
         auto textureAtlas = world.resources.Find<TextureAtlas>("texture.atlas", "man-run-atlas");
@@ -319,7 +319,7 @@ public:
             //        auto material = MAKE<RenderMaterial>();
             auto material = renderer->model.material;
 
-//            auto program = SomeShaderProgram::registry["texture.uniform"];//texture.interp.uniform"]; //"texture.uniform"
+//            auto program = ShaderProgram::registry["texture.uniform"];//texture.interp.uniform"]; //"texture.uniform"
 //            if (program) {
 //                material->SetShaderProgram(program);
 //                //            material->textures.Add(RenderTexture(texture->glId));

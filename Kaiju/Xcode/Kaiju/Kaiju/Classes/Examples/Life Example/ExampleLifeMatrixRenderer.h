@@ -10,9 +10,9 @@ namespace Example {
         class AgentGroup;
 
         /// Runs the simulation and renders it
-        class MatrixRenderer : public SomeMaterialRenderer {
+        class MatrixRenderer : public MaterialRenderer {
         public:
-            using Base = SomeMaterialRenderer;
+            using Base = MaterialRenderer;
 
             AgentSystem system;
             SP<AgentGroup> group;

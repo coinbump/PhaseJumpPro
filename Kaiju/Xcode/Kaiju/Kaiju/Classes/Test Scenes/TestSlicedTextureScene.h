@@ -19,7 +19,7 @@ public:
         texture = DCAST<GLTexture>(world.resources.FindTexture("example-button-normal"));
         GUARD(texture)
 
-        auto camera = SCAST<SomeCamera>(MAKE<OrthoCamera>());
+        auto camera = SCAST<Camera>(MAKE<OrthoCamera>());
         auto cameraNode = MAKE<WorldNode>("Camera");
         cameraNode->Add(camera);
         root.Add(cameraNode);
@@ -28,7 +28,8 @@ public:
             auto meshNode = MAKE<WorldNode>("Slice 9");
 
             Slice9TextureRenderer::SliceModel slicePoints = { { 25, 25 }, { 25, 25 } };
-            auto renderer = MAKE<Slice9TextureRenderer>(texture, Vector2(300, 300), slicePoints);
+            auto renderer = MAKE<Slice9TextureRenderer>(Slice9TextureRenderer::Config{
+                .texture = texture, .worldSize = { 300, 300 }, .sliceModel = slicePoints });
             meshNode->Add(renderer);
 
             auto material = renderer->model.material;

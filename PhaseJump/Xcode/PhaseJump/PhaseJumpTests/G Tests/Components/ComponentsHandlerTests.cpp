@@ -2,7 +2,7 @@
 
 #include "WorldNode.h"
 #include "ComponentsHandler.h"
-#include "SomeTexture.h"
+#include "Texture.h"
 // Compile test
 #include "NodesRenderProcessor.h"
 
@@ -24,8 +24,8 @@ TEST(ComponentsHandler, CountWithContinue) {
             return FinishType::Continue;
         }});
     node.Add(componentHandler);
-    node.With<WorldComponent<>>();
-    node.With<WorldComponent<>>();
+    node.With<WorldComponent>();
+    node.With<WorldComponent>();
     
     componentHandler->Run();
     EXPECT_EQ(2, componentCount);
@@ -41,8 +41,8 @@ TEST(ComponentsHandler, CountWithFinish) {
             return FinishType::Finish;
         }});
     node.Add(componentHandler);
-    node.With<WorldComponent<>>();
-    node.With<WorldComponent<>>();
+    node.With<WorldComponent>();
+    node.With<WorldComponent>();
     
     componentHandler->Run();
     EXPECT_EQ(1, componentCount);
@@ -58,8 +58,8 @@ TEST(ComponentsHandler, CountWithArguments) {
             return FinishType::Continue;
         }});
     node.Add(componentHandler);
-    node.With<WorldComponent<>>();
-    node.With<WorldComponent<>>();
+    node.With<WorldComponent>();
+    node.With<WorldComponent>();
     
     componentHandler->Run(10);
     EXPECT_EQ(20, componentCount);

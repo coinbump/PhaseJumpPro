@@ -18,7 +18,7 @@ using namespace AgentGroupTests;
 
 TEST(AgentGroup, Test)
 {
-    AgentGroup<TestAgent> sut;
+    TypeAgentGroup<TestAgent> sut;
     auto first = sut.Add();
     first->onUpdateFunc = [](auto& p, TimeSlice time) {
         p.core.timeValue += time.delta;

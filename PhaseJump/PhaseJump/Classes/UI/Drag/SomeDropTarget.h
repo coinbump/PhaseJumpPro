@@ -12,9 +12,9 @@
 namespace PJ {
     /// Target that can accept drag items
     /// Requirement: node must have a collider for hit-testing
-    class SomeDropTarget : public WorldComponent<> {
+    class SomeDropTarget : public WorldComponent {
     public:
-        using Base = WorldComponent<>;
+        using Base = WorldComponent;
         using This = SomeDropTarget;
 
         using CanAcceptDragFunc = std::function<bool(This&, DragModel const&)>;

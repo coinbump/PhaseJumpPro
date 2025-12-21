@@ -3,7 +3,7 @@
 #include "QuadMeshBuilder.h"
 #include "RenderContextModel.h"
 #include "RenderModel.h"
-#include "SomeShaderProgram.h"
+#include "ShaderProgram.h"
 
 using namespace std;
 using namespace PJ;

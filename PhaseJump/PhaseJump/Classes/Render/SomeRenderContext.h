@@ -14,29 +14,19 @@
  CODE REVIEW: 12/21/24
  */
 namespace PJ {
-    class SomeRenderer;
+    class Renderer;
     class RenderContextModel;
     class SomeRenderEngine;
     class SomeRenderCommandModel;
-    class SomeTexture;
+    class Texture;
 
     /// Destination model for renders
     class SomeRenderContext : public Base {
     public:
-        String id;
-
-        /// Platform native id for render context object
-        uint32_t renderId{};
-
-        /// Color used to clear this context for each render pass
-        Color clearColor = Color::clear;
-
-        SomeRenderEngine& renderEngine;
-
-        SomeRenderContext(SomeRenderEngine& renderEngine) :
-            renderEngine(renderEngine) {}
-
         virtual ~SomeRenderContext() {}
+
+        /// @return Returns platform native id for render context object
+        virtual uint32_t RenderId() const = 0;
 
         /// Makes context current, for renders
         virtual void Bind() = 0;
@@ -57,8 +47,30 @@ namespace PJ {
         virtual void Build(Vector2Int size) {}
 
         /// For viewport contexts (texture buffer)
-        virtual SP<SomeTexture> Texture() const {
+        virtual SP<Texture> GetTexture() const {
             return nullptr;
+        }
+    };
+
+    class RenderContext : public SomeRenderContext {
+    public:
+        String id;
+
+        /// Platform native id for render context object
+        uint32_t renderId{};
+
+        /// Color used to clear this context for each render pass
+        Color clearColor = Color::clear;
+
+        SomeRenderEngine& renderEngine;
+
+        RenderContext(SomeRenderEngine& renderEngine) :
+            renderEngine(renderEngine) {}
+
+        // MARK: SomeRenderContext
+
+        uint32_t RenderId() const override {
+            return renderId;
         }
     };
 } // namespace PJ

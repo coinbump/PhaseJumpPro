@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SomeLoadResourcesOperation.h"
+#include "LoadResourcesOperation.h"
 
 /*
  RATING: 5 stars
@@ -11,15 +11,15 @@ namespace PJ {
     class GLTexture;
 
     /// Uses SDL to load a bitmap
-    class SDLLoadBitmapOperation : public SomeLoadResourcesOperation {
+    class SDLLoadBitmapOperation : public LoadResourcesOperation {
     public:
-        using Base = SomeLoadResourcesOperation;
+        using Base = LoadResourcesOperation;
 
         SDLLoadBitmapOperation(ResourceInfo info, ResourceRepositoryModel& repoModel) :
-            Base(info, repoModel) {}
+            Base(info, repoModel) {
+            loadResourcesFunc = [this](auto& operation) { return _LoadResources(); };
+        }
 
-        // MARK: SomeLoadResourcesOperation
-
-        Result LoadResources() override;
+        Result _LoadResources();
     };
 } // namespace PJ

@@ -6,8 +6,8 @@
 #include "Font.h"
 #include "ResourceInfo.h"
 #include "ResourceTypes.h"
-#include "SomeShaderProgram.h"
-#include "SomeTexture.h"
+#include "ShaderProgram.h"
+#include "Texture.h"
 #include "UnorderedMap.h"
 
 /*
@@ -16,9 +16,9 @@
  CODE REVIEW: 12/20/24
  */
 namespace PJ {
-    class SomeTexture;
+    class Texture;
     class Font;
-    class SomeShaderProgram;
+    class ShaderProgram;
 
     /// Bundles resource and resource info
     struct ResourceModel {
@@ -82,12 +82,12 @@ namespace PJ {
             return {};
         }
 
-        SP<SomeTexture> FindTexture(String id) const {
-            return Find<SomeTexture>(ResourceType::Texture, id);
+        SP<Texture> FindTexture(String id) const {
+            return Find<Texture>(ResourceType::Texture, id);
         }
 
-        SP<SomeShaderProgram> FindShaderProgram(String id) const {
-            return Find<SomeShaderProgram>(ResourceType::ShaderProgram, id);
+        SP<ShaderProgram> FindShaderProgram(String id) const {
+            return Find<ShaderProgram>(ResourceType::ShaderProgram, id);
         }
     };
 

@@ -5,16 +5,12 @@
 
 /*
  RATING: 5 stars
- Simple protocol
- CODE REVIEW: 9/19/24
+ Simple types
+ CODE REVIEW: 12/19/25
  */
 namespace PJ {
     /// Takes an input and processes it to create an output over time
-    template <class Input>
     class SomeProcessor {
-    protected:
-        Input input;
-
     public:
         SomeProcessor() {}
 
@@ -26,5 +22,17 @@ namespace PJ {
 
         virtual size_t InputCount() const = 0;
         virtual size_t ProcessedCount() const = 0;
+    };
+
+    /// Takes an input and processes it to create an output over time
+    template <class Input>
+    class InputProcessor : public SomeProcessor {
+    protected:
+        Input input;
+
+    public:
+        InputProcessor() {}
+
+        virtual ~InputProcessor() {}
     };
 } // namespace PJ

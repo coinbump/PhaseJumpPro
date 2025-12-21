@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SomeLayout2D.h"
+#include "Layout2D.h"
 #include "Vector2.h"
 #include "WorldNode.h"
 
@@ -12,7 +12,7 @@
 namespace PJ {
     /// Flow the objects with non-contextual spacing (object size doesn't
     /// matter)
-    class VFlow : public SomeLayout2D {
+    class VFlow : public Layout2D {
     public:
         float spacing{};
 

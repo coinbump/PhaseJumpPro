@@ -1,4 +1,5 @@
 #include "World.h"
+#include "Camera.h"
 #include "DesignSystem.h"
 #include "DevProfiler.h"
 #include "DuckDesignSystem.h"
@@ -6,11 +7,10 @@
 #include "Funcs.h"
 #include "GraphNodeTool.h"
 #include "RenderContextModel.h"
-#include "SomeCamera.h"
+#include "Renderer.h"
+#include "ShaderProgram.h"
 #include "SomePlatformWindow.h"
 #include "SomeRenderEngine.h"
-#include "SomeRenderer.h"
-#include "SomeShaderProgram.h"
 #include <stdio.h>
 
 // #define PROFILE
@@ -22,24 +22,52 @@ void BuildUpdateList(WorldNode& node, VectorList<WorldNode*>& updateList) {
     if (node.IsDestroyed()) {
         node.OnDestroy();
 
-        // FUTURE: send OnDestroy to children if needed (ineffecient)
-
         GUARD(node.Parent())
-
-        // TODO: should we be removing and looping at the same time? (ok for now with SP copy, but
-        // what if that changes?)
         node.Parent()->Remove(node);
-    } else {
-        GUARD(node.IsEnabled() && node.World())
-
-        updateList.push_back(&node);
-
-        auto childNodes = node.ChildNodes();
-        std::for_each(childNodes.begin(), childNodes.end(), [&](auto& node) {
-            BuildUpdateList(*node, updateList);
-        });
+        return;
     }
+
+    GUARD(node.IsEnabled() && node.World())
+
+    updateList.push_back(&node);
+
+    // Copy shared pointers because we are removing while iterating
+    auto childNodes = node.ChildNodes();
+
+    std::for_each(childNodes.begin(), childNodes.end(), [&](auto& node) {
+        BuildUpdateList(*node, updateList);
+    });
 }
+
+// FUTURE: evaluate non-recursive approach (this isn't working correctly: see Views test scene)
+// void BuildUpdateList(WorldNode& rootNode, VectorList<WorldNode*>& updateList) {
+//    std::stack<WorldNode*> stack;
+//    stack.push(&rootNode);
+//
+//    while (!stack.empty()) {
+//        WorldNode* node = stack.top();
+//        stack.pop();
+//
+//        if (node->IsDestroyed()) {
+//            node->OnDestroy();
+//
+//            if (node->Parent()) {
+//                node->Parent()->Remove(*node);
+//            }
+//            continue;
+//        }
+//
+//        if (node->IsEnabled() && node->World()) {
+//            updateList.push_back(node);
+//
+//            auto childNodes = node->ChildNodes();
+//
+//            for (auto i = childNodes.rbegin(); i != childNodes.rend(); i++) {
+//                stack.push((*i).get());
+//            }
+//        }
+//    }
+//}
 
 World::World() {
     root->world = this;
@@ -50,6 +78,9 @@ World::World() {
     // Default design system is the "ugly duckling" design system,
     // a basic and simple UI
     designSystem = std::make_unique<DuckDesignSystem>();
+
+    RateLimiter::OnFireFunc overrideFunc = [this](auto& limiter) { RenderNow(); };
+    Override(renderLimiter.onFireFunc, overrideFunc);
 }
 
 void World::Add(SP<SomeWorldSystem> const& system) {
@@ -63,15 +94,18 @@ void World::Add(SP<SomeWorldSystem> const& system) {
 void World::RemoveAllNodes() {
     GUARD(root)
 
-    if (isRemoveNodesLocked) {
-        // If this happens, use Destroy instead
+    if (IsRemoveNodesLocked()) {
+        /*
+         For performance, the render loop takes raw pointers to nodes, so you
+         can't remove or alter the node tree while the render is in progress
+
+         Use Destroy, not Remove, which will remove the node when the render loop is finished
+         */
         PJ::Log("ERROR. Can't remove nodes");
         return;
     }
 
     /*
-     Warning: do not call this for immediate UI
-
      Warning: This leaves dangling pointers to world, but we assume
      that RemoveAll causes all child objects to be de-allocated
      */
@@ -106,7 +140,7 @@ void World::Remove(VectorList<SomeWorldSystem*> const& systems) {
     }
 }
 
-SomeCamera* World::MainCamera() const {
+Camera* World::MainCamera() const {
 #ifdef PROFILE
     DevProfiler devProfiler("MainCamera", [](String value) { cout << value; });
 #endif
@@ -125,14 +159,13 @@ SomeCamera* World::MainCamera() const {
 
     for (auto& node : graph) {
         auto worldNode = node;
-        auto camera = worldNode->GetComponent<SomeCamera>();
+        auto camera = worldNode->TypeComponentPtr<Camera>();
 
         // Offscreen cameras don't qualify as the main camera
         GUARD_CONTINUE(camera && !camera->renderContext)
 
-        auto sharedCamera = camera ? SCAST<SomeCamera>(camera->shared_from_this()) : nullptr;
-        mainCamera = sharedCamera;
-        return sharedCamera.get();
+        mainCamera = camera;
+        return camera.get();
     }
 
     return {};
@@ -144,12 +177,10 @@ void World::OnGo() {
 #ifdef DEBUG
     std::cout << "PHASE JUMP IS DEBUG" << std::endl;
 #endif
-
-    RateLimiter::OnFireFunc overrideFunc = [this](auto& limiter) { RenderNow(); };
-    Override(renderLimiter.onFireFunc, overrideFunc);
 }
 
 void World::Render() {
+    // Render once before we limit rendering
     if (isRenderRateLimited) {
         renderLimiter.Fire();
     } else {
@@ -158,6 +189,8 @@ void World::Render() {
 }
 
 void World::RenderNow() {
+    didRender = true;
+
     GUARD(renderContext)
 
 #ifdef PROFILE
@@ -182,21 +215,21 @@ void World::RenderNow() {
     VectorList<WorldNode*> updateList;
     BuildUpdateList(*root, updateList);
 
-    isRemoveNodesLocked = true;
-    Defer defer([&]() { isRemoveNodesLocked = false; });
+    isRemoveNodesLockedCount++;
+    Defer defer([&]() { isRemoveNodesLockedCount -= 1; });
 
-    VectorList<SomeCamera*> optionalCameras;
+    VectorList<Camera*> optionalCameras;
     std::transform(
         updateList.begin(), updateList.end(), std::back_inserter(optionalCameras),
         [](WorldNode* node) {
-            auto result = node->GetComponent<SomeCamera>();
+            auto result = node->GetComponent<Camera>();
             return (result && result->IsEnabled()) ? result : nullptr;
         }
     );
-    VectorList<SomeCamera*> cameras;
+    VectorList<Camera*> cameras;
     std::copy_if(
         optionalCameras.begin(), optionalCameras.end(), std::back_inserter(cameras),
-        [](SomeCamera* camera) { return camera != nullptr; }
+        [](Camera* camera) { return camera != nullptr; }
     );
 
     RenderContextModel contextModel{ .renderContext = renderContext.get(),
@@ -206,8 +239,12 @@ void World::RenderNow() {
 
     int drawCount = 0;
 
-    // Prevent iterate-mutation crash
-    auto iterSystems = systems;
+    // Prevent crash if system is removed during loop
+    VectorList<SP<SomeWorldSystem>> iterSystems = systems;
+
+    // FUTURE: re-evaluate using pointers (will crash if system is removed during loop)
+    // FUTURE: Map<SomeWorldSystem*>(systems, [](auto& system) { return system.get(); });
+
     for (auto& system : iterSystems) {
         auto result = system->Render(contextModel);
 
@@ -278,8 +315,8 @@ FinishType World::OnUpdate(TimeSlice _time) {
     VectorList<WorldNode*> updateList;
     BuildUpdateList(*root, updateList);
 
-    isRemoveNodesLocked = true;
-    Defer defer([&]() { isRemoveNodesLocked = false; });
+    isRemoveNodesLockedCount++;
+    Defer defer([&]() { isRemoveNodesLockedCount--; });
 
 #ifdef PROFILE
     DevProfiler devProfiler("OnUpdate", [](String value) { cout << value; });
@@ -342,7 +379,7 @@ void World::LoadPrefab(String id, WorldNode& node) {
     GUARD_LOG(node.World() == this, "ERROR. Node must be parented before LoadPrefab")
 
     try {
-        auto prefab = prefabs.at(id);
+        auto& prefab = prefabs.at(id);
         prefab->LoadInto(node);
     } catch (...) {}
 }
@@ -364,13 +401,6 @@ Vector2Int World::PixelSize() const {
     return window->PixelSize();
 }
 
-#include "Matrix4x4.h"
-#include "World.h"
-#include "WorldNode.h"
-#include <TSMatrix4D.h>
-
-using namespace PJ;
-
 ScreenPosition World::WorldToScreen(WorldPosition worldPos) const {
     auto camera = MainCamera();
     GUARDR(camera, {})
@@ -379,8 +409,15 @@ ScreenPosition World::WorldToScreen(WorldPosition worldPos) const {
     return result;
 }
 
+#include "Matrix4x4.h"
+#include "World.h"
+#include "WorldNode.h"
+#include <TSMatrix4D.h>
+
+using namespace PJ;
+
 WorldPosition PJ::ScreenToWorld(SomeWorldComponent const& component, ScreenPosition screenPos) {
-    auto owner = component.owner;
+    auto owner = component.Node();
     GUARDR(owner, {})
 
     auto world = owner->World();
@@ -397,13 +434,12 @@ WorldPosition PJ::ScreenToWorld(SomeWorldComponent const& component, ScreenPosit
 LocalPosition PJ::ScreenToLocal(SomeWorldComponent const& component, ScreenPosition screenPos) {
     LocalPosition result;
 
-    auto owner = component.owner;
+    auto owner = component.Node();
     GUARDR(owner, result)
 
     auto world = owner->World();
     GUARDR(world, result)
 
-    // Get the camera
     auto camera = world->MainCamera();
     GUARDR(camera, result)
 
@@ -423,7 +459,7 @@ ScreenPosition PJ::LocalToScreen(SomeWorldComponent const& component, LocalPosit
 }
 
 ScreenPosition PJ::WorldToScreen(SomeWorldComponent const& component, WorldPosition worldPos) {
-    auto owner = component.owner;
+    auto owner = component.Node();
     GUARDR(owner, {})
 
     auto world = owner->World();

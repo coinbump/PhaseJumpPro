@@ -10,7 +10,7 @@
  */
 namespace PJ {
     /// Component with a switch
-    class SwitchHandler : public WorldComponent<>, public Switchable {
+    class SwitchHandler : public WorldComponent, public Switchable {
     protected:
         SwitchState state = SwitchState::Off;
 

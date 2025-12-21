@@ -9,9 +9,9 @@
  */
 namespace PJ {
     /// Rotates the node N angles per second
-    class RotateKSteering2D : public WorldComponent<> {
+    class RotateKSteering2D : public WorldComponent {
     public:
-        using Base = WorldComponent<>;
+        using Base = WorldComponent;
         using This = RotateKSteering2D;
 
         Angle turnSpeed;

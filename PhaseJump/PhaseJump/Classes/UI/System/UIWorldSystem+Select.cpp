@@ -1,4 +1,5 @@
 #include "SelectHandler.h"
+#include "SetUtils.h"
 #include "UIWorldSystem.h"
 
 using namespace std;

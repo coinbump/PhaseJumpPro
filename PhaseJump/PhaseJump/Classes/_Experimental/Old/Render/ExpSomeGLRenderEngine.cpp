@@ -1,6 +1,6 @@
 #include <stdio.h>
 //
-// void SomeGLRenderEngine::RenderLineLoop(VectorList<float> const& vertices)
+// void BaseGLRenderEngine::RenderLineLoop(VectorList<float> const& vertices)
 //{
 //    RenderInternal([] () {
 //        //    VertexPointer(2, GL_FLOAT, 0, vertices);
@@ -8,7 +8,7 @@
 //    });
 //}
 //
-// void SomeGLRenderEngine::RenderLine(VectorList<float> const& vertices)
+// void BaseGLRenderEngine::RenderLine(VectorList<float> const& vertices)
 //{
 //    RenderInternal([] () {
 //        //    VertexPointer(2, GL_FLOAT, 0, &vertices);
@@ -18,7 +18,7 @@
 
 //
 //
-//  SomeGLRenderEngine.mm
+//  BaseGLRenderEngine.mm
 //  Phase Jump
 //
 //  Copyright 2010 Coin Bump. All rights reserved.
@@ -26,21 +26,21 @@
 //
 // #include "pch.h"
 //
-// #include "SomeGLRenderEngine.h"
+// #include "BaseGLRenderEngine.h"
 // #include "PJ_GLHeaders.h"
 // #include "PJ_Math.h"
 // #include "PJ_DrawTexture.h"
 // #include "PJ_Types.h"
 //
 // PJ_RenderStateStack    pjREStateStack;
-// SomeGLRenderEngine*    PJ::renderEngine = NULL;    // Render engine.
+// BaseGLRenderEngine*    PJ::renderEngine = NULL;    // Render engine.
 // PJ_RenderState        PJ::renderState;
 //
 // PJ_REMatrixStack
 // PJ::renderMatrixStack[static_cast<int>(MatrixStack::GLNumRenderStacks)]; int
 // PJ::frameRenderCount = 0;
 //
-// SomeGLRenderEngine::SomeGLRenderEngine()
+// BaseGLRenderEngine::BaseGLRenderEngine()
 //:    mRenderScale(PJ_Vector2(1.0, 1.0)),
 //    mRenderRotate(0),
 //    mDefaultRenderer(new Renderer)
@@ -60,7 +60,7 @@
 //    PushRenderState
 //
 // */
-// void SomeGLRenderEngine::PushRenderState() {
+// void BaseGLRenderEngine::PushRenderState() {
 //    pjREStateStack.push(PJ::renderState);
 //
 //    MatrixStack    curStack = PJ::renderState.mActiveMatrixStack;
@@ -80,7 +80,7 @@
 //    Does not pop bound textures (expensive).
 //
 // */
-// void SomeGLRenderEngine::PopRenderState() {
+// void BaseGLRenderEngine::PopRenderState() {
 //    if (pjREStateStack.empty()) { return; }
 //
 //    PJ_RenderState    newState = pjREStateStack.top();
@@ -102,18 +102,18 @@
 //    pjREStateStack.pop();
 //}
 //
-// GLuint SomeGLRenderEngine::FrameBufferId()
+// GLuint BaseGLRenderEngine::FrameBufferId()
 //{
 //    return PJ::renderState.mFrameBufferBound;
 //}
 //
-// void SomeGLRenderEngine::SetRenderColorRGBA(PJ_Color color)
+// void BaseGLRenderEngine::SetRenderColorRGBA(PJ_Color color)
 //{
 //    PJ_FColor    fColor = PJ_ColorToFColor(color);
 //    SetRenderColor(fColor);
 //}
 //
-// void SomeGLRenderEngine::SetRenderColorRGB(PJ_Color color)
+// void BaseGLRenderEngine::SetRenderColorRGB(PJ_Color color)
 //{
 //    // FUTURE: eliminate unnecessary state changes.
 //    PJ_FColor    fColor = PJ_ColorToFColor(color);
@@ -121,25 +121,25 @@
 //    SetRenderColor(fColor);
 //}
 //
-// void SomeGLRenderEngine::SetRenderColorRGBF(float red, float green, float
+// void BaseGLRenderEngine::SetRenderColorRGBF(float red, float green, float
 // blue)
 //{
 //    PJ_FColor    fColor(red, green, blue, 1.0);
 //    SetRenderColor(fColor);
 //}
 //
-// void SomeGLRenderEngine::SetRenderColorRGBAF(float red, float green, float
+// void BaseGLRenderEngine::SetRenderColorRGBAF(float red, float green, float
 // blue, float alpha)
 //{
 //    SetRenderColor(PJ_FColor(red, green, blue, alpha));
 //}
 //
-// void SomeGLRenderEngine::Render2DQuad(ZQuad const& v)
+// void BaseGLRenderEngine::Render2DQuad(ZQuad const& v)
 //{
 //    Render2DTriangleStrip(&(*(const_cast<ZQuad*>(&v)))[0], 4);
 //}
 //
-// void SomeGLRenderEngine::Render2DTriangleStrip(void* vertices, int
+// void BaseGLRenderEngine::Render2DTriangleStrip(void* vertices, int
 // numVertices)
 //{
 //    PreRender();
@@ -177,7 +177,7 @@
 //     PJ::frameRenderCount++;
 // }
 //
-// void SomeGLRenderEngine::Render2DTriangleFan(void* vertices, int numVertices)
+// void BaseGLRenderEngine::Render2DTriangleFan(void* vertices, int numVertices)
 //{
 //     PreRender();
 //
@@ -192,7 +192,7 @@
 //    already bound.
 //
 // */
-// void SomeGLRenderEngine::RenderElementsTriangleStrip(GLsizei count, const
+// void BaseGLRenderEngine::RenderElementsTriangleStrip(GLsizei count, const
 // GLvoid *indices)
 //{
 //    // IMPORTANT: the elements must be pointed to elsewhere.
@@ -201,7 +201,7 @@
 //
 //}
 //
-// void SomeGLRenderEngine::SetActiveMatrixStack(MatrixStack renderStack)
+// void BaseGLRenderEngine::SetActiveMatrixStack(MatrixStack renderStack)
 //{
 //    PJ::renderState.mActiveMatrixStack = renderStack;
 //
@@ -209,7 +209,7 @@
 //
 // #pragma mark - MATRICES
 //
-// void SomeGLRenderEngine::LoadIdentity()
+// void BaseGLRenderEngine::LoadIdentity()
 //{
 //    PJ::renderMatrixStack[static_cast<int>(PJ::renderState.mActiveMatrixStack)].LoadIdentity();
 //    LoadMatrix();
@@ -222,7 +222,7 @@
 //    __WIN_PHASE__: near, far are reserved keywords
 //
 // */
-// void SomeGLRenderEngine::LoadOrtho(float left, float right, float bottom,
+// void BaseGLRenderEngine::LoadOrtho(float left, float right, float bottom,
 // float top, float _near, float _far)
 //{
 //    PJ::renderMatrixStack[static_cast<int>(PJ::renderState.mActiveMatrixStack)].mMatrix.LoadOrtho(left,
@@ -230,14 +230,14 @@
 //
 //}
 //
-// void SomeGLRenderEngine::LoadPerspective(float fov_radians, float aspect,
+// void BaseGLRenderEngine::LoadPerspective(float fov_radians, float aspect,
 // float zNear, float zFar)
 //{
 //    PJ::renderMatrixStack[static_cast<int>(PJ::renderState.mActiveMatrixStack)].mMatrix.LoadPerspective(fov_radians,
 //    aspect, zNear, zFar); LoadMatrix();
 //}
 //
-// void SomeGLRenderEngine::SetActiveMatrix(PJ_Matrix4& matrix, bool load)
+// void BaseGLRenderEngine::SetActiveMatrix(PJ_Matrix4& matrix, bool load)
 //{
 //    PJ::renderMatrixStack[static_cast<int>(PJ::renderState.mActiveMatrixStack)].mMatrix
 //    = matrix; if (load) {
@@ -245,7 +245,7 @@
 //    }
 //}
 //
-// void SomeGLRenderEngine::RotateAxisRad(Axis3D axis, float radians, bool load)
+// void BaseGLRenderEngine::RotateAxisRad(Axis3D axis, float radians, bool load)
 //{
 //    PJ_Matrix4    rotateMatrix;
 //
@@ -270,13 +270,13 @@
 //
 //}
 //
-// void SomeGLRenderEngine::RotateAxisDeg(Axis3D axis, float degrees, bool load)
+// void BaseGLRenderEngine::RotateAxisDeg(Axis3D axis, float degrees, bool load)
 //{
 //    RotateAxisRad(axis, DEGREES_TO_RADIANSF(degrees), load);
 //
 //}
 //
-// void SomeGLRenderEngine::Translate(float x, float y, float z, bool load)
+// void BaseGLRenderEngine::Translate(float x, float y, float z, bool load)
 //{
 //    if (0 == x && 0 == y && 0 == z) { return; }
 //
@@ -293,7 +293,7 @@
 //
 //}
 //
-// void SomeGLRenderEngine::Scale(float x, float y, float z, bool load)
+// void BaseGLRenderEngine::Scale(float x, float y, float z, bool load)
 //{
 //    PJ_Vector3    v(x, y, z);
 //    PJ_Matrix4    matrix;
@@ -308,30 +308,30 @@
 //
 //}
 //
-// PJ_Matrix4 SomeGLRenderEngine::GetActiveMatrix() const {
+// PJ_Matrix4 BaseGLRenderEngine::GetActiveMatrix() const {
 //    return
 //    PJ::renderMatrixStack[static_cast<int>(PJ::renderState.mActiveMatrixStack)].mMatrix;
 //
 //}
 //
-// void SomeGLRenderEngine::SetBlendFunc(GLenum source, GLenum dest)
+// void BaseGLRenderEngine::SetBlendFunc(GLenum source, GLenum dest)
 //{
 //    PJ::renderState.SetBlendFunc(source, dest);
 //}
 //
-// void SomeGLRenderEngine::BlendFuncDefault()
+// void BaseGLRenderEngine::BlendFuncDefault()
 //{
 //    SetBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 //
 //}
 //
-// void SomeGLRenderEngine::PushMatrix()
+// void BaseGLRenderEngine::PushMatrix()
 //{
 //    PJ::renderMatrixStack[static_cast<int>(PJ::renderState.mActiveMatrixStack)].push(PJ::renderMatrixStack[static_cast<int>(PJ::renderState.mActiveMatrixStack)].mMatrix);
 //
 //}
 //
-// void SomeGLRenderEngine::PopMatrix(bool load)
+// void BaseGLRenderEngine::PopMatrix(bool load)
 //{
 //    if
 //    (PJ::renderMatrixStack[static_cast<int>(PJ::renderState.mActiveMatrixStack)].size()
@@ -349,23 +349,23 @@
 //
 //}
 //
-// #pragma mark - SomeGLRenderEngine::Renderer
+// #pragma mark - BaseGLRenderEngine::Renderer
 //
-// PJ_FColor& SomeGLRenderEngine::GetRenderColor() {
+// PJ_FColor& BaseGLRenderEngine::GetRenderColor() {
 //    if (mRenderColors.empty()) {
 //        mRenderColors.push_back(PJ_FColor::white);
 //    }
 //    return mRenderColors[0];
 //}
 //
-// PJ_FColor& SomeGLRenderEngine::GetRenderColorAt(size_t index) {
+// PJ_FColor& BaseGLRenderEngine::GetRenderColorAt(size_t index) {
 //    if (index < mRenderColors.size()) {
 //        return mRenderColors[index];
 //    }
 //    return mWhiteColor;
 //}
 //
-// void SomeGLRenderEngine::Renderer::SetRenderColor(PJ_FColor const& color) {
+// void BaseGLRenderEngine::Renderer::SetRenderColor(PJ_FColor const& color) {
 //    if (PJ::renderEngine->mRenderColors.empty()) {
 //        PJ::renderEngine->mRenderColors.push_back(color);
 //    }
@@ -374,7 +374,7 @@
 //    }
 //}
 //
-// void SomeGLRenderEngine::Renderer::RenderTexture(PJ_DrawTexture* tex, ZQuad
+// void BaseGLRenderEngine::Renderer::RenderTexture(PJ_DrawTexture* tex, ZQuad
 // const& v) {
 //    PJ::renderEngine->BindTexture2D(tex->GetRenderID());
 //    PJ::renderEngine->Render2DQuad(v);

@@ -32,22 +32,22 @@ void BoardView::Build() {
             qb.And("Drop node")
                 .With<MatrixPieceHandler>(MatrixPieceHandler::Config{ .origin = loc,
                                                                       .shapeString = "*" })
-                .With<SomeDropTarget>()
+                .With<DropTarget>()
                 .SquareCollider(CellSize().x)
                 .SquareFrame(CellSize().x, Color::white, 2)
-                .ModifyLatest<SomeDropTarget>([=](SomeDropTarget& target) {
-                    SomeRenderer* renderer = target.owner->TypeComponent<SomeRenderer>();
+                .ModifyLatest<DropTarget>([=](DropTarget& target) {
+                    Renderer* renderer = target.owner->TypeComponent<Renderer>();
                     GUARD(renderer)
 
-                    target.canAcceptDragFunc = [=](SomeDropTarget& target, auto& dragModel) {
+                    target.canAcceptDragFunc = [=](DropTarget& target, auto& dragModel) {
                         return !piecesView->board.IsCellOccupied(loc);
                     };
 
-                    target.onStateChangeFunc = [=](SomeDropTarget& target) {
-                        renderer->Enable(target.State() == SomeDropTarget::StateType::DragAccept);
+                    target.onStateChangeFunc = [=](DropTarget& target) {
+                        renderer->Enable(target.State() == DropTarget::StateType::DragAccept);
                     };
 
-                    target.onDropFunc = [=](SomeDropTarget& target, DragModel const& dragModel) {
+                    target.onDropFunc = [=](DropTarget& target, DragModel const& dragModel) {
                         GUARD(dragModel.DragHandler())
 
                         auto pieceHandler =

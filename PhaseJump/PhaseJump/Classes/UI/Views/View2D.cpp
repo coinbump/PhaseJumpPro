@@ -1,6 +1,6 @@
 #include "View2D.h"
+#include "HoverGestureHandler.h"
 #include "QuickBuilder.h"
-#include "SomeHoverGestureHandler.h"
 #include "UIPlanner.h"
 #include "ViewBuilder.h"
 #include "WorldNode.h"
@@ -16,10 +16,10 @@ View2D::View2D() {
     };
     GetUpdatable().onUpdateFunc = onUpdateFunc;
 
-    AddSignalHandler<AddChildNodeEvent>({ .id = SignalId::AddChildNode,
+    AddSignalHandler<AddChildNodeEvent>({ .id = SignalId::ChildNodeAdd,
                                           .func = [this](auto& _component, auto& event) {
                                               auto view =
-                                                  event.node->template TypeComponent<View2D>();
+                                                  event.node.template TypeComponent<View2D>();
                                               GUARD(view)
 
                                               // Top level views don't affect layout
@@ -27,10 +27,10 @@ View2D::View2D() {
 
                                               SetNeedsLayout();
                                           } });
-    AddSignalHandler<RemoveChildNodeEvent>({ .id = SignalId::RemoveChildNode,
+    AddSignalHandler<RemoveChildNodeEvent>({ .id = SignalId::ChildNodeRemove,
                                              .func = [this](auto& _component, auto& event) {
                                                  auto view =
-                                                     event.node->template TypeComponent<View2D>();
+                                                     event.node.template TypeComponent<View2D>();
                                                  GUARD(view)
 
                                                  // Top level views don't affect layout
@@ -99,10 +99,10 @@ View2D::View2D() {
             String layoutLabel = std::format("Layout: {}", layout->TypeName());
             planner.Text({ .text = layoutLabel });
 
-            try {
-                auto planUIFunc = layout->planUIFuncs.at(args.context);
+            auto planUIFunc = layout->GetPlanUIFunc(args.context);
+            if (planUIFunc) {
                 planUIFunc({ .layout = *layout, .context = args.context, .planner = planner });
-            } catch (...) {}
+            }
         }
 
         // Don't rebuild in immediate mode render loop, it will flash
@@ -330,7 +330,7 @@ void View2D::SetNeedsLayout() {
 
 void View2D::SetLayout(UP<SomeViewLayout>& value) {
     if (value) {
-        value->owner = this;
+        value->SetOwner(this);
     }
     layout = std::move(value);
     SetNeedsLayout();

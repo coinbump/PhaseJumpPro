@@ -1,7 +1,7 @@
 #pragma once
 
 #include "GLShaderProgram.h"
-#include "SomeLoadResourcesOperation.h"
+#include "LoadResourcesOperation.h"
 
 /*
  RATING: 5 stars
@@ -12,15 +12,15 @@ namespace PJ {
     class GLShaderProgram;
 
     /// Loads OpenGL shader program
-    class GLLoadShaderProgramOperation : public SomeLoadResourcesOperation {
+    class GLLoadShaderProgramOperation : public LoadResourcesOperation {
     public:
-        using Base = SomeLoadResourcesOperation;
+        using Base = LoadResourcesOperation;
 
         GLLoadShaderProgramOperation(ResourceInfo info, ResourceRepositoryModel& repoModel) :
-            Base(info, repoModel) {}
+            Base(info, repoModel) {
+            loadResourcesFunc = [this](auto& operation) { return _LoadResources(); };
+        }
 
-        // MARK: SomeLoadResourcesOperation
-
-        Result LoadResources() override;
+        Result _LoadResources();
     };
 } // namespace PJ

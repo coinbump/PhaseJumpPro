@@ -90,7 +90,7 @@ namespace PJ {
                 track = static_cast<Track*>(Add(trackToAdd)->get());
             }
 
-            UP<ValueKeyframe<Type>> kf = NEW<Keyframe<Type>>(config.keyframeConfig);
+            UP<ValueKeyframe<Type>> kf = NEW<ValueKeyframe<Type>>(config.keyframeConfig);
             auto result = static_cast<ValueKeyframe<Type>*>(kf.get());
             track->Add(kf, time);
 

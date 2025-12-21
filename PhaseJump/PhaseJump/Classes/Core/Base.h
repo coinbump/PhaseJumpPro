@@ -14,8 +14,7 @@
  */
 namespace PJ {
     /// Base class for many framework objects, provides standard behavior and
-    /// provides polymorphism for factories so we can use dynamic cast and
-    /// `shared_from_this`
+    /// polymorphism for factories
     class Base : public StringConvertible, public std::enable_shared_from_this<Base> {
     protected:
         /// If true, the object was started by calling Go

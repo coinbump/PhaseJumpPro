@@ -13,7 +13,7 @@
 // Unused. Keep for reference
 namespace PJ {
     /// For rendering via `SDL_Renderer`
-    //    class SDLFutureRenderContext : public SomeRenderContext {
+    //    class SDLFutureRenderContext : public RenderContext {
     //    public:
     //        SDL_Renderer* renderer = nullptr;
     //        Color clearColor = Color::gray;

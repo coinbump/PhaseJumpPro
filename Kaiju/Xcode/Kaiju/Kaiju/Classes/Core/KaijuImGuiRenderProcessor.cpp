@@ -37,21 +37,21 @@ void KaijuImGuiRenderProcessor::BuildPainters() {
     GUARD(world)
 
     windowPainter = NEW<ImGuiWindowPainter>("Kaiju", &isToolActive);
-    UP<SomeImGuiPainter> worldInfoPainter = NEW<EditorImGuiWorldInfoPainter>(*world);
-    UP<SomeImGuiPainter> menuBarPainter = NEW<ImGuiMainMenuBarPainter>(editorSystem.menus);
+    UP<ImGuiPainter> worldInfoPainter = NEW<EditorImGuiWorldInfoPainter>(*world);
+    UP<ImGuiPainter> menuBarPainter = NEW<ImGuiMainMenuBarPainter>(editorSystem.menus);
 
-    UP<SomeImGuiPainter> scrollingPainter = NEW<ImGuiChildPainter>("Scrolling");
+    UP<ImGuiPainter> scrollingPainter = NEW<ImGuiChildPainter>("Scrolling");
 
-    UP<SomeImGuiPainter> scenesPainter =
+    UP<ImGuiPainter> scenesPainter =
         NEW<EditorImGuiScenesPainter>(editorSystem, EditorImGuiScenesPainter::OnSceneSwitchFunc());
 
-    UP<SomeImGuiPainter> prefabsPainter = NEW<EditorImGuiPrefabsPainter>(editorSystem);
-    UP<SomeImGuiPainter> resourcesPainter = NEW<EditorImGuiResourcesPainter>(editorSystem);
-    UP<SomeImGuiPainter> sceneTreePainter = NEW<EditorImGuiSceneTreePainter>(
+    UP<ImGuiPainter> prefabsPainter = NEW<EditorImGuiPrefabsPainter>(editorSystem);
+    UP<ImGuiPainter> resourcesPainter = NEW<EditorImGuiResourcesPainter>(editorSystem);
+    UP<ImGuiPainter> sceneTreePainter = NEW<EditorImGuiSceneTreePainter>(
         editorSystem, EditorImGuiSceneTreePainter::OnInspectFunc()
     );
-    UP<SomeImGuiPainter> renderEnginePainter = NEW<EditorImGuiRenderEnginePainter>(editorSystem);
-    UP<SomeImGuiPainter> commandHistoryPainter =
+    UP<ImGuiPainter> renderEnginePainter = NEW<EditorImGuiRenderEnginePainter>(editorSystem);
+    UP<ImGuiPainter> commandHistoryPainter =
         NEW<EditorImGuiCommandHistoryPainter>(editorSystem.commands);
 
     scrollingPainter->tree.Add(scenesPainter);

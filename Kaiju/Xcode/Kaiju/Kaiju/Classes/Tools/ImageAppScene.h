@@ -9,14 +9,14 @@ namespace PJ {
         class DocumentCore {
         public:
             SP<RGBABitmap> bitmap;
-            SP<SomeTexture> texture;
+            SP<Texture> texture;
         };
 
-        using Document = PJ::Document<DocumentCore>;
+        using Document = PJ::CoreDocument<DocumentCore>;
 
         DocumentBundle documents;
         SP<Document> activeDocument;
-        SP<SomeTexture> activeTexture;
+        SP<Texture> activeTexture;
 
         ClassRegistry<BitmapOperationClass> operationClasses;
 
@@ -25,8 +25,6 @@ namespace PJ {
         void SetActiveDocument(SP<Document> document) {
             GUARD(activeDocument != document)
             activeDocument = document;
-
-            // TODO: find texture and show it using ImRenderer
         }
 
         void NavigateToPreviousDocument();

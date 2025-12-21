@@ -19,7 +19,7 @@ EditorImGuiCommandHistoryPainter::EditorImGuiCommandHistoryPainter(CommandHistor
             }
 
             for (auto& command : commandHistory.Commands()) {
-                auto name = command->name;
+                auto name = command->Name();
                 GUARD_CONTINUE(!IsEmpty(name));
 
                 switch (command->State()) {

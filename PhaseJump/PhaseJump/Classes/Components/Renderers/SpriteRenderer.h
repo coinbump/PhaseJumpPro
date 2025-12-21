@@ -1,8 +1,8 @@
 #pragma once
 
+#include "Renderer.h"
 #include "RenderFeature.h"
-#include "SomeRenderer.h"
-#include "SomeTexture.h"
+#include "Texture.h"
 #include <memory>
 
 /*
@@ -12,9 +12,9 @@
  */
 namespace PJ {
     /// Renders a single texture as a sprite
-    class SpriteRenderer : public SomeMaterialRenderer {
+    class SpriteRenderer : public MaterialRenderer {
     public:
-        using Base = SomeMaterialRenderer;
+        using Base = MaterialRenderer;
         using This = SpriteRenderer;
 
     protected:
@@ -29,14 +29,14 @@ namespace PJ {
         struct Config {
             using FeatureStateMap = RenderMaterial::FeatureStateMap;
 
-            SP<SomeTexture> texture;
+            SP<Texture> texture;
             SP<RenderMaterial> material;
 
             FeatureStateMap features = { { RenderFeature::Blend, RenderFeatureState::Enable } };
         };
 
         SpriteRenderer(Config const& config);
-        SpriteRenderer(SP<SomeTexture> texture);
+        SpriteRenderer(SP<Texture> texture);
         SpriteRenderer(SP<RenderMaterial> material);
 
         void SetFlipX(bool value) {

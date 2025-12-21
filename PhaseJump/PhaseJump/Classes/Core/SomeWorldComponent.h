@@ -3,19 +3,19 @@
 #include "Base.h"
 #include "Macros.h"
 #include "SomeSignal.h"
+#include "StandardCore.h"
 #include "UIPlan.h"
 #include "UITypes.h"
 #include "UnorderedMap.h"
 #include "Updatables.h"
 #include "WorldAttachmentCore.h"
 #include "WorldNodeTransform.h"
-#include "WorldPartLife.h"
 #include <memory>
 
 /*
  RATING: 5 stars
- Has unit tests
- CODE REVIEW: 12/22/24
+ Simple types
+ CODE REVIEW: 12/20/25
  */
 namespace PJ {
     class World;
@@ -36,84 +36,65 @@ namespace PJ {
     public:
         using This = SomeWorldComponent;
         using NodeTransform = WorldNodeTransform;
-
-        struct PlanUIArgs {
-            This& component;
-            String context;
-            UIPlanner& planner;
-        };
-
-        using PlanUIFunc = std::function<void(PlanUIArgs)>;
-        using TargetFunc = std::function<WorldNode*(This&)>;
-        using AttachmentCore = WorldAttachmentCore<This>;
-        using SignalHandler = AttachmentCore::SignalHandler;
+        using SignalHandler = PJ::SignalHandler<This>;
         using SignalFunc = SignalHandler::SignalFunc;
 
         // Don't allow copies
         DELETE_COPY(SomeWorldComponent)
 
-        AttachmentCore attachmentCore;
+        SomeWorldComponent() {}
 
-        /// Owner node
-        /// Node is responsible for setting this to null when the component is removed
-        WorldNode* owner{};
+        virtual ~SomeWorldComponent() {}
 
-        /// Func to make UI plan for custom UI in editor
-        UnorderedMap<String, PlanUIFunc> planUIFuncs;
+        /// @return Returns true if this component is enabled
+        virtual bool IsEnabled() const = 0;
 
-        /// Returns the target for this component
-        TargetFunc targetFunc;
+        /// Sets the enabled state
+        virtual SomeWorldComponent& Enable(bool value) = 0;
 
-        SomeWorldComponent(String name = "");
+        /// @return Returns the owner node
+        virtual WorldNode* Node() const = 0;
 
-        bool IsEnabled() const;
+        /// Assigns the owner node
+        virtual SomeWorldComponent& SetNode(WorldNode* value) = 0;
 
-        This& Enable(bool value);
+        /// @return Returns the browsing name
+        virtual String Name() const = 0;
 
-        virtual WorldNode* Node() const {
-            return owner;
-        }
+        /// Sets the browsing name
+        virtual SomeWorldComponent& SetName(String value) = 0;
 
-        String Name() const {
-            return attachmentCore.name.size() > 0 ? attachmentCore.name : TypeName();
-        }
+        /// @return Returns a unique identifier (implementation dependent)
+        virtual String Id() const = 0;
 
-        void SetName(String value) {
-            attachmentCore.name = value;
-        }
-
-        String Id() const {
-            return attachmentCore.id;
-        }
-
-        This& SetId(String value) {
-            attachmentCore.id = value;
-            return *this;
-        }
+        /// Assigns a unique identifier
+        virtual SomeWorldComponent& SetId(String value) = 0;
 
         /// @return Returns the type name of this component for browsers and debugging
         virtual String TypeName() const = 0;
 
+        /// @return Returns the owner node's model matrix
         Matrix4x4 ModelMatrix() const;
 
+        /// @return Returns local position in world coordinates
         Vector3 LocalToWorld(Vector3 localPos) const;
+
+        /// @return Returns world position in local coordinates
         Vector3 WorldToLocal(Vector3 worldPos) const;
 
         // MARK: Lifecycle events
 
-        bool IsAwake() const {
-            return life.IsAwake();
-        }
+        /// @return Returns true if component is awake
+        virtual bool IsAwake() const = 0;
 
-        bool IsStarted() const {
-            return life.IsStarted();
-        }
+        /// @return Returns true if component is started
+        virtual bool IsStarted() const = 0;
 
         /// Called before Start
-        void CheckedAwake();
+        virtual void CheckedAwake() = 0;
 
         /// Called after Awake
-        void CheckedStart();
+        virtual void CheckedStart() = 0;
 
         /// Called after OnUpdate
         virtual void LateUpdate() {}
@@ -122,59 +103,37 @@ namespace PJ {
         virtual void OnDestroy() {}
 
         /// Called in game loop for time delta update events
-        virtual FinishType OnUpdate(TimeSlice time) {
-            return attachmentCore.OnUpdate(time);
-        }
+        virtual FinishType OnUpdate(TimeSlice time) = 0;
 
         /// @return Returns the target node that this component operates on
         /// In a multi-component system, this will usually be the component's owner
         /// In a single-component per node system (Godot), this could be the owner's parent node
         virtual WorldNode* Target() {
-            GUARDR(targetFunc, owner)
-            return targetFunc(*this);
+            return Node();
         }
 
-        virtual UP<UIPlan> MakeUIPlan(String context);
-
-        Updatable& GetUpdatable() {
-            return attachmentCore.updatable;
+        /// @return Returns an optional UI plan used to build inspectors for this component
+        virtual UP<UIPlan> MakeUIPlan(String context) {
+            return {};
         }
 
-        Updatables& GetUpdatables() {
-            return attachmentCore.updatables;
-        }
+        virtual Updatable& GetUpdatable() = 0;
+
+        virtual Updatables& GetUpdatables() = 0;
 
         /// Adds a signal handler for the specified signal
-        This& AddSignalHandler(SignalHandler handler);
-
-        template <class Signal>
-        using SignalHandlerConfig = AttachmentCore::SignalHandlerConfig<Signal>;
-
-        template <class Signal>
-        This& AddSignalHandler(SignalHandlerConfig<Signal> config) {
-            attachmentCore.AddSignalHandler<Signal>(config);
-            OnAddSignalHandler();
-            return *this;
-        }
+        virtual This& AddSignalHandler(SignalHandler handler) = 0;
 
         /// Sends a signal to registered signal handlers
-        void Signal(String id, SomeSignal const& signal) {
-            attachmentCore.Signal(id, signal);
-        }
+        virtual void Signal(String id, SomeSignal const& signal) = 0;
+
+        /// @return Returns true if the component listens to this signal
+        virtual bool IsListenerToSignal(String id) const = 0;
+
+        /// @return Returns true if the component is registered to listen to signals
+        virtual bool IsListener() const = 0;
 
     protected:
-        /// If true, the component should receive events
-        bool isEnabled = true;
-
-        /// Internal. Tracks the life cycle (Start, Awake) of this object
-        WorldPartLife life;
-
-        /// Called when a signal handler is added. Sets the isListener flag on the owner to true
-        void OnAddSignalHandler();
-
-        /// Called when the enabled state for this object changes
-        virtual void OnEnabledChange() {}
-
         /// Called before Start by CheckedAwake
         virtual void Awake() {};
 

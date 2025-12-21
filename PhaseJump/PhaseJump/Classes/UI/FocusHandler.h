@@ -35,7 +35,7 @@ namespace PJ {
 
     /// Handles focus behavior and state for object
     /// Each object that can receive focus must have one
-    class FocusHandler : public WorldComponent<> {
+    class FocusHandler : public WorldComponent {
     public:
         using Base = WorldComponent;
 
@@ -76,7 +76,7 @@ namespace PJ {
     };
 
     /// Allows an object to have focus
-    //    class FocusHandler : public WorldComponent<>
+    //    class FocusHandler : public WorldComponent
 
     //    public:
     //        int focusPriority = 0;

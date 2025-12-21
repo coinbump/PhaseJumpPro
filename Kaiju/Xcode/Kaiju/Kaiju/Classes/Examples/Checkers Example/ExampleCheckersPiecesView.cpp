@@ -37,7 +37,7 @@ void PiecesView::Build() {
                 .With<MatrixPieceHandler>(MatrixPieceHandler::Config{ .origin = loc,
                                                                       .shapeString = "*" })
                 .ModifyLatest<MatrixPieceHandler>([](auto& handler) {
-                    handler.core.typeTags.insert("black");
+                    handler._core.typeTags.insert("black");
                 })
                 .SetValveDurations(0.45f, 0.45f)
                 .HoverScaleToPingPong(1.15f)
@@ -64,7 +64,7 @@ void PiecesView::Build() {
                 .With<MatrixPieceHandler>(MatrixPieceHandler::Config{ .origin = loc,
                                                                       .shapeString = "*" })
                 .ModifyLatest<MatrixPieceHandler>([](auto& handler) {
-                    handler.core.typeTags.insert("red");
+                    handler._core.typeTags.insert("red");
                 })
                 .SetValveDurations(0.45f, 0.45f)
                 .HoverScaleToPingPong(1.15f)
@@ -102,7 +102,7 @@ void PiecesView::TryMove(MatrixPieceHandler& pieceHandler, Vec2I location) {
             RemoveAt(jumpedLocation, DestroyType::Keep);
 
             jumpedPieceNode.RemoveType<DragHandler2D>();
-            jumpedPieceNode.RemoveType<SomeCollider>();
+            jumpedPieceNode.RemoveType<Collider>();
 
             QB(jumpedPieceNode)
                 .SetAnimateDuration(0.2f)
@@ -119,7 +119,7 @@ bool PiecesView::CanMove(MatrixPieceHandler& pieceHandler, Vec2I location) {
     GUARDR(!board.IsCellOccupied(location), false)
 
     auto pieceLocation = pieceHandler.piece->Origin();
-    auto isBlack = pieceHandler.core.typeTags.contains("black");
+    auto isBlack = pieceHandler._core.typeTags.contains("black");
 
     if (isBlack) {
         // Ok to move 1 diagonal.
@@ -137,7 +137,7 @@ bool PiecesView::CanMove(MatrixPieceHandler& pieceHandler, Vec2I location) {
                 auto& jumpedPieceNode = NodeAt(jumpedLocation);
                 auto jumpedPieceComponent = jumpedPieceNode.TypeComponent<MatrixPieceHandler>();
                 if (jumpedPieceComponent &&
-                    jumpedPieceComponent->core.typeTags.contains("black") != isBlack) {
+                    jumpedPieceComponent->_core.typeTags.contains("black") != isBlack) {
                     return true;
                 }
             } catch (...) {}
@@ -157,7 +157,7 @@ bool PiecesView::CanMove(MatrixPieceHandler& pieceHandler, Vec2I location) {
                 auto& jumpedPieceNode = NodeAt(jumpedLocation);
                 auto jumpedPieceComponent = jumpedPieceNode.TypeComponent<MatrixPieceHandler>();
                 if (jumpedPieceComponent &&
-                    jumpedPieceComponent->core.typeTags.contains("black") != isBlack) {
+                    jumpedPieceComponent->_core.typeTags.contains("black") != isBlack) {
                     return true;
                 }
             } catch (...) {}

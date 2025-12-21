@@ -5,14 +5,14 @@
 using namespace PJ;
 using namespace std;
 
-namespace SomeWorldSystemTests {
+namespace WorldSystemTests {
 }
 
-using namespace SomeWorldSystemTests;
+using namespace WorldSystemTests;
 
-TEST(SomeWorldSystem, LifeCycle)
+TEST(WorldSystem, LifeCycle)
 {
-    SomeWorldSystem sut;
+    WorldSystem sut;
     EXPECT_FALSE(sut.IsAwake());
     EXPECT_FALSE(sut.IsStarted());
     
@@ -24,26 +24,26 @@ TEST(SomeWorldSystem, LifeCycle)
     EXPECT_TRUE(sut.IsStarted());
 }
 
-TEST(SomeWorldSystem, AddKeyFunc)
+TEST(WorldSystem, AddKeyFunc)
 {
     int count{};
     
-    SomeWorldSystem sut;
+    WorldSystem sut;
     sut.AddKeyFunc(10, {KeyModifier::Shift, KeyModifier::Control}, [&](auto& system) {
         count++;
     });
         
-    KeyDownUIEvent eventMatch(0, 10, {.modifiers = {KeyModifier::Shift, KeyModifier::Control}});
+    KeyDownUIEvent eventMatch(KeyUIEventCore{.scanCode = 0, .keyCode = 10, .keyModifiers = {.modifiers = {KeyModifier::Shift, KeyModifier::Control}}});
     sut.Signal(SignalId::KeyDown, eventMatch);
     
     EXPECT_EQ(1, count);
     
-    KeyDownUIEvent eventWrongKeyCode(0, 9, {.modifiers = {KeyModifier::Shift, KeyModifier::Control}});
+    KeyDownUIEvent eventWrongKeyCode(KeyUIEventCore{.scanCode = 0, .keyCode = 9, .keyModifiers = {.modifiers = {KeyModifier::Shift, KeyModifier::Control}}});
     sut.Signal(SignalId::KeyDown, eventWrongKeyCode);
     
     EXPECT_EQ(1, count);
     
-    KeyDownUIEvent eventWrongModifiers(0, 10, {.modifiers = {KeyModifier::Shift}});
+    KeyDownUIEvent eventWrongModifiers(KeyUIEventCore{.scanCode = 0, .keyCode = 10, .keyModifiers = {.modifiers = {KeyModifier::Shift}}});
     sut.Signal(SignalId::KeyDown, eventWrongModifiers);
     
     EXPECT_EQ(1, count);

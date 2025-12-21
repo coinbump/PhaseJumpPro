@@ -32,7 +32,7 @@ This& UIPlanner::Button(std::function<ButtonConfig()> configFunc) {
 
     plan.Add([=]() {
         auto config = configFunc();
-        return NEW<UIModel<ActionUICore>>(
+        return NEW<CoreUIModel<ActionUICore>>(
             UIModelType::Button, config.label, ActionUICore{ .func = config.func }
         );
     });
@@ -81,7 +81,7 @@ This& UIPlanner::PickerList(std::function<PickerListConfig()> configFunc) {
     plan.Add([=]() {
         auto config = configFunc();
 
-        return NEW<UIModel<ValueOptionsUICore>>(
+        return NEW<CoreUIModel<ValueOptionsUICore>>(
             UIModelType::PickerList, config.label,
             ValueOptionsUICore{ config.options, config.binding }
         );
@@ -95,7 +95,7 @@ This& UIPlanner::ListSelect(std::function<ListSelectConfig()> configFunc) {
     plan.Add([=]() {
         auto config = configFunc();
 
-        return NEW<UIModel<ValueOptionsUICore>>(
+        return NEW<CoreUIModel<ValueOptionsUICore>>(
             UIModelType::ListSelect, config.label,
             ValueOptionsUICore{ config.options, config.binding }
         );

@@ -12,7 +12,7 @@
  */
 namespace PJ {
     template <class Agent>
-    class AgentGroup;
+    class TypeAgentGroup;
 
     /// Represents a single agent in an agent sytem
     /// Each agent belongs to a group, which manages the storage and lifecycle of the agent
@@ -22,7 +22,7 @@ namespace PJ {
         using This = Agent<Core>;
         using OnUpdateFunc = std::function<void(This&, TimeSlice)>;
         using OnStepFunc = std::function<void(This&)>;
-        using Group = AgentGroup<This>;
+        using Group = TypeAgentGroup<This>;
 
     public:
         Group* group = nullptr;

@@ -54,8 +54,8 @@ void SDLGLRenderContext::Configure(SDL_Window* window) {
     ImGui_ImplOpenGL3_Init();
 }
 
-SomeGLRenderEngine* SDLGLRenderContext::GetGLRenderEngine() const {
-    return static_cast<SomeGLRenderEngine*>(&renderEngine);
+BaseGLRenderEngine* SDLGLRenderContext::GetGLRenderEngine() const {
+    return static_cast<BaseGLRenderEngine*>(&renderEngine);
 }
 
 void SDLGLRenderContext::Bind() {

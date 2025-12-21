@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SomeGraphNode.h"
+#include "GraphNode.h"
 #include "StandardEdgeCore.h"
 #include "StrongReference.h"
 
@@ -17,13 +17,13 @@ namespace PJ {
      The purpose of this class is to allow you to attach properties to graph edges
      */
     template <class EdgeCore = StandardEdgeCore, class Core = Void>
-    class AcyclicGraphNode : public SomeGraphNode<EdgeCore, Core> {
+    class AcyclicGraphNode : public GraphNode<EdgeCore, Core> {
     public:
         using This = AcyclicGraphNode<EdgeCore, Core>;
-        using Base = SomeGraphNode<EdgeCore, Core>;
+        using Base = GraphNode<EdgeCore, Core>;
         using AcyclicNode = This;
         using AcyclicNodeSharedPtr = SP<AcyclicNode>;
-        using NodeStrongReference = StrongReference<SomeGraphNode<EdgeCore>>;
+        using NodeStrongReference = StrongReference<GraphNode<EdgeCore>>;
 
         AcyclicNode* Root() {
             auto node = this;
@@ -56,7 +56,7 @@ namespace PJ {
             return this->FromNodes().size() <= 0;
         }
 
-        // MARK: SomeGraphNode
+        // MARK: GraphNode
 
         typename Base::NodeSharedPtr
         AddEdge(typename Base::NodeSharedPtr toNode, EdgeCore model = {}) override {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SomePointerUIEvent.h"
+#include "PointerUIEventTypes.h"
 
 /*
  RATING: 5 stars
@@ -9,37 +9,42 @@
  */
 namespace PJ {
     /// Sent for a pointer down event followed by a pointer up event over the same visual element
-    class PointerClickUIEvent : public SomePointerButtonUIEvent {
+    class PointerClickUIEvent : public SomeSignal {
     public:
-        using Base = SomePointerButtonUIEvent;
+        using Base = SomeSignal;
         using InputButton = PointerInputButtonType;
+        using Core = PointerButtonUIEventCore;
 
-        PointerClickUIEvent(ScreenPosition pressPosition, InputButton button) :
-            Base(button) {
-            this->screenPos = pressPosition;
-        }
+        Core core;
+
+        PointerClickUIEvent(Core const& core) :
+            core(core) {}
     };
 
     /// Sent when a pointer button is pressed
-    class PointerDownUIEvent : public SomePointerButtonUIEvent {
+    class PointerDownUIEvent : public SomeSignal {
     public:
-        using Base = SomePointerButtonUIEvent;
+        using Base = SomeSignal;
         using InputButton = PointerInputButtonType;
+        using Core = PointerButtonUIEventCore;
 
-        PointerDownUIEvent(ScreenPosition pressPosition, InputButton button) :
-            Base(button) {
-            this->screenPos = pressPosition;
-        }
+        Core core;
+
+        PointerDownUIEvent(Core const& core) :
+            core(core) {}
     };
 
     /// Sent when a pointer button is released
-    class PointerUpUIEvent : public SomePointerButtonUIEvent {
+    class PointerUpUIEvent : public SomeSignal {
     public:
-        using Base = SomePointerButtonUIEvent;
+        using Base = SomeSignal;
         using InputButton = PointerInputButtonType;
+        using Core = PointerButtonUIEventCore;
 
-        PointerUpUIEvent(InputButton button) :
-            Base(button) {}
+        Core core;
+
+        PointerUpUIEvent(Core const& core) :
+            core(core) {}
     };
 
     /// Sent when the pointer moves
@@ -54,18 +59,22 @@ namespace PJ {
     };
 
     /// Sent when the pointer enters a visual element
-    class PointerEnterUIEvent : public SomePointerUIEvent {
+    class PointerEnterUIEvent : public SomeSignal {
     public:
-        using Base = SomePointerUIEvent;
+        using Base = SomeSignal;
+
+        ScreenPosition screenPos;
 
         PointerEnterUIEvent() :
             Base() {}
     };
 
     /// Sent when the pointer exits a visual element
-    class PointerExitUIEvent : public SomePointerUIEvent {
+    class PointerExitUIEvent : public SomeSignal {
     public:
-        using Base = SomePointerUIEvent;
+        using Base = SomeSignal;
+
+        ScreenPosition screenPos;
 
         PointerExitUIEvent() :
             Base() {}

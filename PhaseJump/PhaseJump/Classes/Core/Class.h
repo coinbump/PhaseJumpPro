@@ -4,11 +4,12 @@
 #include "StringUtils.h"
 #include "Tags.h"
 #include "Utils.h"
+#include "Void.h"
 
 /*
  RATING: 5 stars
  Simple type
- CODE REVIEW: 12/21/24
+ CODE REVIEW: 12/19/25
  */
 namespace PJ {
     /**
@@ -21,29 +22,32 @@ namespace PJ {
      In addition, TypeClass stores a factory which can be used to create objects of the
      corresponding type.
      */
-    class SomeClass {
+    class Class {
     public:
-        String id;
+        /// Standard core for a class object
+        struct StandardCore {
+            String id;
 
-        SomeClass(String id) :
-            id(id) {}
+            /// Name for browsing
+            String name;
 
-        virtual ~SomeClass() {}
-    };
+            /// Object type attributes
+            TypeTagSet typeTags;
 
-    /// Standard core for a class object
-    struct StandardClassCore {
-        /// Name for browsing
-        String name;
+            /// Custom properties
+            Tags tags;
+        };
 
-        /// Description for browsing
-        String description;
+        StandardCore _core;
 
-        /// Object type attributes
-        TypeTagSet typeTags;
+        Class(StandardCore const& _core) :
+            _core(_core) {}
 
-        /// Custom properties
-        Tags tags;
+        virtual ~Class() {}
+
+        virtual String Name() const {
+            return _core.name;
+        }
     };
 
     /**
@@ -51,15 +55,17 @@ namespace PJ {
      Allows us to set properties for all objects of the same type via composition of the class.
      Example: 3 cards share the same "JokerCardClass" object
      */
-    template <class Core = StandardClassCore>
-    class Class : public SomeClass {
+    template <class Core = Void>
+    class CoreClass : public Class {
     public:
+        using Base = Class;
+
         Core core{};
 
-        Class(String id, Core core = {}) :
-            SomeClass(id),
+        CoreClass(StandardCore const& _core, Core core = {}) :
+            Class(_core),
             core(core) {}
 
-        virtual ~Class() {}
+        virtual ~CoreClass() {}
     };
 } // namespace PJ

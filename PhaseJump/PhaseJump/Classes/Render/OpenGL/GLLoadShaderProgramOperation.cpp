@@ -1,7 +1,7 @@
 #include "GLLoadShaderProgramOperation.h"
 #include "GLLoadShaderOperation.h"
+#include "GLShader.h"
 #include "GLShaderProgram.h"
-#include "SomeGLShader.h"
 #include "StandardResourceRepositoryModel.h"
 #include <fstream>
 #include <json.hpp>
@@ -47,7 +47,7 @@ std::optional<GLShaderProgram::Info> InfoFromPath(FilePath path) {
     return result;
 }
 
-SomeLoadResourcesOperation::Result GLLoadShaderProgramOperation::LoadResources() {
+LoadResourcesOperation::Result GLLoadShaderProgramOperation::_LoadResources() {
     auto info = InfoFromPath(this->info.filePath);
     GUARDR(info, Failure())
 
@@ -86,7 +86,7 @@ SomeLoadResourcesOperation::Result GLLoadShaderProgramOperation::LoadResources()
     auto result = MAKE<GLShaderProgram>();
     result->Configure(vertexShader, fragmentShader);
 
-    SomeShaderProgram::registry[info->id] = result;
+    ShaderProgram::registry[info->id] = result;
 
     ResourceModel resource{ .info = this->info, .resource = result };
     VectorList<ResourceModel> resources{ resource };

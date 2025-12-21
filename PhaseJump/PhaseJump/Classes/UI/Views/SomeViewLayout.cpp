@@ -4,12 +4,20 @@
 using namespace std;
 using namespace PJ;
 
-void SomeViewLayout::SetNeedsLayout() {
+void ViewLayout::SetNeedsLayout() {
     GUARD(owner)
     owner->SetNeedsLayout();
 }
 
-Vector2 SomeViewLayout::ViewSize(ViewSizeProposal proposal, VectorList<ViewProxy> const& children) {
+SomeViewLayout::PlanUIFunc ViewLayout::GetPlanUIFunc(String id) {
+    try {
+        return planUIFuncs.at(id);
+    } catch (...) {
+        return {};
+    }
+}
+
+Vector2 ViewLayout::ViewSize(ViewSizeProposal proposal, VectorList<ViewProxy> const& children) {
     GUARDR(owner, {})
 
     // Optimize: early exit if this view has fixed size, no need to calculate it

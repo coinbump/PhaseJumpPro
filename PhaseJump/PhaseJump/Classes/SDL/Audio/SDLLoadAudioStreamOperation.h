@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SomeLoadResourcesOperation.h"
+#include "LoadResourcesOperation.h"
 
 /*
  RATING: 5 stars
@@ -9,15 +9,15 @@
  */
 namespace PJ {
     /// Use SDL to load an audio file
-    class SDLLoadAudioStreamOperation : public SomeLoadResourcesOperation {
+    class SDLLoadAudioStreamOperation : public LoadResourcesOperation {
     public:
-        using Base = SomeLoadResourcesOperation;
+        using Base = LoadResourcesOperation;
 
         SDLLoadAudioStreamOperation(ResourceInfo info, ResourceRepositoryModel& repoModel) :
-            Base(info, repoModel) {}
+            Base(info, repoModel) {
+            loadResourcesFunc = [this](auto& operation) { return _LoadResources(); };
+        }
 
-        // MARK: SomeLoadResourcesOperation
-
-        Result LoadResources() override;
+        Result _LoadResources();
     };
 } // namespace PJ

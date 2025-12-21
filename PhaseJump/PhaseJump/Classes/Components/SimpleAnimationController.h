@@ -9,17 +9,17 @@
  CODE REVIEW: 10/19/24
  */
 namespace PJ {
-    class SomeRenderer;
+    class Renderer;
 
     /// Manages animation states and switches to the appropriate renderer when the state changes
     /// Animation transitions are not supported
-    class SimpleAnimationController : public WorldComponent<> {
+    class SimpleAnimationController : public WorldComponent {
     public:
         using This = SimpleAnimationController;
         using StateType = String;
 
-        using BuildRendererFunc = std::function<SP<SomeRenderer>(This&)>;
-        using SetRendererFunc = std::function<void(This&, SP<SomeRenderer>)>;
+        using BuildRendererFunc = std::function<SP<Renderer>(This&)>;
+        using SetRendererFunc = std::function<void(This&, SP<Renderer>)>;
 
     protected:
         /// Build renderer funcs for each animation state

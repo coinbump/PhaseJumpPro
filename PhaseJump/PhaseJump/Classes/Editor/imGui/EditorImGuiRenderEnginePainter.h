@@ -1,8 +1,8 @@
 #pragma once
 
 #include "EditorWorldSystem.h"
+#include "ImGuiPainter.h"
 #include "RenderProcessingModel.h"
-#include "SomeImGuiPainter.h"
 
 /*
  RATING: 5 stars
@@ -11,7 +11,7 @@
  */
 namespace PJ {
     /// Draws information about the render engine and render processors for the editor
-    class EditorImGuiRenderEnginePainter : public SomeImGuiPainter {
+    class EditorImGuiRenderEnginePainter : public ImGuiPainter {
     public:
         EditorWorldSystem& system;
 
@@ -19,7 +19,7 @@ namespace PJ {
     };
 
     /// Draws information about the render processor pipeline
-    class EditorImGuiRenderPipelinePainter : public SomeImGuiPainter {
+    class EditorImGuiRenderPipelinePainter : public ImGuiPainter {
     public:
         World& world;
         RenderProcessingModel::ProcessorList& processors;

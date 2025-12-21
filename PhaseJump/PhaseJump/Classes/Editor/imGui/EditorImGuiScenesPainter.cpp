@@ -24,11 +24,11 @@ EditorImGuiScenesPainter::EditorImGuiScenesPainter(
             }
 
             std::sort(sceneClasses.begin(), sceneClasses.end(), [](auto& lhs, auto& rhs) {
-                return lhs->core.name < rhs->core.name;
+                return lhs->_core.name < rhs->_core.name;
             });
 
             for (auto& sceneClass : sceneClasses) {
-                auto name = sceneClass->core.name;
+                auto name = sceneClass->_core.name;
 
                 // ImGui requires that UI elements have names (unless you specify ##)
                 GUARD_CONTINUE(name.size() > 0)
@@ -36,10 +36,9 @@ EditorImGuiScenesPainter::EditorImGuiScenesPainter(
                 if (ImGui::Button(name.c_str())) {
                     auto scene = sceneClass->Make();
                     if (scene) {
-                        auto removingSystems =
-                            Filter(world.Systems(), [](SP<SomeWorldSystem> system) {
-                                return !system->typeTags.contains(EditorTypeTag::Persist);
-                            });
+                        auto removingSystems = Filter(world.Systems(), [](auto& system) {
+                            return !system->HasTypeTag(EditorTypeTag::Persist);
+                        });
 
                         auto mappedSystems =
                             Map<SomeWorldSystem*>(removingSystems, [](auto& system) {

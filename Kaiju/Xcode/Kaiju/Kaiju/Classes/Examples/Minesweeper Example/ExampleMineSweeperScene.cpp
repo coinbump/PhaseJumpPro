@@ -145,7 +145,7 @@ void Minesweeper::Scene::LoadInto(WorldNode& root) {
                 { .id = SignalId::PointerDown,
                   .func =
                       [this](auto& component, auto& event) {
-                          auto screenPos = event.screenPos;
+                          auto screenPos = event.core.screenPos;
                           auto localPos = ScreenToLocal(*boardView, screenPos);
                           auto loc = boardView->LocalPositionToLocation(localPos);
                           GUARD(loc)
@@ -153,7 +153,7 @@ void Minesweeper::Scene::LoadInto(WorldNode& root) {
                           auto piece = boardView->board.GetPiece(*loc);
                           GUARD(piece)
 
-                          if (PointerInputButton::Left == event.button) {
+                          if (PointerInputButton::Left == event.core.button) {
                               switch (state) {
                               case StateType::Running:
                                   if (piece->typeTags.contains("bomb")) {

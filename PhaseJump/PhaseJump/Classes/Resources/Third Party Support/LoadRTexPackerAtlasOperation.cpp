@@ -12,7 +12,7 @@ using namespace std;
 using namespace PJ;
 using namespace nlohmann;
 
-SomeLoadResourcesOperation::Result LoadRTexPackerAtlasOperation::LoadResources() {
+LoadResourcesOperation::Result LoadRTexPackerAtlasOperation::_LoadResources() {
     FilePath filePath = info.filePath;
 
     std::ifstream file;
@@ -49,7 +49,7 @@ SomeLoadResourcesOperation::Result LoadRTexPackerAtlasOperation::LoadResources()
 
         GUARDR(successValue && successValue.value().size(), Failure())
 
-        SP<SomeTexture> texture = DCAST<SomeTexture>(successValue.value().resources[0].resource);
+        SP<Texture> texture = DCAST<Texture>(successValue.value().resources[0].resource);
         GUARDR(texture, Failure());
 
         Success result;

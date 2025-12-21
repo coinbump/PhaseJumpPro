@@ -5,7 +5,7 @@
 #include <functional>
 
 // Experimental
-// TODO: see mirror improvements made in scrap code
+// FUTURE: see mirror improvements made in scrap code
 namespace PJ {
     /// Added to objects via mirror macros to allow reflection
     /// Example: visual inspector to edit properties

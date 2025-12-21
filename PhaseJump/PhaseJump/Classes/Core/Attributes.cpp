@@ -3,6 +3,6 @@
 using namespace std;
 using namespace PJ;
 
-UP<SomeAttribute> Attributes::NameAttribute(String name) {
-    return NEW<Attribute<String>>(AttributeId::Name, name);
+UP<Attribute> Attributes::NameAttribute(String name) {
+    return NEW<ValueAttribute<String>>(AttributeId::Name, name);
 }

@@ -1,12 +1,12 @@
 #include "UIWorldSystem.h"
 #include "Dev.h"
-#include "SomeHoverGestureHandler.h"
+#include "HoverGestureHandler.h"
 #include "World.h"
 
 using namespace std;
 using namespace PJ;
 
-SomeCamera* UIWorldSystem::Camera() const {
+Camera* UIWorldSystem::GetCamera() const {
     auto world = World();
     GUARDR(world, {})
 
@@ -22,8 +22,12 @@ FinishType UIWorldSystem::OnUpdate(TimeSlice time) {
 }
 
 void UIWorldSystem::UpdateActiveHover(VectorList<PJ::LocalHit> hits) {
-    GUARD(!IsEmpty(hits))
-    auto& node = hits[0].node;
+    auto hoverHits =
+        Filter(hits, [](auto& hit) { return hit.node.IsListenerToSignal(SignalId::Hover); });
+
+    GUARD(!IsEmpty(hoverHits))
+
+    auto& node = hoverHits[0].node;
     SetActiveHover(SCAST<WorldNode>(node.shared_from_this()));
 }
 
@@ -123,7 +127,7 @@ void UIWorldSystem::OnPointerDown(PointerDownUIEvent const& pointerDownEvent) {
 
     // cout << "Log: OnPointerDown\n";
 
-    auto hits = TestScreenHit(pointerDownEvent.screenPos);
+    auto hits = TestScreenHit(pointerDownEvent.core.screenPos);
     for (auto& hit : hits) {
         // FUTURE: only send pointer event to the topmost hit that also supports pointer down
         // signals cout << "Log: HIT: OnPointerDown\n";
@@ -132,8 +136,8 @@ void UIWorldSystem::OnPointerDown(PointerDownUIEvent const& pointerDownEvent) {
         auto& hitNode = hit.node;
         DispatchEvent(hitNode, SignalId::PointerDown, pointerDownEvent);
 
-        pointerDownNodesMap[pointerDownEvent.button].clear();
-        pointerDownNodesMap[pointerDownEvent.button].insert(
+        pointerDownNodesMap[pointerDownEvent.core.button].clear();
+        pointerDownNodesMap[pointerDownEvent.core.button].insert(
             SCAST<WorldNode>(hitNode.shared_from_this())
         );
     }
@@ -154,7 +158,7 @@ void UIWorldSystem::OnPointerUp(PointerUpUIEvent const& pointerUpEvent) {
         }
     }
 
-    auto iterNodes = pointerDownNodesMap[pointerUpEvent.button];
+    auto iterNodes = pointerDownNodesMap[pointerUpEvent.core.button];
     for (auto& node : iterNodes) {
         DispatchEvent(*node, SignalId::PointerUp, pointerUpEvent);
     }

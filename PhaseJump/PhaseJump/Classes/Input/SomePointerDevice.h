@@ -1,7 +1,7 @@
 #pragma once
 
+#include "PointerUIEventTypes.h"
 #include "SomeInputDevice.h"
-#include "SomePointerUIEvent.h"
 #include "SomePosition.h"
 
 /*
@@ -12,18 +12,11 @@
 namespace PJ {
     /// Some device that sends pointer inputs (mouse, stylus)
     class SomePointerDevice : public SomeInputDevice {
-    protected:
-        ScreenPosition screenPos;
-
     public:
         SomePointerDevice() {}
 
-        virtual ScreenPosition GetScreenPosition() const {
-            return screenPos;
-        }
+        virtual ScreenPosition GetScreenPosition() const = 0;
 
-        virtual bool IsButtonDown(PointerInputButtonType button) {
-            return false;
-        }
+        virtual bool IsButtonDown(PointerInputButtonType button) = 0;
     };
 } // namespace PJ

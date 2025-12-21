@@ -8,7 +8,7 @@ AtlasTexture::AtlasTexture(Config const& config) :
     Base(config.base),
     parent(config.parent) {}
 
-SomeTexture* AtlasTexture::RenderTexture() const {
+Texture* AtlasTexture::RenderTexture() const {
     GUARDR(parent, {})
     return parent->texture.get();
 }

@@ -21,17 +21,17 @@ namespace PJ {
         UnorderedMap<String, SP<AtlasTexture>> textureMap;
 
     public:
-        SP<SomeTexture> texture;
+        SP<Texture> texture;
 
-        TextureAtlas(SP<SomeTexture> texture) :
+        TextureAtlas(SP<Texture> texture) :
             texture(texture) {}
 
         /// Converts texture collection type
-        VectorList<SP<SomeTexture>> SomeTextures() {
-            VectorList<SP<SomeTexture>> result;
+        VectorList<SP<Texture>> SomeTextures() {
+            VectorList<SP<Texture>> result;
             std::transform(
                 textures.begin(), textures.end(), std::back_inserter(result),
-                [](SP<AtlasTexture> texture) { return texture; }
+                [](auto& texture) { return texture; }
             );
 
             return result;

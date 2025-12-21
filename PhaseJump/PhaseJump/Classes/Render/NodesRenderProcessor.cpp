@@ -14,9 +14,7 @@ NodesRenderProcessor::NodesRenderProcessor(
         GUARD(phase.cameraModel)
 
         for (auto& node : phase.cameraModel->nodes) {
-            for (auto& component : node->Components()) {
-                component->Signal(signalId, NodesRenderSignal({ .phase = phase }));
-            }
+            node->Signal(signalId, NodesRenderSignal({ .phase = phase }));
         }
     };
 }

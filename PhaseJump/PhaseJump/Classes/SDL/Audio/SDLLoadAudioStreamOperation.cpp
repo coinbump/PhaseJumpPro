@@ -6,7 +6,7 @@
 using namespace std;
 using namespace PJ;
 
-SomeLoadResourcesOperation::Result SDLLoadAudioStreamOperation::LoadResources() {
+LoadResourcesOperation::Result SDLLoadAudioStreamOperation::_LoadResources() {
     SDL_AudioSpec inputAudioSpec;
     Uint32 bufferLength{};
     Uint8* audioBuffer{};

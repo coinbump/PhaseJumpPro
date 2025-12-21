@@ -32,7 +32,7 @@ namespace PJ {
 
         BitmapOperationClass(String id, String name, FactoryFunc factoryFunc) :
             Base(id, factoryFunc) {
-            core.name = name;
+            _core.name = name;
         }
     };
 } // namespace PJ

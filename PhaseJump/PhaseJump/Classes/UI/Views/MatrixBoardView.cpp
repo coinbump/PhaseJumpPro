@@ -9,10 +9,10 @@ MatrixBoardView::MatrixBoardView(Vector2 worldSize, Vector2Int matrixSize) :
     SetFrameSize(worldSize);
 
     AddSignalHandler<AddChildNodeEvent>(
-        { .id = SignalId::AddChildNode,
+        { .id = SignalId::ChildNodeAdd,
           .func =
               [](auto& owner, auto& event) {
-                  auto handler = event.node->template TypeComponent<MatrixPieceHandler>();
+                  auto handler = event.node.template TypeComponent<MatrixPieceHandler>();
                   if (handler) {
                       static_cast<This*>(&owner)->Put(*handler, handler->startOrigin);
                   }

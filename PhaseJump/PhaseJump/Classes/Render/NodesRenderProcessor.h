@@ -16,7 +16,7 @@ namespace PJ {
         RenderProcessor::Phase phase;
     };
 
-    using NodesRenderSignal = Signal<NodesRenderSignalCore>;
+    using NodesRenderSignal = CoreSignal<NodesRenderSignalCore>;
 
     /// Sends a signal to each node during the render processor phase
     /// Example: a node that does its own imGUI painting

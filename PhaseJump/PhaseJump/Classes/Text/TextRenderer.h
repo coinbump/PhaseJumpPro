@@ -3,8 +3,8 @@
 #include "AlignFunc.h"
 #include "AttributedString.h"
 #include "Font.h"
+#include "Renderer.h"
 #include "RenderTypes.h"
-#include "SomeRenderer.h"
 #include "TextMeasurer.h"
 
 /*
@@ -18,9 +18,9 @@ namespace PJ {
     /**
      Renders text (no markup), requires a font and material to use
      */
-    class TextRenderer : public SomeMaterialRenderer {
+    class TextRenderer : public MaterialRenderer {
     public:
-        using Base = SomeMaterialRenderer;
+        using Base = MaterialRenderer;
         using This = TextRenderer;
 
         using ModifyColorsFunc =
@@ -171,7 +171,7 @@ namespace PJ {
             return *this;
         }
 
-        // MARK: SomeRenderer
+        // MARK: Renderer
 
         Vector2 CalculateSize(Vector2 proposal) override;
 

@@ -2,7 +2,7 @@
 
 #include "WorldNode.h"
 #include "NodeHandler.h"
-#include "SomeTexture.h"
+#include "Texture.h"
 
 using namespace std;
 using namespace PJ;
@@ -21,8 +21,8 @@ TEST(NodeHandler, Count) {
             componentCount = node.Components().size();
         }});
     node.Add(sut);
-    node.With<WorldComponent<>>();
-    node.With<WorldComponent<>>();
+    node.With<WorldComponent>();
+    node.With<WorldComponent>();
     
     sut->Run();
     EXPECT_EQ(3, componentCount);

@@ -1,6 +1,6 @@
 #include "TextMeasurer.h"
 #include "Font.h"
-#include "SomeTexture.h"
+#include "Texture.h"
 
 using namespace std;
 using namespace PJ;

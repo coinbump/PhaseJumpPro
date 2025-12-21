@@ -18,14 +18,14 @@ namespace fs = std::filesystem;
  */
 namespace PJ {
     /// Processes a single file
-    class FileProcessor : public SomeProcessor<FilePath> {
+    class FileProcessor : public InputProcessor<FilePath> {
     public:
         using ProcessFileFunc = std::function<void(FilePath)>;
 
         ProcessFileFunc processFileFunc;
 
         FileProcessor() :
-            SomeProcessor<FilePath>() {}
+            InputProcessor<FilePath>() {}
 
         virtual ~FileProcessor() {}
 
@@ -34,7 +34,7 @@ namespace PJ {
             processFileFunc(path);
         }
 
-        // MARK: SomeProcessor
+        // MARK: InputProcessor
 
         size_t InputCount() const override {
             return 1;
@@ -46,9 +46,9 @@ namespace PJ {
     };
 
     /// Processes a list of file paths (Example: rename files)
-    class FilesProcessor : public SomeProcessor<VectorList<FilePath>> {
+    class FilesProcessor : public InputProcessor<VectorList<FilePath>> {
     public:
-        using Base = SomeProcessor<VectorList<FilePath>>;
+        using Base = InputProcessor<VectorList<FilePath>>;
         using This = FilesProcessor;
         using ProcessFileFunc = std::function<void(FilePath)>;
 
@@ -87,7 +87,7 @@ namespace PJ {
         /// Processes the next file in the list
         virtual FinishType ProcessNext();
 
-        // MARK: SomeProcessor
+        // MARK: InputProcessor
 
         virtual size_t InputCount() const {
             return input.size();

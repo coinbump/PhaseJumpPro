@@ -15,7 +15,7 @@ namespace PJ {
     class RenderContextModel;
 
     /// Render pipeline logic for the world. Every world needs a render system
-    class RenderWorldSystem : public SomeWorldSystem {
+    class RenderWorldSystem : public WorldSystem {
     public:
         class Model {
         public:
@@ -23,7 +23,7 @@ namespace PJ {
             RenderProcessingModel processingModel;
         };
 
-        using Base = SomeWorldSystem;
+        using Base = WorldSystem;
         using ProcessorList = RenderProcessingModel::ProcessorList;
 
     protected:

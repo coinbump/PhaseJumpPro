@@ -14,7 +14,7 @@ void EditorImGuiSceneTreePainter::DrawSceneTree(
     if (ImGui::TreeNodeEx(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
         auto mainCamera = system.World()->MainCamera();
         bool isMainCamera = mainCamera ? node.Contains(*mainCamera) : false;
-        bool isPersist = node.core.typeTags.contains(EditorTypeTag::Persist);
+        bool isPersist = node._core.typeTags.contains(EditorTypeTag::Persist);
 
         ImGui::SameLine();
 

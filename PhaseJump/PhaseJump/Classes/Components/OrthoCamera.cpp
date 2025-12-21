@@ -104,7 +104,7 @@ void OrthoCamera::RenderStart(SomeRenderContext* context) {
 
     GUARD(owner)
 
-    auto renderContext = context;
+    auto renderContext = dynamic_cast<RenderContext*>(context);
     GUARD(renderContext)
 
     auto worldPosition = owner->transform.WorldPosition();

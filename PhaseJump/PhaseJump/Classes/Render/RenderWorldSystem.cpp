@@ -1,11 +1,11 @@
 #include "RenderWorldSystem.h"
+#include "Camera.h"
 #include "RenderContextModel.h"
+#include "Renderer.h"
 #include "RenderProcessingModel.h"
 #include "RenderProcessor.h"
-#include "SomeCamera.h"
 #include "SomeRenderContext.h"
 #include "SomeRenderEngine.h"
-#include "SomeRenderer.h"
 #include "World.h"
 #include "WorldNode.h"
 
@@ -21,7 +21,7 @@ RenderWorldSystem::RenderWorldSystem(String name) :
 }
 
 std::optional<RenderResult> RenderWorldSystem::Render(RenderContextModel& _contextModel) {
-    auto mainContext = _contextModel.renderContext;
+    auto mainContext = dynamic_cast<RenderContext*>(_contextModel.renderContext);
     GUARDR(mainContext && world, {});
 
     model.phaseModel.SetPhase(RenderPhaseId::RenderPassStartPrepare);
@@ -64,8 +64,8 @@ std::optional<RenderResult> RenderWorldSystem::Render(RenderContextModel& _conte
                 // Skip hidden nodes
                 GUARD_CONTINUE(node->IsVisible())
 
-                VectorList<SomeRenderer*> renderers;
-                node->CollectTypeComponents<SomeRenderer>(renderers);
+                VectorList<Renderer*> renderers;
+                node->CollectTypeComponents<Renderer>(renderers);
                 for (auto& renderer : renderers) {
                     GUARD_CONTINUE(renderer->IsEnabled())
 
@@ -87,8 +87,9 @@ std::optional<RenderResult> RenderWorldSystem::Render(RenderContextModel& _conte
         }
 
         // Offscreen (viewport) cameras define their own render context
-        SomeRenderContext* context =
+        SomeRenderContext* _context =
             camera->renderContext ? camera->renderContext.get() : mainContext;
+        auto context = dynamic_cast<RenderContext*>(_context);
 
         RenderCameraModel cameraModel(
             { .camera = *camera, .renderModels = renderModels, .context = context, .nodes = nodes }
@@ -114,9 +115,9 @@ std::optional<RenderResult> RenderWorldSystem::Render(RenderContextModel& _conte
 
         // If multiple cameras share the same render context, make sure we only clear it for the
         // first camera
-        if (!context->renderEngine.IsContextCleared(cameraModel.renderContext->renderId)) {
+        if (!context->renderEngine.IsContextCleared(cameraModel.renderContext->RenderId())) {
             cameraModel.renderContext->Clear();
-            context->renderEngine.SetIsContextCleared(cameraModel.renderContext->renderId, true);
+            context->renderEngine.SetIsContextCleared(cameraModel.renderContext->RenderId(), true);
         }
 
         SetPhase(RenderPhaseId::ClearPost);

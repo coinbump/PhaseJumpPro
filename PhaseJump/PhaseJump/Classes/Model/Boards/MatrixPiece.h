@@ -117,7 +117,7 @@ namespace PJ {
     public:
         Core core{};
 
-        CoreMatrixPiece(Core core = {}) :
+        CoreMatrixPiece(Core const& core = {}) :
             core(core) {}
     };
 } // namespace PJ

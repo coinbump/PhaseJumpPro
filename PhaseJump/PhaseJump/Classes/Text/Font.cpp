@@ -1,7 +1,7 @@
 #include "Font.h"
 #include "AtlasTexture.h"
-#include "SomeTexture.h"
 #include "StringUtils.h"
+#include "Texture.h"
 
 using namespace std;
 using namespace PJ;

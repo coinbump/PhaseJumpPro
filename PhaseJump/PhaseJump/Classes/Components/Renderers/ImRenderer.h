@@ -2,8 +2,8 @@
 
 #include "Color.h"
 #include "ImTypes.h"
+#include "Renderer.h"
 #include "RoundCornersMeshBuilder.h"
-#include "SomeRenderer.h"
 #include "UnorderedMap.h"
 #include "Vector2.h"
 #include "VectorList.h"
@@ -24,13 +24,13 @@ namespace PJ {
 
      Perform the immediate render by using the RenderPrepare signal
      */
-    class ImRenderer : public SomeRenderer {
+    class ImRenderer : public Renderer {
     public:
-        using Base = SomeRenderer;
+        using Base = Renderer;
         using This = ImRenderer;
 
         using TranslateItemFunc = std::function<Matrix4x4(This&, ImPathItem&)>;
-        using BuildRendererFunc = std::function<UP<SomeRenderer>(ImPathItem&)>;
+        using BuildRendererFunc = std::function<UP<Renderer>(ImPathItem&)>;
         using BuildRendererFuncsMap = UnorderedMap<String, BuildRendererFunc>;
 
         TranslateItemFunc translateItemFunc;
@@ -102,7 +102,7 @@ namespace PJ {
 
         /// Keeps renderers and materials in memory for next render
         /// Required because we share data from the renderer with the render engine
-        VectorList<UP<SomeRenderer>> renderers;
+        VectorList<UP<Renderer>> renderers;
 
         /// Maps "itemType.renderType" to a build renderer func
         UnorderedMap<String, BuildRendererFunc> buildRendererFuncs;
@@ -191,7 +191,7 @@ namespace PJ {
         This& Image(String id, Vector2 origin);
 
         /// Draws an image texture
-        This& Image(SP<SomeTexture> texture, Vector2 origin);
+        This& Image(SP<Texture> texture, Vector2 origin);
 
         /// Draws a template image, which is modulated by a color
         This& TemplateImage(String id, Vector2 origin, std::optional<Color> color = {});
@@ -255,7 +255,7 @@ namespace PJ {
         /// Use to customize item translation for different coordinate systems
         TranslateItemFunc MakeTranslateItemFunc(float down = vecDown);
 
-        // MARK: SomeRenderer
+        // MARK: Renderer
 
         VectorList<RenderModel> RenderModels() override {
             auto result = model.RenderModels();

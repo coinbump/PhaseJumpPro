@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SomeRaycaster2D.h"
+#include "Raycaster2D.h"
 #include <memory>
 
 /*
@@ -9,11 +9,11 @@
  CODE REVIEW: 1/9/25
  */
 namespace PJ {
-    class SomeCollider2D;
+    class Collider2D;
     class WorldNode;
 
     /// Brute force raycaster
-    class SimpleRaycaster2D : public SomeRaycaster2D {
+    class SimpleRaycaster2D : public Raycaster2D {
     public:
         VectorList<RaycastHit2D> Raycast(Vector2 worldPosition, Vector2 direction) override;
 

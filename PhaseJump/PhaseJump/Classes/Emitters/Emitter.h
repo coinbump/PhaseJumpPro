@@ -1,10 +1,10 @@
 #pragma once
 
 #include "Dev.h"
+#include "Driver.h"
 #include "EmitModel.h"
 #include "EmitterTypes.h"
 #include "OrderedSet.h"
-#include "SomeDriver.h"
 #include "StandardRandom.h"
 #include "WorldComponent.h"
 #include "WorldNode.h"
@@ -16,18 +16,10 @@
  CODE REVIEW: 8/16/24
  */
 namespace PJ {
-    // TODO: needs unit tests
-    /// Interface to an emitter. For the emitter-spawner pattern
-    /// Each emitter uses a spawner to spawn new objects that it emits
-    class SomeEmitter {
-    public:
-        virtual ~SomeEmitter() {}
-    };
-
     /// Emitter spawns objects at intervals
-    class Emitter : public WorldComponent<>, public SomeEmitter {
+    class Emitter : public WorldComponent {
     public:
-        using Base = WorldComponent<>;
+        using Base = WorldComponent;
         using This = Emitter;
         using SpawnType = SP<WorldNode>;
         using SpawnList = VectorList<SpawnType>;
@@ -78,11 +70,11 @@ namespace PJ {
 
     public:
         /// Driver for building emits
-        UP<SomeDriver> driver;
+        UP<Driver> driver;
 
         Emitter();
         Emitter(SpawnFunc spawnFunc, float fireTime);
-        Emitter(SpawnFunc spawnFunc, UP<SomeDriver>& fireDriver);
+        Emitter(SpawnFunc spawnFunc, UP<Driver>& fireDriver);
 
         virtual bool CanSpawn();
 

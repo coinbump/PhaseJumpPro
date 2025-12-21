@@ -33,13 +33,13 @@ namespace PJ {
         auto constexpr DragExit = "drag.exit";
 
         /// Files were dropped in the app window. Sends DropFilesUIEvent
-        auto constexpr DropFiles = "drop.files";
+        auto constexpr FilesDrop = "files.drop";
 
         /// Child node was added. Sends AddChildNodeEvent
-        auto constexpr AddChildNode = "add.childNode";
+        auto constexpr ChildNodeAdd = "childNode.add";
 
         /// Child node was added. Sends AddChildNodeEvent
-        auto constexpr RemoveChildNode = "remove.childNode";
+        auto constexpr ChildNodeRemove = "childNode.remove";
 
         /// Called before render. Sends empty Event
         auto constexpr RenderPrepare = "render.prepare";

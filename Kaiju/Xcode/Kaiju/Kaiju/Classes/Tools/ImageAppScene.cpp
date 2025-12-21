@@ -42,7 +42,7 @@ ImageAppScene::ImageAppScene() {
             }
 
             VectorList<String> options =
-                Map<String>(operationClasses, [](auto& _class) { return _class->core.name; });
+                Map<String>(operationClasses, [](auto& _class) { return _class->Name(); });
 
             Binding<int> binding{ [this]() { return -1; },
                                   [=, this](auto& value) {
@@ -118,7 +118,9 @@ ImageAppScene::ImageAppScene() {
             SP<Document> document = MAKE<Document>(documentConfig);
             ResourceRepository repo(repoModel, document->resources, fm);
 
-            document->saveFunc = [](auto& document) {
+            document->saveFunc = [](auto& _document) {
+                auto& document = *(static_cast<Document*>(&_document));
+
                 PJ::SDLSurface surface({ .bitmap = document.core.bitmap.get() });
                 IMG_SavePNG(surface.Surface(), document.GetFilePath().string().c_str());
 
@@ -140,11 +142,11 @@ ImageAppScene::ImageAppScene() {
         }
     };
 
-    AddSignalHandler<DropFilesUIEvent>({ .id = SignalId::DropFiles, .func = dropFilesHandler });
+    AddSignalHandler<DropFilesUIEvent>({ .id = SignalId::FilesDrop, .func = dropFilesHandler });
 
     AddSignalHandler<KeyDownUIEvent>({ .id = SignalId::KeyDown,
                                        .func = [this](auto& component, auto& keyDownEvent) {
-                                           switch (keyDownEvent.keyCode.value) {
+                                           switch (keyDownEvent.KeyCodeValue()) {
                                            case SDLK_UP:
                                                NavigateToPreviousDocument();
                                                break;

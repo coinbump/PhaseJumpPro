@@ -1,5 +1,5 @@
-#include "SomeGLShader.h"
 #include "GLHeaders.h"
+#include "GLShader.h"
 
 using namespace std;
 using namespace PJ;
@@ -12,14 +12,14 @@ VertexGLShader::VertexGLShader() {
     glType = GL_VERTEX_SHADER;
 }
 
-SomeGLShader::SomeGLShader() {}
+GLShader::GLShader() {}
 
-SomeGLShader::~SomeGLShader() {
+GLShader::~GLShader() {
     GUARD(glId)
     glDeleteShader(glId);
 }
 
-void SomeGLShader::Destroy() {
+void GLShader::Destroy() {
     GUARD(glId)
     glDeleteShader(glId);
     glId = 0;

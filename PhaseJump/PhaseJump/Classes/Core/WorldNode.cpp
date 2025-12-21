@@ -1,6 +1,6 @@
 #include "WorldNode.h"
 #include "Color.h"
-#include "SomeRenderer.h"
+#include "Renderer.h"
 #include "World.h"
 #include <TSMatrix4D.h>
 
@@ -12,8 +12,8 @@ using This = WorldNode;
 WorldNode::WorldNode(Config const& config) :
     transform(*this),
     tree(*this) {
-    core.id = config.id;
-    core.name = config.name;
+    _core.id = config.id;
+    _core.name = config.name;
 }
 
 WorldNode::WorldNode(String name) :
@@ -95,13 +95,13 @@ WorldNode::ComponentList const& WorldNode::Components() const {
 void WorldNode::Add(SP<SomeWorldComponent> component) {
     GUARD(component)
 
-    if (nullptr != component->owner) {
+    if (nullptr != component->Node()) {
         PJ::Log("ERROR. Can't add parented component");
         return;
     }
 
     PJ::Add(components, component);
-    component->owner = this;
+    component->SetNode(this);
 
     // If this node is started, forward life cycle events to the component
     if (life.IsAwake()) {
@@ -111,9 +111,15 @@ void WorldNode::Add(SP<SomeWorldComponent> component) {
         component->CheckedStart();
     }
 
-    if (!IsEmpty(component->attachmentCore.SignalHandlers())) {
-        isListener = true;
-    }
+    auto isListener = std::any_of(components.begin(), components.end(), [](auto& component) {
+        return component->IsListener();
+    });
+    SetIsListener(isListener);
+}
+
+void WorldNode::SetIsListener(bool value) {
+    GUARD(isListener != value)
+    isListener = value;
 }
 
 // Keep for testing single component system for compatibility with Godot
@@ -154,17 +160,21 @@ void WorldNode::Insert(SP<WorldNode> node, size_t index) {
         childMap.insert_or_assign(id, node.get());
     }
 
-    AddChildNodeEvent childNodeEvent(node);
+    AddChildNodeEvent childNodeEvent(*node);
 
     // Let components know there is a new child node
     // Some components need this information (layouts)
     for (auto& component : components) {
-        component->Signal(SignalId::AddChildNode, childNodeEvent);
+        component->Signal(SignalId::ChildNodeAdd, childNodeEvent);
     }
 }
 
 SP<WorldNode> WorldNode::Move(WorldNode& node) {
-    SP<WorldNode> result = SCAST<WorldNode>(node.shared_from_this());
+    auto firstIterator =
+        FirstIteratorIf(tree.Children(), [&](auto& n) { return n.get() == &node; });
+    GUARDR(firstIterator != tree.Children().end(), {})
+
+    SP<WorldNode> result = *firstIterator;
 
     tree.Remove(node);
 
@@ -173,12 +183,12 @@ SP<WorldNode> WorldNode::Move(WorldNode& node) {
         childMap.erase(id);
     }
 
-    RemoveChildNodeEvent childNodeEvent(result);
+    RemoveChildNodeEvent childNodeEvent(*result);
 
     // Let components know we removed a child node
     // Some components need this information (layouts)
     for (auto& component : components) {
-        component->Signal(SignalId::RemoveChildNode, childNodeEvent);
+        component->Signal(SignalId::ChildNodeRemove, childNodeEvent);
     }
 
     return result;
@@ -186,7 +196,11 @@ SP<WorldNode> WorldNode::Move(WorldNode& node) {
 
 void WorldNode::Remove(SP<WorldNode> node) {
     GUARD(node)
-    GUARD_LOG(node->Parent() == this, "ERROR. Can't remove un-parented node")
+    Remove(*node);
+}
+
+void WorldNode::Remove(WorldNode& node) {
+    GUARD_LOG(node.Parent() == this, "ERROR. Can't remove un-parented node")
 
     auto world = World();
     if (world && world->IsRemoveNodesLocked()) {
@@ -196,14 +210,14 @@ void WorldNode::Remove(SP<WorldNode> node) {
     }
 
     VectorList<WorldNode*> subgraph;
-    CollectBreadthFirstTree(node.get(), subgraph);
+    CollectBreadthFirstTree(&node, subgraph);
     for (auto& subNode : subgraph) {
         subNode->world = nullptr;
     }
 
-    tree.Remove(*node);
+    tree.Remove(node);
 
-    auto id = node->Id();
+    auto id = node.Id();
     if (!IsEmpty(id)) {
         childMap.erase(id);
     }
@@ -213,12 +227,8 @@ void WorldNode::Remove(SP<WorldNode> node) {
     // Let components know we removed a child node
     // Some components need this information (layouts)
     for (auto& component : components) {
-        component->Signal(SignalId::RemoveChildNode, childNodeEvent);
+        component->Signal(SignalId::ChildNodeRemove, childNodeEvent);
     }
-}
-
-void WorldNode::Remove(WorldNode& node) {
-    Remove(SCAST<WorldNode>(node.shared_from_this()));
 }
 
 void WorldNode::RemoveAllChildren() {
@@ -247,18 +257,25 @@ void WorldNode::DestroyAllChildren() {
 }
 
 void WorldNode::Remove(SomeWorldComponent& component) {
-    component.owner = nullptr;
+    component.SetNode({});
 
     RemoveFirstIf(components, [&](auto& componentPtr) { return componentPtr.get() == &component; });
+
+    auto isListener = std::any_of(components.begin(), components.end(), [](auto& component) {
+        return component->IsListener();
+    });
+    SetIsListener(isListener);
 }
 
 void WorldNode::RemoveAllComponents() {
     auto iterComponents = components;
     std::for_each(
         iterComponents.begin(), iterComponents.end(),
-        [&](SP<SomeWorldComponent>& component) { component->owner = nullptr; }
+        [&](SP<SomeWorldComponent>& component) { component->SetNode({}); }
     );
     components.clear();
+
+    SetIsListener(false);
 }
 
 Matrix4x4 WorldNode::ModelMatrix() const {
@@ -300,7 +317,7 @@ void WorldNode::CheckedAwake() {
         auto iterComponents = components;
         for (auto& component : iterComponents) {
             // Skip components that were removed by another component in this loop
-            GUARD_CONTINUE(component->owner)
+            GUARD_CONTINUE(component->Node())
 
             component->CheckedAwake();
         }
@@ -312,7 +329,7 @@ void WorldNode::CheckedStart() {
         auto iterComponents = components;
         for (auto& component : iterComponents) {
             // Skip components that were removed by another component in this loop
-            GUARD_CONTINUE(component->owner)
+            GUARD_CONTINUE(component->Node())
 
             component->CheckedStart();
         }
@@ -325,7 +342,7 @@ auto iterComponents = [](VectorList<SP<SomeWorldComponent>> const& components,
     auto iterComponents = components;
     for (auto const& component : iterComponents) {
         // Skip components that were removed by another component in this loop
-        GUARD_CONTINUE(component->owner)
+        GUARD_CONTINUE(component->Node())
 
         // Skip disabled components
         GUARD_CONTINUE(component->IsEnabled())
@@ -373,14 +390,14 @@ Vector3 WorldNode::WorldToLocal(Vector3 worldPos) {
 }
 
 float WorldNode::Opacity() const {
-    auto renderer = TypeComponent<SomeMaterialRenderer>();
+    auto renderer = TypeComponent<MaterialRenderer>();
     GUARDR(renderer, 1.0f)
 
     return renderer->GetColor().a;
 }
 
 This& WorldNode::SetOpacity(float value) {
-    auto renderer = TypeComponent<SomeMaterialRenderer>();
+    auto renderer = TypeComponent<MaterialRenderer>();
     GUARDR(renderer, *this)
 
     renderer->SetAlpha(value);
@@ -393,7 +410,15 @@ bool WorldNode::Contains(SomeWorldComponent& value) {
            }) != components.end();
 }
 
+bool WorldNode::IsListenerToSignal(String signalId) const {
+    return std::any_of(components.begin(), components.end(), [&](auto& component) {
+        return component->IsListenerToSignal(signalId);
+    });
+}
+
 void WorldNode::Signal(String signalId, SomeSignal const& signal) {
+    GUARD(IsEnabled())
+
     auto iterComponents = Components();
     std::for_each(iterComponents.begin(), iterComponents.end(), [&](auto& component) {
         GUARD(component->IsEnabled())

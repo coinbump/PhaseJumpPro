@@ -16,7 +16,7 @@
  CODE REVIEW: 12/8/24
  */
 namespace PJ {
-    class SomeTexture;
+    class Texture;
     class ViewBuilder;
 
     /// Defines properties and methods for building UI
@@ -116,7 +116,7 @@ namespace PJ {
         UnorderedMap<String, BuildConfigViewFunc> buildViewFuncs;
 
         /// Maps UI element ids to specific textures
-        UnorderedMap<String, SP<SomeTexture>> elementTextures;
+        UnorderedMap<String, SP<Texture>> elementTextures;
 
     public:
         struct Config {
@@ -130,12 +130,12 @@ namespace PJ {
         virtual ~DesignSystem() {}
 
         /// Adds a texture for a UI element
-        void AddElementTexture(String elementId, SP<SomeTexture> texture) {
+        void AddElementTexture(String elementId, SP<Texture> texture) {
             elementTextures.insert_or_assign(elementId, texture);
         }
 
         /// @return Returns a texture for a UI element
-        SP<SomeTexture> Texture(String elementId) const {
+        SP<Texture> Texture(String elementId) const {
             try {
                 return elementTextures.at(elementId);
             } catch (...) {}

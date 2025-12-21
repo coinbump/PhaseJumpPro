@@ -24,15 +24,15 @@ namespace PJ {
 
     /// Used to send signal events from one object to another
     template <class Core = Void>
-    class Signal : public SomeSignal {
+    class CoreSignal : public SomeSignal {
     public:
         Core core{};
 
-        Signal(Core core = {}) :
+        CoreSignal(Core const& core = {}) :
             core(core) {}
     };
 
     /// Convenience name
     template <class Core = Void>
-    using Event = Signal<Core>;
+    using Event = CoreSignal<Core>;
 } // namespace PJ

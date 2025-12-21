@@ -26,7 +26,7 @@
 namespace PJ {
     class DropFilesUIEvent;
     class DesignSystem;
-    class SomeTexture;
+    class Texture;
 
     /// Model to build a state transition
     struct StateTransitionModel {
@@ -89,8 +89,8 @@ namespace PJ {
         }
 
         void AddSlider(
-            World& world, WorldNode& parent, DesignSystem& designSystem,
-            SP<SomeTexture> trackTexture, SP<SomeTexture> thumbTexture, SliderConfig config
+            World& world, WorldNode& parent, DesignSystem& designSystem, SP<Texture> trackTexture,
+            SP<Texture> thumbTexture, SliderConfig config
         );
 
         This& SliderVertical(SliderConfig config);
@@ -104,10 +104,6 @@ namespace PJ {
 
         WorldNode& Node() const {
             return nodes[nodes.size() - 1];
-        }
-
-        SP<WorldNode> NodeShared() const {
-            return SCAST<WorldNode>(Node().shared_from_this());
         }
 
         /// Modify all components of this type
@@ -365,7 +361,7 @@ namespace PJ {
         }
 
         /// Adds a component that performs an action when enabled
-        This& WithOnEnable(String id, std::function<void(WorldComponent<>&)> func);
+        This& WithOnEnable(String id, std::function<void(SomeWorldComponent&)> func);
 
         template <class Type>
         constexpr This& RemoveType() {

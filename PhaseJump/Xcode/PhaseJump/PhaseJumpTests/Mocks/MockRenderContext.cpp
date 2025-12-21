@@ -1,5 +1,5 @@
 #include "MockRenderContext.h"
-#include "SomeRenderer.h"
+#include "Renderer.h"
 
 using namespace PJ;
 using namespace PJTest;

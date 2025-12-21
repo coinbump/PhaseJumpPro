@@ -9,8 +9,8 @@
 #include "RenderModel.h"
 #include "RenderModelBuilder.h"
 #include "ResourceCatalog.h"
+#include "ShaderProgram.h"
 #include "SomeRenderEngine.h"
-#include "SomeShaderProgram.h"
 #include "TextureAtlas.h"
 #include "UIPlanner.h"
 #include "Utils.h"
@@ -19,22 +19,22 @@
 using namespace std;
 using namespace PJ;
 
-UnorderedSet<SP<SomeTexture>>
+UnorderedSet<SP<Texture>>
 _FindTextures(World& world, VectorList<AnimatedSpriteRenderer::KeyframeModel> const& models) {
     VectorList<String> textureIds =
         Map<String>(models, [](auto& model) { return model.textureId; });
     textureIds = Filter(textureIds, [](auto& textureId) { return textureId.length() > 0; });
 
     UnorderedSet<String> textureIdSet(textureIds.begin(), textureIds.end());
-    return world.resources.TypeSet<SomeTexture>(ResourceType::Texture, textureIdSet);
+    return world.resources.TypeSet<Texture>(ResourceType::Texture, textureIdSet);
 }
 
-void AnimatedSpriteRenderer::SetTextures(VectorList<SP<SomeTexture>> const& textures) {
+void AnimatedSpriteRenderer::SetTextures(VectorList<SP<Texture>> const& textures) {
     frames.clear();
 
     std::transform(
         textures.cbegin(), textures.cend(), std::back_inserter(frames),
-        [](SP<SomeTexture> texture) {
+        [](auto& texture) {
             Vector2 size(texture->size.x, texture->size.y);
             Vector2 untrimmedSize(texture->UntrimmedSize().x, texture->UntrimmedSize().y);
             Vector2 trimOrigin(texture->TrimOrigin().x, texture->TrimOrigin().y);
@@ -102,7 +102,7 @@ AnimatedSpriteRenderer::AnimatedSpriteRenderer(Config const& config) :
 
     if (config.atlas) {
         auto& atlas = *config.atlas;
-        VectorList<SP<SomeTexture>> someTextures(atlas.Textures().begin(), atlas.Textures().end());
+        VectorList<SP<Texture>> someTextures(atlas.Textures().begin(), atlas.Textures().end());
         textures = someTextures;
     }
 
@@ -253,7 +253,7 @@ void AnimatedSpriteRenderer::SetFrames(VectorList<KeyframeModel> models) {
     GUARD_LOG(frameRate > 0, "ERROR. Frame rate not defined")
 
     auto textures = _FindTextures(*owner->World(), models);
-    VectorList<SP<SomeTexture>> textureList(textures.begin(), textures.end());
+    VectorList<SP<Texture>> textureList(textures.begin(), textures.end());
     SetTextures(textureList);
 
     TimeTrack<int>::Config const& config{ .id = "frame.playable",

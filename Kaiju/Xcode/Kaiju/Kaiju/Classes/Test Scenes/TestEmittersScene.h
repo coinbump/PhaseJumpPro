@@ -4,7 +4,7 @@
 
 using namespace PJ;
 
-class DestroyOnTap : public WorldComponent<> {};
+class DestroyOnTap : public WorldComponent {};
 
 class TestEmittersScene : public Scene {
 public:
@@ -66,7 +66,7 @@ public:
 #ifdef ACID_TEST
             auto texture = DCAST<GLTexture>(owner->World()->Texture("heart-full"));
             auto heartMaterial = MAKE<RenderMaterial>();
-            heartMaterial->SetShaderProgram(SomeShaderProgram::registry["texture.uniform"]);
+            heartMaterial->SetShaderProgram(ShaderProgram::registry["texture.uniform"]);
             heartMaterial->EnableFeature(RenderFeature::Blend, false);
             heartMaterial->Add(texture);
 #endif

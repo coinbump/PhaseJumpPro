@@ -15,7 +15,7 @@
  CODE REVIEW: 12/7/24
  */
 namespace PJ {
-    class SomeTexture;
+    class Texture;
     class Font;
 
     namespace ImPathRenderType {
@@ -95,7 +95,7 @@ namespace PJ {
         bool isOpaque{};
 
         /// Image texture
-        SP<SomeTexture> texture{};
+        SP<Texture> texture{};
 
         /// Text font
         SP<Font> font{};

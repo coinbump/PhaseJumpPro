@@ -1,7 +1,7 @@
 #include "Slice3TextureRenderer.h"
 #include "RenderFeature.h"
 #include "RenderMaterial.h"
-#include "SomeShaderProgram.h"
+#include "ShaderProgram.h"
 #include "TiledMeshBuilder.h"
 
 using namespace std;

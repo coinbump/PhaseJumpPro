@@ -4,8 +4,8 @@
 #include "Binding.h"
 #include "DiagnoseModel.h"
 #include "InterpolateFunc.h"
-#include "Keyframe.h"
 #include "Updatable.h"
+#include "ValueKeyframe.h"
 #include "VectorList.h"
 #include <stdio.h>
 

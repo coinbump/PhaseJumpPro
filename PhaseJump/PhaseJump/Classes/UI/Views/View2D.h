@@ -46,9 +46,9 @@ namespace PJ {
 
     /// Handles logic and layout for a reading-layout oriented node
     /// Example: windows, controls, buttons
-    class View2D : public WorldComponent<>, public WorldSizeable {
+    class View2D : public WorldComponent, public WorldSizeable {
     public:
-        using Base = WorldComponent<>;
+        using Base = WorldComponent;
         using This = View2D;
 
         using IdealSizeFunc = std::function<ViewSizeProposal(This&, ViewSizeProposal)>;

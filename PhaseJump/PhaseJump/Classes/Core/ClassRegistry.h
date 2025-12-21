@@ -16,7 +16,7 @@ namespace PJ {
     /// Registry for classes
     /// Each registered class has metadata like tags, name, etc.
     /// Eacn registered can be a factory that creates a specific type
-    template <class ClassType = SomeClass>
+    template <class ClassType = Class>
     class ClassRegistry {
     protected:
         using ClassMap = UnorderedMap<String, UP<ClassType>>;
@@ -38,13 +38,13 @@ namespace PJ {
         /// Adds a class to the registry
         void Add(UP<ClassType>&& _class) {
             GUARD(_class)
-            map.insert_or_assign(_class->id, std::move(_class));
+            map.insert_or_assign(_class->_core.id, std::move(_class));
         }
 
         /// Adds a class to the registry and set the id
         void Add(String id, UP<ClassType>&& _class) {
             GUARD(_class)
-            _class->id = id;
+            _class->_core.id = id;
             Add(_class);
         }
 

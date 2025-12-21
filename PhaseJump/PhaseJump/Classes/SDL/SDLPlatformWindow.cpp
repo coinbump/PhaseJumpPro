@@ -45,3 +45,15 @@ void SDLPlatformWindow::OnGo() {
 
     // Important: Call world.Go() after you've built your scene
 }
+
+void SDLPlatformWindow::SetWorld(SP<World> value) {
+    GUARD(world != value)
+    if (world) {
+        world->window = {};
+    }
+
+    world = value;
+
+    GUARD(world)
+    world->window = this;
+}

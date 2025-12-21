@@ -1,8 +1,8 @@
 #include "SimpleRaycaster2D.h"
+#include "Camera.h"
 #include "Colliders2D.h"
 #include "Dev.h"
 #include "Matrix4x4.h"
-#include "SomeCamera.h"
 #include "Utils.h"
 #include "World.h"
 #include <iostream>
@@ -19,7 +19,7 @@ VectorList<RaycastHit2D> SimpleRaycaster2D::Raycast(Vector2 worldPosition, Vecto
 
     auto world = owner->World();
 
-    auto camera = owner->GetComponent<SomeCamera>();
+    auto camera = owner->GetComponent<Camera>();
     if (nullptr == camera) {
         PJ::Log("ERROR. Raycaster requires camera.");
         return result;
@@ -32,7 +32,7 @@ VectorList<RaycastHit2D> SimpleRaycaster2D::Raycast(Vector2 worldPosition, Vecto
     CollectBreadthFirstTree(root, graph);
 
     for (auto& node : graph) {
-        auto colliders = node->GetComponents<SomeCollider2D>();
+        auto colliders = node->GetComponents<Collider2D>();
         GUARD_CONTINUE(!IsEmpty(colliders))
 
         auto localPos = node->WorldToLocal(worldPosition);

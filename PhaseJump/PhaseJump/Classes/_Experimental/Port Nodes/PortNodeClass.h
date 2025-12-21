@@ -3,7 +3,7 @@
 #include "Attributes.h"
 #include "Class.h"
 #include "OrderedMap.h"
-#include "SomeTagClass.h"
+#include "TagClass.h"
 #include "VectorList.h"
 
 /*
@@ -16,11 +16,11 @@ namespace PJ {
     class PortNode;
 
     /// Defines metadata for a port node type
-    class PortNodeClass : public Class<> {
+    class PortNodeClass : public Class {
     public:
-        using Base = Class<>;
-        using InputPort = SomeTagClass;
-        using OutputPort = SomeTagClass;
+        using Base = Class;
+        using InputPort = TagClass;
+        using OutputPort = TagClass;
         using InputMap = OrderedMap<String, UP<InputPort>>;
         using OutputMap = OrderedMap<String, UP<OutputPort>>;
 
@@ -41,13 +41,13 @@ namespace PJ {
         OutputMap outputs;
 
         PortNodeClass(String id, Type type, EvalFunc evalFunc) :
-            Base(id),
+            Base({ .id = id }),
             type(type),
             evalFunc(evalFunc) {}
 
         template <class T>
         InputMap::iterator AddInput(String id, String name, T defaultValue = T()) {
-            UP<InputPort> input = NEW<TagClass<T>>(id);
+            UP<InputPort> input = NEW<TypeTagClass<T>>(id);
             input->Add(Attributes::NameAttribute(name))
                 .Add(Attributes::DefaultValueAttribute<T>(defaultValue));
 
@@ -56,7 +56,7 @@ namespace PJ {
 
         template <class T>
         OutputMap::iterator AddOutput(String id, String name) {
-            UP<OutputPort> output = NEW<TagClass<T>>(id);
+            UP<OutputPort> output = NEW<TypeTagClass<T>>(id);
             output->Add(Attributes::NameAttribute(name));
 
             return outputs.insert_or_assign(id, std::move(output)).first;

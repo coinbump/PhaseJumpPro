@@ -14,22 +14,22 @@ namespace PJ {
     class AgentSystem;
 
     /// Allows templated agent groups to be stored in collections
-    class SomeAgentGroup : public SomeUpdatable {
+    class AgentGroup : public SomeUpdatable {
     protected:
-        float stepTimer = 0;
+        float stepTimer{};
 
     public:
         /// System that owns this group
-        AgentSystem* system = nullptr;
+        AgentSystem* system{};
 
         /// (Optional). For step-based simulations, the time value between steps (0 if steps are
         /// disabled)
-        float stepTime = 0;
+        float stepTime{};
     };
 
     /// Handles updates and collection logic for a group of agents
     template <class AgentType = Agent<>>
-    class AgentGroup : public SomeAgentGroup {
+    class TypeAgentGroup : public AgentGroup {
     public:
         using Agent = AgentType;
         using AgentPool = Pool<Agent>;
@@ -43,7 +43,7 @@ namespace PJ {
             return agents;
         }
 
-        AgentGroup(size_t size = 100) :
+        TypeAgentGroup(size_t size = 100) :
             agents(size, 0) {
             updatable.onUpdateFunc = [this](auto& updatable, auto time) {
                 // Give all agents update delta

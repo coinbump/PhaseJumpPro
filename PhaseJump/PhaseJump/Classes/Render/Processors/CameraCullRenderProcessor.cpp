@@ -1,7 +1,7 @@
 #include "CameraCullRenderProcessor.h"
+#include "Camera.h"
 #include "CollectionUtils.h"
 #include "RenderWorldSystem.h"
-#include "SomeCamera.h"
 #include "WorldNode.h"
 
 using namespace std;

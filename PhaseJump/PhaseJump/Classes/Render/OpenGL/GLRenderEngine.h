@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SomeGLRenderEngine.h"
+#include "BaseGLRenderEngine.h"
 #include "UnorderedMap.h"
 #include <optional>
 #include <type_traits>
@@ -21,7 +21,7 @@ namespace PJ {
     static_assert(!std::is_polymorphic_v<RGBAColor>);
 
     // FUTURE: add state-change optimizations by checking render state
-    class GLRenderEngine : public SomeGLRenderEngine {
+    class GLRenderEngine : public BaseGLRenderEngine {
     protected:
         UnorderedMap<String, GLenum> featureIdToGLFeatureIdMap;
 
@@ -30,7 +30,7 @@ namespace PJ {
         virtual void RenderProcess(RenderModel const& model);
 
     public:
-        using Base = SomeGLRenderEngine;
+        using Base = BaseGLRenderEngine;
         using This = GLRenderEngine;
 
         GLuint vao{};
@@ -38,7 +38,7 @@ namespace PJ {
         /// @return Returns the OpenGL id for the given feature id
         std::optional<GLenum> FeatureIdToGLFeatureId(String featureId);
 
-        // MARK: SomeGLRenderEngine
+        // MARK: BaseGLRenderEngine
 
         void DrawArrays(GLenum drawMode, GLint drawFirst, GLsizei drawCount) override;
         void DrawElements(GLenum mode, GLsizei count, GLenum type, const void* indices) override;

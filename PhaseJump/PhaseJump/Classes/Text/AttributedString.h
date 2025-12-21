@@ -11,7 +11,7 @@
  CODE REVIEW: 12/17/24
  */
 namespace PJ {
-    class SomeTexture;
+    class Texture;
 
     /// Common text style ids
     namespace TextStyleId {
@@ -31,7 +31,7 @@ namespace PJ {
     /// Adds additional metadata to texture
     class Image {
     public:
-        SP<SomeTexture> texture;
+        SP<Texture> texture;
         Vector2 size;
     };
 

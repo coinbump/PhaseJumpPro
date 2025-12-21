@@ -1,5 +1,5 @@
 #include "CycleHueEffect.h"
-#include "SomeRenderer.h"
+#include "Renderer.h"
 #include "WorldNode.h"
 
 using namespace std;
@@ -32,7 +32,7 @@ void CycleHueEffect::UpdateEffect() {
     auto target = Target();
     GUARD(target)
 
-    auto renderer = target->GetComponent<SomeMaterialRenderer>();
+    auto renderer = target->GetComponent<MaterialRenderer>();
     GUARD(renderer)
 
     ModelColor hsv;

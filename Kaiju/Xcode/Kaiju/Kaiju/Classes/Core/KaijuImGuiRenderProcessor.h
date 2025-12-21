@@ -18,7 +18,7 @@ public:
     SceneClassRegistry sceneClasses;
     bool isWindowConfigured = false;
     bool isToolActive = false;
-    UP<SomeImGuiPainter> windowPainter;
+    UP<ImGuiPainter> windowPainter;
 
     KaijuImGuiRenderProcessor(KaijuWorldSystem& editorSystem) :
         Base({ .phases = { RenderPhaseId::RenderPassStartPost } }),

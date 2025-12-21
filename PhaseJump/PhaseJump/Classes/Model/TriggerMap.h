@@ -71,7 +71,7 @@ namespace PJ {
         ItemList::iterator AddAction(Action action) {
             // FUTURE: this is inefficient. Optimize with hash/map if needed
             typename ItemList::iterator found =
-                FirstIterator(items, [=](Item const& item) { return item.action == action; });
+                FirstIteratorIf(items, [=](Item const& item) { return item.action == action; });
             GUARDR(found == items.end(), found)
 
             return items.emplace(items.end(), Item{ action, FilterList{} });

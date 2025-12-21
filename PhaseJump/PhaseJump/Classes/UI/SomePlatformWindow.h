@@ -7,28 +7,23 @@
 /*
  RATING: 5 stars
  Tested and works
- CODE REVIEW: 12/21/24
+ CODE REVIEW: 12/19/25
  */
 namespace PJ {
     class World;
-    class SomeRenderEngine;
 
     /// Platform-level window that contains a world and render context for renders
     class SomePlatformWindow : public Base {
-    protected:
-        /// Nodes, systems, and components
-        SP<World> world;
-
     public:
         using This = SomePlatformWindow;
 
         SomePlatformWindow() {}
 
-        SP<World> GetWorld() const {
-            return world;
-        }
+        /// @return Returns the world associated with this window
+        virtual SP<World> GetWorld() const = 0;
 
-        void SetWorld(SP<World> value);
+        /// Sets the world for this window
+        virtual void SetWorld(SP<World> value) = 0;
 
         /// @return Returns window's size in points
         virtual Vector2Int Size() const = 0;

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SomeDragHandler.h"
+#include "DragHandler.h"
 
 /*
  RATING: 5 stars
@@ -9,7 +9,7 @@
  */
 namespace PJ {
     /// Updates with deltas of the drag while it is in progress
-    class DragGestureHandler2D : public SomeDragHandler {
+    class DragGestureHandler2D : public DragHandler {
     public:
         struct Update {
             enum class Type {
@@ -35,7 +35,7 @@ namespace PJ {
                 delta(delta) {}
         };
 
-        using Base = SomeDragHandler;
+        using Base = DragHandler;
         using OnDragGestureUpdateFunc = std::function<void(Update)>;
 
         OnDragGestureUpdateFunc onDragGestureUpdateFunc;
@@ -45,7 +45,7 @@ namespace PJ {
             onDragGestureUpdateFunc(update);
         }
 
-        // MARK: SomeDragHandler
+        // MARK: DragHandler
 
         void OnDragStart(WorldPosition inputPosition) override {
             OnDragGestureUpdate({ *this, Update::Type::Start, inputPosition, {} });

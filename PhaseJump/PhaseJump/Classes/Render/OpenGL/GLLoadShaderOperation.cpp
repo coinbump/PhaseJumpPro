@@ -1,16 +1,25 @@
 #include "GLLoadShaderOperation.h"
 #include "Dev.h"
 #include "GLHeaders.h"
-#include "SomeGLShader.h"
+#include "GLShader.h"
 #include <fstream>
 
 using namespace std;
 using namespace PJ;
 
-SomeLoadResourcesOperation::Result GLLoadShaderOperation::LoadResources() {
+GLLoadShaderOperation::GLLoadShaderOperation(
+    ResourceInfo info, ResourceRepositoryModel& repoModel, FactoryFunc factoryFunc
+) :
+    Base(info, repoModel),
+    factoryFunc(factoryFunc) {
+
+    loadResourcesFunc = [this](auto& operation) { return _LoadResources(); };
+}
+
+LoadResourcesOperation::Result GLLoadShaderOperation::_LoadResources() {
     GUARDR(factoryFunc, Failure())
 
-    SP<SomeGLShader> shader = factoryFunc();
+    SP<GLShader> shader = factoryFunc();
     GUARDR(shader, Failure())
 
     GLint status = 0;

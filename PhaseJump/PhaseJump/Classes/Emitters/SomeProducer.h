@@ -13,7 +13,7 @@ namespace PJ {
     /// Produces an output based an input
     /// Inherit this protocol to provide objects to another object that requests it
     template <class Output, class Input>
-    class SomeProducer : public WorldComponent<> {
+    class SomeProducer : public WorldComponent {
     public:
         virtual Output Produce(Input& input) = 0;
     };

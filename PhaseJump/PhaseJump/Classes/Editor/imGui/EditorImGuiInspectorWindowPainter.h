@@ -1,7 +1,7 @@
 #pragma once
 
 #include "EditorWorldSystem.h"
-#include "SomeImGuiPainter.h"
+#include "ImGuiPainter.h"
 
 /*
  RATING: 5 stars
@@ -10,7 +10,7 @@
  */
 namespace PJ {
     /// Draws an inspector window for the currently inspected world node and edit UI for the scene
-    class EditorImGuiInspectorWindowPainter : public SomeImGuiPainter {
+    class EditorImGuiInspectorWindowPainter : public ImGuiPainter {
     public:
         EditorWorldSystem& system;
 

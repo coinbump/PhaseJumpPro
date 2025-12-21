@@ -3,4 +3,4 @@
 using namespace std;
 using namespace PJ;
 
-UP<SomeMouseDevice> SomeMouseDevice::current;
+UP<SomeMouseDevice> PJ::currentMouseDevice;

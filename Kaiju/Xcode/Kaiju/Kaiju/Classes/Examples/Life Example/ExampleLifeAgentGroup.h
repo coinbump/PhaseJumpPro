@@ -10,9 +10,9 @@ namespace Example {
         class MatrixRenderer;
 
         /// Agent group for the life simulation
-        class AgentGroup : public PJ::AgentGroup<Agent> {
+        class AgentGroup : public PJ::TypeAgentGroup<Agent> {
         public:
-            using Base = PJ::AgentGroup<Agent>;
+            using Base = PJ::TypeAgentGroup<Agent>;
 
             /// Matrix owner of the agent group
             MatrixRenderer* matrixView{};

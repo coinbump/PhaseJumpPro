@@ -11,7 +11,7 @@
 namespace PJ {
     /// Attaches matrix piece info to a world node
     /// Keeps track of the animator for move animations for that piece
-    class MatrixPieceHandler : public WorldComponent<> {
+    class MatrixPieceHandler : public WorldComponent {
     protected:
         SP<SomeUpdatable> animator;
 

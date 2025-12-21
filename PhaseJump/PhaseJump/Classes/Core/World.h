@@ -13,17 +13,22 @@
 #include "Utils.h"
 #include "WorldComponent.h"
 #include <memory>
+#include <stack>
 
-// CODE REVIEW: ?/23
+/*
+ RATING: 5 stars
+ Has unit tests
+ CODE REVIEW: 12/20/25
+ */
 namespace PJ {
     class WorldNode;
     class SomeWorldSystem;
-    class SomeCamera;
+    class Camera;
     class RenderMaterial;
     class Font;
     class DesignSystem;
     class FontSpec;
-    class SomeShaderProgram;
+    class ShaderProgram;
     class SomePlatformWindow;
 
     /**
@@ -63,7 +68,7 @@ namespace PJ {
         SystemList systems;
 
         /// Cached main camera for this world
-        mutable WP<SomeCamera> mainCamera;
+        mutable WP<Camera> mainCamera;
 
         /// If true, the world will not receive update events
         bool isPaused = false;
@@ -75,8 +80,11 @@ namespace PJ {
         /// node
         SP<WorldNode> root = MAKE<WorldNode>("Root");
 
-        /// If true, we are using a list of node pointers, so removes are locked
-        bool isRemoveNodesLocked{};
+        /// If > 0, we are using a list of node pointers, so removes are locked
+        int isRemoveNodesLockedCount{};
+
+        /// If true, the world rendered at least once
+        bool didRender{};
 
     public:
         /// Window that corresponds to this world
@@ -130,7 +138,7 @@ namespace PJ {
 
         /// @return Returns true if removing nodes is not allowed
         bool IsRemoveNodesLocked() const {
-            return isRemoveNodesLocked;
+            return isRemoveNodesLockedCount > 0;
         }
 
         /// Sets the limited render rate in frames per second
@@ -155,16 +163,9 @@ namespace PJ {
             return dynamic_cast<Type*>(found->get());
         }
 
-        /// @return Returns the first system that matches the type
-        /// Convenience name
-        template <class Type>
-        Type* GetSystem() {
-            return TypeSystem<Type>();
-        }
-
         /// @return Returns the main camera for this world. This is the camera used to render
         /// the window's content
-        virtual SomeCamera* MainCamera() const;
+        virtual Camera* MainCamera() const;
 
         /// @return Returns a matrix that transforms this node's vertices in local space (position +
         /// offset + scale + rotation)
@@ -174,7 +175,7 @@ namespace PJ {
         virtual Matrix4x4 WorldModelMatrix(WorldNode const& node);
 
         /// Sends update event to world
-        FinishType OnUpdate(TimeSlice time);
+        virtual FinishType OnUpdate(TimeSlice time);
 
         /// Renders if the rate limiter allows it
         virtual void Render();
@@ -183,10 +184,10 @@ namespace PJ {
         virtual void RenderNow();
 
         /// Adds a node to the root node
-        void Add(SP<WorldNode> const& node);
+        virtual void Add(SP<WorldNode> const& node);
 
         /// Adds a system
-        void Add(SP<SomeWorldSystem> const& system);
+        virtual void Add(SP<SomeWorldSystem> const& system);
 
         /// Adds a node with arguments
         template <typename... Arguments>
@@ -225,33 +226,33 @@ namespace PJ {
         ScreenPosition WorldToScreen(WorldPosition worldPos) const;
 
         /// @return Returns true if the world is paused
-        bool IsPaused() const;
+        virtual bool IsPaused() const;
 
         /// Pauses the world so it will not receive any update events
-        void Pause();
+        virtual void Pause();
 
         /// Unpauses the world so it can receive update events
-        void Play();
+        virtual void Play();
 
         /// Loads a prefab into the specified node, if the prefab exists
-        void LoadPrefab(String id, WorldNode& node);
+        virtual void LoadPrefab(String id, WorldNode& node);
 
         /// Removes a system
-        void Remove(SomeWorldSystem& system);
+        virtual void Remove(SomeWorldSystem& system);
 
         /// Removes a list of systems
-        void Remove(VectorList<SomeWorldSystem*> const& systems);
+        virtual void Remove(VectorList<SomeWorldSystem*> const& systems);
 
         /// Removes all systems
-        void RemoveAllSystems();
+        virtual void RemoveAllSystems();
 
         /// Remove all nodes except for the root node
         /// Warning: do not call this for immediate UI
-        void RemoveAllNodes();
+        virtual void RemoveAllNodes();
 
         /// Mark all nodes to be destroyed
         /// Safe to call for immediate UI
-        void DestroyAllNodes();
+        virtual void DestroyAllNodes();
 
         /// Called to process UI events
         virtual void ProcessUIEvents(UIEventList const& uiEvents);

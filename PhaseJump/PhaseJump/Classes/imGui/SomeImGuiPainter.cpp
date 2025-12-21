@@ -1,33 +1,33 @@
-#include "SomeImGuiPainter.h"
 #include "imgui.h"
+#include "ImGuiPainter.h"
 
 using namespace std;
 using namespace PJ;
 
-void SomeImGuiPainter::Paint() {
+void ImGuiPainter::Paint() {
     Begin();
     Draw();
     DrawChildren();
     End();
 }
 
-void SomeImGuiPainter::Begin() {
+void ImGuiPainter::Begin() {
     GUARD(beginFunc)
     beginFunc(*this);
 }
 
-void SomeImGuiPainter::Draw() {
+void ImGuiPainter::Draw() {
     GUARD(drawFunc)
     drawFunc(*this);
 }
 
-void SomeImGuiPainter::DrawChildren() {
+void ImGuiPainter::DrawChildren() {
     for (auto& child : tree.Children()) {
         child->Paint();
     }
 }
 
-void SomeImGuiPainter::End() {
+void ImGuiPainter::End() {
     GUARD(endFunc)
     endFunc(*this);
 }

@@ -8,7 +8,7 @@
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 9/14/24
+ CODE REVIEW: 12/19/25
  */
 namespace PJ {
     /// Wraps do, undo, and redo behavior. Typically a command will store a memento
@@ -19,21 +19,10 @@ namespace PJ {
 
         enum class StateType { Default, Complete, Reversed };
 
-    protected:
-        StateMachine<StateType> stateMachine;
-
-    public:
-        String name;
-
-        SomeCommand(String name) :
-            name(name) {}
-
         virtual ~SomeCommand() {}
 
-        StateType State() const {
-            return stateMachine.State();
-        }
-
+        virtual String Name() const = 0;
+        virtual StateType State() const = 0;
         virtual void Run() = 0;
         virtual void Undo() = 0;
     };
@@ -50,20 +39,33 @@ namespace PJ {
         RunFunc runFunc;
         UndoFunc undoFunc;
 
+    protected:
+        StateMachine<StateType> stateMachine;
+
+    public:
         Core core{};
+        String name;
 
         Command(String name, RunFunc runFunc, UndoFunc undoFunc) :
-            Base(name),
+            name(name),
             runFunc(runFunc),
             undoFunc(undoFunc) {}
 
         Command(String name, Core const& core, RunFunc runFunc, UndoFunc undoFunc) :
-            Base(name),
+            name(name),
             core(core),
             runFunc(runFunc),
             undoFunc(undoFunc) {}
 
         // MARK: SomeCommand
+
+        StateType State() const override {
+            return stateMachine.State();
+        }
+
+        String Name() const override {
+            return name;
+        }
 
         void Run() override {
             switch (State()) {

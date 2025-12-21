@@ -1,7 +1,7 @@
 #pragma once
 
+#include "ImGuiPainter.h"
 #include "Scene.h"
-#include "SomeImGuiPainter.h"
 #include <functional>
 
 /*
@@ -14,7 +14,7 @@ namespace PJ {
     class EditorWorldSystem;
 
     /// Draws a list of scenes to navigate to for the editor
-    class EditorImGuiScenesPainter : public SomeImGuiPainter {
+    class EditorImGuiScenesPainter : public ImGuiPainter {
     public:
         using OnSceneSwitchFunc = std::function<void(Scene&)>;
 

@@ -79,12 +79,12 @@ namespace PJ {
 
         String UndoCommandName() {
             GUARDR(CanUndo(), "")
-            return commands[activeCommandIndex]->name;
+            return commands[activeCommandIndex]->Name();
         }
 
         String RedoCommandName() {
             GUARDR(CanRedo(), "")
-            return commands[activeCommandIndex + 1]->name;
+            return commands[activeCommandIndex + 1]->Name();
         }
 
         void Undo() {

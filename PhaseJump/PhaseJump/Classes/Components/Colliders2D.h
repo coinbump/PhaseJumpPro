@@ -1,7 +1,7 @@
 #pragma once
 
+#include "Collider2D.h"
 #include "Polygon.h"
-#include "SomeCollider2D.h"
 
 /*
  RATING: 5 stars
@@ -10,7 +10,7 @@
  */
 namespace PJ {
     /// 2D polygon collider
-    class PolygonCollider2D : public SomeCollider2D {
+    class PolygonCollider2D : public Collider2D {
     protected:
         /// Stores the collider shape
         Polygon poly;
@@ -25,7 +25,7 @@ namespace PJ {
 
         This& SetPolygon(Polygon const& value);
 
-        // MARK: SomeCollider2D
+        // MARK: Collider2D
 
         bool TestHit(Vector2 position) override;
 
@@ -42,14 +42,14 @@ namespace PJ {
     };
 
     // 2D circle collider
-    class CircleCollider2D : public SomeCollider2D {
+    class CircleCollider2D : public Collider2D {
     public:
         float radius = 1;
 
         CircleCollider2D(float radius) :
             radius(radius) {}
 
-        // MARK: SomeCollider2D
+        // MARK: Collider2D
 
         bool TestHit(Vector2 position) override {
             auto distance = sqrt(position.x * position.x + position.y * position.y);
@@ -69,7 +69,7 @@ namespace PJ {
     };
 
     // FUTURE:
-    //    class CapsuleCollider2D : public SomeCollider2D {
+    //    class CapsuleCollider2D : public Collider2D {
     //    public:
     //        Vector2 size;
     //

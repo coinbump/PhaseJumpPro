@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SomeGraphNode.h"
+#include "GraphNode.h"
 #include <iostream>
 
 /*
@@ -11,18 +11,18 @@
 namespace PJ {
     /// Cyclic nodes are managed by CyclicGraph
     template <class EdgeCore = StandardEdgeCore, class Core = Void>
-    class CyclicGraphNode : public SomeGraphNode<EdgeCore, Core> {
+    class CyclicGraphNode : public GraphNode<EdgeCore, Core> {
     public:
-        using Base = SomeGraphNode<EdgeCore, Core>;
+        using Base = GraphNode<EdgeCore, Core>;
         using EdgeCoreType = EdgeCore;
         using CoreType = Core;
 
         CyclicGraphNode() {}
 
-        CyclicGraphNode(Core core) :
+        CyclicGraphNode(Core const& core) :
             Base(core) {}
 
-        // MARK: SomeGraphNode
+        // MARK: GraphNode
 
         typename Base::NodeSharedPtr
         AddEdge(typename Base::NodeSharedPtr toNode, EdgeCore model = EdgeCore()) override {

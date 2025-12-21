@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Macros.h"
-#include "SomeTexture.h"
+#include "Texture.h"
 
 /*
  RATING: 5 stars
@@ -12,9 +12,9 @@ namespace PJ {
     class TextureAtlas;
 
     /// GPU texture that references only part of its parent texture (used for texture atlas, fonts)
-    class AtlasTexture : public SomeTexture {
+    class AtlasTexture : public Texture {
     public:
-        using Base = SomeTexture;
+        using Base = Texture;
         using This = AtlasTexture;
 
         enum class Orientation {
@@ -39,13 +39,13 @@ namespace PJ {
 
         AtlasTexture(Config const& config);
 
-        SomeTexture* ParentTexture() const {
+        Texture* ParentTexture() const {
             return RenderTexture();
         }
 
-        // MARK: SomeTexture
+        // MARK: Texture
 
-        SomeTexture* RenderTexture() const override;
+        Texture* RenderTexture() const override;
         uint32_t RenderId() const override;
     };
 } // namespace PJ

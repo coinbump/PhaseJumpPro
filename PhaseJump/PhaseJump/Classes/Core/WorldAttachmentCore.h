@@ -30,6 +30,9 @@ namespace PJ {
     template <class Owner>
     class WorldAttachmentCore {
     public:
+        using This = WorldAttachmentCore<Owner>;
+        using ThisFunc = std::function<void(This&)>;
+        using OnAddSignalHandlerFunc = std::function<void(This&, SignalHandler<Owner>&)>;
         using SignalHandler = PJ::SignalHandler<Owner>;
         using SignalFunc = SignalHandler::SignalFunc;
         using SignalHandlerMap = UnorderedMap<String, VectorList<SignalHandler>>;
@@ -38,17 +41,14 @@ namespace PJ {
         /// Signal handlers. Mapped by signal id
         SignalHandlerMap signalHandlers;
 
+        /// If true, the attachment is enabled
+        bool isEnabled = true;
+
     public:
         Owner& owner;
 
         WorldAttachmentCore(Owner& owner) :
             owner(owner) {}
-
-        /// Unique identifier
-        String id;
-
-        /// User facing name for display
-        String name;
 
         /// Stores func for updates
         Updatable updatable;
@@ -56,7 +56,21 @@ namespace PJ {
         /// Stores objects that need time events
         Updatables updatables;
 
+        /// Called when enabled state changes
+        ThisFunc onEnabledChangeFunc;
+
+        /// Called after signal handler is added
+        OnAddSignalHandlerFunc onAddSignalHandlerFunc;
+
+        bool IsListenerToSignal(String id) const {
+            return signalHandlers.find(id) != signalHandlers.end();
+        }
+
         SignalHandlerMap& SignalHandlers() {
+            return signalHandlers;
+        }
+
+        SignalHandlerMap const& SignalHandlers() const {
             return signalHandlers;
         }
 
@@ -98,10 +112,27 @@ namespace PJ {
             return FinishType::Continue;
         }
 
+        bool IsEnabled() const {
+            return isEnabled;
+        }
+
+        void Enable(bool value) {
+            GUARD(isEnabled != value)
+            isEnabled = value;
+
+            if (onEnabledChangeFunc) {
+                onEnabledChangeFunc(*this);
+            }
+        }
+
         /// Adds a signal handler for the specified signal
         void AddSignalHandler(SignalHandler handler) {
             GUARD_LOG(!IsEmpty(handler.id), "ERROR. Signal handler is missing id")
             signalHandlers[handler.id].push_back(handler);
+
+            if (onAddSignalHandlerFunc) {
+                onAddSignalHandlerFunc(*this, handler);
+            }
         }
 
         template <class Signal>
@@ -123,7 +154,7 @@ namespace PJ {
             };
 
             SignalHandler handler{ .id = config.id, .func = func };
-            signalHandlers[handler.id].push_back(handler);
+            AddSignalHandler(handler);
         }
 
         /// Sends a signal to registered signal handlers

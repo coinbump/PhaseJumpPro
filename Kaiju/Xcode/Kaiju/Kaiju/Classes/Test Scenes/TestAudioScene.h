@@ -23,7 +23,7 @@ static void SDLCALL MyNewAudioCallback(
     }
 }
 
-class TestAudioPad : public WorldComponent<> {
+class TestAudioPad : public WorldComponent {
 public:
     using This = TestAudioPad;
 
@@ -44,9 +44,9 @@ public:
     }
 };
 
-class TestAudioSystem : public SomeWorldSystem {
+class TestAudioSystem : public WorldSystem {
 public:
-    using Base = SomeWorldSystem;
+    using Base = WorldSystem;
 
     TestAudioSystem(String name = "Test Audio") :
         Base(name) {}
@@ -138,7 +138,6 @@ public:
 
         World& world = *root.World();
 
-        // TODO: clean this up somewhere
         world.Add(MAKE<TestAudioSystem>());
     }
 };

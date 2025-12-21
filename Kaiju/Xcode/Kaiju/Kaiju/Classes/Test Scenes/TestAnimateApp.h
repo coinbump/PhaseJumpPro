@@ -7,7 +7,7 @@ using namespace PJ;
 class TestAnimateApp : public Scene {
 public:
     using Base = Scene;
-    using TextureList = VectorList<SP<SomeTexture>>;
+    using TextureList = VectorList<SP<Texture>>;
 
     TextureList textures;
 
@@ -29,13 +29,13 @@ public:
                 GUARD_CONTINUE(successValue)
                 GUARD_CONTINUE(!IsEmpty(successValue->resources))
 
-                auto texture = DCAST<SomeTexture>(successValue->resources[0].resource);
+                auto texture = DCAST<Texture>(successValue->resources[0].resource);
                 GUARD_CONTINUE(texture)
 
                 textures.push_back(texture);
             }
 
-            QB(*args.component.owner)
+            QB(*args.component.Node())
                 .And("Animation")
                 .With<AnimatedTextureRenderer>(textures)
                 .Drag();

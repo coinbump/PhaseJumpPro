@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SomeAttribute.h"
+#include "Attribute.h"
 
 /*
  RATING: 5 stars
@@ -15,16 +15,16 @@ namespace PJ {
     } // namespace AttributeId
 
     namespace Attributes {
-        UP<SomeAttribute> NameAttribute(String name);
+        UP<Attribute> NameAttribute(String name);
 
         template <class T>
-        UP<SomeAttribute> DefaultValueAttribute(T value) {
-            return NEW<Attribute<T>>(AttributeId::DefaultValue, value);
+        UP<Attribute> DefaultValueAttribute(T value) {
+            return NEW<ValueAttribute<T>>(AttributeId::DefaultValue, value);
         }
 
         template <class T>
-        UP<SomeAttribute> RangeAttribute(T minValue, T maxValue) {
-            return NEW<Attribute<std::pair<T, T>>>(
+        UP<Attribute> RangeAttribute(T minValue, T maxValue) {
+            return NEW<ValueAttribute<std::pair<T, T>>>(
                 AttributeId::DefaultValue, std::pair<T, T>(minValue, maxValue)
             );
         }

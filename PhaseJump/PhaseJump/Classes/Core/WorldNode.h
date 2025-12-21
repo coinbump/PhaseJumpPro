@@ -30,16 +30,16 @@ namespace PJ {
     class Cancellable;
 
     struct AddChildNodeEvent : public SomeSignal {
-        SP<WorldNode> node;
+        WorldNode& node;
 
-        AddChildNodeEvent(SP<WorldNode> node) :
+        AddChildNodeEvent(WorldNode& node) :
             node(node) {}
     };
 
     struct RemoveChildNodeEvent : public SomeSignal {
-        SP<WorldNode> node;
+        WorldNode& node;
 
-        RemoveChildNodeEvent(SP<WorldNode> node) :
+        RemoveChildNodeEvent(WorldNode& node) :
             node(node) {}
     };
 
@@ -90,12 +90,12 @@ namespace PJ {
     protected:
         class World* world = nullptr;
 
-    public:
-        /// Core properties
-        StandardCore core;
-
         /// If true, this node will receive signals
         bool isListener{};
+
+    public:
+        /// Standard core properties
+        StandardCore _core;
 
         /// Stores subscriptions to reactive values
         UnorderedSet<SP<Cancellable>> cancellables;
@@ -114,6 +114,12 @@ namespace PJ {
 
         virtual ~WorldNode() {}
 
+        bool IsListener() const {
+            return isListener;
+        }
+
+        void SetIsListener(bool value);
+
         /// Destroy this node in the next update, or after a countdown
         void Destroy(float countdown = 0);
 
@@ -130,22 +136,22 @@ namespace PJ {
 
         /// @return Returns the node's name
         String Id() const {
-            return core.id;
+            return _core.id;
         }
 
         /// Sets the nodes's name
         void SetId(String value) {
-            core.id = value;
+            _core.id = value;
         }
 
         /// @return Returns the node's name
         String Name() const {
-            return core.name;
+            return _core.name;
         }
 
         /// Sets the nodes's name
         void SetName(String value) {
-            core.name = value;
+            _core.name = value;
         }
 
         /// @return Returns the number of child nodes this node contains
@@ -159,6 +165,8 @@ namespace PJ {
 
         /// @return Returns true if the node has received the Start event
         bool IsStarted() const;
+
+        bool IsListenerToSignal(String signalId) const;
 
         /// Send a signal to this node and its components
         void Signal(String signalId, SomeSignal const& signal);
@@ -268,13 +276,6 @@ namespace PJ {
             return result;
         }
 
-        /// Quick build for adding a component with core, type, and arguments
-        /// @return Returns a reference to the component
-        template <class Type, typename... Arguments>
-        constexpr auto& WithCore(Arguments... args) {
-            return AddComponent<WorldComponent<Type>>(args...);
-        }
-
         /// Adds a component based on type and arguments
         /// @return Returns the component pointer
         template <class Type, typename... Arguments>
@@ -289,13 +290,6 @@ namespace PJ {
         template <class Type, typename... Arguments>
         auto WithPtr(Arguments... args) {
             return AddComponentPtr<Type>(args...);
-        }
-
-        /// Quick build for adding a component with core, type, and arguments
-        /// @return Returns the component pointer
-        template <class Type, typename... Arguments>
-        auto WithCorePtr(Arguments... args) {
-            return AddComponentPtr<WorldComponent<Type>>(args...);
         }
 
         /// Adds a child node
@@ -383,6 +377,19 @@ namespace PJ {
         Type* TypeComponent() const {
             for (auto& component : components) {
                 auto typeComponent = dynamic_cast<Type*>(component.get());
+                GUARD_CONTINUE(typeComponent)
+
+                return typeComponent;
+            }
+
+            return nullptr;
+        }
+
+        /// @return Returns the first component of the specified type, if any exists
+        template <class Type>
+        SP<Type> TypeComponentPtr() const {
+            for (auto& component : components) {
+                auto typeComponent = DCAST<Type>(component);
                 GUARD_CONTINUE(typeComponent)
 
                 return typeComponent;
@@ -574,10 +581,11 @@ namespace PJ {
     /// @return Returns the sibling components of the specified type
     template <class Type>
     VectorList<Type*> SiblingTypeComponents(SomeWorldComponent& component) {
-        GUARDR(component.owner, {})
+        auto owner = component.Node();
+        GUARDR(owner, {})
 
         VectorList<Type*> result;
-        component.owner->CollectTypeComponentsIf<Type>(result, [&](Type& sibling) {
+        owner->CollectTypeComponentsIf<Type>(result, [&](Type& sibling) {
             return &sibling != &component;
         });
 

@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Axis.h"
+#include "DragHandler.h"
 #include "PublishedValue.h"
-#include "SomeDragHandler.h"
 #include "UIControl2D.h"
 
 // Future feature. Unimplemented

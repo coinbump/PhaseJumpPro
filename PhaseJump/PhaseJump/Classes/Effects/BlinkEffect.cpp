@@ -1,5 +1,5 @@
 #include "BlinkEffect.h"
-#include "SomeRenderer.h"
+#include "Renderer.h"
 #include "WorldNode.h"
 
 using namespace std;
@@ -24,17 +24,17 @@ BlinkEffect::BlinkEffect(
 
     timeTrack.setBindingFunc = [this](auto& value) {
         GUARD(owner)
-        owner->Modify<SomeRenderer>([=](auto& renderer) { renderer.Enable(value); });
+        owner->Modify<Renderer>([=](auto& renderer) { renderer.Enable(value); });
     };
 
-    onEnabledChangeFunc = [](auto& handler) {
-        auto& effect = *(static_cast<This*>(&handler));
+    attachmentCore.onEnabledChangeFunc = [](auto& core) {
+        auto& effect = *(static_cast<This*>(&core.owner));
 
-        if (handler.IsEnabled()) {
+        if (core.IsEnabled()) {
             effect.timeTrack.Reset();
         } else {
             // Turn renderers back on when effect is off
-            effect.owner->Modify<SomeRenderer>([](auto& renderer) { renderer.Enable(true); });
+            effect.owner->Modify<Renderer>([](auto& renderer) { renderer.Enable(true); });
         }
     };
 

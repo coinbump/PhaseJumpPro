@@ -1,21 +1,21 @@
 #include "gtest/gtest.h"
 
 #include "Slice3TextureRenderer.h"
-#include "SomeTexture.h"
+#include "Texture.h"
 
 using namespace std;
 using namespace PJ;
 
 namespace Slice3TextureRendererTests {
-    class MockTextureX : public SomeTexture {
+    class MockTextureX : public Texture {
     public:
-        MockTextureX() : SomeTexture({.renderId = 1, .size = Vector2Int(50, 10)}) {
+        MockTextureX() : Texture({.renderId = 1, .size = Vector2Int(50, 10)}) {
         }
     };
     
-    class MockTextureY : public SomeTexture {
+    class MockTextureY : public Texture {
     public:
-        MockTextureY() : SomeTexture({.renderId = 1, .size = Vector2Int(10, 50)}) {
+        MockTextureY() : Texture({.renderId = 1, .size = Vector2Int(10, 50)}) {
         }
     };
 }

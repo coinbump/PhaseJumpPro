@@ -1,9 +1,9 @@
 #pragma once
 
 #include "DiagnoseModel.h"
+#include "Renderer.h"
 #include "SomeFramePlayable.h"
-#include "SomeRenderer.h"
-#include "SomeTexture.h"
+#include "Texture.h"
 #include "TimeTrack.h"
 #include "Utils.h"
 #include <memory>
@@ -19,11 +19,11 @@ namespace PJ {
     class TextureAtlas;
 
     /// Renders multiple textures as a sprite
-    class AnimatedSpriteRenderer : public SomeMaterialRenderer {
+    class AnimatedSpriteRenderer : public MaterialRenderer {
     public:
-        using Base = SomeMaterialRenderer;
+        using Base = MaterialRenderer;
         using This = AnimatedSpriteRenderer;
-        using TextureList = VectorList<SP<SomeTexture>>;
+        using TextureList = VectorList<SP<Texture>>;
 
         /// Model to build animation keyframe
         struct KeyframeModel {
@@ -45,10 +45,10 @@ namespace PJ {
     protected:
         /// Model for animation frames
         struct Frame {
-            SP<SomeTexture> texture;
+            SP<Texture> texture;
             Vector2 offset;
 
-            Frame(SP<SomeTexture> texture, Vector2 offset) :
+            Frame(SP<Texture> texture, Vector2 offset) :
                 texture(texture),
                 offset(offset) {}
         };
@@ -121,7 +121,7 @@ namespace PJ {
         void SetFrameRate(float value);
 
         /// Set the animation frame textures
-        void SetTextures(VectorList<SP<SomeTexture>> const& textures);
+        void SetTextures(VectorList<SP<Texture>> const& textures);
 
         /// @return Returns the frame for a specific texture id, if any
         std::optional<int> FrameForTextureId(String textureId) const;
@@ -142,7 +142,7 @@ namespace PJ {
             return "AnimatedSpriteRenderer";
         }
 
-        // MARK: SomeRenderer
+        // MARK: Renderer
 
         void Reset() override;
 

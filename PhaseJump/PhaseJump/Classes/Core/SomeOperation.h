@@ -31,7 +31,7 @@ namespace PJ {
 
         Core core{};
 
-        Operation(Core core = {}, OperationFunc runFunc = {}) :
+        Operation(Core const& core = {}, OperationFunc runFunc = {}) :
             core(core),
             runFunc(runFunc) {}
 

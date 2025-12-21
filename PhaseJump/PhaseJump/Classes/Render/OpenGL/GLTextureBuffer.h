@@ -40,9 +40,9 @@ namespace PJ {
     /// Creates and manages an offscreen OpenGL texture buffer
     /// Useful when we need to render a viewport into the buffer and apply post processing effects
     /// via shaders.
-    class GLTextureBuffer : public SomeRenderContext {
+    class GLTextureBuffer : public RenderContext {
     public:
-        using Base = SomeRenderContext;
+        using Base = RenderContext;
         using This = GLTextureBuffer;
 
     protected:
@@ -65,7 +65,7 @@ namespace PJ {
 
         // MARK: SomeRenderContext
 
-        SP<SomeTexture> Texture() const override {
+        SP<Texture> GetTexture() const override {
             return texture;
         }
 

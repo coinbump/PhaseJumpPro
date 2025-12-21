@@ -1,16 +1,16 @@
 #include "RenderModelBuilder.h"
 #include "Mesh.h"
+#include "Renderer.h"
 #include "RendererModel.h"
 #include "RenderMaterial.h"
 #include "RenderModel.h"
-#include "SomeRenderer.h"
-#include "SomeShaderProgram.h"
+#include "ShaderProgram.h"
 #include "WorldNode.h"
 
 using namespace std;
 using namespace PJ;
 
-PJ::UVTransformFunc UVTransformFuncs::textureCoordinates = [](SomeTexture& texture,
+PJ::UVTransformFunc UVTransformFuncs::textureCoordinates = [](Texture& texture,
                                                               VectorList<Vector2>& uvs) {
     // FUTURE: support rotated textures
     std::transform(uvs.begin(), uvs.end(), uvs.begin(), [=](Vector2 uv) {
@@ -21,7 +21,7 @@ PJ::UVTransformFunc UVTransformFuncs::textureCoordinates = [](SomeTexture& textu
 };
 
 std::optional<RenderModel>
-RenderModelBuilder::Build(SomeMaterialRenderer& renderer, RendererModel& model) {
+RenderModelBuilder::Build(MaterialRenderer& renderer, RendererModel& model) {
     auto material = model.material.get();
     GUARDR_LOG(material, {}, "ERROR. Missing material")
 
@@ -37,7 +37,7 @@ RenderModelBuilder::Build(SomeMaterialRenderer& renderer, RendererModel& model) 
 
 std::optional<RenderModel> RenderModelBuilder::Build(
     WorldNode* node, Mesh const& mesh, RenderMaterial& material,
-    VectorList<SP<SomeTexture>> const& textures
+    VectorList<SP<Texture>> const& textures
 ) {
     RenderModel renderModel(&material);
     renderModel.name = node ? node->Name() : "";

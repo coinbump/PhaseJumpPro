@@ -1,10 +1,10 @@
 #include "ShowCollidersRenderProcessor.h"
+#include "Collider2D.h"
 #include "Colliders2D.h"
 #include "Color.h"
 #include "ColorRenderer.h"
 #include "QuadFrameMeshBuilder.h"
 #include "RenderWorldSystem.h"
-#include "SomeCollider2D.h"
 #include "SomeRenderEngine.h"
 #include "WorldNode.h"
 
@@ -36,7 +36,7 @@ void ShowCollidersRenderProcessor::Process(RenderCameraModel& cameraModel) {
 
     // FUTURE: this can be optimized
     for (auto& node : cameraModel.nodes) {
-        auto colliders = node->GetComponents<SomeCollider2D>();
+        auto colliders = node->GetComponents<Collider2D>();
         for (auto& collider : colliders) {
             auto polyCollider = As<PolygonCollider2D>(collider);
 

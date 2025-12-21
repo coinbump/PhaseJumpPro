@@ -1,14 +1,14 @@
 #include "ViewBuilder.h"
+#include "Collider2D.h"
 #include "ColorView.h"
 #include "FixedGridViewLayout.h"
 #include "FlowStackViewLayout.h"
 #include "Font.h"
+#include "HoverGestureHandler.h"
 #include "ImRenderer.h"
 #include "PadViewLayout.h"
 #include "QuickBuilder.h"
 #include "SliderControl.h"
-#include "SomeCollider2D.h"
-#include "SomeHoverGestureHandler.h"
 #include "SpacerView.h"
 #include "TextRenderer.h"
 #include "TextView.h"
@@ -356,11 +356,11 @@ This& ViewBuilder::ButtonView(BuildConfigFunc<ButtonViewConfig> buildConfigFunc)
                     button.SetOnControlChangeFunc(config.onControlChangeFunc);
                 }
 
-                auto currentCollider = button.owner->TypeComponent<SomeCollider2D>();
+                auto currentCollider = button.owner->TypeComponent<Collider2D>();
                 if (config.makeColliderFunc) {
                     SP<SomeWorldComponent> collider = config.makeColliderFunc();
                     if (collider) {
-                        button.owner->RemoveType<SomeCollider2D>();
+                        button.owner->RemoveType<Collider2D>();
                         button.owner->Add(collider);
                     }
                 } else if (nullptr == currentCollider) {
@@ -402,11 +402,11 @@ This& ViewBuilder::ToggleButtonView(BuildConfigFunc<ToggleButtonViewConfig> buil
                     button.SetOnControlChangeFunc(config.onControlChangeFunc);
                 }
 
-                auto currentCollider = button.owner->TypeComponent<SomeCollider2D>();
+                auto currentCollider = button.owner->TypeComponent<Collider2D>();
                 if (config.makeColliderFunc) {
                     SP<SomeWorldComponent> collider = config.makeColliderFunc();
                     if (collider) {
-                        button.owner->RemoveType<SomeCollider2D>();
+                        button.owner->RemoveType<Collider2D>();
                         button.owner->Add(collider);
                     }
                 } else if (nullptr == currentCollider) {
@@ -719,7 +719,7 @@ This& ViewBuilder::AddToolTip(ToolTipConfig config) {
     GUARDR(activeView, *this)
 
     // Add a collider if needed
-    if (nullptr == activeView->owner->TypeComponent<SomeCollider2D>()) {
+    if (nullptr == activeView->owner->TypeComponent<Collider2D>()) {
         QuickBuilder(*activeView->owner).RectCollider();
     }
 

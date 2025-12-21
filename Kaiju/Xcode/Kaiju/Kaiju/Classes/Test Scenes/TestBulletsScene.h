@@ -16,7 +16,7 @@ public:
         //        Emitter::SpawnFunc spawnFunc = [](auto& emitter, auto model) {
         //            return Emitter::SpawnList{};
         //        };
-        //        UP<SomeDriver> up = NEW<TimerDriver>(0.1f, RunType::Repeat,
+        //        UP<Driver> up = NEW<TimerDriver>(0.1f, RunType::Repeat,
         //        []() {}); MAKE<Emitter>(spawnFunc, up);
 
         QB(root)
@@ -35,7 +35,7 @@ public:
                         DCAST<GLTexture>(owner->World()->resources.FindTexture("heart-full"));
                     GUARDR(texture, Emitter::SpawnList{})
                     auto material = MAKE<RenderMaterial>();
-                    material->SetShaderProgram(SomeShaderProgram::registry["texture.uniform"]);
+                    material->SetShaderProgram(ShaderProgram::registry["texture.uniform"]);
                     material->EnableFeature(RenderFeature::Blend, true);
                     material->Add(texture);
 

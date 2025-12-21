@@ -1,7 +1,9 @@
 #pragma once
 
 #include "InfixOStreamIterator.h"
+#include "MapUtils.h"
 #include "OrderedSet.h"
+#include "SetUtils.h"
 #include "StringUtils.h"
 #include "UnorderedSet.h"
 #include "Utils.h"
@@ -14,7 +16,7 @@
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 10/31/24
+ CODE REVIEW: 12/20/25
  */
 namespace PJ {
     /// Removes all elements from the collection
@@ -113,20 +115,21 @@ namespace PJ {
     /// @return Returns the iterator for the first item that matches the check
     template <class Collection, class UnaryPred>
     constexpr typename Collection::const_iterator
-    FirstIterator(Collection const& collection, UnaryPred check) {
+    FirstIteratorIf(Collection const& collection, UnaryPred check) {
         return std::find_if(collection.cbegin(), collection.cend(), check);
     }
 
     /// @return Returns the iterator for the first item that matches the check
     template <class Collection, class UnaryPred>
-    constexpr typename Collection::iterator FirstIterator(Collection& collection, UnaryPred check) {
+    constexpr typename Collection::iterator
+    FirstIteratorIf(Collection& collection, UnaryPred check) {
         return std::find_if(collection.begin(), collection.end(), check);
     }
 
     /// @return Returns the first item in the collection, if any
     template <class Collection>
-    constexpr typename Collection::value_type SafeFirst(Collection& collection) {
-        typename Collection::value_type defaultResult{};
+    constexpr typename Collection::value_type
+    SafeFirst(Collection& collection, typename Collection::value_type defaultResult = {}) {
         return !IsEmpty(collection) ? *collection.begin() : defaultResult;
     }
 
@@ -134,7 +137,7 @@ namespace PJ {
     template <class Collection, class UnaryPred>
     constexpr std::optional<typename Collection::value_type>
     FirstIf(Collection const& collection, UnaryPred check) {
-        auto i = FirstIterator(collection, check);
+        auto i = FirstIteratorIf(collection, check);
         return i != collection.end() ? *i : std::optional<typename Collection::value_type>();
     }
 
@@ -142,7 +145,7 @@ namespace PJ {
     template <class Collection, class UnaryPred>
     constexpr std::optional<typename Collection::value_type>
     FirstIf(Collection& collection, UnaryPred check) {
-        auto i = FirstIterator(collection, check);
+        auto i = FirstIteratorIf(collection, check);
         return i != collection.end() ? *i : std::optional<typename Collection::value_type>();
     }
 
@@ -152,28 +155,6 @@ namespace PJ {
     constexpr Collection Filter(Collection const& collection, UnaryPred check) {
         Collection result;
         std::copy_if(begin(collection), end(collection), std::back_inserter(result), check);
-        return result;
-    }
-
-    /// Filters items from the collection. If check returns true, the item is kept
-    /// @return Returns the filtered collection
-    template <class Type, class UnaryPred>
-    constexpr UnorderedSet<Type> Filter(UnorderedSet<Type> const& collection, UnaryPred check) {
-        UnorderedSet<Type> result;
-        std::copy_if(
-            begin(collection), end(collection), std::inserter(result, result.begin()), check
-        );
-        return result;
-    }
-
-    /// Filters items from the collection. If check returns true, the item is kept
-    /// @return Returns the filtered collection
-    template <class Type, class UnaryPred>
-    constexpr OrderedSet<Type> Filter(OrderedSet<Type> const& collection, UnaryPred check) {
-        OrderedSet<Type> result;
-        std::copy_if(
-            begin(collection), end(collection), std::inserter(result, result.begin()), check
-        );
         return result;
     }
 
@@ -198,45 +179,19 @@ namespace PJ {
         return result;
     }
 
-    /// Maps a collection of one type to a collection of a different type
-    template <class ResultType, class Type, class Converter>
-    constexpr UnorderedSet<ResultType>
-    Map(UnorderedSet<Type> const& collection, Converter convert) {
-        UnorderedSet<ResultType> result;
-        std::transform(
-            begin(collection), end(collection), std::inserter(result, result.begin()), convert
-        );
-        return result;
-    }
-
-    /// Maps a collection of one type to a collection of a different type
-    template <class ResultType, class Type, class Converter>
-    constexpr OrderedSet<ResultType> Map(OrderedSet<Type> const& collection, Converter convert) {
-        OrderedSet<ResultType> result;
-        std::transform(
-            begin(collection), end(collection), std::inserter(result, result.begin()), convert
-        );
-        return result;
-    }
-
     /// @return Returns true if the index is valid for the collection
     template <class Collection>
     constexpr bool IsValidIndex(Collection& collection, size_t index) {
         return index >= 0 && index < collection.size();
     }
 
-    /// MARK: Erase/Remove
-    /// Removes the item at the specified index from the collection
-    template <class Collection>
-    constexpr void EraseAt(Collection& collection, std::size_t index) {
-        GUARD(IsValidIndex(collection, index))
-        collection.erase(collection.begin() + index);
-    }
+    /// MARK: Remove
 
     /// Removes the item at the specified index from the collection
     template <class Collection>
     constexpr void RemoveAt(Collection& collection, std::size_t index) {
-        EraseAt(collection, index);
+        GUARD(IsValidIndex(collection, index))
+        collection.erase(collection.begin() + index);
     }
 
     /**

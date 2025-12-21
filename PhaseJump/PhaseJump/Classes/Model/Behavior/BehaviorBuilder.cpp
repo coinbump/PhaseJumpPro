@@ -2,10 +2,10 @@
 #include "ComponentsController.h"
 #include "DelayBehavior.h"
 #include "ParallelBehavior.h"
+#include "Renderer.h"
 #include "RepeatBehavior.h"
 #include "SequenceBehavior.h"
 #include "SimpleAnimationController.h"
-#include "SomeRenderer.h"
 #include "StandardRandom.h"
 #include "SwitchBehavior.h"
 #include "TimedBehavior.h"
@@ -143,7 +143,7 @@ This& BehaviorBuilder::AnimationState(String value) {
         simpleAnimationController->SetState(value, PublishValueCondition::Always);
     };
     behavior->updatable.onUpdateFunc = [&node](auto& updatable, auto time) {
-        auto renderer = node.TypeComponent<SomeRenderer>();
+        auto renderer = node.TypeComponent<Renderer>();
         GUARDR(renderer, FinishType::Finish)
 
         return renderer->IsRenderFinished() ? FinishType::Finish : FinishType::Continue;
@@ -164,7 +164,7 @@ This& BehaviorBuilder::AnimationInput(String value) {
         simpleAnimationController->states.Input(value);
     };
     behavior->updatable.onUpdateFunc = [&node](auto& updatable, auto time) {
-        auto renderer = node.TypeComponent<SomeRenderer>();
+        auto renderer = node.TypeComponent<Renderer>();
         GUARDR(renderer, FinishType::Finish)
 
         return renderer->IsRenderFinished() ? FinishType::Finish : FinishType::Continue;

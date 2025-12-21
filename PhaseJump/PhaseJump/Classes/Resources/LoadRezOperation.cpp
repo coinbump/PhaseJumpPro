@@ -7,7 +7,7 @@ using namespace std;
 using namespace PJ;
 using namespace nlohmann;
 
-SomeLoadResourcesOperation::Result LoadRezOperation::LoadResources() {
+LoadResourcesOperation::Result LoadRezOperation::_LoadResources() {
     FilePath filePath = info.filePath;
 
     std::ifstream file;

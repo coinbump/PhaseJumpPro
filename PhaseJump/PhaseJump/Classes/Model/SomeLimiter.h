@@ -20,8 +20,6 @@ namespace PJ {
         virtual void OnFire() = 0;
 
     public:
-        Updatable updatable;
-
         virtual bool CanFire() {
             return true;
         }
@@ -30,16 +28,6 @@ namespace PJ {
             GUARD(CanFire());
 
             OnFire();
-        }
-
-        // MARK: SomeUpdatable
-
-        FinishType OnUpdate(TimeSlice time) override {
-            return updatable.OnUpdate(time);
-        }
-
-        bool IsFinished() const override {
-            return updatable.IsFinished();
         }
     };
 
@@ -53,10 +41,22 @@ namespace PJ {
         using CanFireFunc = std::function<bool(This&)>;
         using OnFireFunc = std::function<void(This&)>;
 
+        Updatable updatable;
+
         CanFireFunc canFireFunc;
         OnFireFunc onFireFunc;
 
         Core core{};
+
+        // MARK: SomeUpdatable
+
+        FinishType OnUpdate(TimeSlice time) override {
+            return updatable.OnUpdate(time);
+        }
+
+        bool IsFinished() const override {
+            return updatable.IsFinished();
+        }
 
     protected:
         // MARK: public SomeLimiter

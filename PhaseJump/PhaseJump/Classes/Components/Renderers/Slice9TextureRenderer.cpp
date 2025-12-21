@@ -1,18 +1,16 @@
 #include "Slice9TextureRenderer.h"
 #include "RenderFeature.h"
 #include "RenderMaterial.h"
-#include "SomeShaderProgram.h"
+#include "ShaderProgram.h"
 #include "TiledMeshBuilder.h"
 
 using namespace std;
 using namespace PJ;
 
-Slice9TextureRenderer::Slice9TextureRenderer(
-    SP<SomeTexture> texture, Vector2 worldSize, SliceModel sliceModel
-) :
-    Base(worldSize),
-    texture(texture),
-    sliceModel(sliceModel) {
+Slice9TextureRenderer::Slice9TextureRenderer(Config const& config) :
+    Base(config.worldSize),
+    texture(config.texture),
+    sliceModel(config.sliceModel) {
 
     model.material = MAKE<RenderMaterial>(RenderMaterial::Config{
         .texture = texture,

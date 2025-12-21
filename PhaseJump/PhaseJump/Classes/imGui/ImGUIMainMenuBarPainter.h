@@ -1,8 +1,8 @@
 #pragma once
 
 #include "imgui.h"
+#include "ImGuiPainter.h"
 #include "Menu.h"
-#include "SomeImGuiPainter.h"
 
 /*
  RATING: 5 stars
@@ -24,9 +24,9 @@ namespace PJ {
     };
 
     /// Builds an imGui main menu from PhaseJump menu objects
-    class ImGuiMainMenuBarPainter : public SomeImGuiPainter {
+    class ImGuiMainMenuBarPainter : public ImGuiPainter {
     public:
-        using Base = SomeImGuiPainter;
+        using Base = ImGuiPainter;
         using This = ImGuiMainMenuBarPainter;
 
         VectorList<UP<Menu>> const& menus;

@@ -40,16 +40,18 @@ namespace PJ {
 
         using PlanUIFunc = std::function<void(PlanUIArgs args)>;
 
-        View2D* owner{};
-
-        /// Func to make UI plan for custom UI in editor
-        UnorderedMap<String, PlanUIFunc> planUIFuncs;
-
         virtual ~SomeViewLayout() {}
 
-        void SetNeedsLayout();
+        /// Sets the layout owner view
+        virtual void SetOwner(View2D* value) = 0;
 
-        /// @return Returns the type name of this component for browsers and debugging
+        /// Forces the layout to update
+        virtual void SetNeedsLayout() = 0;
+
+        /// @return Returns a plan UI func, if any for UI planners
+        virtual PlanUIFunc GetPlanUIFunc(String id) = 0;
+
+        /// @return Returns the type name  for browsers and debugging
         virtual String TypeName() const = 0;
 
         /// Called before layout starts. Use to clear caches
@@ -57,7 +59,8 @@ namespace PJ {
 
         /// @return Returns the size of the view based on the view size proposal and children,
         /// including constraints
-        virtual Vector2 ViewSize(ViewSizeProposal proposal, VectorList<ViewProxy> const& children);
+        virtual Vector2
+        ViewSize(ViewSizeProposal proposal, VectorList<ViewProxy> const& children) = 0;
 
         /// @return Returns the size of the view based on the view size proposal and children
         virtual Vector2 ViewSizeWithoutConstraints(
@@ -88,12 +91,27 @@ namespace PJ {
     public:
         using This = ViewLayout;
 
+        View2D* owner{};
+
+        /// Func to make UI plan for custom UI in editor
+        UnorderedMap<String, PlanUIFunc> planUIFuncs;
+
         using ViewSizeFunc = std::function<
             Vector2(This&, ViewSizeProposal proposal, VectorList<ViewProxy> const& children)>;
 
         ViewSizeFunc viewSizeFunc;
 
         // MARK: SomeViewLayout
+
+        PlanUIFunc GetPlanUIFunc(String id) override;
+
+        void SetOwner(View2D* value) override {
+            this->owner = value;
+        }
+
+        void SetNeedsLayout() override;
+
+        Vector2 ViewSize(ViewSizeProposal proposal, VectorList<ViewProxy> const& children) override;
 
         void StartLayout() override {
             calculatedFrames.clear();

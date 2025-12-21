@@ -6,7 +6,7 @@
 
 // Experimental
 namespace PJ {
-    class SomeAttribute;
+    class Attribute;
 
     namespace PortGraphAttributeId {
         auto constexpr NoPort = "portGraph.noPort";
@@ -18,7 +18,7 @@ namespace PJ {
     } // namespace PortGraphNodeClassId
 
     namespace PortGraphAttributes {
-        SP<SomeAttribute> HidePortAttribute();
+        SP<Attribute> HidePortAttribute();
     }
 
     struct StandardPortGraphConfigurator {

@@ -11,7 +11,7 @@
 using namespace std;
 using namespace PJ;
 
-SomeLoadResourcesOperation::Result SDLLoadGLTextureOperation::LoadResources() {
+LoadResourcesOperation::Result SDLLoadGLTextureOperation::_LoadResources() {
     auto path = info.filePath;
 
     SDLLoadBitmapOperation loadBitmap{ info, repoModel };

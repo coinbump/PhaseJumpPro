@@ -2,7 +2,7 @@
 
 #include "SDKIncludes.h"
 
-class TestInput : public WorldComponent<> {
+class TestInput : public WorldComponent {
     void OnKeyDown(KeyDownUIEvent const& event) {
         //        std::cout << "Key: " << (char)event.keyCode.value << std::endl;
         //

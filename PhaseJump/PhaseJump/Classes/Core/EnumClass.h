@@ -16,7 +16,7 @@ namespace PJ {
     /// Defines the ids and user-facing display names of an enum for
     /// serialization and editing
     template <typename EnumType>
-    class EnumClass : public Class<> {
+    class EnumClass : public Class {
     private:
         VectorList<EnumType> cases;
 
@@ -34,7 +34,7 @@ namespace PJ {
         using Base = Class;
 
         EnumClass(String id) :
-            Base(id) {}
+            Base({ .id = id }) {}
 
         void MapEnum(EnumType value, String id, String name) {
             cases.push_back(value);

@@ -157,7 +157,7 @@ DuckDesignSystem::DuckDesignSystem() :
                               ImRenderer& imRenderer = *(static_cast<ImRenderer*>(&renderer));
 
                               if (nullptr == slider) {
-                                  slider = renderer.owner->template TypeComponent<SliderControl>();
+                                  slider = renderer.Node()->template TypeComponent<SliderControl>();
                               }
                               GUARD(slider);
 

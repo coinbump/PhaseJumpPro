@@ -31,9 +31,9 @@ namespace PJ {
 
     /// Dispatches UI events to the appropriate node
     /// If you're thinking about using this, you probably want UIWorldSystem instead
-    class EventWorldSystem : public SomeWorldSystem {
+    class EventWorldSystem : public WorldSystem {
     public:
-        using Base = SomeWorldSystem;
+        using Base = WorldSystem;
         using This = EventWorldSystem;
         using EventNodeList = VectorList<WorldNode*>;
 

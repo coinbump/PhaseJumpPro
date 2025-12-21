@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SomeGoal.h"
+#include "Goal.h"
 #include <algorithm>
 
 /*
@@ -10,7 +10,7 @@
  */
 namespace PJ {
     /// A goal that must reach a value target to be complete
-    class ValueTargetGoal : public Goal<> {
+    class ValueTargetGoal : public Goal {
     protected:
         int valueTarget{};
         int value{};
@@ -43,7 +43,7 @@ namespace PJ {
             SetValue(Value() + 1);
         }
 
-        // MARK: SomeGoal
+        // MARK: Goal
 
         float Progress() const override {
             return std::clamp((float)value / (float)valueTarget, 0.0f, 1.0f);

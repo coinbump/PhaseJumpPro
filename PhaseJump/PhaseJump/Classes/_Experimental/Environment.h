@@ -48,7 +48,7 @@ namespace PJ {
     class SomeEnvironmentValueClass : public Class<> {
     public:
         SomeEnvironmentValueClass(String id) :
-            Class(id) {}
+            Class({ .id = id }) {}
     };
 
     /// Register each environment value in the Environments so we have access to defaultValue

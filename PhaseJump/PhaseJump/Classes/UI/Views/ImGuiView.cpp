@@ -44,8 +44,9 @@ void ImGuiView::Awake() {
 
     AddSignalHandler({ .id = "render.immediate",
                        .func = [this, nodeHandlerFunc](auto& component, auto& signal) {
-                           GUARD(component.owner)
+                           auto owner = component.Node();
+                           GUARD(owner)
 
-                           nodeHandlerFunc(*component.owner);
+                           nodeHandlerFunc(*owner);
                        } });
 }

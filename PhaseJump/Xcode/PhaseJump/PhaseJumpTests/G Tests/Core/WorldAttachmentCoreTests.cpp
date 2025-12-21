@@ -15,6 +15,44 @@ namespace WorldAttachmentCoreTests {
 
 using namespace WorldAttachmentCoreTests;
 
+TEST(WorldAttachmentCore, OnEnabledChanged) {
+    WorldComponent component;
+    WorldAttachmentCore<SomeWorldComponent> sut(component);
+
+    int count{};
+    sut.onEnabledChangeFunc = [&](auto& core) {
+        count++;
+    };
+    
+    ASSERT_EQ(0, count);
+    ASSERT_TRUE(sut.IsEnabled());
+    
+    sut.Enable(true);
+    ASSERT_EQ(0, count);
+    ASSERT_TRUE(sut.IsEnabled());
+    
+    sut.Enable(false);
+    ASSERT_EQ(1, count);
+    ASSERT_FALSE(sut.IsEnabled());
+}
+
+TEST(WorldAttachmentCore, OnAddSignalHandler) {
+    WorldComponent component;
+    WorldAttachmentCore<SomeWorldComponent> sut(component);
+
+    int count{};
+    sut.onAddSignalHandlerFunc = [&](auto& core, auto& signalHandler) {
+        count++;
+    };
+    
+    ASSERT_EQ(0, count);
+    
+    sut.AddSignalHandler({.id = "test", .func = [&](auto& component, auto& signal) {
+    }});
+    
+    ASSERT_EQ(1, count);
+}
+
 TEST(WorldAttachmentCore, Signal) {
     WorldComponent component;
     WorldAttachmentCore<SomeWorldComponent> sut(component);
@@ -25,7 +63,7 @@ TEST(WorldAttachmentCore, Signal) {
         signalCount++;
     }});
     
-    Signal event;
+    Event event;
     sut.Signal("test", event);
     
     ASSERT_EQ(1, signalCount);
@@ -43,7 +81,7 @@ TEST(WorldAttachmentCore, SignalTypeSafe) {
         signalCount++;
     }});
     
-    Signal event;
+    Event event;
     sut.Signal("test", event);
     
     ASSERT_EQ(1, signalCount);
@@ -70,7 +108,7 @@ TEST(WorldAttachmentCore, SignalMultiple)
     add();
     add();
     
-    Signal event;
+    Event event;
     sut.Signal("test", event);
     
     ASSERT_EQ(2, signalCount);

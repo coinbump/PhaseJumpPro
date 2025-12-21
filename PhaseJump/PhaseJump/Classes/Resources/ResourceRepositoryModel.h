@@ -2,7 +2,7 @@
 
 #include "Factory.h"
 #include "FactoryRegistry.h"
-#include "SomeLoadResourcesOperation.h"
+#include "LoadResourcesOperation.h"
 #include "UnorderedMap.h"
 
 /*
@@ -11,7 +11,7 @@
  CODE REVIEW: 8/11/24
  */
 namespace PJ {
-    class SomeLoadResourcesOperation;
+    class LoadResourcesOperation;
     class ResourceRepositoryModel;
 
     /**
@@ -29,11 +29,11 @@ namespace PJ {
         UnorderedMap<String, String> fileExtensionMap;
 
         /// Maps resource type to operation
-        FactoryRegistry<SomeLoadResourcesOperation, ResourceInfo, ResourceRepositoryModel&>
+        FactoryRegistry<LoadResourcesOperation, ResourceInfo, ResourceRepositoryModel&>
             operationRegistry;
 
     public:
-        using LoadResourcesOperationList = VectorList<SP<SomeLoadResourcesOperation>>;
+        using LoadResourcesOperationList = VectorList<SP<LoadResourcesOperation>>;
 
         virtual ~ResourceRepositoryModel() {}
 

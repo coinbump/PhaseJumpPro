@@ -1,12 +1,12 @@
 #pragma once
 
+#include "Camera.h"
 #include "DragModel.h"
 #include "EventWorldSystem.h"
 #include "OrderedSet.h"
+#include "PointerUIEventTypes.h"
 #include "SDLMouseDevice.h"
 #include "SelectHandler.h"
-#include "SomeCamera.h"
-#include "SomePointerUIEvent.h"
 #include <memory>
 
 /*
@@ -50,7 +50,7 @@ namespace PJ {
 
     public:
         /// @return Returns the camera that defines the projection for this system
-        virtual SomeCamera* Camera() const;
+        virtual Camera* GetCamera() const;
 
         /// @return Returns the active hover node
         SP<WorldNode> ActiveHover();

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SomeCamera.h"
+#include "Camera.h"
 #include "SomeRenderContext.h"
 #include "Vector3.h"
 
@@ -14,9 +14,9 @@ namespace PJ {
 
     /// Uses cartesian coordinates (center is 0,0). X increases right. Y
     /// increases up
-    class OrthoCamera : public SomeCamera {
+    class OrthoCamera : public Camera {
     public:
-        using Base = SomeCamera;
+        using Base = Camera;
 
         /// Specifies the half height of the camera, otherwise the exact screen dimensions are used
         std::optional<float> halfHeight;
@@ -59,7 +59,7 @@ namespace PJ {
 
         virtual ~OrthoCamera();
 
-        // MARK: SomeCamera
+        // MARK: Camera
 
         Vector2 WorldToScreen(Vector3 position) override;
         Vector3 ScreenToWorld(Vector2 position) override;

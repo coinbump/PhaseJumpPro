@@ -1,7 +1,7 @@
 #pragma once
 
-#include "SomeRenderer.h"
-#include "SomeTexture.h"
+#include "Renderer.h"
+#include "Texture.h"
 #include "UVRect.h"
 #include <array>
 #include <memory>
@@ -16,11 +16,11 @@ namespace PJ {
     struct Mesh;
 
     /// Renders a single texture as a 9-slice
-    class Slice9TextureRenderer : public SomeMaterialRenderer {
+    class Slice9TextureRenderer : public MaterialRenderer {
     public:
-        using Base = SomeMaterialRenderer;
+        using Base = MaterialRenderer;
 
-        // TODO: replace with config stop using as a tag, use funcs instead
+        // TODO: stop using as a tag, use funcs instead
         /// Model that defines how to slice the texture
         struct SliceModel {
             /// Insets from top left that defines the top-left corner
@@ -30,11 +30,17 @@ namespace PJ {
             Vector2Int bottomRightInsets;
         };
 
+        struct Config {
+            SP<Texture> texture;
+            Vector2 worldSize;
+            SliceModel sliceModel;
+        };
+
     protected:
         /// Model defining where to slice
         SliceModel sliceModel;
 
-        SP<SomeTexture> texture;
+        SP<Texture> texture;
 
     public:
         /// Model used to build the sliced mesh. Used for unit tests
@@ -94,7 +100,7 @@ namespace PJ {
             BottomRight
         };
 
-        Slice9TextureRenderer(SP<SomeTexture> texture, Vector2 worldSize, SliceModel sliceModel);
+        Slice9TextureRenderer(Config const& config);
 
         BuildModel MakeBuildModel(Vector3 worldSize) const;
 

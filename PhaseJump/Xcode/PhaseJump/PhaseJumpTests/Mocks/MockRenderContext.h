@@ -32,10 +32,10 @@ namespace PJTest {
         virtual void SetIsContextCleared(uint32_t id, bool value) {}
     };
     
-    class MockRenderContext : public PJ::SomeRenderContext
+    class MockRenderContext : public PJ::RenderContext
     {
     public:
-        using Base = PJ::SomeRenderContext;
+        using Base = PJ::RenderContext;
 
         Vector2 size;
         Vector2Int pixelSize;

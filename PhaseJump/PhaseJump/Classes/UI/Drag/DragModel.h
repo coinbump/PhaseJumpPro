@@ -9,21 +9,21 @@
  CODE REVIEW: 9/22/24
  */
 namespace PJ {
-    class SomeDragHandler;
+    class DragHandler;
 
     /// Information needed for a drag gesture
     class DragModel {
     public:
-        using DragHandlerList = VectorList<SP<SomeDragHandler>>;
+        using DragHandlerList = VectorList<SP<DragHandler>>;
 
         // FUTURE: support item providers for on demand data
         DragHandlerList dragHandlers;
 
-        DragModel(SP<SomeDragHandler> dragHandler) {
+        DragModel(SP<DragHandler> dragHandler) {
             dragHandlers.push_back(dragHandler);
         }
 
-        SP<SomeDragHandler> DragHandler() const {
+        SP<DragHandler> DragHandler() const {
             return SafeFirst(dragHandlers);
         }
     };

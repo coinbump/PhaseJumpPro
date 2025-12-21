@@ -3,7 +3,7 @@
 #include "SDKIncludes.h"
 
 // namespace PJ {
-//     class Updater : public WorldComponent<> {
+//     class Updater : public WorldComponent {
 //     }
 // }
 
@@ -16,7 +16,7 @@ public:
     void LoadInto(WorldNode& root) override {
         root.SetName("TestGradientsScene");
 
-        auto camera = SCAST<SomeCamera>(MAKE<OrthoCamera>());
+        auto camera = SCAST<Camera>(MAKE<OrthoCamera>());
         auto cameraNode = MAKE<WorldNode>("Camera");
         cameraNode->Add(camera);
         root.Add(cameraNode);
@@ -102,12 +102,14 @@ public:
             ac.states.AddTransition("2", "next", "0");
             ac.states.SetState("0");
 
-            ac.AddSignalHandler({ .id = SignalId::KeyDown,
-                                  .func = [](auto& component, auto& signal) {
-                                      auto& animationController =
-                                          *(static_cast<SimpleAnimationController*>(&component));
-                                      animationController.states.Input("next");
-                                  } });
+            ac.AddSignalHandler<KeyDownUIEvent>({ .id = SignalId::KeyDown,
+                                                  .func = [](auto& component, auto& signal) {
+                                                      auto& animationController =
+                                                          *(static_cast<SimpleAnimationController*>(
+                                                              &component
+                                                          ));
+                                                      animationController.states.Input("next");
+                                                  } });
 
             //
             //            gradientRenderer->model.SetBuildMeshFunc([](RendererModel const& model) {

@@ -4,8 +4,8 @@
 
 /*
  RATING: 5 stars
- Simple type
- CODE REVIEW: 12/22/24
+ Simple types
+ CODE REVIEW: 12/19/25
  */
 namespace PJ {
     /// Logical code for a key
@@ -70,7 +70,7 @@ namespace PJ {
     };
 
     /// Key related UI event
-    class SomeKeyUIEvent : public SomeSignal {
+    class KeyUIEventCore {
     public:
         /// Scan code of the hardware key that was pressed
         KeyScanCode scanCode;
@@ -80,28 +80,35 @@ namespace PJ {
 
         /// Modifiers pressed along with the key
         KeyModifiers keyModifiers;
-
-        SomeKeyUIEvent(KeyScanCode scanCode, KeyCode keyCode, KeyModifiers keyModifiers) :
-            scanCode(scanCode),
-            keyCode(keyCode),
-            keyModifiers(keyModifiers) {}
     };
 
     /// Key down UI event
-    class KeyDownUIEvent : public SomeKeyUIEvent {
+    class KeyDownUIEvent : public SomeSignal {
     public:
-        using Base = SomeKeyUIEvent;
+        using Base = SomeSignal;
 
-        KeyDownUIEvent(KeyScanCode scanCode, KeyCode keyCode, KeyModifiers keyModifiers) :
-            Base(scanCode, keyCode, keyModifiers) {}
+        KeyUIEventCore core;
+
+        KeyDownUIEvent(KeyUIEventCore const& core) :
+            core(core) {}
+
+        constexpr auto KeyCodeValue() const {
+            return core.keyCode.value;
+        }
     };
 
     /// Key up UI event
-    class KeyUpUIEvent : public SomeKeyUIEvent {
+    class KeyUpUIEvent : public SomeSignal {
     public:
-        using Base = SomeKeyUIEvent;
+        using Base = SomeSignal;
 
-        KeyUpUIEvent(KeyScanCode scanCode, KeyCode keyCode) :
-            Base(scanCode, keyCode, {}) {}
+        KeyUIEventCore core;
+
+        KeyUpUIEvent(KeyUIEventCore const& core) :
+            core(core) {}
+
+        constexpr auto KeyCodeValue() const {
+            return core.keyCode.value;
+        }
     };
 } // namespace PJ

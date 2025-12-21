@@ -2,7 +2,7 @@
 #include "Dev.h"
 #include "DragGestureHandler2D.h"
 #include "QuickBuilder.h"
-#include "SomeRenderer.h"
+#include "Renderer.h"
 #include "UIPlanner.h"
 
 using namespace std;
@@ -129,7 +129,7 @@ float SliderControl::TrackLength() const {
 }
 
 Vector2 SliderControl::RendererSize(WorldNode& target) const {
-    auto renderer = target.GetComponent<SomeRenderer>();
+    auto renderer = target.GetComponent<Renderer>();
     GUARDR(renderer, {})
 
     auto size = renderer->WorldSize();
@@ -187,7 +187,7 @@ void SliderControl::UpdateFrameComponents() {
 
     auto track = Track();
     if (track) {
-        auto trackRenderer = track->TypeComponent<SomeRenderer>();
+        auto trackRenderer = track->TypeComponent<Renderer>();
         if (trackRenderer) {
             Vector2 trackSize = frame.size;
             trackSize.AxisValueOrthogonal(axis) = trackOrthogonal;

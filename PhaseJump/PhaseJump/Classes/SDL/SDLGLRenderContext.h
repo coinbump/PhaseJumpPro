@@ -15,17 +15,17 @@ class ImGuiContext;
  */
 namespace PJ {
     class SDLPlatformWindow;
-    class SomeGLRenderEngine;
+    class BaseGLRenderEngine;
 
     /// SDL render context that uses OpenGL and has built-in support for imGui
-    class SDLGLRenderContext : public SomeRenderContext {
+    class SDLGLRenderContext : public RenderContext {
     protected:
         SDL_Window* window{};
         SDL_GLContext glContext{};
         ImGuiContext* imGuiContext{};
 
     public:
-        using Base = SomeRenderContext;
+        using Base = RenderContext;
         using This = SDLGLRenderContext;
 
         SDLGLRenderContext(SomeRenderEngine& renderEngine) :
@@ -35,7 +35,7 @@ namespace PJ {
 
         void Configure(SDL_Window* window);
 
-        SomeGLRenderEngine* GetGLRenderEngine() const;
+        BaseGLRenderEngine* GetGLRenderEngine() const;
 
         ImGuiContext* ImGuiContext() const {
             return imGuiContext;

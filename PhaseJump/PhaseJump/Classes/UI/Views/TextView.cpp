@@ -19,7 +19,7 @@ TextRenderer* TextView::Renderer() {
 
     owner->AddComponent<TextRenderer>(TextRenderer::Config{
         .font = font, .text = config.text, .worldSize = frame.size });
-    renderer = SCAST<TextRenderer>(owner->TypeComponent<TextRenderer>()->shared_from_this());
+    renderer = owner->TypeComponentPtr<TextRenderer>();
     renderer.lock()->SetColor(config.color);
     return renderer.lock().get();
 }

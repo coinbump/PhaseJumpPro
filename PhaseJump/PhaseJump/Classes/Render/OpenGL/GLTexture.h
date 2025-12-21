@@ -4,8 +4,8 @@
 #include "GLHeaders.h"
 #include "OrderedMap.h"
 #include "RenderTypes.h"
-#include "SomeTexture.h"
 #include "StringUtils.h"
+#include "Texture.h"
 
 /*
  RATING: 5 stars
@@ -13,15 +13,15 @@
  CODE REVIEW: 8/8/24
  */
 namespace PJ {
-    class GLTexture : public SomeTexture {
+    class GLTexture : public Texture {
     public:
-        using Base = SomeTexture;
+        using Base = Texture;
 
         GLTexture(Config const& config);
 
         virtual ~GLTexture();
 
-        // MARK: SomeTexture
+        // MARK: Texture
 
         void SetTextureMagnification(TextureMagnificationType value) override;
         void SetTextureWrap(TextureWrapType value) override;

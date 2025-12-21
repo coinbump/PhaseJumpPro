@@ -9,7 +9,7 @@
  CODE REVIEW: 12/14/25
  */
 namespace PJ {
-    class AudioStreamPlayer : public WorldComponent<> {
+    class AudioStreamPlayer : public WorldComponent {
     public:
         SP<SomeAudioStream> audioStream;
 

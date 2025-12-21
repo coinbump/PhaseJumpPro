@@ -10,12 +10,12 @@
  CODE REVIEW: 9/7/24
  */
 namespace PJ {
-    class SomeRenderer;
+    class Renderer;
 
     /// Animates the material's render color across the range of hues
-    class CycleHueEffect : public WorldComponent<> {
+    class CycleHueEffect : public WorldComponent {
     public:
-        using Base = WorldComponent<>;
+        using Base = WorldComponent;
         using This = CycleHueEffect;
 
         CycleHueEffect(SwitchState state = SwitchState::Off, float cycleTime = 1) :

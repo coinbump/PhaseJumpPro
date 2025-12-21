@@ -11,7 +11,7 @@ namespace PJ {
     /// When run, is given the owner node
     /// Run must be called manually
     template <typename... Arguments>
-    class NodeHandler : public WorldComponent<> {
+    class NodeHandler : public WorldComponent {
     public:
         using Func = std::function<void(WorldNode&, Arguments...)>;
 

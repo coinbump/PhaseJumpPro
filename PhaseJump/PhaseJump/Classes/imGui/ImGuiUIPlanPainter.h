@@ -2,7 +2,7 @@
 
 #include "Color.h"
 #include "imgui.h"
-#include "SomeImGuiPainter.h"
+#include "ImGuiPainter.h"
 #include "Tags.h"
 #include "UIPlan.h"
 #include "UnorderedMap.h"
@@ -14,9 +14,9 @@
  */
 namespace PJ {
     /// Paints a UI plan into imGui
-    class ImGuiUIPlanPainter : public SomeImGuiPainter {
+    class ImGuiUIPlanPainter : public ImGuiPainter {
     public:
-        using DrawModelFunc = std::function<void(This&, SomeUIModel&)>;
+        using DrawModelFunc = std::function<void(This&, UIModel&)>;
 
         UIPlan& plan;
 

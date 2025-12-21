@@ -12,7 +12,7 @@
  CODE REVIEW: 9/28/24
  */
 namespace PJ {
-    class SomeUIModel;
+    class UIModel;
 
     /// Class ids for UI models in a UI plan
     namespace UIModelType {
@@ -29,9 +29,9 @@ namespace PJ {
     } // namespace UIModelType
 
     /// An item in a UI plan, used to build UIs
-    class SomeUIModel : public Treeable<SomeUIModel> {
+    class UIModel : public Treeable<UIModel> {
     public:
-        using This = SomeUIModel;
+        using This = UIModel;
         using TreeNode = TreeNode<This, UP<This>>;
 
         /// Child models for hierarchical UI
@@ -47,12 +47,12 @@ namespace PJ {
         /// Custom properties
         Tags tags;
 
-        SomeUIModel(String classId, String label) :
+        UIModel(String classId, String label) :
             tree(*this),
             classId(classId),
             name(label) {}
 
-        virtual ~SomeUIModel() {}
+        virtual ~UIModel() {}
 
         // MARK: Treeable
 
@@ -74,7 +74,7 @@ namespace PJ {
     public:
         using This = UIPlan;
 
-        using ModelFunc = std::function<UP<SomeUIModel>()>;
+        using ModelFunc = std::function<UP<UIModel>()>;
 
     protected:
         VectorList<ModelFunc> modelFuncs;
@@ -91,14 +91,14 @@ namespace PJ {
 
     /// UI plan model with core
     template <class Core = Void>
-    class UIModel : public SomeUIModel {
+    class CoreUIModel : public UIModel {
     public:
-        using Base = SomeUIModel;
-        using This = UIModel;
+        using Base = UIModel;
+        using This = CoreUIModel;
 
         Core core{};
 
-        UIModel(String classId, String label, Core core = {}) :
+        CoreUIModel(String classId, String label, Core core = {}) :
             Base(classId, label),
             core(core) {}
     };
@@ -123,7 +123,7 @@ namespace PJ {
 
     /// UI plan item with value storage and binding
     template <class Type>
-    using ValueUIModel = UIModel<ValueUICore<Type>>;
+    using ValueUIModel = CoreUIModel<ValueUICore<Type>>;
 
     /// UI model core with a list of value choices and a chosen value
     class ValueOptionsUICore {

@@ -1,74 +1,28 @@
 #pragma once
 
-#include "EaseFunc.h"
-#include "SomeKeyframe.h"
-#include "Void.h"
+#include "Tags.h"
+#include <memory>
 
 /*
  RATING: 5 stars
  Simple type
- CODE REVIEW: 9/21/24
+ CODE REVIEW: 12/19/25
  */
 namespace PJ {
-    /// Defines the default behavior of the time track
-    enum KeyedTimeType {
-        /// Key frame values are interpolated
-        Interpolate,
-
-        /// Each key frame value is a distinct value
-        /// Example: frame id in an animation
-        Discrete
-    };
-
-    template <class Type>
-    struct ValueKeyframeConfig {
-        Type value{};
-        EaseFunc inEaseFunc;
-        EaseFunc outEaseFunc;
-    };
-
-    /// Keyframe that stores a value
-    template <class Type>
-    class ValueKeyframe : public SomeKeyframe {
-    protected:
-        /// Keep hidden. LLVM can't resolve this type externally
-        using Config = ValueKeyframeConfig<Type>;
-
+    /// Keyframe at a specific point in time
+    class Keyframe {
     public:
-        Type value{};
+        using MathType = float;
 
-        /// (Optional). Ease func into this value
-        EaseFunc inEaseFunc;
+        /// Custom properties
+        Tags tags;
 
-        /// (Optional). Ease func from this value
-        EaseFunc outEaseFunc;
+        /// Object attribute types
+        TypeTagSet typeTags;
 
-        ValueKeyframe(Config const& config = {}) :
-            value(config.value),
-            inEaseFunc(config.inEaseFunc),
-            outEaseFunc(config.outEaseFunc) {}
+        virtual ~Keyframe() {}
 
-        Type Value() const {
-            return value;
-        }
-
-        void SetValue(Type _value) {
-            value = _value;
-        }
-    };
-
-    /// Keyframe that stores a value and a core (Example: ease func)
-    template <class Type, class Core = Void>
-    class Keyframe : public ValueKeyframe<Type> {
-    public:
-        using Base = ValueKeyframe<Type>;
-        using This = Keyframe;
-
-        Core core{};
-
-        Keyframe(Base::Config const& config = {}) :
-            Base(config) {}
+        /// The position of this keyframe in time space
+        MathType time{};
     };
 } // namespace PJ
-
-// FUTURE: using ActionKeyframe = ValueKeyframe<std::function<void()>>;

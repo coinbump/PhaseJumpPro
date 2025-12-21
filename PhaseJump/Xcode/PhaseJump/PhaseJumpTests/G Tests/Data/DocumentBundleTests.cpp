@@ -11,14 +11,14 @@ using namespace DocumentBundleTests;
 
 TEST(DocumentBundle, Add) {
     DocumentBundle sut;
-    sut.Add(MAKE<SomeDocument>());
+    sut.Add(MAKE<Document>());
     EXPECT_EQ(1, sut.Count());
 }
 
 TEST(DocumentBundle, Remove) {
     DocumentBundle sut;
     
-    auto document = MAKE<SomeDocument>();
+    auto document = MAKE<Document>();
     
     sut.Add(document);
     EXPECT_EQ(1, sut.Count());
@@ -30,7 +30,7 @@ TEST(DocumentBundle, Remove) {
 TEST(DocumentBundle, ModifiedDocuments) {
     DocumentBundle sut;
     
-    auto document = MAKE<SomeDocument>();
+    auto document = MAKE<Document>();
     
     sut.Add(document);
     EXPECT_EQ(0, sut.ModifiedDocuments().size());
@@ -42,7 +42,7 @@ TEST(DocumentBundle, ModifiedDocuments) {
 TEST(DocumentBundle, SaveModified) {
     DocumentBundle sut;
     
-    auto document = MAKE<Document<>>();
+    auto document = MAKE<CoreDocument<>>();
     
     sut.Add(document);
     document->ModifyPush();

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SomeTexture.h"
+#include "Texture.h"
 #include <fstream>
 #include <SDL3/SDL_render.h>
 
@@ -10,9 +10,9 @@
  CODE REVIEW: 12/1/24
  */
 namespace PJ {
-    class SDLTexture : public SomeTexture {
+    class SDLTexture : public Texture {
     public:
-        using Base = SomeTexture;
+        using Base = Texture;
 
         SDL_Texture* texture{};
 

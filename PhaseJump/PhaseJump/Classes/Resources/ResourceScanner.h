@@ -2,11 +2,11 @@
 
 #include "FilePath.h"
 #include "FileTypes.h"
+#include "LoadResourcesOperation.h"
 #include "OrderedMap.h"
 #include "ResourceCatalog.h"
 #include "ResourceRepositoryPlan.h"
 #include "Result.h"
-#include "SomeLoadResourcesOperation.h"
 #include "StringUtils.h"
 
 /*

@@ -1,9 +1,9 @@
 #pragma once
 
 #include "Mesh.h"
+#include "Renderer.h"
 #include "RenderTypes.h"
 #include "RGBAColor.h"
-#include "SomeRenderer.h"
 #include "Vector2.h"
 
 /*
@@ -13,13 +13,13 @@
  */
 namespace PJ {
     /// Renders a uniform color
-    class ColorRenderer : public SomeMaterialRenderer {
+    class ColorRenderer : public MaterialRenderer {
     public:
 #if PSEUDOCODE
         MIRROR_CLASS(ColorRendererClass);
 #endif
 
-        using Base = SomeMaterialRenderer;
+        using Base = MaterialRenderer;
         using This = ColorRenderer;
 
         struct Config {

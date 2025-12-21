@@ -7,7 +7,7 @@
 #include "RenderMaterial.h"
 #include "RenderTypes.h"
 #include "SharedVectorList.h"
-#include "SomeTexture.h"
+#include "Texture.h"
 #include "UnorderedMap.h"
 #include "Vector3.h"
 #include "VectorList.h"
@@ -18,7 +18,7 @@
  CODE REVIEW: 12/22/24
  */
 namespace PJ {
-    class SomeShaderProgram;
+    class ShaderProgram;
     class SomeRenderCommandModel;
 
     /**

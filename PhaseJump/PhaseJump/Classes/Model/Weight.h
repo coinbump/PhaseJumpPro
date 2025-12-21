@@ -24,10 +24,7 @@ namespace PJ {
     template <class Choice = Void>
     class SomeWeight : public SomeValue<float> {
     public:
-        Choice choice{};
-
-        SomeWeight(Choice choice) :
-            choice(choice) {}
+        virtual Choice const& GetChoice() const = 0;
     };
 
     /// Specifies the fixed weight of a random event
@@ -39,10 +36,11 @@ namespace PJ {
 
     protected:
         float weight{};
+        Choice choice;
 
     public:
         Weight(float weight, Choice choice) :
-            Base(choice),
+            choice(choice),
             weight(weight) {}
 
         // MARK: SomeWeight
@@ -53,6 +51,10 @@ namespace PJ {
 
         void SetValue(float value) override {
             weight = value;
+        }
+
+        Choice const& GetChoice() const override {
+            return choice;
         }
     };
 
@@ -67,10 +69,11 @@ namespace PJ {
 
     protected:
         ValueFunc weightValueFunc;
+        Choice choice;
 
     public:
         DynamicWeight(ValueFunc weightValueFunc, Choice choice) :
-            Base(choice),
+            choice(choice),
             weightValueFunc(weightValueFunc) {}
 
         // MARK: SomeWeight
@@ -82,6 +85,10 @@ namespace PJ {
 
         void SetValue(float value) override {
             PJ::Log("ERROR. Weight value is determined dynamically");
+        }
+
+        Choice const& GetChoice() const override {
+            return choice;
         }
     };
 } // namespace PJ

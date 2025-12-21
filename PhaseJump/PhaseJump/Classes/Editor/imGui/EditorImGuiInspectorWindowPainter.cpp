@@ -92,6 +92,10 @@ EditorImGuiInspectorWindowPainter::EditorImGuiInspectorWindowPainter(EditorWorld
                         " Z: ", node.transform.Scale().z
                     );
                     ImGui::Text("%s", scaleString.c_str());
+
+                    if (node.IsListener()) {
+                        ImGui::Text("Is Listener");
+                    }
                 }
 
                 {

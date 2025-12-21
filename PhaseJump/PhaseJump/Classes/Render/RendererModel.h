@@ -94,8 +94,7 @@ namespace PJ {
             renderModelsNeedBuild = true;
         }
 
-        // TODO: should this return const&?
-        VectorList<RenderModel>& RenderModels() {
+        VectorList<RenderModel> const& RenderModels() {
             if (renderModelsNeedBuild) {
                 renderModelsNeedBuild = false;
 

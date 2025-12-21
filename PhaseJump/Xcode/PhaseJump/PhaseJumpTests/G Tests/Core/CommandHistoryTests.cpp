@@ -24,8 +24,8 @@ TEST(CommandHistory, BuildPastMaxSize)
     EXPECT_EQ(1, sut.ActiveCommandIndex());
     ASSERT_EQ(2, sut.Size());
 
-    EXPECT_EQ("a", sut.At(0).name);
-    EXPECT_EQ("b", sut.At(1).name);
+    EXPECT_EQ("a", sut.At(0).Name());
+    EXPECT_EQ("b", sut.At(1).Name());
     EXPECT_ANY_THROW(sut.At(-1));
     EXPECT_ANY_THROW(sut.At(2));
 
@@ -33,8 +33,8 @@ TEST(CommandHistory, BuildPastMaxSize)
     EXPECT_EQ(1, sut.ActiveCommandIndex());
     ASSERT_EQ(2, sut.Size());
 
-    EXPECT_EQ("b", sut.At(0).name);
-    EXPECT_EQ("c", sut.At(1).name);
+    EXPECT_EQ("b", sut.At(0).Name());
+    EXPECT_EQ("c", sut.At(1).Name());
 }
 
 TEST(CommandHistory, UndoRedo)
@@ -94,8 +94,8 @@ TEST(CommandHistory, UndoThenRun)
     sut.Run(_commandC);
     EXPECT_EQ(1, sut.ActiveCommandIndex());
 
-    EXPECT_EQ("a", sut.At(0).name);
-    EXPECT_EQ("c", sut.At(1).name);
+    EXPECT_EQ("a", sut.At(0).Name());
+    EXPECT_EQ("c", sut.At(1).Name());
 
     EXPECT_EQ(1, commandA->core);
     EXPECT_EQ(0, commandB->core);

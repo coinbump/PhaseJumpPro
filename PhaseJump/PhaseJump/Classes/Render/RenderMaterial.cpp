@@ -2,7 +2,7 @@
 #include "Dev.h"
 #include "PropertyIdBuilder.h"
 #include "ResourceTypes.h"
-#include "SomeShaderProgram.h"
+#include "ShaderProgram.h"
 
 using namespace std;
 using namespace PJ;
@@ -13,9 +13,9 @@ RenderMaterial::RenderMaterial(Config const& config) {
     }
 
     if (!IsEmpty(config.shaderId)) {
-        auto shaderProgram = SomeShaderProgram::registry.find(config.shaderId);
+        auto shaderProgram = ShaderProgram::registry.find(config.shaderId);
         GUARD_LOG(
-            shaderProgram != SomeShaderProgram::registry.end(),
+            shaderProgram != ShaderProgram::registry.end(),
             String("ERROR. Missing shader: ") + config.shaderId
         )
         SetShaderProgram(shaderProgram->second);
@@ -35,7 +35,7 @@ String RenderMaterial::BuildPropertyId() const {
     VectorList<uint32_t> textureIds;
     std::transform(
         textures.cbegin(), textures.cend(), std::back_inserter(textureIds),
-        [](SP<SomeTexture> texture) { return texture->RenderId(); }
+        [](auto& texture) { return texture->RenderId(); }
     );
     builder.AddCollection("textureIds", textureIds);
 
@@ -46,7 +46,7 @@ String RenderMaterial::BuildPropertyId() const {
     return builder.Result();
 }
 
-void RenderMaterial::SetShaderProgram(SP<SomeShaderProgram> program) {
+void RenderMaterial::SetShaderProgram(SP<PJ::ShaderProgram> program) {
     GUARD(program && shaderProgram != program);
     shaderProgram = program;
 
@@ -66,7 +66,7 @@ void RenderMaterial::SetUniformColor(size_t index, Color color) {
     OnChange();
 }
 
-void RenderMaterial::SetTexture(SP<SomeTexture> texture) {
+void RenderMaterial::SetTexture(SP<Texture> texture) {
     GUARD(texture)
 
     if (textures.size() == 1 && textures[0] == texture) {
@@ -77,7 +77,7 @@ void RenderMaterial::SetTexture(SP<SomeTexture> texture) {
     OnChange();
 }
 
-void RenderMaterial::Add(SP<SomeTexture> texture) {
+void RenderMaterial::Add(SP<Texture> texture) {
     GUARD(texture)
     PJ::Add(textures, texture);
 

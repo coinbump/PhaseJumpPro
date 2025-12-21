@@ -9,14 +9,14 @@
  CODE REVIEW: 8/25/24
  */
 namespace PJ {
-    class SomeGoal;
+    class Goal;
 
     /// Event: goal has been completed
     class GoalCompleteEvent : public SomeSignal {
     public:
-        SP<SomeGoal> goal;
+        SP<Goal> goal;
 
-        GoalCompleteEvent(SP<SomeGoal> goal) :
+        GoalCompleteEvent(SP<Goal> goal) :
             goal(goal) {}
     };
 } // namespace PJ

@@ -28,6 +28,26 @@ namespace CollectionUtilsTests {
 
 using namespace CollectionUtilsTests;
 
+TEST(CollectionUtils, RemoveAll) {
+    VectorList<int> sut{ 1, 3, 5, 10 };
+    RemoveAll(sut);
+
+    EXPECT_EQ(0, sut.size());
+}
+
+TEST(CollectionUtils, Count) {
+    VectorList<int> sut{ 1, 3, 5, 10 };
+
+    EXPECT_EQ(4, Count(sut));
+}
+
+TEST(CollectionUtils, IsEmpty) {
+    VectorList<int> sut{ 1, 3, 5, 10 };
+    EXPECT_FALSE(IsEmpty(sut));
+    RemoveAll(sut);
+    EXPECT_TRUE(IsEmpty(sut));
+}
+
 TEST(CollectionUtils, Remove) {
     VectorList<String> sut;
 
@@ -75,20 +95,34 @@ TEST(CollectionUtils, CompactMap) {
 TEST(CollectionUtils, FirstIterator) {
     VectorList<int> sut{ 1, 3, 5, 10 };
 
-    EXPECT_EQ(3, *(FirstIterator(sut, [](int value) { return value == 3; })));
+    EXPECT_EQ(3, *(FirstIteratorIf(sut, [](int value) { return value == 3; })));
 }
 
 TEST(CollectionUtils, FirstIteratorInvalid) {
     VectorList<int> sut{ 1, 3, 5, 10 };
 
-    EXPECT_EQ(3, *(FirstIterator(sut, [](int value) { return value == 3; })));
+    EXPECT_EQ(3, *(FirstIteratorIf(sut, [](int value) { return value == 3; })));
 }
 
-TEST(CollectionUtils, SafeFirst) {
+TEST(CollectionUtils, FirstIf) {
     VectorList<int> sut{ 1, 3, 5, 10 };
 
     auto first = FirstIf(sut, [](int value) { return value > 1; });
     EXPECT_EQ(std::make_optional<int>(3), first);
+}
+
+TEST(CollectionUtils, SafeFirstWithValue) {
+    VectorList<int> sut{ 1 };
+
+    auto first = SafeFirst(sut, 6);
+    EXPECT_EQ(1, first);
+}
+
+TEST(CollectionUtils, SafeFirstWithNoValue) {
+    VectorList<int> sut{};
+
+    auto first = SafeFirst(sut, 6);
+    EXPECT_EQ(6, first);
 }
 
 TEST(CollectionUtils, FirstInvalid) {
@@ -116,6 +150,13 @@ TEST(CollectionUtils, Contains) {
 
     EXPECT_TRUE(Contains(sut, 1));
     EXPECT_FALSE(Contains(sut, -11));
+}
+
+TEST(CollectionUtils, ContainsIf) {
+    VectorList<int> sut{ 1, 3, 5, 10 };
+
+    EXPECT_TRUE(ContainsIf(sut, [](auto& e) { return e == 10; }));
+    EXPECT_FALSE(ContainsIf(sut, [](auto& e) { return e == -11; }));
 }
 
 TEST(CollectionUtils, AddRange) {
@@ -157,33 +198,6 @@ TEST(CollectionUtils, Filter) {
     EXPECT_EQ(2, *i);
 }
 
-TEST(CollectionUtils, FilterSetUnordered) {
-    UnorderedSet<int> sut;
-    sut.insert(1);
-    sut.insert(2);
-    sut.insert(3);
-    sut.insert(4);
-
-    auto values = Filter(sut, [](int value) { return value < 3; });
-    EXPECT_EQ(2, values.size());
-
-    EXPECT_TRUE(sut.contains(1));
-    EXPECT_TRUE(sut.contains(2));
-}
-
-TEST(CollectionUtils, FilterSetOrdered) {
-    OrderedSet<int> sut;
-    sut.insert(1);
-    sut.insert(2);
-    sut.insert(3);
-    sut.insert(4);
-
-    auto values = Filter(sut, [](int value) { return value < 3; });
-    EXPECT_EQ(2, values.size());
-
-    EXPECT_TRUE(sut.contains(1));
-    EXPECT_TRUE(sut.contains(2));
-}
 
 TEST(CollectionUtils, Map) {
     VectorList<int> sut{ 1, 2, 3 };
@@ -192,26 +206,6 @@ TEST(CollectionUtils, Map) {
     EXPECT_EQ(3, values.size());
 
     VectorList<String> expectedValues{ "1", "2", "3" };
-    EXPECT_EQ(expectedValues, values);
-}
-
-TEST(CollectionUtils, MapSetUnordered) {
-    UnorderedSet<int> sut{ 1, 2, 3 };
-
-    auto values = Map<String>(sut, [](int value) { return MakeString(value); });
-    EXPECT_EQ(3, values.size());
-
-    UnorderedSet<String> expectedValues{ "1", "2", "3" };
-    EXPECT_EQ(expectedValues, values);
-}
-
-TEST(CollectionUtils, MapSetOrdered) {
-    OrderedSet<int> sut{ 1, 2, 3 };
-
-    auto values = Map<String>(sut, [](int value) { return MakeString(value); });
-    EXPECT_EQ(3, values.size());
-
-    OrderedSet<String> expectedValues{ "1", "2", "3" };
     EXPECT_EQ(expectedValues, values);
 }
 
@@ -280,4 +274,20 @@ TEST(CollectionUtils, IsValidIndex) {
     EXPECT_FALSE(IsValidIndex(sut, -1));
     EXPECT_TRUE(IsValidIndex(sut, 0));
     EXPECT_FALSE(IsValidIndex(sut, 1));
+}
+
+TEST(CollectionUtils, Append) {
+    vector<int> sut;
+
+    EXPECT_FALSE(Contains(sut, 1));
+    Append(sut, 1);
+    EXPECT_TRUE(Contains(sut, 1));
+}
+
+TEST(CollectionUtils, Add) {
+    vector<int> sut;
+
+    EXPECT_FALSE(Contains(sut, 1));
+    Add(sut, 1);
+    EXPECT_TRUE(Contains(sut, 1));
 }

@@ -11,7 +11,7 @@
 using namespace std;
 using namespace PJ;
 
-SomeLoadResourcesOperation::Result SDLLoadBitmapOperation::LoadResources() {
+LoadResourcesOperation::Result SDLLoadBitmapOperation::_LoadResources() {
     auto path = info.filePath;
 
     SDLSurface _surface{ { .surface = IMG_Load(path.string().c_str()) } };

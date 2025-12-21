@@ -8,7 +8,7 @@ using namespace PJ;
 using namespace std;
 
 namespace WorldNodeTests {
-    class TestComponent : public WorldComponent<>
+    class TestComponent : public WorldComponent
     {
     public:
         int destroyCount = 0;
@@ -114,7 +114,7 @@ TEST(WorldNode, Lifecycle)
 TEST(WorldNode, AddComponent)
 {
     WorldNode sut("");
-    auto component = MAKE<WorldComponent<>>();
+    auto component = MAKE<WorldComponent>();
     sut.Add(component);
 
     EXPECT_EQ(&sut, component->Node());
@@ -127,7 +127,7 @@ TEST(WorldNode, AddComponent_Lifecycle)
     sut.CheckedAwake();
     sut.CheckedStart();
 
-    auto component = MAKE<WorldComponent<>>();
+    auto component = MAKE<WorldComponent>();
     sut.Add(component);
 
     EXPECT_TRUE(component->IsAwake());
@@ -139,7 +139,7 @@ TEST(WorldNode, AddComponent_AlreadyParented)
     WorldNode sut("");
     WorldNode sut2("");
 
-    auto component = MAKE<WorldComponent<>>();
+    auto component = MAKE<WorldComponent>();
     sut.Add(component);
 
     sut2.Add(component);
@@ -153,7 +153,7 @@ TEST(WorldNode, AddComponent_Null)
     WorldNode sut("");
     WorldNode sut2("");
 
-    UP<WorldComponent<>> component;
+    UP<WorldComponent> component;
     sut.Add(std::move(component));
     EXPECT_EQ(0, sut.Components().size());
 }
@@ -161,7 +161,7 @@ TEST(WorldNode, AddComponent_Null)
 TEST(WorldNode, AddComponentT)
 {
     WorldNode sut("");
-    sut.AddComponent<WorldComponent<>>();
+    sut.AddComponent<WorldComponent>();
     EXPECT_EQ(1, sut.Components().size());
 }
 
@@ -291,7 +291,7 @@ TEST(WorldNode, RemoveComponent)
     auto sut = MAKE<WorldNode>();
     world->Add(sut);
 
-    auto component = MAKE<WorldComponent<>>();
+    auto component = MAKE<WorldComponent>();
     sut->Add(component);
     EXPECT_EQ(1, sut->Components().size());
     EXPECT_EQ(sut.get(), component->owner);
@@ -306,9 +306,9 @@ TEST(WorldNode, RemoveAllComponents)
     auto sut = MAKE<WorldNode>();
     world->Add(sut);
 
-    auto component = MAKE<WorldComponent<>>();
+    auto component = MAKE<WorldComponent>();
     sut->Add(component);
-    auto component2 = MAKE<WorldComponent<>>();
+    auto component2 = MAKE<WorldComponent>();
     sut->Add(component2);
     EXPECT_EQ(2, sut->Components().size());
     sut->RemoveAllComponents();
@@ -325,7 +325,7 @@ TEST(WorldNode, RemoveTypeComponents)
 
     auto component = MAKE<TestComponent>();
     sut->Add(component);
-    auto component2 = MAKE<WorldComponent<>>();
+    auto component2 = MAKE<WorldComponent>();
     sut->Add(component2);
     EXPECT_EQ(2, sut->Components().size());
     sut->RemoveType<TestComponent>();
@@ -338,7 +338,7 @@ TEST(WorldNode, Modify)
 {
     auto sut = MAKE<WorldNode>();
     sut->Add(MAKE<TestComponent>());
-    sut->Add(MAKE<WorldComponent<>>());
+    sut->Add(MAKE<WorldComponent>());
 
     int count{};
     sut->Modify<TestComponent>([&](auto& component) {
@@ -647,8 +647,8 @@ TEST(WorldNode, OnAddChildNode)
     world->Add(sut);
 
     int value = 0;
-    auto component = MAKE<WorldComponent<StandardCore>>();
-    component->AddSignalHandler({.id = SignalId::AddChildNode, .func = [&](auto& owner, auto& event) {
+    auto component = MAKE<WorldComponent>();
+    component->AddSignalHandler({.id = SignalId::ChildNodeAdd, .func = [&](auto& owner, auto& event) {
         value++;
     }});
     sut->Add(component);
@@ -662,8 +662,8 @@ TEST(WorldNode, OnAddChildNode)
 TEST(WorldNode, Contains)
 {
     auto sut = MAKE<WorldNode>();
-    auto component = MAKE<WorldComponent<>>();
-    auto component2 = MAKE<WorldComponent<>>();
+    auto component = MAKE<WorldComponent>();
+    auto component2 = MAKE<WorldComponent>();
     sut->Add(component);
 
     EXPECT_TRUE(sut->Contains(*component));
@@ -731,7 +731,7 @@ TEST(WorldNode, Signal)
         signalCount++;
     }});
     
-    Signal event;
+    CoreSignal event;
     sut->Signal("test", event);
     
     ASSERT_EQ(1, signalCount);
@@ -753,7 +753,7 @@ TEST(WorldNode, SignalMultiple)
     add();
     add();
     
-    Signal event;
+    CoreSignal event;
     sut->Signal("test", event);
     
     ASSERT_EQ(4, signalCount);
@@ -769,23 +769,85 @@ TEST(WorldNode, SignalDisabled)
         signalCount++;
         }}).Enable(false);
     
-    Signal event;
+    CoreSignal event;
     sut->Signal("test", event);
     
     ASSERT_EQ(0, signalCount);
 }
 
-TEST(SomeWorldComponent, AddComponentWithSignals)
+TEST(WorldNode, IsListenerWithSignals)
 {
     WorldNode node;
-    auto sut = MAKE<WorldComponent<>>("");
+    auto sut = MAKE<WorldComponent>("");
     
-    EXPECT_FALSE(node.isListener);
+    EXPECT_FALSE(node.IsListener());
     
     sut->AddSignalHandler({.id = "test"});
     node.Add(sut);
     
-    EXPECT_TRUE(node.isListener);
+    EXPECT_TRUE(node.IsListener());
+}
+
+TEST(WorldNode, IsListenerToSignal)
+{
+    WorldNode sut;
+    auto& component1 = sut.With<WorldComponent>();
+    
+    EXPECT_FALSE(sut.IsListener());
+    
+    component1.AddSignalHandler({.id = "test"});
+    EXPECT_TRUE(component1.IsListenerToSignal("test"));
+    EXPECT_FALSE(component1.IsListenerToSignal("bad"));
+    EXPECT_TRUE(sut.IsListenerToSignal("test"));
+    EXPECT_FALSE(sut.IsListenerToSignal("bad"));
+}
+
+TEST(WorldNode, IsListenerWithMixedSignals)
+{
+    WorldNode sut;
+    auto component1 = MAKE<WorldComponent>("");
+    auto component2 = MAKE<WorldComponent>("");
+    
+    EXPECT_FALSE(sut.IsListener());
+    
+    component2->AddSignalHandler({.id = "test"});
+    EXPECT_TRUE(component2->IsListener());
+    
+    sut.Add(component1);
+    EXPECT_FALSE(sut.IsListener());
+    sut.Add(component2);
+    EXPECT_TRUE(sut.IsListener());
+    sut.Remove(*component2);
+    EXPECT_FALSE(sut.IsListener());
+}
+
+TEST(WorldNode, IsListenerWithRemoveAll)
+{
+    WorldNode sut;
+    auto component1 = MAKE<WorldComponent>("");
+    auto component2 = MAKE<WorldComponent>("");
+    
+    EXPECT_FALSE(sut.IsListener());
+    
+    component2->AddSignalHandler({.id = "test"});
+    EXPECT_TRUE(component2->IsListener());
+    
+    sut.Add(component1);
+    EXPECT_FALSE(sut.IsListener());
+    sut.Add(component2);
+    EXPECT_TRUE(sut.IsListener());
+    sut.RemoveAllComponents();
+    EXPECT_FALSE(sut.IsListener());
+}
+
+TEST(WorldNode, IsListener)
+{
+    WorldNode node;
+    auto sut = MAKE<WorldComponent>("");
+    
+    EXPECT_FALSE(node.IsListener());
+    node.SetIsListener(true);
+    EXPECT_TRUE(node.IsListener());
 }
 
 TEST(WorldNode, ChildMap)

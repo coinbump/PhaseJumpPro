@@ -4,8 +4,8 @@
 #include "Macros.h"
 #include "RenderFeature.h"
 #include "RenderTypes.h"
-#include "SomeTexture.h"
 #include "Tags.h"
+#include "Texture.h"
 #include "UnorderedMap.h"
 #include "Vector2.h"
 #include "VectorList.h"
@@ -16,7 +16,7 @@
  CODE REVIEW: 12/21/24
  */
 namespace PJ {
-    class SomeShaderProgram;
+    class ShaderProgram;
 
     /// Render properties for object
     class RenderMaterial {
@@ -24,10 +24,10 @@ namespace PJ {
         using FeatureStateMap = UnorderedMap<String, RenderFeatureState>;
 
     protected:
-        SP<SomeShaderProgram> shaderProgram;
+        SP<ShaderProgram> shaderProgram;
 
         /// Texture inputs to shader
-        VectorList<SP<SomeTexture>> textures;
+        VectorList<SP<Texture>> textures;
 
         /// Uniform (non-interpolated) color inputs to shader
         VectorList<Color> uniformColors;
@@ -49,7 +49,7 @@ namespace PJ {
 
     public:
         struct Config {
-            SP<SomeTexture> texture;
+            SP<Texture> texture;
 
             String shaderId;
             FeatureStateMap features = { { RenderFeature::Blend, RenderFeatureState::Disable } };
@@ -64,10 +64,10 @@ namespace PJ {
         }
 
         /// Sets the shader program for this material
-        void SetShaderProgram(SP<SomeShaderProgram> program);
+        void SetShaderProgram(SP<ShaderProgram> program);
 
         /// @return Returns the shader program for this material
-        SomeShaderProgram* ShaderProgram() const {
+        ShaderProgram* ShaderProgram() const {
             return shaderProgram.get();
         }
 
@@ -93,16 +93,16 @@ namespace PJ {
             return features;
         }
 
-        VectorList<SP<SomeTexture>> const& Textures() const {
+        VectorList<SP<Texture>> const& Textures() const {
             return textures;
         }
 
         /// Sets the texture if one exists, or add it if missing (only used for single-texture
         /// materials)
-        void SetTexture(SP<SomeTexture> texture);
+        void SetTexture(SP<Texture> texture);
 
         /// Adds the texture's render texture to the material
-        void Add(SP<SomeTexture> texture);
+        void Add(SP<Texture> texture);
 
         /// Enables or disables a feature for this material
         void EnableFeature(String feature, bool isEnabled);

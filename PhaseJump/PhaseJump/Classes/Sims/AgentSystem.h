@@ -15,7 +15,7 @@ namespace PJ {
     /// For convenience, agents can be divided into Agent Groups
     class AgentSystem : public SomeUpdatable {
     public:
-        using GroupList = VectorList<SP<SomeAgentGroup>>;
+        using GroupList = VectorList<SP<AgentGroup>>;
 
     protected:
         GroupList groups;
@@ -36,7 +36,7 @@ namespace PJ {
             return groups;
         }
 
-        void Add(SP<SomeAgentGroup> group) {
+        void Add(SP<AgentGroup> group) {
             GUARD(group)
             GUARD_LOG(group->system == nullptr, "ERROR. Can't add owned sim group")
 

@@ -56,7 +56,7 @@ This& ImRenderer::TemplateImage(String id, Vector2 origin, std::optional<Color> 
     return *this;
 }
 
-This& ImRenderer::Image(SP<SomeTexture> texture, Vector2 origin) {
+This& ImRenderer::Image(SP<Texture> texture, Vector2 origin) {
     GUARDR(texture, *this)
 
     ImPathItem item;
@@ -296,7 +296,7 @@ void ImRenderer::Configure() {
 
     id = RendererId(ImPathItemType::Rect, ImPathRenderType::Fill);
     buildRendererFuncs[id] = [this](auto& item) {
-        UP<SomeRenderer> result = NEW<ColorRenderer>(ColorRenderer::Config{
+        UP<Renderer> result = NEW<ColorRenderer>(ColorRenderer::Config{
             .color = item.GetColor(0), .worldSize = item.frame.size });
 
         // All immediate paths use blend so they batch render together
@@ -310,7 +310,7 @@ void ImRenderer::Configure() {
 
     id = RendererId(ImPathItemType::Rect, ImPathRenderType::Frame);
     buildRendererFuncs[id] = [this](auto& item) {
-        UP<SomeRenderer> result = NEW<ColorRenderer>(ColorRenderer::Config{
+        UP<Renderer> result = NEW<ColorRenderer>(ColorRenderer::Config{
             .color = item.GetColor(0), .worldSize = item.frame.size });
 
         auto strokeWidth = item.strokeWidth;
@@ -330,7 +330,7 @@ void ImRenderer::Configure() {
 
     id = RendererId(ImPathItemType::Polygon, ImPathRenderType::Frame);
     buildRendererFuncs[id] = [this](auto& item) {
-        UP<SomeRenderer> result = NEW<ColorRenderer>(ColorRenderer::Config{
+        UP<Renderer> result = NEW<ColorRenderer>(ColorRenderer::Config{
             .color = item.GetColor(0), .worldSize = item.frame.size });
 
         auto colorRenderer = static_cast<ColorRenderer*>(result.get());
@@ -354,7 +354,7 @@ void ImRenderer::Configure() {
 
     id = RendererId(ImPathItemType::Capsule, ImPathRenderType::Fill);
     buildRendererFuncs[id] = [this](auto& item) {
-        UP<SomeRenderer> result = NEW<ColorRenderer>(ColorRenderer::Config{
+        UP<Renderer> result = NEW<ColorRenderer>(ColorRenderer::Config{
             .color = item.GetColor(0), .worldSize = item.frame.size });
 
         auto itemAxis = item.axis;
@@ -373,7 +373,7 @@ void ImRenderer::Configure() {
 
     id = RendererId(ImPathItemType::RoundCorners, ImPathRenderType::Fill);
     buildRendererFuncs[id] = [this](auto& item) {
-        UP<SomeRenderer> result = NEW<ColorRenderer>(ColorRenderer::Config{
+        UP<Renderer> result = NEW<ColorRenderer>(ColorRenderer::Config{
             .color = item.GetColor(0), .worldSize = item.frame.size });
 
         auto itemCorners = item.roundCorners;
@@ -393,7 +393,7 @@ void ImRenderer::Configure() {
 
     id = RendererId(ImPathItemType::Arc, ImPathRenderType::Fill);
     buildRendererFuncs[id] = [this](auto& item) {
-        UP<SomeRenderer> result = NEW<ColorRenderer>(ColorRenderer::Config{
+        UP<Renderer> result = NEW<ColorRenderer>(ColorRenderer::Config{
             .color = item.GetColor(0), .worldSize = item.frame.size });
 
         auto polyModel = CenterPolyModel::ellipse;
@@ -412,7 +412,7 @@ void ImRenderer::Configure() {
 
     id = RendererId(ImPathItemType::Arc, ImPathRenderType::Frame);
     buildRendererFuncs[id] = [this](auto& item) {
-        UP<SomeRenderer> result = NEW<ColorRenderer>(ColorRenderer::Config{
+        UP<Renderer> result = NEW<ColorRenderer>(ColorRenderer::Config{
             .color = item.GetColor(0), .worldSize = item.frame.size });
 
         auto strokeWidth = item.strokeWidth;
@@ -435,8 +435,8 @@ void ImRenderer::Configure() {
     // MARK: Text
 
     id = String(ImPathItemType::Text) + String(".") + String(ImPathRenderType::Fill);
-    buildRendererFuncs[id] = [this](auto& item) -> UP<SomeRenderer> {
-        UP<SomeRenderer> result = NEW<TextRenderer>(TextRenderer::Config{
+    buildRendererFuncs[id] = [this](auto& item) -> UP<Renderer> {
+        UP<Renderer> result = NEW<TextRenderer>(TextRenderer::Config{
             .font = item.font, .text = item.text, .worldSize = item.frame.size });
         static_cast<TextRenderer*>(result.get())->SetColor(item.GetColor(0, Color::white));
         return result;
@@ -445,8 +445,8 @@ void ImRenderer::Configure() {
     // MARK: Image
 
     id = String(ImPathItemType::Image) + String(".") + String(ImPathRenderType::Fill);
-    buildRendererFuncs[id] = [this](auto& item) -> UP<SomeRenderer> {
-        SP<SomeTexture> texture = item.texture;
+    buildRendererFuncs[id] = [this](auto& item) -> UP<Renderer> {
+        SP<Texture> texture = item.texture;
         if (nullptr == texture) {
             GUARDR(owner, {})
 
@@ -457,7 +457,7 @@ void ImRenderer::Configure() {
             GUARDR(texture, {})
         }
 
-        UP<SomeRenderer> result = NEW<SpriteRenderer>(SpriteRenderer::Config{ .texture = texture });
+        UP<Renderer> result = NEW<SpriteRenderer>(SpriteRenderer::Config{ .texture = texture });
         auto spriteRenderer = static_cast<SpriteRenderer*>(result.get());
 
         spriteRenderer->SetColor(item.GetColor(0, Color::white));
@@ -485,7 +485,7 @@ void ImRenderer::Configure() {
                 auto buildRendererFunc = buildRendererFuncs.at(id);
                 GUARD_CONTINUE(buildRendererFunc)
 
-                UP<SomeRenderer> renderer = buildRendererFunc(item);
+                UP<Renderer> renderer = buildRendererFunc(item);
                 GUARD_CONTINUE(renderer)
 
                 auto renderModels = renderer->RenderModels();

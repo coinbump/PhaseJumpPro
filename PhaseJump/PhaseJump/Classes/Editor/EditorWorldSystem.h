@@ -16,7 +16,7 @@
  */
 namespace PJ {
     /// Standard properties and functionality for an editor-based app
-    class EditorWorldSystem : public SomeWorldSystem {
+    class EditorWorldSystem : public WorldSystem {
     public:
         /// Model for node inspection
         struct InspectNodeModel {

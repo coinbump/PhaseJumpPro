@@ -10,7 +10,7 @@ TestViewsScene::TestViewsScene() {
     PlanUIFunc planUIFunc = [this](auto args) {
         auto& planner = args.planner;
 
-        // TODO: should this be optional<int>? for no selection?
+        // ?: should this be optional<int>? for no selection?
         Binding<int> binding{ [this]() { return LayoutSizeIndex() ? *LayoutSizeIndex() : -1; },
                               [this](auto& value) { SetLayoutSizeIndex(value); } };
         planner.ListSelect({ .label = "Sizes", .options = { "1080", "phone" }, .binding = binding }
@@ -75,12 +75,12 @@ void TestViewsScene::LoadInto(WorldNode& root) {
 
     QB(root).OrthoStandard();
 
-    auto& ac = root.With<WorldComponent<>>();
+    auto& ac = root.With<WorldComponent>();
     rootComponent = &ac;
     ac.AddSignalHandler<KeyDownUIEvent>({ .id = SignalId::KeyDown,
                                           .func = [this,
                                                    &root](auto& component, auto& keyDownEvent) {
-                                              switch (keyDownEvent.keyCode.value) {
+                                              switch (keyDownEvent.KeyCodeValue()) {
                                               case SDLK_LEFT:
                                                   {
                                                       targetView--;
@@ -138,7 +138,7 @@ void TestViewsScene::LoadInto(WorldNode& root) {
                       GUARD(!IsEmpty(button.owner->Children()))
 
                       auto renderer =
-                          button.owner->Children()[0]->TypeComponent<SomeMaterialRenderer>();
+                          button.owner->Children()[0]->TypeComponent<MaterialRenderer>();
                       GUARD(renderer)
 
                       renderer->SetColor(
@@ -168,7 +168,7 @@ void TestViewsScene::LoadInto(WorldNode& root) {
           { .modifyViewFunc = [](auto& view) { view.AddComponent(MAKE<ColorRenderer>()); },
             .onControlChangeFunc =
                 [](auto& control) {
-                    auto renderer = control.owner->TypeComponent<SomeRenderer>();
+                    auto renderer = control.owner->TypeComponent<Renderer>();
 
                     if (control.IsPressed()) {
                         renderer->SetColor(Color::pink);
@@ -741,7 +741,7 @@ void TestViewsScene::LoadInto(WorldNode& root) {
                                                         );
                                                     GUARD(keyDownEvent)
 
-                                                    switch (keyDownEvent->keyCode.value) {
+                                                    switch (keyDownEvent->KeyCodeValue()) {
                                                     case '8':
                                                         view.Navigate(
                                                             PageView::NavigateDirection::Back, true

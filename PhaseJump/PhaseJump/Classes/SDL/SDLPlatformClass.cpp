@@ -146,14 +146,14 @@ SDLConfigPlatformResult SDLPlatformClass::Configure(SDLPlatformConfig& config, S
     }
 
     // Register a mouse device
-    Mouse::current = NEW<SDLMouseDevice>();
+    currentMouseDevice = NEW<SDLMouseDevice>();
 
     auto uiSystem = MAKE<UIWorldSystem>();
-    uiSystem->typeTags.insert(EditorTypeTag::Persist);
+    uiSystem->AddTypeTag(EditorTypeTag::Persist);
     world->Add(uiSystem);
 
     auto renderSystem = MAKE<RenderWorldSystem>();
-    renderSystem->typeTags.insert(EditorTypeTag::Persist);
+    renderSystem->AddTypeTag(EditorTypeTag::Persist);
     world->Add(renderSystem);
 
     // FUTURE: config should specify which render processes to use

@@ -25,7 +25,7 @@ struct DeleteNodeCommandCore {
 EditorWorldSystem::EditorWorldSystem(int commandHistorySize) :
     commands(commandHistorySize) {
 
-    typeTags.insert(EditorTypeTag::Persist);
+    AddTypeTag(EditorTypeTag::Persist);
 
     AddKeyFunc('z', { KeyModifier::Shortcut }, [this](auto& system) { commands.Undo(); });
     AddKeyFunc('z', { KeyModifier::Shortcut, KeyModifier::Shift }, [this](auto& system) {

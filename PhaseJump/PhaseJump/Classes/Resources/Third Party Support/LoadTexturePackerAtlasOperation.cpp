@@ -11,7 +11,7 @@ using namespace std;
 using namespace PJ;
 using namespace nlohmann;
 
-SomeLoadResourcesOperation::Result LoadTexturePackerAtlasOperation::LoadResources() {
+LoadResourcesOperation::Result LoadTexturePackerAtlasOperation::_LoadResources() {
     FilePath filePath = info.filePath;
 
     std::ifstream file;
@@ -45,7 +45,7 @@ SomeLoadResourcesOperation::Result LoadTexturePackerAtlasOperation::LoadResource
 
         GUARDR(successValue && successValue->size() > 0, Failure())
 
-        SP<SomeTexture> texture = DCAST<SomeTexture>(successValue->resources[0].resource);
+        SP<Texture> texture = DCAST<Texture>(successValue->resources[0].resource);
         GUARDR(texture, Failure());
 
         Success result;

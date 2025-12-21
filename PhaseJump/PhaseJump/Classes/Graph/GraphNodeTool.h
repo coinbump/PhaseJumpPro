@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SomeGraphNode.h"
+#include "GraphNode.h"
 
 /*
  RATING: 5 stars
@@ -10,7 +10,7 @@
 namespace PJ {
     template <class EdgeCore = StandardEdgeCore>
     struct GraphNodeTool {
-        using Node = SomeGraphNode<EdgeCore>;
+        using Node = GraphNode<EdgeCore>;
         using NodeSharedPtr = SP<Node>;
         using NodeSet = OrderedSet<NodeSharedPtr>;
         using NodeList = VectorList<NodeSharedPtr>;

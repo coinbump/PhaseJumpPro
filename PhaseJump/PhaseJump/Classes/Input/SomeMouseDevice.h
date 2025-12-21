@@ -5,18 +5,14 @@
 /*
  RATING: 5 stars
  Simple type
- CODE REVIEW: 8/11/24
+ CODE REVIEW: 12/19/25
  */
 namespace PJ {
     class SomeMouseDevice : public SomePointerDevice {
     public:
         SomeMouseDevice() {}
-
-        static UP<SomeMouseDevice> current;
     };
 
-    // MARL: Convenience
-
-    using Mouse = SomeMouseDevice;
+    extern UP<SomeMouseDevice> currentMouseDevice;
 
 } // namespace PJ

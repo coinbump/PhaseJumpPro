@@ -39,7 +39,7 @@ namespace PJ {
             float totalWeight = 0;
             for (auto& wr : choices) {
                 float weight = wr->Value();
-                PJ::Add(evaluateWeights, PJ::Weight(weight, wr->choice));
+                PJ::Add(evaluateWeights, PJ::Weight(weight, wr->GetChoice()));
 
                 totalWeight += weight;
             }
@@ -55,7 +55,7 @@ namespace PJ {
 
                 curWeight += weight;
                 if (random <= curWeight) {
-                    return wr.choice;
+                    return wr.GetChoice();
                 }
             }
 

@@ -29,29 +29,4 @@ namespace PJ {
         }
         return result;
     }
-
-    template <class Set>
-    concept IsStdSet = std::is_same_v<Set, std::set<typename Set::value_type>>;
-
-    template <class Set>
-        requires IsStdSet<Set>
-    void AddOrRemove(Set& set, typename Set::value_type const& value, bool add) {
-        if (add) {
-            set.insert(value);
-        } else {
-            set.erase(value);
-        }
-    }
-
-    // TODO: template <class Set, class Type> + requires
-    template <class Type>
-    OrderedSet<Type> operator-(OrderedSet<Type> const& lhs, OrderedSet<Type> const& rhs) {
-        OrderedSet<Type> result;
-
-        std::set_difference(
-            lhs.begin(), lhs.end(), rhs.begin(), rhs.end(), std::inserter(result, result.begin())
-        );
-
-        return result;
-    }
 } // namespace PJ

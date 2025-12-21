@@ -37,7 +37,7 @@ EditorImGuiResourcesPainter::EditorImGuiResourcesPainter(EditorWorldSystem& _sys
                             if (ImGui::SmallButton(addButtonName.c_str())) {
                                 QB(*world.Root())
                                     .And()
-                                    .With<SpriteRenderer>(SCAST<SomeTexture>(res.second.resource))
+                                    .With<SpriteRenderer>(SCAST<Texture>(res.second.resource))
                                     .Drag();
                             }
                         }

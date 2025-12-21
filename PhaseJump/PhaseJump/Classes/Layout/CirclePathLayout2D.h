@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CirclePath.h"
-#include "SomePathLayout.h"
+#include "PathLayout.h"
 #include "Utils.h"
 #include "WorldSizeable.h"
 #include <memory>
@@ -13,7 +13,7 @@
  */
 namespace PJ {
     /// Distribute objects along a circle path
-    class CirclePathLayout2D : public SomePathLayout, public WorldSizeable {
+    class CirclePathLayout2D : public PathLayout, public WorldSizeable {
     protected:
         float radius = 1.0f;
 
@@ -43,7 +43,7 @@ namespace PJ {
             radius = std::min(value.x, value.y) / 2.0f;
         }
 
-        // MARK: SomePathLayout
+        // MARK: PathLayout
 
         UP<SomePath> BuildPath() override {
             return NEW<CirclePath>(radius);

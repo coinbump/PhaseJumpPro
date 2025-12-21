@@ -15,20 +15,21 @@ namespace PJ {
     template <typename EnumType>
     class Enum : public Base {
     public:
-        StandardCore core;
+        /// Standard core properties
+        StandardCore _core;
 
         using EnumClassType = EnumClass<EnumType>;
 
         EnumType value{};
 
         Enum(SP<EnumClassType> _class) {
-            core.SetClass(_class);
+            _core.SetClass(_class);
         }
 
         virtual ~Enum() {}
 
         SP<EnumClassType> EnumClass() const {
-            return SCAST<EnumClassType>(core.Class());
+            return SCAST<EnumClassType>(_core.Class());
         }
 
         virtual String Id() const {

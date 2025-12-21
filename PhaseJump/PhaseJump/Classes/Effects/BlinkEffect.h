@@ -12,12 +12,12 @@
  CODE REVIEW: 9/28/24
  */
 namespace PJ {
-    class SomeRenderer;
+    class Renderer;
 
     /// Turns renderers on/off based on a time track
-    class BlinkEffect : public WorldComponent<> {
+    class BlinkEffect : public WorldComponent {
     public:
-        using Base = WorldComponent<>;
+        using Base = WorldComponent;
         using This = BlinkEffect;
 
     protected:

@@ -19,7 +19,7 @@ ImGuiUIPlanPainter::ImGuiUIPlanPainter(UIPlan& plan) :
     };
 
     drawModelFuncs[UIModelType::Button] = [this](auto& painter, auto& _model) {
-        auto ptr = dynamic_cast<UIModel<ActionUICore>*>(&_model);
+        auto ptr = dynamic_cast<CoreUIModel<ActionUICore>*>(&_model);
         GUARD(ptr);
         auto& model = *ptr;
 
@@ -125,7 +125,7 @@ ImGuiUIPlanPainter::ImGuiUIPlanPainter(UIPlan& plan) :
     };
 
     drawModelFuncs[UIModelType::PickerList] = [](auto& painter, auto& _model) {
-        auto ptr = dynamic_cast<UIModel<ValueOptionsUICore>*>(&_model);
+        auto ptr = dynamic_cast<CoreUIModel<ValueOptionsUICore>*>(&_model);
         GUARD(ptr)
         auto& model = *ptr;
 
@@ -148,7 +148,7 @@ ImGuiUIPlanPainter::ImGuiUIPlanPainter(UIPlan& plan) :
     };
 
     drawModelFuncs[UIModelType::ListSelect] = [](auto& painter, auto& _model) {
-        auto ptr = dynamic_cast<UIModel<ValueOptionsUICore>*>(&_model);
+        auto ptr = dynamic_cast<CoreUIModel<ValueOptionsUICore>*>(&_model);
         GUARD(ptr)
         auto& model = *ptr;
 

@@ -21,7 +21,7 @@ namespace PJ {
 
     /// Handles selection state behavior in an object canvas
     /// Default behavior: Sends signal when selection changes
-    class SelectHandler : public WorldComponent<> {
+    class SelectHandler : public WorldComponent {
     public:
         using Base = WorldComponent;
         using This = SelectHandler;

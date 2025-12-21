@@ -5,8 +5,8 @@
 #include "RenderMaterial.h"
 #include "RenderModel.h"
 #include "RenderModelBuilder.h"
+#include "ShaderProgram.h"
 #include "SomeRenderEngine.h"
-#include "SomeShaderProgram.h"
 #include "UIPlanner.h"
 #include "Utils.h"
 
@@ -75,7 +75,7 @@ SpriteRenderer::SpriteRenderer(Config const& config) :
     Override(planUIFuncs[UIContextId::Inspector], planUIFunc);
 }
 
-SpriteRenderer::SpriteRenderer(SP<SomeTexture> texture) :
+SpriteRenderer::SpriteRenderer(SP<Texture> texture) :
     SpriteRenderer(Config{ .texture = texture }) {}
 
 SpriteRenderer::SpriteRenderer(SP<RenderMaterial> material) :

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SomeLoadResourcesOperation.h"
+#include "LoadResourcesOperation.h"
 
 /*
  RATING: 5 stars
@@ -8,24 +8,20 @@
  CODE REVIEW: 12/21/24
  */
 namespace PJ {
-    class SomeGLShader;
+    class GLShader;
 
     /// Loads OpenGL shader
-    class GLLoadShaderOperation : public SomeLoadResourcesOperation {
+    class GLLoadShaderOperation : public LoadResourcesOperation {
     public:
-        using Base = SomeLoadResourcesOperation;
-        using FactoryFunc = std::function<SP<SomeGLShader>()>;
+        using Base = LoadResourcesOperation;
+        using FactoryFunc = std::function<SP<GLShader>()>;
 
         FactoryFunc factoryFunc;
 
         GLLoadShaderOperation(
             ResourceInfo info, ResourceRepositoryModel& repoModel, FactoryFunc factoryFunc
-        ) :
-            Base(info, repoModel),
-            factoryFunc(factoryFunc) {}
+        );
 
-        // MARK: SomeLoadResourcesOperation
-
-        Result LoadResources() override;
+        Result _LoadResources();
     };
 } // namespace PJ

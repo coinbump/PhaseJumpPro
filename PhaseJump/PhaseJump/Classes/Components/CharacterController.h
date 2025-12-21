@@ -12,9 +12,9 @@
 namespace PJ {
     /// Used to control states and behaviors for a character
     /// Example: game boss with phase states, and behavior trees for each phase of the battle
-    class CharacterController : public WorldComponent<> {
+    class CharacterController : public WorldComponent {
     public:
-        using Base = WorldComponent<>;
+        using Base = WorldComponent;
         using This = CharacterController;
         using StateType = String;
 

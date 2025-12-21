@@ -20,7 +20,7 @@
 namespace PJ {
     class QuickBuilder;
     class WorldNode;
-    class SomeCollider2D;
+    class Collider2D;
     class ImRenderer;
     class DesignSystem;
 
@@ -38,7 +38,7 @@ namespace PJ {
 
         using BuildViewFunc = std::function<void(This&)>;
         using AddViewFunc = std::function<void(QuickBuilder&)>;
-        using MakeColliderFunc = std::function<SP<SomeCollider2D>()>;
+        using MakeColliderFunc = std::function<SP<Collider2D>()>;
 
         template <class Config>
         using BuildConfigFunc = std::function<Config(View2D&)>;

@@ -2,6 +2,7 @@
 #include "AnimatedSpriteRenderer.h"
 #include "AnimateFuncs.h"
 #include "BatchByMaterialRenderProcessor.h"
+#include "Collider2D.h"
 #include "Colliders2D.h"
 #include "ColorRenderer.h"
 #include "ComponentsController.h"
@@ -13,6 +14,7 @@
 #include "FramePlayable.h"
 #include "Funcs.h"
 #include "GridMeshBuilder.h"
+#include "HoverGestureHandler.h"
 #include "imgui.h"
 #include "Matrix4x4.h"
 #include "NodeHandler.h"
@@ -29,8 +31,6 @@
 #include "SimpleRaycaster2D.h"
 #include "Slice9TextureRenderer.h"
 #include "SliderControl.h"
-#include "SomeCollider2D.h"
-#include "SomeHoverGestureHandler.h"
 #include "SomePlatformWindow.h"
 #include "SomeUIEvent.h"
 #include "SpriteRenderer.h"
@@ -42,15 +42,15 @@ using namespace PJ;
 
 using This = QuickBuilder::This;
 
-This& QuickBuilder::WithOnEnable(String id, std::function<void(WorldComponent<>&)> func) {
-    return With<WorldComponent<>>().ModifyLatest<WorldComponent<>>([=](auto& component) {
+This& QuickBuilder::WithOnEnable(String id, std::function<void(SomeWorldComponent&)> func) {
+    return With<WorldComponent>().ModifyLatest<WorldComponent>([=](auto& component) {
         // Disabled by default, so enable func runs
         component.Enable(false);
 
         component.SetId(id);
-        component.onEnabledChangeFunc = [=](auto& component) {
-            GUARD(component.IsEnabled())
-            func(*(static_cast<WorldComponent<>*>(&component)));
+        component.attachmentCore.onEnabledChangeFunc = [func](auto& core) {
+            GUARD(core.IsEnabled())
+            func(core.owner);
         };
     });
 }
@@ -97,16 +97,19 @@ This& QuickBuilder::OrthoStandard(OrthoStandardConfig config) {
 }
 
 This& QuickBuilder::ScaleWithWindow(Vector3 worldSize, float ratio) {
-    return With<WorldComponent<>>().ModifyLatestAny([=](auto& component) {
+    return With<WorldComponent>().ModifyLatest<WorldComponent>([=](auto& component) {
         auto sizeFunc = [=](SomeWorldComponent& component) {
-            Vec2I worldPixelSize = component.owner->World()->PixelSize();
+            auto owner = component.Node();
+            GUARD(owner)
+
+            Vec2I worldPixelSize = owner->World()->PixelSize();
             Vector2 worldPixelSizeF{ (float)worldPixelSize.x, (float)worldPixelSize.y };
 
             auto maxSize = worldPixelSizeF * ratio;
             auto scaleCandidates = maxSize / worldSize;
             auto scale = std::min(scaleCandidates.x, scaleCandidates.y);
 
-            component.owner->SetScale2D(scale);
+            owner->SetScale2D(scale);
         };
         sizeFunc(component);
 
@@ -120,16 +123,14 @@ This& QuickBuilder::ScaleWithWindow(Vector3 worldSize, float ratio) {
 }
 
 This& QuickBuilder::SizeWithWindow(Vector2 ratio) {
-    return ModifyLatestAny([=](auto& component) {
+    return ModifyLatest<WorldComponent>([=](auto& component) {
         auto worldSizable = dynamic_cast<WorldSizeable*>(&component);
-        GUARD_LOG(
-            worldSizable && component.owner && component.owner->World(),
-            "ERROR. Must be world sizable"
-        )
+        auto owner = component.Node();
+        GUARD_LOG(worldSizable && owner && owner->World(), "ERROR. Must be world sizable")
 
         auto sizeFunc = [=](SomeWorldComponent& component) {
-            Vector2 floatPixelSize{ (float)component.owner->World()->PixelSize().x,
-                                    (float)component.owner->World()->PixelSize().y };
+            Vector2 floatPixelSize{ (float)owner->World()->PixelSize().x,
+                                    (float)owner->World()->PixelSize().y };
             auto worldPixelSize = floatPixelSize * ratio;
             worldSizable->SetWorldSize({ (float)worldPixelSize.x, (float)worldPixelSize.y, 0.0f });
         };
@@ -192,7 +193,7 @@ This& QuickBuilder::Drag(OnDragUpdateFunc onDragUpdateFunc) {
     components.push_back(component);
 
     // Add basic drag collider if it's missing
-    if (!Node().TypeComponent<SomeCollider2D>()) {
+    if (!Node().TypeComponent<Collider2D>()) {
         auto worldSizeable = Node().TypeComponent<WorldSizeable>();
         if (worldSizeable) {
             auto worldSize = worldSizeable->WorldSize();
@@ -212,10 +213,10 @@ This& QuickBuilder::DragSnapBack(OnDragUpdateFunc onDragUpdateFunc) {
 }
 
 This& QuickBuilder::OnDropFiles(OnDropFilesFunc onDropFilesFunc) {
-    With<WorldComponent<>>("Drop files")
-        .ModifyLatestAny([onDropFilesFunc](SomeWorldComponent& component) {
-            component.AddSignalHandler<DropFilesUIEvent>(
-                { .id = SignalId::DropFiles,
+    With<WorldComponent>("Drop files")
+        .ModifyLatest<WorldComponent>([onDropFilesFunc](auto& component) {
+            component.template AddSignalHandler<DropFilesUIEvent>(
+                { .id = SignalId::FilesDrop,
                   .func = [onDropFilesFunc](
                               auto& component, auto& signal
                           ) { onDropFilesFunc({ .component = component, .event = signal }); } }
@@ -243,8 +244,8 @@ This& QuickBuilder::CircleCollider(float radius) {
 }
 
 void QuickBuilder::AddSlider(
-    World& world, WorldNode& parent, DesignSystem& designSystem, SP<SomeTexture> trackTexture,
-    SP<SomeTexture> thumbTexture, SliderConfig config
+    World& world, WorldNode& parent, DesignSystem& designSystem, SP<PJ::Texture> trackTexture,
+    SP<PJ::Texture> thumbTexture, SliderConfig config
 ) {
     GUARD(trackTexture && thumbTexture)
 
@@ -270,19 +271,22 @@ void QuickBuilder::AddSlider(
         .valueBinding = config.valueBinding });
     components.push_back(&sliderControl);
 
-    auto& trackNode = parent.AddNode("Slider track");
-    trackNode.AddComponent<Slice9TextureRenderer>(trackTexture, Vector2{}, slicePoints);
+    auto _trackNode = parent.AddNodePtr("Slider track");
+    auto& trackNode = *_trackNode;
+    trackNode.AddComponent<Slice9TextureRenderer>(Slice9TextureRenderer::Config{
+        .texture = trackTexture, .worldSize = {}, .sliceModel = slicePoints });
 
     float endCapSize =
         designSystem.theme->ElementTagValue<float>(UIElementId::SliderTrack, UITag::EndCapSize);
     sliderControl.SetEndCapSize(endCapSize).SetFrame(PJ::Rect({ 0, 0 }, config.worldSize));
 
-    auto& thumbNode = parent.AddNode("Slider thumb");
+    auto _thumbNode = parent.AddNodePtr("Slider thumb");
+    auto& thumbNode = *_thumbNode;
     thumbNode.AddComponent<PolygonCollider2D>().SetPolygon(Polygon::MakeRect(thumbTexture->size));
     thumbNode.AddComponent<SpriteRenderer>(thumbTexture);
 
-    sliderControl.SetTrack(SCAST<WorldNode>(trackNode.shared_from_this()));
-    sliderControl.SetThumb(SCAST<WorldNode>(thumbNode.shared_from_this()));
+    sliderControl.SetTrack(_trackNode);
+    sliderControl.SetThumb(_thumbNode);
 }
 
 This& QuickBuilder::Slider(SliderConfig config) {
@@ -672,12 +676,13 @@ This& QuickBuilder::ImGui(StringView title, PaintImmediateFunc paintFunc) {
         ImGui::End();
     };
 
-    Node().With<WorldComponent<>>().AddSignalHandler({ .id = "render.immediate",
-                                                       .func = [=](auto& component, auto& signal) {
-                                                           GUARD(component.owner)
+    Node().With<WorldComponent>().AddSignalHandler({ .id = "render.immediate",
+                                                     .func = [=](auto& component, auto& signal) {
+                                                         auto owner = component.Node();
+                                                         GUARD(owner)
 
-                                                           nodeHandlerFunc(*component.owner);
-                                                       } });
+                                                         nodeHandlerFunc(*owner);
+                                                     } });
 
     return *this;
 }

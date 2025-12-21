@@ -28,7 +28,7 @@ KaijuWorldSystem::KaijuWorldSystem() {
     // auto menuItem = MAKE<MenuItem>("Hello", VectorList<KeyboardShortcut>{{"c",
     // {EventModifier::Shift, EventModifier::Control}}, {"A", {EventModifier::OptionAlt}}},
     // [](auto& menuItem) { std::cout << "Hello" << std::endl; }); menuItem->isToggleOn = true;
-    typeTags.insert(EditorTypeTag::Persist);
+    AddTypeTag(EditorTypeTag::Persist);
 
     auto undoMenuItem = NEW<MenuItem>(
         "Undo", VectorList<KeyboardShortcut>{ { "z", { KeyModifier::Shortcut } } },
@@ -130,9 +130,9 @@ void KaijuWorldSystem::ProcessUIEvents(UIEventList const& uiEvents) {
     for (auto& event : uiEvents) {
         auto keyDownEvent = DCAST<KeyDownUIEvent>(event);
         if (keyDownEvent) {
-            switch (keyDownEvent->keyCode.value) {
+            switch (keyDownEvent->KeyCodeValue()) {
             case SDLK_TAB:
-                if (keyDownEvent->keyModifiers.Contains(KeyModifier::Control)) {
+                if (keyDownEvent->core.keyModifiers.Contains(KeyModifier::Control)) {
                     isUIVisible = !isUIVisible;
                 }
                 break;

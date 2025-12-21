@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SomeLoadResourcesOperation.h"
+#include "LoadResourcesOperation.h"
 
 /*
  RATING: 5 stars
@@ -9,15 +9,15 @@
  */
 namespace PJ {
     /// Load a texture atlas .fnt file created by Bitmap Font Generator
-    class LoadBitmapFontOperation : public SomeLoadResourcesOperation {
+    class LoadBitmapFontOperation : public LoadResourcesOperation {
     public:
-        using Base = SomeLoadResourcesOperation;
+        using Base = LoadResourcesOperation;
 
         LoadBitmapFontOperation(ResourceInfo info, ResourceRepositoryModel& repoModel) :
-            Base(info, repoModel) {}
+            Base(info, repoModel) {
+            loadResourcesFunc = [this](auto& operation) { return _LoadResources(); };
+        }
 
-        // MARK: SomeLoadResourcesOperation
-
-        Result LoadResources() override;
+        Result _LoadResources();
     };
 } // namespace PJ

@@ -11,9 +11,9 @@
 namespace PJ {
     /// Enables/disables components based on controller states
     /// Example: turn effects on and off based on the current effect state
-    class ComponentsController : public WorldComponent<> {
+    class ComponentsController : public WorldComponent {
     public:
-        using Base = WorldComponent<>;
+        using Base = WorldComponent;
         using This = ComponentsController;
         using StateType = String;
 

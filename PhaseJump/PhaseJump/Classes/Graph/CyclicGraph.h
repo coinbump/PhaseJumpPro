@@ -62,7 +62,7 @@ namespace PJ {
             GUARD(fromNode && toNode)
 
             fromNode->AddEdgeInternal(
-                model, NEW<WeakReference<SomeGraphNode<EdgeCore, typename Node::CoreType>>>(toNode)
+                model, NEW<WeakReference<GraphNode<EdgeCore, typename Node::CoreType>>>(toNode)
             );
 
             nodes.insert(fromNode);

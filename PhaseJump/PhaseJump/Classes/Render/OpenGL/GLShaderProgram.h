@@ -2,8 +2,8 @@
 
 #include "FilePath.h"
 #include "GLHeaders.h"
-#include "SomeGLShader.h"
-#include "SomeShaderProgram.h"
+#include "GLShader.h"
+#include "ShaderProgram.h"
 #include "UnorderedMap.h"
 #include "VectorList.h"
 #include <memory>
@@ -14,10 +14,10 @@
  CODE REVIEW: 12/21/24
  */
 namespace PJ {
-    class SomeGLRenderEngine;
+    class BaseGLRenderEngine;
 
     /// Links  a vertex and a fragment shader
-    class GLShaderProgram : public SomeShaderProgram {
+    class GLShaderProgram : public ShaderProgram {
     public:
         /// Used to register shader program info before the GL context is ready
         /// so the render engine can load the programs later

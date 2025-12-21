@@ -157,7 +157,8 @@ UIEventList SDLUIEventsBuilder::BuildUIEvents(SDLEventList const& events, float 
                 keyModifiers.AddIf(KeyModifier::Shortcut, (sdlEvent.key.mod & SDL_KMOD_GUI) != 0);
 #endif
 
-                auto event = MAKE<KeyDownUIEvent>(scanCode, keyCode, keyModifiers);
+                auto event = MAKE<KeyDownUIEvent>(KeyUIEventCore{
+                    .scanCode = scanCode, .keyCode = keyCode, .keyModifiers = keyModifiers });
                 result.push_back(SCAST<SomeSignal>(event));
                 break;
             }
@@ -166,7 +167,8 @@ UIEventList SDLUIEventsBuilder::BuildUIEvents(SDLEventList const& events, float 
                 KeyScanCode scanCode(sdlEvent.key.scancode);
                 KeyCode keyCode(sdlEvent.key.key);
 
-                auto event = MAKE<KeyUpUIEvent>(scanCode, keyCode);
+                auto event =
+                    MAKE<KeyUpUIEvent>(KeyUIEventCore{ .scanCode = scanCode, .keyCode = keyCode });
                 result.push_back(SCAST<SomeSignal>(event));
                 break;
             }
@@ -174,14 +176,16 @@ UIEventList SDLUIEventsBuilder::BuildUIEvents(SDLEventList const& events, float 
             {
                 auto inputButton = PointerInputButtonFromSDLButton(sdlEvent.button.button);
                 auto screenPosition = Vector2(sdlEvent.button.x, sdlEvent.button.y);
-                auto event = MAKE<PointerDownUIEvent>(screenPosition, inputButton);
+                auto event = MAKE<PointerDownUIEvent>(PointerButtonUIEventCore{
+                    .screenPos = screenPosition, .button = inputButton });
                 result.push_back(SCAST<SomeSignal>(event));
                 break;
             }
         case SDL_EVENT_MOUSE_BUTTON_UP:
             {
                 auto inputButton = PointerInputButtonFromSDLButton(sdlEvent.button.button);
-                result.push_back(MAKE<PointerUpUIEvent>(inputButton));
+                result.push_back(MAKE<PointerUpUIEvent>(PointerButtonUIEventCore{
+                    .button = inputButton }));
                 break;
             }
         case SDL_EVENT_MOUSE_MOTION:

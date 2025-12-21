@@ -4,7 +4,7 @@
 #include "RenderFeature.h"
 #include "RenderMaterial.h"
 #include "RenderModelBuilder.h"
-#include "SomeShaderProgram.h"
+#include "ShaderProgram.h"
 #include "TextMeasurer.h"
 #include "TextureAtlas.h"
 #include "UIPlanner.h"

@@ -46,7 +46,7 @@
 //         virtual void Process(PortEvaluation eval) = 0;
 //     };
 //
-//     class TestPortGraphHandler : public WorldComponent<> {
+//     class TestPortGraphHandler : public WorldComponent {
 //     public:
 //         SP<PortGraphRunner> runner;
 //         SP<SomePortGraphProcessor> processor;

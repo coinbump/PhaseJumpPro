@@ -38,4 +38,3 @@ TEST(OrderedMap, ContainsKeyWhere) {
     value = ContainsIf(sut, [](auto& pair) -> bool { return pair.second == 90; });
     EXPECT_FALSE(value);
 }
-

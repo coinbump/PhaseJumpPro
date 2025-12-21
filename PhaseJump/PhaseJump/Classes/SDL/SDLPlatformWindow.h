@@ -22,6 +22,9 @@ namespace PJ {
         SDL_Window* window{};
         SDL_Renderer* renderer{};
 
+        /// Nodes, systems, and components
+        SP<World> world;
+
         Config config;
 
     public:
@@ -48,6 +51,12 @@ namespace PJ {
         }
 
         // MARK: SomePlatformWindow
+        SP<World> GetWorld() const override {
+            return world;
+        }
+
+        /// Sets the world for this window
+        void SetWorld(SP<World> value) override;
 
         Vector2Int Size() const override {
             GUARDR(window, {})

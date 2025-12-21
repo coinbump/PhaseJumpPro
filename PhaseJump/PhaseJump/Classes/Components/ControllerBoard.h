@@ -16,7 +16,7 @@ namespace PJ {
     } // namespace ControllerBoardId
 
     /// Central point of control for elements such as switches, effects, colors, lighting, etc.
-    class ControllerBoard : public WorldComponent<> {
+    class ControllerBoard : public WorldComponent {
     public:
         using This = ControllerBoard;
 

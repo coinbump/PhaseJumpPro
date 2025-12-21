@@ -1,5 +1,5 @@
 #include "SimpleAnimationController.h"
-#include "SomeRenderer.h"
+#include "Renderer.h"
 #include "WorldNode.h"
 
 using namespace std;
@@ -10,7 +10,7 @@ SimpleAnimationController::SimpleAnimationController() {
         auto target = controller.Target();
         GUARD(target)
 
-        target->RemoveType<SomeRenderer>();
+        target->RemoveType<Renderer>();
         target->Add(renderer);
     };
 

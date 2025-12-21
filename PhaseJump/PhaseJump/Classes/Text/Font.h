@@ -13,7 +13,7 @@
  */
 namespace PJ {
     class TextureAtlas;
-    class SomeTexture;
+    class Texture;
 
     /// Defines parameters for finding a font from resources
     struct FontSpec {
@@ -57,7 +57,7 @@ namespace PJ {
             int advanceX = 0;
 
             /// Texture to render the glyph
-            SP<SomeTexture> texture;
+            SP<Texture> texture;
 
             int Height() const;
         };

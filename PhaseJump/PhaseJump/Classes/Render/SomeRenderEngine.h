@@ -28,10 +28,6 @@ namespace PJ {
      */
     class SomeRenderEngine : public Base {
     public:
-        /// If true, render states won't be switched if we're already in that state
-        /// Flag enables us to A/B benchmark with this on/off
-        bool optimizeStateSwitches = true;
-
         /// Called before RenderDraw
         virtual void RenderStart(SomeRenderContext* context) = 0;
 

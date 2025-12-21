@@ -1,7 +1,7 @@
 #pragma once
 
-#include "SomeRenderer.h"
-#include "SomeTexture.h"
+#include "Renderer.h"
+#include "Texture.h"
 #include <memory>
 
 // Unused. Future feature?
@@ -19,7 +19,7 @@ namespace PJ {
     //        /// Material holds the render texture, this is the actual texture object (child
     //        texture for
     //        /// texture atlas)
-    //        SP<SomeTexture> texture;
+    //        SP<Texture> texture;
     //
     //    public:
     //        bool flipX = false;
@@ -27,7 +27,7 @@ namespace PJ {
     //
     //        // FUTURE: float pixelsPerUnit = 1.0f;
     //
-    //        SpriteRenderer(SP<SomeTexture> texture);
+    //        SpriteRenderer(SP<Texture> texture);
     //        SpriteRenderer(SP<RenderMaterial> material);
     //
     //        Vector2 Size() const;
@@ -38,7 +38,7 @@ namespace PJ {
     //            return "SpriteRenderer";
     //        }
     //
-    //        // MARK: SomeRenderer
+    //        // MARK: Renderer
     //
     //        void SetColor(Color value) override;
     //

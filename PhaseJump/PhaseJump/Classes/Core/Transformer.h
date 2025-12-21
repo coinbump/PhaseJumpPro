@@ -34,7 +34,7 @@ namespace PJ {
 
         TransformFunc func;
 
-        Transformer(Core core, TransformFunc func) :
+        Transformer(Core const& core, TransformFunc func) :
             func(func),
             core(core) {}
 

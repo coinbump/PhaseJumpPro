@@ -37,39 +37,52 @@ namespace PJ {
     /// An event from an input controller (joystick, gamepad, etc.)
     class SomeControllerUIEvent : public SomeSignal {
     public:
-        String controllerId;
+        using Base = SomeControllerUIEvent;
 
-        SomeControllerUIEvent(String controllerId) :
-            controllerId(controllerId) {}
+        virtual String ControllerId() const = 0;
     };
 
     class ControllerAxisUIEvent : public SomeControllerUIEvent {
     public:
         using Base = SomeControllerUIEvent;
 
+        String controllerId;
         String axisId;
 
         /// Normalized value [-1.0-1.0]
         float value = 0;
 
         ControllerAxisUIEvent(String controllerId, String axisId, float value) :
-            Base(controllerId),
+            controllerId(controllerId),
             axisId(axisId),
             value(value) {}
+
+        // MARK: SomeControllerUIEvent
+
+        virtual String ControllerId() const override {
+            return controllerId;
+        }
     };
 
     /// Controller button event
     class ControllerButtonUIEvent : public SomeControllerUIEvent {
     public:
-        using Base = SomeControllerUIEvent;
+        using Base = SomeSignal;
 
+        String controllerId;
         String buttonId;
-        int buttonIndex = 0;
+        int buttonIndex{};
 
         ControllerButtonUIEvent(String controllerId, String buttonId, int buttonIndex) :
-            Base(controllerId),
+            controllerId(controllerId),
             buttonId(buttonId),
             buttonIndex(buttonIndex) {}
+
+        // MARK: SomeControllerUIEvent
+
+        virtual String ControllerId() const override {
+            return controllerId;
+        }
     };
 
     /// Controller button down event

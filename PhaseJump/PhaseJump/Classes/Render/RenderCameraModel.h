@@ -10,8 +10,8 @@
  */
 namespace PJ {
     class RenderProcessor;
-    class SomeRenderer;
-    class SomeCamera;
+    class Renderer;
+    class Camera;
     class SomeRenderContext;
     class WorldNode;
 
@@ -55,7 +55,7 @@ namespace PJ {
 
         struct Config {
             SomeRenderContext* context{};
-            SomeCamera& camera;
+            Camera& camera;
             VectorList<RenderModel>& renderModels;
             VectorList<WorldNode*>& nodes;
         };
@@ -66,7 +66,7 @@ namespace PJ {
         SomeRenderContext* renderContext{};
 
         /// Camera being rendered
-        SomeCamera* camera{};
+        Camera* camera{};
 
         /// Nodes to render
         NodeList& nodes;
@@ -83,7 +83,7 @@ namespace PJ {
 
         /// Temporary renderers used by render processors
         /// We share memory from the renderer model, keep it in memory
-        VectorList<SP<SomeRenderer>> renderers;
+        VectorList<SP<Renderer>> renderers;
 
         /// Materials created by render processor that override an existing material
         /// Multiple models might share the same material, this gives us a single source of truth

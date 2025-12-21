@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SomeLayout2D.h"
+#include "Layout2D.h"
 #include "WorldNode.h"
 
 /*
@@ -11,7 +11,7 @@
 namespace PJ {
     /// Flow the objects with non-contextual spacing (object size doesn't
     /// matter)
-    class HFlow : public SomeLayout2D {
+    class HFlow : public Layout2D {
     public:
         float spacing = 10;
 
@@ -30,7 +30,7 @@ namespace PJ {
         }
 
     protected:
-        // MARK: SomeLayout
+        // MARK: Layout
 
         void ApplyLayout() override {
             GUARD(owner)

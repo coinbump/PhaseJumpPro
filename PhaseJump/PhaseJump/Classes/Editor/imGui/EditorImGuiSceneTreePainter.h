@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SomeImGuiPainter.h"
+#include "ImGuiPainter.h"
 
 /*
  RATING: 5 stars
@@ -12,7 +12,7 @@ namespace PJ {
     class EditorWorldSystem;
 
     /// Draws scene tree imGui UI for editor
-    class EditorImGuiSceneTreePainter : public SomeImGuiPainter {
+    class EditorImGuiSceneTreePainter : public ImGuiPainter {
     public:
         using OnInspectFunc = std::function<void(WorldNode&)>;
 

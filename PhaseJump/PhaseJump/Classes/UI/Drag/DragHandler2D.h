@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SomeDragHandler.h"
+#include "DragHandler.h"
 
 /*
  RATING: 5 stars
@@ -16,9 +16,9 @@ namespace PJ {
      - Add DragHandler2D to objects you want to be draggable
      - Attach a collider to the draggable object
      */
-    class DragHandler2D : public SomeDragHandler {
+    class DragHandler2D : public DragHandler {
     public:
-        using Base = SomeDragHandler;
+        using Base = DragHandler;
         using This = DragHandler2D;
 
         using OnDragUpdateFunc = std::function<void(This&)>;
@@ -38,7 +38,7 @@ namespace PJ {
         /// started
         void InOnDropSnapBack();
 
-        // MARK: SomeDragHandler
+        // MARK: DragHandler
 
         void OnDragUpdate(WorldPosition inputPosition) override;
         void OnDragEnd() override;

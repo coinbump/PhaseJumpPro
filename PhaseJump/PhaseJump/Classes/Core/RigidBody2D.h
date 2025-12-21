@@ -4,7 +4,7 @@
 
 // Unused. Future feature if we add Box2D support
 // namespace PJ {
-//    class RigidBody2D : public WorldComponent<> {
+//    class RigidBody2D : public WorldComponent {
 //    public:
 //        // FUTURE: Add Box2D for Physics (not supported yet
 //        bool IsKinematic() const {

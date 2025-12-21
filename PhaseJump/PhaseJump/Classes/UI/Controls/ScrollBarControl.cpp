@@ -1,7 +1,7 @@
 #include "ScrollBarControl.h"
 #include "Dev.h"
 #include "DragGestureHandler2D.h"
-#include "SomeRenderer.h"
+#include "Renderer.h"
 
 using namespace std;
 using namespace PJ;
@@ -34,7 +34,7 @@ void ScrollBarControl::Awake() {
     auto thumbLock = LOCK(thumb);
     GUARD(thumbLock)
 
-    WP<This> weakThis = SCAST<This>(shared_from_this());
+    WP<This> weakThis = SCAST<This>(shared _from_this());
 
     thumbDragHandler = thumbLock->AddComponentPtr<DragGestureHandler2D>();
     thumbDragHandler->onDragGestureUpdateFunc = [weakThis](auto update) {
@@ -94,7 +94,7 @@ Vector2 ScrollBarControl::TrackSize() const {
 }
 
 Vector2 ScrollBarControl::RendererSize(WorldNode& target) const {
-    auto renderer = target.GetComponent<SomeRenderer>();
+    auto renderer = target.GetComponent<Renderer>();
     GUARDR(renderer, {})
 
     auto size = renderer->WorldSize();

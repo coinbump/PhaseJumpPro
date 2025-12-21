@@ -1,7 +1,7 @@
 #pragma once
 
 #include "LinePath.h"
-#include "SomePathLayout.h"
+#include "PathLayout.h"
 #include "Vector3.h"
 
 /*
@@ -11,7 +11,7 @@
  */
 namespace PJ {
     /// Distribute objects along a line path
-    class LinePathLayout : public SomePathLayout {
+    class LinePathLayout : public PathLayout {
     protected:
         Vector3 start;
         Vector3 end;

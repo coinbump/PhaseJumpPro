@@ -1,15 +1,15 @@
 #include "gtest/gtest.h"
 
 #include "Slice9TextureRenderer.h"
-#include "SomeTexture.h"
+#include "Texture.h"
 
 using namespace std;
 using namespace PJ;
 
 namespace Slice9TextureRendererTests {
-    class MockTexture : public SomeTexture {
+    class MockTexture : public Texture {
     public:
-        MockTexture() : SomeTexture({.renderId = 1, .size = Vector2Int(50, 50), .alphaMode = TextureAlphaMode::PremultiplyAlpha}) {
+        MockTexture() : Texture({.renderId = 1, .size = Vector2Int(50, 50), .alphaMode = TextureAlphaMode::PremultiplyAlpha}) {
         }
     };
 }
@@ -18,7 +18,7 @@ using namespace Slice9TextureRendererTests;
 
 TEST(Slice9TextureRenderer, TestBuildModel) {
     auto texture = MAKE<MockTexture>();
-    Slice9TextureRenderer renderer(texture, Vector2(100, 100), {Vector2Int(10, 10), Vector2Int(10, 10)});
+    Slice9TextureRenderer renderer(Slice9TextureRenderer::Config{.texture = texture, .worldSize = Vector2(100, 100), .sliceModel = {Vector2Int(10, 10), Vector2Int(10, 10)}});
     auto sut = renderer.MakeBuildModel({100, 100, 0});
 
     EXPECT_EQ(10, sut.sliceLeft);

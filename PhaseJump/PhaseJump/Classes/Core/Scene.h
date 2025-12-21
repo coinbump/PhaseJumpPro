@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ClassRegistry.h"
-#include "SomeLoadResourcesOperation.h"
+#include "LoadResourcesOperation.h"
 #include "TypeClass.h"
 #include "WorldComponent.h"
 
@@ -16,13 +16,13 @@ namespace PJ {
     /**
      Scenes load themselves into their parent node on start
      */
-    class Scene : public WorldComponent<> {
+    class Scene : public WorldComponent {
     protected:
         bool isLoaded = false;
 
     public:
         // FUTURE: develop a file format, or parse Unity/Godot scenes
-        using Base = WorldComponent<>;
+        using Base = WorldComponent;
         using LoadFunc = std::function<void(WorldNode& root)>;
 
         LoadFunc loadFunc;
@@ -54,7 +54,7 @@ namespace PJ {
     public:
         SceneClass(String id, String name, FactoryFunc factoryFunc) :
             TypeClass<Scene>(id, factoryFunc) {
-            core.name = name;
+            _core.name = name;
         }
     };
 

@@ -13,11 +13,14 @@ EditorImGuiRenderEnginePainter::EditorImGuiRenderEnginePainter(EditorWorldSystem
         auto& world = *system.World();
 
         if (ImGui::CollapsingHeader("Render Engine", ImGuiTreeNodeFlags_DefaultOpen)) {
-            auto& renderEngine = world.renderContext->renderEngine;
-            bool optimizeStateSwitches = renderEngine.optimizeStateSwitches;
-            if (ImGui::Checkbox("Optimize state switches", &optimizeStateSwitches)) {
-                renderEngine.optimizeStateSwitches = optimizeStateSwitches;
-            }
+            auto renderContext = dynamic_cast<RenderContext*>(world.renderContext.get());
+            GUARD(renderContext)
+
+            auto& renderEngine = renderContext->renderEngine;
+            //            bool optimizeStateSwitches = renderEngine.optimizeStateSwitches;
+            //            if (ImGui::Checkbox("Optimize state switches", &optimizeStateSwitches)) {
+            //                renderEngine.optimizeStateSwitches = optimizeStateSwitches;
+            //            }
 
             ImGui::Text("Enabled features");
             for (auto& enabledFeature : renderEngine.EnabledFeatures()) {
@@ -42,7 +45,7 @@ EditorImGuiRenderEnginePainter::EditorImGuiRenderEnginePainter(EditorWorldSystem
             };
 
             if (ImGui::CollapsingHeader("Render Pipeline", ImGuiTreeNodeFlags_DefaultOpen)) {
-                auto renderSystem = world.GetSystem<RenderWorldSystem>();
+                auto renderSystem = world.TypeSystem<RenderWorldSystem>();
                 GUARD(renderSystem)
 
                 drawRenderProcessors("Render Processors", renderSystem->Processors());
@@ -83,7 +86,7 @@ EditorImGuiRenderPipelinePainter::EditorImGuiRenderPipelinePainter(
         };
 
         if (ImGui::CollapsingHeader("Render Pipeline", ImGuiTreeNodeFlags_DefaultOpen)) {
-            auto renderSystem = world.GetSystem<RenderWorldSystem>();
+            auto renderSystem = world.TypeSystem<RenderWorldSystem>();
             GUARD(renderSystem)
 
             drawRenderProcessors("Render Processors", renderSystem->Processors());

@@ -3,7 +3,7 @@
 
 // Experimental
 namespace PJ {
-    class SomeTextureBuffer : public SomeRenderContext {};
+    class SomeTextureBuffer : public RenderContext {};
 } // namespace PJ
 
 #if FALSE

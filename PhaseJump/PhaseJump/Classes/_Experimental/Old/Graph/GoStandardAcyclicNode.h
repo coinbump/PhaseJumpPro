@@ -57,7 +57,7 @@
 //                 for (auto& node : fromNodes)
 //                 {
 //                     if (node.Reference.TryGetTarget(out
-//                     SomeGraphNode<StandardEdgeModel> fromNode))
+//                     GraphNode<StandardEdgeModel> fromNode))
 //                     {
 //                         for (Edge fromEdge : fromNode.Edges)
 //                         {

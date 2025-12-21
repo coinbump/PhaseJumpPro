@@ -1,6 +1,6 @@
-#include "SomeCamera.h"
-#include "SomeDragHandler.h"
-#include "SomeDropTarget.h"
+#include "Camera.h"
+#include "DragHandler.h"
+#include "DropTarget.h"
 #include "UIWorldSystem.h"
 #include "World.h"
 
@@ -21,7 +21,7 @@ void UIWorldSystem::OnDragUpdate() {
 
         auto inputScreenPosition = mouseDevice->GetScreenPosition();
         auto inputWorldPosition =
-            PJ::WorldPosition(Camera()->ScreenToWorld(Vector3(inputScreenPosition)));
+            PJ::WorldPosition(GetCamera()->ScreenToWorld(Vector3(inputScreenPosition)));
         dragged->OnDragUpdate(WorldPosition(inputWorldPosition));
     } else {
         OnDragEnd();
@@ -83,7 +83,7 @@ void UIWorldSystem::OnDragEnd() {
 
     auto activeDropTarget = this->activeDropTarget.lock();
     if (activeDropTarget) {
-        auto dropTarget = activeDropTarget->TypeComponent<SomeDropTarget>();
+        auto dropTarget = activeDropTarget->TypeComponent<DropTarget>();
         if (dropTarget) {
             dropTarget->OnDrop(*dragModel);
             dropTarget->OnDragExit();

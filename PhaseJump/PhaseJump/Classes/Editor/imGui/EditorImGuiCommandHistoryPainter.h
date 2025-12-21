@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SomeImGuiPainter.h"
+#include "ImGuiPainter.h"
 
 /*
  RATING: 5 stars
@@ -11,7 +11,7 @@ namespace PJ {
     class CommandHistory;
 
     /// Draws command history
-    class EditorImGuiCommandHistoryPainter : public SomeImGuiPainter {
+    class EditorImGuiCommandHistoryPainter : public ImGuiPainter {
     public:
         CommandHistory& commandHistory;
 

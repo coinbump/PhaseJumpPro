@@ -3,8 +3,8 @@
 #include "GLBlendMode.h"
 #include "GLHeaders.h"
 #include "OrderedMap.h"
+#include "SetUtils.h"
 #include "StringUtils.h"
-#include "UnorderedSet.h"
 
 /*
  RATING: 5 stars

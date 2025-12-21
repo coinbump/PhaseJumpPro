@@ -11,7 +11,7 @@
 namespace PJ {
     class SomeRenderContext;
     class WorldNode;
-    class SomeCamera;
+    class Camera;
 
     struct RenderContextModel {
         /// Pointer, not reference for model copies
@@ -21,6 +21,6 @@ namespace PJ {
         WorldNode* root{};
 
         VectorList<WorldNode*> nodes;
-        VectorList<SomeCamera*> cameras;
+        VectorList<Camera*> cameras;
     };
 } // namespace PJ
