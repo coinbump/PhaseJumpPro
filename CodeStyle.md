@@ -22,7 +22,7 @@ int GetPurchaseCount() const;
 
 ## Interfaces and Some Prefix
 
-The prefix `some` has been used to designate a purely virtual interface class.
+The prefix `Some` has been used to designate a purely virtual interface class.
 
 Interface classes should not store data or state, and should not have implementations for core functionality unless the implementation is trivial.
 
