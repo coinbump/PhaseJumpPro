@@ -6,16 +6,17 @@ This document establishes best practices and coding styles for this project.
 
 For convenience, don't use Get for getters, unless the type that the getter function would return matches the name of the function.
 
-Good:
+Correct:
 
 ```cpp
 int PurchaseCount() const;
 ```
 
-Bad:
+Incorrect:
 
 ```cpp
 World* World() const;
+int GetPurchaseCount() const;
 ```
 
 Instead:
