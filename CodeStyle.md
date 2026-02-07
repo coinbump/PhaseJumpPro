@@ -4,7 +4,7 @@ This document establishes best practices and coding styles for this project.
 
 ## Getters and Setters
 
-For convenience, don't use Get for getters, unless the type that the getter function would return matches the name of the function.
+For convenience, don't use `Get` as a prefix for getters, unless the type that the getter function would return matches the name of the function.
 
 Correct:
 
