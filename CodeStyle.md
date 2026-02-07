@@ -9,6 +9,7 @@ For convenience, don't use Get for getters, unless the type that the getter func
 Correct:
 
 ```cpp
+World* GetWorld() const;
 int PurchaseCount() const;
 ```
 
@@ -17,12 +18,6 @@ Incorrect:
 ```cpp
 World* World() const;
 int GetPurchaseCount() const;
-```
-
-Instead:
-
-```cpp
-World* GetWorld() const;
 ```
 
 ## Interfaces and Some Prefix
