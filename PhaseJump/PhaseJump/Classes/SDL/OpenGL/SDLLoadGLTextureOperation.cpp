@@ -1,5 +1,6 @@
 #include "SDLLoadGLTextureOperation.h"
 #include "Bitmap.h"
+#include "BitmapOperations.h"
 #include "GLTexture.h"
 #include "SDLFileManager.h"
 #include "SDLLoadBitmapOperation.h"
@@ -33,7 +34,8 @@ LoadResourcesOperation::Result SDLLoadGLTextureOperation::_LoadResources() {
     }
 
     // OpenGl expects textures to be upside-down
-    // TODO: even though we aren't flipping the bitmap, it still works, so something is incorrect
+    auto operation = BitmapOperations::FlipV(true);
+    operation->Run(*rgbaBitmap);
 
     SDLFileManager fm;
     String id = fm.FileName(path, FileManager::FileNameFormat::NoExtension);

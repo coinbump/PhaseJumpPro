@@ -43,7 +43,7 @@ namespace PJ {
 } // namespace PJ
 
 namespace GLFWKit {
-    //    class Window : public SomeWindow {
+    //    class Window final : public SomeWindow {
     //        Window(Vector2 size, String title) {
     //            GLFWwindow* window;
     //            window = glfwCreateWindow(size.x, size.y, title, NULL, NULL);
@@ -85,7 +85,7 @@ namespace GLFWKit {
     //        }
     //    };
     //
-    //    class Interface : public SomeInterface() {
+    //    class Interface final : public SomeInterface() {
     //    protected:
     //        bool isLoaded = false;
     //

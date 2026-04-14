@@ -43,17 +43,17 @@ namespace PJ {
             return agents;
         }
 
-        TypeAgentGroup(size_t size = 100) :
-            agents(size, 0) {
+        TypeAgentGroup(size_t size, AgentPool::ResetFunc resetFunc) :
+            agents(size, resetFunc) {
             updatable.onUpdateFunc = [this](auto& updatable, auto time) {
                 // Give all agents update delta
-                RunAgentsAction([=](auto& agent) { agent.OnUpdate(time); });
+                ForAgents([=](auto& agent) { agent.OnUpdate(time); });
 
                 // For step-based simulation give all agents steps
                 if (stepTime > 0) {
                     stepTimer += time.delta;
                     while (stepTimer >= stepTime) {
-                        RunAgentsAction([](auto& agent) { agent.OnStep(); });
+                        ForAgents([](auto& agent) { agent.OnStep(); });
                         PostStep();
                         stepTimer -= stepTime;
                     }
@@ -65,25 +65,17 @@ namespace PJ {
 
         /// Adds agent to the pool or reuses it
         /// Important: don't store pointers to objects inside resizable pools, memory will move
-        Agent* Add() {
-            auto agent = agents.Add();
-            GUARDR(agent, nullptr)
-            agent->group = this;
+        std::optional<typename AgentPool::Getter> Add() {
+            auto getter = agents.Add();
+            GUARDR(getter, {})
+            getter->Get().group = this;
 
-            return agent;
+            return getter;
         }
 
         /// Run a function for all active agents
-        void RunAgentsAction(std::function<void(Agent&)> action) {
-            for (size_t i = 0; i <= agents.LastActiveIndex(); i++) {
-                try {
-                    auto& agent = agents.at(i);
-                    GUARD(agent.IsActive())
-                    action(agent);
-                } catch (...) {
-                    return;
-                }
-            }
+        void ForAgents(std::function<void(Agent&)> action) {
+            agents.ForActive(action);
         }
 
         /// (Optional). After each step, do any needed logic

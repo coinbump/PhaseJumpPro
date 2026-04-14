@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "SharedVectorList.h"
+#include "SpanVectorList.h"
 
 using namespace PJ;
 using namespace std;
@@ -9,19 +9,19 @@ namespace SharedVectorListTests {
 
 using namespace SharedVectorListTests;
 
-TEST(SharedVectorList, Vector)
+TEST(SpanVectorList, Vector)
 {
     std::vector<int> source{0, 3, 4};
-    SharedVectorList<int> sut(source);
-    EXPECT_FALSE(sut.IsShared());
+    SpanVectorList<int> sut(source);
+    EXPECT_FALSE(sut.IsSpan());
     EXPECT_EQ(3, sut.Modifiable().size());
 }
 
-TEST(SharedVectorList, Span)
+TEST(SpanVectorList, Span)
 {
     std::vector<int> source{0, 3, 4};
-    SharedVectorList<int> sut{std::span<int>(source)};
-    EXPECT_TRUE(sut.IsShared());
+    SpanVectorList<int> sut{std::span<int>(source)};
+    EXPECT_TRUE(sut.IsSpan());
 
     ASSERT_EQ(3, sut.Span().size());
     EXPECT_EQ(0, sut.Span()[0]);
@@ -33,14 +33,14 @@ TEST(SharedVectorList, Span)
     EXPECT_EQ(4, sut[2]);
 }
 
-TEST(SharedVectorList, SpanModifiable)
+TEST(SpanVectorList, SpanModifiable)
 {
     std::vector<int> source{0, 3, 4};
-    SharedVectorList<int> sut{std::span<int>(source)};
-    EXPECT_TRUE(sut.IsShared());
+    SpanVectorList<int> sut{std::span<int>(source)};
+    EXPECT_TRUE(sut.IsSpan());
 
     EXPECT_EQ(3, sut.Modifiable().size());
-    EXPECT_FALSE(sut.IsShared());
+    EXPECT_FALSE(sut.IsSpan());
 
     EXPECT_EQ(0, sut[0]);
     EXPECT_EQ(3, sut[1]);
@@ -48,10 +48,10 @@ TEST(SharedVectorList, SpanModifiable)
 }
 
 // Unavailable. At requires C++26
-//TEST(SharedVectorList, SpanAt)
+//TEST(SpanVectorList, SpanAt)
 //{
 //    std::vector<int> source{0, 3, 4};
-//    SharedVectorList<int> sut{std::span<int>(source)};
+//    SpanVectorList<int> sut{std::span<int>(source)};
 //    EXPECT_TRUE(sut.IsShared());
 //
 //    EXPECT_NO_THROW(sut.At(0));

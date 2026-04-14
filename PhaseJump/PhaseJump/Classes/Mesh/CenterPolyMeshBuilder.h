@@ -13,7 +13,7 @@
 namespace PJ {
     /// A mesh that can be defined by a center point at (0, 0) and a surrounding
     /// path Example: capsule, rounded rectangle, arc, ellipse, circle
-    class CenterPolyMeshBuilder : public SomeMeshBuilder {
+    class CenterPolyMeshBuilder final : public SomeMeshBuilder {
     public:
         Vector2 worldSize;
         CenterPolyModel model;

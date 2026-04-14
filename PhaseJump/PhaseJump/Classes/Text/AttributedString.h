@@ -44,19 +44,13 @@ namespace PJ {
         int attributeLength{};
 
         String fontName;
-        float fontSize;
+        float fontSize{};
 
         Color color;
 
         bool IsAttribute() const {
             return attributeLength > 0;
         }
-
-        // FUTURE: support inline images
-        // FUTURE: Image image;
-
-        // FUTURE: support paragraph styles + lookup
-        // String styleId;
     };
 
     /// Text with formatting attributes

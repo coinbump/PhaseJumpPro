@@ -5,7 +5,7 @@ namespace PJ {
     // PROBLEM: for Tower defense, need collisions, raycasting, and steering
 
     // Why do we need this? Just make it all static?
-    class ColorRendererClass : public SomeRendererClass {
+    class ColorRendererClass final : public SomeRendererClass {
         class ImGuiInspectorBuilder {
         public:
             template <class T>
@@ -69,7 +69,7 @@ namespace PJ {
             }
 
             template <class Type>
-            class ClassMirror : public SomeClassMirror {
+            class ClassMirror final : public SomeClassMirror {
 
                 Binding<Type> binding;
             };
@@ -113,7 +113,7 @@ namespace PJ {
         SomeCanvas{ public: virtual ~SomeCanvas(){} };
 
     public
-        ImageCanvas : public SomeCanvas {
+        ImageCanvas final : public SomeCanvas {
         public:
             /// Source of truth for the image
             SP<Bitmap> bitmap;
@@ -138,7 +138,7 @@ namespace PJ {
         };
 
         template <class CanvasType, class Core = Void>
-        public CanvasTool : public SomeCanvasTool {
+        public CanvasTool final : public SomeCanvasTool {
         public:
             Core core{};
 

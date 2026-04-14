@@ -74,7 +74,7 @@ namespace PJ {
     };
 
     /// Stores delay progress for delayed emit
-    class DelayedEmitModel : public SomeUpdatable {
+    class DelayedEmitModel final : public SomeUpdatable {
     public:
         EmitModel model;
         Updatable updatable;

@@ -13,7 +13,7 @@
  */
 namespace PJ {
     /// Sent after the window is resized
-    class WindowResizeUIEvent : public SomeSignal {
+    class WindowResizeUIEvent final : public SomeSignal {
     public:
         /// Logical size (not pixel size) of the window
         Vector2 size;

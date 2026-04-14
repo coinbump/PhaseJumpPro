@@ -21,7 +21,7 @@ namespace PJ {
 
     /// Stores the cached dependency after it is created
     template <class T>
-    class CachedDependency : public SomeDependency<T> {
+    class CachedDependency final : public SomeDependency<T> {
     public:
         using Type = T;
         using Value = SP<Type>;

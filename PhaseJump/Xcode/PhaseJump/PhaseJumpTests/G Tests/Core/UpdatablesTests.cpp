@@ -8,20 +8,25 @@ using namespace PJ;
 using namespace std;
 
 namespace UpdatablesTests {
-    class TestUpdatable : public Updatable
+    class TestUpdatable
     {
     public:
+        SP<Updatable> updatable = MAKE<Updatable>();
+        
         float finishTime = 0;
         float time = 0;
 
         TestUpdatable(float finishTime) : finishTime(finishTime) {
+            updatable->onUpdateFunc = [this](auto& updatable, auto time) {
+                this->time += time.delta;
+                bool isFinished = this->time >= this->finishTime;
+                
+                return isFinished ? FinishType::Finish : FinishType::Continue;
+            };
         }
 
-        FinishType OnUpdate(TimeSlice time) override {
-            this->time += time.delta;
-            isFinished = this->time >= finishTime;
-            
-            return isFinished ? FinishType::Finish : FinishType::Continue;
+        FinishType OnUpdate(TimeSlice time) {
+            return updatable->OnUpdate(time);
         }
     };
 }
@@ -33,26 +38,26 @@ TEST(Updatables, Toggles)
     auto u1 = MAKE<TestUpdatable>(1);
     auto u2 = MAKE<TestUpdatable>(2);
     Updatables sut;
-    sut.Add(u1);
-    sut.Add(u2);
+    sut.Add(u1->updatable);
+    sut.Add(u2->updatable);
 
     sut.OnUpdate(TimeSlice(0.5f));
-    EXPECT_FALSE(u1->IsFinished());
-    EXPECT_FALSE(u2->IsFinished());
+    EXPECT_FALSE(u1->updatable->IsFinished());
+    EXPECT_FALSE(u2->updatable->IsFinished());
     EXPECT_EQ(0.5f, u1->time);
     EXPECT_EQ(0.5f, u2->time);
     EXPECT_EQ(2, sut.Count());
 
     sut.OnUpdate(TimeSlice(0.5f));
-    EXPECT_TRUE(u1->IsFinished());
-    EXPECT_FALSE(u2->IsFinished());
+    EXPECT_TRUE(u1->updatable->IsFinished());
+    EXPECT_FALSE(u2->updatable->IsFinished());
     EXPECT_EQ(1.0f, u1->time);
     EXPECT_EQ(1.0f, u2->time);
     EXPECT_EQ(1, sut.Count());
 
     sut.OnUpdate(TimeSlice(1));
-    EXPECT_TRUE(u1->IsFinished());
-    EXPECT_TRUE(u2->IsFinished());
+    EXPECT_TRUE(u1->updatable->IsFinished());
+    EXPECT_TRUE(u2->updatable->IsFinished());
     EXPECT_EQ(1.0f, u1->time);
     EXPECT_EQ(2.0f, u2->time);
 }
@@ -62,16 +67,16 @@ TEST(Updatables, PointerDeallocates)
     auto u1 = MAKE<TestUpdatable>(1);
     auto u2 = MAKE<TestUpdatable>(2);
     Updatables sut;
-    sut.Add(u1);
-    sut.Add(u2);
+    sut.Add(u1->updatable);
+    sut.Add(u2->updatable);
 
     sut.OnUpdate(TimeSlice(0.5f));
     EXPECT_EQ(2, sut.Count());
 
-    u2.reset();
+    u2->updatable.reset();
 
     sut.OnUpdate(TimeSlice(0.5f));
-    EXPECT_TRUE(u1->IsFinished());
+    EXPECT_TRUE(u1->updatable->IsFinished());
     EXPECT_EQ(1, sut.Count());
 }
 
@@ -133,7 +138,7 @@ TEST(Updatables, AddDelay)
 
     EXPECT_EQ(0, updatable->time);
 
-    sut.AddDelay(2, updatable);
+    sut.AddWithDelay(2, updatable->updatable);
 
     sut.OnUpdate({2});
     EXPECT_EQ(0, updatable->time);

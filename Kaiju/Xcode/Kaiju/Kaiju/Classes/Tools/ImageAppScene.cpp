@@ -245,7 +245,7 @@ void ImageAppScene::LoadInto(WorldNode& root) {
 
 void ImageAppScene::RegisterOperationClasses() {
     operationClasses.Add(NEW<BitmapOperationClass>("flipV", "Flip vertical", []() {
-        return BitmapOperations::FlipV();
+        return BitmapOperations::FlipV(false);
     }));
 
     PJ::Log("Bitmap operations are registered");

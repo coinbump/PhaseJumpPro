@@ -52,7 +52,7 @@
 //         SP<SomePortGraphProcessor> processor;
 //     };
 //
-//     class TestPortGraphProcessor : public SomePortGraphProcessor {
+//     class TestPortGraphProcessor final : public SomePortGraphProcessor {
 //     public:
 //         void Process(PortEvaluation eval) override {
 //             // Get paint events

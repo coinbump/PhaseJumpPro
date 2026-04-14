@@ -80,10 +80,10 @@ namespace PJ {
         /// Environment variables (found by walking from child to root)
         Tags environment;
 
-        // If true, this view is in hover state
+        /// If true, this view is in hover state
         ObservedValue<bool> isHovering{ false };
 
-        // If true, this is a top level view (popover, alert, etc.)
+        /// If true, this is a top level view (popover, alert, etc.)
         bool isTopLevel{};
 
     public:
@@ -145,7 +145,7 @@ namespace PJ {
             SetNeedsLayout();
         }
 
-        Rect WithFrameConstraints(Rect frame) const;
+        Rect WithFrameConstraints(Rect const& frame) const;
         Vector2 WithPositionConstraints(Vector2 origin) const;
         Vector2 WithSizeConstraints(Vector2 size) const;
 
@@ -262,7 +262,7 @@ namespace PJ {
         VectorList<View2D*> TopLevelViews();
 
         /// Presents a top level view
-        void Present(PresentTopLevelViewConfig config);
+        void Present(PresentTopLevelViewConfig const& config);
 
         /// Dismisses a top level view
         void Dismiss(View2D& view);

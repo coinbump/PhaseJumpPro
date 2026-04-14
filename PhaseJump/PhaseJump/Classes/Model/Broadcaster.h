@@ -12,7 +12,7 @@
  */
 namespace PJ {
     /// Broadcaster sends messages to listeners.
-    class Broadcaster : public SomeBroadcaster {
+    class Broadcaster final : public SomeBroadcaster {
     public:
         using Base = SomeBroadcaster;
         using This = Broadcaster;

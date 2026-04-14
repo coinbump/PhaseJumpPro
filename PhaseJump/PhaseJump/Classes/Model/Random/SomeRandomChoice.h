@@ -22,7 +22,7 @@ namespace PJ {
 
     template <class Choice>
         requires std::integral<Choice> || std::floating_point<Choice>
-    class MinMaxRandomChoice : public SomeRandomChoice<Choice> {
+    class MinMaxRandomChoice final : public SomeRandomChoice<Choice> {
     public:
         Choice min;
         Choice max;
@@ -45,7 +45,7 @@ namespace PJ {
     using MinMaxFloatRandomChoice = MinMaxRandomChoice<float>;
 
     /// Generates value based on variance values
-    class VaryIntRandomChoice : public SomeRandomChoice<int> {
+    class VaryIntRandomChoice final : public SomeRandomChoice<int> {
     public:
         int value;
         int vary;
@@ -61,7 +61,7 @@ namespace PJ {
     };
 
     /// Generates value based on variance values
-    class VaryFloatRandomChoice : public SomeRandomChoice<float> {
+    class VaryFloatRandomChoice final : public SomeRandomChoice<float> {
     public:
         float value;
         float vary;

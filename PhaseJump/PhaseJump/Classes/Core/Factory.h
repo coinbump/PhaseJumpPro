@@ -31,7 +31,7 @@ namespace PJ {
 
     /// Uses allocator function for factory instantation
     template <class Type, typename... Arguments>
-    class Factory : public SomeFactory<typename Type::RootBaseType, Arguments...> {
+    class Factory final : public SomeFactory<typename Type::RootBaseType, Arguments...> {
     protected:
         using BaseType = Type::RootBaseType;
 

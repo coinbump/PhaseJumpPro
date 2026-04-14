@@ -14,7 +14,7 @@ namespace PJ {
 
     /// Uses cartesian coordinates (center is 0,0). X increases right. Y
     /// increases up
-    class OrthoCamera : public Camera {
+    class OrthoCamera final : public Camera {
     public:
         using Base = Camera;
 

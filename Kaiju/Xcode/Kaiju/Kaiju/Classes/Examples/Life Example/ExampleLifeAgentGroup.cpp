@@ -6,7 +6,7 @@ using namespace PJ;
 using namespace Example::Life;
 
 Example::Life::AgentGroup::AgentGroup(MatrixRenderer* matrixView) :
-    Base(matrixView->matrix.Count()),
+    Base(matrixView->matrix.Count(), [](auto& p) {}),
     matrixView(matrixView) {
     stepTime = 0.1f;
 }
@@ -14,7 +14,7 @@ Example::Life::AgentGroup::AgentGroup(MatrixRenderer* matrixView) :
 void Example::Life::AgentGroup::PostStep() {
     Base::PostStep();
 
-    RunAgentsAction([](auto& agent) { agent.core.isAlive = agent.core.nextIsAlive; });
+    ForAgents([](auto& agent) { agent.core.isAlive = agent.core.nextIsAlive; });
     matrixView->PostStep();
 }
 

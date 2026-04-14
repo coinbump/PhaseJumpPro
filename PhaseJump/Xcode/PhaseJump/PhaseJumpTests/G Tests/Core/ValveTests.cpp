@@ -5,11 +5,13 @@ using namespace PJ;
 using namespace std;
 
 namespace ValveTests {
-    class TestValve : public Valve
+    class TestValve
     {
     public:
-        TestValve(bool isOn, float& progress) : Valve(isOn) {
-            SetOnValveUpdateFunc([&](auto& valve) {
+        Valve valve;
+        
+        TestValve(bool isOn, float& progress) : valve(isOn) {
+            valve.SetOnValveUpdateFunc([&](auto& valve) {
                 progress = valve.Value();
             });
         }
@@ -23,13 +25,13 @@ TEST(Valve, Init)
     {
         float progress{};
         TestValve sut(true, progress);
-        EXPECT_TRUE(sut.IsOn());
+        EXPECT_TRUE(sut.valve.IsOn());
         EXPECT_EQ(1, progress);
     }
     {
         float progress{};
         TestValve sut(false, progress);
-        EXPECT_FALSE(sut.IsOn());
+        EXPECT_FALSE(sut.valve.IsOn());
         EXPECT_EQ(0, progress);
     }
 }
@@ -38,21 +40,21 @@ TEST(Valve, TurnOnWhenOff)
 {
     float progress{};
     TestValve sut(false, progress);
-    EXPECT_FALSE(sut.IsOn());
+    EXPECT_FALSE(sut.valve.IsOn());
 
-    sut.TurnOn(2);
-    EXPECT_EQ(Valve::StateType::TurnOn, sut.State());
-    EXPECT_EQ(0, sut.Value());
+    sut.valve.TurnOn(2);
+    EXPECT_EQ(Valve::StateType::TurnOn, sut.valve.State());
+    EXPECT_EQ(0, sut.valve.Value());
 
-    sut.OnUpdate({1});
-    EXPECT_EQ(0.5f, sut.Value());
+    sut.valve.OnUpdate({1});
+    EXPECT_EQ(0.5f, sut.valve.Value());
     EXPECT_EQ(0.5f, progress);
 
-    sut.OnUpdate({1});
-    EXPECT_EQ(1.0f, sut.Value());
+    sut.valve.OnUpdate({1});
+    EXPECT_EQ(1.0f, sut.valve.Value());
     EXPECT_EQ(1.0f, progress);
 
-    EXPECT_TRUE(sut.IsOn());
+    EXPECT_TRUE(sut.valve.IsOn());
 }
 
 TEST(Valve, TurnOnInterruptTurnOff)
@@ -139,11 +141,11 @@ TEST(Valve, TurnOnImmediate)
 {
     float progress{};
     TestValve sut(false, progress);
-    EXPECT_FALSE(sut.IsOn());
+    EXPECT_FALSE(sut.valve.IsOn());
 
-    sut.TurnOn(0);
-    EXPECT_EQ(Valve::StateType::On, sut.State());
-    EXPECT_EQ(1, sut.Value());
+    sut.valve.TurnOn(0);
+    EXPECT_EQ(Valve::StateType::On, sut.valve.State());
+    EXPECT_EQ(1, sut.valve.Value());
     EXPECT_EQ(1, progress);
 }
 
@@ -151,10 +153,10 @@ TEST(Valve, TurnOffImmediate)
 {
     float progress{};
     TestValve sut(true, progress);
-    EXPECT_TRUE(sut.IsOn());
+    EXPECT_TRUE(sut.valve.IsOn());
 
-    sut.TurnOff(0);
-    EXPECT_EQ(Valve::StateType::Off, sut.State());
-    EXPECT_EQ(0, sut.Value());
+    sut.valve.TurnOff(0);
+    EXPECT_EQ(Valve::StateType::Off, sut.valve.State());
+    EXPECT_EQ(0, sut.valve.Value());
     EXPECT_EQ(0, progress);
 }

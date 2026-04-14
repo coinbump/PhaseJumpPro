@@ -8,7 +8,7 @@
  CODE REVIEW: 9/21/24
  */
 namespace PJ {
-    class SDLMouseDevice : public SomeMouseDevice {
+    class SDLMouseDevice final : public SomeMouseDevice {
     public:
         SDLMouseDevice() {}
 

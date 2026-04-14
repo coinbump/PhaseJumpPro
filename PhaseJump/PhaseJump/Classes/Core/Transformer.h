@@ -23,7 +23,7 @@ namespace PJ {
 
     /// Wraps a transform func with state
     template <class Core, class Input, class Output = Input>
-    class Transformer : public SomeTransformer<Input, Output> {
+    class Transformer final : public SomeTransformer<Input, Output> {
     public:
         using Base = SomeTransformer<Input, Output>;
         using This = Transformer<Core, Input, Output>;

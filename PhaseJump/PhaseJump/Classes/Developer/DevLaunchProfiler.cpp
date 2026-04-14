@@ -9,7 +9,7 @@ using namespace PJ;
 VectorList<uint32_t> const triangles{ 0, 1, 2, 1, 3, 2 };
 VectorList<Vector2> const uvs{ Vector2(0, 0), Vector2(1, 0), Vector2(0, 1), Vector2(1, 1) };
 
-class QuadMeshBuilderA : public SomeMeshBuilder {
+class QuadMeshBuilderA final : public SomeMeshBuilder {
 public:
     Vector2 worldSize{ 10.0f, 10.0f };
 
@@ -30,7 +30,7 @@ public:
     }
 };
 
-class QuadMeshBuilderB : public SomeMeshBuilder {
+class QuadMeshBuilderB final : public SomeMeshBuilder {
 public:
     Vector2 worldSize{ 10.0f, 10.0f };
 

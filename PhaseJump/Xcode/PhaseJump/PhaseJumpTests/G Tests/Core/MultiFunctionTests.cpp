@@ -6,10 +6,11 @@ using namespace PJ;
 using namespace std;
 
 namespace MultiFunctionTests {
-    class TestMultiFunction : public MultiFunction<String(VectorList<int>&, int, float)>
+    class TestMultiFunction
     {
     public:
         VectorList<int> values;
+        MultiFunction<String(VectorList<int>&, int, float)> multiFunction;
 
         TestMultiFunction()
         {
@@ -24,14 +25,17 @@ namespace MultiFunctionTests {
 
                 return MakeString(total);
             };
-            funcs.push_back(func);
-            funcs.push_back(func);
+            IncrementingIdentifier identifier;
+            multiFunction.Add(identifier.Next(), func);
+            multiFunction.Add(identifier.Next(), func);
         }
     };
 
-    class TestMultiFunctionVoid : public MultiFunction<void(int, String&)>
+    class TestMultiFunctionVoid
     {
     public:
+        MultiFunction<void(int, String&)> multiFunction;
+        
         TestMultiFunctionVoid()
         {
         }
@@ -40,8 +44,9 @@ namespace MultiFunctionTests {
             auto func = [](int value, String& result) {
                 result += MakeString(value);
             };
-            funcs.push_back(func);
-            funcs.push_back(func);
+            IncrementingIdentifier identifier;
+            multiFunction.Add(identifier.Next(), func);
+            multiFunction.Add(identifier.Next(), func);
         }
     };
 }
@@ -52,14 +57,28 @@ TEST(MultiFunction, Tests)
 {
     TestMultiFunction sut;
     sut.Configure();
-    sut.reducer = [](String const& first, String next) -> String {
+    sut.multiFunction.reducer = [](String const& first, String next) -> String {
         String firstValue = first;
         return firstValue + next;
     };
-    auto result = sut.Run(sut.values, 3, 5.0f);
+    auto result = sut.multiFunction.Run(sut.values, 3, 5.0f);
     EXPECT_EQ("88", result);
-    EXPECT_EQ(4, sut.values.size());
     VectorList<int> expectedValues{3, 5, 3, 5};
+    EXPECT_EQ(expectedValues, sut.values);
+}
+
+TEST(MultiFunction, Remove)
+{
+    TestMultiFunction sut;
+    sut.Configure();
+    sut.multiFunction.Remove("1");
+    sut.multiFunction.reducer = [](String const& first, String next) -> String {
+        String firstValue = first;
+        return firstValue + next;
+    };
+    auto result = sut.multiFunction.Run(sut.values, 3, 5.0f);
+    EXPECT_EQ("8", result);
+    VectorList<int> expectedValues{3, 5};
     EXPECT_EQ(expectedValues, sut.values);
 }
 
@@ -68,11 +87,11 @@ TEST(MultiFunction, Empty)
     TestMultiFunction sut;
     
     // This reducer should not be called
-    sut.reducer = [](String const& first, String next) -> String {
+    sut.multiFunction.reducer = [](String const& first, String next) -> String {
         String firstValue = first;
         return firstValue + next;
     };
-    auto result = sut.Run(sut.values, 3, 5.0f);
+    auto result = sut.multiFunction.Run(sut.values, 3, 5.0f);
     EXPECT_EQ("", result);
     EXPECT_EQ(0, sut.values.size());
     VectorList<int> expectedValues;
@@ -85,7 +104,19 @@ TEST(MultiFunction, VoidSpecialization)
     sut.Configure();
     int value = 11;
     String result;
-    sut.Run(value, result);
+    sut.multiFunction.Run(value, result);
 
     EXPECT_EQ(MakeString(value) + MakeString(value), result);
+}
+
+TEST(MultiFunction, VoidRemove)
+{
+    TestMultiFunctionVoid sut;
+    sut.Configure();
+    sut.multiFunction.Remove("1");
+    int value = 11;
+    String result;
+    sut.multiFunction.Run(value, result);
+
+    EXPECT_EQ(MakeString(value), result);
 }

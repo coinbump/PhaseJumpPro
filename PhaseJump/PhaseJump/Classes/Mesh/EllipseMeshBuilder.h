@@ -10,7 +10,7 @@
  */
 namespace PJ {
     /// Renders an ellipse
-    class EllipseMeshBuilder : public SomeMeshBuilder {
+    class EllipseMeshBuilder final : public SomeMeshBuilder {
     public:
         Angle angleStep{ { .degrees = 10 } };
         Vector2 worldSize{ 1, 1 };

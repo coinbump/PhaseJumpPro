@@ -21,7 +21,7 @@ namespace PJ {
     };
 
     template <class Core>
-    struct RenderCommandModel : public SomeRenderCommandModel {
+    struct RenderCommandModel final : public SomeRenderCommandModel {
         using Base = SomeRenderCommandModel;
 
         Core core{};

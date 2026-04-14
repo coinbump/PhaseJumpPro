@@ -12,7 +12,7 @@ namespace PJ {
     class Goal;
 
     /// Event: goal has been completed
-    class GoalCompleteEvent : public SomeSignal {
+    class GoalCompleteEvent final : public SomeSignal {
     public:
         SP<Goal> goal;
 

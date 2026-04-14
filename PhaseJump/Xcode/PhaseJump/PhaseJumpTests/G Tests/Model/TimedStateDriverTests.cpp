@@ -12,17 +12,17 @@ namespace TimedStateDriverTests {
         Test2
     };
 
-    class TestStateDriver : public TimedStateDriver<TestEnum>
+    class TestStateDriver
     {
     public:
-        using Base = TimedStateDriver<TestEnum>;
+        TimedStateDriver<TestEnum> driver;
 
         int test1Count{};
         int test2Count{};
         int finishedCount{};
 
-        TestStateDriver(StateMachine<TestEnum>& target) : Base(target) {
-            onStateFinishFunc = [&](auto& driver) {
+        TestStateDriver(StateMachine<TestEnum>& target) : driver(target) {
+            driver.onStateFinishFunc = [&](auto& driver) {
                 finishedCount++;
             };
 
@@ -59,13 +59,13 @@ TEST(TimedStateDriver, Test_TimedStateDriver)
     target.SetState(TestEnum::Test1);
     EXPECT_EQ(1, sut.test1Count);
 
-    sut.SetStateDuration(1.0f);
-    sut.OnUpdate(TimeSlice(1.5f));
+    sut.driver.SetStateDuration(1.0f);
+    sut.driver.OnUpdate(TimeSlice(1.5f));
     EXPECT_EQ(sut.finishedCount, 1);
-    sut.ResetStateTimer();
-    sut.OnUpdate(TimeSlice(.5f));
-    EXPECT_NEAR(.5f, sut.StateProgress(), .001f);
-    sut.OnUpdate(TimeSlice(.6f));
+    sut.driver.ResetStateTimer();
+    sut.driver.OnUpdate(TimeSlice(.5f));
+    EXPECT_NEAR(.5f, sut.driver.StateProgress(), .001f);
+    sut.driver.OnUpdate(TimeSlice(.6f));
     EXPECT_EQ(sut.finishedCount, 2);
 
     target.SetState(TestEnum::Test2);

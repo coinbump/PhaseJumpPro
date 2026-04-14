@@ -12,7 +12,7 @@
 namespace PJ {
     /// Drives the states in a state machine by giving each state a duration
     template <class StateType>
-    class TimedStateDriver : public SomeUpdatable {
+    class TimedStateDriver final : public SomeUpdatable {
     protected:
         /// Time in the current state since the last state transition
         float timeInState = 0;

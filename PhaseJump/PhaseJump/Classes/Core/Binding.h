@@ -17,7 +17,7 @@ namespace PJ {
 
     /// Binding that gets and sets values via function
     template <class T>
-    class Binding : public SomeBinding<T> {
+    class Binding final : public SomeBinding<T> {
     public:
         using Base = SomeBinding<T>;
         using This = Binding;

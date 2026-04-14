@@ -10,7 +10,7 @@
  */
 namespace PJ {
     /// Builds a grid of lines mesh to display a matrix
-    class GridMeshBuilder : public SomeMeshBuilder {
+    class GridMeshBuilder final : public SomeMeshBuilder {
     public:
         Vector2 worldSize;
         Vector2Int gridSize;

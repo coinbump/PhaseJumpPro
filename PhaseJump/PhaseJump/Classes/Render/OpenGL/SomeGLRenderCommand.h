@@ -21,7 +21,7 @@ namespace PJ {
 
     /// OpenGL render command
     template <class Core>
-    struct GLRenderCommand : public SomeGLRenderCommand {
+    struct GLRenderCommand final : public SomeGLRenderCommand {
         using This = GLRenderCommand<Core>;
 
         using RunFunc = std::function<void(This&, GLRenderEngine&)>;

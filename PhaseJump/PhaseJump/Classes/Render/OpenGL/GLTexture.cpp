@@ -1,4 +1,5 @@
 #include "GLTexture.h"
+#include "BitmapOperations.h"
 
 using namespace std;
 using namespace PJ;
@@ -7,6 +8,16 @@ GLTexture::GLTexture(Config const& config) :
     Base(config) {
     if (config.bitmap) {
         auto& bitmap = *config.bitmap;
+
+        bool flip = false;
+
+        switch (bitmap.orientation) {
+        case BitmapOrientation::Flip:
+            break;
+        case BitmapOrientation::Standard:
+            flip = true;
+            BitmapOperations::FlipV(false)->Run(bitmap);
+        }
 
         // http://www.sdltutorials.com/sdl-tip-sdl-surface-to-opengl-texture
         renderId = 0;
@@ -40,6 +51,10 @@ GLTexture::GLTexture(Config const& config) :
 
         size = bitmap.Size();
         untrimmedSize = size;
+
+        if (flip) {
+            BitmapOperations::FlipV(false)->Run(bitmap);
+        }
     } else {
         SetTextureMagnification(config.textureMagnification);
     }

@@ -5,95 +5,121 @@
 #include "Utils.h"
 #include "VectorList.h"
 #include <functional>
+#include <stack>
 
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 9/8/24
+ CODE REVIEW: 4/13/26
  */
 namespace PJ {
-    class Poolable {
+    /// Wraps access to a items
+    template <class Type>
+    class SomeGetter {
     public:
-        using ResetFunc = std::function<void(Poolable&)>;
+        virtual ~SomeGetter() {}
 
-    protected:
-        bool isActive = false;
+        virtual Type Get() const = 0;
 
-    public:
-        // Used for pool remove
-        size_t index = 0;
-
-        ResetFunc resetFunc;
-
-        bool IsActive() const {
-            return isActive;
-        }
-
-        void SetIsActive(bool value) {
-            GUARD(isActive != value)
-            isActive = value;
-
-            // When re-activating a poolable object, it gets reset for reuse
-            GUARD(isActive)
-            Reset();
-        }
-
-        void Reset() {
-            GUARD(resetFunc)
-            resetFunc(*this);
+        operator Type() const {
+            return Get();
         }
     };
 
     /// List of objects that can be re-used, so we don't have the cost of allocation and
     /// de-allocation. Used in systems with large numbers of objects. Example: simulations, particle
     /// emitters
-    template <std::derived_from<Poolable> Type>
-    class Pool {
+    template <class Type>
+    class Pool final {
+    public:
+        using ResetFunc = std::function<void(Type&)>;
+
+        ResetFunc resetFunc;
+
+        DELETE_COPY(Pool)
+        DELETE_MOVE(Pool)
+
+        class Getter : public SomeGetter<Type&> {
+        public:
+            using This = Getter;
+
+            friend class Pool<Type>;
+
+        protected:
+            Pool<Type>& pool;
+            size_t index{};
+
+        public:
+            Getter(Pool<Type>& pool, size_t index) :
+                pool(pool),
+                index(index) {}
+
+            // MARK: SomeGetter
+
+            Type& Get() const override {
+                return pool.items[index].value;
+            }
+        };
+
+        class Item {
+        public:
+            Type value;
+            bool isActive{};
+        };
+
     protected:
-        int64_t lastActiveIndex = -1;
         size_t activeCount = 0;
 
-        VectorList<UP<Type>> value;
-        UnorderedSet<size_t> inactiveAvailable;
+        VectorList<Item> items;
+        std::stack<size_t> inactiveAvailable;
 
     public:
-        /// (Optional). If > 0 indicates the max size for this pool
-        size_t maxSize = 0;
+        Pool(size_t size, ResetFunc resetFunc) :
+            items(size),
+            resetFunc(resetFunc) {}
 
-        Pool(size_t size, size_t maxSize = 0) :
-            value(size),
-            maxSize(maxSize) {}
+        /// @return Returns the max index possible after the final active element
+        size_t ActiveScanEnd() const {
+            return activeCount + inactiveAvailable.size();
+        }
 
         /// @return Returns the element at the specified index, or throws an exception if it is not
         /// available
         Type const& at(size_t index) const {
             GUARD_THROW(
-                index >= 0 && index <= lastActiveIndex && index < value.size() && value[index],
+                index < items.size() && items[index].isActive,
                 std::out_of_range("Invalid pool index")
             )
-            return *value[index];
+            return items[index].value;
         }
 
         /// @return Returns the element at the specified index, or throws an exception if it is not
         /// available
         Type& at(size_t index) {
             GUARD_THROW(
-                index >= 0 && index <= lastActiveIndex && index < value.size() && value[index],
+                index < items.size() && items[index].isActive,
                 std::out_of_range("Invalid pool index")
             )
-            return *value[index];
+            return items[index].value;
         }
 
-        int64_t LastActiveIndex() const {
-            return lastActiveIndex;
+        void ForActive(std::function<void(Type&)> action) {
+            GUARD(action)
+
+            auto activeEnd = ActiveScanEnd();
+            for (size_t i = 0; i < activeEnd && i < items.size(); i++) {
+                Item& item = items[i];
+                GUARD_CONTINUE(item.isActive)
+                action(item.value);
+            }
         }
 
-        VectorList<UP<Type>> const& Value() {
-            return value;
+        VectorList<Item> const& Items() const {
+            return items;
         }
 
-        size_t PoolSize() const {
-            return value.size();
+        size_t Size() const {
+            return items.size();
         }
 
         size_t ActiveCount() const {
@@ -105,66 +131,76 @@ namespace PJ {
         }
 
         /// Adds item to the pool or reuses it
-        Type* Add() {
-            auto firstInactiveIndex = this->lastActiveIndex + 1;
+        std::optional<Getter> Add() {
+            auto firstInactiveIndex = activeCount;
 
             if (inactiveAvailable.size() > 0) {
-                firstInactiveIndex = *inactiveAvailable.begin();
-                inactiveAvailable.erase(firstInactiveIndex);
+                firstInactiveIndex = inactiveAvailable.top();
+                inactiveAvailable.pop();
             }
 
-            /// Grow pool as needed, up to max size
-            if (firstInactiveIndex >= value.size()) {
-                size_t newSize = value.size() * 2;
-                if (maxSize > 0) {
-                    value.resize(std::min(maxSize, newSize));
-                } else {
-                    value.resize(newSize);
-                }
-            }
+            GUARDR(firstInactiveIndex < items.size(), {})
 
-            GUARDR(firstInactiveIndex < value.size(), nullptr)
+            SetIsActive(firstInactiveIndex, true);
 
-            if (nullptr == value[firstInactiveIndex]) {
-                value[firstInactiveIndex] = NEW<Type>();
-            }
-            value[firstInactiveIndex]->SetIsActive(true);
-            value[firstInactiveIndex]->index = firstInactiveIndex;
-            activeCount++;
-
-            lastActiveIndex = std::max(lastActiveIndex, (int64_t)firstInactiveIndex);
-
-            return value[firstInactiveIndex].get();
+            return Getter(*this, firstInactiveIndex);
         }
 
-        void Remove(Type* typeValue) {
-            GUARD(typeValue)
-            Remove(*typeValue);
+        std::optional<Getter> Add(Type const& value) {
+            auto result = Add();
+            GUARDR(result, {})
+
+            result->Get() = value;
+            return result;
         }
 
-        void Remove(Type typeValue) {
-            RemoveAt(typeValue.index);
+        void Remove(std::optional<Getter> const& getter) {
+            GUARD(getter)
+            RemoveAt(getter->index);
+        }
+
+        void Remove(Getter const& getter) {
+            RemoveAt(getter.index);
         }
 
         void RemoveAt(size_t index) {
-            GUARD(index >= 0 && index < value.size())
-            GUARD(value[index]->IsActive())
+            GUARD(index < items.size())
+            GUARD(items[index].isActive)
 
-            value[index]->SetIsActive(false);
-            inactiveAvailable.insert(index);
-            activeCount--;
+            SetIsActive(index, false);
+            inactiveAvailable.push(index);
+        }
 
-            GUARD(lastActiveIndex == index)
+        bool IsActive(size_t index) const {
+            GUARDR(index < items.size(), false)
+            return items[index].isActive;
+        }
 
-            // We removed the element for lastActiveIndex, so update it
-            int64_t newLastActiveIndex = -1;
-            for (int64_t i = index - 1; i >= 0; i--) {
-                if (value[i]->IsActive()) {
-                    newLastActiveIndex = i;
-                    break;
-                }
+    protected:
+        void SetIsActive(size_t index, bool value) {
+            GUARD(index < items.size())
+
+            auto isActive = IsActive(index);
+
+            GUARD(isActive != value)
+            items[index].isActive = value;
+
+            if (value) {
+                activeCount++;
+            } else {
+                activeCount--;
             }
-            lastActiveIndex = newLastActiveIndex;
+
+            GUARD(value)
+            Reset(items[index]);
+        }
+
+        void Reset(Item& item) {
+            GUARD(resetFunc)
+
+            try {
+                resetFunc(item.value);
+            } catch (...) {}
         }
     };
 } // namespace PJ

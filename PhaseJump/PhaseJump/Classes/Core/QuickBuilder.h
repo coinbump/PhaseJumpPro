@@ -462,7 +462,7 @@ namespace PJ {
         AnimateStartEnd(Type startValue, Type endValue, MakeAnimatorFunc<Type, WorldNode&> maker) {
             auto& node = Node();
             auto animator = maker(startValue, endValue, node);
-            node.updatables.AddDelay(std::max(0.0f, AnimateState().delay), std::move(animator));
+            node.updatables.AddWithDelay(std::max(0.0f, AnimateState().delay), std::move(animator));
             return *this;
         }
 
@@ -471,7 +471,7 @@ namespace PJ {
         AnimateCycle(Type startValue, Type endValue, MakeAnimatorFunc<Type, WorldNode&> maker) {
             auto& node = Node();
             auto animator = maker(startValue, endValue, node);
-            node.updatables.AddDelay(std::max(0.0f, AnimateState().delay), std::move(animator));
+            node.updatables.AddWithDelay(std::max(0.0f, AnimateState().delay), std::move(animator));
             return *this;
         }
 

@@ -18,26 +18,30 @@ using namespace AgentGroupTests;
 
 TEST(AgentGroup, Test)
 {
-    TypeAgentGroup<TestAgent> sut;
+    TypeAgentGroup<TestAgent> sut{100, [](auto& item) {
+        item.core = {};
+    }};
     auto first = sut.Add();
-    first->onUpdateFunc = [](auto& p, TimeSlice time) {
+    ASSERT_TRUE(first);
+    
+    (*first).Get().onUpdateFunc = [](auto& p, TimeSlice time) {
         p.core.timeValue += time.delta;
     };
-    first->onStepFunc = [](auto& p) {
+    (*first).Get().onStepFunc = [](auto& p) {
         p.core.stepCount++;
     };
-    ASSERT_NE(nullptr, first);
-    EXPECT_EQ(&sut, first->group);
+    ASSERT_TRUE(first);
+    EXPECT_EQ(&sut, (*first).Get().group);
 
-    EXPECT_EQ(0, first->core.intValue);
-    sut.RunAgentsAction([](auto& agent) {
+    EXPECT_EQ(0, (*first).Get().core.intValue);
+    sut.ForAgents([](auto& agent) {
         agent.core.intValue++;
     });
-    EXPECT_EQ(1, first->core.intValue);
+    EXPECT_EQ(1, (*first).Get().core.intValue);
 
     sut.stepTime = 3;
 
     sut.OnUpdate({3});
-    EXPECT_EQ(3, first->core.timeValue);
-    EXPECT_EQ(1, first->core.stepCount);
+    EXPECT_EQ(3, (*first).Get().core.timeValue);
+    EXPECT_EQ(1, (*first).Get().core.stepCount);
 }

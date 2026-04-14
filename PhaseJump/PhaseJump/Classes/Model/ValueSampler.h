@@ -11,7 +11,7 @@
 namespace PJ {
     /// Samples values in update and keeps the most recent samples, discarding the old ones
     template <class Type>
-    class ValueSampler : public SomeUpdatable {
+    class ValueSampler final : public SomeUpdatable {
     public:
         using GetFunc = std::function<Type()>;
 

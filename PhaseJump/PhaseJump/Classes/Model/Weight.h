@@ -29,7 +29,7 @@ namespace PJ {
 
     /// Specifies the fixed weight of a random event
     template <class Choice>
-    class Weight : public SomeWeight<Choice> {
+    class Weight final : public SomeWeight<Choice> {
     public:
         using Base = SomeWeight<Choice>;
         using This = Weight;
@@ -60,7 +60,7 @@ namespace PJ {
 
     /// Specifies the weight of a random event dynamically
     template <class Choice>
-    class DynamicWeight : public SomeWeight<Choice> {
+    class DynamicWeight final : public SomeWeight<Choice> {
     public:
         using Base = SomeWeight<Choice>;
         using This = DynamicWeight<Choice>;

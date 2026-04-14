@@ -13,7 +13,7 @@
 namespace PJ {
     /// A simulation contains agents, each agent is responsible for its own localized logic
     /// For convenience, agents can be divided into Agent Groups
-    class AgentSystem : public SomeUpdatable {
+    class AgentSystem final : public SomeUpdatable {
     public:
         using GroupList = VectorList<SP<AgentGroup>>;
 

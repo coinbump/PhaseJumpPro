@@ -10,7 +10,7 @@
  */
 namespace PJ {
     /// Model that defines a circle path
-    class CirclePath : public SomePath {
+    class CirclePath final : public SomePath {
     public:
         float radius = 0;
 

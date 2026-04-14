@@ -11,7 +11,7 @@
 namespace PJ {
     /// Holds weak reference to object
     template <class T>
-    struct WeakReference : public SomeReference<T> {
+    struct WeakReference final : public SomeReference<T> {
     protected:
         WP<T> value;
 

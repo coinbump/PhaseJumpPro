@@ -132,7 +132,7 @@ TEST(Bitmap, FlipV)
     sut.SetPixelColor(Vector2Int(0, 1), Color::blue);
     sut.SetPixelColor(Vector2Int(1, 1), Color::white);
 
-    auto flipVOperation = BitmapOperations::FlipV();
+    auto flipVOperation = BitmapOperations::FlipV(false);
     flipVOperation->Run(sut);
     
     {

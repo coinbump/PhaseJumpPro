@@ -11,7 +11,7 @@
  */
 namespace PJ {
     /// Animates frames using a time track with frame values
-    class FramePlayable : public SomeFramePlayable {
+    class FramePlayable final : public SomeFramePlayable {
     public:
         using Base = SomeFramePlayable;
         using This = FramePlayable;
@@ -43,12 +43,13 @@ namespace PJ {
         // MARK: SomeFramePlayable
 
         /// @return Returns the frame rate for fixed rate animations
+        /// TODO: BUG: DOES NOT WORK, because we switched to timelines
         float FrameRate() const override {
             return frameRate;
         }
 
         /// Set the frame rate for fixed rate animations
-        /// BUG: DOES NOT WORK, because we switched to timelines
+        /// TODO: BUG: DOES NOT WORK, because we switched to timelines
         void SetFrameRate(float value) override {
             frameRate = value;
 

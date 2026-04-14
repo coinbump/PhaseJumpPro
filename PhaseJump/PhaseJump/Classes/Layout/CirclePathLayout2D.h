@@ -8,7 +8,7 @@
 
 /*
  RATING: 5 stars
- Tested and works
+ Has unit tests
  CODE REVIEW: 9/14/24
  */
 namespace PJ {

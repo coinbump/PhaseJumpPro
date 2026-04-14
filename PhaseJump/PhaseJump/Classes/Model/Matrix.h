@@ -21,7 +21,7 @@ namespace PJ {
 
     /// Stores objects in an x-by-y matrix structure
     template <class Cell>
-    class Matrix : public SomeMatrix {
+    class Matrix final : public SomeMatrix {
     protected:
         VectorList<Cell> cells;
         Vector2Int size;
@@ -170,9 +170,10 @@ namespace PJ {
 
         /// Sets the cell value
         void SetCell(Vector2Int loc, Cell value) {
-            GUARD(IsValidLocation(loc))
+            auto index = LocToIndex(loc);
+            GUARD_THROW(index, std::out_of_range("Invalid cell loc"))
 
-            CellAt(loc) = value;
+            cells[*index] = value;
         }
 
         void SetAllCells(Cell value) {

@@ -28,7 +28,7 @@ namespace PJ {
     };
 
     template <class Core = Void>
-    class Command : public SomeCommand {
+    class Command final : public SomeCommand {
     public:
         using This = Command<Core>;
         using Base = SomeCommand;

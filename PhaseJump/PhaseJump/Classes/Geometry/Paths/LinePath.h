@@ -9,7 +9,7 @@
  */
 namespace PJ {
     /// Model that defines a line path
-    class LinePath : public SomePath {
+    class LinePath final : public SomePath {
     public:
         Vector3 start;
         Vector3 end;

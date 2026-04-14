@@ -14,7 +14,7 @@ namespace PJ {
 
     /// Stored value backing for a publisher
     template <typename Output>
-    struct ValueSimpleSubject : public SomeSimpleSubject<Output> {
+    struct ValueSimpleSubject final : public SomeSimpleSubject<Output> {
         using Base = SomeSimpleSubject<Output>;
 
     protected:

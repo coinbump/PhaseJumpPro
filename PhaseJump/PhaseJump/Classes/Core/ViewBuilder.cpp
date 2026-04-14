@@ -567,7 +567,9 @@ World* ViewBuilder::GetWorld() const {
 }
 
 DesignSystem* ViewBuilder::GetDesignSystem() const {
-    return QB().Node().World()->designSystem.get();
+    auto world = GetWorld();
+    GUARDR(world, {})
+    return world->designSystem.get();
 }
 
 This& ViewBuilder::RadioButtonGroup(RadioButtonGroupConfig config) {

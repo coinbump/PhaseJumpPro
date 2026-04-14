@@ -9,6 +9,7 @@
  CODE REVIEW: 9/25/24
  */
 namespace PJ {
+    // TODO: this shouldn't be Some, it descends from non-abstract Playable
     /// Animates a frame value (for frame animations)
     class SomeFramePlayable : public Playable {
     public:

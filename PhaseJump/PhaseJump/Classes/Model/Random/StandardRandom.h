@@ -11,7 +11,7 @@
 namespace PJ {
     /// The default random number generator
     /// This references a global static generator, so it's ok to make copies
-    class StandardRandom : public SomeRandom {
+    class StandardRandom final : public SomeRandom {
     public:
         // FUTURE: evaluate different random number generators and seeds
 

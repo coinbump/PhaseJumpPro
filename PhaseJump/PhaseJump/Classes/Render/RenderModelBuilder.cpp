@@ -14,8 +14,11 @@ PJ::UVTransformFunc UVTransformFuncs::textureCoordinates = [](Texture& texture,
                                                               VectorList<Vector2>& uvs) {
     // FUTURE: support rotated textures
     std::transform(uvs.begin(), uvs.end(), uvs.begin(), [=](Vector2 uv) {
-        uv *= texture.NormalSize();
-        uv += texture.NormalOrigin();
+        auto normalSize = texture.NormalSize();
+        uv *= normalSize;
+
+        auto normalOrigin = texture.NormalOrigin();
+        uv += { normalOrigin.x, 1.0f - normalOrigin.y - normalSize.y };
         return uv;
     });
 };

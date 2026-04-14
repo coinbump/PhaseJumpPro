@@ -40,6 +40,10 @@ namespace PJ {
             ApplyLayout();
         }
 
+        bool NeedsLayout() const {
+            return needsLayout;
+        }
+
         void SetNeedsLayout() {
             needsLayout = true;
         }

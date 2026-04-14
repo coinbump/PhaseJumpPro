@@ -8,7 +8,7 @@ using namespace PJ;
 using namespace std;
 
 namespace WorldAttachmentCoreTests {
-    class TestSignal : public SomeSignal {
+    class TestSignal final : public SomeSignal {
         
     };
 }

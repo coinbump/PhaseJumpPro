@@ -17,13 +17,15 @@ namespace ReceptorTests {
         }
     };
 
-    class TestSignal : public ReceptorSignal<String> {
+    class TestSignal  {
     public:
+        ReceptorSignal<String> signal;
+        
         TestSignal() {
         }
 
         void Configure() {
-            AddKey("test");
+            signal.AddKey("test");
         }
     };
 }
@@ -37,13 +39,13 @@ TEST(Receptor, Tests)
     signal.Configure();
 
     TestSignal badSignal;
-    badSignal.AddKey("wrong");
+    badSignal.signal.AddKey("wrong");
 
     sut.AddLockForKey("test");
 
-    sut.OnSignal(badSignal);
-    sut.OnSignal(signal);
-    sut.OnSignal(signal);
+    sut.OnSignal(badSignal.signal);
+    sut.OnSignal(signal.signal);
+    sut.OnSignal(signal.signal);
 
     EXPECT_EQ(2, sut.matches["test"]);
 }

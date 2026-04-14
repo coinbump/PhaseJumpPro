@@ -28,7 +28,7 @@ namespace PJ {
 
     /// Wraps std::function so we can subclass and add state if needed
     template <typename Result, typename... Arguments>
-    class Function<Result(Arguments...)> : public SomeFunction<Result(Arguments...)> {
+    class Function<Result(Arguments...)> final : public SomeFunction<Result(Arguments...)> {
     public:
         using Func = std::function<Result(Arguments... args)>;
 
@@ -48,7 +48,7 @@ namespace PJ {
     // TODO: can this just be a mutable lambda?
     /// A function that stores persistent state
     template <typename Core, typename Result, typename... Arguments>
-    class CoreFunction : public SomeFunction<Result(Arguments...)> {
+    class CoreFunction final : public SomeFunction<Result(Arguments...)> {
     public:
         using CoreFunc = std::function<Result(Core& core, Arguments... args)>;
 
@@ -68,4 +68,26 @@ namespace PJ {
         }
     };
 
+    /// A function that is uniquely identifiable
+    template <typename Result, typename... Arguments>
+    class IdentifiableFunction final : public SomeFunction<Result(Arguments...)> {
+    public:
+        using Func = std::function<Result(Arguments... args)>;
+
+        String id;
+        Func func;
+
+        IdentifiableFunction() {}
+
+        IdentifiableFunction(String id, Func func) :
+            id(id),
+            func(func) {}
+
+        // MARK: SomeFunction
+
+        Result operator()(Arguments... args) override {
+            GUARDR(func, Result())
+            return func(args...);
+        }
+    };
 } // namespace PJ

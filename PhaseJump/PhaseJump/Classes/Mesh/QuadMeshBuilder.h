@@ -14,7 +14,7 @@ namespace PJ {
     } // namespace QuadMesh
 
     /// 1x1 quad mesh, oriented to x-y plane
-    class QuadMeshBuilder : public SomeMeshBuilder {
+    class QuadMeshBuilder final : public SomeMeshBuilder {
     public:
         Vector2 worldSize{};
 

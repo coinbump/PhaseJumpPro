@@ -44,7 +44,7 @@ namespace PJ {
     /// Contains keyframes that determine values, and a binding func that binds those values
     /// to an animation
     template <class Type>
-    class TimeTrack : public SomeTimeTrack {
+    class TimeTrack final : public SomeTimeTrack {
     public:
         using Base = SomeTimeTrack;
         using This = TimeTrack;

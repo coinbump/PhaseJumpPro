@@ -29,14 +29,14 @@ namespace PJ {
     class DragHandler2D;
     class Cancellable;
 
-    struct AddChildNodeEvent : public SomeSignal {
+    struct AddChildNodeEvent final : public SomeSignal {
         WorldNode& node;
 
         AddChildNodeEvent(WorldNode& node) :
             node(node) {}
     };
 
-    struct RemoveChildNodeEvent : public SomeSignal {
+    struct RemoveChildNodeEvent final : public SomeSignal {
         WorldNode& node;
 
         RemoveChildNodeEvent(WorldNode& node) :

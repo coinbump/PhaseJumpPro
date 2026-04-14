@@ -65,7 +65,7 @@ namespace PJ {
     };
 
     /// Scans for resources
-    class ResourceScanner : public SomeResourceScanner {
+    class ResourceScanner final : public SomeResourceScanner {
     public:
         /// Defines how we're scanning/loading resources
         ResourceScanModel& scanModel;

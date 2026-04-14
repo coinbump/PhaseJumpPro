@@ -6,7 +6,7 @@
 #include "Mesh.h"
 #include "RenderMaterial.h"
 #include "RenderTypes.h"
-#include "SharedVectorList.h"
+#include "SpanVectorList.h"
 #include "Texture.h"
 #include "UnorderedMap.h"
 #include "Vector3.h"
@@ -41,7 +41,7 @@ namespace PJ {
         /// Varying values that are interpolated per-vertex
         /// Optimize: Shared so that we can store the colors span from the renderer model without an
         /// extra copy
-        SharedVectorList<RenderColor> vertexColors;
+        SpanVectorList<RenderColor> vertexColors;
 
         /// Mesh to be rendered
         Mesh mesh;

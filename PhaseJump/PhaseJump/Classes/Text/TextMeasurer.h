@@ -50,7 +50,7 @@ namespace PJ {
     /// Allows us to override the font's default metrics if needed
     struct FontMeasureMetrics {
         /// Distance from baseline to next baseline
-        int leading = 0;
+        int leading{};
 
         FontMeasureMetrics(int leading) :
             leading(leading) {}

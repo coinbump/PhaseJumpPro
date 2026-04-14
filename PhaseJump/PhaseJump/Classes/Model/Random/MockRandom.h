@@ -11,7 +11,7 @@
  */
 namespace PJ {
     /// Returns a fixed set of random values (for testing, debugging)
-    class MockRandom : public SomeRandom {
+    class MockRandom final : public SomeRandom {
     public:
         using T = float;
         using Allocator = VectorList<float>::allocator_type;

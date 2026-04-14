@@ -11,7 +11,7 @@
  */
 namespace PJ {
     /// Builds a frame mesh for a uniform poly that extends from the center
-    class CenterPolyFrameMeshBuilder : public SomeMeshBuilder {
+    class CenterPolyFrameMeshBuilder final : public SomeMeshBuilder {
     public:
         struct Config {
             Vector2 worldSize;

@@ -24,7 +24,7 @@ This& QuickCharacter::TransitionTo(String input, StateType toState) {
 }
 
 This& QuickCharacter::WaitInput(float delay, String input) {
-    controller.GetUpdatables().AddDelay(delay, [input, this](auto time) {
+    controller.GetUpdatables().AddWithDelay(delay, [input, this](auto time) {
         controller.states.Input(input);
         return FinishType::Finish;
     });

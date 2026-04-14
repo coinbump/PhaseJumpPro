@@ -37,7 +37,7 @@ namespace UIWorldSystemTests {
         }
     };
     
-    class MockMouseDevice : public SomeMouseDevice {
+    class MockMouseDevice final : public SomeMouseDevice {
     public:
         ScreenPosition screenPos{200, 100};
         

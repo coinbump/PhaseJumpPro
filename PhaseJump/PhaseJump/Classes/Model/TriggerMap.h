@@ -41,7 +41,7 @@ namespace PJ {
 
     /// A map of actions and  filter funcs that trigger those actions
     template <class Trigger, class Action = String>
-    class TriggerMap : public SomeMultiMap<Trigger, Action> {
+    class TriggerMap final : public SomeMultiMap<Trigger, Action> {
     public:
         using FilterFunc = std::function<bool(Trigger const&)>;
         using FilterList = VectorList<FilterFunc>;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Function.h"
+#include "UnorderedMap.h"
 #include "Utils.h"
 #include "VectorList.h"
 #include <algorithm>
@@ -14,16 +15,33 @@ namespace PJ {
     template <typename Result, typename... Arguments>
     class MultiFunction;
 
+    /// Creates string identifiers in an incrementing fashion ("0", "1", ...)
+    class IncrementingIdentifier {
+    protected:
+        uint32_t id{};
+
+    public:
+        String Next() {
+            auto oldId = id;
+            id++;
+            return MakeString(oldId);
+        }
+    };
+
     /// Composes multiple ordered functions
     /// Each result is combined into the final result by a reducer
     /// Default reducer only returns the final result
+    /// Similar to the Delegate type in C#
     template <typename Result, typename... Arguments>
-    class MultiFunction<Result(Arguments...)> : public SomeFunction<Result(Arguments...)> {
+    class MultiFunction<Result(Arguments...)> final : public SomeFunction<Result(Arguments...)> {
     public:
         using Func = std::function<Result(Arguments... args)>;
         using Reducer = std::function<Result(Result const&, Result)>;
 
-        VectorList<Func> funcs;
+    protected:
+        UnorderedMap<String, Func> funcs;
+
+    public:
         std::optional<Reducer> reducer;
 
         MultiFunction() {}
@@ -32,9 +50,9 @@ namespace PJ {
             std::optional<Result> result;
 
             auto iterFuncs = funcs;
-            std::for_each(iterFuncs.begin(), iterFuncs.end(), [&](Func& func) {
-                GUARD(func)
-                Result thisResult = func(args...);
+            std::for_each(iterFuncs.begin(), iterFuncs.end(), [&](auto& pair) {
+                GUARD(pair.second)
+                Result thisResult = pair.second(args...);
 
                 if (reducer && result) {
                     Result reducedResult = reducer.value()(*result, thisResult);
@@ -52,30 +70,33 @@ namespace PJ {
             return Run(args...);
         }
 
-        // MARK: Convenience
+        void Add(String id, Func value) {
+            funcs[id] = value;
+        }
 
-        void Add(Func value) {
-            this->funcs.push_back(value);
+        void Remove(String id) {
+            funcs.erase(id);
         }
     };
 
-    /// Allows us to compose multiple ordered functions instead of using inheritance
-    /// Each result is combined into the final result by a reducer
-    /// Default reducer only returns the final result
+    /// Combines multiple ordered functions with identical arguments
+    /// Similar to the Delegate type in C#
     template <typename... Arguments>
     class MultiFunction<void(Arguments...)> {
     public:
         using Func = std::function<void(Arguments... args)>;
 
-        VectorList<Func> funcs;
+    protected:
+        UnorderedMap<String, Func> funcs;
 
+    public:
         MultiFunction() {}
 
         void Run(Arguments... args) const {
             auto iterFuncs = funcs;
-            std::for_each(iterFuncs.begin(), iterFuncs.end(), [&](Func& func) {
-                GUARD(func)
-                func(args...);
+            std::for_each(iterFuncs.begin(), iterFuncs.end(), [&](auto& pair) {
+                GUARD(pair.second)
+                pair.second(args...);
             });
         }
 
@@ -83,10 +104,12 @@ namespace PJ {
             Run(args...);
         }
 
-        // MARK: Convenience
+        void Add(String id, Func value) {
+            funcs[id] = value;
+        }
 
-        void Add(Func value) {
-            this->funcs.push_back(value);
+        void Remove(String id) {
+            funcs.erase(id);
         }
     };
 } // namespace PJ

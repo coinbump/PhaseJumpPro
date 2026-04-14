@@ -8,13 +8,15 @@ using namespace PJ;
 using namespace std;
 
 namespace SignalTests {
-    class TestSignal : public ReceptorSignal<String> {
+    class TestSignal  {
     public:
+        ReceptorSignal<String> signal;
+        
         TestSignal() {
         }
 
         void Configure() {
-            AddKey("test");
+            signal.AddKey("test");
         }
     };
 }
@@ -26,6 +28,6 @@ TEST(Signal, Tests)
     TestSignal sut;
     sut.Configure();
 
-    EXPECT_TRUE(sut.ContainsKey("test"));
-    EXPECT_FALSE(sut.ContainsKey("wrong"));
+    EXPECT_TRUE(sut.signal.ContainsKey("test"));
+    EXPECT_FALSE(sut.signal.ContainsKey("wrong"));
 }

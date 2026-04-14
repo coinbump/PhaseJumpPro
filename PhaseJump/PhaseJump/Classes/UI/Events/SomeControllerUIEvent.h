@@ -42,7 +42,7 @@ namespace PJ {
         virtual String ControllerId() const = 0;
     };
 
-    class ControllerAxisUIEvent : public SomeControllerUIEvent {
+    class ControllerAxisUIEvent final : public SomeControllerUIEvent {
     public:
         using Base = SomeControllerUIEvent;
 

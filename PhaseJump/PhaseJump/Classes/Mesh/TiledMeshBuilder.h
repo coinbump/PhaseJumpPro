@@ -16,7 +16,7 @@ namespace PJ {
 
      Usage: Use TextureWrap::Repeat if you can. Fallback to this if you need it
      */
-    class TiledMeshBuilder : public SomeMeshBuilder {
+    class TiledMeshBuilder final : public SomeMeshBuilder {
     public:
         Vector2 tileSize{ 1, 1 };
         Vector2 worldSize{ 1, 1 };

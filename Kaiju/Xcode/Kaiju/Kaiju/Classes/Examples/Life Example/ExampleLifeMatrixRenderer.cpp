@@ -79,15 +79,16 @@ void MatrixRenderer::Awake() {
             auto agent = group->Add();
             GUARD(agent)
 
-            agent->onStepFunc = LifeAgents::MakeOnStepFunc();
-            agent->core.location = Vector2Int(x, y);
+            agent->Get().onStepFunc = LifeAgents::MakeOnStepFunc();
+            agent->Get().core.location = Vector2Int(x, y);
 
             // Add some random live cells
             if (random.Value() < 0.2f) {
-                agent->core.isAlive = true;
+                agent->Get().core.isAlive = true;
             }
 
-            matrix.SetCell(agent->core.location, agent);
+            // This only works because we're not resizing the matrix
+            matrix.SetCell(agent->Get().core.location, &agent->Get());
         }
     }
 }

@@ -40,7 +40,7 @@ namespace PJ {
 
     /// Data in memory
     template <class Type = int8_t>
-    class Data : public SomeData {
+    class Data final : public SomeData {
     private:
         /// Disables copy
         Data(Data const&);

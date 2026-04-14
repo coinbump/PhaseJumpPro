@@ -12,7 +12,7 @@
  */
 namespace PJ {
     /// An audio stream plays a single stream of audio
-    class SDLAudioStream : public SomeAudioStream {
+    class SDLAudioStream final : public SomeAudioStream {
     protected:
         Uint8* audioBuffer{};
         Uint32 bufferLength{};

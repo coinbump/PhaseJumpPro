@@ -14,7 +14,7 @@
  */
 namespace PJ {
     /// Uses SDL to display a platform window
-    class SDLPlatformWindow : public SomePlatformWindow {
+    class SDLPlatformWindow final : public SomePlatformWindow {
     public:
         using Config = SDLPlatformWindowConfig;
 

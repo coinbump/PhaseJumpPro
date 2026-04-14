@@ -17,7 +17,7 @@ namespace PJ {
     /// Represents a single agent in an agent sytem
     /// Each agent belongs to a group, which manages the storage and lifecycle of the agent
     template <class Core = Void>
-    class Agent : public Poolable {
+    class Agent {
     public:
         using This = Agent<Core>;
         using OnUpdateFunc = std::function<void(This&, TimeSlice)>;
@@ -32,7 +32,6 @@ namespace PJ {
         OnUpdateFunc onUpdateFunc;
 
         Agent() {
-            resetFunc = [](auto& agent) { ((This*)&agent)->core = Core(); };
             // std::cout << "Agent init" << std::endl;
         }
 

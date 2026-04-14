@@ -270,7 +270,7 @@
 #include <PhaseJump/SequenceBehavior.h>
 #include <PhaseJump/SequenceCounter.h>
 #include <PhaseJump/Shared.h>
-#include <PhaseJump/SharedVectorList.h>
+#include <PhaseJump/SpanVectorList.h>
 #include <PhaseJump/ShowBoundsRenderProcessor.h>
 #include <PhaseJump/ShowCollidersRenderProcessor.h>
 #include <PhaseJump/ShowMeshRenderProcessor.h>

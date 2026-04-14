@@ -132,8 +132,6 @@ FinishType Playable::OnUpdate(TimeSlice time) {
     } else {
         return updatable.OnUpdate(time);
     }
-
-    return FinishType::Continue;
 }
 
 bool Playable::IsFinished() const {

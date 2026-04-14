@@ -44,7 +44,7 @@ namespace PJ {
 
     /// Reflects a property
     template <class T>
-    class PropertyMirror : public SomePropertyMirror {
+    class PropertyMirror final : public SomePropertyMirror {
     public:
         using Base = SomePropertyMirror;
         using This = PropertyMirror<T>;
@@ -72,7 +72,7 @@ namespace PJ {
     };
 
     /// Reflects a child object that also supports reflection
-    class ChildPropertyMirror : public SomePropertyMirror {
+    class ChildPropertyMirror final : public SomePropertyMirror {
     public:
         using Base = SomePropertyMirror;
         using MirrorsFunc = std::function<PropertyMirrors*()>;

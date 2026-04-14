@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ExampleLifeAgent.h"
+#include "ExampleLifeAgentGroup.h"
 #include "SDKIncludes.h"
 
 using namespace PJ;

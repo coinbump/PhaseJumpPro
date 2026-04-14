@@ -21,7 +21,7 @@ namespace PJ {
         using PixelFormat = PJ::PixelFormat::RGBA8888;
         using Pixel = PixelFormat::Pixel;
 
-        UP<BitmapOperation> FlipV();
+        UP<BitmapOperation> FlipV(bool updateOrientation);
 
     } // namespace BitmapOperations
 

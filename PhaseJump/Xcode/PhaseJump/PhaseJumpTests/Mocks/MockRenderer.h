@@ -5,7 +5,7 @@
 
 namespace PJTest
 {
-//    class MockRenderer : public SomeMaterialRenderer {
+//    class MockRenderer final : public SomeMaterialRenderer {
 //    public:
 //        VectorList<RenderContextModel> renderHistory;
 //        

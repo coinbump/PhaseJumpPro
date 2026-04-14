@@ -61,7 +61,7 @@ namespace PJ {
 
     /// Result operation with a core and run func
     template <class Input, class Output, class Core = Void>
-    class ResultOperation : public SomeResultOperation<Input, Output> {
+    class ResultOperation final : public SomeResultOperation<Input, Output> {
     public:
         using Base = SomeResultOperation<Input, Output>;
         using This = ResultOperation<Input, Output, Core>;

@@ -53,7 +53,7 @@ namespace PJ {
 
     /// Register each environment value in the Environments so we have access to defaultValue
     template <class T>
-    struct EnvironmentValueClass : public SomeEnvironmentValueClass {
+    struct EnvironmentValueClass final : public SomeEnvironmentValueClass {
         T defaultValue;
 
         EnvironmentValueClass(String id, T defaultValue) :

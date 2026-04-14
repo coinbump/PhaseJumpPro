@@ -12,7 +12,7 @@
  */
 namespace PJ {
     /// Runs for a specified duration, then finishes or repeats
-    class Timer : public SomeUpdatable {
+    class Timer final : public SomeUpdatable {
     protected:
         /// Timer duration
         float duration{};

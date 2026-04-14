@@ -19,7 +19,7 @@ namespace PJ {
     };
 
     /// Focus  coordinator event for determining current focus
-    class FocusEvent : public SomeSignal {
+    class FocusEvent final : public SomeSignal {
     public:
         String id;
     };
@@ -54,7 +54,7 @@ namespace PJ {
         virtual SP<WorldNode> Evaluate(SP<FocusHandler> activeFocus, FocusEvent event) = 0;
     };
 
-    class FocusHintCoordinator : public SomeFocusCoordinator {
+    class FocusHintCoordinator final : public SomeFocusCoordinator {
     public:
         // MARK: SomeFocusCoordinator
 

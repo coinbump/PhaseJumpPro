@@ -9,7 +9,7 @@
  */
 namespace PJ {
     /// Sent for a pointer down event followed by a pointer up event over the same visual element
-    class PointerClickUIEvent : public SomeSignal {
+    class PointerClickUIEvent final : public SomeSignal {
     public:
         using Base = SomeSignal;
         using InputButton = PointerInputButtonType;
@@ -22,7 +22,7 @@ namespace PJ {
     };
 
     /// Sent when a pointer button is pressed
-    class PointerDownUIEvent : public SomeSignal {
+    class PointerDownUIEvent final : public SomeSignal {
     public:
         using Base = SomeSignal;
         using InputButton = PointerInputButtonType;
@@ -35,7 +35,7 @@ namespace PJ {
     };
 
     /// Sent when a pointer button is released
-    class PointerUpUIEvent : public SomeSignal {
+    class PointerUpUIEvent final : public SomeSignal {
     public:
         using Base = SomeSignal;
         using InputButton = PointerInputButtonType;
@@ -48,7 +48,7 @@ namespace PJ {
     };
 
     /// Sent when the pointer moves
-    class PointerMoveUIEvent : public SomeSignal {
+    class PointerMoveUIEvent final : public SomeSignal {
     public:
         ScreenPosition screenPos;
         Vector2 delta;
@@ -59,7 +59,7 @@ namespace PJ {
     };
 
     /// Sent when the pointer enters a visual element
-    class PointerEnterUIEvent : public SomeSignal {
+    class PointerEnterUIEvent final : public SomeSignal {
     public:
         using Base = SomeSignal;
 
@@ -70,7 +70,7 @@ namespace PJ {
     };
 
     /// Sent when the pointer exits a visual element
-    class PointerExitUIEvent : public SomeSignal {
+    class PointerExitUIEvent final : public SomeSignal {
     public:
         using Base = SomeSignal;
 

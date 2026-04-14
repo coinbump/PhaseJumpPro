@@ -10,7 +10,7 @@ namespace PJ {
     class WorldNode;
 
     /// Tracks velocity for an object based on updates, no samples or averages are used
-    class VelocityTracker : public SomeUpdatable {
+    class VelocityTracker final : public SomeUpdatable {
     public:
         using Base = Updatable;
         using This = VelocityTracker;

@@ -20,7 +20,7 @@ namespace PJ {
      If you need more complex animations (time on hold, time off hold), use the driver pattern to
      drive the valve's states
      */
-    class Valve : public SomeUpdatable {
+    class Valve final : public SomeUpdatable {
     public:
         using Base = Updatable;
         using This = Valve;

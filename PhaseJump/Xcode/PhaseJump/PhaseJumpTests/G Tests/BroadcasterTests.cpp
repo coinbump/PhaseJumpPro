@@ -7,7 +7,7 @@ using namespace PJ;
 using namespace std;
 
 namespace BroadcasterTests {
-    class TestListener : public SomeListener {
+    class TestListener final : public SomeListener {
     public:
         int listenCount = 0;
         String lastMessage;

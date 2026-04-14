@@ -11,7 +11,7 @@
  */
 namespace PJ {
     /// Builds a horizontal capsule mesh (capsules are rarely vertical)
-    class CapsuleMeshBuilder : public SomeMeshBuilder {
+    class CapsuleMeshBuilder final : public SomeMeshBuilder {
     public:
         Axis2D axis = Axis2D::X;
         Vector2 worldSize = { 10, 10 };

@@ -52,7 +52,7 @@ namespace PJ {
     };
 
     /// Platform neutral code using C++ stdlib
-    class BasePlatform : public SomePlatform {
+    class BasePlatform final : public SomePlatform {
         void Register() override;
     };
 
@@ -60,7 +60,7 @@ namespace PJ {
         // Register NextStep platform classes here
     }
 
-    class NSPlatform : public SomePlatform {
+    class NSPlatform final : public SomePlatform {
     public:
         NSPlatform();
 
@@ -75,7 +75,7 @@ namespace PJ {
         // Register NextStep platform classes here
     }
 
-    class MacPlatform : public SomePlatform {
+    class MacPlatform final : public SomePlatform {
     public:
         MacPlatform();
 
@@ -90,7 +90,7 @@ namespace PJ {
         // Register Mac platform classes here
     }
 
-    class iOSPlatform : public SomePlatform {
+    class iOSPlatform final : public SomePlatform {
     public:
         iOSPlatform();
 
@@ -105,7 +105,7 @@ namespace PJ {
         // Register iOS platform classes here
     }
 
-    class WindowsPlatform : public SomePlatform {
+    class WindowsPlatform final : public SomePlatform {
     public:
         WindowsPlatform();
 

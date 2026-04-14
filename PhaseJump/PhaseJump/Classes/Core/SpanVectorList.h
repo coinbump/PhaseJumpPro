@@ -19,7 +19,7 @@ namespace PJ {
      copy if we need to modify it from the original source of truth.
      */
     template <class ValueType, class SpanValueType = ValueType const>
-    class SharedVectorList {
+    class SpanVectorList {
     protected:
         using SpanType = std::span<SpanValueType>;
         using Vector = VectorList<ValueType>;
@@ -27,12 +27,12 @@ namespace PJ {
         std::variant<SpanType, Vector> value;
 
     public:
-        SharedVectorList() {}
+        SpanVectorList() {}
 
-        SharedVectorList(SpanType span) :
+        SpanVectorList(SpanType span) :
             value(span) {}
 
-        SharedVectorList(Vector const& vector) :
+        SpanVectorList(Vector const& vector) :
             value(vector) {}
 
         /// @return Returns a span view into the list
@@ -52,7 +52,7 @@ namespace PJ {
 
         /// @return Returns true if the stored value is a shared span and doesn't hold the owning
         /// list object
-        constexpr bool IsShared() const {
+        constexpr bool IsSpan() const {
             auto span = std::get_if<SpanType>(&value);
             return nullptr != span && nullptr != span->data();
         }

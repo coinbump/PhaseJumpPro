@@ -21,7 +21,7 @@ namespace PJ {
      Example: animate a character from positions start to end
      */
     template <class T>
-    class Animator : public SomeUpdatable {
+    class Animator final : public SomeUpdatable {
     protected:
         AnimationCycleTimer timer;
 

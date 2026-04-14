@@ -64,12 +64,11 @@ void GLTextureBuffer::Build(Vector2Int size) {
     GLuint textureId{};
     glGenTextures(1, &textureId);
 
-    // TODO: this is incorrect, we are using weird size and origin to "fix things"
     texture = MAKE<GLTexture>(GLTexture::Config{ .id = "buffer",
                                                  .renderId = textureId,
                                                  .size = size,
-                                                 .normalOrigin = Vector2(0, 1),
-                                                 .normalSize = Vector2(1, -1) });
+                                                 .normalOrigin = Vector2(0, 0),
+                                                 .normalSize = Vector2(1, 1) });
 
     glRenderEngine->BindTexture2D(textureId);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);

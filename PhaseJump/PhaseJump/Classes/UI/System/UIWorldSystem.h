@@ -21,7 +21,7 @@ namespace PJ {
     class FocusHandler;
 
     /// Sent when a drag enters a drop area
-    class DragEnterUIEvent : public SomeSignal {
+    class DragEnterUIEvent final : public SomeSignal {
     public:
         DragModel dragModel;
 
@@ -30,7 +30,7 @@ namespace PJ {
     };
 
     /// Sent when a drag exits a drop area
-    class DragExitUIEvent : public SomeSignal {};
+    class DragExitUIEvent final : public SomeSignal {};
 
     /// Handles advanced user input like drag and drop, hover, etc.
     class UIWorldSystem : public EventWorldSystem {

@@ -24,7 +24,7 @@ namespace PJ {
     class ImRenderer;
     class DesignSystem;
 
-    /// Used to build views with QuickBuilder
+    /// Used to build views
     class ViewBuilder {
     protected:
         /// External builder

@@ -8,16 +8,16 @@ SP<SomeUpdatable> Updatables::AddTimed(float duration, SimpleOnUpdateFunc onUpda
     return Add(result);
 }
 
-SP<SomeUpdatable> Updatables::AddDelay(float delay, SP<SomeUpdatable> value) {
+SP<SomeUpdatable> Updatables::AddWithDelay(float delay, SP<SomeUpdatable> value) {
     return Add(MakeDelayFunc(delay, value));
 }
 
-SP<SomeUpdatable> Updatables::AddDelay(float delay, SimpleOnUpdateFunc onUpdateFunc) {
+SP<SomeUpdatable> Updatables::AddWithDelay(float delay, SimpleOnUpdateFunc onUpdateFunc) {
     auto result = MakeDelayFunc(delay, onUpdateFunc);
     return Add(result);
 }
 
-SP<SomeUpdatable> Updatables::AddSpeed(float speed, SimpleOnUpdateFunc onUpdateFunc) {
+SP<SomeUpdatable> Updatables::AddAtSpeed(float speed, SimpleOnUpdateFunc onUpdateFunc) {
     auto result = MakeSpeedFunc(speed, onUpdateFunc);
     return Add(result);
 }

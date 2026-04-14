@@ -30,7 +30,7 @@ namespace PJ {
     };
 
     /// Loads resources
-    class ResourceRepository : public SomeResourceRepository {
+    class ResourceRepository final : public SomeResourceRepository {
     protected:
         void Run(LoadResourcesOperationList const& operations);
 

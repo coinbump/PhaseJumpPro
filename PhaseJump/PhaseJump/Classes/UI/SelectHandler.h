@@ -11,7 +11,7 @@ namespace PJ {
     class UIWorldSystem;
 
     /// Sent when an object is selected or de-selected
-    class SelectEvent : public SomeSignal {
+    class SelectEvent final : public SomeSignal {
     public:
         bool isSelected{};
 

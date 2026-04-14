@@ -65,8 +65,6 @@ LoadResourcesOperation::Result SDLLoadBitmapOperation::_LoadResources() {
         }
     };
 
-    SDLPixelFormat pixelFormat(pixelFormatDetails);
-
     auto pixelCount = surface->w * surface->h;
     auto rgbaPixelsDataSize = sizeof(uint32_t) * pixelCount;
     uint32_t* surfacePixel = (uint32_t*)surface->pixels;

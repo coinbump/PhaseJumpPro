@@ -24,7 +24,7 @@ namespace PJ {
 
     /// Used to send signal events from one object to another
     template <class Core = Void>
-    class CoreSignal : public SomeSignal {
+    class CoreSignal final : public SomeSignal {
     public:
         Core core{};
 

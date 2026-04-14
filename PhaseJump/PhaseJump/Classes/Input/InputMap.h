@@ -10,7 +10,7 @@
  */
 namespace PJ {
     /// Event sent when an action event occurs based on user input
-    class InputActionEvent : public SomeSignal {
+    class InputActionEvent final : public SomeSignal {
     public:
         String action;
 

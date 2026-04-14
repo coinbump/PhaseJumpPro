@@ -205,6 +205,8 @@ Vector2 View2D::LocalToView(Vector3 localPosition) const {
 }
 
 Vector3 View2D::TopLeftLocalPosition() const {
+    GUARDR(owner, {})
+
     Vector3 result{ frame.size.x / 2.0f * vecLeft, frame.size.y / 2.0f * vecUp,
                     owner->transform.LocalPosition().z };
     return result;
@@ -305,6 +307,8 @@ void View2D::ApplyLayout() {
         auto root = RootView();
         GUARD(root)
 
+        // TODO: Potential for infinite loop if this is called during layout, rename this to
+        // ForceApplyLayout?
         root->ApplyLayout();
     }
 
@@ -417,11 +421,11 @@ Vector2 View2D::WithPositionConstraints(Vector2 origin) const {
     return result;
 }
 
-Rect View2D::WithFrameConstraints(Rect frame) const {
+Rect View2D::WithFrameConstraints(Rect const& frame) const {
     auto result = frame;
 
-    frame.origin = WithPositionConstraints(frame.origin);
-    frame.size = WithSizeConstraints(frame.size);
+    result.origin = WithPositionConstraints(frame.origin);
+    result.size = WithSizeConstraints(frame.size);
 
     return result;
 }
@@ -487,7 +491,7 @@ VectorList<View2D*> View2D::TopLevelViews() {
     return childViews;
 }
 
-void View2D::Present(PresentTopLevelViewConfig config) {
+void View2D::Present(PresentTopLevelViewConfig const& config) {
     GUARD(config.makeFrameFunc)
     GUARD(config.buildViewFunc)
 
@@ -518,15 +522,16 @@ void View2D::Dismiss(View2D& view) {
 
 void View2D::PopTopLevel() {
     auto topLevelViews = TopLevelViews();
-    GUARD(!IsEmpty(TopLevelViews()))
+    GUARD(!IsEmpty(topLevelViews))
 
     Dismiss(*topLevelViews[topLevelViews.size() - 1]);
 }
 
 void View2D::PopTo(View2D& view) {
     auto topLevelViews = TopLevelViews();
-    GUARD(!IsEmpty(TopLevelViews()))
+    GUARD(!IsEmpty(topLevelViews))
 
+    // TODO: Evaluate for dangling pointers if Dismiss destroys views
     for (auto i = topLevelViews.rbegin(); i != topLevelViews.rend(); i++) {
         auto& topLevelView = *i;
         if (topLevelView == &view) {

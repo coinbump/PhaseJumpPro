@@ -15,7 +15,7 @@ class SDL_Window;
  */
 namespace PJ {
     /// Polls SDL UI events, with support for imGui
-    class SDLUIEventPoller : public SomeUIEventPoller {
+    class SDLUIEventPoller final : public SomeUIEventPoller {
     protected:
         Result Process(SDLEventList const& events);
 

@@ -12,7 +12,7 @@
  */
 namespace PJ {
     /// Model that defines a circle path
-    class BezierPath : public SomePath {
+    class BezierPath final : public SomePath {
     public:
         using Base = SomePath;
         using This = BezierPath;

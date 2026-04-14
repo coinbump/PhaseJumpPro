@@ -20,6 +20,10 @@
     Type(Type const&) = delete; \
     Type& operator=(Type const&) = delete;
 
+#define DELETE_MOVE(Type)  \
+    Type(Type&&) = delete; \
+    Type& operator=(Type&&) = delete;
+
 // TODO: add unit tests
 #define GUARD(test) \
     if (!(test)) {  \

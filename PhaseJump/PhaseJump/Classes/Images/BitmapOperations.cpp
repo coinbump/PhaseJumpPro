@@ -3,9 +3,9 @@
 using namespace std;
 using namespace PJ;
 
-UP<BitmapOperation> BitmapOperations::FlipV() {
+UP<BitmapOperation> BitmapOperations::FlipV(bool updateOrientation) {
     return NEW<BitmapOperation>(BitmapOperation::Config{
-        .runFunc = [](auto& operation, auto& bitmap) {
+        .runFunc = [=](auto& operation, auto& bitmap) {
             GUARDR(bitmap.Size().x > 0 && bitmap.Size().y > 0, Void{})
 
             for (int i = 0; i < bitmap.Size().y; i++) {
@@ -23,7 +23,9 @@ UP<BitmapOperation> BitmapOperations::FlipV() {
             }
 
             // Keep track of bitmap orientation for graphic pipelines
-            bitmap.orientation = Flipped(bitmap.orientation);
+            if (updateOrientation) {
+                bitmap.orientation = Flipped(bitmap.orientation);
+            }
 
             return Void{};
         } });

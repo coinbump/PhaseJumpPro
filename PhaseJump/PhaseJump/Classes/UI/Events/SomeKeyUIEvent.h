@@ -83,7 +83,7 @@ namespace PJ {
     };
 
     /// Key down UI event
-    class KeyDownUIEvent : public SomeSignal {
+    class KeyDownUIEvent final : public SomeSignal {
     public:
         using Base = SomeSignal;
 
@@ -98,7 +98,7 @@ namespace PJ {
     };
 
     /// Key up UI event
-    class KeyUpUIEvent : public SomeSignal {
+    class KeyUpUIEvent final : public SomeSignal {
     public:
         using Base = SomeSignal;
 

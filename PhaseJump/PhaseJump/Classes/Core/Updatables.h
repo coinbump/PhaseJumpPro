@@ -12,7 +12,7 @@
  */
 namespace PJ {
     /// Updates a list of updatables
-    class Updatables : public SomeUpdatable {
+    class Updatables final : public SomeUpdatable {
     public:
         /// Used for composed update functions when we don't care about the updatable object
         using ContinueOnUpdateFunc = std::function<void(TimeSlice)>;
@@ -47,7 +47,7 @@ namespace PJ {
         SP<SomeUpdatable> AddTimed(float duration, SimpleOnUpdateFunc onUpdateFunc);
 
         /// Adds an updatable that will start after delay
-        SP<SomeUpdatable> AddDelay(float delay, SP<SomeUpdatable> value);
+        SP<SomeUpdatable> AddWithDelay(float delay, SP<SomeUpdatable> value);
 
         /**
          @brief Adds an updatable func that starts after delay (in seconds)
@@ -56,10 +56,10 @@ namespace PJ {
          @returns
          An updatable that is used to receive update events for the func
          */
-        SP<SomeUpdatable> AddDelay(float delay, SimpleOnUpdateFunc onUpdateFunc);
+        SP<SomeUpdatable> AddWithDelay(float delay, SimpleOnUpdateFunc onUpdateFunc);
 
         /// Adds an updatable func that runs at  the specified speed (default is 1)
-        SP<SomeUpdatable> AddSpeed(float speed, SimpleOnUpdateFunc onUpdateFunc);
+        SP<SomeUpdatable> AddAtSpeed(float speed, SimpleOnUpdateFunc onUpdateFunc);
 
         /// Removes all updatables
         void RemoveAll();

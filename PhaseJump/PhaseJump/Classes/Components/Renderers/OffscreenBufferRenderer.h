@@ -8,7 +8,7 @@
 namespace PJ {
     /// Renders an offscreen buffer texture
     // is this just a textureRenderer? Or something different?
-    //    class OffscreenBufferRenderer : public SomeMaterialRenderer {
+    //    class OffscreenBufferRenderer final : public SomeMaterialRenderer {
     //    public:
     //        using Base = SomeMaterialRenderer;
     //        using This = OffscreenBufferRenderer;

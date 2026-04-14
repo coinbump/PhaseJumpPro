@@ -44,7 +44,7 @@ namespace PJ {
 
     /// An object that receives time update events
     /// Finish the updatable when it's finished so it can be removed
-    class Updatable : public SomeUpdatable {
+    class Updatable final : public SomeUpdatable {
     protected:
         /// If true, this updatable is finished running and will be removed
         bool isFinished{};

@@ -13,7 +13,7 @@
 namespace PJ {
     /// Holds strong reference to an object
     template <class T>
-    struct StrongReference : public SomeReference<T> {
+    struct StrongReference final : public SomeReference<T> {
     protected:
         SP<T> value;
 

@@ -11,7 +11,7 @@
  */
 namespace PJ {
     /// Sent when an object's hover state changes
-    class HoverUIEvent : public SomeSignal {
+    class HoverUIEvent final : public SomeSignal {
     public:
         bool isHovering{};
 

@@ -12,18 +12,18 @@ namespace MatrixTests {
         Test2
     };
 
-    class TestMatrix : public Matrix<int>
+    class TestMatrix
     {
     public:
-        using Base = Matrix<int>;
+        Matrix<int> matrix;
         
         TestMatrix(Vector2Int size)
-        : Base(size)
+        : matrix(size)
         {
         }
         
-        size_t RowsCount() const { return size.y; }
-        size_t ColumnsCount() const { return size.x; }
+        size_t RowsCount() const { return matrix.Size().y; }
+        size_t ColumnsCount() const { return matrix.Size().x; }
     };
 }
 
@@ -33,32 +33,32 @@ TEST(Matrix, Test_Matrix)
 {
     TestMatrix sut(Vector2Int(5, 5));
 
-    EXPECT_EQ(5, sut.Width());
-    EXPECT_EQ(5, sut.Height());
+    EXPECT_EQ(5, sut.matrix.Width());
+    EXPECT_EQ(5, sut.matrix.Height());
     EXPECT_EQ(5, sut.RowsCount());
     EXPECT_EQ(5, sut.ColumnsCount());
 
-    sut.ResizeStable(Vector2Int(4, 4));
-    EXPECT_EQ(4, sut.Width());
-    EXPECT_EQ(4, sut.Height());
+    sut.matrix.ResizeStable(Vector2Int(4, 4));
+    EXPECT_EQ(4, sut.matrix.Width());
+    EXPECT_EQ(4, sut.matrix.Height());
     EXPECT_EQ(4, sut.RowsCount());
     EXPECT_EQ(4, sut.ColumnsCount());
 
-    sut.ResizeStable(Vector2Int(6, 6));
-    EXPECT_EQ(6, sut.Width());
-    EXPECT_EQ(6, sut.Height());
+    sut.matrix.ResizeStable(Vector2Int(6, 6));
+    EXPECT_EQ(6, sut.matrix.Width());
+    EXPECT_EQ(6, sut.matrix.Height());
     EXPECT_EQ(6, sut.RowsCount());
     EXPECT_EQ(6, sut.ColumnsCount());
 
-    EXPECT_FALSE(sut.IsValidLocation(Vector2Int(-1, -1)));
-    EXPECT_FALSE(sut.IsValidLocation(Vector2Int(6, 0)));
-    EXPECT_FALSE(sut.IsValidLocation(Vector2Int(0, 6)));
-    EXPECT_TRUE(sut.IsValidLocation(Vector2Int(0, 0)));
-    EXPECT_TRUE(sut.IsValidLocation(Vector2Int(5, 5)));
+    EXPECT_FALSE(sut.matrix.IsValidLocation(Vector2Int(-1, -1)));
+    EXPECT_FALSE(sut.matrix.IsValidLocation(Vector2Int(6, 0)));
+    EXPECT_FALSE(sut.matrix.IsValidLocation(Vector2Int(0, 6)));
+    EXPECT_TRUE(sut.matrix.IsValidLocation(Vector2Int(0, 0)));
+    EXPECT_TRUE(sut.matrix.IsValidLocation(Vector2Int(5, 5)));
 
-    EXPECT_EQ(0, sut.CellAt(Vector2Int(0, 0)));
-    sut.SetCell(Vector2Int(0, 0), 3);
-    EXPECT_EQ(3, sut.CellAt(Vector2Int(0, 0)));
+    EXPECT_EQ(0, sut.matrix.CellAt(Vector2Int(0, 0)));
+    sut.matrix.SetCell(Vector2Int(0, 0), 3);
+    EXPECT_EQ(3, sut.matrix.CellAt(Vector2Int(0, 0)));
 }
 
 TEST(Matrix, Test_Rotate1x1)

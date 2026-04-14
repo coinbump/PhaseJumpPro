@@ -26,7 +26,7 @@ namespace PJ {
     };
 
     /// Builds a horizontal capsule mesh (capsules are rarely vertical)
-    class RoundCornersMeshBuilder : public SomeMeshBuilder {
+    class RoundCornersMeshBuilder final : public SomeMeshBuilder {
     public:
         Vector2 worldSize = { 10, 10 };
         Angle angleStep = Angle::WithDegrees(10);

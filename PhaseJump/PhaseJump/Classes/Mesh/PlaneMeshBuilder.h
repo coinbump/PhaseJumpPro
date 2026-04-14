@@ -12,7 +12,7 @@
  */
 namespace PJ {
     /// A plane mesh of NxN cells built across the x,y, or z axis
-    class PlaneMeshBuilder : public SomeMeshBuilder {
+    class PlaneMeshBuilder final : public SomeMeshBuilder {
     public:
         Vector2Int meshSize;
         Vector2 worldSize;

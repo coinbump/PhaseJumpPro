@@ -29,10 +29,10 @@ namespace PJ {
         virtual ~SomeMenuItem() {}
     };
 
-    class SeparatorMenuItem : public SomeMenuItem {};
+    class SeparatorMenuItem final : public SomeMenuItem {};
 
     /// Standard menu item
-    class MenuItem : public SomeMenuItem {
+    class MenuItem final : public SomeMenuItem {
     public:
         using Func = std::function<void(MenuItem const&)>;
         using BoolFunc = std::function<bool(MenuItem const&)>;

@@ -19,7 +19,7 @@ namespace PJ {
     };
 
     template <class Input>
-    struct SimpleSubscription : public SomeSimpleSubscription<Input> {
+    struct SimpleSubscription final : public SomeSimpleSubscription<Input> {
         using ReceiveValue = Input const&;
         using ReceiveFunc = std::function<void(ReceiveValue)>;
 

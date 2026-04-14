@@ -11,7 +11,7 @@
  */
 namespace PJ {
     /// Renders an arc
-    class ArcMeshBuilder : public SomeMeshBuilder {
+    class ArcMeshBuilder final : public SomeMeshBuilder {
     public:
         Angle startAngle;
         Angle angleDelta{ { .degrees = 360 } };

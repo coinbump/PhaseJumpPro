@@ -69,7 +69,7 @@ namespace PJ {
 
     /// Stores bitmap images in memory as pixels
     template <class PixelFormat = PixelFormat::RGBA8888>
-    class Bitmap : public SomeBitmap {
+    class Bitmap final : public SomeBitmap {
     public:
         using Base = SomeBitmap;
         using This = Bitmap;
