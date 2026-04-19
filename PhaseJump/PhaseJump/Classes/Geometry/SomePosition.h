@@ -13,6 +13,9 @@ namespace PJ {
     /// World position. Use to clarify context for vector type
     using WorldPosition = Vector3;
 
+    /// World position. Use to clarify context for vector type
+    using WorldPosition2D = Vector2;
+
     /// Local position. Use to clarify context for vector type
     using LocalPosition = Vector3;
 

@@ -1,5 +1,6 @@
 #include "GLTextureBuffer.h"
 #include "Bitmap.h"
+#include "BitmapOperations.h"
 #include "GLRenderEngine.h"
 #include "GLTexture.h"
 
@@ -37,22 +38,39 @@ bool CheckFrameBufferStatus() {
 }
 
 void GLTextureBuffer::Bind() {
-    GUARD(frameBuffer.id)
+    GUARD(frameBuffer && frameBuffer->Id())
 
     auto glRenderEngine = static_cast<GLRenderEngine*>(&renderEngine);
 
-    glRenderEngine->BindFrameBuffer(frameBuffer.id);
+    glRenderEngine->BindFrameBuffer(frameBuffer->Id());
     glViewport(0, 0, size.x, size.y);
 }
 
 void GLTextureBuffer::Clear() {
-    // FUTURE: support stencil buffer if needed
     glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // Set the value to clear the stencil buffer to
+    glClearStencil(0);
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+}
+
+void GLTextureBuffer::Resize(Vector2Int size) {
+    GUARD_LOG(size.x > 0 && size.y > 0, "Can't resize to non-positive size")
+    GUARD(size != this->size)
+
+    frameBuffer.reset();
+    depthBuffer.reset();
+    texture.reset();
+
+    renderId = 0;
+    this->size = {};
+
+    Build(size);
 }
 
 void GLTextureBuffer::Build(Vector2Int size) {
-    GUARD_LOG(!frameBuffer.id && !depthBuffer.id, "Can't rebuild existing buffer")
+    GUARD_LOG(!frameBuffer && !depthBuffer, "Can't rebuild existing buffer")
 
     auto glRenderEngine = static_cast<GLRenderEngine*>(&renderEngine);
 
@@ -90,11 +108,34 @@ void GLTextureBuffer::Build(Vector2Int size) {
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthBufferId);
 
     GUARD(CheckFrameBufferStatus())
-    frameBuffer.id = frameBufferId;
-    depthBuffer.id = depthBufferId;
+    frameBuffer = NEW<GLFrameBuffer>(frameBufferId);
+    depthBuffer = NEW<GLRenderBuffer>(depthBufferId);
     this->size = size;
 }
 
 bool GLTextureBuffer::IsValid() const {
-    return frameBuffer.id != 0 && size.x > 0 && size.y > 0;
+    GUARDR(frameBuffer, false)
+
+    return frameBuffer->Id() != 0 && size.x > 0 && size.y > 0;
+}
+
+UP<Bitmap<PixelFormat::RGBA8888>> GLTextureBuffer::NewBitmap() {
+    GUARDR(IsValid(), nullptr);
+
+    auto glRenderEngine = static_cast<GLRenderEngine*>(&renderEngine);
+
+    GLint prevFrameBuffer = 0;
+    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &prevFrameBuffer);
+
+    Bind();
+
+    auto bitmap =
+        NEW<Bitmap<PixelFormat::RGBA8888>>(Bitmap<PixelFormat::RGBA8888>::Config{ .size = size });
+    glReadPixels(0, 0, size.x, size.y, GL_RGBA, GL_UNSIGNED_BYTE, bitmap->Pixels().data());
+
+    glRenderEngine->BindFrameBuffer((GLuint)prevFrameBuffer);
+
+    BitmapOperations::NewFlipVertical(UpdateOrientationType::None)->Run(*bitmap);
+
+    return bitmap;
 }

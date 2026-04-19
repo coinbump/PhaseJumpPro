@@ -19,8 +19,7 @@ namespace PJ {
     /**
      Immediate mode renderer
 
-     As opposed to the traditional model of creating persistent renderers, this pattern allows
-     you to draw in immediate mode. This can make building certain types of apps easier
+     Uses a Y-up Cartesian coordinate system with the origin at the bottom-left of its world
 
      Perform the immediate render by using the RenderPrepare signal
      */
@@ -152,7 +151,7 @@ namespace PJ {
         }
 
         /// Sets the color to be used by the next render option, if a color is not provided
-        This& SetColor(Color value) {
+        This& SetForegroundColor(Color value) {
             color = value;
             return *this;
         }
@@ -228,6 +227,13 @@ namespace PJ {
             return FramePolygon(poly, PolyClose::Open, color);
         }
 
+        /// Frame a bezier path with the color, or use the default color if not specified.
+        /// `segmentDistance` controls the polyline resolution — smaller values produce
+        /// a smoother curve at higher mesh cost.
+        This& FrameBezier(
+            BezierPath bezierPath, float segmentDistance = 10, std::optional<Color> color = {}
+        );
+
         /// Frame a rectangle with the color, or use the default color if not specified
         This& FrameRect(Rect frame, std::optional<Color> color = {});
 
@@ -256,6 +262,10 @@ namespace PJ {
         TranslateItemFunc MakeTranslateItemFunc(float down = vecDown);
 
         // MARK: Renderer
+
+        void SetColor(Color color) override {
+            SetForegroundColor(color);
+        }
 
         VectorList<RenderModel> RenderModels() override {
             auto result = model.RenderModels();

@@ -1,8 +1,9 @@
 #pragma once
 
+#include "ButtonTracker.h"
 #include "PointerClickUIEvent.h"
 #include "StandardEventCore.h"
-#include "UIControl2D.h"
+#include "View2D.h"
 
 /*
  RATING: 5 stars
@@ -11,48 +12,29 @@
  */
 namespace PJ {
     /// Handles button tracking behavior for a button control
-    class ButtonControl : public UIControl2D {
+    class ButtonControl : public View2D {
     public:
         using This = ButtonControl;
-        using Base = UIControl2D;
+        using Base = View2D;
 
         using OnPressFunc = std::function<void(ButtonControl&)>;
+        using TrackType = ButtonTracker::TrackType;
 
-    protected:
-        bool isTracking = false;
-        bool isPressed = false;
-
-        void SetIsPressed(bool value);
-
-    public:
-        enum class TrackType {
-            // Track the button
-            Track,
-
-            // Fire the button press on tap
-            Immediate
-        };
-
-        TrackType trackType = TrackType::Track;
+        /// Encapsulates pointer tracking and press detection
+        ButtonTracker tracker;
 
         /// Called when the button is pressed
         OnPressFunc onPressFunc;
 
         bool IsTracking() const {
-            return isTracking;
+            return tracker.IsTracking();
         }
 
         bool IsPressed() const {
-            return isPressed;
+            return tracker.IsPressed();
         }
 
-    public:
         ButtonControl();
-
-        void OnPointerDown(PointerDownUIEvent const& _event);
-        void OnPointerEnter(PointerEnterUIEvent const& _event);
-        void OnPointerExit(PointerExitUIEvent const& _event);
-        void OnPointerUp(PointerUpUIEvent const& _event);
 
     protected:
         void Awake() override;

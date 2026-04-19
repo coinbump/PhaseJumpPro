@@ -46,6 +46,6 @@ namespace PJ {
         // MARK: Texture
 
         Texture* RenderTexture() const override;
-        uint32_t RenderId() const override;
+        RenderItemId RenderId() const override;
     };
 } // namespace PJ

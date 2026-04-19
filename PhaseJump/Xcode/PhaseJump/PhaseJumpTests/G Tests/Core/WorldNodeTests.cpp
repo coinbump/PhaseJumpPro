@@ -29,7 +29,7 @@ using namespace WorldNodeTests;
 
 TEST(WorldNode, IsEnabled)
 {
-    WorldNode sut("name");
+    WorldNode sut(WorldNode::Config{ .name = "name" });
     EXPECT_EQ(String("name"), sut.Name());
     EXPECT_TRUE(sut.IsEnabled());
     
@@ -42,7 +42,7 @@ TEST(WorldNode, IsEnabled)
 
 TEST(WorldNode, IsEnabledNodeDestroyed)
 {
-    WorldNode sut("name");
+    WorldNode sut(WorldNode::Config{ .name = "name"});
     EXPECT_EQ(String("name"), sut.Name());
     EXPECT_TRUE(sut.IsEnabled());
     
@@ -54,7 +54,7 @@ TEST(WorldNode, IsEnabledNodeDestroyed)
 
 TEST(WorldNode, IsVisible)
 {
-    WorldNode sut("name");
+    WorldNode sut(WorldNode::Config{ .name = "name" });
     EXPECT_EQ(String("name"), sut.Name());
     EXPECT_FALSE(sut.IsVisible());
     
@@ -82,7 +82,7 @@ TEST(WorldNode, IsVisible)
 
 TEST(WorldNode, Toggles)
 {
-    WorldNode sut("name");
+    WorldNode sut(WorldNode::Config{ .name = "name"});
     EXPECT_EQ(String("name"), sut.Name());
     EXPECT_TRUE(sut.IsEnabled());
     EXPECT_FALSE(sut.IsAwake());
@@ -98,7 +98,7 @@ TEST(WorldNode, Toggles)
 
 TEST(WorldNode, Lifecycle)
 {
-    WorldNode sut("");
+    WorldNode sut;
     EXPECT_FALSE(sut.IsAwake());
     EXPECT_FALSE(sut.IsStarted());
 
@@ -113,7 +113,7 @@ TEST(WorldNode, Lifecycle)
 
 TEST(WorldNode, AddComponent)
 {
-    WorldNode sut("");
+    WorldNode sut;
     auto component = MAKE<WorldComponent>();
     sut.Add(component);
 
@@ -123,7 +123,7 @@ TEST(WorldNode, AddComponent)
 
 TEST(WorldNode, AddComponent_Lifecycle)
 {
-    WorldNode sut("");
+    WorldNode sut;
     sut.CheckedAwake();
     sut.CheckedStart();
 
@@ -136,8 +136,8 @@ TEST(WorldNode, AddComponent_Lifecycle)
 
 TEST(WorldNode, AddComponent_AlreadyParented)
 {
-    WorldNode sut("");
-    WorldNode sut2("");
+    WorldNode sut;
+    WorldNode sut2;
 
     auto component = MAKE<WorldComponent>();
     sut.Add(component);
@@ -150,8 +150,8 @@ TEST(WorldNode, AddComponent_AlreadyParented)
 
 TEST(WorldNode, AddComponent_Null)
 {
-    WorldNode sut("");
-    WorldNode sut2("");
+    WorldNode sut;
+    WorldNode sut2;
 
     UP<WorldComponent> component;
     sut.Add(std::move(component));
@@ -160,7 +160,7 @@ TEST(WorldNode, AddComponent_Null)
 
 TEST(WorldNode, AddComponentT)
 {
-    WorldNode sut("");
+    WorldNode sut;
     sut.AddComponent<WorldComponent>();
     EXPECT_EQ(1, sut.Components().size());
 }

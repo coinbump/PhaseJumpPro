@@ -72,7 +72,7 @@ namespace PJ {
         /// Progress bar config
         struct ProgressBarConfig {
             /// Returns normalized progress value (0-1)
-            GetFunc<float> valueFunc;
+            GetBindingFunc<float> valueFunc;
 
             std::optional<Color> progressColor;
         };

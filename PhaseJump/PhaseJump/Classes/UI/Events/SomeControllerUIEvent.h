@@ -86,7 +86,7 @@ namespace PJ {
     };
 
     /// Controller button down event
-    class ControllerButtonDownUIEvent : public ControllerButtonUIEvent {
+    class ControllerButtonDownUIEvent final : public ControllerButtonUIEvent {
     public:
         using Base = ControllerButtonUIEvent;
 

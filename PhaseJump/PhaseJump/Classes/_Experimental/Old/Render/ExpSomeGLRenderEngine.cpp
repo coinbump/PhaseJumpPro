@@ -230,10 +230,10 @@
 //
 //}
 //
-// void BaseGLRenderEngine::LoadPerspective(float fov_radians, float aspect,
+// void BaseGLRenderEngine::LoadPerspective(float fovRadians, float aspect,
 // float zNear, float zFar)
 //{
-//    PJ::renderMatrixStack[static_cast<int>(PJ::renderState.mActiveMatrixStack)].mMatrix.LoadPerspective(fov_radians,
+//    PJ::renderMatrixStack[static_cast<int>(PJ::renderState.mActiveMatrixStack)].mMatrix.LoadPerspective(fovRadians,
 //    aspect, zNear, zFar); LoadMatrix();
 //}
 //
@@ -519,7 +519,7 @@
 //        void Scale(float x, float y, float z, bool load);
 //        void LoadIdentity();
 //        void LoadOrtho(float left, float right, float bottom, float top, float
-//        _near, float _far); void LoadPerspective(float fov_radians, float
+//        _near, float _far); void LoadPerspective(float fovRadians, float
 //        aspect, float zNear, float zFar);
 //
 //        virtual void SetRenderAlpha(float alpha) { mRenderAlpha = alpha; } //

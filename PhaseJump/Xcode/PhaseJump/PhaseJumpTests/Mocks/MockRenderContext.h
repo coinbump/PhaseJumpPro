@@ -21,6 +21,7 @@ namespace PJTest {
         virtual void EnableFeature(String featureId, bool isEnabled) {}
 
         virtual void ProjectionMatrixLoadOrthographic(Vector2 size) {}
+        virtual void ProjectionMatrixLoadPerspective(float fovRadians, float aspect, float zNear, float zFar) {}
         virtual void LoadTranslate(Vector3 value) {}
 
         virtual SP<SomeRenderContext> MakeTextureBuffer() { return {}; }

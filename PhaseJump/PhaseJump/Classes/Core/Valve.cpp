@@ -22,7 +22,6 @@ Valve::Valve(bool isOn) :
                 valve.SetState(StateType::Off);
                 break;
             default:
-                PJ::Log("ERROR. Animating valve with no destination");
                 break;
             }
         }

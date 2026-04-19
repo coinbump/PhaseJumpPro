@@ -6,13 +6,13 @@
 using namespace Example::Life;
 
 MatrixRenderer::MatrixRenderer(Vector3 worldSize) :
-    Base(worldSize),
+    core(this, worldSize),
     matrix({ 300, 300 }) {
 
     auto material = MAKE<RenderMaterial>(RenderMaterial::Config{ .shaderId = ShaderId::ColorVary });
-    model.material = material;
+    core.model.material = material;
 
-    model.SetBuildMeshFunc([this](auto& model) {
+    core.model.SetBuildMeshFunc([this](auto& model) {
         Mesh mesh;
 
         auto worldSize = model.WorldSize();
@@ -40,7 +40,7 @@ MatrixRenderer::MatrixRenderer(Vector3 worldSize) :
         return mesh;
     });
 
-    model.SetBuildVertexColorsFunc([this](auto const& model, auto& colors) {
+    core.model.SetBuildVertexColorsFunc([this](auto const& model, auto& colors) {
         colors.resize(matrix.Size().x * matrix.Size().y * 4);
 
         size_t i = 0;
@@ -62,6 +62,8 @@ MatrixRenderer::MatrixRenderer(Vector3 worldSize) :
             }
         }
     });
+
+    Override(planUIFuncs[UIContextId::Inspector], core.MakePlanUIFunc());
 }
 
 void MatrixRenderer::Awake() {

@@ -16,11 +16,11 @@ TEST(SwitchBehavior, ChooseFunc) {
 
     UP<BehaviorNode> child1 = NEW<BehaviorNode>();
     BehaviorNode* childPtr1 = child1.get();
-    sut.tree.Add(child1);
+    sut.tree.Add(std::move(child1));
 
     UP<BehaviorNode> child2 = NEW<BehaviorNode>();
     BehaviorNode* childPtr2 = child2.get();
-    sut.tree.Add(child2);
+    sut.tree.Add(std::move(child2));
 
     sut.OnUpdate({3});
     EXPECT_TRUE(sut.IsRunning());
@@ -35,11 +35,11 @@ TEST(SwitchBehavior, InvalidChooseFunc) {
 
     UP<BehaviorNode> child1 = NEW<BehaviorNode>();
     BehaviorNode* childPtr1 = child1.get();
-    sut.tree.Add(child1);
+    sut.tree.Add(std::move(child1));
 
     UP<BehaviorNode> child2 = NEW<BehaviorNode>();
     BehaviorNode* childPtr2 = child2.get();
-    sut.tree.Add(child2);
+    sut.tree.Add(std::move(child2));
 
     sut.OnUpdate({3});
     EXPECT_TRUE(sut.IsRunning());
@@ -67,7 +67,7 @@ TEST(SwitchBehavior, AllChildrenFinish) {
     childPtr1->updatable.onUpdateFunc = [](auto& updatable, auto time) {
         return FinishType::Finish;
     };
-    sut.tree.Add(child1);
+    sut.tree.Add(std::move(child1));
 
     sut.OnUpdate({3});
     EXPECT_FALSE(sut.IsRunning());
@@ -85,11 +85,11 @@ TEST(SwitchBehavior, OneChildFinish) {
     childPtr1->updatable.onUpdateFunc = [](auto& updatable, auto time) {
         return FinishType::Finish;
     };
-    sut.tree.Add(child1);
+    sut.tree.Add(std::move(child1));
     
     UP<BehaviorNode> child2 = NEW<BehaviorNode>();
     BehaviorNode* childPtr2 = child2.get();
-    sut.tree.Add(child2);
+    sut.tree.Add(std::move(child2));
 
     sut.OnUpdate({3});
     EXPECT_FALSE(sut.IsRunning());

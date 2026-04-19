@@ -15,7 +15,8 @@ using namespace BindingTests;
 TEST(Binding, GetSet)
 {
     int value = 5;
-    auto sut = Binding<int>([&]() { return value; }, [&](int newValue) { value = newValue; });
+    auto sut = Binding<int>({ .getFunc = [&]() { return value; },
+                              .setFunc = [&](int newValue) { value = newValue; } });
 
     EXPECT_EQ(5, sut.Value());
     
@@ -26,7 +27,8 @@ TEST(Binding, GetSet)
 TEST(Binding, Operators)
 {
     int value = 5;
-    auto sut = Binding<int>([&]() { return value; }, [&](int newValue) { value = newValue; });
+    auto sut = Binding<int>({ .getFunc = [&]() { return value; },
+                              .setFunc = [&](int newValue) { value = newValue; } });
 
     EXPECT_EQ(5, sut);
 

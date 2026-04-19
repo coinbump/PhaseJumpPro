@@ -6,11 +6,27 @@
 #include "RenderProcessor.h"
 #include "SomeRenderContext.h"
 #include "SomeRenderEngine.h"
+#include "UnorderedSet.h"
 #include "World.h"
 #include "WorldNode.h"
 
 using namespace std;
 using namespace PJ;
+
+namespace {
+    /// @return True if `node` is a strict descendant of `ancestor` (not equal to it).
+    bool IsDescendant(WorldNode const* ancestor, WorldNode const* node) {
+        GUARDR(ancestor && node, false)
+        GUARDR(node != ancestor, false)
+
+        for (auto cursor = node->Parent(); cursor; cursor = cursor->Parent()) {
+            if (cursor == ancestor) {
+                return true;
+            }
+        }
+        return false;
+    }
+} // namespace
 
 RenderWorldSystem::RenderWorldSystem(String name) :
     Base(name) {
@@ -35,11 +51,60 @@ std::optional<RenderResult> RenderWorldSystem::Render(RenderContextModel& _conte
 
     auto& cameras = _contextModel.cameras;
 
+    // Viewport cameras render first so their backing textures are up to date before any outer
+    // camera samples them (e.g. a SpriteRenderer on the viewport owner composites the texture).
+    std::stable_partition(cameras.begin(), cameras.end(), [](Camera const* camera) {
+        return camera && camera->type == CameraType::Viewport;
+    });
+
+    // Collect the owner nodes of all Viewport cameras. Their descendants are rendered exclusively
+    // by their own viewport camera and must be hidden from every other camera in this pass.
+    VectorList<WorldNode const*> viewportCameraNodes;
+    for (auto& camera : cameras) {
+        if (camera && camera->type == CameraType::Viewport && camera->owner) {
+            viewportCameraNodes.push_back(camera->owner);
+        }
+    }
+
     // Execute a complete render pass for each camera
-    // FUTURE: support limiting which nodes are rendered for each camera
     // FUTURE: support occlusion filtering for nodes based on camera view
     for (auto& camera : cameras) {
         GUARD_CONTINUE(camera)
+
+        bool const isViewportCamera = camera->type == CameraType::Viewport;
+        WorldNode const* viewportRoot = isViewportCamera ? camera->owner : nullptr;
+
+        // Discard non-viewport cameras nested inside a viewport's subtree. Their content is
+        // already rendered by the enclosing viewport camera into the viewport's own context;
+        // letting them run again would double-render to the main context.
+        if (!isViewportCamera) {
+            bool nestedInViewport = false;
+            for (auto* vpRoot : viewportCameraNodes) {
+                if (IsDescendant(vpRoot, camera->owner)) {
+                    nestedInViewport = true;
+                    break;
+                }
+            }
+            GUARD_CONTINUE(!nestedInViewport)
+        }
+
+        auto shouldRender = [&](WorldNode const* node) {
+            // Viewport camera: render only the children below its owner (the owner itself lives in
+            // the outer world and holds the sprite that composites this viewport back in).
+            if (isViewportCamera) {
+                return IsDescendant(viewportRoot, node);
+            }
+
+            // Non-viewport camera: render everything except nodes that are strict descendants of a
+            // Viewport camera's owner. The viewport owner itself still renders via the main camera
+            // (that's where the composite SpriteRenderer lives).
+            for (auto* vpRoot : viewportCameraNodes) {
+                if (IsDescendant(vpRoot, node)) {
+                    return false;
+                }
+            }
+            return true;
+        };
 
         // Rendered nodes are sent to render processors to add custom render models
         // Example: show colliders render processor
@@ -63,6 +128,9 @@ std::optional<RenderResult> RenderWorldSystem::Render(RenderContextModel& _conte
             for (auto& node : _contextModel.nodes) {
                 // Skip hidden nodes
                 GUARD_CONTINUE(node->IsVisible())
+
+                // Viewport-camera visibility gating (see shouldRender above).
+                GUARD_CONTINUE(shouldRender(node))
 
                 VectorList<Renderer*> renderers;
                 node->CollectTypeComponents<Renderer>(renderers);

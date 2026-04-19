@@ -75,6 +75,7 @@ namespace PJ {
         }
 
         float Progress() const {
+            GUARDR(duration > 0, 0)
             return std::clamp(state / duration, 0.0f, 1.0f);
         }
 

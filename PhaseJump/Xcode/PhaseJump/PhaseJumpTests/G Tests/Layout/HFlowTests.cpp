@@ -26,7 +26,7 @@ TEST(HFlow, Tests)
 
     worldNode->Add(sut);
 
-    sut->LayoutIfNeeded();
+    sut->layout.LayoutIfNeeded();
 
     EXPECT_EQ(1.0f, sut->spacing);
     EXPECT_EQ(2.0f, sut->Size().x);

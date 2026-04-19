@@ -27,7 +27,7 @@ namespace PJ {
     };
 
     /// Demonstration class for modules (not a real class)
-    class _FooClass : public TypeClass<Base> {
+    class _FooClass final : public TypeClass<Base> {
     public:
         using Base = TypeClass<PJ::Base>;
 
@@ -38,7 +38,7 @@ namespace PJ {
     };
 
     // Demonstration class for modules (not a real class)
-    class _MacFooClass : public TypeClass<Base> {
+    class _MacFooClass final : public TypeClass<Base> {
     public:
         using Base = TypeClass<PJ::Base>;
 

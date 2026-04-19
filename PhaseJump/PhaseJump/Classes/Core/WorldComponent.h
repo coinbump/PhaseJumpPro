@@ -55,6 +55,9 @@ namespace PJ {
 
         WorldComponent(String name = "");
 
+        DELETE_COPY(WorldComponent)
+        DELETE_MOVE(WorldComponent)
+
         // FUTURE: virtual void UpdateFromSerializedProperties(bool forceUpdate) {}
 
         template <class Signal>

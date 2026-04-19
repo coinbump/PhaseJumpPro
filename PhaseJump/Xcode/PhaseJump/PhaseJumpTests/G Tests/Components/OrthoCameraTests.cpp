@@ -16,7 +16,6 @@ namespace OrthoCameraTests {
 TEST(OrthoCamera, RenderContextSize) {
     auto world = MAKE<World>();
     auto _renderContext = NEW<MockRenderContext>(MockRenderContext::Config { .size = {400, 200}, .pixelSize = {400, 200}});
-    auto renderContext = _renderContext.get();
     world->renderContext = std::move(_renderContext);
 
     auto& sut = world->AddNode().AddComponent<OrthoCamera>();
@@ -27,7 +26,6 @@ TEST(OrthoCamera, RenderContextSize) {
 TEST(OrthoCamera, RenderContextPixelSize) {
     auto world = MAKE<World>();
     auto _renderContext = NEW<MockRenderContext>(MockRenderContext::Config { .size = {200, 100}, .pixelSize = {400, 200}});
-    auto renderContext = _renderContext.get();
     world->renderContext = std::move(_renderContext);
 
     auto& sut = world->AddNode().AddComponent<OrthoCamera>();
@@ -38,7 +36,6 @@ TEST(OrthoCamera, RenderContextPixelSize) {
 TEST(OrthoCamera, RenderContextExtents) {
     auto world = MAKE<World>();
     auto _renderContext = NEW<MockRenderContext>(MockRenderContext::Config { .size = {200, 100}, .pixelSize = {400, 200}});
-    auto renderContext = _renderContext.get();
     world->renderContext = std::move(_renderContext);
 
     auto& sut = world->AddNode().AddComponent<OrthoCamera>();
@@ -48,7 +45,6 @@ TEST(OrthoCamera, RenderContextExtents) {
 TEST(OrthoCamera, CameraExtents) {
     auto world = MAKE<World>();
     auto _renderContext = NEW<MockRenderContext>(MockRenderContext::Config { .size = {200, 100}, .pixelSize = {400, 200}});
-    auto renderContext = _renderContext.get();
     world->renderContext = std::move(_renderContext);
 
     auto& sut = world->AddNode().AddComponent<OrthoCamera>();
@@ -58,7 +54,6 @@ TEST(OrthoCamera, CameraExtents) {
 TEST(OrthoCamera, CameraExtentsWithHalfHeight) {
     auto world = MAKE<World>();
     auto _renderContext = NEW<MockRenderContext>(MockRenderContext::Config { .size = {200, 100}, .pixelSize = {400, 200}});
-    auto renderContext = _renderContext.get();
     world->renderContext = std::move(_renderContext);
 
     auto& sut = world->AddNode().AddComponent<OrthoCamera>();
@@ -70,7 +65,6 @@ TEST(OrthoCamera, CameraExtentsWithHalfHeight) {
 TEST(OrthoCamera, SetContentScale) {
     auto world = MAKE<World>();
     auto _renderContext = NEW<MockRenderContext>(MockRenderContext::Config { .size = {400, 200}, .pixelSize = {400, 200}});
-    auto renderContext = _renderContext.get();
     world->renderContext = std::move(_renderContext);
 
     auto& sut = world->AddNode().AddComponent<OrthoCamera>();
@@ -83,7 +77,6 @@ TEST(OrthoCamera, SetContentScale) {
 TEST(OrthoCamera, WorldToScreenScaleSameSize) {
     auto world = MAKE<World>();
     auto _renderContext = NEW<MockRenderContext>(MockRenderContext::Config { .size = {400, 200}, .pixelSize = {400, 200}});
-    auto renderContext = _renderContext.get();
     world->renderContext = std::move(_renderContext);
 
     auto& sut = world->AddNode().AddComponent<OrthoCamera>();
@@ -93,7 +86,6 @@ TEST(OrthoCamera, WorldToScreenScaleSameSize) {
 TEST(OrthoCamera, WorldToScreenScale) {
     auto world = MAKE<World>();
     auto _renderContext = NEW<MockRenderContext>(MockRenderContext::Config { .size = {200, 100}, .pixelSize = {400, 200}});
-    auto renderContext = _renderContext.get();
     world->renderContext = std::move(_renderContext);
 
     auto& sut = world->AddNode().AddComponent<OrthoCamera>();
@@ -103,126 +95,120 @@ TEST(OrthoCamera, WorldToScreenScale) {
 TEST(OrthoCamera, WorldToScreenSameSize) {
     auto world = MAKE<World>();
     auto _renderContext = NEW<MockRenderContext>(MockRenderContext::Config { .size = {400, 200}, .pixelSize = {400, 200}});
-    auto renderContext = _renderContext.get();
     world->renderContext = std::move(_renderContext);
 
     auto& sut = world->AddNode().AddComponent<OrthoCamera>();
 
-    auto screenZero = sut.WorldToScreen({});
+    auto screenZero = sut.ContextToScreen({});
     EXPECT_EQ(Vector2(200, 100), screenZero);
 
-    auto screenOne = sut.WorldToScreen(Vector3(1, 1, 0));
+    auto screenOne = sut.ContextToScreen(Vector3(1, 1, 0));
     EXPECT_EQ(Vector2(201, 99), screenOne);
 
     sut.owner->transform.SetWorldPosition(Vector3(1, 1, 0));
 
-    auto screenOneOffset = sut.WorldToScreen(Vector3(1, 1, 0));
+    auto screenOneOffset = sut.ContextToScreen(Vector3(1, 1, 0));
     EXPECT_EQ(Vector2(200, 100), screenOneOffset);
 }
 
 TEST(OrthoCamera, WorldToScreenScaled) {
     auto world = MAKE<World>();
     auto _renderContext = NEW<MockRenderContext>(MockRenderContext::Config { .size = {200, 100}, .pixelSize = {400, 200}});
-    auto renderContext = _renderContext.get();
     world->renderContext = std::move(_renderContext);
 
     auto& sut = world->AddNode().AddComponent<OrthoCamera>();
 
-    auto screenZero = sut.WorldToScreen({});
+    auto screenZero = sut.ContextToScreen({});
     EXPECT_EQ(Vector2(100, 50), screenZero);
 
-    auto screenOne = sut.WorldToScreen(Vector3(2, 2, 0));
+    auto screenOne = sut.ContextToScreen(Vector3(2, 2, 0));
     EXPECT_EQ(Vector2(101, 49), screenOne);
 
     sut.owner->transform.SetWorldPosition(Vector3(2, 2, 0));
 
-    auto screenOneOffset = sut.WorldToScreen(Vector3(2, 2, 0));
+    auto screenOneOffset = sut.ContextToScreen(Vector3(2, 2, 0));
     EXPECT_EQ(Vector2(100, 50), screenOneOffset);
 }
 
 TEST(OrthoCamera, WorldToScreenWithHalfHeight) {
     auto world = MAKE<World>();
     auto _renderContext = NEW<MockRenderContext>(MockRenderContext::Config { .size = {400, 200}, .pixelSize = {400, 200}});
-    auto renderContext = _renderContext.get();
     world->renderContext = std::move(_renderContext);
 
     auto& sut = world->AddNode().AddComponent<OrthoCamera>();
     sut.SetHalfHeight(50);
 
-    auto screenZero = sut.WorldToScreen({});
+    auto screenZero = sut.ContextToScreen({});
     EXPECT_EQ(Vector2(200, 100), screenZero);
 
-    auto screenOne = sut.WorldToScreen(Vector3(1, 1, 0));
+    auto screenOne = sut.ContextToScreen(Vector3(1, 1, 0));
     EXPECT_EQ(Vector2(202, 98), screenOne);
 
     sut.owner->transform.SetWorldPosition(Vector3(1, 1, 0));
-    auto screenZeroOffset = sut.WorldToScreen({});
+    auto screenZeroOffset = sut.ContextToScreen({});
     EXPECT_EQ(Vector2(198, 102), screenZeroOffset);
 
-    auto screenOneOffset = sut.WorldToScreen(Vector3(1, 1, 0));
+    auto screenOneOffset = sut.ContextToScreen(Vector3(1, 1, 0));
     EXPECT_EQ(Vector2(200, 100), screenOneOffset);
 }
 
 TEST(OrthoCamera, ScreenToWorld) {
     auto world = MAKE<World>();
     auto _renderContext = NEW<MockRenderContext>(MockRenderContext::Config { .size = {400, 200}, .pixelSize = {400, 200}});
-    auto renderContext = _renderContext.get();
     world->renderContext = std::move(_renderContext);
 
     auto& sut = world->AddNode().AddComponent<OrthoCamera>();
 
-    auto worldZero = sut.ScreenToWorld(Vector2(200, 100));
+    auto worldZero = sut.ScreenToContext(Vector2(200, 100));
     EXPECT_EQ(Vector3{}, worldZero);
 
-    auto worldOne = sut.ScreenToWorld(Vector2(201, 99));
+    auto worldOne = sut.ScreenToContext(Vector2(201, 99));
     EXPECT_EQ(Vector3(1, 1, 0), worldOne);
 
     sut.owner->transform.SetWorldPosition(Vector3(1, 1 * vecUp, 0));
 
-    auto worldOneOffset = sut.ScreenToWorld(Vector2(200, 100));
+    auto worldOneOffset = sut.ScreenToContext(Vector2(200, 100));
     EXPECT_EQ(Vector3(1, 1, 0), worldOneOffset);
 }
 
 TEST(OrthoCamera, ScreenToWorldScaled) {
     auto world = MAKE<World>();
     auto _renderContext = NEW<MockRenderContext>(MockRenderContext::Config { .size = {200, 100}, .pixelSize = {400, 200}});
-    auto renderContext = _renderContext.get();
     world->renderContext = std::move(_renderContext);
 
     auto& sut = world->AddNode().AddComponent<OrthoCamera>();
 
-    auto worldZero = sut.ScreenToWorld(Vector2(100, 50));
+    auto worldZero = sut.ScreenToContext(Vector2(100, 50));
     EXPECT_EQ(Vector3{}, worldZero);
 
-    auto worldOne = sut.ScreenToWorld(Vector2(101, 49));
+    auto worldOne = sut.ScreenToContext(Vector2(101, 49));
     EXPECT_EQ(Vector3(2, 2, 0), worldOne);
 
     sut.owner->transform.SetWorldPosition(Vector3(1, 1 * vecUp, 0));
 
-    auto worldOneOffset = sut.ScreenToWorld(Vector2(100, 50));
+    auto worldOneOffset = sut.ScreenToContext(Vector2(100, 50));
     EXPECT_EQ(Vector3(1, 1, 0), worldOneOffset);
 }
 
 TEST(OrthoCamera, ScreenToWorldWithHalfHeight) {
     auto world = MAKE<World>();
     auto _renderContext = NEW<MockRenderContext>(MockRenderContext::Config { .size = {400, 200}, .pixelSize = {400, 200}});
-    auto renderContext = _renderContext.get();
     world->renderContext = std::move(_renderContext);
 
     auto& sut = world->AddNode().AddComponent<OrthoCamera>();
     sut.SetHalfHeight(50);
 
-    auto worldZero = sut.ScreenToWorld(Vector2(200, 100));
+    auto worldZero = sut.ScreenToContext(Vector2(200, 100));
     EXPECT_EQ(Vector3{}, worldZero);
 
-    auto worldOne = sut.ScreenToWorld(Vector2(202, 98));
+    auto worldOne = sut.ScreenToContext(Vector2(202, 98));
     EXPECT_EQ(Vector3(1, 1, 0), worldOne);
 
     sut.owner->transform.SetWorldPosition(Vector3(1, 1 * vecUp, 0));
 
-    auto worldZeroOffset = sut.ScreenToWorld(Vector2(198, 102));
+    auto worldZeroOffset = sut.ScreenToContext(Vector2(198, 102));
     EXPECT_EQ(Vector3{}, worldZeroOffset);
 
-    auto screenOneOffset = sut.ScreenToWorld(Vector2(200, 100));
+    auto screenOneOffset = sut.ScreenToContext(Vector2(200, 100));
     EXPECT_EQ(Vector3(1, 1, 0), screenOneOffset);
 }

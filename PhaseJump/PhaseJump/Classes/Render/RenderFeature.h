@@ -19,19 +19,22 @@ namespace PJ {
         auto constexpr Blend = "blend";
 
         /// Enables optional clipping of rendered output
-        auto constexpr ScissorTest = "scissorTest";
+        auto constexpr ScissorTest = "scissor.test";
 
         /// Enables culling of back faces
-        auto constexpr CullFace = "cullFace";
+        auto constexpr CullFace = "cull.face";
 
         /// Enables 2D textures
-        auto constexpr Texture2D = "texture2D";
+        auto constexpr Texture2D = "texture.2D";
 
         /// Enables Z-ordering via depth testing
-        auto constexpr DepthTest = "depthTest";
+        auto constexpr DepthTest = "depth.test";
+
+        /// Enables stencil testing
+        auto constexpr StencilTest = "stencil.test";
 
         /// Enables MSAA rendering
-        auto constexpr MultiSample = "multiSample";
+        auto constexpr MultiSample = "multi.sample";
 
     }; // namespace RenderFeature
 } // namespace PJ

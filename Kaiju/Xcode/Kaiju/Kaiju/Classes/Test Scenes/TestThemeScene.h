@@ -17,6 +17,6 @@ public:
             qb.And("Theme color").Circle(20, color.second).Pop();
         }
 
-        qb.ModifyAll<HFlow>([](HFlow& c, auto index) { c.LayoutIfNeeded(); });
+        qb.ModifyAll<HFlow>([](HFlow& c, auto index) { c.layout.LayoutIfNeeded(); });
     }
 };

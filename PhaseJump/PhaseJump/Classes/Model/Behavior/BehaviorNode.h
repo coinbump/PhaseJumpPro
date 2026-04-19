@@ -36,7 +36,7 @@ namespace PJ {
      Reference:
      https://docs.nvidia.com/holoscan/sdk-user-guide/gxf/doc/behavior_tree/behavior_trees.html
      */
-    class BehaviorNode : public Treeable<BehaviorNode>, public SomeUpdatable {
+    class BehaviorNode : public SomeUpdatable {
     public:
         // FUTURE: add ParallelBehavior if needed
         using Base = Updatable;
@@ -77,8 +77,8 @@ namespace PJ {
 
         BehaviorNode(String name = {}, RunType runType = RunType::Once);
 
-        void Add(UP<This>& value) {
-            tree.Add(value);
+        void Add(UP<This> value) {
+            tree.Add(std::move(value));
         }
 
         BehaviorState State() const {
@@ -116,11 +116,11 @@ namespace PJ {
 
         // MARK: Treeable
 
-        This* Parent() const override {
+        This* Parent() const {
             return tree.Parent();
         }
 
-        void SetParent(This* value) override {
+        void SetParent(This* value) {
             tree.SetParent(value);
         }
 

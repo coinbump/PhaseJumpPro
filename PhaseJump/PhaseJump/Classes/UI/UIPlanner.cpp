@@ -6,12 +6,12 @@ using namespace PJ;
 
 using This = UIPlanner;
 
-This& UIPlanner::Text(std::function<TextConfig()> configFunc) {
+This& UIPlanner::LabelText(std::function<LabelTextConfig()> configFunc) {
     GUARDR(configFunc, *this)
 
     plan.Add([=]() {
         auto config = configFunc();
-        Binding<String> binding([=]() { return config.text; }, {});
+        Binding<String> binding({ .getFunc = [=]() { return config.text; } });
         return NEW<ValueUIModel<String>>(UIModelType::Text, config.label, ValueUICore{ binding });
     });
     return *this;
@@ -21,7 +21,7 @@ This& UIPlanner::TreeNode(std::function<TreeNodeConfig()> configFunc) {
     GUARDR(configFunc, *this)
 
     plan.Add([=]() {
-        Binding<TreeNodeConfig> binding([=]() { return configFunc(); }, {});
+        Binding<TreeNodeConfig> binding({ .getFunc = [=]() { return configFunc(); } });
         return NEW<ValueUIModel<TreeNodeConfig>>(UIModelType::TreeNode, "", ValueUICore{ binding });
     });
     return *this;
@@ -85,6 +85,16 @@ This& UIPlanner::PickerList(std::function<PickerListConfig()> configFunc) {
             UIModelType::PickerList, config.label,
             ValueOptionsUICore{ config.options, config.binding }
         );
+    });
+    return *this;
+}
+
+This& UIPlanner::Image(std::function<ImageConfig()> configFunc) {
+    GUARDR(configFunc, *this)
+
+    plan.Add([=]() {
+        Binding<ImageConfig> binding({ .getFunc = [=]() { return configFunc(); } });
+        return NEW<ValueUIModel<ImageConfig>>(UIModelType::Image, "", ValueUICore{ binding });
     });
     return *this;
 }

@@ -47,6 +47,7 @@ namespace PJ {
         // MARK: Playable
 
         float Progress() const override {
+            GUARDR(duration > 0, 0)
             return std::clamp(state / duration, 0.0f, 1.0f);
         }
 

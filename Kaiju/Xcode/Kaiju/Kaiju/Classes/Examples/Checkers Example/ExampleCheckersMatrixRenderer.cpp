@@ -6,14 +6,14 @@ using namespace Example;
 using namespace Checkers;
 
 MatrixRenderer::MatrixRenderer(Vector3 worldSize) :
-    Base(worldSize) {
+    core(this, worldSize) {
 
     auto material = MAKE<RenderMaterial>(RenderMaterial::Config{ .shaderId = ShaderId::ColorVary });
 
     Vec2I matrixSize{ 8, 8 };
-    model.material = material;
+    core.model.material = material;
 
-    model.SetBuildMeshFunc([=](auto& model) {
+    core.model.SetBuildMeshFunc([=](auto& model) {
         Mesh mesh;
 
         Vector3 cellSize{ model.WorldSize().x / matrixSize.x, model.WorldSize().y / matrixSize.y,
@@ -36,7 +36,7 @@ MatrixRenderer::MatrixRenderer(Vector3 worldSize) :
         return mesh;
     });
 
-    model.SetBuildVertexColorsFunc([=](auto const& model, auto& colors) {
+    core.model.SetBuildVertexColorsFunc([=](auto const& model, auto& colors) {
         colors.resize(matrixSize.x * matrixSize.y * 4);
 
         bool isDark = false;
@@ -57,4 +57,6 @@ MatrixRenderer::MatrixRenderer(Vector3 worldSize) :
             Toggle(isDark);
         }
     });
+
+    Override(planUIFuncs[UIContextId::Inspector], core.MakePlanUIFunc());
 }

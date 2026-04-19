@@ -30,7 +30,113 @@ ViewBuilder::ViewBuilder(WorldNode& node) {
     qb = NEW<QuickBuilder>(node);
 }
 
-This& ViewBuilder::Pad(BuildConfigFunc<PadConfig> buildConfigFunc) {
+ViewBuilder::Scope::~Scope() {
+    Leave();
+}
+
+ViewBuilder::Scope::Scope(Scope&& other) noexcept :
+    vb(other.vb),
+    componentsBaseSize(other.componentsBaseSize) {
+    other.vb = nullptr;
+}
+
+ViewBuilder::Scope& ViewBuilder::Scope::operator=(Scope&& other) noexcept {
+    if (this != &other) {
+        Leave();
+        vb = other.vb;
+        componentsBaseSize = other.componentsBaseSize;
+        other.vb = nullptr;
+    }
+    return *this;
+}
+
+void ViewBuilder::Scope::Leave() {
+    if (vb) {
+        // Isolate child components from the parent's ModifyLatest target: truncate the list
+        // back to the point just after the scope's own view was added. Children remain as
+        // actual child world nodes; only the component-list cursor is reset.
+        vb->QB().TruncateComponentsToSize(componentsBaseSize);
+        vb->QB().Pop();
+        vb = nullptr;
+    }
+}
+
+template <class Config>
+ViewBuilder::Scope ViewBuilder::PushLayoutView(
+    Config config, std::function<UP<SomeViewLayout>(Config const&)> makeLayoutFunc
+) {
+    QB().And("").With<View2D>();
+
+    auto view = QB().Node().TypeComponent<View2D>();
+    if (view) {
+        view->owner->SetName(config.name);
+        UP<SomeViewLayout> layout = makeLayoutFunc(config);
+        view->SetLayout(layout);
+    }
+
+    return Scope(*this, QB().ComponentsSize());
+}
+
+ViewBuilder::Scope ViewBuilder::BeginVStack(VStackConfig config) {
+    return PushLayoutView<VStackConfig>(config, [](VStackConfig const& c) {
+        return NEW<FlowStackViewLayout>(Axis2D::Y, c.spacing, c.alignFunc);
+    });
+}
+
+ViewBuilder::Scope ViewBuilder::BeginHStack(HStackConfig config) {
+    return PushLayoutView<HStackConfig>(config, [](HStackConfig const& c) {
+        return NEW<FlowStackViewLayout>(Axis2D::X, c.spacing, c.alignFunc);
+    });
+}
+
+ViewBuilder::Scope ViewBuilder::BeginZStack(ZStackConfig config) {
+    return PushLayoutView<ZStackConfig>(config, [](ZStackConfig const& c) {
+        return NEW<ZStackViewLayout>(c.alignment.xAlignFunc, c.alignment.yAlignFunc);
+    });
+}
+
+ViewBuilder::Scope ViewBuilder::BeginPad(PadConfig config) {
+    return PushLayoutView<PadConfig>(config, [](PadConfig const& c) {
+        return NEW<PadViewLayout>(c.insets);
+    });
+}
+
+ViewBuilder::Scope ViewBuilder::BeginFixedGrid(FixedGridConfig config) {
+    return PushLayoutView<FixedGridConfig>(config, [](FixedGridConfig const& c) {
+        return NEW<FixedGridViewLayout>(FixedGridViewLayout::Config{ .gridSize = c.gridSize,
+                                                                     .cellSize = c.cellSize,
+                                                                     .alignment = c.alignment,
+                                                                     .spacing = c.spacing });
+    });
+}
+
+This& ViewBuilder::Rebuildable(BuildViewFunc buildFunc) {
+    auto view = QB().Node().TypeComponent<View2D>();
+    GUARDR_LOG(view, *this, "ERROR: Rebuildable needs an active View2D")
+
+    view->buildViewFunc = [buildFunc](View2D& view) {
+        GUARD(view.owner)
+        if (buildFunc) {
+            ViewBuilder vb(*view.owner);
+            buildFunc(vb);
+        }
+    };
+
+    // Build initial children. Don't use view->Rebuild() — it unconditionally destroys existing
+    // children, which would clobber anything added imperatively before this call.
+    if (buildFunc) {
+        ViewBuilder vb(*view->owner);
+        buildFunc(vb);
+    }
+
+    return *this;
+}
+
+template <class Config>
+This& ViewBuilder::AddLayoutView(
+    BuildConfigFunc<Config> buildConfigFunc,
+    std::function<UP<SomeViewLayout>(Config const&)> makeLayoutFunc
+) {
     QB().And()
         .With<View2D>()
         .ModifyLatest<View2D>([=](auto& view) {
@@ -41,7 +147,7 @@ This& ViewBuilder::Pad(BuildConfigFunc<PadConfig> buildConfigFunc) {
                 auto config = buildConfigFunc(view);
                 view.owner->SetName(config.name);
 
-                UP<SomeViewLayout> layout = NEW<PadViewLayout>(config.insets);
+                UP<SomeViewLayout> layout = makeLayoutFunc(config);
                 view.SetLayout(layout);
 
                 GUARD(config.buildViewFunc)
@@ -57,155 +163,72 @@ This& ViewBuilder::Pad(BuildConfigFunc<PadConfig> buildConfigFunc) {
     return *this;
 }
 
-This& ViewBuilder::HStack(BuildConfigFunc<HStackConfig> buildConfigFunc) {
-    QB().And()
-        .With<View2D>()
-        .ModifyLatest<View2D>([&](auto& view) {
-            view.buildViewFunc = [=](auto& view) {
-                GUARD(buildConfigFunc)
-                GUARD(view.owner)
-
-                auto config = buildConfigFunc(view);
-                view.owner->SetName(config.name);
-
-                UP<SomeViewLayout> layout =
-                    NEW<FlowStackViewLayout>(Axis2D::X, config.spacing, config.alignFunc);
-                view.SetLayout(layout);
-
-                GUARD(config.buildViewFunc)
-
-                ViewBuilder viewBuilder(*view.owner);
-                config.buildViewFunc(viewBuilder);
-            };
-
-            view.Rebuild();
-        })
-        .Pop();
-
-    return *this;
-}
-
-This& ViewBuilder::VStack(BuildConfigFunc<VStackConfig> buildConfigFunc) {
-    QB().And()
-        .With<View2D>()
-        .ModifyLatest<View2D>([&](auto& view) {
-            view.buildViewFunc = [=](auto& view) {
-                GUARD(buildConfigFunc)
-                GUARD(view.owner)
-
-                auto config = buildConfigFunc(view);
-                view.owner->SetName(config.name);
-
-                UP<SomeViewLayout> layout =
-                    NEW<FlowStackViewLayout>(Axis2D::Y, config.spacing, config.alignFunc);
-                view.SetLayout(layout);
-
-                GUARD(config.buildViewFunc)
-
-                ViewBuilder viewBuilder(*view.owner);
-                config.buildViewFunc(viewBuilder);
-            };
-
-            view.Rebuild();
-        })
-        .Pop();
-
-    return *this;
-}
-
-This& ViewBuilder::FixedGrid(BuildConfigFunc<FixedGridConfig> buildConfigFunc) {
-    QB().And()
-        .With<View2D>()
-        .ModifyLatest<View2D>([&](auto& view) {
-            view.buildViewFunc = [=](auto& view) {
-                GUARD(buildConfigFunc)
-                GUARD(view.owner)
-
-                auto config = buildConfigFunc(view);
-                view.owner->SetName(config.name);
-
-                UP<SomeViewLayout> layout = NEW<FixedGridViewLayout>(FixedGridViewLayout::Config{
-                    .gridSize = config.gridSize,
-                    .cellSize = config.cellSize,
-                    .alignment = config.alignment,
-                    .spacing = config.spacing });
-                view.SetLayout(layout);
-
-                GUARD(config.buildViewFunc)
-
-                ViewBuilder viewBuilder(*view.owner);
-                config.buildViewFunc(viewBuilder);
-            };
-
-            view.Rebuild();
-        })
-        .Pop();
-
-    return *this;
-}
-
-This& ViewBuilder::ZStack(BuildConfigFunc<ZStackConfig> buildConfigFunc) {
-    QB().And()
-        .With<View2D>()
-        .ModifyLatest<View2D>([&](auto& view) {
-            view.buildViewFunc = [=](auto& view) {
-                GUARD(buildConfigFunc)
-                GUARD(view.owner)
-
-                auto config = buildConfigFunc(view);
-                view.owner->SetName(config.name);
-
-                UP<SomeViewLayout> layout =
-                    NEW<ZStackViewLayout>(config.alignment.xAlignFunc, config.alignment.yAlignFunc);
-                view.SetLayout(layout);
-
-                GUARD(config.buildViewFunc)
-
-                ViewBuilder viewBuilder(*view.owner);
-                config.buildViewFunc(viewBuilder);
-            };
-
-            view.Rebuild();
-        })
-        .Pop();
-
-    return *this;
-}
-
-This& ViewBuilder::Background(BuildViewFunc buildBackgroundFunc) {
-    QB().ModifyLatest<View2D>([&](auto& activeView) {
+This& ViewBuilder::AddAttachment(BuildViewFunc buildFunc, bool isBackground) {
+    QB().ModifyLatest<View2D>([=](auto& activeView) {
         auto parentView = activeView.ParentView();
-        GUARD_LOG(parentView, "ERROR: Missing parent view for background")
+        GUARD_LOG(
+            parentView, isBackground ? "ERROR: Missing parent view for background"
+                                     : "ERROR: Missing parent view for overlay"
+        )
 
         auto viewNode = parentView->owner->Move(*activeView.owner);
 
         ViewBuilder vb(*parentView->owner);
         vb.ViewAttachments([=](auto& view) {
-            return ViewAttachmentsConfig{ .buildBackgroundFunc = buildBackgroundFunc,
-                                          .viewNode = viewNode };
+            ViewAttachmentsConfig config{ .viewNode = viewNode };
+            if (isBackground) {
+                config.buildBackgroundFunc = buildFunc;
+            } else {
+                config.buildOverlayFunc = buildFunc;
+            }
+            return config;
         });
     });
 
     return *this;
+}
+
+This& ViewBuilder::Pad(BuildConfigFunc<PadConfig> buildConfigFunc) {
+    return AddLayoutView<PadConfig>(buildConfigFunc, [](PadConfig const& config) {
+        return NEW<PadViewLayout>(config.insets);
+    });
+}
+
+This& ViewBuilder::HStack(BuildConfigFunc<HStackConfig> buildConfigFunc) {
+    return AddLayoutView<HStackConfig>(buildConfigFunc, [](HStackConfig const& config) {
+        return NEW<FlowStackViewLayout>(Axis2D::X, config.spacing, config.alignFunc);
+    });
+}
+
+This& ViewBuilder::VStack(BuildConfigFunc<VStackConfig> buildConfigFunc) {
+    return AddLayoutView<VStackConfig>(buildConfigFunc, [](VStackConfig const& config) {
+        return NEW<FlowStackViewLayout>(Axis2D::Y, config.spacing, config.alignFunc);
+    });
+}
+
+This& ViewBuilder::FixedGrid(BuildConfigFunc<FixedGridConfig> buildConfigFunc) {
+    return AddLayoutView<FixedGridConfig>(buildConfigFunc, [](FixedGridConfig const& config) {
+        return NEW<FixedGridViewLayout>(FixedGridViewLayout::Config{ .gridSize = config.gridSize,
+                                                                     .cellSize = config.cellSize,
+                                                                     .alignment = config.alignment,
+                                                                     .spacing = config.spacing });
+    });
+}
+
+This& ViewBuilder::ZStack(BuildConfigFunc<ZStackConfig> buildConfigFunc) {
+    return AddLayoutView<ZStackConfig>(buildConfigFunc, [](ZStackConfig const& config) {
+        return NEW<ZStackViewLayout>(config.alignment.xAlignFunc, config.alignment.yAlignFunc);
+    });
+}
+
+This& ViewBuilder::Background(BuildViewFunc buildBackgroundFunc) {
+    return AddAttachment(buildBackgroundFunc, true);
 }
 
 This& ViewBuilder::Overlay(BuildViewFunc buildOverlayFunc) {
     // Important: Add Background first or the view order will be wrong
     // FUTURE: make this more intelligent if needed
-    QB().ModifyLatest<View2D>([&](auto& activeView) {
-        auto parentView = activeView.ParentView();
-        GUARD_LOG(parentView, "ERROR: Missing parent view for background")
-
-        auto viewNode = parentView->owner->Move(*activeView.owner);
-
-        ViewBuilder vb(*parentView->owner);
-        vb.ViewAttachments([=](auto& view) {
-            return ViewAttachmentsConfig{ .buildOverlayFunc = buildOverlayFunc,
-                                          .viewNode = viewNode };
-        });
-    });
-
-    return *this;
+    return AddAttachment(buildOverlayFunc, false);
 }
 
 This& ViewBuilder::ViewAttachments(BuildConfigFunc<ViewAttachmentsConfig> buildConfigFunc) {
@@ -331,10 +354,14 @@ This& ViewBuilder::SliderView(SliderViewConfig config) {
     return *this;
 }
 
-This& ViewBuilder::ButtonView(BuildConfigFunc<ButtonViewConfig> buildConfigFunc) {
+template <class Control, class Config>
+This& ViewBuilder::AddControlView(
+    BuildConfigFunc<Config> buildConfigFunc,
+    std::function<void(Control&, Config const&)> configureControlFunc
+) {
     QB().And("")
-        .With<ButtonControl>()
-        .ModifyLatest<ButtonControl>([&](auto& view) {
+        .With<Control>()
+        .template ModifyLatest<Control>([=](auto& view) {
             view.buildViewFunc = [=](auto& view) {
                 GUARD(buildConfigFunc)
                 GUARD(view.owner)
@@ -349,22 +376,25 @@ This& ViewBuilder::ButtonView(BuildConfigFunc<ButtonViewConfig> buildConfigFunc)
                             .buildViewFunc = config.buildLabelFunc }
                 );
 
-                auto& button = *(static_cast<ButtonControl*>(&view));
-                button.onPressFunc = config.onPressFunc;
+                auto& control = *(static_cast<Control*>(&view));
 
-                if (config.onControlChangeFunc) {
-                    button.SetOnControlChangeFunc(config.onControlChangeFunc);
+                if (config.onViewStateChangeFunc) {
+                    control.SetOnViewStateChangeFunc(config.onViewStateChangeFunc);
                 }
 
-                auto currentCollider = button.owner->TypeComponent<Collider2D>();
+                auto currentCollider = control.owner->template TypeComponent<Collider2D>();
                 if (config.makeColliderFunc) {
                     SP<SomeWorldComponent> collider = config.makeColliderFunc();
                     if (collider) {
-                        button.owner->RemoveType<Collider2D>();
-                        button.owner->Add(collider);
+                        control.owner->template RemoveType<Collider2D>();
+                        control.owner->Add(collider);
                     }
                 } else if (nullptr == currentCollider) {
-                    QuickBuilder(*button.owner).RectCollider();
+                    QuickBuilder(*control.owner).RectCollider();
+                }
+
+                if (configureControlFunc) {
+                    configureControlFunc(control, config);
                 }
 
                 if (config.modifyViewFunc) {
@@ -379,54 +409,22 @@ This& ViewBuilder::ButtonView(BuildConfigFunc<ButtonViewConfig> buildConfigFunc)
     return *this;
 }
 
+This& ViewBuilder::ButtonView(BuildConfigFunc<ButtonViewConfig> buildConfigFunc) {
+    return AddControlView<ButtonControl, ButtonViewConfig>(
+        buildConfigFunc, [](ButtonControl& control, ButtonViewConfig const& config
+                         ) { control.onPressFunc = config.onPressFunc; }
+    );
+}
+
 This& ViewBuilder::ToggleButtonView(BuildConfigFunc<ToggleButtonViewConfig> buildConfigFunc) {
-    QB().And("")
-        .With<ToggleButtonControl>()
-        .ModifyLatest<ToggleButtonControl>([&](auto& view) {
-            view.buildViewFunc = [=](auto& view) {
-                GUARD(buildConfigFunc)
-                GUARD(view.owner)
-
-                auto config = buildConfigFunc(view);
-                view.owner->SetName(config.name);
-
-                ViewBuilder vb(*view.owner);
-                vb.AddViewAttachments(
-                    view, { .name = config.name,
-                            .buildBackgroundFunc = config.buildFrameFunc,
-                            .buildViewFunc = config.buildLabelFunc }
-                );
-
-                auto& button = *(static_cast<ToggleButtonControl*>(&view));
-                if (config.onControlChangeFunc) {
-                    button.SetOnControlChangeFunc(config.onControlChangeFunc);
-                }
-
-                auto currentCollider = button.owner->TypeComponent<Collider2D>();
-                if (config.makeColliderFunc) {
-                    SP<SomeWorldComponent> collider = config.makeColliderFunc();
-                    if (collider) {
-                        button.owner->RemoveType<Collider2D>();
-                        button.owner->Add(collider);
-                    }
-                } else if (nullptr == currentCollider) {
-                    QuickBuilder(*button.owner).RectCollider();
-                }
-
-                if (config.isOnBinding.IsValid()) {
-                    button.SetIsOnBinding(config.isOnBinding);
-                }
-
-                if (config.modifyViewFunc) {
-                    config.modifyViewFunc(view);
-                }
-            };
-
-            view.Rebuild();
-        })
-        .Pop();
-
-    return *this;
+    return AddControlView<ToggleButtonControl, ToggleButtonViewConfig>(
+        buildConfigFunc,
+        [](ToggleButtonControl& control, ToggleButtonViewConfig const& config) {
+            if (config.isOnBinding.IsValid()) {
+                control.SetIsOnBinding(config.isOnBinding);
+            }
+        }
+    );
 }
 
 This& ViewBuilder::Immediate(BuildConfigFunc<ImmediateConfig> buildConfigFunc) {
@@ -585,13 +583,17 @@ This& ViewBuilder::RadioButtonGroup(RadioButtonGroupConfig config) {
                     auto& option = config.options[i];
                     String id = MakeString(i);
 
-                    vb.RadioButton({ .label = option,
-                                     .isOnBinding = {
-                                         [=]() { return config.store->selection.Value() == id; },
-                                         [=](auto& value) {
-                                             if (value)
-                                                 config.store->selection = id;
-                                         } } });
+                    vb.RadioButton(
+                        { .label = option,
+                          .isOnBinding = Binding<bool>(
+                              { .getFunc = [=]() { return config.store->selection.Value() == id; },
+                                .setFunc =
+                                    [=](auto& value) {
+                                        if (value)
+                                            config.store->selection = id;
+                                    } }
+                          ) }
+                    );
                 }
             } });
 
@@ -609,108 +611,81 @@ This& ViewBuilder::SegmentedPicker(SegmentedPickerConfig config) {
             auto& option = config.options[i];
             String id = MakeString(i);
 
-            vb.SegmentToggle({ .label = option,
-                               .isOnBinding = {
-                                   [=]() { return config.store->selection.Value() == id; },
-                                   [=](auto& value) {
-                                       if (value)
-                                           config.store->selection = id;
-                                   } } });
+            vb.SegmentToggle(
+                { .label = option,
+                  .isOnBinding = Binding<bool>(
+                      { .getFunc = [=]() { return config.store->selection.Value() == id; },
+                        .setFunc =
+                            [=](auto& value) {
+                                if (value)
+                                    config.store->selection = id;
+                            } }
+                  ) }
+            );
         }
     } });
 
     return *this;
 }
 
-This& ViewBuilder::Surface(SurfaceConfig config) {
+template <class Config>
+This& ViewBuilder::BuildFromDesignSystem(String elementId, Config config) {
     auto designSystem = GetDesignSystem();
     GUARDR(designSystem, *this)
-    designSystem->BuildView(UIItemId::Surface, config, *this);
+    designSystem->BuildView(elementId, config, *this);
     return *this;
+}
+
+This& ViewBuilder::Surface(SurfaceConfig config) {
+    return BuildFromDesignSystem(UIItemId::Surface, config);
 }
 
 This& ViewBuilder::Button(ButtonConfig config) {
-    auto designSystem = GetDesignSystem();
-    GUARDR(designSystem, *this)
-    designSystem->BuildView(UIItemId::Button, config, *this);
-    return *this;
+    return BuildFromDesignSystem(UIItemId::Button, config);
 }
 
 This& ViewBuilder::SegmentToggle(ToggleButtonConfig config) {
-    auto designSystem = GetDesignSystem();
-    GUARDR(designSystem, *this)
-    designSystem->BuildView(UIItemId::SegmentToggle, config, *this);
-    return *this;
+    return BuildFromDesignSystem(UIItemId::SegmentToggle, config);
 }
 
 This& ViewBuilder::ImageToggle(ToggleButtonConfig config) {
-    auto designSystem = GetDesignSystem();
-    GUARDR(designSystem, *this)
-    designSystem->BuildView(UIItemId::ImageToggle, config, *this);
-    return *this;
+    return BuildFromDesignSystem(UIItemId::ImageToggle, config);
 }
 
 This& ViewBuilder::SwitchToggle(ToggleButtonConfig config) {
-    auto designSystem = GetDesignSystem();
-    GUARDR(designSystem, *this)
-    designSystem->BuildView(UIItemId::SwitchToggle, config, *this);
-    return *this;
+    return BuildFromDesignSystem(UIItemId::SwitchToggle, config);
 }
 
 This& ViewBuilder::Dial(DialConfig config) {
-    auto designSystem = GetDesignSystem();
-    GUARDR(designSystem, *this)
-    designSystem->BuildView(UIItemId::Dial, config, *this);
-    return *this;
+    return BuildFromDesignSystem(UIItemId::Dial, config);
 }
 
 This& ViewBuilder::Slider(SliderConfig config) {
-    auto designSystem = GetDesignSystem();
-    GUARDR(designSystem, *this)
-    designSystem->BuildView(UIItemId::Slider, config, *this);
-    return *this;
+    return BuildFromDesignSystem(UIItemId::Slider, config);
 }
 
 This& ViewBuilder::ProgressBar(ProgressBarConfig config) {
-    auto designSystem = GetDesignSystem();
-    GUARDR(designSystem, *this)
-    designSystem->BuildView(UIItemId::ProgressBar, config, *this);
-    return *this;
+    return BuildFromDesignSystem(UIItemId::ProgressBar, config);
 }
 
 This& ViewBuilder::ProgressCircle(ProgressBarConfig config) {
-    auto designSystem = GetDesignSystem();
-    GUARDR(designSystem, *this)
-    designSystem->BuildView(UIItemId::ProgressCircle, config, *this);
-    return *this;
+    return BuildFromDesignSystem(UIItemId::ProgressCircle, config);
 }
 
 This& ViewBuilder::Label(LabelConfig config) {
-    auto designSystem = GetDesignSystem();
-    GUARDR(designSystem, *this)
-    designSystem->BuildView(UIItemId::Label, config, *this);
-    return *this;
+    return BuildFromDesignSystem(UIItemId::Label, config);
 }
 
 This& ViewBuilder::CheckButton(ToggleButtonConfig config) {
-    auto designSystem = GetDesignSystem();
-    GUARDR(designSystem, *this)
-    designSystem->BuildView(UIItemId::CheckButton, config, *this);
-    return *this;
+    return BuildFromDesignSystem(UIItemId::CheckButton, config);
 }
 
 This& ViewBuilder::RadioButton(ToggleButtonConfig config) {
-    auto designSystem = GetDesignSystem();
-    GUARDR(designSystem, *this)
-    designSystem->BuildView(UIItemId::RadioButton, config, *this);
-    return *this;
+    return BuildFromDesignSystem(UIItemId::RadioButton, config);
 }
 
 This& ViewBuilder::Toast(LabelConfig config) {
-    auto designSystem = GetDesignSystem();
-    GUARDR(designSystem, *this)
-    designSystem->BuildView(UIItemId::Toast, config, *this);
-    return *this;
+    return BuildFromDesignSystem(UIItemId::Toast, config);
 }
 
 This& ViewBuilder::AddToolTip(ToolTipConfig config) {

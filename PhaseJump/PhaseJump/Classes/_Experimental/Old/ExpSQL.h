@@ -10,7 +10,7 @@
  operations with Begin/End transaction.
 
  */
-class PJ_SQLWrapTransaction {
+class [[nodiscard]] PJ_SQLWrapTransaction {
 public:
     SQLDatabase* db;
 

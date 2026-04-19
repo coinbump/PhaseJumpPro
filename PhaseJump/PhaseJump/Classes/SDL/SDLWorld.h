@@ -44,6 +44,9 @@ namespace PJ {
         /// Start time value for main loop time delta calculation
         uint64_t startTime{};
 
+        /// SDL system cursors created in OnGo, keyed by CursorId.
+        UnorderedMap<String, SDL_Cursor*> sdlCursors;
+
     public:
         /// Max update time delta value
         /// Prevents problems if the app hitches or is paused by the debugger
@@ -60,6 +63,10 @@ namespace PJ {
             this->window = window;
             this->renderContext = std::move(renderContext);
         }
+
+        // MARK: World
+
+        void SetCursor(String cursorId) override;
 
     protected:
         void MainLoop();

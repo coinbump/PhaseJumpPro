@@ -34,10 +34,11 @@ LoadResourcesOperation::Result SDLLoadGLTextureOperation::_LoadResources() {
     }
 
     // OpenGl expects textures to be upside-down
-    auto operation = BitmapOperations::FlipV(true);
+    auto operation = BitmapOperations::NewFlipVertical(UpdateOrientationType::Update);
     operation->Run(*rgbaBitmap);
 
-    SDLFileManager fm;
+    auto _fm = NewSDLFileManager();
+    FileManager& fm = *_fm;
     String id = fm.FileName(path, FileManager::FileNameFormat::NoExtension);
 
     auto texture = MAKE<GLTexture>(GLTexture::Config{ .id = id, .bitmap = rgbaBitmap.get() });

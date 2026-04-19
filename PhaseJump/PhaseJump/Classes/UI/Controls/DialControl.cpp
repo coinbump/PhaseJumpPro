@@ -30,13 +30,14 @@ void DialControl::Awake() {
                 case DragGestureHandler2D::Update::Type::Update:
                     {
                         float value = dial->dragStartValue;
-                        auto delta = update.delta;
+                        auto delta = update.Translation();
                         value += delta.y / dial->fullDragDelta;
                         value = std::clamp(value, 0.0f, 1.0f);
                         dial->valueBinding.SetValue(value);
                         break;
                     }
                 case DragGestureHandler2D::Update::Type::End:
+                case DragGestureHandler2D::Update::Type::Cancel:
                     break;
                 }
             };

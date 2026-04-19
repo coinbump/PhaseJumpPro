@@ -44,8 +44,14 @@ namespace PJ {
         /// Called before render. Sends empty Event
         auto constexpr RenderPrepare = "render.prepare";
 
-        /// Called after window is resized
-        auto constexpr WindowResize = "window.resize";
+        /// Called after outer platform window is resized
+        auto constexpr PlatformWindowResize = "platform.window.resize";
+
+        /// Called after outer container is resized
+        auto constexpr ContainerResize = "container.resize";
+
+        /// Called after selection changed
+        auto constexpr Select = "select";
 
         /*
          UNSUPPORTED SIGNALS

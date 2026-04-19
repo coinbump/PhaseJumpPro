@@ -15,19 +15,27 @@ namespace PJ {
     class Mesh;
     class SomeRenderContext;
 
-    /// Transforms the positions of an object from object space to screen space
-    class SomeCoordinateConverter {
-    public:
-        virtual ~SomeCoordinateConverter() {}
+    enum class CameraType {
+        /// Renders all nodes in world
+        World,
 
-        virtual Vector2 WorldToScreen(Vector3 position) = 0;
-        virtual Vector3 ScreenToWorld(Vector2 position) = 0;
+        /// Renders child nodes only
+        Viewport
+    };
+
+    enum class CameraProjection {
+        /// Orthographic projection (2D)
+        Orthographic,
+
+        /// Perspective projection (3D)
+        Perspective
     };
 
     /// A camera component performs coordinate conversion from world to screen
     /// space
-    class Camera : public WorldComponent, public SomeCoordinateConverter {
+    class Camera : public WorldComponent {
     public:
+        CameraType type = CameraType::World;
         Color clearColor = Color::white;
 
         /// Allows each camera to have its own render pipeline
@@ -42,6 +50,12 @@ namespace PJ {
         Camera();
 
         virtual void RenderStart(SomeRenderContext* context) {}
+
+        /// Transforms position from render context to screen space coordinates
+        virtual Vector2 ContextToScreen(Vector3 position) = 0;
+
+        /// Transforms position from screen space to render context coordinates
+        virtual Vector3 ScreenToContext(Vector2 position) = 0;
 
         virtual bool IsCulled(Mesh const& mesh) {
             return false;

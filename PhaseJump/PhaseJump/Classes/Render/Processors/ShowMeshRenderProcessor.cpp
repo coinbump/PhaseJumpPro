@@ -41,7 +41,7 @@ void ShowMeshRenderProcessor::Process(RenderCameraModel& cameraModel) {
     // FUTURE: we can probably speed this up with a shader
     auto renderer =
         MAKE<ColorRenderer>(ColorRenderer::Config{ .material = triMaterial, .color = color });
-    renderer->model.SetBuildMeshFunc([=](RendererModel const& model) { return finalMesh; });
+    renderer->core.model.SetBuildMeshFunc([=](RendererModel const& model) { return finalMesh; });
     cameraModel.renderers.push_back(renderer);
 
     auto thisRenderModels = renderer->RenderModels();

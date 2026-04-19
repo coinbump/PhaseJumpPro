@@ -56,10 +56,46 @@ bool SQLDatabase::TryOpen(FilePath filePath, SQLDatabaseOpenType openType, int f
     return true;
 }
 
+namespace {
+    int BindParameter(sqlite3_stmt* stmt, int index, SQLValue const& param) {
+        switch (param.type) {
+        case SQLValueType::Int:
+            {
+                char const* begin = param.value.c_str();
+                char* end = nullptr;
+                long long parsed = std::strtoll(begin, &end, 10);
+                if (end == begin) {
+                    return SQLITE_MISMATCH;
+                }
+                return sqlite3_bind_int64(stmt, index, parsed);
+            }
+        case SQLValueType::Real:
+            {
+                char const* begin = param.value.c_str();
+                char* end = nullptr;
+                double parsed = std::strtod(begin, &end);
+                if (end == begin) {
+                    return SQLITE_MISMATCH;
+                }
+                return sqlite3_bind_double(stmt, index, parsed);
+            }
+        case SQLValueType::Text:
+        case SQLValueType::Any:
+            return sqlite3_bind_text(stmt, index, param.value.c_str(), -1, SQLITE_TRANSIENT);
+        case SQLValueType::Blob:
+            return sqlite3_bind_blob(
+                stmt, index, param.value.data(), (int)param.value.size(), SQLITE_TRANSIENT
+            );
+        }
+        return SQLITE_ERROR;
+    }
+} // namespace
+
 /**
- Prepare sql statement for execution.
+ Prepare sql statement for execution and bind its parameters.
 
  https://www.sqlite.org/c3ref/prepare.html
+ https://www.sqlite.org/c3ref/bind_blob.html
  */
 int SQLDatabase::Prepare(SQLCommand& command) {
     if (command.statement.value.length() == 0) {
@@ -75,7 +111,23 @@ int SQLDatabase::Prepare(SQLCommand& command) {
     PJ::Log("SQL. Prepare ", command.statement.value, " RESULT: ", result);
 #endif
 
-    return result;
+    if (result != SQLITE_OK) {
+        return result;
+    }
+
+    int paramIndex = 1;
+    for (auto const& param : command.statement.parameters) {
+        int bindResult = BindParameter(command.sqliteStatement, paramIndex, param);
+        if (bindResult != SQLITE_OK) {
+            PJ::Log("ERROR. Bind parameter ", paramIndex, " RESULT: ", bindResult);
+            sqlite3_finalize(command.sqliteStatement);
+            command.sqliteStatement = nullptr;
+            return bindResult;
+        }
+        paramIndex++;
+    }
+
+    return SQLITE_OK;
 }
 
 /**

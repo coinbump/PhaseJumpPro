@@ -15,9 +15,11 @@ public:
 
     TestEmittersScene() {
         PlanUIFunc planUIFunc = [this](auto args) {
-            args.planner.InputFloat({ .label = "Emit delta",
-                                      .binding = { [this]() { return EmitDelta(); },
-                                                   [this](auto& value) { SetEmitDelta(value); } } }
+            args.planner.InputFloat(
+                { .label = "Emit delta",
+                  .binding =
+                      Binding<float>({ .getFunc = [this]() { return EmitDelta(); },
+                                       .setFunc = [this](auto& value) { SetEmitDelta(value); } }) }
             );
         };
         Override(planUIFuncs[UIContextId::Editor], planUIFunc);
@@ -56,9 +58,9 @@ public:
 
         auto font = DCAST<Font>(FindFontWithSize(world.resources, 32));
 
-        auto node = MAKE<WorldNode>("Emitter");
+        auto node = MAKE<WorldNode>(WorldNode::Config{ .name = "Emitter" });
         Emitter::SpawnFunc spawnFunc = [this, font](Emitter& emitter, EmitModel emit) {
-            auto node = MAKE<WorldNode>("Heart");
+            auto node = MAKE<WorldNode>(WorldNode::Config{ .name = "Heart" });
 
             // #define ACID_TEST
 

@@ -35,6 +35,7 @@
 #include "SomeUIEvent.h"
 #include "SpriteRenderer.h"
 #include "Theme.h"
+#include "Window.h"
 #include "World.h"
 
 using namespace std;
@@ -114,7 +115,7 @@ This& QuickBuilder::ScaleWithWindow(Vector3 worldSize, float ratio) {
         sizeFunc(component);
 
         component.template AddSignalHandler<WindowResizeUIEvent>(
-            { .id = SignalId::WindowResize,
+            { .id = SignalId::PlatformWindowResize,
               .func = [sizeFunc](auto& component, auto& event) { sizeFunc(component); } }
         );
     });
@@ -128,17 +129,26 @@ This& QuickBuilder::SizeWithWindow(Vector2 ratio) {
         auto owner = component.Node();
         GUARD_LOG(worldSizable && owner && owner->World(), "ERROR. Must be world sizable")
 
-        auto sizeFunc = [=](SomeWorldComponent& component) {
+        auto platformWindowSizeFunc = [=](SomeWorldComponent& component) {
             Vector2 floatPixelSize{ (float)owner->World()->PixelSize().x,
                                     (float)owner->World()->PixelSize().y };
             auto worldPixelSize = floatPixelSize * ratio;
             worldSizable->SetWorldSize({ (float)worldPixelSize.x, (float)worldPixelSize.y, 0.0f });
         };
-        sizeFunc(component);
+        platformWindowSizeFunc(component);
 
         component.template AddSignalHandler<WindowResizeUIEvent>(
-            { .id = SignalId::WindowResize,
-              .func = [sizeFunc](auto& component, auto& event) { sizeFunc(component); } }
+            { .id = SignalId::PlatformWindowResize,
+              .func =
+                  [platformWindowSizeFunc, owner](auto& component, auto& event) {
+                      // PJ::Window resize overrides outer OS window resize when nested
+                      for (auto cursor = owner->Parent(); cursor; cursor = cursor->Parent()) {
+                          if (cursor->template TypeComponent<Window>()) {
+                              return;
+                          }
+                      }
+                      platformWindowSizeFunc(component);
+                  } }
         );
     });
 }
@@ -151,7 +161,7 @@ This& QuickBuilder::Circle(float radius, Color color) {
     return With<ColorRenderer>(ColorRenderer::Config{
                                    .color = color, .worldSize = Vector2(radius * 2, radius * 2) })
         .ModifyLatest<ColorRenderer>([](auto& renderer) {
-            renderer.SetBuildMeshFunc([](RendererModel const& model) {
+            renderer.core.SetBuildMeshFunc([](RendererModel const& model) {
                 return EllipseMeshBuilder(model.WorldSize()).BuildMesh();
             });
         });
@@ -164,7 +174,7 @@ This& QuickBuilder::Rect(Vector2 size, Color color) {
 This& QuickBuilder::RectFrame(Vector2 size, Color color, float strokeWidth) {
     return With<ColorRenderer>(ColorRenderer::Config{ .color = color, .worldSize = size })
         .ModifyLatest<ColorRenderer>([=](auto& renderer) {
-            renderer.SetBuildMeshFunc([=](RendererModel const& model) {
+            renderer.core.SetBuildMeshFunc([=](RendererModel const& model) {
                 return QuadFrameMeshBuilder(model.WorldSize(), { strokeWidth, strokeWidth })
                     .BuildMesh();
             });
@@ -178,7 +188,7 @@ This& QuickBuilder::SquareFrame(float size, Color color, float strokeWidth) {
 This& QuickBuilder::Grid(Vector2 worldSize, Vec2I gridSize, Color color, float strokeWidth) {
     return With<ColorRenderer>(ColorRenderer::Config{ .color = color, .worldSize = worldSize })
         .ModifyLatest<ColorRenderer>([=](auto& renderer) {
-            renderer.SetBuildMeshFunc([=](RendererModel const& model) {
+            renderer.core.SetBuildMeshFunc([=](RendererModel const& model) {
                 return GridMeshBuilder({ .worldSize = worldSize,
                                          .gridSize = gridSize,
                                          .strokeWidth = strokeWidth })
@@ -231,12 +241,7 @@ This& QuickBuilder::SquareCollider(float size) {
 }
 
 This& QuickBuilder::RectCollider(Vector2 size) {
-    return With<PolygonCollider2D>().ModifyLatest<PolygonCollider2D>([=](auto& collider) {
-        // A zero sized rect polygon can't be resized later for views, so make sure this has some
-        // size
-        collider.SetPolygon(Polygon::MakeRect({ std::max(0.00001f, size.x),
-                                                std::max(0.00001f, size.y) }));
-    });
+    return With<RectCollider2D>(size);
 }
 
 This& QuickBuilder::CircleCollider(float radius) {
@@ -271,7 +276,7 @@ void QuickBuilder::AddSlider(
         .valueBinding = config.valueBinding });
     components.push_back(&sliderControl);
 
-    auto _trackNode = parent.AddNodePtr("Slider track");
+    auto _trackNode = parent.AddNodePtr(WorldNode::Config{ .name = "Slider track" });
     auto& trackNode = *_trackNode;
     trackNode.AddComponent<Slice9TextureRenderer>(Slice9TextureRenderer::Config{
         .texture = trackTexture, .worldSize = {}, .sliceModel = slicePoints });
@@ -280,7 +285,7 @@ void QuickBuilder::AddSlider(
         designSystem.theme->ElementTagValue<float>(UIElementId::SliderTrack, UITag::EndCapSize);
     sliderControl.SetEndCapSize(endCapSize).SetFrame(PJ::Rect({ 0, 0 }, config.worldSize));
 
-    auto _thumbNode = parent.AddNodePtr("Slider thumb");
+    auto _thumbNode = parent.AddNodePtr(WorldNode::Config{ .name = "Slider thumb" });
     auto& thumbNode = *_thumbNode;
     thumbNode.AddComponent<PolygonCollider2D>().SetPolygon(Polygon::MakeRect(thumbTexture->size));
     thumbNode.AddComponent<SpriteRenderer>(thumbTexture);

@@ -4,6 +4,7 @@
 #include "LoadRezOperation.h"
 #include "LoadRTexPackerAtlasOperation.h"
 #include "LoadTexturePackerAtlasOperation.h"
+#include "SDLLoadAudioStreamOperation.h"
 #include "SDLLoadBitmapOperation.h"
 #include "SDLLoadGLTextureOperation.h"
 
@@ -51,6 +52,12 @@ StandardResourceRepositoryModel::StandardResourceRepositoryModel() {
         NEW<Factory<LoadResourcesOperation, ResourceInfo, ResourceRepositoryModel&>>(
             [](ResourceInfo info, ResourceRepositoryModel& repoModel) {
                 return NEW<LoadRezOperation>(info, repoModel);
+            }
+        );
+    operationRegistry.map[ResourceType::AudioStream] =
+        NEW<Factory<LoadResourcesOperation, ResourceInfo, ResourceRepositoryModel&>>(
+            [](ResourceInfo info, ResourceRepositoryModel& repoModel) {
+                return NEW<SDLLoadAudioStreamOperation>(info, repoModel);
             }
         );
 }

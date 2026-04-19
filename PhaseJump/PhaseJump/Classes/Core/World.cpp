@@ -11,6 +11,7 @@
 #include "ShaderProgram.h"
 #include "SomePlatformWindow.h"
 #include "SomeRenderEngine.h"
+#include "Viewport.h"
 #include <stdio.h>
 
 // #define PROFILE
@@ -294,9 +295,27 @@ Matrix4x4 World::WorldModelMatrix(WorldNode const& node) {
     auto modelMatrix = LocalModelMatrix(node);
     auto parent = node.Parent();
 
-    // Transform child to parent matrix
+    // Transform child to parent matrix.
+    // Once a Viewport ancestor is found, that node and every ancestor above it contribute
+    // only their translation: descendants render into the viewport's offscreen context,
+    // where rotation and scale of the viewport node and outer hierarchy don't apply.
+    // Translation is still folded in so descendants follow the viewport (and the window
+    // hosting it) as it moves around the parent world.
+    bool foundViewport = false;
+
     while (parent) {
-        auto parentModelMatrix = LocalModelMatrix(*parent);
+        if (!foundViewport && parent->TypeComponent<Viewport>()) {
+            foundViewport = true;
+        }
+
+        Matrix4x4 parentModelMatrix;
+        if (foundViewport) {
+            parentModelMatrix.LoadTranslate(
+                parent->transform.LocalPosition() + parent->transform.Value().offset
+            );
+        } else {
+            parentModelMatrix = LocalModelMatrix(*parent);
+        }
 
         modelMatrix = parentModelMatrix * modelMatrix;
 
@@ -405,7 +424,7 @@ ScreenPosition World::WorldToScreen(WorldPosition worldPos) const {
     auto camera = MainCamera();
     GUARDR(camera, {})
 
-    auto result = camera->WorldToScreen(worldPos);
+    auto result = camera->ContextToScreen(worldPos);
     return result;
 }
 
@@ -427,7 +446,7 @@ WorldPosition PJ::ScreenToWorld(SomeWorldComponent const& component, ScreenPosit
     auto camera = world->MainCamera();
     GUARDR(camera, {})
 
-    auto result = camera->ScreenToWorld(screenPos);
+    auto result = camera->ScreenToContext(screenPos);
     return result;
 }
 
@@ -443,7 +462,7 @@ LocalPosition PJ::ScreenToLocal(SomeWorldComponent const& component, ScreenPosit
     auto camera = world->MainCamera();
     GUARDR(camera, result)
 
-    auto worldPosition = camera->ScreenToWorld(screenPos);
+    auto worldPosition = camera->ScreenToContext(screenPos);
 
     auto worldModelMatrix = world->WorldModelMatrix(*owner);
     Terathon::Point3D point(worldPosition.x, worldPosition.y, worldPosition.z);

@@ -5,7 +5,7 @@
 #include "WorldComponent.h"
 
 /*
- RATING: 5 stars
+ RATING: 5+ stars
  Simple protocol
  CODE REVIEW: 12/13/24
  */

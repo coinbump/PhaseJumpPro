@@ -50,7 +50,7 @@ namespace PJ {
 
         /// Pane inside the world. Used to split up the world into different sections such as
         /// toolbars views, scenes, etc.
-        class WorkspaceArea : public Treeable<Workspace> {
+        class WorkspaceArea {
             {
             public:
                 using This = Workspace;

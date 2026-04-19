@@ -9,10 +9,15 @@
 /*
  RATING: 5 stars
  Has unit tests
- CODE REVIEW: 12/1/24
+ CODE REVIEW: 4/14/26
  */
 namespace PJ {
     enum class PolyClose { Open, Closed };
+
+    class Triangle {
+    public:
+        std::array<Vector2, 3> value;
+    };
 
     /// Stores vertices for a closed polygon
     /// Polygons are assumed to be closed between the final and first vertices
@@ -107,6 +112,13 @@ namespace PJ {
 
         bool TestHit(Vector2 pt) const;
 
+        /// Triangulates the interior of this polygon using the Bowyer-Watson
+        /// Delaunay triangulation algorithm. Triangles whose centroid falls
+        /// outside the polygon (for concave shapes) are discarded, so the
+        /// result covers only the interior.
+        /// Requires at least 3 vertices; otherwise returns an empty list.
+        VectorList<Triangle> BuildTriangles() const;
+
         bool IsBoundsInvalid() const {
             return isBoundsInvalid;
         }
@@ -133,7 +145,7 @@ namespace PJ {
         Vector2 ModGet(size_t index) const {
             auto size = value.size();
             GUARDR(size > 0, {});
-            return value[index >= 0 && index < size ? index : index % size];
+            return value[index < size ? index : index % size];
         }
 
         size_t Count() const {
@@ -143,12 +155,12 @@ namespace PJ {
         String ToString() const;
 
         Vector2& operator[](size_t index) {
-            Assert(index >= 0 && index < value.size());
+            Assert(index < value.size());
             return value[index];
         }
 
         Vector2 const& operator[](size_t index) const {
-            Assert(index >= 0 && index < value.size());
+            Assert(index < value.size());
             return value[index];
         }
     };

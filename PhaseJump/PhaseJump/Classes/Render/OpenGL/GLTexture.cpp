@@ -16,7 +16,7 @@ GLTexture::GLTexture(Config const& config) :
             break;
         case BitmapOrientation::Standard:
             flip = true;
-            BitmapOperations::FlipV(false)->Run(bitmap);
+            BitmapOperations::NewFlipVertical(UpdateOrientationType::None)->Run(bitmap);
         }
 
         // http://www.sdltutorials.com/sdl-tip-sdl-surface-to-opengl-texture
@@ -53,7 +53,7 @@ GLTexture::GLTexture(Config const& config) :
         untrimmedSize = size;
 
         if (flip) {
-            BitmapOperations::FlipV(false)->Run(bitmap);
+            BitmapOperations::NewFlipVertical(UpdateOrientationType::None)->Run(bitmap);
         }
     } else {
         SetTextureMagnification(config.textureMagnification);

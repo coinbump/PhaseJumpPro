@@ -18,7 +18,7 @@ namespace PJ {
 
     /// Protocol for an object that renders imGui UI elements
     /// Used to build a tree of imGui elements and re-arrange them as needed
-    class ImGuiPainter : public Treeable<ImGuiPainter>, public SomePainter {
+    class ImGuiPainter : public SomePainter {
     public:
         using This = ImGuiPainter;
         using Func = std::function<void(This&)>;
@@ -48,11 +48,11 @@ namespace PJ {
 
         // MARK: Treeable
 
-        This* Parent() const override {
+        This* Parent() const {
             return tree.Parent();
         }
 
-        void SetParent(This* value) override {
+        void SetParent(This* value) {
             tree.SetParent(value);
         }
 

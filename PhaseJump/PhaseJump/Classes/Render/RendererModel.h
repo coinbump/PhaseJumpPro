@@ -5,6 +5,7 @@
 #include "RenderTypes.h"
 #include "Tags.h"
 #include "Vector3.h"
+#include "WorldSizeable.h"
 
 /*
  RATING: 5 stars
@@ -15,7 +16,7 @@ namespace PJ {
     class RenderMaterial;
 
     /// Standard model for a renderer that renders a mesh
-    class RendererModel {
+    class RendererModel : public WorldSizeable {
     public:
         using This = RendererModel;
 
@@ -155,6 +156,8 @@ namespace PJ {
             BuildIfNeeded();
             return mesh;
         }
+
+        // MARK: WorldSizeable
 
         Vector3 WorldSize() const {
             return worldSize;

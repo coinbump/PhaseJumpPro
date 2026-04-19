@@ -1,6 +1,7 @@
 #pragma once
 
-#include "Layout2D.h"
+#include "Layout.h"
+#include "WorldComponent.h"
 #include "WorldNode.h"
 
 /*
@@ -11,28 +12,25 @@
 namespace PJ {
     /// Flow the objects with non-contextual spacing (object size doesn't
     /// matter)
-    class HFlow : public Layout2D {
+    class HFlow : public WorldComponent {
     public:
+        using Base = WorldComponent;
+        using This = HFlow;
+
+        Layout layout;
         float spacing = 10;
 
         HFlow(float spacing = 10) :
-            spacing(spacing) {}
+            spacing(spacing) {
+            layout.applyLayoutFunc = [this](Layout&) { ApplyLayout(); };
+        }
 
         Vector3 Size() const {
             GUARDR(owner, {})
             return Vector3(spacing * (owner->ChildNodes().size() - 1), 0, 0);
         }
 
-        // MARK: SomeWorldComponent
-
-        String TypeName() const override {
-            return "HFlow";
-        }
-
-    protected:
-        // MARK: Layout
-
-        void ApplyLayout() override {
+        void ApplyLayout() {
             GUARD(owner)
 
             auto firstPos = (Size().x / 2) * vecLeft;
@@ -45,6 +43,25 @@ namespace PJ {
                 );
                 position += spacing;
             }
+        }
+
+        // MARK: SomeWorldComponent
+
+        String TypeName() const override {
+            return "HFlow";
+        }
+
+    protected:
+        // MARK: WorldComponent
+
+        void Awake() override {
+            Base::Awake();
+            layout.Awake(*this);
+        }
+
+        void Start() override {
+            Base::Start();
+            layout.Start(*this);
         }
     };
 } // namespace PJ

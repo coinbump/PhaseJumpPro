@@ -21,12 +21,12 @@ DuckDesignSystem::DuckDesignSystem() :
             { UIElementId::OnPrimaryContainer, Color32(75, 60, 119) },
             { UIElementId::SecondaryContainer, Color32(225, 224, 247) },
             { UIElementId::OnSecondaryContainer, Color32(68, 69, 87) },
-            
+
             { UIElementId::Surface, Color32(78, 78, 88) },
             { UIElementId::OnSurface, Color32(200, 200, 200) },
             { UIElementId::Secondary, Color32(93, 93, 112) },
             { UIElementId::OnSecondary, Color32(255, 255, 255) },
-            
+
             { UIElementId::SurfaceContainer, Color32(40, 40, 40) },
             { UIElementId::OnSurfaceContainer, Color32(215, 215, 215) },
             { UIElementId::SurfaceInteractive, Color32(83, 83, 83) },
@@ -38,7 +38,7 @@ DuckDesignSystem::DuckDesignSystem() :
             { UIElementId::SurfaceToggleOnPress, Color32(72, 92, 140) },
             { UIElementId::OnSurfaceInteractive, Color32(200, 200, 200) },
             { UIElementId::OnSurfaceInteractivePress, Color32(80, 80, 80) },
-            
+
             { UIElementId::SurfaceContainerLowSecondary, Color32(35, 35, 35) },
             { UIElementId::SurfaceContainerLowTertiary, Color32(15, 15, 15) },
             { UIElementId::SurfaceContainerHighSecondary, Color32(50, 50, 50) },
@@ -55,8 +55,22 @@ DuckDesignSystem::DuckDesignSystem() :
         }
     });
 
-    // MARK: Surface
+    RegisterSurface();
+    RegisterButton();
+    RegisterSlider();
+    RegisterSegmentToggle();
+    RegisterImageToggle();
+    RegisterSwitchToggle();
+    RegisterCheckTypeButtons();
+    RegisterProgressBar();
+    RegisterProgressCircle();
+    RegisterDial();
+    RegisterLabel();
+    RegisterToast();
+    RegisterToolTip();
+}
 
+void DuckDesignSystem::RegisterSurface() {
     buildViewFuncs[UIItemId::Surface] = [this](auto* _config, auto& vb) {
         SurfaceConfig const& config = *(static_cast<SurfaceConfig const*>(_config));
         Color surfaceColor = Color::white;
@@ -74,9 +88,9 @@ DuckDesignSystem::DuckDesignSystem() :
                        .modifyRendererFunc = [=](auto& renderer
                                              ) { renderer.areShapesOpaque = areShapesOpaque; } });
     };
+}
 
-    // MARK: Button
-
+void DuckDesignSystem::RegisterButton() {
     buildViewFuncs[UIItemId::Button] = [this](auto* _config, auto& vb) {
         ButtonConfig const& config = *(static_cast<ButtonConfig const*>(_config));
 
@@ -120,9 +134,9 @@ DuckDesignSystem::DuckDesignSystem() :
                             ).FixedSize({}, frameHeight);
                         } });
     };
+}
 
-    // MARK: Slider
-
+void DuckDesignSystem::RegisterSlider() {
     buildViewFuncs[UIItemId::Slider] = [this](auto* _config, auto& vb) {
         SliderConfig const& config = *(static_cast<SliderConfig const*>(_config));
 
@@ -191,57 +205,57 @@ DuckDesignSystem::DuckDesignSystem() :
                 );
             });
     };
+}
 
-    // MARK: Collapsing Header
+// MARK: Collapsing Header
 
-    // Need mechanism for updating views when values change
-    //    buildViewFuncs[UIItemId::CollapsingHeader] = [this](auto _config, auto& vb) {
-    //        CollapsingHeaderConfig& config = *(static_cast<CollapsingHeaderConfig*>(_config));
-    //
-    //        Color surfaceColor = theme->ThemeColor(UIElementId::SurfaceInteractive, Color::gray);
-    //        Color pressColor = theme->ThemeColor(UIElementId::SurfaceInteractivePress,
-    //        Color::blue); Color hoverColor =
-    //        theme->ThemeColor(UIElementId::SurfaceInteractiveHover, Color::red); Color labelColor
-    //        = theme->ThemeColor(UIElementId::OnSurfaceInteractive, Color::black); Color
-    //        labelPressColor =
-    //            theme->ThemeColor(UIElementId::OnSurfaceInteractivePress, Color::white);
-    //        float frameHeight = theme->ElementSize(UIElementId::ControlFrame, { 0, 30 }).y;
-    //
-    //        bool areShapesOpaque = this->areShapesOpaque;
-    //            vb.ButtonView({ .onPressFunc = [=](auto& button) {
-    //                config.isCollapsedBinding.SetValue(!config.isCollapsedBinding.Value());
-    //            }, .buildFrameFunc = [=](auto& vb) {
-    //                           vb.Immediate(
-    //                                 { .renderFunc =
-    //                                       [=](auto& view, auto& renderer) {
-    //                                           auto& button =
-    //                                               *(static_cast<ButtonControl*>(view.ParentView()));
-    //
-    //                                           renderer.SetColor(
-    //                                               button.IsPressed()    ? pressColor
-    //                                               : button.IsHovering() ? hoverColor
-    //                                                                     : surfaceColor
-    //                                           );
-    //                                           renderer.FillRect(view.Bounds());
-    //
-    //                                           renderer.SetColor(
-    //                                               button.IsPressed() ? labelPressColor :
-    //                                               labelColor
-    //                                           );
-    //                                           renderer.Text(config.label, { 0, 0 }, 32);
-    //                                       },
-    //                                   .modifyRendererFunc =
-    //                                       [=](auto& renderer) {
-    //                                           renderer.areShapesOpaque = areShapesOpaque;
-    //                                           // Don't translate, so all contents are centered
-    //                                           renderer.translateItemFunc = {};
-    //                                       } }
-    //                           ).FixedSize({}, frameHeight);
-    //                       } });
-    //    };
+// Need mechanism for updating views when values change
+//    buildViewFuncs[UIItemId::CollapsingHeader] = [this](auto _config, auto& vb) {
+//        CollapsingHeaderConfig& config = *(static_cast<CollapsingHeaderConfig*>(_config));
+//
+//        Color surfaceColor = theme->ThemeColor(UIElementId::SurfaceInteractive, Color::gray);
+//        Color pressColor = theme->ThemeColor(UIElementId::SurfaceInteractivePress,
+//        Color::blue); Color hoverColor =
+//        theme->ThemeColor(UIElementId::SurfaceInteractiveHover, Color::red); Color labelColor
+//        = theme->ThemeColor(UIElementId::OnSurfaceInteractive, Color::black); Color
+//        labelPressColor =
+//            theme->ThemeColor(UIElementId::OnSurfaceInteractivePress, Color::white);
+//        float frameHeight = theme->ElementSize(UIElementId::ControlFrame, { 0, 30 }).y;
+//
+//        bool areShapesOpaque = this->areShapesOpaque;
+//            vb.ButtonView({ .onPressFunc = [=](auto& button) {
+//                config.isCollapsedBinding.SetValue(!config.isCollapsedBinding.Value());
+//            }, .buildFrameFunc = [=](auto& vb) {
+//                           vb.Immediate(
+//                                 { .renderFunc =
+//                                       [=](auto& view, auto& renderer) {
+//                                           auto& button =
+//                                               *(static_cast<ButtonControl*>(view.ParentView()));
+//
+//                                           renderer.SetColor(
+//                                               button.IsPressed()    ? pressColor
+//                                               : button.IsHovering() ? hoverColor
+//                                                                     : surfaceColor
+//                                           );
+//                                           renderer.FillRect(view.Bounds());
+//
+//                                           renderer.SetColor(
+//                                               button.IsPressed() ? labelPressColor :
+//                                               labelColor
+//                                           );
+//                                           renderer.Text(config.label, { 0, 0 }, 32);
+//                                       },
+//                                   .modifyRendererFunc =
+//                                       [=](auto& renderer) {
+//                                           renderer.areShapesOpaque = areShapesOpaque;
+//                                           // Don't translate, so all contents are centered
+//                                           renderer.translateItemFunc = {};
+//                                       } }
+//                           ).FixedSize({}, frameHeight);
+//                       } });
+//    };
 
-    // MARK: Segment toggle
-
+void DuckDesignSystem::RegisterSegmentToggle() {
     buildViewFuncs[UIItemId::SegmentToggle] = [this](auto* _config, auto& vb) {
         ToggleButtonConfig const& config = *(static_cast<ToggleButtonConfig const*>(_config));
 
@@ -299,33 +313,33 @@ DuckDesignSystem::DuckDesignSystem() :
                                   ).FixedSize({}, frameHeight);
                               } });
     };
+}
 
-    //    auto setToggleColor = [this](ToggleButtonControl& button, ImRenderer& renderer) {
-    //        Color surfaceColor = theme->ThemeColor(UIElementId::SurfaceToggleOff, Color::gray);
-    //        Color pressColor = theme->ThemeColor(UIElementId::SurfaceToggleOffPress,
-    //        Color::yellow); Color hoverColor =
-    //        theme->ThemeColor(UIElementId::SurfaceToggleOffHover, Color::red); Color isOnColor =
-    //        theme->ThemeColor(UIElementId::SurfaceToggleOn, Color::green); Color isOnHoverColor =
-    //        theme->ThemeColor(UIElementId::SurfaceToggleOnHover, isOnColor); Color isOnPressColor
-    //        = theme->ThemeColor(UIElementId::SurfaceToggleOnPress, isOnColor);
-    //
-    //         if (button.IsToggleOn()) {
-    //             renderer.SetColor(
-    //                 button.IsPressed()    ? isOnPressColor
-    //                 : button.IsHovering() ? isOnHoverColor
-    //                                       : isOnColor
-    //             );
-    //         } else {
-    //             renderer.SetColor(
-    //                 button.IsPressed()    ? pressColor
-    //                 : button.IsHovering() ? hoverColor
-    //                                       : surfaceColor
-    //             );
-    //         }
-    //    };
+//    auto setToggleColor = [this](ToggleButtonControl& button, ImRenderer& renderer) {
+//        Color surfaceColor = theme->ThemeColor(UIElementId::SurfaceToggleOff, Color::gray);
+//        Color pressColor = theme->ThemeColor(UIElementId::SurfaceToggleOffPress,
+//        Color::yellow); Color hoverColor =
+//        theme->ThemeColor(UIElementId::SurfaceToggleOffHover, Color::red); Color isOnColor =
+//        theme->ThemeColor(UIElementId::SurfaceToggleOn, Color::green); Color isOnHoverColor =
+//        theme->ThemeColor(UIElementId::SurfaceToggleOnHover, isOnColor); Color isOnPressColor
+//        = theme->ThemeColor(UIElementId::SurfaceToggleOnPress, isOnColor);
+//
+//         if (button.IsToggleOn()) {
+//             renderer.SetColor(
+//                 button.IsPressed()    ? isOnPressColor
+//                 : button.IsHovering() ? isOnHoverColor
+//                                       : isOnColor
+//             );
+//         } else {
+//             renderer.SetColor(
+//                 button.IsPressed()    ? pressColor
+//                 : button.IsHovering() ? hoverColor
+//                                       : surfaceColor
+//             );
+//         }
+//    };
 
-    // MARK: ImageToggle
-
+void DuckDesignSystem::RegisterImageToggle() {
     buildViewFuncs[UIItemId::ImageToggle] = [this](auto* _config, auto& vb) {
         ToggleButtonConfig const& config = *(static_cast<ToggleButtonConfig const*>(_config));
 
@@ -381,9 +395,9 @@ DuckDesignSystem::DuckDesignSystem() :
                   } }
         );
     };
+}
 
-    // MARK: SwitchToggle
-
+void DuckDesignSystem::RegisterSwitchToggle() {
     buildViewFuncs[UIItemId::SwitchToggle] = [this](auto* _config, auto& vb) {
         ToggleButtonConfig const& config = *(static_cast<ToggleButtonConfig const*>(_config));
 
@@ -437,9 +451,9 @@ DuckDesignSystem::DuckDesignSystem() :
                   } }
         );
     };
+}
 
-    // MARK: buildCheckTypeButtonFunc
-
+void DuckDesignSystem::RegisterCheckTypeButtons() {
     auto buildCheckTypeButtonFunc = [this](
                                         auto* _config, ViewBuilder& vb,
                                         std::function<void(ImRenderer&, Rect)> drawFill,
@@ -511,8 +525,6 @@ DuckDesignSystem::DuckDesignSystem() :
         );
     };
 
-    // MARK: Check button
-
     buildViewFuncs[UIItemId::CheckButton] = [buildCheckTypeButtonFunc,
                                              this](auto* _config, auto& vb) {
         buildCheckTypeButtonFunc(
@@ -524,8 +536,6 @@ DuckDesignSystem::DuckDesignSystem() :
         );
     };
 
-    // MARK: Radio button
-
     buildViewFuncs[UIItemId::RadioButton] = [buildCheckTypeButtonFunc,
                                              this](auto* _config, auto& vb) {
         buildCheckTypeButtonFunc(
@@ -536,9 +546,9 @@ DuckDesignSystem::DuckDesignSystem() :
             }
         );
     };
+}
 
-    // MARK: Progress bar
-
+void DuckDesignSystem::RegisterProgressBar() {
     buildViewFuncs[UIItemId::ProgressBar] = [this](auto* _config, auto& vb) {
         ProgressBarConfig const& config = *(static_cast<ProgressBarConfig const*>(_config));
 
@@ -567,9 +577,9 @@ DuckDesignSystem::DuckDesignSystem() :
                                              ) { renderer.areShapesOpaque = areShapesOpaque; } }
         ).FixedSize({}, frameHeight);
     };
+}
 
-    // MARK: Progress Circle
-
+void DuckDesignSystem::RegisterProgressCircle() {
     buildViewFuncs[UIItemId::ProgressCircle] = [this](auto* _config, auto& vb) {
         ProgressBarConfig const& config = *(static_cast<ProgressBarConfig const*>(_config));
 
@@ -606,9 +616,9 @@ DuckDesignSystem::DuckDesignSystem() :
                                              ) { renderer.areShapesOpaque = areShapesOpaque; } }
         ).FixedSize(60, 60);
     };
+}
 
-    // MARK: Dial
-
+void DuckDesignSystem::RegisterDial() {
     buildViewFuncs[UIItemId::Dial] = [this](auto* _config, auto& vb) {
         DialConfig const& config = *(static_cast<DialConfig const*>(_config));
 
@@ -658,9 +668,9 @@ DuckDesignSystem::DuckDesignSystem() :
 
         vb.QB().Pop();
     };
+}
 
-    // MARK: Label
-
+void DuckDesignSystem::RegisterLabel() {
     buildViewFuncs[UIItemId::Label] = [this](auto* _config, auto& vb) {
         LabelConfig const& config = *(static_cast<LabelConfig const*>(_config));
 
@@ -677,9 +687,9 @@ DuckDesignSystem::DuckDesignSystem() :
                                      ) { renderer.Text(config.text, { 0, 0 }, 32, color); } }
         ).FixedSize({}, frameHeight);
     };
+}
 
-    // MARK: Toast
-
+void DuckDesignSystem::RegisterToast() {
     buildViewFuncs[UIItemId::Toast] = [this](auto* _config, auto& vb) {
         LabelConfig const& config = *(static_cast<LabelConfig const*>(_config));
 
@@ -693,9 +703,9 @@ DuckDesignSystem::DuckDesignSystem() :
             } });
         });
     };
+}
 
-    // MARK: ToolTip
-
+void DuckDesignSystem::RegisterToolTip() {
     buildViewFuncs[UIItemId::ToolTip] = [this](auto* _config, auto& vb) {
         ToolTipConfig const& config = *(static_cast<ToolTipConfig const*>(_config));
 

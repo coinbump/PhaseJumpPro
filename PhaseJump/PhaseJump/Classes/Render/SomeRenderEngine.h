@@ -2,6 +2,7 @@
 
 #include "Base.h"
 #include "List.h"
+#include "Tags.h"
 #include "UnorderedSet.h"
 #include "Vector2.h"
 #include "Vector3.h"
@@ -40,6 +41,12 @@ namespace PJ {
         /// Loads an orthographic projection matrix
         virtual void ProjectionMatrixLoadOrthographic(Vector2 size) = 0;
 
+        /// Loads a perspective projection matrix.
+        /// fovRadians is the vertical field of view; aspect is width/height.
+        virtual void ProjectionMatrixLoadPerspective(
+            float fovRadians, float aspect, float zNear, float zFar
+        ) = 0;
+
         /// Load a translation view matrix
         virtual void LoadTranslate(Vector3 value) = 0;
 
@@ -62,5 +69,11 @@ namespace PJ {
 
         /// Sets a flag to indicate the context has been cleared
         virtual void SetIsContextCleared(uint32_t id, bool value) = 0;
+
+        /// @return Returns diagnostic info for the editor. Each Tags entry carries a "label" and
+        /// "value" string pair.
+        virtual VectorList<Tags> EditorInfoList() {
+            return {};
+        }
     };
 } // namespace PJ

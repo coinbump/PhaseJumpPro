@@ -26,10 +26,11 @@ namespace PJ {
         auto constexpr Text = "text";
         auto constexpr TreeNode = "tree.node";
         auto constexpr Button = "button";
+        auto constexpr Image = "image";
     } // namespace UIModelType
 
     /// An item in a UI plan, used to build UIs
-    class UIModel : public Treeable<UIModel> {
+    class UIModel {
     public:
         using This = UIModel;
         using TreeNode = TreeNode<This, UP<This>>;
@@ -56,11 +57,11 @@ namespace PJ {
 
         // MARK: Treeable
 
-        This* Parent() const override {
+        This* Parent() const {
             return tree.Parent();
         }
 
-        void SetParent(This* value) override {
+        void SetParent(This* value) {
             tree.SetParent(value);
         }
     };

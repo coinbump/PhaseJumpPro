@@ -13,35 +13,43 @@ FlowStackViewLayout::FlowStackViewLayout(Axis2D _axis, float _spacing, AlignFunc
     PlanUIFunc planUIFunc = [this](auto args) {
         auto& planner = args.planner;
 
-        planner.InputFloat({ .label = "Spacing",
-                             .binding = { [this]() { return spacing; },
-                                          [this](auto& value) { SetSpacing(value); } } });
-        planner.InputBool({ .label = "Vertical",
-                            .binding = { [this]() { return axis == Axis2D::Y; },
-                                         [this](auto& value) {
-                                             SetAxis(value ? Axis2D::Y : Axis2D::X);
-                                         } } });
+        planner.InputFloat(
+            { .label = "Spacing",
+              .binding = Binding<float>({ .getFunc = [this]() { return spacing; },
+                                          .setFunc = [this](auto& value) { SetSpacing(value); } }) }
+        );
+        planner.InputBool(
+            { .label = "Vertical",
+              .binding = Binding<bool>(
+                  { .getFunc = [this]() { return axis == Axis2D::Y; },
+                    .setFunc = [this](auto& value) { SetAxis(value ? Axis2D::Y : Axis2D::X); } }
+              ) }
+        );
 
-        planner.PickerList({ .label = "Alignment",
-                             .options = _editAlignOptions,
-                             .binding = {
-                                 [this]() { return _editAlignOption ? *_editAlignOption : -1; },
-                                 [this](auto& value) {
-                                     _editAlignOption = value;
-                                     switch (value) {
-                                     case 0:
-                                         SetAlignFunc(AlignFuncs::left);
-                                         break;
-                                     case 1:
-                                         SetAlignFunc(AlignFuncs::center);
-                                         break;
-                                     case 2:
-                                         SetAlignFunc(AlignFuncs::right);
-                                         break;
-                                     default:
-                                         break;
-                                     }
-                                 } } });
+        planner.PickerList(
+            { .label = "Alignment",
+              .options = _editAlignOptions,
+              .binding = Binding<int>(
+                  { .getFunc = [this]() { return _editAlignOption ? *_editAlignOption : -1; },
+                    .setFunc =
+                        [this](auto& value) {
+                            _editAlignOption = value;
+                            switch (value) {
+                            case 0:
+                                SetAlignFunc(AlignFuncs::left);
+                                break;
+                            case 1:
+                                SetAlignFunc(AlignFuncs::center);
+                                break;
+                            case 2:
+                                SetAlignFunc(AlignFuncs::right);
+                                break;
+                            default:
+                                break;
+                            }
+                        } }
+              ) }
+        );
     };
     Override(planUIFuncs[UIContextId::Inspector], planUIFunc);
 }

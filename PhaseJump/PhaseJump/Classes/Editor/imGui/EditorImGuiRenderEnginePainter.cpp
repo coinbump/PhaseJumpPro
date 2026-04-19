@@ -56,6 +56,23 @@ EditorImGuiRenderEnginePainter::EditorImGuiRenderEnginePainter(EditorWorldSystem
             if (mainCamera) {
                 drawRenderProcessors("Main Camera", mainCamera->processingModel.Processors());
             }
+
+            if (ImGui::CollapsingHeader("Render Engine Info")) {
+                auto tagList = renderEngine.EditorInfoList();
+                if (ImGui::BeginTable("RenderEngineInfo", 2)) {
+                    for (auto& tags : tagList) {
+                        auto label = tags.SafeValue<String>("label");
+                        auto value = tags.SafeValue<String>("value");
+
+                        ImGui::TableNextRow();
+                        ImGui::TableSetColumnIndex(0);
+                        ImGui::Text("%s", label.c_str());
+                        ImGui::TableSetColumnIndex(1);
+                        ImGui::Text("%s", value.c_str());
+                    }
+                    ImGui::EndTable();
+                }
+            }
         }
     };
 }

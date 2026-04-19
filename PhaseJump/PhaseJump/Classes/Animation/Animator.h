@@ -26,7 +26,7 @@ namespace PJ {
         AnimationCycleTimer timer;
 
     public:
-        using Base = Updatable;
+        using Base = SomeUpdatable;
         using This = Animator;
 
         struct Config {
@@ -83,8 +83,8 @@ namespace PJ {
             AnimationCycleType cycleType = AnimationCycleType::Once,
             InterpolateFunc<T> reverseInterpolateFunc = {}
         ) :
-            Animator({ .interpolateFunc = interpolateFunc,
-                       .duration = duration,
+            Animator({ .duration = duration,
+                       .interpolateFunc = interpolateFunc,
                        .binding = binding,
                        .cycleType = cycleType,
                        .reverseInterpolateFunc = reverseInterpolateFunc }) {}

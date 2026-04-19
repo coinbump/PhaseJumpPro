@@ -21,6 +21,9 @@ namespace PJ {
         EditorWorldSystem& system;
         OnSceneSwitchFunc onSceneSwitchFunc;
 
+        /// Scene name filter text (case-insensitive contains match)
+        String filterText;
+
         EditorImGuiScenesPainter(EditorWorldSystem& system, OnSceneSwitchFunc onSceneSwitchFunc);
     };
 } // namespace PJ

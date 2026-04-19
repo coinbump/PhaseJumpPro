@@ -25,40 +25,43 @@ std::function<void(UIPlanner&, BehaviorNode*)> planBehaviorUIFunc = [](UIPlanner
               [=](auto& planner) {
                   auto repeatBehavior = dynamic_cast<RepeatBehavior*>(node);
                   if (repeatBehavior) {
-                      planner.Text({ .text = "Repeat Max: " +
-                                             MakeString(repeatBehavior->RepeatMax()) });
-                      planner.Text({ .text = "Repeat Count: " +
-                                             MakeString(repeatBehavior->RepeatCount()) });
+                      planner.LabelText({ .text = "Repeat Max: " +
+                                                  MakeString(repeatBehavior->RepeatMax()) });
+                      planner.LabelText({ .text = "Repeat Count: " +
+                                                  MakeString(repeatBehavior->RepeatCount()) });
                   }
 
                   auto delayBehavior = dynamic_cast<DelayBehavior*>(node);
                   if (delayBehavior) {
-                      planner.Text({ .text = "Delay Max: " + MakeString(delayBehavior->DelayMax()) }
-                      );
-                      planner.Text({ .text = "Delay Remain: " +
-                                             MakeString(delayBehavior->DelayRemainder()) });
+                      planner.LabelText({ .text = "Delay Max: " +
+                                                  MakeString(delayBehavior->DelayMax()) });
+                      planner.LabelText({ .text = "Delay Remain: " +
+                                                  MakeString(delayBehavior->DelayRemainder()) });
                   }
 
                   auto timedBehavior = dynamic_cast<TimedBehavior*>(node);
                   if (timedBehavior) {
-                      planner.Text({ .text = "Time Max: " + MakeString(timedBehavior->TimeMax()) });
-                      planner.Text({ .text = "Time Remain: " +
-                                             MakeString(timedBehavior->TimeRemainder()) });
+                      planner.LabelText({ .text = "Time Max: " +
+                                                  MakeString(timedBehavior->TimeMax()) });
+                      planner.LabelText({ .text = "Time Remain: " +
+                                                  MakeString(timedBehavior->TimeRemainder()) });
                   }
 
                   auto parallelBehavior = dynamic_cast<ParallelBehavior*>(node);
                   if (parallelBehavior) {
-                      planner.Text({ .text = "Success Count: " +
-                                             MakeString(parallelBehavior->ChildSuccessCount()) });
-                      planner.Text({ .text = "Failure Count: " +
-                                             MakeString(parallelBehavior->ChildFailureCount()) });
+                      planner.LabelText({ .text =
+                                              "Success Count: " +
+                                              MakeString(parallelBehavior->ChildSuccessCount()) });
+                      planner.LabelText({ .text =
+                                              "Failure Count: " +
+                                              MakeString(parallelBehavior->ChildFailureCount()) });
                   }
 
                   auto sequenceBehavior = dynamic_cast<SequenceBehavior*>(node);
                   if (sequenceBehavior) {
                       auto target = sequenceBehavior->Target();
                       if (target) {
-                          planner.Text({ .text = "Target: " + target->name });
+                          planner.LabelText({ .text = "Target: " + target->name });
                       }
                   }
 
@@ -67,23 +70,25 @@ std::function<void(UIPlanner&, BehaviorNode*)> planBehaviorUIFunc = [](UIPlanner
                       auto timeline =
                           dynamic_cast<Timeline*>(updatableBehavior->GetChildUpdatable());
                       if (timeline) {
-                          planner.Text({ .text = "Duration: " + MakeString(timeline->Duration()) });
-                          planner.Text({ .text = "Play Time: " + MakeString(timeline->PlayTime()) }
-                          );
-                          planner.Text({ .text = "Progress: " + MakeString(timeline->Progress()) });
+                          planner.LabelText({ .text = "Duration: " +
+                                                      MakeString(timeline->Duration()) });
+                          planner.LabelText({ .text = "Play Time: " +
+                                                      MakeString(timeline->PlayTime()) });
+                          planner.LabelText({ .text = "Progress: " +
+                                                      MakeString(timeline->Progress()) });
 
                           for (auto& track : timeline->Tracks()) {
-                              planner.Text({ .text = "Track: " + MakeString(track->id) });
-                              planner.Text({ .text = "  Track Time: " +
-                                                     MakeString(track->PlayTime()) });
+                              planner.LabelText({ .text = "Track: " + MakeString(track->id) });
+                              planner.LabelText({ .text = "  Track Time: " +
+                                                          MakeString(track->PlayTime()) });
 
                               auto floatTimeTrack = dynamic_cast<TimeTrack<float>*>(track.get());
                               if (floatTimeTrack) {
                                   auto keyframe =
                                       floatTimeTrack->KeyframeAtOrBefore(track->PlayTime());
                                   if (keyframe) {
-                                      planner.Text({ .text = "    Keyframe: " +
-                                                             MakeString(keyframe->time) });
+                                      planner.LabelText({ .text = "    Keyframe: " +
+                                                                  MakeString(keyframe->time) });
                                   }
                               }
                           }
@@ -113,7 +118,7 @@ CharacterController::CharacterController() {
     PlanUIFunc planUIFunc = [this](auto args) {
         auto& planner = args.planner;
 
-        planner.Text({ .label = "State", .text = states.State() });
+        planner.LabelText({ .label = "State", .text = states.State() });
 
         GUARD(behavior)
         planBehaviorUIFunc(planner, behavior.get());

@@ -78,7 +78,7 @@ This& BehaviorBuilder::Action(String name, OnRunFunc onRunFunc) {
     };
     behavior->name = name;
     behavior->_diagnose.Enable(_diagnose);
-    TopBehavior()->Add(behavior);
+    TopBehavior()->Add(std::move(behavior));
 
     return *this;
 }
@@ -129,7 +129,7 @@ This& BehaviorBuilder::Timeline(String name, BuildTimelineFunc buildTimelineFunc
 
     UP<BehaviorNode> behavior =
         NEW<UpdatableBehavior>([=](auto& behavior) { return buildTimelineFunc(); });
-    return With(behavior, name);
+    return With(std::move(behavior), name);
 }
 
 This& BehaviorBuilder::AnimationState(String value) {
@@ -149,7 +149,7 @@ This& BehaviorBuilder::AnimationState(String value) {
         return renderer->IsRenderFinished() ? FinishType::Finish : FinishType::Continue;
     };
 
-    return With(behavior, "Animation State: " + value);
+    return With(std::move(behavior), "Animation State: " + value);
 }
 
 This& BehaviorBuilder::AnimationInput(String value) {
@@ -170,7 +170,7 @@ This& BehaviorBuilder::AnimationInput(String value) {
         return renderer->IsRenderFinished() ? FinishType::Finish : FinishType::Continue;
     };
 
-    return With(behavior, "Animation Input: " + value);
+    return With(std::move(behavior), "Animation Input: " + value);
 }
 
 This& BehaviorBuilder::Delay(String name, float delay) {
@@ -179,7 +179,7 @@ This& BehaviorBuilder::Delay(String name, float delay) {
 
 This& BehaviorBuilder::Delay(String name, std::function<float()> delayValueFunc) {
     UP<BehaviorNode> behavior = NEW<DelayBehavior>(delayValueFunc);
-    return With(behavior, name);
+    return With(std::move(behavior), name);
 }
 
 This& BehaviorBuilder::ComponentsState(String value) {

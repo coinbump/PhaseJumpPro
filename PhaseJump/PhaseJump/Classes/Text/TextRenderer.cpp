@@ -13,22 +13,22 @@ using namespace std;
 using namespace PJ;
 
 TextRenderer::TextRenderer(Config const& config) :
-    Base(config.worldSize),
+    core(this, config.worldSize),
     font(config.font),
     text(config.text) {
 
     GUARD(font && font->atlas && font->atlas->Textures().size() > 0)
 
-    model.material =
+    core.model.material =
         MAKE<RenderMaterial>(RenderMaterial::Config{ .shaderId = ShaderId::TextureVary });
-    model.material->Add(font->atlas->texture);
-    model.material->EnableFeature(RenderFeature::Blend, true);
+    core.model.material->Add(font->atlas->texture);
+    core.model.material->EnableFeature(RenderFeature::Blend, true);
 
-    auto defaultFunc = model.BuildVertexColorsFunc();
+    auto defaultFunc = core.model.BuildVertexColorsFunc();
 
-    model.SetBuildMeshFunc([this](auto& model) { return BuildMesh(); });
+    core.model.SetBuildMeshFunc([this](auto& model) { return BuildMesh(); });
 
-    model.SetBuildVertexColorsFunc([=, this](auto& model, auto& colors) {
+    core.model.SetBuildVertexColorsFunc([=, this](auto& model, auto& colors) {
         defaultFunc(model, colors);
 
         if (metrics) {
@@ -59,16 +59,20 @@ TextRenderer::TextRenderer(Config const& config) :
         this->modifyColorsFunc(*this, colors);
     });
 
+    Override(planUIFuncs[UIContextId::Inspector], core.MakePlanUIFunc());
+
     PlanUIFunc planUIFunc = [this](auto args) {
-        args.planner.InputText({ .label = "Text",
-                                 .binding = { [this]() { return text.PlainText(); },
-                                              [this](auto& value) { SetText(value); } } });
+        args.planner.InputText(
+            { .label = "Text",
+              .binding = Binding<String>({ .getFunc = [this]() { return text.PlainText(); },
+                                           .setFunc = [this](auto& value) { SetText(value); } }) }
+        );
     };
     Override(planUIFuncs[UIContextId::Inspector], planUIFunc);
 }
 
 void TextRenderer::OnTextChange() {
-    model.SetMeshNeedsBuild();
+    core.model.SetMeshNeedsBuild();
 }
 
 Mesh TextRenderer::BuildMesh() {

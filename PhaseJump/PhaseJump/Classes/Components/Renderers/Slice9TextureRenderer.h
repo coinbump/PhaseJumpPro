@@ -16,9 +16,12 @@ namespace PJ {
     struct Mesh;
 
     /// Renders a single texture as a 9-slice
-    class Slice9TextureRenderer : public MaterialRenderer {
+    class Slice9TextureRenderer : public Renderer {
     public:
-        using Base = MaterialRenderer;
+        using Base = Renderer;
+        using This = Slice9TextureRenderer;
+
+        MaterialRendererCore core;
 
         // TODO: stop using as a tag, use funcs instead
         /// Model that defines how to slice the texture
@@ -103,6 +106,30 @@ namespace PJ {
         Slice9TextureRenderer(Config const& config);
 
         BuildModel MakeBuildModel(Vector3 worldSize) const;
+
+        // MARK: Renderer
+
+        VectorList<RenderModel> RenderModels() override {
+            return core.RenderModels();
+        }
+
+        Color GetColor() const override {
+            return core.GetColor();
+        }
+
+        void SetColor(Color color) override {
+            core.SetColor(color);
+        }
+
+        // MARK: WorldSizeable
+
+        Vector3 WorldSize() const override {
+            return core.model.WorldSize();
+        }
+
+        void SetWorldSize(Vector3 value) override {
+            core.model.SetWorldSize(value);
+        }
 
         // MARK: SomeWorldComponent
 

@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Macros.h"
+#include <algorithm>
+#include <concepts>
 #include <type_traits>
 
 /*
@@ -9,17 +11,15 @@
  CODE REVIEW: 10/14/24
  */
 namespace PJ {
-    /// TreeNodes require their owner to be Treeable
+    /// Types used as the Node parameter of `TreeNode` must expose Parent/SetParent.
     template <class Node>
-    class Treeable {
-    public:
-        virtual ~Treeable() {}
-
-        virtual Node* Parent() const = 0;
-        virtual void SetParent(Node* value) = 0;
+    concept Treeable = requires(Node& node, Node const& childNode, Node* parentNode) {
+        { childNode.Parent() } -> std::same_as<Node*>;
+        node.SetParent(parentNode);
     };
 
-    /// Tree node with parent and children
+    /// Tree node with parent and children.
+    /// Node must satisfy `Treeable`
     template <class Node, class NodePtr>
     class TreeNode {
     public:
@@ -37,7 +37,9 @@ namespace PJ {
         NodeList children;
 
     public:
-        TreeNode(Node& owner) :
+        TreeNode(Node& owner)
+            requires Treeable<Node>
+            :
             owner(owner) {}
 
         Node const& Owner() const {
@@ -60,23 +62,13 @@ namespace PJ {
             return children.size();
         }
 
-        void Add(NodePtr& node) {
-            Insert(node, children.size());
+        /// Takes ownership of node and appends it as a child.
+        void Add(NodePtr node) {
+            Insert(std::move(node), children.size());
         }
 
-        /// Shared pointer specialization of Insert
-        SPECIALIZE_IS_SAME(NodePtr, SP<Node>) void Insert(SP<Node>& node, size_t index) {
-            GUARD(node)
-            GUARD(nullptr == node->Parent())
-
-            index = std::clamp(index, (size_t)0, children.size());
-
-            node->SetParent(&owner);
-            children.insert(children.begin() + index, node);
-        }
-
-        /// Unique pointer specialization of Insert
-        SPECIALIZE_IS_SAME(NodePtr, UP<Node>) void Insert(UP<Node>& node, size_t index) {
+        /// Takes ownership of node and inserts it at index
+        void Insert(NodePtr node, size_t index) {
             GUARD(node)
             GUARD(nullptr == node->Parent())
 
@@ -94,14 +86,25 @@ namespace PJ {
             RemoveFirstIf(children, [&](NodePtr& child) { return child.get() == &node; });
         }
 
-        void RemoveAllChildren(bool updateParent = true) {
-            if (updateParent) {
-                for (auto& child : children) {
-                    child->SetParent(nullptr);
-                }
+        void RemoveAllChildren() {
+            for (auto& child : children) {
+                child->SetParent(nullptr);
             }
 
             children.clear();
+        }
+
+        /// Transfers child from this tree to another tree
+        void Reparent(Node& child, TreeNode& newParent) {
+            auto it = std::find_if(children.begin(), children.end(), [&](NodePtr& c) {
+                return c.get() == &child;
+            });
+            GUARD(it != children.end())
+
+            NodePtr holding = std::move(*it);
+            children.erase(it);
+            child.SetParent(nullptr);
+            newParent.Add(std::move(holding));
         }
     };
 } // namespace PJ

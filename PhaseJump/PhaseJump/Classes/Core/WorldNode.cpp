@@ -16,9 +16,6 @@ WorldNode::WorldNode(Config const& config) :
     _core.name = config.name;
 }
 
-WorldNode::WorldNode(String name) :
-    WorldNode(Config{ .name = name }) {}
-
 void WorldNode::Destroy(float countdown) {
     if (countdown == 0) {
         destroyCountdown = 0;
@@ -153,9 +150,12 @@ void WorldNode::Insert(SP<WorldNode> node, size_t index) {
         subNode->world = world;
     }
 
-    // The id map allows us to quickly access identifiable children without constantly
+    // The id map allows us to quickly access identifiable children without
     // filtering the entire child node list
     auto id = node->Id();
+    if (IsEmpty(id)) {
+        id = node->Name();
+    }
     if (!IsEmpty(id)) {
         childMap.insert_or_assign(id, node.get());
     }
@@ -246,7 +246,7 @@ void WorldNode::RemoveAllChildren() {
             subNode->world = nullptr;
         }
     }
-    tree.RemoveAllChildren(true);
+    tree.RemoveAllChildren();
     childMap.clear();
 }
 
@@ -390,14 +390,14 @@ Vector3 WorldNode::WorldToLocal(Vector3 worldPos) {
 }
 
 float WorldNode::Opacity() const {
-    auto renderer = TypeComponent<MaterialRenderer>();
+    auto renderer = TypeComponent<Renderer>();
     GUARDR(renderer, 1.0f)
 
     return renderer->GetColor().a;
 }
 
 This& WorldNode::SetOpacity(float value) {
-    auto renderer = TypeComponent<MaterialRenderer>();
+    auto renderer = TypeComponent<Renderer>();
     GUARDR(renderer, *this)
 
     renderer->SetAlpha(value);

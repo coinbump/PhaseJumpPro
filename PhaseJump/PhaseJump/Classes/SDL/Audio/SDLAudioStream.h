@@ -24,6 +24,22 @@ namespace PJ {
 
         virtual ~SDLAudioStream();
 
+        Uint8* AudioBuffer() const {
+            return audioBuffer;
+        }
+
+        Uint32 BufferLength() const {
+            return bufferLength;
+        }
+
+        SDL_AudioSpec AudioSpec() const {
+            return audioSpec;
+        }
+
+        SDL_AudioStream* Stream() const {
+            return stream;
+        }
+
         void Flush();
 
         // MARK: SomeUpdatable

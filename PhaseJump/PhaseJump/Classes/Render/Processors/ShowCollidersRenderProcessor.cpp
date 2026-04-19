@@ -17,7 +17,7 @@ void AddOverlay(
 ) {
     auto renderer = MAKE<ColorRenderer>(ColorRenderer::Config{
         .material = colliderMaterial, .color = color, .worldSize = overlaySize });
-    renderer->model.SetBuildMeshFunc([=](RendererModel const& model) {
+    renderer->core.model.SetBuildMeshFunc([=](RendererModel const& model) {
         // FUTURE: draw the actual polygon, not just the frame
         QuadFrameMeshBuilder builder(overlaySize, Vector2(3, 3));
         Mesh mesh = builder.BuildMesh();
@@ -50,7 +50,7 @@ void ShowCollidersRenderProcessor::Process(RenderCameraModel& cameraModel) {
 
             // FUTURE: support more colliders as needed
             if (circleCollider) {
-                Vector2 overlaySize(circleCollider->radius * 2, circleCollider->radius * 2);
+                Vector2 overlaySize(circleCollider->Radius() * 2, circleCollider->Radius() * 2);
                 AddOverlay(cameraModel, node, colliderMaterial, color, overlaySize);
                 continue;
             }

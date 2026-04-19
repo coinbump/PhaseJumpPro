@@ -6,23 +6,24 @@
 #include "RenderMaterial.h"
 #include "RenderModel.h"
 #include "SomeRenderEngine.h"
+#include "UIPlanner.h"
 
 using namespace std;
 using namespace PJ;
 
 SimpleGradientRenderer::SimpleGradientRenderer(Config const& config) :
-    Base(config.worldSize),
+    core(this, config.worldSize),
     startColor(config.startColor),
     endColor(config.endColor) {
-    model.material =
+    core.model.material =
         MAKE<RenderMaterial>(RenderMaterial::Config{ .shaderId = ShaderId::ColorVary });
 
-    model.SetBuildMeshFunc([](RendererModel const& model) {
+    core.model.SetBuildMeshFunc([](RendererModel const& model) {
         QuadMeshBuilder builder(model.WorldSize());
         return builder.BuildMesh();
     });
 
-    model.SetBuildVertexColorsFunc([this](auto& model, auto& colors) {
+    core.model.SetBuildVertexColorsFunc([this](auto& model, auto& colors) {
         colors.clear();
         Add(colors, startColor);
         Add(colors, endColor);
@@ -34,5 +35,7 @@ SimpleGradientRenderer::SimpleGradientRenderer(Config const& config) :
     // FUTURE: support MultiGradientRenderer with multiple color stops if needed
 
     bool isOpaque = startColor.IsOpaque() && endColor.IsOpaque();
-    model.material->EnableFeature(RenderFeature::Blend, !isOpaque);
+    core.model.material->EnableFeature(RenderFeature::Blend, !isOpaque);
+
+    Override(planUIFuncs[UIContextId::Inspector], core.MakePlanUIFunc());
 }

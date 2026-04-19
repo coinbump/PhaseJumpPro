@@ -1,7 +1,9 @@
 #pragma once
 
 #include "BaseGLRenderEngine.h"
+#include "GLSomeBuffer.h"
 #include "UnorderedMap.h"
+#include <array>
 #include <optional>
 #include <type_traits>
 
@@ -24,6 +26,31 @@ namespace PJ {
     class GLRenderEngine : public BaseGLRenderEngine {
     protected:
         UnorderedMap<String, GLenum> featureIdToGLFeatureIdMap;
+
+        // Pooled GPU buffers reused across frames to avoid per-draw glGenBuffers churn
+        // (glBufferData orphan still runs each upload). At RenderStart, in-use buffers move back
+        // into the free list; acquire pulls from free or allocates lazily. Lifetime is tied to the
+        // engine — UP destructors call glDeleteBuffers via GLSomeBuffer.
+        VectorList<UP<GLVertexBuffer>> freeVertexBuffers;
+        VectorList<UP<GLIndexBuffer>> freeIndexBuffers;
+        VectorList<UP<GLVertexBuffer>> inUseVertexBuffers;
+        VectorList<UP<GLIndexBuffer>> inUseIndexBuffers;
+
+        // Sliding window of recent in-use counts. After recycling, free pools are trimmed to the
+        // window's peak so a single spike frame doesn't permanently inflate VRAM.
+        static constexpr size_t poolHistoryFrames = 60;
+        static constexpr size_t poolMinFloor = 8;
+        std::array<size_t, poolHistoryFrames> vertexBufferUseHistory{};
+        std::array<size_t, poolHistoryFrames> indexBufferUseHistory{};
+        size_t poolHistoryIndex{};
+
+        GLVertexBuffer* AcquirePooledVertexBuffer(GLVertexBufferPlan const& plan);
+        GLIndexBuffer* AcquirePooledIndexBuffer(std::span<uint32_t const> indices);
+        void RecycleBufferPools();
+        void
+        UploadVertexBuffer(GLVertexBuffer& buffer, GLVertexBufferPlan const& plan, GLenum usage);
+        void
+        UploadIndexBuffer(GLIndexBuffer& buffer, std::span<uint32_t const> indices, GLenum usage);
 
         UP<SomeGLRenderCommand> BuildRenderCommand(SomeRenderCommandModel& proxyCommand);
 
@@ -68,12 +95,16 @@ namespace PJ {
         void RenderStart(SomeRenderContext* context) override;
         void RenderDraw(RenderDrawModel const& drawModel) override;
         void ProjectionMatrixLoadOrthographic(Vector2 size) override;
+        void ProjectionMatrixLoadPerspective(
+            float fovRadians, float aspect, float zNear, float zFar
+        ) override;
         void LoadTranslate(Vector3 value) override;
         SP<SomeRenderContext> MakeTextureBuffer() override;
+        VectorList<Tags> EditorInfoList() override;
 
     protected:
         void RenderProcess(RenderDrawModel const& processModel);
-        void RenderDrawPlans(VectorList<GLRenderPlan*> const& renderPlans);
+        void RenderDrawPlans(std::span<GLRenderPlan* const> renderPlans);
         void ScanGLExtensions();
 
         // MARK: Base

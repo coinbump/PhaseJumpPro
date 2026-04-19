@@ -2,6 +2,7 @@
 
 #include "UIPlan.h"
 #include "UITypes.h"
+#include "Vector2.h"
 
 /*
  RATING: 5 stars
@@ -25,9 +26,14 @@ namespace PJ {
             std::function<void()> func;
         };
 
-        struct TextConfig {
+        struct LabelTextConfig {
             String label;
             String text;
+        };
+
+        struct ImageConfig {
+            RenderItemId imageId{};
+            Vector2 size;
         };
 
         struct TreeNodeConfig {
@@ -80,12 +86,12 @@ namespace PJ {
             return Button([=]() { return config; });
         }
 
-        /// Adds dynamic text to UI
-        This& Text(std::function<TextConfig()> configFunc);
+        /// Adds dynamic label and text to UI
+        This& LabelText(std::function<LabelTextConfig()> configFunc);
 
-        /// Adds text to UI
-        This& Text(TextConfig config) {
-            return Text([=]() { return config; });
+        /// Adds label and text to UI
+        This& LabelText(LabelTextConfig config) {
+            return LabelText([=]() { return config; });
         }
 
         /// Adds dynamic tree node to UI
@@ -116,12 +122,20 @@ namespace PJ {
         /// Adds dynamic list picker to UI
         This& PickerList(std::function<PickerListConfig()> configFunc);
 
-        /// Adds list picker to UI
+        /// Adds static list picker to UI
         This& PickerList(PickerListConfig config) {
             return PickerList([=]() { return config; });
         }
 
         /// Adds color picker field to UI
         This& PickerColor(PickerColorConfig config);
+
+        /// Adds dynamic image to UI
+        This& Image(std::function<ImageConfig()> configFunc);
+
+        /// Adds static image to UI
+        This& Image(ImageConfig config) {
+            return Image([=]() { return config; });
+        }
     };
 } // namespace PJ

@@ -53,7 +53,7 @@ public:
         auto program = ShaderProgram::registry.find("chromaticAberrationSimple");
         //        auto program = ShaderProgram::registry.find("texture.uniform");
         if (program != ShaderProgram::registry.end()) {
-            spriteRenderer.model.material->SetShaderProgram(program->second);
+            spriteRenderer.core.model.material->SetShaderProgram(program->second);
         }
 
         // this is cheating the UV coordinates for now, don't forget
@@ -307,7 +307,7 @@ public:
 
            auto frameRenderer = MAKE<ColorRenderer>(ColorRenderer::Config{.color = Color::red, .worldSize = Vector2(maxTextureTrueSize.x, maxTextureTrueSize.y)});
 
-            frameRenderer->model.SetBuildMeshFunc([](RendererModel const& model) {
+            frameRenderer->core.model.SetBuildMeshFunc([](RendererModel const& model) {
                 QuadFrameMeshBuilder meshBuilder(model.WorldSize(), Vector2(3, 3));
                 return meshBuilder.BuildMesh();
             });
@@ -317,7 +317,7 @@ public:
             meshNode.Add(testKeyboard);
 
             //        auto material = MAKE<RenderMaterial>();
-            auto material = renderer->model.material;
+            auto material = renderer->core.model.material;
 
 //            auto program = ShaderProgram::registry["texture.uniform"];//texture.interp.uniform"]; //"texture.uniform"
 //            if (program) {

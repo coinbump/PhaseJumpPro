@@ -22,9 +22,10 @@ namespace PJ {
         // MARK: SomeMeshBuilder
 
         Mesh BuildMesh() override {
-            return ArcMeshBuilder(
-                       worldSize, Angle::WithDegrees(0), Angle::WithDegrees(360.0f), angleStep
-            )
+            return ArcMeshBuilder(ArcMeshBuilder::Config{ .worldSize = worldSize,
+                                                          .startAngle = Angle::WithDegrees(0),
+                                                          .angleDelta = Angle::WithDegrees(360.0f),
+                                                          .angleStep = angleStep })
                 .BuildMesh();
         }
     };

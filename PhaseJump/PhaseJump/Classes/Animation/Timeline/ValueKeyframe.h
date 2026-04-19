@@ -23,8 +23,8 @@ namespace PJ {
     template <class Type>
     struct ValueKeyframeConfig {
         Type value{};
-        EaseFunc inEaseFunc;
-        EaseFunc outEaseFunc;
+        EaseFunc inEaseFunc{};
+        EaseFunc outEaseFunc{};
     };
 
     /// Keyframe that stores a value
@@ -38,10 +38,10 @@ namespace PJ {
         Type value{};
 
         /// (Optional). Ease func into this value
-        EaseFunc inEaseFunc;
+        EaseFunc inEaseFunc{};
 
         /// (Optional). Ease func from this value
-        EaseFunc outEaseFunc;
+        EaseFunc outEaseFunc{};
 
         ValueKeyframe(Config const& config = {}) :
             value(config.value),

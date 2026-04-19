@@ -1,5 +1,9 @@
 #include "KaijuWorldSystem.h"
+#include "AudioAppScene.h"
+#include "CanvasAppScene.h"
+#include "DesktopAppScene.h"
 #include "ExampleCheckersScene.h"
+#include "ExampleEaseScene.h"
 #include "ExampleGraphsScene.h"
 #include "ExampleLifeScene.h"
 #include "ExampleMatrixBoardViewAnimationScene.h"
@@ -13,6 +17,7 @@
 #include "TestEmittersScene.h"
 #include "TestGradientsScene.h"
 #include "TestMeshPathScene.h"
+#include "TestPolygonScene.h"
 #include "TestSlicedTextureScene.h"
 #include "TestSteeringScene.h"
 #include "TestTextureScene.h"
@@ -49,11 +54,12 @@ KaijuWorldSystem::KaijuWorldSystem() {
     };
     redoMenuItem->isEnabledFunc = [this](auto& menuItem) { return commands.CanRedo(); };
 
-    auto menu = NEW<Menu>("Edit");
-    menu->items.push_back(std::move(undoMenuItem));
-    menu->items.push_back(std::move(redoMenuItem));
-    menu->items.push_back(NEW<SeparatorMenuItem>());
-    menus.push_back(std::move(menu));
+    // TODO:
+    //    auto menu = NEW<Menu>("Edit");
+    //    menu->items.push_back(std::move(undoMenuItem));
+    //    menu->items.push_back(std::move(redoMenuItem));
+    //    menu->items.push_back(NEW<SeparatorMenuItem>());
+    //    menus.push_back(std::move(menu));
 
     RegisterSceneClasses();
 }
@@ -82,6 +88,9 @@ void KaijuWorldSystem::RegisterSceneClasses() {
     }));
     sceneClasses.Add(NEW<SceneClass>("test.editBezier", "Test edit bezier", []() {
         return NEW<TestEditBezierScene>();
+    }));
+    sceneClasses.Add(NEW<SceneClass>("test.polygon", "Test polygon", []() {
+        return NEW<TestPolygonScene>();
     }));
     sceneClasses.Add(NEW<SceneClass>("test.theme", "Test theme", []() {
         return NEW<TestThemeScene>();
@@ -115,6 +124,9 @@ void KaijuWorldSystem::RegisterSceneClasses() {
     sceneClasses.Add(NEW<SceneClass>("example.checkers", "Example: Checkers", []() {
         return NEW<Example::Checkers::Scene>();
     }));
+    sceneClasses.Add(NEW<SceneClass>("example.ease", "Example: Ease", []() {
+        return NEW<Example::EaseScene>();
+    }));
     sceneClasses.Add(NEW<SceneClass>("app.filesProcessor", "Files processor", []() {
         return NEW<Kaiju::FilesProcessorScene>();
     }));
@@ -123,6 +135,18 @@ void KaijuWorldSystem::RegisterSceneClasses() {
 
     sceneClasses.Add(NEW<SceneClass>("app.image", "App: Image", []() {
         return NEW<ImageAppScene>();
+    }));
+
+    sceneClasses.Add(NEW<SceneClass>("app.audio", "App: Audio", []() {
+        return NEW<AudioAppScene>();
+    }));
+
+    sceneClasses.Add(NEW<SceneClass>("app.canvas", "App: Canvas", []() {
+        return NEW<CanvasAppScene>();
+    }));
+
+    sceneClasses.Add(NEW<SceneClass>("app.desktop", "App: Desktop", []() {
+        return NEW<DesktopAppScene>();
     }));
 }
 

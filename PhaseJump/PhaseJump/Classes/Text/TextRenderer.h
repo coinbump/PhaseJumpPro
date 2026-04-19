@@ -18,10 +18,12 @@ namespace PJ {
     /**
      Renders text (no markup), requires a font and material to use
      */
-    class TextRenderer : public MaterialRenderer {
+    class TextRenderer : public Renderer {
     public:
-        using Base = MaterialRenderer;
+        using Base = Renderer;
         using This = TextRenderer;
+
+        MaterialRendererCore core;
 
         using ModifyColorsFunc =
             std::function<void(TextRenderer const&, VectorList<RenderColor>& colors)>;
@@ -89,7 +91,7 @@ namespace PJ {
 
         TextRenderer& SetModifyColorsFunc(ModifyColorsFunc value) {
             modifyColorsFunc = value;
-            model.SetVertexColorsNeedsBuild();
+            core.model.SetVertexColorsNeedsBuild();
             return *this;
         }
 
@@ -119,7 +121,7 @@ namespace PJ {
         }
 
         TextMetrics Metrics() {
-            model.BuildIfNeeded();
+            core.model.BuildIfNeeded();
             return metrics ? *metrics : TextMetrics{};
         }
 
@@ -167,13 +169,35 @@ namespace PJ {
         }
 
         TextRenderer& SetTextColor(Color color) {
-            SetColor(color);
+            core.SetColor(color);
             return *this;
         }
 
         // MARK: Renderer
 
         Vector2 CalculateSize(Vector2 proposal) override;
+
+        VectorList<RenderModel> RenderModels() override {
+            return core.RenderModels();
+        }
+
+        Color GetColor() const override {
+            return core.GetColor();
+        }
+
+        void SetColor(Color color) override {
+            core.SetColor(color);
+        }
+
+        // MARK: WorldSizeable
+
+        Vector3 WorldSize() const override {
+            return core.model.WorldSize();
+        }
+
+        void SetWorldSize(Vector3 value) override {
+            core.model.SetWorldSize(value);
+        }
 
         // MARK: SomeWorldComponent
 

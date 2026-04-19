@@ -25,13 +25,17 @@ Graphs::Scene::Scene() {
 void Graphs::Scene::LoadInto(WorldNode& root) {
     QB(root)
         .Named("Example: Graphs")
-        .OrthoStandard(QuickBuilder::OrthoStandardConfig{ .clearColor = Color::black })
+        .OrthoStandard()
         .And("Graphs")
         .RootView(
             worldSize,
             [this](auto& vb) {
                 vb.VStack({ .spacing = 20, .buildViewFunc = [this](auto& vb) {
                                vb.Immediate({ .renderFunc = [this](auto& view, auto& renderer) {
+                                   Rect frame({ .origin = { 0, 0 }, .size = renderer.WorldSize() });
+
+                                   renderer.FillRect(frame);
+
                                    /// Optimize: draw opaque shapes
                                    renderer.areShapesOpaque = true;
 
@@ -87,7 +91,7 @@ void Graphs::Scene::RandomizeValues(bool isAnimated) {
                 InterpolateFuncs::Make(oldValue, newValue), EaseFuncs::outElastic
             );
             auto animator = NEW<Animator<float>>(Animator<float>::Config{
-                .interpolateFunc = interpolateFunc, .duration = 1, .binding = [&](auto value) {
+                .duration = 1, .interpolateFunc = interpolateFunc, .binding = [&](auto value) {
                     bar.value = value;
                 } });
 

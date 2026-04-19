@@ -3,23 +3,24 @@
 #include "RenderMaterial.h"
 #include "ShaderProgram.h"
 #include "TiledMeshBuilder.h"
+#include "UIPlanner.h"
 
 using namespace std;
 using namespace PJ;
 
 Slice3TextureRenderer::Slice3TextureRenderer(Config const& config) :
-    Base({}),
+    core(this, Vector3{}),
     texture(config.texture),
     axis(config.axis),
     startInset(config.startInset),
     endInset(config.endInset) {
 
-    model.material = MAKE<RenderMaterial>(RenderMaterial::Config{
+    core.model.material = MAKE<RenderMaterial>(RenderMaterial::Config{
         .texture = config.texture,
         .shaderId = ShaderId::TextureVary,
         .features = { { RenderFeature::Blend, RenderFeatureState::Enable } } });
 
-    model.SetBuildMeshFunc([this](RendererModel const& model) {
+    core.model.SetBuildMeshFunc([this](RendererModel const& model) {
         return BuildMesh(model.WorldSize());
     });
 
@@ -30,11 +31,13 @@ Slice3TextureRenderer::Slice3TextureRenderer(Config const& config) :
         worldSize.AxisValueOrthogonal(axis) = textureSize.AxisValueOrthogonal(axis);
         SetWorldSize(worldSize);
     }
+
+    Override(planUIFuncs[UIContextId::Inspector], core.MakePlanUIFunc());
 }
 
 PJ::Slice3TextureRenderer::BuildModel Slice3TextureRenderer::MakeBuildModel(Vector3 worldSize
 ) const {
-    auto material = model.material;
+    auto material = core.model.material;
     GUARDR(material, {})
     GUARDR(texture, {})
     GUARDR_LOG(worldSize.x > 0 && worldSize.y > 0, {}, "ERROR. Sliced texture size is invalid")

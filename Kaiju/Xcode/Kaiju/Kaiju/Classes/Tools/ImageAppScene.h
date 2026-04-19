@@ -14,41 +14,27 @@ namespace PJ {
 
         using Document = PJ::CoreDocument<DocumentCore>;
 
-        DocumentBundle documents;
-        SP<Document> activeDocument;
-        SP<Texture> activeTexture;
+        class CommandCore {
+        public:
+            SP<Document> document;
+        };
 
-        ClassRegistry<BitmapOperationClass> operationClasses;
+        using Command = PJ::Command<CommandCore>;
+        using CommandClass = PJ::CommandClass<CommandCore>;
+
+        DocumentBundle documents;
+        UP<FileManager> fileManager;
+
+        ClassRegistry<CommandClass> commandClasses;
 
         ImageAppScene();
-
-        void SetActiveDocument(SP<Document> document) {
-            GUARD(activeDocument != document)
-            activeDocument = document;
-        }
-
-        void NavigateToPreviousDocument();
-        void NavigateToNextDocument();
 
         // MARK: Scene
 
         void LoadInto(WorldNode& root) override;
 
     protected:
-        void RegisterOperationClasses();
-
-        /*
-         on select bitmap operation class -> create bitmap operation -> create command -> add to
-         commands for undo/redo
-
-         ***??? when bitmap changes, update texture with new pixels + bump modified count <- or just
-         create a new one? What if we cropped the bitmap?
-
-         ImRenderer draws frame + dropShadow + image
-
-         Tests: Document, DocumentBundle, file
-         */
-
-        // DocumentBundle documentBundle;
+        void RegisterClasses();
+        void Run(SP<Document> document, BitmapOperation& operation);
     };
 } // namespace PJ

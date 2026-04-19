@@ -62,7 +62,7 @@ Vector2 OrthoCamera::WorldToScreenScale() const {
     return result;
 }
 
-Vector2 OrthoCamera::WorldToScreen(Vector3 position) {
+Vector2 OrthoCamera::ContextToScreen(Vector3 position) {
     auto contextExtents = RenderContextExtents();
     auto cameraPosition = owner->transform.WorldPosition();
 
@@ -79,7 +79,7 @@ Vector2 OrthoCamera::WorldToScreen(Vector3 position) {
     return screenPosition;
 }
 
-Vector3 OrthoCamera::ScreenToWorld(Vector2 position) {
+Vector3 OrthoCamera::ScreenToContext(Vector2 position) {
     auto contextExtents = RenderContextExtents();
     auto cameraPosition = owner->transform.WorldPosition();
 

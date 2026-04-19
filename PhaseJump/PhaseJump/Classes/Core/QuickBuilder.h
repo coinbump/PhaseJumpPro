@@ -51,7 +51,7 @@ namespace PJ {
             DropFilesUIEvent event;
         };
 
-        using OnDragUpdateFunc = std::function<void(DragHandler2D&)>;
+        using OnDragUpdateFunc = DragHandler::OnDragUpdateFunc;
         using OnDropFilesFunc = std::function<void(OnDropFilesArgs args)>;
 
         struct SliderConfig {
@@ -210,10 +210,10 @@ namespace PJ {
         Grid(Vector2 worldSize, Vec2I gridSize, Color color = Color::black, float strokeWidth = 1);
 
         /// Make the current node draggable
-        This& Drag(OnDragUpdateFunc onDragUpdateFunc = [](auto&) {});
+        This& Drag(OnDragUpdateFunc onDragUpdateFunc = {});
 
         /// Make the current node draggable and snap back to original position when drag is finished
-        This& DragSnapBack(OnDragUpdateFunc onDragUpdateFunc = [](auto&) {});
+        This& DragSnapBack(OnDragUpdateFunc onDragUpdateFunc = {});
 
         /// Respond to a drop files event
         This& OnDropFiles(OnDropFilesFunc onDropFilesFunc);
@@ -276,6 +276,19 @@ namespace PJ {
             return *this;
         }
 
+        /// @return Current size of the component list, used as a save point for RAII scopes
+        size_t ComponentsSize() const {
+            return components.size();
+        }
+
+        /// Truncate the component list back to a previously saved size. Used by RAII scopes
+        /// to isolate child additions from the parent's ModifyLatest target.
+        void TruncateComponentsToSize(size_t size) {
+            if (size < components.size()) {
+                components.resize(size);
+            }
+        }
+
         constexpr This& Pop(int count = 1) {
             while (count > 0) {
                 // Can't pop the first node
@@ -328,6 +341,14 @@ namespace PJ {
             auto& result = Node().AddNode(args...);
             nodes.push_back(result);
             return *this;
+        }
+
+        constexpr This& And(String name) {
+            return AddNode(WorldNode::Config{ .name = name });
+        }
+
+        constexpr This& And(const char* name) {
+            return AddNode(WorldNode::Config{ .name = name });
         }
 
         template <typename... Arguments>

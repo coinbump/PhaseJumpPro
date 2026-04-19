@@ -36,10 +36,10 @@ TEST(CirclePathLayout2D, SetRadiusSameValue)
     auto sut = MAKE<CirclePathLayout2D>(2.0f);
     worldNode->Add(sut);
 
-    sut->LayoutIfNeeded();
+    sut->layout.LayoutIfNeeded();
 
     sut->SetRadius(2.0f);
-    EXPECT_FALSE(sut->NeedsLayout());
+    EXPECT_FALSE(sut->layout.NeedsLayout());
 }
 
 TEST(CirclePathLayout2D, WorldSize)

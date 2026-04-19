@@ -9,11 +9,35 @@
 #include "SomeRenderContext.h"
 #include "SomeRenderEngine.h"
 #include "SomeUIEventPoller.h"
+#include "UIWorldSystem.h"
 #include "Updatable.h"
 #include "Utils.h"
 #include "WorldComponent.h"
 #include <memory>
 #include <stack>
+
+namespace CursorId {
+    auto constexpr Arrow = "arrow";
+    auto constexpr TextInput = "text.input";
+    auto constexpr Wait = "wait";
+    auto constexpr Crosshair = "crosshair";
+    auto constexpr Progress = "progress";
+    auto constexpr ResizeNWSE = "resize.nwse";
+    auto constexpr ResizeNESW = "resize.nesw";
+    auto constexpr ResizeEastWest = "resize.ew";
+    auto constexpr ResizeNorthSouth = "resize.ns";
+    auto constexpr Move = "move";
+    auto constexpr NotAllowed = "not.allowed";
+    auto constexpr Pointer = "pointer";
+    auto constexpr ResizeNorthwest = "resize.nw";
+    auto constexpr ResizeNorth = "resize.n";
+    auto constexpr ResizeNortheast = "resize.ne";
+    auto constexpr ResizeEast = "resize.e";
+    auto constexpr ResizeSoutheast = "resize.se";
+    auto constexpr ResizeSouth = "resize.s";
+    auto constexpr ResizeSouthwest = "resize.sw";
+    auto constexpr ResizeWest = "resize.w";
+} // namespace CursorId
 
 /*
  RATING: 5 stars
@@ -78,7 +102,7 @@ namespace PJ {
 
         /// Root node. Child nodes add components that implement specific behaviors for each
         /// node
-        SP<WorldNode> root = MAKE<WorldNode>("Root");
+        SP<WorldNode> root = MAKE<WorldNode>(WorldNode::Config{ .name = "Root", .id = "root" });
 
         /// If > 0, we are using a list of node pointers, so removes are locked
         int isRemoveNodesLockedCount{};
@@ -256,6 +280,10 @@ namespace PJ {
 
         /// Called to process UI events
         virtual void ProcessUIEvents(UIEventList const& uiEvents);
+
+        /// Sets the platform mouse cursor by id (see CursorId). No-op in the base class —
+        /// platform worlds (e.g. SDLWorld) override to dispatch to the windowing system.
+        virtual void SetCursor(String cursorId) {}
 
     protected:
         // MARK: Base

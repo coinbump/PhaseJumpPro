@@ -1,11 +1,12 @@
 #pragma once
 
+#include "ObservedValue.h"
 #include "WorldComponent.h"
 
 /*
- RATING: 5 stars
- Simple type
- CODE REVIEW: 12/21/24
+ RATING: 5+ stars
+ Has unit tests
+ CODE REVIEW: 4/18/26
  */
 namespace PJ {
     class UIWorldSystem;
@@ -25,14 +26,15 @@ namespace PJ {
     public:
         using Base = WorldComponent;
         using This = SelectHandler;
-        using SelectHandlerFunc = std::function<void(This&)>;
+        using OnIsSelectedChangeFunc = std::function<void(This&)>;
 
     protected:
-        bool isSelected = false;
+        ObservedValue<bool> isSelected{ false };
         bool isSelectable = true;
 
     public:
-        SelectHandlerFunc onSelectChangeFunc;
+        /// Default behavior is to send a signal to the owner, or you can replace this
+        OnIsSelectedChangeFunc onIsSelectedChangeFunc;
 
         SelectHandler();
 
@@ -40,18 +42,19 @@ namespace PJ {
             return isSelectable;
         }
 
+        void SetIsSelectable(bool value) {
+            isSelectable = value;
+        }
+
         bool IsSelected() const {
             return isSelected;
         }
 
         void SetIsSelected(bool value) {
-            GUARD(isSelected != value)
             if (value && !isSelectable) {
                 return;
             }
-
             isSelected = value;
-            OnSelectChange();
         }
 
         // MARK: SomeWorldComponent
@@ -59,12 +62,5 @@ namespace PJ {
         String TypeName() const override {
             return "SelectHandler";
         }
-
-    protected:
-        void Awake() override {
-            Base::Awake();
-        }
-
-        virtual void OnSelectChange();
     };
 } // namespace PJ

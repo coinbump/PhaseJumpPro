@@ -29,7 +29,7 @@ namespace PJ {
         Reverse = 1
     };
 
-    static AnimationCycleState Flip(AnimationCycleState state) {
+    constexpr AnimationCycleState Flip(AnimationCycleState state) {
         switch (state) {
         case AnimationCycleState::Forward:
             return AnimationCycleState::Reverse;

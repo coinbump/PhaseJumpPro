@@ -2,6 +2,7 @@
 #include "EditorTypes.h"
 #include "EditorWorldSystem.h"
 #include "imgui.h"
+#include "StringUtils.h"
 #include "World.h"
 #include "WorldNode.h"
 
@@ -18,9 +19,31 @@ EditorImGuiScenesPainter::EditorImGuiScenesPainter(
         auto& world = *system.World();
 
         if (ImGui::CollapsingHeader("Scenes", ImGuiTreeNodeFlags_DefaultOpen)) {
+            VectorList<char> filterBuffer;
+            filterBuffer.resize(filterText.size() + 256);
+            std::copy(filterText.begin(), filterText.end(), filterBuffer.begin());
+
+            if (ImGui::InputText("Filter", filterBuffer.data(), filterBuffer.size())) {
+                filterText = String(
+                    filterBuffer.begin(), std::find(filterBuffer.begin(), filterBuffer.end(), 0)
+                );
+            }
+
+            auto lowerFilter = ToLower(filterText);
+
             VectorList<SceneClass*> sceneClasses;
             for (auto& sceneClassI : system.sceneClasses.Map()) {
-                sceneClasses.push_back(sceneClassI.second.get());
+                auto sceneClass = sceneClassI.second.get();
+                auto& name = sceneClass->_core.name;
+
+                // ImGui requires that UI elements have names (unless you specify ##)
+                GUARD_CONTINUE(name.size() > 0)
+
+                if (!lowerFilter.empty()) {
+                    GUARD_CONTINUE(ToLower(name).find(lowerFilter) != String::npos)
+                }
+
+                sceneClasses.push_back(sceneClass);
             }
 
             std::sort(sceneClasses.begin(), sceneClasses.end(), [](auto& lhs, auto& rhs) {
@@ -29,9 +52,6 @@ EditorImGuiScenesPainter::EditorImGuiScenesPainter(
 
             for (auto& sceneClass : sceneClasses) {
                 auto name = sceneClass->_core.name;
-
-                // ImGui requires that UI elements have names (unless you specify ##)
-                GUARD_CONTINUE(name.size() > 0)
 
                 if (ImGui::Button(name.c_str())) {
                     auto scene = sceneClass->Make();

@@ -23,6 +23,8 @@ namespace PJ {
     class Collider2D;
     class ImRenderer;
     class DesignSystem;
+    class SomeViewLayout;
+    class ToggleButtonControl;
 
     /// Used to build views
     class ViewBuilder {
@@ -175,7 +177,7 @@ namespace PJ {
         /// Button view config
         struct ButtonViewConfig {
             String name = "Button";
-            UIControl2D::OnControlChangeFunc onControlChangeFunc;
+            View2D::OnViewStateChangeFunc onViewStateChangeFunc;
             MakeColliderFunc makeColliderFunc;
             BuildViewFunc buildFrameFunc;
             BuildViewFunc buildLabelFunc;
@@ -186,7 +188,7 @@ namespace PJ {
         /// Toggle button view config
         struct ToggleButtonViewConfig {
             String name = "Toggle Button";
-            UIControl2D::OnControlChangeFunc onControlChangeFunc;
+            View2D::OnViewStateChangeFunc onViewStateChangeFunc;
             MakeColliderFunc makeColliderFunc;
             Binding<bool> isOnBinding;
             BuildViewFunc buildFrameFunc;
@@ -206,6 +208,53 @@ namespace PJ {
 
         /// @return Returns the active view where new views will be created
         View2D* ActiveView() const;
+
+        /// RAII guard returned by the Begin methods. Destructor pops the current node,
+        /// returning the builder to the parent scope. Move-only.
+        class [[nodiscard]] Scope {
+        public:
+            Scope() = default;
+            ~Scope();
+
+            Scope(Scope&& other) noexcept;
+            Scope& operator=(Scope&& other) noexcept;
+            Scope(Scope const&) = delete;
+            Scope& operator=(Scope const&) = delete;
+
+            /// End the scope early (pops the current node). Destructor does this automatically
+            /// if this isn't called first.
+            void Leave();
+
+        private:
+            friend class ViewBuilder;
+
+            Scope(ViewBuilder& vb, size_t componentsBaseSize) :
+                vb(&vb),
+                componentsBaseSize(componentsBaseSize) {}
+
+            ViewBuilder* vb{};
+            size_t componentsBaseSize{};
+        };
+
+        /// Push a VStack layout view. Children added until the returned Scope destructs.
+        Scope BeginVStack(VStackConfig configs);
+
+        /// Push an HStack layout view. Children added until the returned Scope destructs.
+        Scope BeginHStack(HStackConfig config);
+
+        /// Push a ZStack layout view. Children added until the returned Scope destructs.
+        Scope BeginZStack(ZStackConfig config);
+
+        /// Push a Pad layout view. Children added until the returned Scope destructs.
+        Scope BeginPad(PadConfig config);
+
+        /// Push a fixed grid layout view. Children added until the returned Scope destructs.
+        Scope BeginFixedGrid(FixedGridConfig config);
+
+        /// Make the current view rebuildable: store buildFunc as its buildViewFunc and invoke
+        /// it once to build initial children. Any call to SetNeedsRebuild()/Rebuild() on the
+        /// view re-runs buildFunc against fresh children.
+        This& Rebuildable(BuildViewFunc buildFunc);
 
         /// Starts with a root view
         This& RootView(Vector2 size, ViewBuilder::BuildViewFunc buildFunc);
@@ -396,6 +445,29 @@ namespace PJ {
 
     protected:
         This& AddViewAttachments(View2D& view, ViewAttachmentsConfig config);
+
+    private:
+        template <class Config>
+        This& AddLayoutView(
+            BuildConfigFunc<Config> buildConfigFunc,
+            std::function<UP<SomeViewLayout>(Config const&)> makeLayoutFunc
+        );
+
+        template <class Control, class Config>
+        This& AddControlView(
+            BuildConfigFunc<Config> buildConfigFunc,
+            std::function<void(Control&, Config const&)> configureControlFunc
+        );
+
+        template <class Config>
+        This& BuildFromDesignSystem(String elementId, Config config);
+
+        This& AddAttachment(BuildViewFunc buildFunc, bool isBackground);
+
+        template <class Config>
+        Scope PushLayoutView(
+            Config config, std::function<UP<SomeViewLayout>(Config const&)> makeLayoutFunc
+        );
     };
 } // namespace PJ
 

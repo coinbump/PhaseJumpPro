@@ -47,11 +47,9 @@ TEST(Interpolator, MakeBinding)
     float testValue = -1;
     float start = 0.0f;
     float end = 100.0f;
-    InterpolateFunc<float> easeFunc = [=](float value) {
-        return value * 2.0f;
-    };
+    EaseFunc easeFunc = [](float value) { return value * 2.0f; };
     auto interpolateFunc =
-    InterpolateFuncs::Ease(InterpolateFuncs::Make(start, end), easeFunc);
+        InterpolateFuncs::Ease(InterpolateFuncs::Make(start, end), easeFunc);
     auto sut = InterpolateFuncs::Binding<float>(interpolateFunc, [&](auto& value) {
         testValue = value;
     });

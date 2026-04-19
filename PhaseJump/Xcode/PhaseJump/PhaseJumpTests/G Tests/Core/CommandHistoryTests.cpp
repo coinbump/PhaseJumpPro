@@ -6,11 +6,32 @@ using namespace std;
 
 namespace CommandHistoryTests {
     UP<SomeCommand> MakeCommand(String name) {
-        return NEW<Command<int>>(name, [](auto& command) { command.core++; }, [](auto& command) { command.core--; });
+        return NEW<Command<int>>(Command<int>::Config{ .name = name, .runFunc = [](auto& command) { command.core++; }, .undoFunc = [](auto& command) { command.core--; }});
     }
 }
 
 using namespace CommandHistoryTests;
+
+TEST(CommandHistory, RemoveIf)
+{
+    CommandHistory sut(2);
+
+    EXPECT_EQ(-1, sut.ActiveCommandIndex());
+    sut.Run(MakeCommand("a"));
+    EXPECT_EQ(0, sut.ActiveCommandIndex());
+    EXPECT_EQ(1, sut.Size());
+    sut.Run(MakeCommand("b"));
+    EXPECT_EQ(1, sut.ActiveCommandIndex());
+    ASSERT_EQ(2, sut.Size());
+    
+    sut.RemoveIf([](auto& command) {
+        return command.Name() == "a";
+    });
+    
+    EXPECT_EQ(0, sut.ActiveCommandIndex());
+    ASSERT_EQ(1, sut.Size());
+    EXPECT_EQ("b", sut.Commands()[0]->Name());
+}
 
 TEST(CommandHistory, BuildPastMaxSize)
 {

@@ -19,11 +19,13 @@ namespace PJ {
     class TextureAtlas;
 
     /// Renders multiple textures as a sprite
-    class AnimatedSpriteRenderer : public MaterialRenderer {
+    class AnimatedSpriteRenderer : public Renderer {
     public:
-        using Base = MaterialRenderer;
+        using Base = Renderer;
         using This = AnimatedSpriteRenderer;
         using TextureList = VectorList<SP<Texture>>;
+
+        MaterialRendererCore core;
 
         /// Model to build animation keyframe
         struct KeyframeModel {
@@ -144,10 +146,32 @@ namespace PJ {
 
         // MARK: Renderer
 
-        void Reset() override;
+        virtual void Reset();
 
         bool IsRenderFinished() const override {
             return framePlayable && framePlayable->IsFinished();
+        }
+
+        VectorList<RenderModel> RenderModels() override {
+            return core.RenderModels();
+        }
+
+        Color GetColor() const override {
+            return core.GetColor();
+        }
+
+        void SetColor(Color color) override {
+            core.SetColor(color);
+        }
+
+        // MARK: WorldSizeable
+
+        Vector3 WorldSize() const override {
+            return core.model.WorldSize();
+        }
+
+        void SetWorldSize(Vector3 value) override {
+            core.model.SetWorldSize(value);
         }
 
         // MARK: WorldComponent

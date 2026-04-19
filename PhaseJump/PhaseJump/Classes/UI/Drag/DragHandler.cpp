@@ -13,30 +13,60 @@ DragHandler::DragHandler() {
                                                static_cast<This*>(&component)->OnPointerDown(event);
                                            } });
 
-    uiSystemResolver = [this]() { return owner->World()->TypeSystem<UIWorldSystem>(); };
+    uiSystemResolver = [this]() -> UIWorldSystem* {
+        GUARDR(owner, {})
+
+        auto const world = owner->World();
+        GUARDR(world, {})
+
+        return world->TypeSystem<UIWorldSystem>();
+    };
 }
 
 bool DragHandler::IsDragging() const {
-    return state == StateType::Drag;
+    return state == StateType::Began;
 }
 
-void DragHandler::OnDragEnd() {
+void DragHandler::Cancel() {
+    switch (state) {
+    case StateType::Began:
+        {
+            auto uiSystem = UISystem();
+            GUARD(uiSystem)
+
+            uiSystem->CancelDrag();
+            break;
+        }
+    default:
+        break;
+    }
+}
+
+void DragHandler::OnDragCancel() {
+    state = StateType::Default;
+}
+
+void DragHandler::OnDragEnd(WorldPosition position) {
     state = StateType::Default;
 }
 
 void DragHandler::StartDrag(WorldPosition inputPosition) {
     GUARD(owner)
 
-    // Allow drag to be handled by another object
-    if (!dragTarget.expired()) {
-        dragTarget.lock()->StartDrag(inputPosition);
+    // Allow drag to be handled by another object, the state for this handler does not update
+    DragHandler* dragTarget{};
+    if (dragTargetResolver) {
+        dragTarget = dragTargetResolver();
+    }
+    if (dragTarget) {
+        dragTarget->StartDrag(inputPosition);
         return;
     }
 
-    state = StateType::Drag;
+    state = StateType::Began;
 
-    dragStartPosition = owner->transform.WorldPosition();
-    dragStartInputPosition = inputPosition;
+    dragNodeStartPosition = owner->transform.WorldPosition();
+    dragStartPosition = inputPosition;
 
     auto uiSystem = UISystem();
     GUARD(uiSystem)
@@ -49,9 +79,6 @@ void DragHandler::StartDrag(WorldPosition inputPosition) {
 
 void DragHandler::OnPointerDown(PointerDownUIEvent const& event) {
     GUARD(owner)
-
-    // Debug.Log("DragHandler2D OnPointerDown at: " +
-    // eventData.pressPosition.ToString());
 
     auto inputWorldPosition = ScreenToWorld(*this, event.core.screenPos);
     StartDrag(inputWorldPosition);

@@ -45,7 +45,8 @@ public:
                     }
 
                     std::ostringstream ss;
-                    ss << "Delta: " << update.delta.x << ", " << update.delta.y << std::endl;
+                    ss << "Delta: " << update.Translation().x << ", " << update.Translation().y
+                       << std::endl;
                     textRenderer->SetText(ss.str());
                     // BUG: textRenderer->SizeToFit();
                 };
@@ -59,7 +60,7 @@ public:
             .ModifyLatest<ButtonControl>([=](ButtonControl& button) {
                 button.onPressFunc = [](auto&) { std::cout << "Press" << std::endl; };
                 button.SetWorldSize({ 200, 50, 0 });
-                button.SetOnControlChangeFunc([](UIControl2D& control) {
+                button.SetOnViewStateChangeFunc([](View2D& control) {
                     auto spriteRenderer = control.owner->TypeComponent<SpriteRenderer>();
                     GUARD(spriteRenderer)
                     spriteRenderer->SetColor(

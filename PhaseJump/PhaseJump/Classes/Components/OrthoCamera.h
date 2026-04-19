@@ -61,8 +61,8 @@ namespace PJ {
 
         // MARK: Camera
 
-        Vector2 WorldToScreen(Vector3 position) override;
-        Vector3 ScreenToWorld(Vector2 position) override;
+        Vector2 ContextToScreen(Vector3 position) override;
+        Vector3 ScreenToContext(Vector2 position) override;
         void RenderStart(SomeRenderContext* context) override;
         bool IsCulled(Mesh const& mesh) override;
 

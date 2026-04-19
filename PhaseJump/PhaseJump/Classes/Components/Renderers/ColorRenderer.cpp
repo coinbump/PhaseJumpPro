@@ -6,23 +6,24 @@
 #include "RenderMaterial.h"
 #include "RenderModel.h"
 #include "SomeRenderEngine.h"
+#include "UIPlanner.h"
 
 using namespace std;
 using namespace PJ;
 
 ColorRenderer::ColorRenderer(Config const& config) :
-    Base(config.worldSize) {
+    core(this, config.worldSize) {
 
-    model.material =
+    core.model.material =
         config.material ? config.material : MakeMaterial(RenderOpacityTypeFor(config.color));
-    model.SetColor(config.color);
+    core.model.SetColor(config.color);
 
-    model.SetBuildMeshFunc([](RendererModel const& model) {
+    core.model.SetBuildMeshFunc([](RendererModel const& model) {
         QuadMeshBuilder builder(model.WorldSize());
         return builder.BuildMesh();
     });
 
-    model.SetOnColorsChangeFunc([](auto& model) {
+    core.model.SetOnColorsChangeFunc([](auto& model) {
         auto material = model.material;
         GUARD(material)
 
@@ -32,10 +33,9 @@ ColorRenderer::ColorRenderer(Config const& config) :
         auto color = colors[0];
         material->EnableFeature(RenderFeature::Blend, color.a != 1);
     });
-}
 
-ColorRenderer::ColorRenderer(Color color, Vector2 worldSize) :
-    ColorRenderer({ .color = color, .worldSize = worldSize }) {}
+    Override(planUIFuncs[UIContextId::Inspector], core.MakePlanUIFunc());
+}
 
 SP<RenderMaterial> ColorRenderer::MakeMaterial(RenderOpacityType opacityType) {
     auto material = MAKE<RenderMaterial>(RenderMaterial::Config{ .shaderId = ShaderId::ColorVary });
@@ -45,9 +45,9 @@ SP<RenderMaterial> ColorRenderer::MakeMaterial(RenderOpacityType opacityType) {
 }
 
 void ColorRenderer::EnableBlend(bool isFeatureEnabled) {
-    model.SetOnColorsChangeFunc({});
+    core.model.SetOnColorsChangeFunc({});
 
-    auto material = model.Material();
+    auto material = core.model.Material();
     GUARD(material)
     material->EnableFeature(RenderFeature::Blend, isFeatureEnabled);
 }

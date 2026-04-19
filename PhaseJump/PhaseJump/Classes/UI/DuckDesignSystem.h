@@ -23,5 +23,20 @@ namespace PJ {
         using This = DuckDesignSystem;
 
         DuckDesignSystem();
+
+    private:
+        void RegisterSurface();
+        void RegisterButton();
+        void RegisterSlider();
+        void RegisterSegmentToggle();
+        void RegisterImageToggle();
+        void RegisterSwitchToggle();
+        void RegisterCheckTypeButtons();
+        void RegisterProgressBar();
+        void RegisterProgressCircle();
+        void RegisterDial();
+        void RegisterLabel();
+        void RegisterToast();
+        void RegisterToolTip();
     };
 } // namespace PJ

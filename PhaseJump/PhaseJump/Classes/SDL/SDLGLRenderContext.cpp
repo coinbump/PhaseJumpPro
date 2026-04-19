@@ -69,6 +69,10 @@ void SDLGLRenderContext::Bind() {
 
 void SDLGLRenderContext::Clear() {
     glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
+
+    // Set the value to clear the stencil buffer to
+    glClearStencil(0);
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 }
 

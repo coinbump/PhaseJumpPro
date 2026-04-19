@@ -46,58 +46,74 @@ View2D::View2D() {
     PlanUIFunc planUIFunc = [this](auto args) {
         auto& planner = args.planner;
 
-        args.planner.Text([this]() {
+        args.planner.LabelText([this]() {
             String frameString = std::format(
                 "Origin: {}, {} \tSize: {}, {}", frame.origin.x, frame.origin.y, frame.size.x,
                 frame.size.y
             );
-            return UIPlanner::TextConfig{ .label = "Frame", .text = frameString };
+            return UIPlanner::LabelTextConfig{ .label = "Frame", .text = frameString };
         });
 
-        planner.InputFloat({ .label = "Fixed Width",
-                             .binding = { [this]() { return FixedWidth() ? *FixedWidth() : 0; },
-                                          [this](auto& value) {
-                                              SetFixedSize(
-                                                  value > 0 ? value : std::optional<float>{},
-                                                  FixedHeight()
-                                              );
-                                          } } });
-        planner.InputFloat({ .label = "Fixed Height",
-                             .binding = { [this]() { return FixedHeight() ? *FixedHeight() : 0; },
-                                          [this](auto& value) {
-                                              SetFixedSize(
-                                                  FixedWidth(),
-                                                  value > 0 ? value : std::optional<float>{}
-                                              );
-                                          } } });
+        planner.InputFloat(
+            { .label = "Fixed Width",
+              .binding = Binding<float>(
+                  { .getFunc = [this]() { return FixedWidth() ? *FixedWidth() : 0; },
+                    .setFunc =
+                        [this](auto& value) {
+                            SetFixedSize(value > 0 ? value : std::optional<float>{}, FixedHeight());
+                        } }
+              ) }
+        );
+        planner.InputFloat(
+            { .label = "Fixed Height",
+              .binding = Binding<float>(
+                  { .getFunc = [this]() { return FixedHeight() ? *FixedHeight() : 0; },
+                    .setFunc =
+                        [this](auto& value) {
+                            SetFixedSize(FixedWidth(), value > 0 ? value : std::optional<float>{});
+                        } }
+              ) }
+        );
 
         planner.InputFloat(
             { .label = "Max Width",
-              .binding = { [this]() { return MaxWidth() ? *MaxWidth() : 0; },
-                           [this](auto& value) {
-                               SetMaxSize(value > 0 ? value : std::optional<float>{}, MaxHeight());
-                           } } }
+              .binding = Binding<float>(
+                  { .getFunc = [this]() { return MaxWidth() ? *MaxWidth() : 0; },
+                    .setFunc =
+                        [this](auto& value) {
+                            SetMaxSize(value > 0 ? value : std::optional<float>{}, MaxHeight());
+                        } }
+              ) }
         );
         planner.InputFloat(
             { .label = "Max Height",
-              .binding = { [this]() { return MaxHeight() ? *MaxHeight() : 0; },
-                           [this](auto& value) {
-                               SetMaxSize(MaxWidth(), value > 0 ? value : std::optional<float>{});
-                           } } }
+              .binding = Binding<float>(
+                  { .getFunc = [this]() { return MaxHeight() ? *MaxHeight() : 0; },
+                    .setFunc =
+                        [this](auto& value) {
+                            SetMaxSize(MaxWidth(), value > 0 ? value : std::optional<float>{});
+                        } }
+              ) }
         );
 
-        planner.InputBool({ .label = "Ideal Width",
-                            .binding = { [this]() { return IsIdealWidth(); },
-                                         [this](auto& value) {
-                                             SetIsIdealSize(value, IsIdealHeight());
-                                         } } });
-        planner.InputBool({ .label = "Ideal Height",
-                            { [this]() { return IsIdealHeight(); },
-                              [this](auto& value) { SetIsIdealSize(IsIdealWidth(), value); } } });
+        planner.InputBool(
+            { .label = "Ideal Width",
+              .binding = Binding<bool>(
+                  { .getFunc = [this]() { return IsIdealWidth(); },
+                    .setFunc = [this](auto& value) { SetIsIdealSize(value, IsIdealHeight()); } }
+              ) }
+        );
+        planner.InputBool(
+            { .label = "Ideal Height",
+              .binding = Binding<bool>(
+                  { .getFunc = [this]() { return IsIdealHeight(); },
+                    .setFunc = [this](auto& value) { SetIsIdealSize(IsIdealWidth(), value); } }
+              ) }
+        );
 
         if (layout) {
             String layoutLabel = std::format("Layout: {}", layout->TypeName());
-            planner.Text({ .text = layoutLabel });
+            planner.LabelText({ .text = layoutLabel });
 
             auto planUIFunc = layout->GetPlanUIFunc(args.context);
             if (planUIFunc) {
@@ -117,6 +133,18 @@ void View2D::Start() {
     // Run in start, not Awake, so everything is in place
     UpdateFrameComponents();
     LayoutIfNeeded();
+}
+
+void View2D::Awake() {
+    Base::Awake();
+
+    // Sync to the latest state
+    OnViewStateChange();
+}
+
+void View2D::OnViewStateChange() {
+    GUARD(onViewStateChangeFunc)
+    onViewStateChangeFunc(*this);
 }
 
 View2D* View2D::ParentView() const {

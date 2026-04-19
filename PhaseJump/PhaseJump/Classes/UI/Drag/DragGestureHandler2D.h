@@ -3,36 +3,43 @@
 #include "DragHandler.h"
 
 /*
- RATING: 5 stars
+ RATING: 5+ stars
  Tested and works
- CODE REVIEW: 9/4/24
+ CODE REVIEW: 4/15/26
  */
 namespace PJ {
-    /// Updates with deltas of the drag while it is in progress
+    /// Updates with drag state while gesture is in progress
     class DragGestureHandler2D : public DragHandler {
     public:
         struct Update {
             enum class Type {
-                // Drag started
+                /// Drag started
                 Start,
 
-                // Drag is in progress
+                /// Drag is in progress
                 Update,
 
-                // Drag has ended
-                End
+                /// Drag ended
+                End,
+
+                /// Drag cancelled
+                Cancel
             };
 
             DragGestureHandler2D& handler;
             Type type;
-            Vector2 worldPosition;
-            Vector2 delta;
 
-            Update(DragGestureHandler2D& gesture, Type type, Vector2 worldPosition, Vector2 delta) :
-                handler(gesture),
-                type(type),
-                worldPosition(worldPosition),
-                delta(delta) {}
+            /// Start world position of the drag gesture
+            WorldPosition2D startPosition;
+
+            /// Current world position of the drag gesture
+            WorldPosition2D position;
+
+            /// @return Returns total translation from the start of the drag gesture to the current
+            /// event of the drag gesture
+            Vector2 Translation() const {
+                return position - startPosition;
+            }
         };
 
         using Base = DragHandler;
@@ -40,6 +47,16 @@ namespace PJ {
 
         OnDragGestureUpdateFunc onDragGestureUpdateFunc;
 
+        DragGestureHandler2D() {
+            onDragUpdateFunc = [this](auto& dragHandler, auto position) {
+                OnDragGestureUpdate({ .handler = *this,
+                                      .type = Update::Type::Update,
+                                      .startPosition = dragStartPosition,
+                                      .position = position });
+            };
+        }
+
+    protected:
         virtual void OnDragGestureUpdate(Update update) {
             GUARD(onDragGestureUpdateFunc)
             onDragGestureUpdateFunc(update);
@@ -47,20 +64,28 @@ namespace PJ {
 
         // MARK: DragHandler
 
-        void OnDragStart(WorldPosition inputPosition) override {
-            OnDragGestureUpdate({ *this, Update::Type::Start, inputPosition, {} });
+        void OnDragCancel() override {
+            Base::OnDragCancel();
+
+            OnDragGestureUpdate({ .handler = *this, .type = Update::Type::Cancel });
         }
 
-        void OnDragUpdate(WorldPosition inputPosition) override {
-            auto delta = inputPosition - dragStartInputPosition;
-            OnDragGestureUpdate({ *this, Update::Type::Update, inputPosition,
-                                  Vector2(delta.x, delta.y) });
+        void OnDragStart(WorldPosition position) override {
+            Base::OnDragStart(position);
+
+            OnDragGestureUpdate({ .handler = *this,
+                                  .type = Update::Type::Start,
+                                  .startPosition = dragStartPosition,
+                                  .position = position });
         }
 
-        void OnDragEnd() override {
-            Base::OnDragEnd();
+        void OnDragEnd(WorldPosition position) override {
+            Base::OnDragEnd(position);
 
-            OnDragGestureUpdate({ *this, Update::Type::End, {}, {} });
+            OnDragGestureUpdate({ .handler = *this,
+                                  .type = Update::Type::End,
+                                  .startPosition = dragStartPosition,
+                                  .position = position });
         }
 
         // MARK: SomeWorldComponent

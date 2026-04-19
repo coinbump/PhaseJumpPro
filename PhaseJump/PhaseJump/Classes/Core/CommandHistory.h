@@ -1,5 +1,6 @@
 #pragma once
 
+#include "CollectionUtils.h"
 #include "Command.h"
 #include "List.h"
 
@@ -75,6 +76,12 @@ namespace PJ {
             commands[activeCommandIndex] = std::move(command);
 
             commandPtr->Run();
+        }
+
+        template <class UnaryPred>
+        constexpr void RemoveIf(UnaryPred check) {
+            PJ::RemoveIf(commands, [&](auto& upCommand) { return check(*upCommand.get()); });
+            activeCommandIndex = std::min((int32_t)commands.size() - 1, activeCommandIndex);
         }
 
         String UndoCommandName() {

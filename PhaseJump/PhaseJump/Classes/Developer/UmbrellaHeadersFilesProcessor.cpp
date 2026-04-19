@@ -16,7 +16,8 @@ void UmbrellaHeadersFilesProcessor::Process(FilePath filePath) {
     FilePath classesFilePath = filePath;
     classesFilePath /= "PhaseJump/Classes";
 
-    SDLFileManager fm;
+    auto _fm = NewSDLFileManager();
+    FileManager& fm = *_fm;
     auto pathList = fm.FilePathList(classesFilePath, FileSearchType::Recursive);
 
     auto process = [&](String prefix) {

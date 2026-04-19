@@ -130,7 +130,8 @@ SDLConfigPlatformResult SDLPlatformClass::Configure(SDLPlatformConfig& config, S
     // Careful: this is only meant for quick prototyping. It will block the main thread
     if (config.resourcesPath.string().size() > 0) {
         StandardResourceScanModel scanModel(StandardResourceScanModel::LoadType::Rez);
-        SDLFileManager fm;
+        auto _fm = NewSDLFileManager();
+        FileManager& fm = *_fm;
         ResourceScanner resourceScanner(scanModel, fm);
 
         StandardResourceRepositoryModel repoModel;

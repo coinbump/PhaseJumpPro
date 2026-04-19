@@ -5,6 +5,7 @@
 #include "SQLTypes.h"
 #include "SQLValue.h"
 #include "StringUtils.h"
+#include "VectorList.h"
 #include <sqlite3.h>
 
 /*
@@ -25,8 +26,15 @@ namespace PJ {
         }
     };
 
+    /// Builds a parameterized SQL statement.
+    ///
+    /// Values added via `Append(SQLValue)` are emitted as `?` placeholders and
+    /// collected in `parameters`; the database binds them at prepare time via
+    /// `sqlite3_bind_*`. Callers must not embed raw user values via
+    /// `AppendString` — only via `Append(SQLValue)`.
     struct SQLStatement {
         String value;
+        VectorList<SQLValue> parameters;
 
         SQLStatement() {}
 
@@ -51,22 +59,10 @@ namespace PJ {
             }
         }
 
+        /// Appends a `?` placeholder and records the value for binding.
         void Append(SQLValue value) {
-            switch (value.type) {
-            case SQLValueType::Text:
-            case SQLValueType::Any:
-            case SQLValueType::Blob:
-                // SQL value strings are wrapped in single quotes.
-                // Example: name='myName'
-                this->value.append("'");
-                this->value.append(value.value);
-                this->value.append("'");
-                break;
-            case SQLValueType::Int:
-            case SQLValueType::Real:
-                this->value.append(value.value);
-                break;
-            }
+            this->value.append("?");
+            parameters.push_back(value);
         }
     };
 } // namespace PJ

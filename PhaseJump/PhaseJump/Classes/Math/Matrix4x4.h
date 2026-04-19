@@ -64,14 +64,18 @@ namespace PJ {
         void LoadTranslate(Vector3 translate);
 
         /**
-            Loads a perspective transformation matrix
+            Loads a perspective transformation matrix.
 
-         @param fov_radians Field of view in the y direction
+            Right-handed, OpenGL-style (camera looks down -Z, NDC z in [-1, +1]).
+            Equivalent to gluPerspective. Loads identity (and returns early) if
+            aspect is 0, zNear equals zFar, or fovRadians is 0.
+
+         @param fovRadians Field of view in the y direction
          @param aspect Aspect ratio in the x direction (height)
          @param zNear Distance from viewer to the near clipping plane (always positive)
          @param zFar Distance from viewer to the far clipping plane (always positive)
          */
-        void LoadPerspective(float fov_radians, float aspect, float zNear, float zFar);
+        void LoadPerspective(float fovRadians, float aspect, float zNear, float zFar);
 
         /**
             Loads an orthogonal projection matrix

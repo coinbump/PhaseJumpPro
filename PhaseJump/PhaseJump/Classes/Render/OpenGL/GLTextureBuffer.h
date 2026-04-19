@@ -15,28 +15,61 @@
 namespace PJ {
     /// Wraps an OpenGL frame buffer and deletes it when it goes out of scope
     struct GLFrameBuffer {
+    public:
         // Don't allow copies
         DELETE_COPY(GLFrameBuffer);
 
-        uint32_t id{};
+    protected:
+        RenderItemId id{};
+
+    public:
+        RenderItemId Id() const {
+            return id;
+        }
 
         GLFrameBuffer() {}
 
+        GLFrameBuffer(RenderItemId id) :
+            id(id) {}
+
         ~GLFrameBuffer();
+
+        void Delete() {
+            GUARD(id)
+            glDeleteFramebuffers(1, &id);
+            id = 0;
+        }
     };
 
     /// Wraps an OpenGL render buffer and deletes it when it goes out of scope
     struct GLRenderBuffer {
+    public:
         // Don't allow copies
         DELETE_COPY(GLRenderBuffer);
 
-        uint32_t id{};
+    protected:
+        RenderItemId id{};
+
+    public:
+        RenderItemId Id() const {
+            return id;
+        }
 
         GLRenderBuffer() {}
 
+        GLRenderBuffer(RenderItemId id) :
+            id(id) {}
+
         ~GLRenderBuffer();
+
+        void Delete() {
+            GUARD(id)
+            glDeleteRenderbuffers(1, &id);
+            id = 0;
+        }
     };
 
+    // TODO: fix resource leak bugs for early exit
     /// Creates and manages an offscreen OpenGL texture buffer
     /// Useful when we need to render a viewport into the buffer and apply post processing effects
     /// via shaders.
@@ -47,8 +80,8 @@ namespace PJ {
 
     protected:
         Vector2Int size;
-        GLFrameBuffer frameBuffer;
-        GLRenderBuffer depthBuffer;
+        UP<GLFrameBuffer> frameBuffer;
+        UP<GLRenderBuffer> depthBuffer;
 
         SP<GLTexture> texture;
 
@@ -69,21 +102,18 @@ namespace PJ {
             return texture;
         }
 
-        // TODO: this is untested
-        SP<Bitmap<PixelFormat::RGBA8888>> MakeBitmap() {
-            GUARDR(IsValid(), nullptr);
-
-            Data<uint32_t> data;
-            data.ResizeCount(size.x * size.y);
-            glReadPixels(0, 0, size.x, size.y, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, data.Pointer());
-
-            return MAKE<Bitmap<PixelFormat::RGBA8888>>(Bitmap<PixelFormat::RGBA8888>::Config{
-                .size = size, .data = &data });
+        RenderItemId RenderId() const override {
+            return texture ? texture->RenderId() : 0;
         }
+
+        /// Reads the buffer's pixels into a new standard-oriented RGBA bitmap.
+        /// Binds this buffer for the read and restores the previously bound framebuffer.
+        UP<Bitmap<PixelFormat::RGBA8888>> NewBitmap();
 
         bool IsValid() const;
 
         void Build(Vector2Int size) override;
+        void Resize(Vector2Int size) override;
         void Bind() override;
         void Clear() override;
 

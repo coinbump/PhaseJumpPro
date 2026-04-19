@@ -54,14 +54,14 @@ void KaijuImGuiRenderProcessor::BuildPainters() {
     UP<ImGuiPainter> commandHistoryPainter =
         NEW<EditorImGuiCommandHistoryPainter>(editorSystem.commands);
 
-    scrollingPainter->tree.Add(scenesPainter);
-    scrollingPainter->tree.Add(prefabsPainter);
-    scrollingPainter->tree.Add(resourcesPainter);
-    scrollingPainter->tree.Add(sceneTreePainter);
-    scrollingPainter->tree.Add(renderEnginePainter);
-    scrollingPainter->tree.Add(commandHistoryPainter);
+    scrollingPainter->tree.Add(std::move(scenesPainter));
+    scrollingPainter->tree.Add(std::move(prefabsPainter));
+    scrollingPainter->tree.Add(std::move(resourcesPainter));
+    scrollingPainter->tree.Add(std::move(sceneTreePainter));
+    scrollingPainter->tree.Add(std::move(renderEnginePainter));
+    scrollingPainter->tree.Add(std::move(commandHistoryPainter));
 
-    windowPainter->tree.Add(menuBarPainter);
-    windowPainter->tree.Add(worldInfoPainter);
-    windowPainter->tree.Add(scrollingPainter);
+    windowPainter->tree.Add(std::move(menuBarPainter));
+    windowPainter->tree.Add(std::move(worldInfoPainter));
+    windowPainter->tree.Add(std::move(scrollingPainter));
 }

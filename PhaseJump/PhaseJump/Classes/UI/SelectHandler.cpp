@@ -5,13 +5,13 @@ using namespace std;
 using namespace PJ;
 
 SelectHandler::SelectHandler() {
-    onSelectChangeFunc = [this](auto& handler) {
-        GUARD(owner)
-        owner->Signal("selected", SelectEvent(isSelected));
-    };
-}
+    isSelected.SetOnValueChangeFunc(SetOnValueChangeFuncType::None, [this](auto value) {
+        GUARD(onIsSelectedChangeFunc)
+        onIsSelectedChangeFunc(*this);
+    });
 
-void SelectHandler::OnSelectChange() {
-    GUARD(onSelectChangeFunc);
-    onSelectChangeFunc(*this);
+    onIsSelectedChangeFunc = [this](auto& handler) {
+        GUARD(owner)
+        owner->Signal(SignalId::Select, SelectEvent(isSelected));
+    };
 }

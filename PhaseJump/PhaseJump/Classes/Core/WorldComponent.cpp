@@ -12,16 +12,18 @@ WorldComponent::WorldComponent(String name) :
     };
 
     PlanUIFunc planUIFunc = [this](auto args) {
-        args.planner.Text([this]() {
+        args.planner.LabelText([this]() {
             VectorList<String> signalNames = attachmentCore.SignalHandlerNames();
             auto text = Joined(signalNames, ", ");
 
-            return UIPlanner::TextConfig{ .label = "Signals", .text = text };
+            return UIPlanner::LabelTextConfig{ .label = "Signals", .text = text };
         });
 
-        args.planner.InputBool({ .label = "Is Enabled",
-                                 .binding = { [this]() { return IsEnabled(); },
-                                              [this](auto& value) { Enable(value); } } });
+        args.planner.InputBool(
+            { .label = "Is Enabled",
+              .binding = Binding<bool>({ .getFunc = [this]() { return IsEnabled(); },
+                                         .setFunc = [this](auto& value) { Enable(value); } }) }
+        );
     };
     Override(planUIFuncs[UIContextId::Inspector], planUIFunc);
 }

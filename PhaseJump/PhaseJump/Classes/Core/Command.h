@@ -2,6 +2,7 @@
 
 #include "Dev.h"
 #include "StateMachine.h"
+#include "TypeClass.h"
 #include "Void.h"
 #include <functional>
 
@@ -43,19 +44,21 @@ namespace PJ {
         StateMachine<StateType> stateMachine;
 
     public:
+        struct Config {
+            String name;
+            Core core;
+            RunFunc runFunc;
+            UndoFunc undoFunc;
+        };
+
         Core core{};
         String name;
 
-        Command(String name, RunFunc runFunc, UndoFunc undoFunc) :
-            name(name),
-            runFunc(runFunc),
-            undoFunc(undoFunc) {}
-
-        Command(String name, Core const& core, RunFunc runFunc, UndoFunc undoFunc) :
-            name(name),
-            core(core),
-            runFunc(runFunc),
-            undoFunc(undoFunc) {}
+        Command(Config const& config) :
+            name(config.name),
+            core(config.core),
+            runFunc(config.runFunc),
+            undoFunc(config.undoFunc) {}
 
         // MARK: SomeCommand
 
@@ -91,5 +94,16 @@ namespace PJ {
             undoFunc(*this);
             stateMachine.SetState(StateType::Reversed);
         }
+    };
+
+    /// Used to register a type of command that can be instantiated as needed
+    template <class Core = Void>
+    class CommandClass final : public TypeClass<Command<Core>> {
+    public:
+        using Command = PJ::Command<Core>;
+        using Base = TypeClass<Command>;
+
+        CommandClass(String id, Base::FactoryFunc factoryFunc) :
+            Base(id, factoryFunc) {}
     };
 } // namespace PJ

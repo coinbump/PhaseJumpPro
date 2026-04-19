@@ -3,7 +3,7 @@
 #include "Axis.h"
 #include "DragHandler.h"
 #include "ObservedValue.h"
-#include "UIControl2D.h"
+#include "View2D.h"
 
 /*
  RATING: 4 stars
@@ -18,10 +18,10 @@ namespace PJ {
 
      Built with optional child nodes for the track and thumb
      */
-    class SliderControl : public UIControl2D {
+    class SliderControl : public View2D {
     public:
         // FUTURE: support snap positions
-        using Base = UIControl2D;
+        using Base = View2D;
         using This = SliderControl;
 
         using OnValueChangeFunc = std::function<void(This&)>;

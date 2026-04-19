@@ -1,11 +1,19 @@
 #pragma once
 
 /*
- RATING: 5 stars
+ RATING: 5+ stars
  Has unit tests
- CODE REVIEW: 11/30/24
+ CODE REVIEW: 4/15/26
  */
 namespace PJ {
+    enum class SetOnValueChangeFuncType {
+        /// Calls value change func when it is set
+        Sync,
+
+        /// Does not call value change func when it is set
+        None
+    };
+
     /// When the value changes, call a func
     template <class Type>
         requires std::equality_comparable<Type>
@@ -19,16 +27,31 @@ namespace PJ {
 
         OnValueChangeFunc onValueChangeFunc;
 
+        void OnValueChange() {
+            GUARD(onValueChangeFunc)
+            onValueChangeFunc(value);
+        }
+
     public:
         explicit ObservedValue(Type value = {}) :
             value(value) {}
 
-        void SetOnValueChangeFunc(OnValueChangeFunc value) {
+        /// Sets the on value change func and optionally syncs it with the current value
+        void SetOnValueChangeFunc(
+            SetOnValueChangeFuncType setOnValueChangeFuncType, OnValueChangeFunc value
+        ) {
             onValueChangeFunc = value;
-            OnValueChange();
+
+            switch (setOnValueChangeFuncType) {
+            case SetOnValueChangeFuncType::Sync:
+                OnValueChange();
+                break;
+            default:
+                break;
+            }
         }
 
-        Type Value() const {
+        Type const& Value() const {
             return value;
         }
 
@@ -39,9 +62,11 @@ namespace PJ {
             OnValueChange();
         }
 
-        void OnValueChange() {
-            GUARD(onValueChangeFunc)
-            onValueChangeFunc(value);
+        void SetValue(Type&& value) {
+            GUARD(this->value != value)
+            this->value = std::move(value);
+
+            OnValueChange();
         }
 
         operator Type() const {

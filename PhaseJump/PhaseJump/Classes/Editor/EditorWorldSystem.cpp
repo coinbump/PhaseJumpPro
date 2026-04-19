@@ -39,14 +39,15 @@ void EditorWorldSystem::Add(SP<WorldNode> node, WorldNode* parent, size_t index)
     index = std::min(parent->Children().size() - 1, index);
 
     AddNodeCommandCore commandCore{ .node = node, .parent = parent, .index = index };
-    UP<SomeCommand> command = NEW<Command<AddNodeCommandCore>>(
-        String("Add ") + node->Name(), commandCore,
-        [](auto& command) {
-            command.core.node->Restore();
-            command.core.parent->Insert(command.core.node, command.core.index);
-        },
-        [](auto& command) { command.core.node->Destroy(); }
-    );
+    UP<SomeCommand> command = NEW<Command<AddNodeCommandCore>>(Command<AddNodeCommandCore>::Config{
+        .name = String("Add ") + node->Name(),
+        .core = commandCore,
+        .runFunc =
+            [](auto& command) {
+                command.core.node->Restore();
+                command.core.parent->Insert(command.core.node, command.core.index);
+            },
+        .undoFunc = [](auto& command) { command.core.node->Destroy(); } });
     commands.Run(command);
 }
 
@@ -58,13 +59,15 @@ void EditorWorldSystem::Delete(SP<WorldNode> node) {
     GUARD(index)
 
     DeleteNodeCommandCore commandCore{ .node = node, .parent = parent, .index = *index };
-    UP<SomeCommand> command = NEW<Command<DeleteNodeCommandCore>>(
-        String("Delete ") + node->Name(), commandCore,
-        [](auto& command) { command.core.node->Destroy(); },
-        [](auto& command) {
-            command.core.node->Restore();
-            command.core.parent->Insert(command.core.node, command.core.index);
-        }
-    );
+    UP<SomeCommand> command =
+        NEW<Command<DeleteNodeCommandCore>>(Command<DeleteNodeCommandCore>::Config{
+            .name = String("Delete ") + node->Name(),
+            .core = commandCore,
+            .runFunc = [](auto& command) { command.core.node->Destroy(); },
+            .undoFunc =
+                [](auto& command) {
+                    command.core.node->Restore();
+                    command.core.parent->Insert(command.core.node, command.core.index);
+                } });
     commands.Run(command);
 }

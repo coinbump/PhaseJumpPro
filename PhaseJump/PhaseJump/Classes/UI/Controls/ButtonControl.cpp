@@ -5,69 +5,32 @@ using namespace std;
 using namespace PJ;
 
 ButtonControl::ButtonControl() {
+    tracker.onPressFunc = [this]() { OnPress(); };
+    tracker.onStateChangeFunc = [this]() { OnViewStateChange(); };
+
     AddSignalHandler<PointerDownUIEvent>({ .id = SignalId::PointerDown,
                                            .func = [this](auto& component, auto& event) {
-                                               OnPointerDown(event);
+                                               tracker.OnPointerDown();
                                            } });
 
     AddSignalHandler<PointerEnterUIEvent>({ .id = SignalId::PointerEnter,
                                             .func = [this](auto& component, auto& event) {
-                                                OnPointerEnter(event);
+                                                tracker.OnPointerEnter();
                                             } });
 
     AddSignalHandler<PointerExitUIEvent>({ .id = SignalId::PointerExit,
                                            .func = [this](auto& component, auto& event) {
-                                               OnPointerExit(event);
+                                               tracker.OnPointerExit();
                                            } });
 
     AddSignalHandler<PointerUpUIEvent>({ .id = SignalId::PointerUp,
                                          .func = [this](auto& component, auto& event) {
-                                             OnPointerUp(event);
+                                             tracker.OnPointerUp();
                                          } });
 }
 
 void ButtonControl::Awake() {
     Base::Awake();
-}
-
-void ButtonControl::OnPointerDown(PointerDownUIEvent const& _event) {
-    switch (trackType) {
-    case TrackType::Immediate:
-        OnPress();
-        break;
-    case TrackType::Track:
-        isTracking = true;
-        SetIsPressed(true);
-        break;
-    }
-}
-
-void ButtonControl::OnPointerEnter(PointerEnterUIEvent const& _event) {
-    GUARD(isTracking)
-    SetIsPressed(true);
-}
-
-void ButtonControl::OnPointerExit(PointerExitUIEvent const& _event) {
-    GUARD(isTracking)
-    SetIsPressed(false);
-}
-
-void ButtonControl::OnPointerUp(PointerUpUIEvent const& _event) {
-    GUARD(isTracking)
-    isTracking = false;
-
-    bool wasPressed = isPressed;
-    SetIsPressed(false);
-
-    if (wasPressed) {
-        OnPress();
-    }
-}
-
-void ButtonControl::SetIsPressed(bool value) {
-    GUARD(value != isPressed)
-    isPressed = value;
-    OnControlChange();
 }
 
 void ButtonControl::OnPress() {

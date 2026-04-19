@@ -33,6 +33,8 @@ namespace PJ {
             NoExtension
         };
 
+        virtual void ShowFile(FilePath path) = 0;
+
         /// @return Returns true if the file at the specified path is a directory/folder
         virtual bool IsDirectory(FilePath path) = 0;
 
@@ -68,8 +70,15 @@ namespace PJ {
     // MARK: - FileManager
 
     /// Platform independent file manager
-    class FileManager : public SomeFileManager {
+    class FileManager final : public SomeFileManager {
     public:
+        using PersistentDataPathFunc =
+            std::function<FilePath(String companyName, String applicationName)>;
+        using ShowFileFunc = std::function<void(FilePath path)>;
+
+        PersistentDataPathFunc persistentDataPathFunc;
+        ShowFileFunc showFileFunc;
+
         // MARK: SomeFileManager
 
         void CreateDirectories(FilePath path) override;
@@ -79,8 +88,19 @@ namespace PJ {
         VectorList<FilePath> FilePathList(FilePath path, FileSearchType searchType) override;
         String ParentPath(FilePath path) override;
 
+        void ShowFile(FilePath path) override {
+            GUARD(showFileFunc)
+            showFileFunc(path);
+        }
+
         char PreferredSeparator() const override {
             return std::filesystem::path::preferred_separator;
+        }
+
+        FilePath PersistentDataPath(String companyName, String applicationName) override {
+            GUARDR(persistentDataPathFunc, {})
+
+            return persistentDataPathFunc(companyName, applicationName);
         }
     };
 } // namespace PJ

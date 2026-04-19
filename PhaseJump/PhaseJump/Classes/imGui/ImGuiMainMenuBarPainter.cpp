@@ -18,6 +18,7 @@ ImGuiMainMenuBarPainter::ImGuiMainMenuBarPainter(VectorList<UP<Menu>> const& men
     menus(menus) {
     drawFunc = [](auto& _painter) {
         auto& painter = *(static_cast<This*>(&_painter));
+        GUARD(!painter.menus.empty())
 
         ImGuiPaintMainMenuBar mainMenu([&]() {
             for (auto& menu : painter.menus) {

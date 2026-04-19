@@ -21,7 +21,7 @@ void UIWorldSystem::OnDragUpdate() {
 
         auto inputScreenPosition = mouseDevice->GetScreenPosition();
         auto inputWorldPosition =
-            PJ::WorldPosition(GetCamera()->ScreenToWorld(Vector3(inputScreenPosition)));
+            PJ::WorldPosition(GetCamera()->ScreenToContext(Vector3(inputScreenPosition)));
         dragged->OnDragUpdate(WorldPosition(inputWorldPosition));
     } else {
         OnDragEnd();
@@ -75,11 +75,25 @@ void UIWorldSystem::StartDrag(SP<DragModel> dragModel) {
     dragState = lockDrag ? DragState::LockDragMouseDown : DragState::Drag;
 }
 
+void UIWorldSystem::CancelDrag() {
+    GUARD(IsDragging())
+    GUARD(dragModel && dragModel->DragHandler());
+
+    // Let the drag handler finish before checking drop targets
+    dragModel->DragHandler()->OnDragCancel();
+    dragModel.reset();
+    dragState = DragState::Default;
+}
+
 void UIWorldSystem::OnDragEnd() {
+    GUARD(mouseDevice && mouseDevice->IsAvailable())
     GUARD(dragModel && dragModel->DragHandler())
 
     // Let the drag handler finish before checking drop targets
-    dragModel->DragHandler()->OnDragEnd();
+    auto inputScreenPosition = mouseDevice->GetScreenPosition();
+    auto inputWorldPosition =
+        PJ::WorldPosition(GetCamera()->ScreenToContext(Vector3(inputScreenPosition)));
+    dragModel->DragHandler()->OnDragEnd(inputWorldPosition);
 
     auto activeDropTarget = this->activeDropTarget.lock();
     if (activeDropTarget) {

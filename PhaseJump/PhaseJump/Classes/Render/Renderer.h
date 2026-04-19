@@ -45,22 +45,41 @@ namespace PJ {
         virtual bool IsRenderFinished() const {
             return false;
         }
+
+        /// @return Returns the renderer's tint color. Default is white.
+        virtual Color GetColor() const {
+            return Color::white;
+        }
+
+        /// Sets the renderer's tint color. Default is no-op.
+        virtual void SetColor(Color color) {}
+
+        /// Sets the alpha of the renderer's color
+        void SetAlpha(float value) {
+            auto color = GetColor();
+            color.a = value;
+            SetColor(color);
+        }
     };
 
-    /// Renders a material and mesh
-    class MaterialRenderer : public Renderer {
+    /// Shared core for components that render a material and mesh
+    class MaterialRendererCore {
     public:
-        using Base = Renderer;
-        using This = MaterialRenderer;
+        using This = MaterialRendererCore;
         using BuildMeshFunc = RendererModel::BuildMeshFunc;
+
+        /// Owner component. Used to produce the model matrix for rendered models.
+        SomeWorldComponent* owner{};
 
         /// Defines model for renderer
         RendererModel model;
 
-        MaterialRenderer(Vector3 worldSize);
+        MaterialRendererCore(SomeWorldComponent* owner, Vector3 worldSize);
 
-        /// Override to reset internal renderer states
-        virtual void Reset() {}
+        This& SetOwner(SomeWorldComponent* value) {
+            owner = value;
+            return *this;
+        }
 
         This& SetBuildMeshFunc(BuildMeshFunc buildMeshFunc) {
             model.SetBuildMeshFunc(buildMeshFunc);
@@ -75,23 +94,14 @@ namespace PJ {
             model.SetAlpha(value);
         }
 
-        Color GetColor() {
+        Color GetColor() const {
             return model.GetColor();
         }
 
-        // MARK: Renderer
-
         /// Create models to send to the render engine for a render
-        VectorList<RenderModel> RenderModels() override;
+        VectorList<RenderModel> RenderModels();
 
-        // MARK: WorldSizeable
-
-        Vector3 WorldSize() const override {
-            return model.WorldSize();
-        }
-
-        void SetWorldSize(Vector3 value) override {
-            model.SetWorldSize(value);
-        }
+        /// @return Returns a PlanUIFunc that provides standard editor UI for the core
+        WorldComponent::PlanUIFunc MakePlanUIFunc();
     };
 } // namespace PJ

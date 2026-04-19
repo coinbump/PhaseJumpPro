@@ -17,12 +17,12 @@ public:
         root.SetName("TestGradientsScene");
 
         auto camera = SCAST<Camera>(MAKE<OrthoCamera>());
-        auto cameraNode = MAKE<WorldNode>("Camera");
+        auto cameraNode = MAKE<WorldNode>(WorldNode::Config{ .name = "Camera" });
         cameraNode->Add(camera);
         root.Add(cameraNode);
 
         for (int i = 0; i < 1; i++) {
-            auto gradientNode = MAKE<WorldNode>("Gradient");
+            auto gradientNode = MAKE<WorldNode>(WorldNode::Config{ .name = "Gradient" });
             auto gradientRenderer = MAKE<SimpleGradientRenderer>(SimpleGradientRenderer::Config{
                 .startColor = Color::white,
                 .endColor = Color::black.WithAlpha(1),
@@ -39,7 +39,7 @@ public:
                 .startColor = Color::white,
                 .endColor = Color::black.WithAlpha(1),
                 .worldSize = Vector2(400, 400) });
-            quadFrameRenderer->model.SetBuildMeshFunc([](auto& model) {
+            quadFrameRenderer->core.model.SetBuildMeshFunc([](auto& model) {
                 QuadFrameMeshBuilder meshBuilder(model.WorldSize(), Vector2(20, 20));
                 return meshBuilder.BuildMesh();
             });
@@ -49,14 +49,15 @@ public:
                     .startColor = Color::white,
                     .endColor = Color::black.WithAlpha(1),
                     .worldSize = Vector2(400, 400) });
-                quadRenderer->model.SetBuildMeshFunc([](auto& model) {
+                quadRenderer->core.model.SetBuildMeshFunc([](auto& model) {
                     QuadMeshBuilder meshBuilder(model.WorldSize());
                     return meshBuilder.BuildMesh();
                 });
 
                 //                auto renderer = MAKE<ColorRenderer>(ColorRenderer::Config{
                 //                    .color = Color::black, .worldSize = { 400, 400 } });
-                //                renderer->model.SetBuildMeshFunc([](RendererModel const& model) {
+                //                renderer->core.model.SetBuildMeshFunc([](RendererModel const&
+                //                model) {
                 //                    RoundCornersMeshBuilder meshBuilder(
                 //                        { .worldSize = model.WorldSize(), .corners =
                 //                        RoundCorners::WithRadius(40) }
@@ -69,7 +70,7 @@ public:
             ac.Add("1", [](auto& controller) {
                 auto renderer = MAKE<ColorRenderer>(ColorRenderer::Config{
                     .color = Color::blue, .worldSize = { 400, 400 } });
-                renderer->model.SetBuildMeshFunc([](auto& model) {
+                renderer->core.model.SetBuildMeshFunc([](auto& model) {
                     QuadFrameMeshBuilder meshBuilder(model.WorldSize(), Vector2(20, 20));
                     return meshBuilder.BuildMesh();
                 });
@@ -78,7 +79,7 @@ public:
             ac.Add("2", [](auto& controller) {
                 auto renderer = MAKE<ColorRenderer>(ColorRenderer::Config{
                     .color = Color::black, .worldSize = { 400, 400 } });
-                renderer->model.SetBuildMeshFunc([](RendererModel const& model) {
+                renderer->core.model.SetBuildMeshFunc([](RendererModel const& model) {
                     Polygon poly;
                     poly.Add({ -100, 100 });
                     poly.Add({ 100, 200 });

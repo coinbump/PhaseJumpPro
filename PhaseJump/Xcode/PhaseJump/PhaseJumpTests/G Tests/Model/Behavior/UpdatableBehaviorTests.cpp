@@ -42,7 +42,7 @@ TEST(UpdatableBehavior, Run) {
 
     UP<BehaviorNode> child = NEW<BehaviorNode>();
     BehaviorNode* childPtr = child.get();
-    sut.tree.Add(child);
+    sut.tree.Add(std::move(child));
 
     int runCount{};
     childPtr->onRunFunc = [&](auto& behavior) {
@@ -73,7 +73,7 @@ TEST(UpdatableBehavior, Finish) {
 
     UP<BehaviorNode> child = NEW<BehaviorNode>();
     BehaviorNode* childPtr = child.get();
-    sut.tree.Add(child);
+    sut.tree.Add(std::move(child));
 
     int runCount{};
     childPtr->onRunFunc = [&](auto& behavior) {

@@ -13,11 +13,38 @@ namespace PJ {
     struct Mesh;
 
     /// Renders a mesh
-    class MeshRenderer : public MaterialRenderer {
+    class MeshRenderer : public Renderer {
     public:
-        using Base = MaterialRenderer;
+        using Base = Renderer;
+        using This = MeshRenderer;
+
+        MaterialRendererCore core;
 
         MeshRenderer(Vector3 worldSize);
+
+        // MARK: Renderer
+
+        VectorList<RenderModel> RenderModels() override {
+            return core.RenderModels();
+        }
+
+        Color GetColor() const override {
+            return core.GetColor();
+        }
+
+        void SetColor(Color color) override {
+            core.SetColor(color);
+        }
+
+        // MARK: WorldSizeable
+
+        Vector3 WorldSize() const override {
+            return core.model.WorldSize();
+        }
+
+        void SetWorldSize(Vector3 value) override {
+            core.model.SetWorldSize(value);
+        }
 
         // MARK: SomeWorldComponent
 

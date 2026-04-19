@@ -51,7 +51,7 @@ TEST(TimedBehavior, Test) {
 
     UP<BehaviorNode> child = NEW<TestBehavior>();
     TestBehavior* childPtr = static_cast<TestBehavior*>(child.get());
-    sut.tree.Add(child);
+    sut.tree.Add(std::move(child));
 
     int runCount{};
     int finishCount{};

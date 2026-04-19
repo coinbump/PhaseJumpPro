@@ -7,7 +7,6 @@
 #include "Updatable.h"
 #include "ValueKeyframe.h"
 #include "VectorList.h"
-#include <stdio.h>
 
 /*
  RATING: 5 stars

@@ -27,7 +27,7 @@ TEST(SequenceBehavior, FinishSuccess) {
         return FinishType::Finish;
     };
     BehaviorNode* childPtr1 = child1.get();
-    sut.tree.Add(child1);
+    sut.tree.Add(std::move(child1));
 
     UP<BehaviorNode> child2 = NEW<BehaviorNode>();
     float runTime2{};
@@ -37,7 +37,7 @@ TEST(SequenceBehavior, FinishSuccess) {
         return FinishType::Finish;
     };
     BehaviorNode* childPtr2 = child2.get();
-    sut.tree.Add(child2);
+    sut.tree.Add(std::move(child2));
 
     sut.OnUpdate({3});
     EXPECT_TRUE(sut.IsRunning());
@@ -78,7 +78,7 @@ TEST(SequenceBehavior, FinishFailureFirst) {
         return FinishType::Finish;
     };
     BehaviorNode* childPtr1 = child1.get();
-    sut.tree.Add(child1);
+    sut.tree.Add(std::move(child1));
 
     UP<BehaviorNode> child2 = NEW<BehaviorNode>();
     float runTime2{};
@@ -88,7 +88,7 @@ TEST(SequenceBehavior, FinishFailureFirst) {
         return FinishType::Finish;
     };
     BehaviorNode* childPtr2 = child2.get();
-    sut.tree.Add(child2);
+    sut.tree.Add(std::move(child2));
 
     sut.OnUpdate({3});
     EXPECT_FALSE(sut.IsRunning());
@@ -120,7 +120,7 @@ TEST(SequenceBehavior, FinishFailureSecond) {
         return FinishType::Finish;
     };
     BehaviorNode* childPtr1 = child1.get();
-    sut.tree.Add(child1);
+    sut.tree.Add(std::move(child1));
 
     UP<BehaviorNode> child2 = NEW<BehaviorNode>();
     float runTime2{};
@@ -130,7 +130,7 @@ TEST(SequenceBehavior, FinishFailureSecond) {
         return FinishType::Finish;
     };
     BehaviorNode* childPtr2 = child2.get();
-    sut.tree.Add(child2);
+    sut.tree.Add(std::move(child2));
 
     sut.OnUpdate({3});
     EXPECT_TRUE(sut.IsRunning());

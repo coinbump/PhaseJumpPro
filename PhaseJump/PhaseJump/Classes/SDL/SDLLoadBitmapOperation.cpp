@@ -73,7 +73,8 @@ LoadResourcesOperation::Result SDLLoadBitmapOperation::_LoadResources() {
                                                            .pixels = surfacePixel,
                                                            .pixelsDataSize = rgbaPixelsDataSize });
 
-    SDLFileManager fm;
+    auto _fm = NewSDLFileManager();
+    FileManager& fm = *_fm;
     String id = fm.FileName(path, FileManager::FileNameFormat::NoExtension);
 
     // Unless an id is specified, use the file name as an id

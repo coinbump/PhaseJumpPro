@@ -24,6 +24,10 @@
     Type(Type&&) = delete; \
     Type& operator=(Type&&) = delete;
 
+#define DEFAULT_MOVE(Type)  \
+    Type(Type&&) = default; \
+    Type& operator=(Type&&) = default;
+
 // TODO: add unit tests
 #define GUARD(test) \
     if (!(test)) {  \
@@ -61,3 +65,5 @@
 //    void SetSTR(ValueFunc)(ValueType const& newValue) { \
 //        this->value = newValue;                         \
 //    }
+
+using RenderItemId = uint32_t;

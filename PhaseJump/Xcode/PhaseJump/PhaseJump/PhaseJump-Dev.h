@@ -11,6 +11,7 @@
 #include <PhaseJump-Dev/AnimationCycleTypes.h>
 #include <PhaseJump-Dev/Animator.h>
 #include <PhaseJump-Dev/AnyFactory.h>
+#include <PhaseJump-Dev/PolygonMeshBuilder.h>
 #include <PhaseJump-Dev/App.h>
 #include <PhaseJump-Dev/ArcMeshBuilder.h>
 #include <PhaseJump-Dev/AtlasTexture.h>
@@ -22,6 +23,7 @@
 #include <PhaseJump-Dev/BatchByMaterialRenderProcessor.h>
 #include <PhaseJump-Dev/BehaviorBuilder.h>
 #include <PhaseJump-Dev/BehaviorNode.h>
+#include <PhaseJump-Dev/BezierFrameMeshBuilder.h>
 #include <PhaseJump-Dev/BezierPath.h>
 #include <PhaseJump-Dev/BezierPathLayout.h>
 #include <PhaseJump-Dev/Binding.h>
@@ -32,6 +34,7 @@
 #include <PhaseJump-Dev/Broadcaster.h>
 #include <PhaseJump-Dev/ButtonControl.h>
 #include <PhaseJump-Dev/CameraCullRenderProcessor.h>
+#include <PhaseJump-Dev/CanvasTool.h>
 #include <PhaseJump-Dev/CapsuleMeshBuilder.h>
 #include <PhaseJump-Dev/CartesianUtils.h>
 #include <PhaseJump-Dev/Catalog.h>
@@ -65,6 +68,7 @@
 #include <PhaseJump-Dev/DependencyContainer.h>
 #include <PhaseJump-Dev/DepthFirstOrderRenderProcessor.h>
 #include <PhaseJump-Dev/DesignSystem.h>
+#include <PhaseJump-Dev/Desktop.h>
 #include <PhaseJump-Dev/Dev.h>
 #include <PhaseJump-Dev/DevLaunchProfiler.h>
 #include <PhaseJump-Dev/DevProfiler.h>
@@ -174,6 +178,7 @@
 #include <PhaseJump-Dev/MultiFunction.h>
 #include <PhaseJump-Dev/NodeHandler.h>
 #include <PhaseJump-Dev/NodesRenderProcessor.h>
+#include <PhaseJump-Dev/ObjectCanvas.h>
 #include <PhaseJump-Dev/ObservedValue.h>
 #include <PhaseJump-Dev/OffscreenBuffer.h>
 #include <PhaseJump-Dev/OffscreenBufferRenderer.h>
@@ -235,8 +240,10 @@
 #include <PhaseJump-Dev/RoundCornersMeshBuilder.h>
 #include <PhaseJump-Dev/Runner.h>
 #include <PhaseJump-Dev/SDLAudioStream.h>
+#include <PhaseJump-Dev/SDLAudioStreamRenderer.h>
 #include <PhaseJump-Dev/SDLColorBuilder.h>
 #include <PhaseJump-Dev/SDLFileManager.h>
+#include <PhaseJump-Dev/MacFileManager.h>
 #include <PhaseJump-Dev/SDLGLRenderContext.h>
 #include <PhaseJump-Dev/SDLLoadAudioStreamOperation.h>
 #include <PhaseJump-Dev/SDLLoadBitmapOperation.h>
@@ -266,6 +273,7 @@
 #include <PhaseJump-Dev/Scene.h>
 #include <PhaseJump-Dev/ScrollBarControl.h>
 #include <PhaseJump-Dev/SelectHandler.h>
+#include <PhaseJump-Dev/SelectObjectsCanvasTool.h>
 #include <PhaseJump-Dev/SelectorBehavior.h>
 #include <PhaseJump-Dev/SequenceBehavior.h>
 #include <PhaseJump-Dev/SequenceCounter.h>
@@ -305,7 +313,7 @@
 #include <PhaseJump-Dev/SomeInputDevice.h>
 #include <PhaseJump-Dev/SomeKeyUIEvent.h>
 #include <PhaseJump-Dev/Layout.h>
-#include <PhaseJump-Dev/Layout2D.h>
+#include <PhaseJump-Dev/Layout.h>
 #include <PhaseJump-Dev/SomeLimiter.h>
 #include <PhaseJump-Dev/SomeListener.h>
 #include <PhaseJump-Dev/LoadResourcesOperation.h>
@@ -385,7 +393,6 @@
 #include <PhaseJump-Dev/TriggerMap.h>
 #include <PhaseJump-Dev/TypeClass.h>
 #include <PhaseJump-Dev/Types.h>
-#include <PhaseJump-Dev/UIControl2D.h>
 #include <PhaseJump-Dev/UIPlan.h>
 #include <PhaseJump-Dev/UIPlanner.h>
 #include <PhaseJump-Dev/UITypes.h>
@@ -413,10 +420,12 @@
 #include <PhaseJump-Dev/ViewBuilder.h>
 #include <PhaseJump-Dev/ViewProxy.h>
 #include <PhaseJump-Dev/ViewSizeProposal.h>
+#include <PhaseJump-Dev/Viewport.h>
 #include <PhaseJump-Dev/Void.h>
 #include <PhaseJump-Dev/WeakReference.h>
 #include <PhaseJump-Dev/Weight.h>
 #include <PhaseJump-Dev/WeightedRandomChoice.h>
+#include <PhaseJump-Dev/Window.h>
 #include <PhaseJump-Dev/World.h>
 #include <PhaseJump-Dev/WorldAttachmentCore.h>
 #include <PhaseJump-Dev/WorldComponent.h>

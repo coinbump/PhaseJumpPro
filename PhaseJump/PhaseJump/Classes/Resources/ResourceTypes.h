@@ -5,8 +5,11 @@ namespace PJ {
         /// Image texture
         auto constexpr Texture = "texture";
 
+        /// Image loaded as an audio stream
+        auto constexpr AudioStream = "audio.stream";
+
         /// Shader program (combined vertex + fragment shader)
-        auto constexpr ShaderProgram = "shaderProgram";
+        auto constexpr ShaderProgram = "shader.program";
 
         /// Texture atlas created by RTexPacker (by Raylib)
         auto constexpr RTexPackerAtlas = "rtexPacker.atlas";
@@ -18,7 +21,7 @@ namespace PJ {
         auto constexpr Bitmap = "bitmap";
 
         /// Font created by BMFont (by AngelCode)
-        auto constexpr BitmapFont = "bitmapFont";
+        auto constexpr BitmapFont = "font.bitmap";
 
         /// Resource map
         auto constexpr Rez = "rez";

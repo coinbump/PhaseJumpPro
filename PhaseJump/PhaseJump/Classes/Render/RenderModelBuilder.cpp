@@ -5,6 +5,7 @@
 #include "RenderMaterial.h"
 #include "RenderModel.h"
 #include "ShaderProgram.h"
+#include "SomeWorldComponent.h"
 #include "WorldNode.h"
 
 using namespace std;
@@ -24,16 +25,17 @@ PJ::UVTransformFunc UVTransformFuncs::textureCoordinates = [](Texture& texture,
 };
 
 std::optional<RenderModel>
-RenderModelBuilder::Build(MaterialRenderer& renderer, RendererModel& model) {
+RenderModelBuilder::Build(MaterialRendererCore& core, RendererModel& model) {
     auto material = model.material.get();
     GUARDR_LOG(material, {}, "ERROR. Missing material")
 
     auto& materialTextures = material->Textures();
-    auto result = Build(renderer.owner, model.GetMesh(), *material, materialTextures);
+    WorldNode* node = core.owner ? core.owner->Node() : nullptr;
+    auto result = Build(node, model.GetMesh(), *material, materialTextures);
     GUARDR(result, {})
 
     // NOTE: currently zIndex is ignored
-    result->zIndex = renderer.model.zIndex;
+    result->zIndex = core.model.zIndex;
 
     return result;
 }

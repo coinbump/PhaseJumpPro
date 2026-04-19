@@ -9,18 +9,28 @@ PadViewLayout::PadViewLayout(LayoutInsets _insets) :
     PlanUIFunc planUIFunc = [this](auto args) {
         auto& planner = args.planner;
 
-        planner.InputFloat({ .label = "Leading",
-                             .binding = { [this]() { return insets.leading; },
-                                          [this](auto& value) { SetLeadingInset(value); } } });
-        planner.InputFloat({ .label = "Trailing",
-                             .binding = { [this]() { return insets.trailing; },
-                                          [this](auto& value) { SetTrailingInset(value); } } });
+        planner.InputFloat(
+            { .label = "Leading",
+              .binding =
+                  Binding<float>({ .getFunc = [this]() { return insets.leading; },
+                                   .setFunc = [this](auto& value) { SetLeadingInset(value); } }) }
+        );
+        planner.InputFloat(
+            { .label = "Trailing",
+              .binding =
+                  Binding<float>({ .getFunc = [this]() { return insets.trailing; },
+                                   .setFunc = [this](auto& value) { SetTrailingInset(value); } }) }
+        );
         planner.InputFloat({ .label = "Top",
-                             .binding = { [this]() { return insets.top; },
-                                          [this](auto& value) { SetTopInset(value); } } });
-        planner.InputFloat({ .label = "Bottom",
-                             .binding = { [this]() { return insets.bottom; },
-                                          [this](auto& value) { SetBottomInset(value); } } });
+                             .binding = Binding<float>({ .getFunc = [this]() { return insets.top; },
+                                                         .setFunc = [this](auto& value
+                                                                    ) { SetTopInset(value); } }) });
+        planner.InputFloat(
+            { .label = "Bottom",
+              .binding =
+                  Binding<float>({ .getFunc = [this]() { return insets.bottom; },
+                                   .setFunc = [this](auto& value) { SetBottomInset(value); } }) }
+        );
     };
     Override(planUIFuncs[UIContextId::Inspector], planUIFunc);
 }

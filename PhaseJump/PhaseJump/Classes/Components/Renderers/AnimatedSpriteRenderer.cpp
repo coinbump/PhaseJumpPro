@@ -51,12 +51,12 @@ void AnimatedSpriteRenderer::SetTextures(VectorList<SP<Texture>> const& textures
 }
 
 AnimatedSpriteRenderer::AnimatedSpriteRenderer(Config const& config) :
-    Base({}) {
+    core(this, Vector3{}) {
 
-    model.material =
+    core.model.material =
         MAKE<RenderMaterial>(RenderMaterial::Config{ .shaderId = ShaderId::TextureVary });
 
-    model.SetBuildMeshFunc([this](auto& model) {
+    core.model.SetBuildMeshFunc([this](auto& model) {
         QuadMeshBuilder builder(model.WorldSize());
         auto result = builder.BuildMesh();
 
@@ -96,7 +96,7 @@ AnimatedSpriteRenderer::AnimatedSpriteRenderer(Config const& config) :
         return result;
     });
 
-    model.material->EnableFeature(RenderFeature::Blend, true);
+    core.model.material->EnableFeature(RenderFeature::Blend, true);
 
     auto textures = config.textures;
 
@@ -117,32 +117,42 @@ AnimatedSpriteRenderer::AnimatedSpriteRenderer(Config const& config) :
     // Synchronize states
     OnFrameChange();
 
+    Override(planUIFuncs[UIContextId::Inspector], core.MakePlanUIFunc());
+
     PlanUIFunc planUIFunc = [this](auto args) {
         auto& planner = args.planner;
 
         planner
             .InputBool({ .label = "Flip X",
-                         .binding = { [this]() { return flipX; },
-                                      [this](auto& value) { SetFlipX(value); } } })
+                         .binding = Binding<bool>({ .getFunc = [this]() { return flipX; },
+                                                    .setFunc = [this](auto& value
+                                                               ) { SetFlipX(value); } }) })
             .InputBool({ .label = "Flip Y",
-                         .binding = { [this]() { return flipY; },
-                                      [this](auto& value) { SetFlipY(value); } } });
+                         .binding = Binding<bool>({ .getFunc = [this]() { return flipY; },
+                                                    .setFunc = [this](auto& value
+                                                               ) { SetFlipY(value); } }) });
 
         FramePlayable* rateFramePlayable = dynamic_cast<FramePlayable*>(framePlayable.get());
         if (rateFramePlayable) {
             VectorList<String> cycleOptions{ "Once", "PingPong", "Loop" };
             planner
                 .InputFloat({ .label = "Frame rate",
-                              .binding = {
-                                  [=]() { return rateFramePlayable->FrameRate(); },
-                                  [=](auto& value) { rateFramePlayable->SetFrameRate(value); } } })
-                .PickerList({ .label = "Animation cycle",
-                              .options = cycleOptions,
-                              .binding = { [=]() { return (int)rateFramePlayable->CycleType(); },
-                                           [=](auto& value) {
-                                               rateFramePlayable->SetCycleType((AnimationCycleType
-                                               )value);
-                                           } } });
+                              .binding = Binding<float>(
+                                  { .getFunc = [=]() { return rateFramePlayable->FrameRate(); },
+                                    .setFunc = [=](auto& value
+                                               ) { rateFramePlayable->SetFrameRate(value); } }
+                              ) })
+                .PickerList(
+                    { .label = "Animation cycle",
+                      .options = cycleOptions,
+                      .binding = Binding<int>(
+                          { .getFunc = [=]() { return (int)rateFramePlayable->CycleType(); },
+                            .setFunc =
+                                [=](auto& value) {
+                                    rateFramePlayable->SetCycleType((AnimationCycleType)value);
+                                } }
+                      ) }
+                );
         }
     };
     Override(planUIFuncs[UIContextId::Inspector], planUIFunc);
@@ -176,7 +186,7 @@ void AnimatedSpriteRenderer::Awake() {
 }
 
 void AnimatedSpriteRenderer::Configure() {
-    model.SetBuildRenderModelsFunc([this](auto& model) {
+    core.model.SetBuildRenderModelsFunc([this](auto& model) {
         VectorList<RenderModel> result;
 
         auto material = model.material.get();
@@ -186,7 +196,7 @@ void AnimatedSpriteRenderer::Configure() {
         GUARDR(frame >= 0 && frame < frames.size(), result)
         auto frameModel = frames[frame];
 
-        auto renderModel = RenderModelBuilder().Build(*this, model);
+        auto renderModel = RenderModelBuilder().Build(core, model);
         GUARDR(renderModel, result)
 
         renderModel->SetVertexColors(std::span<RenderColor const>(model.VertexColors()));
@@ -197,8 +207,6 @@ void AnimatedSpriteRenderer::Configure() {
 }
 
 void AnimatedSpriteRenderer::Reset() {
-    Base::Reset();
-
     SetFrame(0);
 }
 
@@ -239,9 +247,9 @@ void AnimatedSpriteRenderer::OnFrameChange() {
     auto& frameTexture = frameModel.texture;
     GUARD(frameTexture)
 
-    model.material->SetTexture(frameTexture);
-    model.SetWorldSize(Size());
-    model.SetMeshNeedsBuild();
+    core.model.material->SetTexture(frameTexture);
+    core.model.SetWorldSize(Size());
+    core.model.SetMeshNeedsBuild();
 
     PJ::LogIf(_diagnose, "Frame Change: ", MakeString(frame), " texture: ", frameTexture->id);
 }
@@ -307,13 +315,13 @@ std::optional<int> AnimatedSpriteRenderer::FrameForTextureId(String textureId) c
 void AnimatedSpriteRenderer::SetFlipX(bool value) {
     GUARD(flipX != value)
     flipX = value;
-    model.SetMeshNeedsBuild();
+    core.model.SetMeshNeedsBuild();
 }
 
 void AnimatedSpriteRenderer::SetFlipY(bool value) {
     GUARD(flipY != value)
     flipY = value;
-    model.SetMeshNeedsBuild();
+    core.model.SetMeshNeedsBuild();
 }
 
 float AnimatedSpriteRenderer::FrameRate() const {

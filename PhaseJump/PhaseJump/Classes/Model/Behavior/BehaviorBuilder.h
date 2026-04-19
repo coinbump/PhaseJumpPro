@@ -45,7 +45,7 @@ namespace PJ {
             auto behaviorPtr = behavior.get();
 
             if (topBehavior) {
-                topBehavior->Add(behavior);
+                topBehavior->Add(std::move(behavior));
             }
 
             behaviors.push_back(behaviorPtr);
@@ -53,7 +53,7 @@ namespace PJ {
             return *this;
         }
 
-        This& With(UP<BehaviorNode>& behavior, String name) {
+        This& With(UP<BehaviorNode> behavior, String name) {
             GUARDR(behavior, *this)
             behavior->name = name;
             behavior->_diagnose.Enable(_diagnose);
@@ -61,7 +61,7 @@ namespace PJ {
             auto topBehavior = TopBehavior();
             GUARDR(topBehavior, *this)
 
-            topBehavior->Add(behavior);
+            topBehavior->Add(std::move(behavior));
 
             return *this;
         }

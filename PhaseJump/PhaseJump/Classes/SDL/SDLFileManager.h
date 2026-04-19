@@ -10,13 +10,12 @@
  CODE REVIEW: 10/6/24
  */
 namespace PJ {
-    /// Provides file manager functionality via SDL
-    class SDLFileManager : public FileManager {
-    public:
-        // MARK: SomeFileManager
-
-        FilePath PersistentDataPath(String companyName, String applicationName) override {
+    static UP<FileManager> NewSDLFileManager() {
+        UP<FileManager> result = NEW<FileManager>();
+        result->persistentDataPathFunc = [](String companyName, String applicationName) {
             return SDL_GetPrefPath(companyName.c_str(), applicationName.c_str());
-        }
-    };
+        };
+
+        return result;
+    }
 } // namespace PJ

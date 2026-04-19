@@ -5,24 +5,27 @@
 #include "SomeMeshBuilder.h"
 
 /*
- RATING: 5 stars
- Has unit tests (from CenterPolyMeshBuilder)
- CODE REVIEW: 12/13/24
+ RATING: 5+ stars
+ Has unit tests
+ CODE REVIEW: 4/18/26
  */
 namespace PJ {
     /// Renders an arc
     class ArcMeshBuilder final : public SomeMeshBuilder {
     public:
         Angle startAngle;
-        Angle angleDelta{ { .degrees = 360 } };
-        Angle angleStep{ { .degrees = 10 } };
-        Vector2 worldSize{ 10, 10 };
+        Angle angleDelta;
+        Angle angleStep;
+        Vector2 worldSize;
 
-        ArcMeshBuilder(Vector2 worldSize, Angle startAngle, Angle angleDelta, Angle angleStep) :
-            startAngle(startAngle),
-            angleDelta(angleDelta),
-            angleStep(angleStep),
-            worldSize(worldSize) {}
+        struct Config {
+            Vector2 worldSize{ 10, 10 };
+            Angle startAngle;
+            Angle angleDelta = Angle::WithDegrees(360);
+            Angle angleStep = Angle::WithDegrees(10);
+        };
+
+        ArcMeshBuilder(Config const& config);
 
         // MARK: SomeMeshBuilder
 

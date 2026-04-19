@@ -7,6 +7,7 @@
 #include "RenderModelBuilder.h"
 #include "ShaderProgram.h"
 #include "SomeRenderEngine.h"
+#include "StringUtils.h"
 #include "UIPlanner.h"
 #include "Utils.h"
 
@@ -14,26 +15,26 @@ using namespace std;
 using namespace PJ;
 
 SpriteRenderer::SpriteRenderer(Config const& config) :
-    Base(Vector3{}) {
+    core(this, Vector3{}) {
 
     if (config.texture) {
         auto texture = config.texture;
 
-        model.material = MAKE<RenderMaterial>(RenderMaterial::Config{
+        core.model.material = MAKE<RenderMaterial>(RenderMaterial::Config{
             .shaderId = ShaderId::TextureVary, .features = config.features });
-        model.material->Add(texture);
+        core.model.material->Add(texture);
     } else if (config.material) {
-        model.material = config.material;
+        core.model.material = config.material;
     }
 
-    if (model.material) {
-        if (!IsEmpty(model.material->Textures())) {
-            auto& texture = *model.material->Textures().begin();
-            model.SetWorldSize(Vector2(texture->size.x, texture->size.y));
+    if (core.model.material) {
+        if (!IsEmpty(core.model.material->Textures())) {
+            auto& texture = *core.model.material->Textures().begin();
+            core.model.SetWorldSize(Vector2(texture->size.x, texture->size.y));
         }
     }
 
-    model.SetBuildMeshFunc([this](RendererModel const& model) {
+    core.model.SetBuildMeshFunc([this](RendererModel const& model) {
         QuadMeshBuilder builder(model.WorldSize());
         auto result = builder.BuildMesh();
 
@@ -63,14 +64,37 @@ SpriteRenderer::SpriteRenderer(Config const& config) :
     });
     Configure();
 
+    Override(planUIFuncs[UIContextId::Inspector], core.MakePlanUIFunc());
+
     PlanUIFunc planUIFunc = [this](auto args) {
+        args.planner.LabelText([this]() {
+            auto size = core.model.WorldSize();
+            return UIPlanner::LabelTextConfig{ .label = "World Size",
+                                               .text = std::format("{}, {}", size.x, size.y) };
+        });
+
+        args.planner.LabelText([this]() {
+            auto material = core.model.Material();
+            if (material) {
+                auto texture = core.model.Material()->Textures()[0];
+                if (texture) {
+                    return UIPlanner::LabelTextConfig{ .label = "Texture ID",
+                                                       .text = MakeString(texture->RenderId()) };
+                }
+            }
+
+            return UIPlanner::LabelTextConfig{ .label = "Texture ID: MISSING" };
+        });
+
         args.planner
             .InputBool({ .label = "Flip X",
-                         .binding = { [this]() { return flipX; },
-                                      [this](auto& value) { SetFlipX(value); } } })
+                         .binding = Binding<bool>({ .getFunc = [this]() { return flipX; },
+                                                    .setFunc = [this](auto& value
+                                                               ) { SetFlipX(value); } }) })
             .InputBool({ .label = "Flip Y",
-                         .binding = { [this]() { return flipY; },
-                                      [this](auto& value) { SetFlipY(value); } } });
+                         .binding = Binding<bool>({ .getFunc = [this]() { return flipY; },
+                                                    .setFunc = [this](auto& value
+                                                               ) { SetFlipY(value); } }) });
     };
     Override(planUIFuncs[UIContextId::Inspector], planUIFunc);
 }
@@ -82,8 +106,8 @@ SpriteRenderer::SpriteRenderer(SP<RenderMaterial> material) :
     SpriteRenderer(Config{ .material = material }) {}
 
 void SpriteRenderer::Configure() {
-    model.SetBuildRenderModelsFunc([this](auto& model) {
-        auto renderModel = RenderModelBuilder().Build(*this, model);
+    core.model.SetBuildRenderModelsFunc([this](auto& model) {
+        auto renderModel = RenderModelBuilder().Build(core, model);
         GUARDR(renderModel, VectorList<RenderModel>())
         renderModel->SetVertexColors(std::span<RenderColor const>(model.VertexColors()));
         return VectorList<RenderModel>{ *renderModel };

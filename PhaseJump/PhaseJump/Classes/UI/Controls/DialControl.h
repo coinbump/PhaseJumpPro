@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Binding.h"
-#include "UIControl2D.h"
+#include "View2D.h"
 
 /*
  RATING: 5 stars
@@ -10,10 +10,10 @@
  */
 namespace PJ {
     /// Handles button tracking behavior for a button control
-    class DialControl : public UIControl2D {
+    class DialControl : public View2D {
     public:
         using This = DialControl;
-        using Base = UIControl2D;
+        using Base = View2D;
 
     protected:
         float fullDragDelta{};

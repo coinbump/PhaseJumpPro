@@ -79,12 +79,11 @@ void GLRenderEngine::SetViewport(GLint x, GLint y, GLsizei width, GLsizei height
 }
 
 std::optional<GLenum> GLRenderEngine::FeatureIdToGLFeatureId(String featureId) {
-    try {
-        auto& result = featureIdToGLFeatureIdMap.at(featureId);
-        return result;
-    } catch (...) {
+    auto i = featureIdToGLFeatureIdMap.find(featureId);
+    if (i == featureIdToGLFeatureIdMap.end()) {
         return {};
     }
+    return i->second;
 }
 
 void GLRenderEngine::EnableFeature(String featureId, bool isEnabled) {
@@ -149,6 +148,7 @@ void GLRenderEngine::OnGo() {
     featureIdToGLFeatureIdMap[RenderFeature::CullFace] = GL_CULL_FACE;
     featureIdToGLFeatureIdMap[RenderFeature::Texture2D] = GL_TEXTURE_2D;
     featureIdToGLFeatureIdMap[RenderFeature::DepthTest] = GL_DEPTH_TEST;
+    featureIdToGLFeatureIdMap[RenderFeature::StencilTest] = GL_STENCIL_TEST;
     featureIdToGLFeatureIdMap[RenderFeature::MultiSample] = GL_MULTISAMPLE;
 
     // https://learnopengl.com/Advanced-OpenGL/Face-culling
@@ -159,6 +159,7 @@ void GLRenderEngine::OnGo() {
 
     EnableFeature(RenderFeature::Texture2D, true);
     EnableFeature(RenderFeature::DepthTest, true);
+    EnableFeature(RenderFeature::StencilTest, true);
 
     EnableFeature(RenderFeature::MultiSample, true);
 
@@ -263,12 +264,142 @@ void GLRenderEngine::ProjectionMatrixLoadOrthographic(Vector2 size) {
     projectionMatrix.LoadOrthographic(0, size.x, 0, size.y, Vector3::forward.z, Vector3::back.z);
 }
 
+void GLRenderEngine::ProjectionMatrixLoadPerspective(
+    float fovRadians, float aspect, float zNear, float zFar
+) {
+    projectionMatrix.LoadPerspective(fovRadians, aspect, zNear, zFar);
+}
+
 void GLRenderEngine::LoadTranslate(Vector3 value) {
     viewMatrix.LoadTranslate(value);
 }
 
 void GLRenderEngine::RenderStart(SomeRenderContext* context) {
     renderPlans.clear();
+    RecycleBufferPools();
+}
+
+void GLRenderEngine::RecycleBufferPools() {
+    size_t const vertexInUse = inUseVertexBuffers.size();
+    size_t const indexInUse = inUseIndexBuffers.size();
+
+    for (auto& buffer : inUseVertexBuffers) {
+        freeVertexBuffers.push_back(std::move(buffer));
+    }
+    inUseVertexBuffers.clear();
+
+    for (auto& buffer : inUseIndexBuffers) {
+        freeIndexBuffers.push_back(std::move(buffer));
+    }
+    inUseIndexBuffers.clear();
+
+    // Trim free pools down to the recent peak in-use so spike frames don't permanently inflate
+    // VRAM. Excess UPs destruct here, which calls glDeleteBuffers via GLSomeBuffer::~.
+    vertexBufferUseHistory[poolHistoryIndex] = vertexInUse;
+    indexBufferUseHistory[poolHistoryIndex] = indexInUse;
+    poolHistoryIndex = (poolHistoryIndex + 1) % poolHistoryFrames;
+
+    size_t const vertexPeak = std::max(
+        poolMinFloor,
+        *std::max_element(vertexBufferUseHistory.begin(), vertexBufferUseHistory.end())
+    );
+    size_t const indexPeak = std::max(
+        poolMinFloor, *std::max_element(indexBufferUseHistory.begin(), indexBufferUseHistory.end())
+    );
+
+    if (freeVertexBuffers.size() > vertexPeak) {
+        freeVertexBuffers.resize(vertexPeak);
+    }
+    if (freeIndexBuffers.size() > indexPeak) {
+        freeIndexBuffers.resize(indexPeak);
+    }
+}
+
+void GLRenderEngine::UploadVertexBuffer(
+    GLVertexBuffer& buffer, GLVertexBufferPlan const& plan, GLenum usage
+) {
+    GLsizei totalSize = 0;
+    for (auto& item : plan.items) {
+        totalSize += item->Size();
+    }
+    GUARD(totalSize > 0)
+
+    RunGL([&]() { glBindBuffer(GL_ARRAY_BUFFER, buffer.glId); }, "Bind VBO");
+    // Orphan + refill: glBufferData(NULL) lets the driver allocate fresh storage
+    // so this upload doesn't synchronize with in-flight draws using the prior contents.
+    RunGL([&]() { glBufferData(GL_ARRAY_BUFFER, totalSize, nullptr, usage); }, "VBO Data");
+
+    buffer.attributes.clear();
+    int offset = 0;
+    for (auto& item : plan.items) {
+        auto itemSize = item->Size();
+        RunGL(
+            [&]() { glBufferSubData(GL_ARRAY_BUFFER, offset, itemSize, item->dataPtr); },
+            "VBO SubData"
+        );
+
+        buffer.attributes[item->attributeId].offset = offset;
+        buffer.attributes[item->attributeId].glType = item->glType;
+        buffer.attributes[item->attributeId].normalize = item->normalize;
+
+        offset += itemSize;
+    }
+}
+
+void GLRenderEngine::UploadIndexBuffer(
+    GLIndexBuffer& buffer, std::span<uint32_t const> indices, GLenum usage
+) {
+    RunGL([&]() { glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer.glId); }, "Bind IBO");
+    RunGL(
+        [&]() {
+            glBufferData(
+                GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(uint32_t), indices.data(), usage
+            );
+        },
+        "IBO Data"
+    );
+}
+
+GLVertexBuffer* GLRenderEngine::AcquirePooledVertexBuffer(GLVertexBufferPlan const& plan) {
+    GLsizei totalSize = 0;
+    for (auto& item : plan.items) {
+        totalSize += item->Size();
+    }
+    GUARDR(totalSize > 0, nullptr)
+
+    UP<GLVertexBuffer> buffer;
+    if (!freeVertexBuffers.empty()) {
+        buffer = std::move(freeVertexBuffers.back());
+        freeVertexBuffers.pop_back();
+    } else {
+        GLuint glId{};
+        RunGL([&]() { glGenBuffers(1, &glId); }, "Gen VBO (pool)");
+        buffer = NEW<GLVertexBuffer>(glId);
+    }
+
+    UploadVertexBuffer(*buffer, plan, GL_DYNAMIC_DRAW);
+
+    auto raw = buffer.get();
+    inUseVertexBuffers.push_back(std::move(buffer));
+    return raw;
+}
+
+GLIndexBuffer* GLRenderEngine::AcquirePooledIndexBuffer(std::span<uint32_t const> indices) {
+    UP<GLIndexBuffer> buffer;
+    if (!freeIndexBuffers.empty()) {
+        buffer = std::move(freeIndexBuffers.back());
+        freeIndexBuffers.pop_back();
+    } else {
+        GLuint glId{};
+        RunGL([&]() { glGenBuffers(1, &glId); }, "Gen IBO (pool)");
+        buffer = NEW<GLIndexBuffer>(glId);
+    }
+
+    UploadIndexBuffer(*buffer, indices, GL_DYNAMIC_DRAW);
+
+    auto raw = buffer.get();
+    inUseIndexBuffers.push_back(std::move(buffer));
+    return raw;
 }
 
 void GLRenderEngine::RenderProcess(RenderDrawModel const& drawModel) {
@@ -334,37 +465,33 @@ void GLRenderEngine::RenderProcess(RenderModel const& model) {
 void GLRenderEngine::RenderDraw(RenderDrawModel const& drawModel) {
     RenderProcess(drawModel);
 
-    VectorList<GLRenderPlan*> renderPlanPointers =
-        Map<GLRenderPlan*>(renderPlans, [](auto& plan) { return plan.get(); });
+    VectorList<GLRenderPlan*> orderedPlans;
+    orderedPlans.reserve(renderPlans.size());
+    for (auto& plan : renderPlans) {
+        orderedPlans.push_back(plan.get());
+    }
 
-    VectorList<GLRenderPlan*> noBlendRenderPlans;
-    std::copy_if(
-        renderPlanPointers.begin(), renderPlanPointers.end(),
-        std::back_inserter(noBlendRenderPlans),
-        [&](auto& plan) { return !plan->model.IsFeatureEnabled(RenderFeature::Blend); }
-    );
-
-    VectorList<GLRenderPlan*> blendRenderPlans;
-    std::copy_if(
-        renderPlanPointers.begin(), renderPlanPointers.end(), std::back_inserter(blendRenderPlans),
-        [&](auto& plan) { return plan->model.IsFeatureEnabled(RenderFeature::Blend); }
-    );
+    auto blendBegin = std::partition(orderedPlans.begin(), orderedPlans.end(), [](auto* plan) {
+        return !plan->model.IsFeatureEnabled(RenderFeature::Blend);
+    });
 
     // Sort opaque front-to-back
-    std::sort(noBlendRenderPlans.begin(), noBlendRenderPlans.end(), [](auto& lhs, auto& rhs) {
+    std::sort(orderedPlans.begin(), blendBegin, [](auto* lhs, auto* rhs) {
         return lhs->model.z > rhs->model.z;
     });
 
     EnableFeature(RenderFeature::DepthTest, true);
-    RenderDrawPlans(noBlendRenderPlans);
+    RenderDrawPlans({ orderedPlans.begin(), blendBegin });
 
     EnableFeature(RenderFeature::DepthTest, false);
-    RenderDrawPlans(blendRenderPlans);
+    RenderDrawPlans({ blendBegin, orderedPlans.end() });
 
     renderPlans.clear();
 }
 
-void GLRenderEngine::RenderDrawPlans(VectorList<GLRenderPlan*> const& renderPlans) {
+void GLRenderEngine::RenderDrawPlans(std::span<GLRenderPlan* const> renderPlans) {
+    Matrix4x4 const viewProjectionMatrix = projectionMatrix * viewMatrix;
+
     for (auto& rp : renderPlans) {
         auto& vboPlan = *rp->vboPlan.get();
         auto& model = rp->model;
@@ -376,12 +503,12 @@ void GLRenderEngine::RenderDrawPlans(VectorList<GLRenderPlan*> const& renderPlan
 
         auto& modelMatrix = model.matrix;
 
-        auto vbo = BuildVertexBuffer(vboPlan);
-        GUARD(vbo)
+        auto vbo = AcquirePooledVertexBuffer(vboPlan);
+        GUARD_CONTINUE(vbo)
 
         auto& mesh = model.GetMesh();
-        auto ibo = BuildIndexBuffer(mesh.Triangles());
-        GUARD(ibo)
+        auto ibo = AcquirePooledIndexBuffer(mesh.Triangles());
+        GUARD_CONTINUE(ibo)
 
         auto hasColorAttribute = glProgram->HasVertexAttribute("a_color");
         auto hasTextureCoordAttribute = glProgram->HasVertexAttribute("a_texCoord");
@@ -390,14 +517,22 @@ void GLRenderEngine::RenderDrawPlans(VectorList<GLRenderPlan*> const& renderPlan
 
         Use(*glProgram);
 
-        for (auto& texture : model.Material()->Textures()) {
-            // glActiveTexture is causing VBO errors. Investigate
-            // glActiveTexture(GL_TEXTURE0 + i);
-            glBindTexture(GL_TEXTURE_2D, texture->RenderId());
+        auto& textures = modelMaterial->Textures();
+        for (size_t i = 0; i < textures.size(); ++i) {
+            glActiveTexture(GL_TEXTURE0 + (GLenum)i);
+            glBindTexture(GL_TEXTURE_2D, textures[i]->RenderId());
+
+            // Shader sampler convention: u_texture is unit 0, u_texture1.. for additional units
+            String samplerName = (0 == i) ? String("u_texture") : "u_texture" + std::to_string(i);
+            if (glProgram->HasUniform(samplerName)) {
+                glUniform1i(glProgram->uniformLocations[samplerName], (GLint)i);
+            }
+        }
+        if (!textures.empty()) {
+            glActiveTexture(GL_TEXTURE0);
         }
 
         if (glProgram->uniformLocations.find("u_mvpMatrix") != glProgram->uniformLocations.end()) {
-            Matrix4x4 viewProjectionMatrix = projectionMatrix * viewMatrix;
             Matrix4x4 modelViewProjection = viewProjectionMatrix * modelMatrix;
 
             auto location = glProgram->uniformLocations["u_mvpMatrix"];
@@ -482,4 +617,22 @@ void GLRenderEngine::ScanGLExtensions() {
 
 SP<SomeRenderContext> GLRenderEngine::MakeTextureBuffer() {
     return MAKE<GLTextureBuffer>(*this);
+}
+
+VectorList<Tags> GLRenderEngine::EditorInfoList() {
+    auto result = Base::EditorInfoList();
+
+    auto addTag = [&](String label, size_t value) {
+        Tags tags;
+        tags.Set("label", label);
+        tags.Set("value", String(std::to_string(value)));
+        result.push_back(tags);
+    };
+
+    addTag("free vertex buffers size", freeVertexBuffers.size());
+    addTag("free index buffers size", freeIndexBuffers.size());
+    addTag("in use vertex buffers size", inUseVertexBuffers.size());
+    addTag("in use index buffers size", inUseIndexBuffers.size());
+
+    return result;
 }

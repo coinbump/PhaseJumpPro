@@ -11,6 +11,7 @@
 #include <PhaseJump/AnimationCycleTypes.h>
 #include <PhaseJump/Animator.h>
 #include <PhaseJump/AnyFactory.h>
+#include <PhaseJump/PolygonMeshBuilder.h>
 #include <PhaseJump/App.h>
 #include <PhaseJump/ArcMeshBuilder.h>
 #include <PhaseJump/AtlasTexture.h>
@@ -22,6 +23,7 @@
 #include <PhaseJump/BatchByMaterialRenderProcessor.h>
 #include <PhaseJump/BehaviorBuilder.h>
 #include <PhaseJump/BehaviorNode.h>
+#include <PhaseJump/BezierFrameMeshBuilder.h>
 #include <PhaseJump/BezierPath.h>
 #include <PhaseJump/BezierPathLayout.h>
 #include <PhaseJump/Binding.h>
@@ -32,6 +34,7 @@
 #include <PhaseJump/Broadcaster.h>
 #include <PhaseJump/ButtonControl.h>
 #include <PhaseJump/CameraCullRenderProcessor.h>
+#include <PhaseJump/CanvasTool.h>
 #include <PhaseJump/CapsuleMeshBuilder.h>
 #include <PhaseJump/CartesianUtils.h>
 #include <PhaseJump/Catalog.h>
@@ -65,6 +68,7 @@
 #include <PhaseJump/DependencyContainer.h>
 #include <PhaseJump/DepthFirstOrderRenderProcessor.h>
 #include <PhaseJump/DesignSystem.h>
+#include <PhaseJump/Desktop.h>
 #include <PhaseJump/Dev.h>
 #include <PhaseJump/DevLaunchProfiler.h>
 #include <PhaseJump/DevProfiler.h>
@@ -174,6 +178,7 @@
 #include <PhaseJump/MultiFunction.h>
 #include <PhaseJump/NodeHandler.h>
 #include <PhaseJump/NodesRenderProcessor.h>
+#include <PhaseJump/ObjectCanvas.h>
 #include <PhaseJump/ObservedValue.h>
 #include <PhaseJump/OffscreenBuffer.h>
 #include <PhaseJump/OffscreenBufferRenderer.h>
@@ -235,8 +240,10 @@
 #include <PhaseJump/RoundCornersMeshBuilder.h>
 #include <PhaseJump/Runner.h>
 #include <PhaseJump/SDLAudioStream.h>
+#include <PhaseJump/SDLAudioStreamRenderer.h>
 #include <PhaseJump/SDLColorBuilder.h>
 #include <PhaseJump/SDLFileManager.h>
+#include <PhaseJump/MacFileManager.h>
 #include <PhaseJump/SDLGLRenderContext.h>
 #include <PhaseJump/SDLLoadAudioStreamOperation.h>
 #include <PhaseJump/SDLLoadBitmapOperation.h>
@@ -266,6 +273,7 @@
 #include <PhaseJump/Scene.h>
 #include <PhaseJump/ScrollBarControl.h>
 #include <PhaseJump/SelectHandler.h>
+#include <PhaseJump/SelectObjectsCanvasTool.h>
 #include <PhaseJump/SelectorBehavior.h>
 #include <PhaseJump/SequenceBehavior.h>
 #include <PhaseJump/SequenceCounter.h>
@@ -305,7 +313,7 @@
 #include <PhaseJump/SomeInputDevice.h>
 #include <PhaseJump/SomeKeyUIEvent.h>
 #include <PhaseJump/Layout.h>
-#include <PhaseJump/Layout2D.h>
+#include <PhaseJump/Layout.h>
 #include <PhaseJump/SomeLimiter.h>
 #include <PhaseJump/SomeListener.h>
 #include <PhaseJump/LoadResourcesOperation.h>
@@ -385,7 +393,6 @@
 #include <PhaseJump/TriggerMap.h>
 #include <PhaseJump/TypeClass.h>
 #include <PhaseJump/Types.h>
-#include <PhaseJump/UIControl2D.h>
 #include <PhaseJump/UIPlan.h>
 #include <PhaseJump/UIPlanner.h>
 #include <PhaseJump/UITypes.h>
@@ -413,10 +420,12 @@
 #include <PhaseJump/ViewBuilder.h>
 #include <PhaseJump/ViewProxy.h>
 #include <PhaseJump/ViewSizeProposal.h>
+#include <PhaseJump/Viewport.h>
 #include <PhaseJump/Void.h>
 #include <PhaseJump/WeakReference.h>
 #include <PhaseJump/Weight.h>
 #include <PhaseJump/WeightedRandomChoice.h>
+#include <PhaseJump/Window.h>
 #include <PhaseJump/World.h>
 #include <PhaseJump/WorldAttachmentCore.h>
 #include <PhaseJump/WorldComponent.h>

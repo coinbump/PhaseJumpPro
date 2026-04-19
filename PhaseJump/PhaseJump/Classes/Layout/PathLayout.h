@@ -5,6 +5,7 @@
 #include "SomePath.h"
 #include "Vector3.h"
 #include "VectorList.h"
+#include "WorldComponent.h"
 #include <memory>
 
 /*
@@ -14,10 +15,13 @@
  */
 namespace PJ {
     /// Distribute children along a path
-    class PathLayout : public Layout {
+    class PathLayout : public WorldComponent {
     public:
-        using Base = Layout;
+        using Base = WorldComponent;
+        using This = PathLayout;
         using BuildPathFunc = std::function<UP<SomePath>()>;
+
+        Layout layout;
 
         /// Builds the path
         BuildPathFunc buildPathFunc;
@@ -35,14 +39,29 @@ namespace PJ {
         /// If empty, each child node will be positioned at equal intervals
         VectorList<float> positions;
 
+        PathLayout() {
+            layout.applyLayoutFunc = [this](Layout&) { ApplyLayout(); };
+        }
+
         /// Called to build the path for this layout
         virtual UP<SomePath> BuildPath() {
             GUARDR(buildPathFunc, {})
             return buildPathFunc();
         }
 
-        // MARK: Layout
+        void ApplyLayout();
 
-        void ApplyLayout() override;
+    protected:
+        // MARK: WorldComponent
+
+        void Awake() override {
+            Base::Awake();
+            layout.Awake(*this);
+        }
+
+        void Start() override {
+            Base::Start();
+            layout.Start(*this);
+        }
     };
 } // namespace PJ

@@ -49,12 +49,14 @@ SliderControl::SliderControl(Config const& config) :
     }
     SetIdealSizeFunc(idealSizeFunc);
 
-    value.SetOnValueChangeFunc([this](auto value) { OnValueChange(); });
+    value.SetOnValueChangeFunc(SetOnValueChangeFuncType::Sync, [this](auto value) {
+        OnValueChange();
+    });
 
     PlanUIFunc planUIFunc = [this](auto args) {
-        args.planner.Text([this]() {
-            return UIPlanner::TextConfig{ .label = "Value",
-                                          .text = std::format("{}", value.Value()) };
+        args.planner.LabelText([this]() {
+            return UIPlanner::LabelTextConfig{ .label = "Value",
+                                               .text = std::format("{}", value.Value()) };
         });
     };
     Override(planUIFuncs[UIContextId::Inspector], planUIFunc);
@@ -81,13 +83,14 @@ void SliderControl::Awake() {
     dragHandler->onDragGestureUpdateFunc = [this](auto update) {
         switch (update.type) {
         case DragGestureHandler2D::Update::Type::Start:
-            OnDragStart(update.worldPosition);
+            OnDragStart(update.position);
             break;
         case DragGestureHandler2D::Update::Type::End:
+        case DragGestureHandler2D::Update::Type::Cancel:
             OnDragEnd();
             break;
         case DragGestureHandler2D::Update::Type::Update:
-            OnDragUpdate(update.worldPosition);
+            OnDragUpdate(update.position);
             break;
         }
     };

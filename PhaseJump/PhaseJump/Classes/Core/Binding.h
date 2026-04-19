@@ -13,7 +13,7 @@ namespace PJ {
     using SetBindingFunc = std::function<void(T const&)>;
 
     template <class T>
-    using GetFunc = std::function<T()>;
+    using GetBindingFunc = std::function<T()>;
 
     /// Binding that gets and sets values via function
     template <class T>
@@ -22,7 +22,7 @@ namespace PJ {
         using Base = SomeBinding<T>;
         using This = Binding;
 
-        using GetFunc = GetFunc<T>;
+        using GetFunc = GetBindingFunc<T>;
         using SetFunc = SetBindingFunc<T>;
 
         struct Config {
@@ -38,10 +38,6 @@ namespace PJ {
         Binding(Config const& config) :
             getFunc(config.getFunc),
             setFunc(config.setFunc) {}
-
-        Binding(GetFunc getFunc, SetFunc setFunc) :
-            getFunc(getFunc),
-            setFunc(setFunc) {}
 
         T Value() const override {
             GUARDR(getFunc, T())

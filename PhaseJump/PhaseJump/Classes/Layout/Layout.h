@@ -1,7 +1,9 @@
 #pragma once
 
+#include "Macros.h"
+#include "Updatable.h"
 #include "Vector3.h"
-#include "WorldComponent.h"
+#include <functional>
 #include <memory>
 
 /*
@@ -10,29 +12,33 @@
  CODE REVIEW: 12/19/25
  */
 namespace PJ {
-    /// Defines the layout of child world nodes
-    class Layout : public WorldComponent {
+    class WorldComponent;
+
+    class Layout {
     public:
-        using Base = WorldComponent;
         using This = Layout;
+        using ApplyLayoutFunc = std::function<void(This&)>;
 
-    protected:
-        using LayoutFunc = std::function<void(This&)>;
+        /// Called to arrange the children. Subclass sets this to dispatch to its
+        /// own layout implementation
+        ApplyLayoutFunc applyLayoutFunc;
 
-        LayoutFunc applyLayoutFunc;
-
-        bool needsLayout = true;
-
-        /// Arrange child objects according to the layout
-        virtual void ApplyLayout() {
-            GUARD(applyLayoutFunc)
-            applyLayoutFunc(*this);
-        }
-
-    public:
         /// If true, layout will be applied automatically
         /// If false, you must apply layout manually
         bool autoApply = true;
+
+        /// Receives update events and triggers a layout pass when needed
+        Updatable updatable;
+
+    protected:
+        bool needsLayout = true;
+
+    public:
+        /// Arrange child objects according to the layout
+        void ApplyLayout() {
+            GUARD(applyLayoutFunc)
+            applyLayoutFunc(*this);
+        }
 
         void LayoutIfNeeded() {
             GUARD(needsLayout);
@@ -48,8 +54,10 @@ namespace PJ {
             needsLayout = true;
         }
 
-    protected:
-        void Awake() override;
-        void Start() override;
+        /// Wires up the enclosing component's update and signal dispatch
+        void Awake(WorldComponent& component);
+
+        /// Applies layout if needed when the component starts
+        void Start(WorldComponent& component);
     };
 } // namespace PJ

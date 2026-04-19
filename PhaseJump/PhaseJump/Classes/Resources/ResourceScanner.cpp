@@ -66,6 +66,7 @@ StandardResourceScanModel::StandardResourceScanModel(LoadType loadType) {
             fileExtensionMap["jpeg"] = ResourceType::Texture;
             fileExtensionMap["bmp"] = ResourceType::Texture;
             fileExtensionMap["shprog"] = ResourceType::ShaderProgram;
+            fileExtensionMap["wav"] = ResourceType::AudioStream;
             break;
         }
     }

@@ -13,7 +13,7 @@ Texture* AtlasTexture::RenderTexture() const {
     return parent->texture.get();
 }
 
-uint32_t AtlasTexture::RenderId() const {
+RenderItemId AtlasTexture::RenderId() const {
     GUARDR(parent && parent->texture, 0)
     return parent->texture->RenderId();
 }

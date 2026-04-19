@@ -96,6 +96,9 @@ namespace PJ {
         /// Called to start a drag objects gesture
         virtual void StartDrag(SP<DragModel> dragModel);
 
+        /// Called to cancel current drag gesture
+        virtual void CancelDrag();
+
         /// @return Returns the drag objects gesture model
         DragModel* DraggedItems() const {
             return dragModel.get();

@@ -11,7 +11,7 @@ using namespace CommandTests;
 
 TEST(Command, Test)
 {
-    Command<int> sut("", [](auto& command) { command.core++; }, [](auto& command) { command.core--; });
+    Command<int> sut(Command<int>::Config{.runFunc = [](auto& command) { command.core++; }, .undoFunc = [](auto& command) { command.core--; }});
     sut.core = 0;
 
     EXPECT_EQ(SomeCommand::StateType::Default, sut.State());

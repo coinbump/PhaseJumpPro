@@ -3,32 +3,35 @@
 #include "RenderMaterial.h"
 #include "ShaderProgram.h"
 #include "TiledMeshBuilder.h"
+#include "UIPlanner.h"
 
 using namespace std;
 using namespace PJ;
 
 Slice9TextureRenderer::Slice9TextureRenderer(Config const& config) :
-    Base(config.worldSize),
+    core(this, config.worldSize),
     texture(config.texture),
     sliceModel(config.sliceModel) {
 
-    model.material = MAKE<RenderMaterial>(RenderMaterial::Config{
+    core.model.material = MAKE<RenderMaterial>(RenderMaterial::Config{
         .texture = texture,
         .shaderId = ShaderId::TextureVary,
         .features = { { RenderFeature::Blend, RenderFeatureState::Enable } } });
 
     if (texture) {
-        model.material->Add(texture);
+        core.model.material->Add(texture);
     }
 
-    model.SetBuildMeshFunc([this](RendererModel const& model) {
+    core.model.SetBuildMeshFunc([this](RendererModel const& model) {
         return BuildMesh(model.WorldSize());
     });
+
+    Override(planUIFuncs[UIContextId::Inspector], core.MakePlanUIFunc());
 }
 
 PJ::Slice9TextureRenderer::BuildModel Slice9TextureRenderer::MakeBuildModel(Vector3 worldSize
 ) const {
-    auto material = model.material;
+    auto material = core.model.material;
     GUARDR(material, {})
     GUARDR(texture, {})
 

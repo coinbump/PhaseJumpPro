@@ -13,14 +13,12 @@
  */
 namespace PJ {
     /// Renders a uniform color
-    class ColorRenderer : public MaterialRenderer {
+    class ColorRenderer : public Renderer {
     public:
-#if PSEUDOCODE
-        MIRROR_CLASS(ColorRendererClass);
-#endif
-
-        using Base = MaterialRenderer;
+        using Base = Renderer;
         using This = ColorRenderer;
+
+        MaterialRendererCore core;
 
         struct Config {
             Color color;
@@ -29,12 +27,35 @@ namespace PJ {
         };
 
         ColorRenderer(Config const& config);
-        ColorRenderer(Color color, Vector2 worldSize);
 
         /// Disable dynamic blend mode changes
         void EnableBlend(bool isFeatureEnabled);
 
         static SP<RenderMaterial> MakeMaterial(RenderOpacityType opacityType);
+
+        // MARK: Renderer
+
+        VectorList<RenderModel> RenderModels() override {
+            return core.RenderModels();
+        }
+
+        Color GetColor() const override {
+            return core.GetColor();
+        }
+
+        void SetColor(Color color) override {
+            core.SetColor(color);
+        }
+
+        // MARK: WorldSizeable
+
+        Vector3 WorldSize() const override {
+            return core.model.WorldSize();
+        }
+
+        void SetWorldSize(Vector3 value) override {
+            core.model.SetWorldSize(value);
+        }
 
         // MARK: SomeWorldComponent
 

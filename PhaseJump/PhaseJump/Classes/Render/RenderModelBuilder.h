@@ -18,7 +18,7 @@ namespace PJ {
     class Texture;
     class WorldNode;
     class Renderer;
-    class MaterialRenderer;
+    class MaterialRendererCore;
     class RendererModel;
 
     /// Called to transform uv coordinates for a texture (usally for textures inside a texture
@@ -30,7 +30,7 @@ namespace PJ {
     }
 
     struct RenderModelBuilder {
-        std::optional<RenderModel> Build(MaterialRenderer& renderer, RendererModel& model);
+        std::optional<RenderModel> Build(MaterialRendererCore& core, RendererModel& model);
 
     protected:
         std::optional<RenderModel> Build(

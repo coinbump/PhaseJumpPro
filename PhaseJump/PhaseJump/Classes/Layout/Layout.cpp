@@ -1,26 +1,30 @@
 #include "Layout.h"
 #include "Funcs.h"
+#include "WorldComponent.h"
 
 using namespace std;
 using namespace PJ;
 
-void Layout::Awake() {
-    Base::Awake();
-
-    Updatable::OnUpdateFunc onUpdateFunc = [=, this](Updatable& updatable, TimeSlice time) {
+void Layout::Awake(WorldComponent& component) {
+    updatable.onUpdateFunc = [this](Updatable&, TimeSlice) {
         LayoutIfNeeded();
         return FinishType::Continue;
     };
-    GetUpdatable().onUpdateFunc = onUpdateFunc;
 
-    AddSignalHandler({ .id = SignalId::ChildNodeAdd,
-                       .func = [this](auto& _component, auto& event) { SetNeedsLayout(); } });
-    AddSignalHandler({ .id = SignalId::ChildNodeRemove,
-                       .func = [this](auto& _component, auto& event) { SetNeedsLayout(); } });
+    component.GetUpdatable().onUpdateFunc = [this](Updatable&, TimeSlice time) {
+        return updatable.OnUpdate(time);
+    };
+
+    component.AddSignalHandler({ .id = SignalId::ChildNodeAdd,
+                                 .func = [this](auto& _component, auto& event) {
+                                     SetNeedsLayout();
+                                 } });
+    component.AddSignalHandler({ .id = SignalId::ChildNodeRemove,
+                                 .func = [this](auto& _component, auto& event) {
+                                     SetNeedsLayout();
+                                 } });
 }
 
-void Layout::Start() {
-    Base::Start();
-
+void Layout::Start(WorldComponent&) {
     LayoutIfNeeded();
 }

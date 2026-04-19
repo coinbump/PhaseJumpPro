@@ -9,7 +9,8 @@ using namespace PJ;
 using namespace PJ_Dev;
 
 void IncludeAliasFileProcessor::Process(FilePath filePath) {
-    SDLFileManager fm;
+    auto _fm = NewSDLFileManager();
+    FileManager& fm = *_fm;
     auto extension = fm.FileExtension(filePath, FileManager::FileExtensionFormat::NoDot);
     if ("h" == extension) {
         String pathString = filePath.string();

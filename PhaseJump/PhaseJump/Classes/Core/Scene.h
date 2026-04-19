@@ -50,7 +50,7 @@ namespace PJ {
     };
 
     /// Used to register a type of scene that can be instantiated as needed
-    class SceneClass : public TypeClass<Scene> {
+    class SceneClass final : public TypeClass<Scene> {
     public:
         SceneClass(String id, String name, FactoryFunc factoryFunc) :
             TypeClass<Scene>(id, factoryFunc) {

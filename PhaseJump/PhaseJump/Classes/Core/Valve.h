@@ -1,6 +1,5 @@
 #pragma once
 
-#include "EaseFunc.h"
 #include "Timer.h"
 #include "Updatable.h"
 #include <memory>
@@ -22,7 +21,7 @@ namespace PJ {
      */
     class Valve final : public SomeUpdatable {
     public:
-        using Base = Updatable;
+        using Base = SomeUpdatable;
         using This = Valve;
         using OnValveUpdateFunc = std::function<void(This&)>;
 
@@ -48,6 +47,9 @@ namespace PJ {
 
     public:
         Valve(bool isOn = false);
+
+        DELETE_COPY(Valve)
+        DELETE_MOVE(Valve)
 
         float Value() const;
 
@@ -98,6 +100,6 @@ namespace PJ {
 
     protected:
         void SetState(StateType value);
-        virtual void OnValveUpdate();
+        void OnValveUpdate();
     };
 } // namespace PJ

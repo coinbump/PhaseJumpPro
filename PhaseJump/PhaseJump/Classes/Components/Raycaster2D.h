@@ -16,7 +16,7 @@ namespace PJ {
     };
 
     /// Handles 2D Raycast tests
-    class Raycaster2D : public Raycaster {
+    class Raycaster2D : public WorldComponent {
     public:
         using RaycastHit2DList = VectorList<RaycastHit2D>;
 

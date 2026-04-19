@@ -14,7 +14,7 @@ namespace PJ {
     /// GPU texture that can be rendered in a Render Context
     class Texture : public Base {
     protected:
-        uint32_t renderId = 0;
+        RenderItemId renderId = 0;
 
     public:
         String id;
@@ -41,7 +41,7 @@ namespace PJ {
             String id;
 
             // Method A: prebuilt texture
-            uint32_t renderId{};
+            RenderItemId renderId{};
             Vector2Int origin;
             Vector2Int size;
             Vector2Int trimOrigin;
@@ -99,7 +99,7 @@ namespace PJ {
             return const_cast<Texture*>(this);
         }
 
-        virtual uint32_t RenderId() const {
+        virtual RenderItemId RenderId() const {
             return renderId;
         }
 

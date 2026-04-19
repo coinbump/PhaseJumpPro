@@ -22,7 +22,7 @@ TEST(BehaviorNode, AddChild) {
 
     UP<BehaviorNode> child = NEW<BehaviorNode>();
     BehaviorNode* childPtr = child.get();
-    sut.tree.Add(child);
+    sut.tree.Add(std::move(child));
 
     EXPECT_EQ(1, sut.tree.ChildCount());
     EXPECT_EQ(childPtr, sut.Target());
@@ -33,7 +33,7 @@ TEST(BehaviorNode, ChildSuccessCount) {
 
     UP<BehaviorNode> child = NEW<BehaviorNode>();
     BehaviorNode* childPtr = child.get();
-    sut.tree.Add(child);
+    sut.tree.Add(std::move(child));
     childPtr->finishState = BehaviorState::Success;
 
     EXPECT_EQ(0, sut.ChildSuccessCount());
@@ -46,7 +46,7 @@ TEST(BehaviorNode, ChildFailureCount) {
 
     UP<BehaviorNode> child = NEW<BehaviorNode>();
     BehaviorNode* childPtr = child.get();
-    sut.tree.Add(child);
+    sut.tree.Add(std::move(child));
     childPtr->finishState = BehaviorState::Failure;
 
     EXPECT_EQ(0, sut.ChildFailureCount());
@@ -66,7 +66,7 @@ TEST(BehaviorNode, OnRun) {
 
     UP<BehaviorNode> child = NEW<BehaviorNode>();
     BehaviorNode* childPtr = child.get();
-    sut.tree.Add(child);
+    sut.tree.Add(std::move(child));
 
     int runCount{};
     float runTime{};
@@ -103,7 +103,7 @@ TEST(BehaviorNode, OnFinish) {
 
     UP<BehaviorNode> child = NEW<BehaviorNode>();
     BehaviorNode* childPtr = child.get();
-    sut.tree.Add(child);
+    sut.tree.Add(std::move(child));
 
     int runCount{};
     float runTime{};

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Angle.h"
+#include "BezierPath.h"
 #include "Color.h"
 #include "Font.h"
 #include "Polygon.h"
@@ -36,6 +37,7 @@ namespace PJ {
         auto constexpr Arc = "arc";
 
         auto constexpr Polygon = "poly";
+        auto constexpr Bezier = "bezier";
         auto constexpr Text = "text";
         auto constexpr Image = "image";
 
@@ -66,6 +68,12 @@ namespace PJ {
         /// Shape for polygon paths
         Polygon poly;
         PolyClose polyClose{};
+
+        /// Shape for bezier paths
+        BezierPath bezierPath;
+
+        /// Target world-space distance between sampled points for bezier paths
+        float segmentDistance = 10;
 
         VectorList<Vector2> vectors;
         VectorList<Color> colors;

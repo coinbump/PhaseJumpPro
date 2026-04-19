@@ -35,14 +35,14 @@ VectorList<PJ::LocalHit> EventWorldSystem::TestScreenHit(ScreenPosition screenPo
     auto raycaster = camera->owner->GetComponent<Raycaster2D>();
     GUARDR_LOG(raycaster, {}, "ERROR: Raycaster required for TestScreenHit")
 
-    auto worldPosition = camera->ScreenToWorld(screenPosition);
+    auto worldPosition = camera->ScreenToContext(screenPosition);
     // cout << "Log: Test: " << worldPosition.ToString() << std::endl;
 
     auto hits = raycaster->Raycast(worldPosition, {});
 
     VectorList<PJ::LocalHit> result;
     for (auto& hit : hits) {
-        auto worldHitPosition = camera->ScreenToWorld(screenPosition);
+        auto worldHitPosition = camera->ScreenToContext(screenPosition);
         auto worldModelMatrix = world->WorldModelMatrix(hit.node);
         Terathon::Point3D point(worldHitPosition.x, worldHitPosition.y, worldHitPosition.z);
         auto localHitPosition = Terathon::InverseTransform(worldModelMatrix, point);
@@ -114,7 +114,7 @@ void EventWorldSystem::ProcessUIEvents(UIEventList const& uiEvents) {
 
         auto windowResizeEvent = dynamic_cast<WindowResizeUIEvent*>(event.get());
         if (windowResizeEvent) {
-            DispatchEvent(SignalId::WindowResize, *windowResizeEvent, eventNodes);
+            DispatchEvent(SignalId::PlatformWindowResize, *windowResizeEvent, eventNodes);
             continue;
         }
     }

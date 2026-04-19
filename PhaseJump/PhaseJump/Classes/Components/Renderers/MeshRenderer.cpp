@@ -2,19 +2,23 @@
 #include "Angle.h"
 #include "QuadMeshBuilder.h"
 #include "RenderContextModel.h"
+#include "RenderMaterial.h"
 #include "RenderModel.h"
 #include "ShaderProgram.h"
+#include "UIPlanner.h"
 
 using namespace std;
 using namespace PJ;
 
 MeshRenderer::MeshRenderer(Vector3 worldSize) :
-    Base(worldSize) {
-    model.SetBuildMeshFunc([](RendererModel const& model) {
+    core(this, worldSize) {
+    core.model.SetBuildMeshFunc([](RendererModel const& model) {
         QuadMeshBuilder builder(model.WorldSize());
         return builder.BuildMesh();
     });
 
-    model.material =
+    core.model.material =
         MAKE<RenderMaterial>(RenderMaterial::Config{ .shaderId = ShaderId::ColorVary });
+
+    Override(planUIFuncs[UIContextId::Inspector], core.MakePlanUIFunc());
 }

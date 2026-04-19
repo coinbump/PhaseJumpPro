@@ -1,27 +1,27 @@
 {
     "resources": [
         {
-            "type": "shaderProgram",
+            "type": "shader.program",
             "path": "pj_shaders/colorVary.shprog"
         },
         {
-            "type": "shaderProgram",
+            "type": "shader.program",
             "path": "pj_shaders/colorUniform.shprog"
         },
         {
-            "type": "shaderProgram",
+            "type": "shader.program",
             "path": "pj_shaders/textureInterpUniform.shprog"
         },
         {
-            "type": "shaderProgram",
+            "type": "shader.program",
             "path": "pj_shaders/textureInvert.shprog"
         },
         {
-            "type": "shaderProgram",
+            "type": "shader.program",
             "path": "pj_shaders/textureUniform.shprog"
         },
         {
-            "type": "shaderProgram",
+            "type": "shader.program",
             "path": "pj_shaders/textureVary.shprog"
         },
         {
@@ -73,7 +73,7 @@
             "path": "art/TexturePacker.json"
         },
         {
-            "type": "bitmapFont",
+            "type": "font.bitmap",
             "path": "art/ArialBlack-32.fnt"
         }
     ]

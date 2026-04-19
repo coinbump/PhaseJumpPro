@@ -15,8 +15,8 @@ TEST(Animator, Animate)
 
     auto interpolator = InterpolateFuncs::Ease(InterpolateFuncs::Make<float>(0.0f, 360.0f));
     SetBindingFunc<float> binding = [&testValue](float value) { testValue = value; };
-    Animator<float> sut({.interpolateFunc = interpolator,
-            .duration = 1.0f,
+    Animator<float> sut({.duration = 1.0f,
+            .interpolateFunc = interpolator,
         .binding = binding});
 
     sut.OnUpdate(TimeSlice(0.5f));
@@ -38,8 +38,8 @@ TEST(Animator, SetProgress)
     SetBindingFunc<float> binding = [&testValue](float value) {
         testValue = value;
     };
-    Animator<float> sut({.interpolateFunc = interpolator,
-            .duration = 1.0f,
+    Animator<float> sut({.duration = 1.0f,
+            .interpolateFunc = interpolator,
         .binding = binding});
 
     sut.SetProgress(0.5f);
@@ -63,8 +63,8 @@ TEST(Animator, CycleOnceForward)
     auto testValue = -1.0f;
 
     Animator<float> sut({
-        .interpolateFunc = InterpolateFuncs::Make(0.0f, 360.0f),
         .duration = 1.0f,
+        .interpolateFunc = InterpolateFuncs::Make(0.0f, 360.0f),
         .binding = [&testValue] (float value) { testValue = value; }, .cycleType = AnimationCycleType::Once
     });
 
@@ -84,8 +84,8 @@ TEST(Animator, MatchInReverse)
     auto testValue = -1.0f;
 
     Animator<float> sut({
-        .interpolateFunc = InterpolateFuncs::Ease(InterpolateFuncs::Make(0.0f, 360.0f), EaseFuncs::inSquared),
         .duration = 1.0f,
+        .interpolateFunc = InterpolateFuncs::Ease(InterpolateFuncs::Make(0.0f, 360.0f), EaseFuncs::inSquared),
         .binding = [&testValue] (float value) { testValue = value; }, .cycleType = AnimationCycleType::PingPong,
         .reverseInterpolateFunc = InterpolateFuncs::Ease(InterpolateFuncs::Make(360.0f, 0.0f), EaseFuncs::inSquared)});
 
@@ -102,8 +102,8 @@ TEST(Animator, RewindInReverse)
     auto testValue = -1.0f;
 
     Animator<float> sut({
-        .interpolateFunc = InterpolateFuncs::Ease(InterpolateFuncs::Make(0.0f, 360.0f), EaseFuncs::inSquared),
         .duration = 1.0f,
+        .interpolateFunc = InterpolateFuncs::Ease(InterpolateFuncs::Make(0.0f, 360.0f), EaseFuncs::inSquared),
         .binding = [&testValue] (float value) { testValue = value; }, .cycleType = AnimationCycleType::PingPong
     });
 

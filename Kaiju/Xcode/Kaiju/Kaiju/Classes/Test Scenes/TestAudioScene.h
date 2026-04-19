@@ -83,7 +83,7 @@ public:
                         playerNode->Add(spriteRenderer);
 
                         // do this by default
-                        auto thumbMaterial = spriteRenderer->model.material;
+                        auto thumbMaterial = spriteRenderer->core.model.material;
                         thumbMaterial->EnableFeature(RenderFeature::Blend, true);
 
                         QuickBuilder(*playerNode).Drag();

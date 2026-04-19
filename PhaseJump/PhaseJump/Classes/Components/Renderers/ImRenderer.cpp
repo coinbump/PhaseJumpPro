@@ -1,4 +1,5 @@
 #include "ImRenderer.h"
+#include "BezierFrameMeshBuilder.h"
 #include "CapsuleMeshBuilder.h"
 #include "CenterPolyFrameMeshBuilder.h"
 #include "ColorRenderer.h"
@@ -93,6 +94,48 @@ This& ImRenderer::FramePolygon(Polygon poly, PolyClose polyClose, std::optional<
     item.endPathCap = endPathCap;
     item.pathCorner = pathCorner;
     item.polyClose = polyClose;
+    AddPath({ .item = item, .renderType = ImPathRenderType::Frame });
+
+    return *this;
+}
+
+This& ImRenderer::FrameBezier(
+    BezierPath bezierPath, float segmentDistance, std::optional<Color> color
+) {
+    GUARDR(!bezierPath.controlPoints.empty(), *this)
+
+    ImPathItem item;
+    item.type = ImPathItemType::Bezier;
+
+    Color itemColor = color ? *color : this->strokeColor;
+    item.colors = { itemColor };
+
+    // Frame bounds = axis-aligned bounding box of the control points. The curve is
+    // contained within their convex hull, so this is a safe outer bound.
+    Vector2 minPoint(bezierPath.controlPoints[0].x, bezierPath.controlPoints[0].y);
+    Vector2 maxPoint = minPoint;
+    for (auto const& cp : bezierPath.controlPoints) {
+        minPoint.x = std::min(minPoint.x, cp.x);
+        minPoint.y = std::min(minPoint.y, cp.y);
+        maxPoint.x = std::max(maxPoint.x, cp.x);
+        maxPoint.y = std::max(maxPoint.y, cp.y);
+    }
+
+    item.frame.origin = minPoint;
+    item.frame.size = { maxPoint.x - minPoint.x, maxPoint.y - minPoint.y };
+
+    // Center the control points on (0, 0) so the mesh is built in local space.
+    Vector2 center{ (minPoint.x + maxPoint.x) / 2.0f, (minPoint.y + maxPoint.y) / 2.0f };
+    for (auto& cp : bezierPath.controlPoints) {
+        cp.x -= center.x;
+        cp.y -= center.y;
+    }
+
+    item.bezierPath = bezierPath;
+    item.segmentDistance = segmentDistance;
+    item.strokeWidth = strokeWidth;
+    item.startPathCap = startPathCap;
+    item.endPathCap = endPathCap;
     AddPath({ .item = item, .renderType = ImPathRenderType::Frame });
 
     return *this;
@@ -318,7 +361,7 @@ void ImRenderer::Configure() {
         auto colorRenderer = static_cast<ColorRenderer*>(result.get());
         // TODO: rethink this pattern
         colorRenderer->EnableBlend(!areShapesOpaque);
-        colorRenderer->SetBuildMeshFunc([strokeWidth](auto& model) {
+        colorRenderer->core.SetBuildMeshFunc([strokeWidth](auto& model) {
             QuadFrameMeshBuilder meshBuilder(model.WorldSize(), { strokeWidth, strokeWidth });
             return meshBuilder.BuildMesh();
         });
@@ -337,13 +380,35 @@ void ImRenderer::Configure() {
         colorRenderer->EnableBlend(!areShapesOpaque);
         colorRenderer->SetWorldSize(item.poly.Size());
 
-        colorRenderer->SetBuildMeshFunc([item](auto& model) {
+        colorRenderer->core.SetBuildMeshFunc([item](auto& model) {
             PolyFrameMeshBuilder meshBuilder{ { .startCap = item.startPathCap,
                                                 .endCap = item.endPathCap,
                                                 .polyClose = item.polyClose,
                                                 .corner = item.pathCorner,
                                                 .strokeWidth = item.strokeWidth,
                                                 .poly = item.poly } };
+            return meshBuilder.BuildMesh();
+        });
+
+        return result;
+    };
+
+    // MARK: Bezier
+
+    id = RendererId(ImPathItemType::Bezier, ImPathRenderType::Frame);
+    buildRendererFuncs[id] = [this](auto& item) {
+        UP<Renderer> result = NEW<ColorRenderer>(ColorRenderer::Config{
+            .color = item.GetColor(0), .worldSize = item.frame.size });
+
+        auto colorRenderer = static_cast<ColorRenderer*>(result.get());
+        colorRenderer->EnableBlend(!areShapesOpaque);
+
+        colorRenderer->core.SetBuildMeshFunc([item](auto& model) {
+            BezierFrameMeshBuilder meshBuilder{ { .bezierPath = item.bezierPath,
+                                                  .segmentDistance = item.segmentDistance,
+                                                  .strokeWidth = item.strokeWidth,
+                                                  .startCap = item.startPathCap,
+                                                  .endCap = item.endPathCap } };
             return meshBuilder.BuildMesh();
         });
 
@@ -361,7 +426,7 @@ void ImRenderer::Configure() {
 
         auto colorRenderer = static_cast<ColorRenderer*>(result.get());
         colorRenderer->EnableBlend(!areShapesOpaque);
-        colorRenderer->SetBuildMeshFunc([itemAxis](auto& model) {
+        colorRenderer->core.SetBuildMeshFunc([itemAxis](auto& model) {
             CapsuleMeshBuilder meshBuilder{ { .axis = itemAxis, .worldSize = model.WorldSize() } };
             return meshBuilder.BuildMesh();
         });
@@ -380,7 +445,7 @@ void ImRenderer::Configure() {
 
         auto colorRenderer = static_cast<ColorRenderer*>(result.get());
         colorRenderer->EnableBlend(!areShapesOpaque);
-        colorRenderer->SetBuildMeshFunc([itemCorners](auto& model) {
+        colorRenderer->core.SetBuildMeshFunc([itemCorners](auto& model) {
             RoundCornersMeshBuilder meshBuilder{ { .corners = itemCorners,
                                                    .worldSize = model.WorldSize() } };
             return meshBuilder.BuildMesh();
@@ -402,7 +467,7 @@ void ImRenderer::Configure() {
 
         auto colorRenderer = static_cast<ColorRenderer*>(result.get());
         colorRenderer->EnableBlend(!areShapesOpaque);
-        colorRenderer->SetBuildMeshFunc([polyModel](auto& model) {
+        colorRenderer->core.SetBuildMeshFunc([polyModel](auto& model) {
             CenterPolyMeshBuilder meshBuilder(model.WorldSize(), polyModel);
             return meshBuilder.BuildMesh();
         });
@@ -422,7 +487,7 @@ void ImRenderer::Configure() {
 
         auto colorRenderer = static_cast<ColorRenderer*>(result.get());
         colorRenderer->EnableBlend(!areShapesOpaque);
-        colorRenderer->SetBuildMeshFunc([strokeWidth, polyModel](auto& model) {
+        colorRenderer->core.SetBuildMeshFunc([strokeWidth, polyModel](auto& model) {
             CenterPolyFrameMeshBuilder meshBuilder(
                 { .worldSize = model.WorldSize(), .strokeWidth = strokeWidth, .model = polyModel }
             );
@@ -461,7 +526,9 @@ void ImRenderer::Configure() {
         auto spriteRenderer = static_cast<SpriteRenderer*>(result.get());
 
         spriteRenderer->SetColor(item.GetColor(0, Color::white));
-        spriteRenderer->model.Material()->EnableFeature(RenderFeature::Blend, !areImagesOpaque);
+        spriteRenderer->core.model.Material()->EnableFeature(
+            RenderFeature::Blend, !areImagesOpaque
+        );
 
         return result;
     };

@@ -44,7 +44,7 @@ namespace PJ {
         BuildViewFunc buildViewFunc;
     };
 
-    /// Handles logic and layout for a reading-layout oriented node
+    /// Handles logic and layout for a reading-layout oriented node (top-left is 0, 0)
     /// Example: windows, controls, buttons
     class View2D : public WorldComponent, public WorldSizeable {
     public:
@@ -53,6 +53,7 @@ namespace PJ {
 
         using IdealSizeFunc = std::function<ViewSizeProposal(This&, ViewSizeProposal)>;
         using BuildViewFunc = std::function<void(View2D&)>;
+        using OnViewStateChangeFunc = std::function<void(This&)>;
 
         /// If true, this view is an attachment to another view
         bool isAttachment{};
@@ -86,11 +87,21 @@ namespace PJ {
         /// If true, this is a top level view (popover, alert, etc.)
         bool isTopLevel{};
 
+    protected:
+        /// Called when the control's state changes
+        OnViewStateChangeFunc onViewStateChangeFunc;
+
     public:
         /// Used to rebuild this view if the content changes
         BuildViewFunc buildViewFunc;
 
         View2D();
+
+        void SetOnViewStateChangeFunc(OnViewStateChangeFunc value) {
+            onViewStateChangeFunc = value;
+            GUARD(onViewStateChangeFunc)
+            onViewStateChangeFunc(*this);
+        }
 
         void SetNeedsRebuild();
         void RebuildIfNeeded();
@@ -341,6 +352,9 @@ namespace PJ {
         /// @return Returns a position in this view converted to a position in the root view
         Vector2 ToRootViewPosition(Vector2 viewPosition);
 
+        /// Called when the view state changes, used to update the view's appearance if needed
+        virtual void OnViewStateChange();
+
     protected:
         /// Called when the frame changes
         virtual void OnFrameChange();
@@ -354,5 +368,6 @@ namespace PJ {
         // MARK: SomeComponent
 
         void Start() override;
+        void Awake() override;
     };
 } // namespace PJ

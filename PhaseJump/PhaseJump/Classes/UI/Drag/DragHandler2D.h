@@ -3,34 +3,40 @@
 #include "DragHandler.h"
 
 /*
- RATING: 5 stars
+ RATING: 5+ stars
  Tested and works
- CODE REVIEW: 9/22/24
+ CODE REVIEW: 4/16/26
  */
 namespace PJ {
     /**
      Attach to objects that can be dragged
      Requirements:
      - Attach a raycaster to the camera
-     - Create an UISystem object
+     - Create a UI system object
      - Add DragHandler2D to objects you want to be draggable
      - Attach a collider to the draggable object
      */
     class DragHandler2D : public DragHandler {
     public:
+        enum class DropType {
+            /// The drag ended
+            End,
+
+            /// The drag was cancelled
+            Cancel
+        };
+
         using Base = DragHandler;
         using This = DragHandler2D;
 
-        using OnDragUpdateFunc = std::function<void(This&)>;
-        using OnDropFunc = std::function<void(This&)>;
+        using OnDropFunc = std::function<void(This&, DropType)>;
 
-        OnDragUpdateFunc onDragUpdateFunc;
         OnDropFunc onDropFunc;
 
-        virtual void Drop();
+        void Drop(DropType dropType);
 
-        DragHandler2D& SetOnDragUpdateFunc(OnDragUpdateFunc onDragUpdateFunc) {
-            this->onDragUpdateFunc = onDragUpdateFunc;
+        This& SetOnDropFunc(OnDropFunc onDropFunc) {
+            this->onDropFunc = onDropFunc;
             return *this;
         }
 
@@ -38,15 +44,17 @@ namespace PJ {
         /// started
         void InOnDropSnapBack();
 
-        // MARK: DragHandler
-
-        void OnDragUpdate(WorldPosition inputPosition) override;
-        void OnDragEnd() override;
-
         // MARK: SomeWorldComponent
 
         String TypeName() const override {
             return "DragHandler2D";
         }
+
+    protected:
+        // MARK: DragHandler
+
+        void OnDragUpdate(WorldPosition position) override;
+        void OnDragEnd(WorldPosition position) override;
+        void OnDragCancel() override;
     };
 } // namespace PJ

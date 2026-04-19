@@ -17,9 +17,12 @@ namespace PJ {
     struct Mesh;
 
     /// Renders a single texture as a 3-slice (start, middle, end)
-    class Slice3TextureRenderer : public MaterialRenderer {
+    class Slice3TextureRenderer : public Renderer {
     public:
-        using Base = MaterialRenderer;
+        using Base = Renderer;
+        using This = Slice3TextureRenderer;
+
+        MaterialRendererCore core;
 
     protected:
         SP<Texture> texture;
@@ -77,6 +80,30 @@ namespace PJ {
         Slice3TextureRenderer(Config const& config);
 
         BuildModel MakeBuildModel(Vector3 worldSize) const;
+
+        // MARK: Renderer
+
+        VectorList<RenderModel> RenderModels() override {
+            return core.RenderModels();
+        }
+
+        Color GetColor() const override {
+            return core.GetColor();
+        }
+
+        void SetColor(Color color) override {
+            core.SetColor(color);
+        }
+
+        // MARK: WorldSizeable
+
+        Vector3 WorldSize() const override {
+            return core.model.WorldSize();
+        }
+
+        void SetWorldSize(Vector3 value) override {
+            core.model.SetWorldSize(value);
+        }
 
         // MARK: SomeWorldComponent
 

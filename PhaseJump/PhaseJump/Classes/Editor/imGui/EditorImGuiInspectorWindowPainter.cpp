@@ -51,27 +51,30 @@ EditorImGuiInspectorWindowPainter::EditorImGuiInspectorWindowPainter(EditorWorld
                     UIPlan uiPlan;
                     UIPlanner planner(uiPlan);
 
-                    planner.InputFloat({ .label = "X",
-                                         .binding = Binding<float>(
-                                             [&]() { return node.transform.LocalPosition().x; },
-                                             [&](auto& value) {
-                                                 node.transform.SetAxisPosition(Axis::X, value);
-                                             }
-                                         ) });
-                    planner.InputFloat({ .label = "Y",
-                                         .binding = Binding<float>(
-                                             [&]() { return node.transform.LocalPosition().y; },
-                                             [&](auto& value) {
-                                                 node.transform.SetAxisPosition(Axis::Y, value);
-                                             }
-                                         ) });
-                    planner.InputFloat({ .label = "Z",
-                                         .binding = Binding<float>(
-                                             [&]() { return node.transform.LocalPosition().z; },
-                                             [&](auto& value) {
-                                                 node.transform.SetAxisPosition(Axis::Z, value);
-                                             }
-                                         ) });
+                    planner.InputFloat(
+                        { .label = "X",
+                          .binding = Binding<float>(
+                              { .getFunc = [&]() { return node.transform.LocalPosition().x; },
+                                .setFunc = [&](auto& value
+                                           ) { node.transform.SetAxisPosition(Axis::X, value); } }
+                          ) }
+                    );
+                    planner.InputFloat(
+                        { .label = "Y",
+                          .binding = Binding<float>(
+                              { .getFunc = [&]() { return node.transform.LocalPosition().y; },
+                                .setFunc = [&](auto& value
+                                           ) { node.transform.SetAxisPosition(Axis::Y, value); } }
+                          ) }
+                    );
+                    planner.InputFloat(
+                        { .label = "Z",
+                          .binding = Binding<float>(
+                              { .getFunc = [&]() { return node.transform.LocalPosition().z; },
+                                .setFunc = [&](auto& value
+                                           ) { node.transform.SetAxisPosition(Axis::Z, value); } }
+                          ) }
+                    );
 
                     ImGuiUIPlanPainter(uiPlan).Paint();
 

@@ -16,12 +16,12 @@ TEST(ParallelBehavior, OnFinishAllSuccess) {
     UP<BehaviorNode> child1 = NEW<TimedBehavior>(1);
     BehaviorNode* childPtr1 = child1.get();
     childPtr1->finishState = BehaviorState::Success;
-    sut.tree.Add(child1);
+    sut.tree.Add(std::move(child1));
 
     UP<BehaviorNode> child2 = NEW<TimedBehavior>(2);
     BehaviorNode* childPtr2 = child2.get();
     childPtr2->finishState = BehaviorState::Success;
-    sut.tree.Add(child2);
+    sut.tree.Add(std::move(child2));
 
     sut.OnUpdate({1});
     EXPECT_TRUE(sut.IsRunning());
@@ -41,12 +41,12 @@ TEST(ParallelBehavior, OnFinishAllFailure) {
     UP<BehaviorNode> child1 = NEW<TimedBehavior>(1);
     BehaviorNode* childPtr1 = child1.get();
     childPtr1->finishState = BehaviorState::Failure;
-    sut.tree.Add(child1);
+    sut.tree.Add(std::move(child1));
 
     UP<BehaviorNode> child2 = NEW<TimedBehavior>(2);
     BehaviorNode* childPtr2 = child2.get();
     childPtr2->finishState = BehaviorState::Failure;
-    sut.tree.Add(child2);
+    sut.tree.Add(std::move(child2));
 
     sut.OnUpdate({1});
     EXPECT_TRUE(sut.IsRunning());
@@ -67,12 +67,12 @@ TEST(ParallelBehavior, OnFinishPartialSuccess) {
     UP<BehaviorNode> child1 = NEW<TimedBehavior>(1);
     BehaviorNode* childPtr1 = child1.get();
     childPtr1->finishState = BehaviorState::Success;
-    sut.tree.Add(child1);
+    sut.tree.Add(std::move(child1));
 
     UP<BehaviorNode> child2 = NEW<TimedBehavior>(2);
     BehaviorNode* childPtr2 = child2.get();
     childPtr2->finishState = BehaviorState::Success;
-    sut.tree.Add(child2);
+    sut.tree.Add(std::move(child2));
 
     sut.OnUpdate({1});
     EXPECT_FALSE(sut.IsRunning());
@@ -88,12 +88,12 @@ TEST(ParallelBehavior, OnFinishPartialFailure) {
     UP<BehaviorNode> child1 = NEW<TimedBehavior>(1);
     BehaviorNode* childPtr1 = child1.get();
     childPtr1->finishState = BehaviorState::Failure;
-    sut.tree.Add(child1);
+    sut.tree.Add(std::move(child1));
 
     UP<BehaviorNode> child2 = NEW<TimedBehavior>(2);
     BehaviorNode* childPtr2 = child2.get();
     childPtr2->finishState = BehaviorState::Success;
-    sut.tree.Add(child2);
+    sut.tree.Add(std::move(child2));
 
     sut.OnUpdate({1});
     EXPECT_FALSE(sut.IsRunning());
@@ -108,12 +108,12 @@ TEST(ParallelBehavior, OnFinishMixed) {
     UP<BehaviorNode> child1 = NEW<TimedBehavior>(1);
     BehaviorNode* childPtr1 = child1.get();
     childPtr1->finishState = BehaviorState::Failure;
-    sut.tree.Add(child1);
+    sut.tree.Add(std::move(child1));
 
     UP<BehaviorNode> child2 = NEW<TimedBehavior>(2);
     BehaviorNode* childPtr2 = child2.get();
     childPtr2->finishState = BehaviorState::Success;
-    sut.tree.Add(child2);
+    sut.tree.Add(std::move(child2));
 
     sut.finishState = BehaviorState::Failure;
 

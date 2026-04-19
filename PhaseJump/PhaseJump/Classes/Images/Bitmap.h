@@ -9,14 +9,17 @@
 #include <memory>
 #include <optional>
 #include <span>
+#include <type_traits>
 
 /*
- RATING: 5 stars
+ RATING: 5+ stars
  Has unit tests
  CODE REVIEW: 8/9/24
  */
 namespace PJ {
     enum class ColorComponent { Red, Green, Blue, Alpha };
+
+    enum class CopyType { Copy, None };
 
     enum class BitmapOrientation {
         /// Default bitmap orientation
@@ -32,24 +35,40 @@ namespace PJ {
         struct RGBA8888 {
             using Pixel = RGBAColor;
 
-            int ColorComponentBitSize(ColorComponent component) const {
+            static constexpr int ColorComponentBitSize(ColorComponent) {
                 return 8;
             }
 
-            int PixelSize() const {
+            static constexpr int PixelSize() {
                 return 4;
+            }
+
+            static constexpr bool HasAlpha() {
+                return true;
+            }
+
+            static Pixel FromColor(Color color) {
+                return RGBAColor(color);
             }
         };
 
         struct BGRA8888 {
             using Pixel = BGRAColor;
 
-            int ColorComponentBitSize(ColorComponent component) const {
+            static constexpr int ColorComponentBitSize(ColorComponent) {
                 return 8;
             }
 
-            int PixelSize() const {
+            static constexpr int PixelSize() {
                 return 4;
+            }
+
+            static constexpr bool HasAlpha() {
+                return true;
+            }
+
+            static Pixel FromColor(Color color) {
+                return BGRAColor(color.r, color.g, color.b, color.a);
             }
         };
     }; // namespace PixelFormat
@@ -61,10 +80,12 @@ namespace PJ {
 
         virtual ~SomeBitmap() {};
 
-        virtual void* DataPtr() const = 0;
-        virtual Vector2Int const& Size() const = 0;
+        virtual void* DataPtr() = 0;
+        virtual void const* DataPtr() const = 0;
+        virtual Vector2Int Size() const = 0;
         virtual size_t DataSize() const = 0;
         virtual int PixelSize() const = 0;
+        virtual bool HasAlpha() const = 0;
     };
 
     /// Stores bitmap images in memory as pixels
@@ -75,12 +96,17 @@ namespace PJ {
         using This = Bitmap;
         using Pixel = typename PixelFormat::Pixel;
 
-        // Don't allow copies
+        static_assert(
+            std::is_trivially_copyable_v<Pixel>,
+            "Pixel must be trivially copyable (Bitmap uses memcpy / std::copy_n)"
+        );
+
+        // Don't allow copies (pixel buffers can be large); moves are fine.
         DELETE_COPY(Bitmap)
+        DEFAULT_MOVE(Bitmap)
 
     protected:
         VectorList<Pixel> pixels;
-        PixelFormat pixelFormat;
         Vector2Int size;
 
     public:
@@ -90,32 +116,25 @@ namespace PJ {
             BitmapOrientation orientation{};
             Vector2Int size;
 
-            // METHOD: pixels pointer
-            void* pixels{};
+            /// Optional source pixels copied into the bitmap at construction.
+            /// Interpreted as raw bytes; `pixelsDataSize` is the size of the buffer in bytes.
+            void const* pixels{};
             size_t pixelsDataSize{};
-
-            // METHOD: pixel data
-            PJ::Data<uint32_t> const* data{};
         };
 
         Bitmap() {}
 
-        Bitmap(Config const& _config) :
-            orientation(_config.orientation) {
-            auto config = _config;
+        Bitmap(Config const& config) :
+            orientation(config.orientation) {
             size = config.size;
             GUARD(size.x > 0 && size.y > 0)
 
-            auto pixelCount = size.x * size.y;
+            // Avoid overflow for large bitmaps
+            size_t pixelCount = (size_t)size.x * (size_t)size.y;
             pixels.resize(pixelCount);
 
-            if (config.data) {
-                config.pixels = config.data->Pointer();
-                config.pixelsDataSize = config.data->Size();
-            }
-
             if (config.pixels && config.pixelsDataSize > 0) {
-                auto totalSize = pixelFormat.PixelSize() * pixels.size();
+                auto totalSize = (size_t)PixelFormat::PixelSize() * pixels.size();
                 memcpy(pixels.data(), config.pixels, std::min(totalSize, config.pixelsDataSize));
             }
         }
@@ -153,26 +172,23 @@ namespace PJ {
         }
 
         std::span<Pixel const> Data() const {
-            return pixels.size() > 0 ? std::span<Pixel const>(pixels) : std::span<Pixel>();
+            return pixels.size() > 0 ? std::span<Pixel const>(pixels) : std::span<Pixel const>();
         }
 
         std::span<Pixel> ScanLineData(int y) {
             GUARDR(IsValidY(y), std::span<Pixel>());
 
-            return std::span<Pixel>(pixels.data() + (size.x * y), size.x);
+            return std::span<Pixel>(pixels.data() + (int64_t)size.x * (int64_t)y, size.x);
         }
 
         std::span<Pixel const> ScanLineData(int y) const {
-            GUARDR(IsValidY(y), std::span<Pixel>());
+            GUARDR(IsValidY(y), std::span<Pixel const>());
 
-            return std::span<Pixel const>(pixels.data() + (size.x * y), size.x);
+            return std::span<Pixel const>(pixels.data() + (int64_t)size.x * (int64_t)y, size.x);
         }
 
         bool IsValidY(int y) const {
-            GUARDR(pixels.size() > 0 && size.x > 0 && size.y > 0, false);
-            GUARDR(y >= 0 && y < size.y, false);
-
-            return true;
+            return y >= 0 && y < size.y;
         }
 
         VectorList<Pixel> const& Pixels() const {
@@ -183,30 +199,42 @@ namespace PJ {
             return pixels;
         }
 
+        int Width() const {
+            return size.x;
+        }
+
+        int Height() const {
+            return size.y;
+        }
+
         size_t ColorComponentBitSize(ColorComponent component) const {
-            return pixelFormat.ColorComponentBitSize(component);
+            return PixelFormat::ColorComponentBitSize(component);
         }
 
-        bool HasAlpha() const {
-            return true;
-        }
-
-        std::span<Pixel> PixelDataAt(Vector2Int loc, size_t count) const {
+        std::span<Pixel> PixelDataAt(Vector2Int loc, size_t count) {
             auto index = LocToIndex(loc);
             GUARDR(index, std::span<Pixel>())
 
-            // Check: pixels.size is 2, index is 1, max # of items copied is 1 (2 - 1)
-            auto maxCount = pixels.size() - *index;
+            auto maxCount = pixels.size() - (size_t)*index;
             auto minCount = std::min(count, maxCount);
-            return std::span<Pixel>((Pixel*)pixels.data() + *index, minCount);
+            return std::span<Pixel>(pixels.data() + *index, minCount);
         }
 
-        std::optional<int> LocToIndex(Vector2Int loc) const {
+        std::span<Pixel const> PixelDataAt(Vector2Int loc, size_t count) const {
+            auto index = LocToIndex(loc);
+            GUARDR(index, std::span<Pixel const>())
+
+            auto maxCount = pixels.size() - (size_t)*index;
+            auto minCount = std::min(count, maxCount);
+            return std::span<Pixel const>(pixels.data() + *index, minCount);
+        }
+
+        std::optional<int64_t> LocToIndex(Vector2Int loc) const {
             GUARDR(loc.x >= 0 && loc.y >= 0, std::nullopt)
             GUARDR(loc.x < size.x && loc.y < size.y, std::nullopt)
 
-            auto result = size.x * loc.y + loc.x;
-            GUARDR(result < pixels.size(), std::nullopt)
+            int64_t result = (int64_t)size.x * (int64_t)loc.y + (int64_t)loc.x;
+            GUARDR(result < (int64_t)pixels.size(), std::nullopt)
 
             return result;
         }
@@ -233,52 +261,50 @@ namespace PJ {
             auto pixelData = PixelDataAt(loc, 1);
             GUARD(!pixelData.empty());
 
-            RGBAColor color32 = color;
-            pixelData[0] = color32;
+            pixelData[0] = PixelFormat::FromColor(color);
         }
 
-        void Resize(Vector2Int size) {
+        /// Sets every pixel in the bitmap to `color`.
+        void Fill(Color color) {
+            Pixel pixel = PixelFormat::FromColor(color);
+            std::fill(pixels.begin(), pixels.end(), pixel);
+        }
+
+        void Resize(Vector2Int size, CopyType copyType = CopyType::Copy) {
             GUARD(this->size != size)
             GUARD(size.x > 0 && size.y > 0)
 
             auto oldSize = this->size;
-            auto oldPixels = pixels;
 
-            size_t vectorSize = size.x * size.y;
-            pixels = VectorList<Pixel>(vectorSize);
-
-            this->size = size;
-
-            if (oldPixels.size() == 0) {
+            // Fast path: no need to preserve old contents.
+            if (copyType == CopyType::None || pixels.empty()) {
+                pixels = VectorList<Pixel>((size_t)size.x * (size_t)size.y);
+                this->size = size;
                 return;
             }
 
-            // FUTURE: update with std::span and std::copy
-            char* sourceData = (char*)oldPixels.data();
-            size_t sourceLineSize = PixelSize() * oldSize.x;
-            size_t destLineSize = PixelSize() * size.x;
+            VectorList<Pixel> oldPixels = std::move(pixels);
+            pixels = VectorList<Pixel>((size_t)size.x * (size_t)size.y);
+            this->size = size;
 
-            auto lineCopySize = std::min(sourceLineSize, destLineSize);
-            GUARD(lineCopySize > 0)
-
+            auto copyWidth = std::min(oldSize.x, size.x);
             auto copyHeight = std::min(oldSize.y, size.y);
-            GUARD(copyHeight > 0)
+            GUARD(copyWidth > 0 && copyHeight > 0)
 
             for (int y = 0; y < copyHeight; y++) {
-                memcpy(
-                    PixelDataAt(Vector2Int(0, y), lineCopySize).data(), sourceData, lineCopySize
-                );
-                sourceData += sourceLineSize;
+                Pixel const* srcLine = oldPixels.data() + (size_t)oldSize.x * (size_t)y;
+                auto destLine = PixelDataAt(Vector2Int(0, y), (size_t)copyWidth);
+                std::copy_n(srcLine, copyWidth, destLine.begin());
             }
         }
 
         Pixel* operator[](size_t index) {
-            GUARDR(index >= 0 && index < this->pixels.size(), nullptr)
+            GUARDR(index < this->pixels.size(), nullptr)
             return &pixels[index];
         }
 
         Pixel const* operator[](size_t index) const {
-            GUARDR(index >= 0 && index < this->pixels.size(), nullptr)
+            GUARDR(index < this->pixels.size(), nullptr)
             return &pixels[index];
         }
 
@@ -296,20 +322,28 @@ namespace PJ {
 
         // MARK: SomeBitmap
 
-        void* DataPtr() const override {
-            return (void*)pixels.data();
+        void* DataPtr() override {
+            return pixels.data();
+        }
+
+        void const* DataPtr() const override {
+            return pixels.data();
         }
 
         size_t DataSize() const override {
-            return pixelFormat.PixelSize() * pixels.size();
+            return (size_t)PixelFormat::PixelSize() * pixels.size();
         }
 
         int PixelSize() const override {
-            return pixelFormat.PixelSize();
+            return PixelFormat::PixelSize();
         }
 
-        Vector2Int const& Size() const override {
+        Vector2Int Size() const override {
             return size;
+        }
+
+        bool HasAlpha() const override {
+            return PixelFormat::HasAlpha();
         }
     };
 

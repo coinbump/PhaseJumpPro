@@ -144,7 +144,7 @@ namespace PJ {
         }
     };
 
-    struct EnvironmentPusher {
+    struct [[nodiscard]] EnvironmentPusher {
         SP<Environment> environment;
 
         EnvironmentPusher() :

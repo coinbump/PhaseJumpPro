@@ -20,19 +20,19 @@ public:
         GUARD(texture)
 
         auto camera = SCAST<Camera>(MAKE<OrthoCamera>());
-        auto cameraNode = MAKE<WorldNode>("Camera");
+        auto cameraNode = MAKE<WorldNode>(WorldNode::Config{ .name = "Camera" });
         cameraNode->Add(camera);
         root.Add(cameraNode);
 
         for (int i = 0; i < 1; i++) {
-            auto meshNode = MAKE<WorldNode>("Slice 9");
+            auto meshNode = MAKE<WorldNode>(WorldNode::Config{ .name = "Slice 9" });
 
             Slice9TextureRenderer::SliceModel slicePoints = { { 25, 25 }, { 25, 25 } };
             auto renderer = MAKE<Slice9TextureRenderer>(Slice9TextureRenderer::Config{
                 .texture = texture, .worldSize = { 300, 300 }, .sliceModel = slicePoints });
             meshNode->Add(renderer);
 
-            auto material = renderer->model.material;
+            auto material = renderer->core.model.material;
 
             root.Add(meshNode);
         }
@@ -41,7 +41,7 @@ public:
             texture = DCAST<GLTexture>(world.resources.FindTexture("slider-track"));
             GUARD(texture)
 
-            auto meshNode = MAKE<WorldNode>("Slice 3- X");
+            auto meshNode = MAKE<WorldNode>(WorldNode::Config{ .name = "Slice 3- X" });
 
             auto renderer =
                 MAKE<Slice3TextureRenderer>(Slice3TextureRenderer::Config{ .texture = texture,
@@ -52,7 +52,7 @@ public:
             meshNode->Add(renderer);
             meshNode->transform.SetLocalPosition(Vector3(0, 200, 0));
 
-            auto material = renderer->model.material;
+            auto material = renderer->core.model.material;
 
             root.Add(meshNode);
         }
@@ -61,7 +61,7 @@ public:
             texture = DCAST<GLTexture>(world.resources.FindTexture("slider-track-v"));
             GUARD(texture)
 
-            auto meshNode = MAKE<WorldNode>("Slice 3- Y");
+            auto meshNode = MAKE<WorldNode>(WorldNode::Config{ .name = "Slice 3- Y" });
 
             auto renderer =
                 MAKE<Slice3TextureRenderer>(Slice3TextureRenderer::Config{ .texture = texture,
@@ -72,13 +72,13 @@ public:
             meshNode->Add(renderer);
             meshNode->transform.SetLocalPosition(Vector3(200, 0, 0));
 
-            auto material = renderer->model.material;
+            auto material = renderer->core.model.material;
 
             root.Add(meshNode);
         }
 
         {
-            auto meshNode = MAKE<WorldNode>("Immediate");
+            auto meshNode = MAKE<WorldNode>(WorldNode::Config{ .name = "Immediate" });
 
             auto renderer = MAKE<ImRenderer>(ImRenderer::Config{ .worldSize = { 400, 400 } });
             meshNode->Add(renderer);

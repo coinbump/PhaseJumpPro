@@ -65,8 +65,8 @@ TEST(BezierPathLayout, SetControlPointsSetsNeedsLayout)
     auto sut = MAKE<BezierPathLayout>();
     worldNode->Add(sut);
 
-    sut->LayoutIfNeeded();
-    EXPECT_FALSE(sut->NeedsLayout());
+    sut->layout.LayoutIfNeeded();
+    EXPECT_FALSE(sut->layout.NeedsLayout());
 
     VectorList<Vector3> points = {
         Vector3(0, 0, 0),
@@ -74,7 +74,7 @@ TEST(BezierPathLayout, SetControlPointsSetsNeedsLayout)
         Vector3(10, 0, 0)
     };
     sut->SetControlPoints(points);
-    EXPECT_TRUE(sut->NeedsLayout());
+    EXPECT_TRUE(sut->layout.NeedsLayout());
 }
 
 TEST(BezierPathLayout, SetControlPointSetsNeedsLayout)
@@ -89,11 +89,11 @@ TEST(BezierPathLayout, SetControlPointSetsNeedsLayout)
     auto sut = MAKE<BezierPathLayout>(points);
     worldNode->Add(sut);
 
-    sut->LayoutIfNeeded();
-    EXPECT_FALSE(sut->NeedsLayout());
+    sut->layout.LayoutIfNeeded();
+    EXPECT_FALSE(sut->layout.NeedsLayout());
 
     sut->SetControlPoint(1, Vector3(5, 20, 0));
-    EXPECT_TRUE(sut->NeedsLayout());
+    EXPECT_TRUE(sut->layout.NeedsLayout());
 }
 
 TEST(BezierPathLayout, SetControlPointInvalidIndex)
@@ -108,12 +108,12 @@ TEST(BezierPathLayout, SetControlPointInvalidIndex)
     auto sut = MAKE<BezierPathLayout>(points);
     worldNode->Add(sut);
 
-    sut->LayoutIfNeeded();
-    EXPECT_FALSE(sut->NeedsLayout());
+    sut->layout.LayoutIfNeeded();
+    EXPECT_FALSE(sut->layout.NeedsLayout());
 
     // Out of bounds index should not modify state
     sut->SetControlPoint(5, Vector3(99, 99, 0));
-    EXPECT_FALSE(sut->NeedsLayout());
+    EXPECT_FALSE(sut->layout.NeedsLayout());
 }
 
 TEST(BezierPathLayout, QuadraticPathMidpoint)

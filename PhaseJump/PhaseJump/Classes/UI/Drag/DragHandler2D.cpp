@@ -1,35 +1,40 @@
 #include "DragHandler2D.h"
+#include "WorldNode.h"
 
 using namespace std;
 using namespace PJ;
 
-void DragHandler2D::Drop() {
+void DragHandler2D::Drop(DropType dropType) {
     GUARD(onDropFunc)
-    onDropFunc(*this);
+    onDropFunc(*this, dropType);
 }
 
 void DragHandler2D::InOnDropSnapBack() {
-    onDropFunc = [](auto& dragHandler) {
+    onDropFunc = [](auto& dragHandler, auto dropType) {
         GUARD(dragHandler.owner)
-        dragHandler.owner->transform.SetWorldPosition(dragHandler.dragStartPosition);
+        dragHandler.owner->transform.SetWorldPosition(dragHandler.dragNodeStartPosition);
     };
 }
 
-void DragHandler2D::OnDragUpdate(WorldPosition inputPosition) {
+void DragHandler2D::OnDragUpdate(WorldPosition position) {
     GUARD(owner)
     NodeTransform& transform = owner->transform;
 
-    auto internalOffset = dragStartPosition - dragStartInputPosition;
-    transform.SetWorldPositionXY(inputPosition + internalOffset);
+    auto internalOffset = dragNodeStartPosition - dragStartPosition;
+    transform.SetWorldPositionXY(position + internalOffset);
 
     GUARD(onDragUpdateFunc)
-    onDragUpdateFunc(*this);
-    // PJ::Log("Internal Offset: " + internalOffset.ToString() + " transform: " +
-    // transform.ToString());
+    onDragUpdateFunc(*this, position);
 }
 
-void DragHandler2D::OnDragEnd() {
-    Base::OnDragEnd();
+void DragHandler2D::OnDragEnd(WorldPosition position) {
+    Base::OnDragEnd(position);
 
-    Drop();
+    Drop(DropType::End);
+}
+
+void DragHandler2D::OnDragCancel() {
+    Base::OnDragCancel();
+
+    Drop(DropType::Cancel);
 }

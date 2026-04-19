@@ -3,7 +3,7 @@
 #include "Axis.h"
 #include "DragHandler.h"
 #include "PublishedValue.h"
-#include "UIControl2D.h"
+#include "View2D.h"
 
 // Future feature. Unimplemented
 #if FALSE
@@ -20,10 +20,10 @@ namespace PJ {
 
      The thumb node must have a collider attached for hit testing
      */
-    class ScrollBarControl : public UIControl2D {
+    class ScrollBarControl : public View2D {
     public:
         // FUTURE: support dynamic thumb size based on content size
-        using Base = UIControl2D;
+        using Base = View2D;
         using This = ScrollBarControl;
 
         /// The object for the thumb (if not specified, the first child object is

@@ -21,6 +21,18 @@ namespace PJ {
     class ShaderProgram;
     class SomeRenderCommandModel;
 
+    /// Names of common render model types
+    namespace RenderModelType {
+        /// Draw a mesh
+        auto constexpr Draw = "draw";
+
+        /// Push a stencil
+        auto constexpr StencilPush = "stencil.push";
+
+        /// Pop a stencil
+        auto constexpr StencilPop = "stencil.pop";
+    } // namespace RenderModelType
+
     /**
      Model for a render operation
 
@@ -51,6 +63,9 @@ namespace PJ {
         Mesh const* meshPtr{};
 
     public:
+        /// Specifies how this render model should be used by the render engine
+        String type = RenderModelType::Draw;
+
         /// @return Returns the material
         RenderMaterial* Material() const {
             return material;

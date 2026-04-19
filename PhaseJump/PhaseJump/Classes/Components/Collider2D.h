@@ -9,7 +9,7 @@
  */
 namespace PJ {
     /// 2D collider
-    class Collider2D : public Collider {
+    class Collider2D : public WorldComponent, public WorldSizeable {
     public:
         using TestHitFunc = std::function<bool(Vector2 position)>;
 

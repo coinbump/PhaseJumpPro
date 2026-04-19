@@ -31,7 +31,7 @@ public:
               c.SetColor(Color(progress, 1.0f - progress, 0, 1));
               c.owner->SetScale(Vector3(1.0f + progress, 1.0f + progress, 1));
 
-              c.model.SetBuildMeshFunc([](RendererModel const& model) {
+              c.core.model.SetBuildMeshFunc([](RendererModel const& model) {
                   EllipseMeshBuilder builder(model.WorldSize(), Angle::WithDegrees(5.0f));
                   return builder.BuildMesh();
               });
@@ -49,7 +49,7 @@ public:
         Repeat(count, [&]() { qb.And("Mesh").With<MeshRenderer>(Vector3(40, 20, 0)).Pop(); });
 
         qb.ModifyAll<MeshRenderer>([=](MeshRenderer& c, auto index) {
-              c.model.SetBuildMeshFunc([](RendererModel const& model) {
+              c.core.model.SetBuildMeshFunc([](RendererModel const& model) {
                   EllipseMeshBuilder builder(model.WorldSize(), Angle::WithDegrees(5.0f));
                   return builder.BuildMesh();
               });

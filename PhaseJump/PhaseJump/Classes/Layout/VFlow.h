@@ -1,7 +1,8 @@
 #pragma once
 
-#include "Layout2D.h"
+#include "Layout.h"
 #include "Vector2.h"
+#include "WorldComponent.h"
 #include "WorldNode.h"
 
 /*
@@ -12,12 +13,18 @@
 namespace PJ {
     /// Flow the objects with non-contextual spacing (object size doesn't
     /// matter)
-    class VFlow : public Layout2D {
+    class VFlow : public WorldComponent {
     public:
+        using Base = WorldComponent;
+        using This = VFlow;
+
+        Layout layout;
         float spacing{};
 
         VFlow(float spacing) :
-            spacing(spacing) {}
+            spacing(spacing) {
+            layout.applyLayoutFunc = [this](Layout&) { ApplyLayout(); };
+        }
 
         Vector3 Size() const {
             GUARDR(owner, {})
@@ -25,7 +32,7 @@ namespace PJ {
             return Vector3(0, spacing * (owner->ChildNodes().size() - 1), 0);
         }
 
-        void ApplyLayout() override {
+        void ApplyLayout() {
             GUARD(owner)
 
             auto firstPos = (Size().y / 2) * vecUp;
@@ -38,6 +45,19 @@ namespace PJ {
                 );
                 position += spacing * vecDown;
             }
+        }
+
+    protected:
+        // MARK: WorldComponent
+
+        void Awake() override {
+            Base::Awake();
+            layout.Awake(*this);
+        }
+
+        void Start() override {
+            Base::Start();
+            layout.Start(*this);
         }
     };
 } // namespace PJ

@@ -26,7 +26,7 @@ namespace PJ {
     };
 
     /// Pushes and pops an imGui id
-    struct ImGuiPushId {
+    struct [[nodiscard]] ImGuiPushId {
         ImGuiPushId(String value) {
             ImGui::PushID(value.c_str());
         }

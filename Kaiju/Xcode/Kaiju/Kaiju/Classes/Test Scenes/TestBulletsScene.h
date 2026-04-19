@@ -29,7 +29,7 @@ public:
 
                 emitter.spawnFunc = [](Emitter& emitter, EmitModel emit) {
                     auto owner = emitter.owner;
-                    auto node = MAKE<WorldNode>("Bullet");
+                    auto node = MAKE<WorldNode>(WorldNode::Config{ .name = "Bullet" });
 
                     auto texture =
                         DCAST<GLTexture>(owner->World()->resources.FindTexture("heart-full"));

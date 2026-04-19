@@ -11,6 +11,16 @@ Angle::Angle(Vector2 distance) {
         return;
     }
 
+    // Fast paths
+    if (distance.x == 0) {
+        this->value = (distance.y * vecDown < 0) ? 0.0f : 180.0f;
+        return;
+    }
+    if (distance.y == 0) {
+        this->value = (distance.x > 0) ? 90.0f : 270.0f;
+        return;
+    }
+
     float radians = atan2(distance.y * vecDown, distance.x);
     auto angle = Angle::WithDegrees((FloatMath::RadiansToDegrees * radians) + 90.0f);
     auto result = angle.Clipped();
@@ -18,10 +28,9 @@ Angle::Angle(Vector2 distance) {
 }
 
 Angle Angle::Clipped() const {
-    auto angle = Degrees();
-    angle = fmod(angle, 360.0f);
+    auto angle = fmod(Degrees(), 360.0f);
     if (angle < 0) {
-        angle = 360.0f - fmod(abs(angle), 360.0f);
+        angle += 360.0f;
     }
     return Angle::WithDegrees(angle);
 }

@@ -195,8 +195,13 @@ void Matrix4x4::LoadTranslate(Vector3 translate) {
     (*this)[15] = 1.0f;
 }
 
-void Matrix4x4::LoadPerspective(float fov_radians, float aspect, float zNear, float zFar) {
-    float f = 1.0f / tanf(fov_radians / 2.0f);
+void Matrix4x4::LoadPerspective(float fovRadians, float aspect, float zNear, float zFar) {
+    LoadIdentity();
+    GUARD(aspect != 0.0f)
+    GUARD(zNear != zFar)
+    GUARD(fovRadians != 0.0f)
+
+    float f = 1.0f / tanf(fovRadians / 2.0f);
 
     (*this)[0] = f / aspect;
     (*this)[1] = 0.0f;
@@ -215,7 +220,7 @@ void Matrix4x4::LoadPerspective(float fov_radians, float aspect, float zNear, fl
 
     (*this)[12] = 0.0f;
     (*this)[13] = 0.0f;
-    (*this)[14] = 2 * zFar * zNear / (zNear - zFar);
+    (*this)[14] = 2.0f * zFar * zNear / (zNear - zFar);
     (*this)[15] = 0.0f;
 }
 

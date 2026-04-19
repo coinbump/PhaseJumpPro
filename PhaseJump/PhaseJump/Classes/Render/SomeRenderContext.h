@@ -26,7 +26,7 @@ namespace PJ {
         virtual ~SomeRenderContext() {}
 
         /// @return Returns platform native id for render context object
-        virtual uint32_t RenderId() const = 0;
+        virtual RenderItemId RenderId() const = 0;
 
         /// Makes context current, for renders
         virtual void Bind() = 0;
@@ -46,6 +46,12 @@ namespace PJ {
         /// For on demand contexts (texture buffer)
         virtual void Build(Vector2Int size) {}
 
+        /// For on demand contexts (texture buffer): tear down and rebuild at the new size. Default
+        /// implementation just calls Build, for contexts that don't need explicit teardown.
+        virtual void Resize(Vector2Int size) {
+            Build(size);
+        }
+
         /// For viewport contexts (texture buffer)
         virtual SP<Texture> GetTexture() const {
             return nullptr;
@@ -57,7 +63,7 @@ namespace PJ {
         String id;
 
         /// Platform native id for render context object
-        uint32_t renderId{};
+        RenderItemId renderId{};
 
         /// Color used to clear this context for each render pass
         Color clearColor = Color::clear;
@@ -69,7 +75,7 @@ namespace PJ {
 
         // MARK: SomeRenderContext
 
-        uint32_t RenderId() const override {
+        RenderItemId RenderId() const override {
             return renderId;
         }
     };

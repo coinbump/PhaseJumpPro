@@ -50,7 +50,7 @@ namespace PJ {
 
      Each component provides composable logic for their owner node
      */
-    class WorldNode : public Base, public Treeable<WorldNode> {
+    class WorldNode : public Base {
     public:
         using Base = PJ::Base;
         using This = WorldNode;
@@ -110,7 +110,9 @@ namespace PJ {
         };
 
         WorldNode(Config const& config);
-        WorldNode(String name = "");
+
+        WorldNode() :
+            WorldNode(WorldNode::Config{}) {}
 
         virtual ~WorldNode() {}
 
@@ -305,6 +307,14 @@ namespace PJ {
             SP<WorldNode> result = MAKE<WorldNode>(args...);
             Add(result);
             return *result;
+        }
+
+        constexpr WorldNode& And(String name) {
+            return AddNode(WorldNode::Config{ .name = name });
+        }
+
+        constexpr WorldNode& And(const char* name) {
+            return AddNode(WorldNode::Config{ .name = name });
         }
 
         /// Quick build for adding a child node based on arguments
@@ -565,11 +575,11 @@ namespace PJ {
 
         // MARK: Treeable
 
-        WorldNode* Parent() const override {
+        WorldNode* Parent() const {
             return tree.Parent();
         }
 
-        void SetParent(WorldNode* value) override {
+        void SetParent(WorldNode* value) {
             tree.SetParent(value);
         }
 
