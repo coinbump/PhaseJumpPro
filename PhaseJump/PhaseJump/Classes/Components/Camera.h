@@ -51,11 +51,34 @@ namespace PJ {
 
         virtual void RenderStart(SomeRenderContext* context) {}
 
-        /// Transforms position from render context to screen space coordinates
+        /// Transforms position from camera coordinates to screen space coordinates
         virtual Vector2 ContextToScreen(Vector3 position) = 0;
 
-        /// Transforms position from screen space to render context coordinates
+        /// Transforms position from screen space to camera coordinates
         virtual Vector3 ScreenToContext(Vector2 position) = 0;
+
+        /// Transforms a position from this camera's local cartesian coordinate system into
+        /// outer-world coordinates.
+        virtual Vector3 LocalToWorld(Vector3 localPos) {
+            return localPos;
+        }
+
+        /// Inverse of LocalToWorld. Converts an outer-world position into this camera's local
+        /// cartesian coordinate system.
+        virtual Vector3 WorldToLocal(Vector3 worldPos) {
+            return worldPos;
+        }
+
+        /// Converts a screen position into this camera's local cartesian frame — the frame
+        /// that descendant nodes' WorldModelMatrix positions live in.
+        virtual Vector3 ScreenToLocal(Vector2 screen) {
+            return ScreenToContext(screen);
+        }
+
+        /// Inverse of ScreenToLocal.
+        virtual Vector2 LocalToScreen(Vector3 localPos) {
+            return ContextToScreen(localPos);
+        }
 
         virtual bool IsCulled(Mesh const& mesh) {
             return false;

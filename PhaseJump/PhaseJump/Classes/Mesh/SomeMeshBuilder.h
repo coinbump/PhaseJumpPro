@@ -1,8 +1,6 @@
 #pragma once
 
 #include "Mesh.h"
-#include "VertexList.h"
-#include "WorldComponent.h"
 
 /*
  RATING: 5+ stars

@@ -100,3 +100,96 @@ TEST(Viewport, IsViewportCameraType) {
     Viewport sut;
     EXPECT_EQ(CameraType::Viewport, sut.type);
 }
+
+TEST(Viewport, LocalToWorldIdentityAtOriginWithUnitScale) {
+    SUT sut;
+    sut.viewport->worldSize = Vector2(100, 100);
+
+    EXPECT_EQ(Vector3(0, 0, 0), sut.viewport->LocalToWorld(Vector3(0, 0, 0)));
+    EXPECT_EQ(Vector3(30, 0, 0), sut.viewport->LocalToWorld(Vector3(30, 0, 0)));
+    EXPECT_EQ(Vector3(-20, 40, 0), sut.viewport->LocalToWorld(Vector3(-20, 40, 0)));
+}
+
+TEST(Viewport, LocalToWorldAppliesOwnerScale) {
+    SUT sut;
+    sut.viewport->worldSize = Vector2(100, 100);
+    sut.viewport->owner->transform.SetScale(Vector3(2, 2, 1));
+
+    // Owner position stays fixed — scale only stretches around it.
+    EXPECT_EQ(Vector3(0, 0, 0), sut.viewport->LocalToWorld(Vector3(0, 0, 0)));
+    EXPECT_EQ(Vector3(60, 0, 0), sut.viewport->LocalToWorld(Vector3(30, 0, 0)));
+    EXPECT_EQ(Vector3(-40, 80, 0), sut.viewport->LocalToWorld(Vector3(-20, 40, 0)));
+}
+
+TEST(Viewport, LocalToWorldAppliesOwnerPositionAndScale) {
+    SUT sut;
+    sut.viewport->worldSize = Vector2(100, 100);
+    sut.viewport->owner->transform.SetWorldPosition(Vector3(10, 5, 0));
+    sut.viewport->owner->transform.SetScale(Vector3(2, 3, 1));
+
+    EXPECT_EQ(Vector3(10, 5, 0), sut.viewport->LocalToWorld(Vector3(10, 5, 0)));
+    // Offset (30, 0) from owner scales to (60, 0) then shifts by owner pos.
+    EXPECT_EQ(Vector3(70, 5, 0), sut.viewport->LocalToWorld(Vector3(40, 5, 0)));
+    // Negative offset scales too.
+    EXPECT_EQ(Vector3(-10, -25, 0), sut.viewport->LocalToWorld(Vector3(0, -5, 0)));
+}
+
+TEST(Viewport, WorldToLocalInvertsLocalToWorld) {
+    SUT sut;
+    sut.viewport->worldSize = Vector2(100, 100);
+    sut.viewport->owner->transform.SetWorldPosition(Vector3(10, 5, 0));
+    sut.viewport->owner->transform.SetScale(Vector3(2, 3, 1));
+
+    for (auto sample : VectorList<Vector3>{ Vector3(0, 0, 0), Vector3(30, -20, 0),
+                                            Vector3(-45, 17, 0), Vector3(1000, -1000, 0) }) {
+        auto world = sut.viewport->LocalToWorld(sample);
+        auto roundTrip = sut.viewport->WorldToLocal(world);
+        EXPECT_EQ(sample, roundTrip);
+    }
+}
+
+TEST(Viewport, WorldToLocalSurvivesZeroScale) {
+    SUT sut;
+    sut.viewport->worldSize = Vector2(100, 100);
+    sut.viewport->owner->transform.SetWorldPosition(Vector3(10, 5, 0));
+    sut.viewport->owner->transform.SetScale(Vector3(0, 0, 0));
+
+    // Zero scale is treated as identity per-axis to avoid NaN; output collapses onto owner pos.
+    auto result = sut.viewport->WorldToLocal(Vector3(123, 456, 0));
+    EXPECT_EQ(Vector3(123, 456, 0), result);
+}
+
+TEST(Viewport, CameraBaseDefaultsToIdentity) {
+    auto world = MAKE<World>();
+    auto renderContext =
+        NEW<MockRenderContext>(MockRenderContext::Config{ .size = { 400, 200 },
+                                                          .pixelSize = { 400, 200 } });
+    world->renderContext = std::move(renderContext);
+
+    auto& camera = world->AddNode().AddComponent<OrthoCamera>();
+    // OrthoCamera does not override LocalToWorld / WorldToLocal — the base Camera identity
+    // behavior applies since ortho's local frame already matches the outer world.
+    EXPECT_EQ(Vector3(42, -13, 7), camera.LocalToWorld(Vector3(42, -13, 7)));
+    EXPECT_EQ(Vector3(42, -13, 7), camera.WorldToLocal(Vector3(42, -13, 7)));
+
+    // ScreenToLocal falls back to ScreenToContext for cameras whose local frame matches the
+    // outer world; LocalToScreen is symmetric.
+    EXPECT_EQ(camera.ScreenToContext(Vector2(10, 20)), camera.ScreenToLocal(Vector2(10, 20)));
+    EXPECT_EQ(
+        camera.ContextToScreen(Vector3(3, 4, 0)), camera.LocalToScreen(Vector3(3, 4, 0))
+    );
+}
+
+TEST(Viewport, ScreenToLocalRoundTripsThroughOwnerScale) {
+    SUT sut;
+    sut.viewport->worldSize = Vector2(100, 100);
+    sut.viewport->owner->transform.SetScale(Vector3(2, 2, 1));
+
+    // The outer camera is 400x200 with world == screen (1:1). A click at screen (260, 100)
+    // maps to outer world (60, 0). The 2x-scaled viewport at origin pulls that back to its
+    // local frame at (30, 0).
+    EXPECT_EQ(Vector3(30, 0, 0), sut.viewport->ScreenToLocal(Vector2(260, 100)));
+
+    // Round trip: local (30, 0) should map back to screen (260, 100).
+    EXPECT_EQ(Vector2(260, 100), sut.viewport->LocalToScreen(Vector3(30, 0, 0)));
+}

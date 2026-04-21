@@ -6,13 +6,19 @@
 #include "Font.h"
 #include "Funcs.h"
 #include "GraphNodeTool.h"
+#include "Matrix4x4.h"
+#include "Prefab.h"
 #include "RenderContextModel.h"
 #include "Renderer.h"
 #include "ShaderProgram.h"
 #include "SomePlatformWindow.h"
+#include "SomeRenderContext.h"
 #include "SomeRenderEngine.h"
+#include "SomeUIEventPoller.h"
 #include "Viewport.h"
+#include "WorldNode.h"
 #include <stdio.h>
+#include <TSMatrix4D.h>
 
 // #define PROFILE
 
@@ -84,6 +90,8 @@ World::World() {
     Override(renderLimiter.onFireFunc, overrideFunc);
 }
 
+World::~World() = default;
+
 void World::Add(SP<SomeWorldSystem> const& system) {
     GUARD(system)
     GUARD_LOG(system->World() == nullptr, "ERROR. Can't add owned system to world")
@@ -146,12 +154,13 @@ Camera* World::MainCamera() const {
     DevProfiler devProfiler("MainCamera", [](String value) { cout << value; });
 #endif
 
-    if (!mainCamera.expired()) {
-        auto cameraResult = mainCamera.lock().get();
-
-        // Make sure the cached reference isn't an orphan
-        if (cameraResult->owner && cameraResult->owner->World()) {
-            return cameraResult;
+    // Hold the lock for the full check so the cached camera can't be freed
+    // between the truthiness test and the return.
+    if (auto cached = mainCamera.lock()) {
+        // Confirm the cached camera still belongs to *this* world — a camera re-parented
+        // into another world must not be returned here.
+        if (cached->owner && cached->owner->World() == this) {
+            return cached.get();
         }
     }
 
@@ -274,17 +283,50 @@ void World::ProcessUIEvents(UIEventList const& uiEvents) {
 }
 
 Matrix4x4 World::LocalModelMatrix(WorldNode const& node) {
-    Matrix4x4 translateMatrix, scaleMatrix, rotationMatrix;
+    Matrix4x4 translateMatrix, scaleMatrix, xRotation, yRotation, zRotation;
     translateMatrix.LoadTranslate(node.transform.LocalPosition() + node.transform.Value().offset);
     scaleMatrix.LoadScale(node.transform.Scale());
 
-    // This is 2D rotation only
-    // FUTURE: support 3D rotation if needed.
-    rotationMatrix.LoadZRadRotation(Angle::WithDegrees(node.transform.Rotation().z).Radians());
+    Vector3 const rotation = node.transform.Rotation();
+    xRotation.LoadXRadRotation(Angle::WithDegrees(rotation.x).Radians());
+    yRotation.LoadYRadRotation(Angle::WithDegrees(rotation.y).Radians());
+    zRotation.LoadZRadRotation(Angle::WithDegrees(rotation.z).Radians());
 
+    auto rotationMatrix = zRotation * yRotation * xRotation;
     auto m1 = translateMatrix * rotationMatrix;
     auto modelMatrix = m1 * scaleMatrix;
     return modelMatrix;
+}
+
+Matrix4x4 World::AncestorChainMatrix(WorldNode const* startNode) {
+    Matrix4x4 modelMatrix;
+    modelMatrix.LoadIdentity();
+
+    bool foundViewport = false;
+    auto cursor = startNode;
+    while (cursor) {
+        if (!foundViewport && cursor->TypeComponent<Viewport>()) {
+            foundViewport = true;
+        }
+
+        Matrix4x4 cursorMatrix;
+        if (foundViewport) {
+            cursorMatrix.LoadTranslate(
+                cursor->transform.LocalPosition() + cursor->transform.Value().offset
+            );
+        } else {
+            cursorMatrix = LocalModelMatrix(*cursor);
+        }
+
+        modelMatrix = cursorMatrix * modelMatrix;
+        cursor = cursor->Parent();
+    }
+
+    return modelMatrix;
+}
+
+Matrix4x4 World::ParentWorldModelMatrix(WorldNode const& node) {
+    return AncestorChainMatrix(node.Parent());
 }
 
 Matrix4x4 World::WorldModelMatrix(WorldNode const& node) {
@@ -292,42 +334,7 @@ Matrix4x4 World::WorldModelMatrix(WorldNode const& node) {
     // DevProfiler devProfiler("WorldModelMatrix", [](String value) { cout << value; });
 #endif
 
-    auto modelMatrix = LocalModelMatrix(node);
-    auto parent = node.Parent();
-
-    // Transform child to parent matrix.
-    // Once a Viewport ancestor is found, that node and every ancestor above it contribute
-    // only their translation: descendants render into the viewport's offscreen context,
-    // where rotation and scale of the viewport node and outer hierarchy don't apply.
-    // Translation is still folded in so descendants follow the viewport (and the window
-    // hosting it) as it moves around the parent world.
-    bool foundViewport = false;
-
-    while (parent) {
-        if (!foundViewport && parent->TypeComponent<Viewport>()) {
-            foundViewport = true;
-        }
-
-        Matrix4x4 parentModelMatrix;
-        if (foundViewport) {
-            parentModelMatrix.LoadTranslate(
-                parent->transform.LocalPosition() + parent->transform.Value().offset
-            );
-        } else {
-            parentModelMatrix = LocalModelMatrix(*parent);
-        }
-
-        modelMatrix = parentModelMatrix * modelMatrix;
-
-        parent = parent->Parent();
-    }
-
-    Matrix4x4 worldScaleMatrix;
-    worldScaleMatrix.LoadIdentity();
-
-    modelMatrix = worldScaleMatrix * modelMatrix;
-
-    return modelMatrix;
+    return AncestorChainMatrix(node.Parent()) * LocalModelMatrix(node);
 }
 
 FinishType World::OnUpdate(TimeSlice _time) {
@@ -428,13 +435,6 @@ ScreenPosition World::WorldToScreen(WorldPosition worldPos) const {
     return result;
 }
 
-#include "Matrix4x4.h"
-#include "World.h"
-#include "WorldNode.h"
-#include <TSMatrix4D.h>
-
-using namespace PJ;
-
 WorldPosition PJ::ScreenToWorld(SomeWorldComponent const& component, ScreenPosition screenPos) {
     auto owner = component.Node();
     GUARDR(owner, {})
@@ -459,10 +459,14 @@ LocalPosition PJ::ScreenToLocal(SomeWorldComponent const& component, ScreenPosit
     auto world = owner->World();
     GUARDR(world, result)
 
-    auto camera = world->MainCamera();
+    // Use the node's host camera so sub-host cameras (e.g. a Viewport applying an owner scale
+    // under Window ContentResizeType::Scale) undo their transform as part of the screen->world
+    // conversion. WorldModelMatrix already drops scale for viewport ancestors, so the result
+    // lands in the same frame the node's local matrix inverts against.
+    auto camera = owner->HostCamera();
     GUARDR(camera, result)
 
-    auto worldPosition = camera->ScreenToContext(screenPos);
+    auto worldPosition = camera->ScreenToLocal(screenPos);
 
     auto worldModelMatrix = world->WorldModelMatrix(*owner);
     Terathon::Point3D point(worldPosition.x, worldPosition.y, worldPosition.z);

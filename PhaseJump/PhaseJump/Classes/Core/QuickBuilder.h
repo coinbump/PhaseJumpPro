@@ -174,6 +174,23 @@ namespace PJ {
             OrthoStandardConfig config = { .clearColor = Color::white, .isImGuiEnabled = true }
         );
 
+        struct PerspectiveStandardConfig {
+            Color clearColor = Color::white;
+            Angle fov = Angle::WithDegrees(60);
+            float nearClip = 1.0f;
+            float farClip = 10000.0f;
+            bool isImGuiEnabled = true;
+        };
+
+        /// Add standard perspective camera and associated components
+        This& PerspectiveStandard(
+            PerspectiveStandardConfig config = { .clearColor = Color::white,
+                                                 .fov = Angle::WithDegrees(60),
+                                                 .nearClip = 1.0f,
+                                                 .farClip = 10000.0f,
+                                                 .isImGuiEnabled = true }
+        );
+
         /// Scales a node with a fixed size to keep it proportional to the size of the window
         This& ScaleWithWindow(Vector3 worldSize, float ratio = 1.0f);
 

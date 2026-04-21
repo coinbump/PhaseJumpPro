@@ -21,6 +21,7 @@
 #include "NodesRenderProcessor.h"
 #include "OrthoCamera.h"
 #include "PadViewLayout.h"
+#include "PerspectiveCamera.h"
 #include "QuadFrameMeshBuilder.h"
 #include "RenderFeature.h"
 #include "RotateKSteering2D.h"
@@ -35,6 +36,7 @@
 #include "SomeUIEvent.h"
 #include "SpriteRenderer.h"
 #include "Theme.h"
+#include "Viewport.h"
 #include "Window.h"
 #include "World.h"
 
@@ -63,6 +65,9 @@ This& QuickBuilder::Repeat(int count, std::function<void(This&)> func) {
 }
 
 This& QuickBuilder::OrthoStandard(OrthoStandardConfig config) {
+    /// If there is a viewport we're in a window, don't add the camera
+    GUARDR(!Node().TypeComponent<Viewport>(), *this)
+
     return With<OrthoCamera>().With<SimpleRaycaster2D>().ModifyLatest<OrthoCamera>([=](auto& camera
                                                                                    ) {
         camera.clearColor = config.clearColor;
@@ -97,8 +102,59 @@ This& QuickBuilder::OrthoStandard(OrthoStandardConfig config) {
     });
 }
 
+This& QuickBuilder::PerspectiveStandard(PerspectiveStandardConfig config) {
+    return With<PerspectiveCamera>().ModifyLatest<PerspectiveCamera>([=](auto& camera) {
+        camera.clearColor = config.clearColor;
+        camera.fov = config.fov;
+        camera.nearClip = config.nearClip;
+        camera.farClip = config.farClip;
+
+        auto showMeshRenderProcessor = MAKE<ShowMeshRenderProcessor>();
+        showMeshRenderProcessor->Enable(false);
+        camera.processingModel.Add(showMeshRenderProcessor);
+
+        auto showBoundsRenderProcessor = MAKE<ShowBoundsRenderProcessor>();
+        showBoundsRenderProcessor->Enable(false);
+        camera.processingModel.Add(showBoundsRenderProcessor);
+
+        // Important: always batch process, or renders will be slow
+        auto batchRenderProcessor = MAKE<BatchByMaterialRenderProcessor>();
+        camera.processingModel.Add(batchRenderProcessor);
+
+        if (config.isImGuiEnabled) {
+            RenderProcessor::Config renderProcessorConfig{ .name = "Nodes imGui",
+                                                           .phases = { RenderPhaseId::DrawPost } };
+            auto nodesImGuiRenderProcessor = MAKE<NodesRenderProcessor>(
+                NodesRenderProcessor::Config{
+                    .signalId = "render.immediate",
+                },
+                renderProcessorConfig
+            );
+            camera.processingModel.Add(nodesImGuiRenderProcessor);
+        }
+    });
+}
+
 This& QuickBuilder::ScaleWithWindow(Vector3 worldSize, float ratio) {
-    return With<WorldComponent>().ModifyLatest<WorldComponent>([=](auto& component) {
+    return With<WorldComponent>().ModifyLatest<WorldComponent>([=](WorldComponent& component) {
+        if (component.IsDescendant<Window>()) {
+            auto ownerNode = component.Node();
+            GUARD(ownerNode)
+
+            Window* window = nullptr;
+            for (auto cursor = ownerNode->Parent(); cursor; cursor = cursor->Parent()) {
+                window = cursor->TypeComponent<Window>();
+                if (window) {
+                    break;
+                }
+            }
+            GUARD(window)
+
+            window->contentResizeType = ContentResizeType::Scale;
+            window->ApplyLayout();
+            return;
+        }
+
         auto sizeFunc = [=](SomeWorldComponent& component) {
             auto owner = component.Node();
             GUARD(owner)
@@ -114,7 +170,7 @@ This& QuickBuilder::ScaleWithWindow(Vector3 worldSize, float ratio) {
         };
         sizeFunc(component);
 
-        component.template AddSignalHandler<WindowResizeUIEvent>(
+        component.AddSignalHandler<WindowResizeUIEvent>(
             { .id = SignalId::PlatformWindowResize,
               .func = [sizeFunc](auto& component, auto& event) { sizeFunc(component); } }
         );
@@ -140,13 +196,10 @@ This& QuickBuilder::SizeWithWindow(Vector2 ratio) {
         component.template AddSignalHandler<WindowResizeUIEvent>(
             { .id = SignalId::PlatformWindowResize,
               .func =
-                  [platformWindowSizeFunc, owner](auto& component, auto& event) {
+                  [platformWindowSizeFunc](auto& component, auto& event) {
                       // PJ::Window resize overrides outer OS window resize when nested
-                      for (auto cursor = owner->Parent(); cursor; cursor = cursor->Parent()) {
-                          if (cursor->template TypeComponent<Window>()) {
-                              return;
-                          }
-                      }
+                      auto worldComponent = dynamic_cast<WorldComponent*>(&component);
+                      GUARD(worldComponent && !worldComponent->template IsDescendant<Window>())
                       platformWindowSizeFunc(component);
                   } }
         );

@@ -1,8 +1,13 @@
 #include "gtest/gtest.h"
-#include "WorldNode.h"
-#include "WorldComponent.h"
-#include "World.h"
+#include "MockRenderContext.h"
+#include "OrthoCamera.h"
 #include "StringUtils.h"
+#include "Viewport.h"
+#include "World.h"
+#include "WorldComponent.h"
+#include "WorldNode.h"
+
+using namespace PJTest;
 
 using namespace PJ;
 using namespace std;
@@ -897,11 +902,50 @@ TEST(WorldNode, RemoveAllChildMap)
     auto world = MAKE<World>();
     auto sut = MAKE<WorldNode>();
     world->Add(sut);
-    
+
     auto child = MAKE<WorldNode>(WorldNode::Config{ .id = "id" });
     sut->Add(child);
-    
+
     EXPECT_EQ(child.get(), (*sut)["id"]);
     sut->RemoveAllChildren();
     EXPECT_EQ(nullptr, (*sut)["id"]);
+}
+
+TEST(WorldNode, HostCameraFallsBackToMainCamera)
+{
+    auto world = MAKE<World>();
+    auto renderContext = NEW<MockRenderContext>(MockRenderContext::Config{
+        .size = { 400, 200 }, .pixelSize = { 400, 200 } });
+    world->renderContext = std::move(renderContext);
+
+    auto& mainCamera = world->AddNode().AddComponent<OrthoCamera>();
+
+    // A node with no Camera ancestors should fall through to the world's main camera.
+    auto& node = world->AddNode();
+    EXPECT_EQ(&mainCamera, node.HostCamera());
+}
+
+TEST(WorldNode, HostCameraPicksNearestAncestorCamera)
+{
+    auto world = MAKE<World>();
+    auto renderContext = NEW<MockRenderContext>(MockRenderContext::Config{
+        .size = { 400, 200 }, .pixelSize = { 400, 200 } });
+    world->renderContext = std::move(renderContext);
+
+    world->AddNode().AddComponent<OrthoCamera>();
+
+    auto& outerViewportNode = world->AddNode();
+    auto& outerViewport = outerViewportNode.AddComponent<Viewport>();
+
+    auto& innerViewportNode = outerViewportNode.AddNode();
+    auto& innerViewport = innerViewportNode.AddComponent<Viewport>();
+
+    auto& leaf = innerViewportNode.AddNode();
+
+    // Nearest Camera ancestor wins, so the inner viewport hosts the leaf.
+    EXPECT_EQ(&innerViewport, leaf.HostCamera());
+
+    // A node directly under the outer viewport (no inner viewport in between) picks the outer.
+    auto& outerLeaf = outerViewportNode.AddNode();
+    EXPECT_EQ(&outerViewport, outerLeaf.HostCamera());
 }

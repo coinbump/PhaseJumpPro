@@ -7,7 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3C456EC78B89AA0A3F472F53 /* TestPerspectiveScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3F5A8F55784F104E7B512D59 /* TestPerspectiveScene.cpp */; };
 		3E74BA225FC7749A832CFFC8 /* CanvasAppScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9BC7877CE88D5DCAA7AB0A08 /* CanvasAppScene.cpp */; };
+		5F4BE23A230A65E64EDF938E /* TestPerspectiveScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3F5A8F55784F104E7B512D59 /* TestPerspectiveScene.cpp */; };
 		5F589880F9E4D23D5CC780A8 /* DesktopAppScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 956EF6F6DF65FC423E953802 /* DesktopAppScene.cpp */; };
 		7F46599AB1FC8988F643378D /* DesktopAppScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 956EF6F6DF65FC423E953802 /* DesktopAppScene.cpp */; };
 		CD1D467F2C9368BA00839F39 /* ExampleLifeAgentGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDDB6F7E2C8E56150073D3A2 /* ExampleLifeAgentGroup.cpp */; };
@@ -135,6 +137,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		2379590A55B119F15D3E9519 /* TestPerspectiveScene.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = TestPerspectiveScene.h; sourceTree = "<group>"; };
+		3F5A8F55784F104E7B512D59 /* TestPerspectiveScene.cpp */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; path = TestPerspectiveScene.cpp; sourceTree = "<group>"; };
 		70C293CD3D0872E830FB4ED4 /* CanvasAppScene.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = CanvasAppScene.h; sourceTree = "<group>"; };
 		956EF6F6DF65FC423E953802 /* DesktopAppScene.cpp */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; path = DesktopAppScene.cpp; sourceTree = "<group>"; };
 		9BC7877CE88D5DCAA7AB0A08 /* CanvasAppScene.cpp */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; path = CanvasAppScene.cpp; sourceTree = "<group>"; };
@@ -149,7 +153,6 @@
 		CD21C6892C855770004EE116 /* TestZOrderScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestZOrderScene.h; sourceTree = "<group>"; };
 		CD21C6C82C8819E4004EE116 /* TestEditBezierScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestEditBezierScene.h; sourceTree = "<group>"; };
 		CD21C6CD2C8908E0004EE116 /* TestThemeScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestThemeScene.h; sourceTree = "<group>"; };
-		CD21C6CE2C891993004EE116 /* TestUIScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestUIScene.h; sourceTree = "<group>"; };
 		CD2A601A2B39EAFC000B801B /* SwiftTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftTest.swift; sourceTree = "<group>"; };
 		CD372FB42CC6F7C700D79CA5 /* KaijuWorldSystem.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = KaijuWorldSystem.cpp; sourceTree = "<group>"; };
 		CD372FBC2CC8037400D79CA5 /* SDKIncludes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDKIncludes.h; sourceTree = "<group>"; };
@@ -495,7 +498,6 @@
 				CD86A73929F0C1540015BFCE /* TestSlicedTextureScene.h */,
 				CD837E4D2A00AFCF00467542 /* TestTextureScene.h */,
 				CD21C6CD2C8908E0004EE116 /* TestThemeScene.h */,
-				CD21C6CE2C891993004EE116 /* TestUIScene.h */,
 				CD21C6892C855770004EE116 /* TestZOrderScene.h */,
 				CD815FF22CB24B1D00FBB665 /* TestSteeringScene.h */,
 				CD815FF92CB2E29200FBB665 /* TestBulletsScene.h */,
@@ -503,6 +505,8 @@
 				CD51DBDA2CEAE45300658590 /* TestViewsScene.cpp */,
 				CD8E90E02F903070005E864E /* TestPolygonScene.h */,
 				CD8E90E12F903070005E864E /* TestPolygonScene.cpp */,
+				2379590A55B119F15D3E9519 /* TestPerspectiveScene.h */,
+				3F5A8F55784F104E7B512D59 /* TestPerspectiveScene.cpp */,
 			);
 			path = "Test Scenes";
 			sourceTree = "<group>";
@@ -737,6 +741,7 @@
 				CDEC25F32C9BD94F00FF14A2 /* ExampleMatrixBoardViewAnimationScene.cpp in Sources */,
 				E4040D58BF3B28931AE12319 /* CanvasAppScene.cpp in Sources */,
 				5F589880F9E4D23D5CC780A8 /* DesktopAppScene.cpp in Sources */,
+				3C456EC78B89AA0A3F472F53 /* TestPerspectiveScene.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -772,6 +777,7 @@
 				CDEC25F22C9BD94F00FF14A2 /* ExampleMatrixBoardViewAnimationScene.cpp in Sources */,
 				3E74BA225FC7749A832CFFC8 /* CanvasAppScene.cpp in Sources */,
 				7F46599AB1FC8988F643378D /* DesktopAppScene.cpp in Sources */,
+				5F4BE23A230A65E64EDF938E /* TestPerspectiveScene.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

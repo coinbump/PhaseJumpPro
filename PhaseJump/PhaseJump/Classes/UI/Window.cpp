@@ -224,6 +224,9 @@ void Window::Awake() {
     if (buildContentFunc) {
         buildContentFunc(*_contentNode);
     }
+
+    // Baseline content size for scale resize
+    baseContentSize = Vector2(size.x, size.y - effectiveTitleBarHeight);
 }
 
 SP<WorldNode> Window::BuildResizeNode(String name, HResize hResize, VResize vResize) {
@@ -359,38 +362,49 @@ void Window::ApplyLayout(Vector2 size) {
         }
     }
 
-    auto viewport = content->TypeComponent<Viewport>();
-    if (viewport) {
-        viewport->worldSize = Vector2(size.x, contentHeight);
-    }
+    bool const canScale = contentResizeType == ContentResizeType::Scale && baseContentSize.x > 0 &&
+                          baseContentSize.y > 0;
 
-    auto contentRenderer = content->TypeComponent<SpriteRenderer>();
-    if (contentRenderer) {
-        contentRenderer->SetWorldSize(Vector3(size.x, contentHeight, 0));
+    if (canScale) {
+        // Scale the content node
+        float const scaleX = size.x / baseContentSize.x;
+        float const scaleY = contentHeight / baseContentSize.y;
+        content->transform.SetScale(Vector3(scaleX, scaleY, 1));
+    } else {
+        auto viewport = content->TypeComponent<Viewport>();
+        if (viewport) {
+            viewport->worldSize = Vector2(size.x, contentHeight);
+        }
 
-        // Re-bind the viewport's texture — Resize rebuilds the backing texture, so the old one
-        // the sprite was holding is now dead.
-        if (viewport && viewport->renderContext) {
-            auto texture = viewport->renderContext->GetTexture();
-            auto material = contentRenderer->core.model.material;
-            if (texture && material) {
-                material->SetTexture(texture);
-                contentRenderer->core.model.SetMeshNeedsBuild();
+        auto contentRenderer = content->TypeComponent<SpriteRenderer>();
+        if (contentRenderer) {
+            contentRenderer->SetWorldSize(Vector3(size.x, contentHeight, 0));
+
+            // Re-bind the viewport's texture — Resize rebuilds the backing texture, so the old one
+            // the sprite was holding is now dead.
+            if (viewport && viewport->renderContext) {
+                auto texture = viewport->renderContext->GetTexture();
+                auto material = contentRenderer->core.model.material;
+                if (texture && material) {
+                    material->SetTexture(texture);
+                    contentRenderer->core.model.SetMeshNeedsBuild();
+                }
+            }
+        }
+
+        for (auto& child : content->Children()) {
+            for (auto& component : child->Components()) {
+                auto worldSizeable = DCAST<WorldSizeable>(component);
+                GUARD_CONTINUE(worldSizeable)
+
+                worldSizeable->SetWorldSize(Vector3(size.x, contentHeight, 0));
             }
         }
     }
+
     content->transform.SetLocalPosition(
         Vector3(0, halfWindowHeight - effectiveTitleBarHeight - halfContentHeight, 0)
     );
-
-    for (auto& child : content->Children()) {
-        for (auto& component : child->Components()) {
-            auto worldSizeable = DCAST<WorldSizeable>(component);
-            GUARD_CONTINUE(worldSizeable)
-
-            worldSizeable->SetWorldSize(Vector3(size.x, contentHeight, 0));
-        }
-    }
 
     if (auto overlay = frameOverlayNode.lock()) {
         for (auto& component : overlay->Components()) {

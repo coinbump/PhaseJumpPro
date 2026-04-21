@@ -37,6 +37,20 @@ namespace PJ {
         /// Converts SDL3 screen coords to buffer-local context coords
         Vector3 ScreenToContext(Vector2 position) override;
 
+        /// Maps a position in the viewport's local cartesian space (where descendant nodes
+        /// report their WorldModelMatrix-based world positions) into outer-world coordinates,
+        Vector3 LocalToWorld(Vector3 localPos) override;
+
+        /// Inverse of LocalToWorld.
+        Vector3 WorldToLocal(Vector3 worldPos) override;
+
+        /// Routes screen position through the outer main camera and into this viewport's local
+        /// frame, so a raw screen click lands where descendant nodes live.
+        Vector3 ScreenToLocal(Vector2 screen) override;
+
+        /// Inverse of ScreenToLocal.
+        Vector2 LocalToScreen(Vector3 localPos) override;
+
         // MARK: SomeWorldComponent
 
         String TypeName() const override {

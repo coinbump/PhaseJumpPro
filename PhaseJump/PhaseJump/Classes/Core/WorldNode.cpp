@@ -1,4 +1,5 @@
 #include "WorldNode.h"
+#include "Camera.h"
 #include "Color.h"
 #include "Renderer.h"
 #include "World.h"
@@ -387,6 +388,15 @@ Vector3 WorldNode::WorldToLocal(Vector3 worldPos) {
 
     auto result = localToWorldMatrix.MultiplyPoint(worldPos);
     return result;
+}
+
+Camera* WorldNode::HostCamera() const {
+    auto camera = GetAncestorComponent<Camera>();
+    if (camera) {
+        return camera;
+    }
+    GUARDR(world, nullptr)
+    return world->MainCamera();
 }
 
 float WorldNode::Opacity() const {

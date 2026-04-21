@@ -1,4 +1,5 @@
 #include "EditorImGuiSceneTreePainter.h"
+#include "Camera.h"
 #include "EditorTypes.h"
 #include "EditorWorldSystem.h"
 #include "imgui.h"

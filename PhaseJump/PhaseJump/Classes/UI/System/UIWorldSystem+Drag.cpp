@@ -3,9 +3,31 @@
 #include "DropTarget.h"
 #include "UIWorldSystem.h"
 #include "World.h"
+#include "WorldNode.h"
 
 using namespace std;
 using namespace PJ;
+
+namespace {
+    /// Converts a screen position into the dragged node's world frame. Routes through the
+    /// node's host camera so sub-host cameras (e.g. a scaled Viewport) undo their owner
+    /// transform, keeping drag input in the same frame as owner.WorldPosition() and
+    /// SetWorldPositionXY (both use ParentWorldModelMatrix).
+    Vector3 DragScreenToWorld(
+        Camera* fallbackCamera, SP<DragHandler> const& dragged, ScreenPosition screen
+    ) {
+        Camera* camera = fallbackCamera;
+        if (dragged) {
+            if (auto node = dragged->Node()) {
+                if (auto host = node->HostCamera()) {
+                    camera = host;
+                }
+            }
+        }
+        GUARDR(camera, Vector3{})
+        return camera->ScreenToLocal(screen);
+    }
+} // namespace
 
 void UIWorldSystem::OnDragUpdate() {
     GUARD(IsDragging())
@@ -21,7 +43,7 @@ void UIWorldSystem::OnDragUpdate() {
 
         auto inputScreenPosition = mouseDevice->GetScreenPosition();
         auto inputWorldPosition =
-            PJ::WorldPosition(GetCamera()->ScreenToContext(Vector3(inputScreenPosition)));
+            PJ::WorldPosition(DragScreenToWorld(GetCamera(), dragged, inputScreenPosition));
         dragged->OnDragUpdate(WorldPosition(inputWorldPosition));
     } else {
         OnDragEnd();
@@ -91,8 +113,9 @@ void UIWorldSystem::OnDragEnd() {
 
     // Let the drag handler finish before checking drop targets
     auto inputScreenPosition = mouseDevice->GetScreenPosition();
-    auto inputWorldPosition =
-        PJ::WorldPosition(GetCamera()->ScreenToContext(Vector3(inputScreenPosition)));
+    auto inputWorldPosition = PJ::WorldPosition(
+        DragScreenToWorld(GetCamera(), dragModel->DragHandler(), inputScreenPosition)
+    );
     dragModel->DragHandler()->OnDragEnd(inputWorldPosition);
 
     auto activeDropTarget = this->activeDropTarget.lock();

@@ -1,10 +1,12 @@
 #pragma once
 
+#include "DevLog.h"
 #include "Macros.h"
 #include "StringUtils.h"
 #include <assert.h>
 #include <functional>
 #include <iostream>
+#include <sstream>
 #include <stdio.h>
 
 /*
@@ -32,6 +34,10 @@ namespace PJ {
             ([&] { std::cout << args; }(), ...);
             std::cout << std::endl;
         }
+
+        std::stringstream stream;
+        ([&] { stream << args; }(), ...);
+        devLog << stream.str();
     }
 
     template <class... Arguments>

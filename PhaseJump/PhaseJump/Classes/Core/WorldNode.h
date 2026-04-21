@@ -25,6 +25,7 @@ namespace PJ {
     class World;
     class Matrix4x4;
     class OrthoCamera;
+    class Camera;
     class Theme;
     class DragHandler2D;
     class Cancellable;
@@ -497,6 +498,10 @@ namespace PJ {
         /// @return Returns converted world point in local coordinates
         Vector3 WorldToLocal(Vector3 worldPos);
 
+        /// @return The camera that hosts this node's coordinate frame.
+        /// Either the main camera or a viewport
+        Camera* HostCamera() const;
+
         /// @return Returns the opacity of an attached renderer
         float Opacity() const;
 
@@ -529,6 +534,19 @@ namespace PJ {
             VectorList<Type*> result;
             CollectDescendantTypeComponentsIf<Type>(result, [](auto& element) { return true; });
             return result;
+        }
+
+        /// @return Returns the first component of the specified type found by walking up the
+        /// ancestor chain, or nullptr if none is found
+        template <class Type>
+        Type* GetAncestorComponent() const {
+            for (auto node = Parent(); node; node = node->Parent()) {
+                auto component = node->TypeComponent<Type>();
+                if (component) {
+                    return component;
+                }
+            }
+            return nullptr;
         }
 
         /// @return Returns current scale for node

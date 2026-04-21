@@ -60,3 +60,13 @@ SomeWorldComponent& WorldComponent::AddSignalHandler(SignalHandler handler) {
     attachmentCore.AddSignalHandler(handler);
     return *this;
 }
+
+bool WorldComponent::HasAncestor(std::function<bool(WorldNode*)> const& predicate) const {
+    GUARDR(owner && predicate, false)
+    for (auto cursor = owner->Parent(); cursor; cursor = cursor->Parent()) {
+        if (predicate(cursor)) {
+            return true;
+        }
+    }
+    return false;
+}

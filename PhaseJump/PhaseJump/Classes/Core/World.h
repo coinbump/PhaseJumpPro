@@ -1,18 +1,12 @@
 #pragma once
 
-#include "DesignSystem.h"
-#include "EventWorldSystem.h"
-#include "OrthoCamera.h"
-#include "Prefab.h"
 #include "RateLimiter.h"
 #include "ResourceCatalog.h"
-#include "SomeRenderContext.h"
-#include "SomeRenderEngine.h"
-#include "SomeUIEventPoller.h"
-#include "UIWorldSystem.h"
-#include "Updatable.h"
+#include "SomeUIEvent.h"
+#include "Tags.h"
+#include "Updatables.h"
 #include "Utils.h"
-#include "WorldComponent.h"
+#include "WorldNode.h"
 #include <memory>
 #include <stack>
 
@@ -45,7 +39,6 @@ namespace CursorId {
  CODE REVIEW: 12/20/25
  */
 namespace PJ {
-    class WorldNode;
     class SomeWorldSystem;
     class Camera;
     class RenderMaterial;
@@ -54,6 +47,10 @@ namespace PJ {
     class FontSpec;
     class ShaderProgram;
     class SomePlatformWindow;
+    class SomeRenderContext;
+    class SomeRenderEngine;
+    class SomeUIEventPoller;
+    class Prefab;
 
     /**
      Container for the system that drives Phase Jump Pro
@@ -150,6 +147,9 @@ namespace PJ {
 
         World();
 
+        /// Defined in .cpp so forward-declared UP<> members can resolve their deleters.
+        virtual ~World();
+
         WorldNode* Root() const {
             return root.get();
         }
@@ -197,6 +197,10 @@ namespace PJ {
 
         /// @return Returns a matrix that transforms this node's vertices into world space
         virtual Matrix4x4 WorldModelMatrix(WorldNode const& node);
+
+        /// @return Returns the matrix that transforms a local position owned by `node` into
+        /// world space, with support for viewports
+        virtual Matrix4x4 ParentWorldModelMatrix(WorldNode const& node);
 
         /// Sends update event to world
         virtual FinishType OnUpdate(TimeSlice time);
@@ -289,6 +293,12 @@ namespace PJ {
         // MARK: Base
 
         void OnGo() override;
+
+        /// Walks up from `startNode` composing each ancestor's model matrix left-to-right.
+        /// Once a Viewport ancestor is encountered, that node and every ancestor above it
+        /// contribute translation only — scale and rotation live in the viewport's separate
+        /// rendered output. Passing nullptr returns identity.
+        Matrix4x4 AncestorChainMatrix(WorldNode const* startNode);
     };
 
     /// @return Returns the local position in this component's owner space for the screen position

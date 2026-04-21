@@ -14,10 +14,12 @@ Vector3 WorldNodeTransform::WorldPosition() const {
     auto world = owner.World();
     GUARDR(world, result)
 
-    auto parentNode = owner.Parent();
-    GUARDR(parentNode, result)
+    GUARDR(owner.Parent(), result)
 
-    auto worldModelMatrix = world->WorldModelMatrix(*parentNode);
+    // Use ParentWorldModelMatrix (not WorldModelMatrix(parent)) so the frame matches how
+    // descendants of a Viewport compute their positions — same viewport translate-only rule
+    // applies to the parent itself, keeping direct children and grandchildren consistent.
+    auto worldModelMatrix = world->ParentWorldModelMatrix(owner);
     result = worldModelMatrix.MultiplyPoint(result);
 
     return result;
@@ -28,7 +30,7 @@ void WorldNodeTransform::SetWorldPosition(Vector3 position, SetLocalPosFunc func
     auto parentNode = owner.Parent();
 
     if (world && parentNode) {
-        auto worldModelMatrix = world->WorldModelMatrix(*parentNode);
+        auto worldModelMatrix = world->ParentWorldModelMatrix(owner);
         Terathon::Point3D point(position.x, position.y, position.z);
         auto localPosition = Terathon::InverseTransform(worldModelMatrix, point);
 

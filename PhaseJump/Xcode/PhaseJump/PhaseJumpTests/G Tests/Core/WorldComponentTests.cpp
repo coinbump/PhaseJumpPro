@@ -8,6 +8,10 @@ using namespace PJ;
 using namespace std;
 
 namespace WorldComponentTests {
+    class MarkerComponent : public WorldComponent {
+    public:
+        String TypeName() const override { return "MarkerComponent"; }
+    };
 }
 
 using namespace WorldComponentTests;
@@ -90,10 +94,73 @@ TEST(SomeWorldComponent, AddSignalTemplateIsListener)
     WorldNode node;
     auto sut = MAKE<WorldComponent>("");
     node.Add(sut);
-    
+
     EXPECT_FALSE(node.IsListener());
-    
+
     sut->AddSignalHandler<KeyDownUIEvent>({.id = "test"});
-    
+
     EXPECT_TRUE(node.IsListener());
+}
+
+TEST(WorldComponent, IsDescendant_NoOwner_ReturnsFalse)
+{
+    WorldComponent sut;
+    EXPECT_FALSE(sut.IsDescendant<MarkerComponent>());
+}
+
+TEST(WorldComponent, IsDescendant_NoParent_ReturnsFalse)
+{
+    auto root = MAKE<WorldNode>();
+    auto _sut = MAKE<WorldComponent>("");
+    root->Add(_sut);
+
+    EXPECT_FALSE(_sut->IsDescendant<MarkerComponent>());
+}
+
+TEST(WorldComponent, IsDescendant_AncestorHasComponent_ReturnsTrue)
+{
+    auto root = MAKE<WorldNode>();
+    root->AddComponent<MarkerComponent>();
+
+    auto child = MAKE<WorldNode>();
+    root->Add(child);
+
+    auto grandchild = MAKE<WorldNode>();
+    child->Add(grandchild);
+
+    auto sut = MAKE<WorldComponent>("");
+    grandchild->Add(sut);
+
+    EXPECT_TRUE(sut->IsDescendant<MarkerComponent>());
+}
+
+TEST(WorldComponent, IsDescendant_OnlySelfHasComponent_ReturnsFalse)
+{
+    auto root = MAKE<WorldNode>();
+
+    auto child = MAKE<WorldNode>();
+    root->Add(child);
+    child->AddComponent<MarkerComponent>();
+
+    auto sut = MAKE<WorldComponent>("");
+    child->Add(sut);
+
+    EXPECT_FALSE(sut->IsDescendant<MarkerComponent>());
+}
+
+TEST(WorldComponent, IsDescendant_SiblingHasComponent_ReturnsFalse)
+{
+    auto root = MAKE<WorldNode>();
+
+    auto child = MAKE<WorldNode>();
+    root->Add(child);
+
+    auto sibling = MAKE<WorldNode>();
+    root->Add(sibling);
+    sibling->AddComponent<MarkerComponent>();
+
+    auto sut = MAKE<WorldComponent>("");
+    child->Add(sut);
+
+    EXPECT_FALSE(sut->IsDescendant<MarkerComponent>());
 }

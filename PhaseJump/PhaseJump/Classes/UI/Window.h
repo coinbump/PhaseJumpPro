@@ -31,6 +31,13 @@ namespace PJ {
         bool hasFrame = true;
     };
 
+    /// Determines how content is resized inside a container when the container changes size
+    enum class ContentResizeType {
+        Resize,
+
+        Scale
+    };
+
     /// Desktop-style draggable window with a title frame and a viewport-backed content area
     class Window : public WorldComponent, public WorldSizeable {
     protected:
@@ -69,6 +76,9 @@ namespace PJ {
 
         /// Minimum world size the window can be resized to
         Vector2 minWindowSize{ 100, 100 };
+
+        /// Controls how the content node reacts to window size changes.
+        ContentResizeType contentResizeType = ContentResizeType::Resize;
 
         /// World size to restore when the window exits its Maximized state
         Vector2 defaultWorldSize{ 0, 0 };
@@ -120,6 +130,11 @@ namespace PJ {
 
         void Awake() override;
 
+        /// Re-applies the current layout
+        void ApplyLayout() {
+            ApplyLayout(worldSize.Value());
+        }
+
     protected:
         WP<WorldNode> titleBarNode;
         WP<WorldNode> titleBarViewNode;
@@ -138,6 +153,10 @@ namespace PJ {
 
         /// Local position to restore when the window exits its Maximized state
         Vector3 defaultLocalPosition{};
+
+        /// Content size captured after the initial layout. Zero until the first layout pass
+        /// completes.
+        Vector2 baseContentSize{};
 
         /// Builds a resize handle child node that drives a window resize along the given axes
         SP<WorldNode> BuildResizeNode(String name, HResize hResize, VResize vResize);

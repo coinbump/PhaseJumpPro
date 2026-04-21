@@ -1,7 +1,10 @@
 #include "DragHandler.h"
 #include "Camera.h"
 #include "Matrix4x4.h"
+#include "PointerClickUIEvent.h"
+#include "UIWorldSystem.h"
 #include "World.h"
+#include "WorldNode.h"
 #include <TSMatrix4D.h>
 
 using namespace std;
@@ -80,6 +83,9 @@ void DragHandler::StartDrag(WorldPosition inputPosition) {
 void DragHandler::OnPointerDown(PointerDownUIEvent const& event) {
     GUARD(owner)
 
-    auto inputWorldPosition = ScreenToWorld(*this, event.core.screenPos);
+    // Route screen input through the owner's host camera for viewport support
+    auto camera = owner->HostCamera();
+    GUARD(camera)
+    auto inputWorldPosition = PJ::WorldPosition(camera->ScreenToLocal(event.core.screenPos));
     StartDrag(inputWorldPosition);
 }

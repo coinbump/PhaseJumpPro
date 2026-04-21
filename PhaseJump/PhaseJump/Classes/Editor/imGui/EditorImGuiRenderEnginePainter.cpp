@@ -1,6 +1,8 @@
 #include "EditorImGuiRenderEnginePainter.h"
+#include "Camera.h"
 #include "RenderProcessor.h"
 #include "RenderWorldSystem.h"
+#include "SomeRenderContext.h"
 #include "SomeRenderEngine.h"
 #include "World.h"
 

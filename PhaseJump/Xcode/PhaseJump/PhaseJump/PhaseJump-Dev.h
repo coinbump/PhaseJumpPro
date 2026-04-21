@@ -59,6 +59,7 @@
 #include <PhaseJump-Dev/ComponentsHandler.h>
 #include <PhaseJump-Dev/ControllerBoard.h>
 #include <PhaseJump-Dev/CoreTypes.h>
+#include <PhaseJump-Dev/BoxMeshBuilder.h>
 #include <PhaseJump-Dev/CycleHueEffect.h>
 #include <PhaseJump-Dev/CyclicGraph.h>
 #include <PhaseJump-Dev/CyclicGraphNode.h>
@@ -186,6 +187,7 @@
 #include <PhaseJump-Dev/OrderedMap.h>
 #include <PhaseJump-Dev/OrderedSet.h>
 #include <PhaseJump-Dev/OrthoCamera.h>
+#include <PhaseJump-Dev/PerspectiveCamera.h>
 #include <PhaseJump-Dev/OverrideFeaturesRenderProcessor.h>
 #include <PhaseJump-Dev/PadViewLayout.h>
 #include <PhaseJump-Dev/PageView.h>

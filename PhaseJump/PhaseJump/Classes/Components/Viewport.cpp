@@ -140,3 +140,56 @@ Vector3 Viewport::ScreenToContext(Vector2 position) {
     auto worldPos = mainCamera->ScreenToContext(position);
     return WorldToContext(worldPos);
 }
+
+Vector3 Viewport::LocalToWorld(Vector3 localPos) {
+    GUARDR(owner, localPos)
+
+    auto ownerPos = owner->transform.WorldPosition();
+    auto scale = owner->transform.Scale();
+
+    Vector3 offset(localPos.x - ownerPos.x, localPos.y - ownerPos.y, localPos.z - ownerPos.z);
+    return Vector3(
+        ownerPos.x + offset.x * scale.x, ownerPos.y + offset.y * scale.y,
+        ownerPos.z + offset.z * scale.z
+    );
+}
+
+Vector3 Viewport::WorldToLocal(Vector3 worldPos) {
+    GUARDR(owner, worldPos)
+
+    auto ownerPos = owner->transform.WorldPosition();
+    auto scale = owner->transform.Scale();
+
+    // Guard against zero-scale axes producing divide-by-zero; preserve the owner position on
+    // those axes instead.
+    float sx = scale.x != 0 ? scale.x : 1.0f;
+    float sy = scale.y != 0 ? scale.y : 1.0f;
+    float sz = scale.z != 0 ? scale.z : 1.0f;
+
+    Vector3 offset(worldPos.x - ownerPos.x, worldPos.y - ownerPos.y, worldPos.z - ownerPos.z);
+    return Vector3(
+        ownerPos.x + offset.x / sx, ownerPos.y + offset.y / sy, ownerPos.z + offset.z / sz
+    );
+}
+
+Vector3 Viewport::ScreenToLocal(Vector2 screen) {
+    GUARDR(owner, {})
+    auto world = owner->World();
+    GUARDR(world, {})
+    auto mainCamera = world->MainCamera();
+    GUARDR(mainCamera, {})
+
+    auto outerWorld = mainCamera->ScreenToContext(screen);
+    return WorldToLocal(outerWorld);
+}
+
+Vector2 Viewport::LocalToScreen(Vector3 localPos) {
+    GUARDR(owner, {})
+    auto world = owner->World();
+    GUARDR(world, {})
+    auto mainCamera = world->MainCamera();
+    GUARDR(mainCamera, {})
+
+    auto outerWorld = LocalToWorld(localPos);
+    return mainCamera->ContextToScreen(outerWorld);
+}

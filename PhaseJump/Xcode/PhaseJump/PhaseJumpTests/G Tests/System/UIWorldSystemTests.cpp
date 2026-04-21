@@ -4,6 +4,7 @@
 #include "World.h"
 #include "DragHandler.h"
 #include "Camera.h"
+#include "OrthoCamera.h"
 
 using namespace PJ;
 using namespace PJTest;

@@ -17,12 +17,12 @@
 #include "TestEmittersScene.h"
 #include "TestGradientsScene.h"
 #include "TestMeshPathScene.h"
+#include "TestPerspectiveScene.h"
 #include "TestPolygonScene.h"
 #include "TestSlicedTextureScene.h"
 #include "TestSteeringScene.h"
 #include "TestTextureScene.h"
 #include "TestThemeScene.h"
-#include "TestUIScene.h"
 #include "TestViewsScene.h"
 #include "TestZOrderScene.h"
 
@@ -77,6 +77,9 @@ void KaijuWorldSystem::RegisterSceneClasses() {
     sceneClasses.Add(NEW<SceneClass>("test.meshPath", "Test Mesh Path", []() {
         return NEW<TestMeshPathScene>();
     }));
+    sceneClasses.Add(NEW<SceneClass>("test.perspective", "Test Perspective", []() {
+        return NEW<TestPerspectiveScene>();
+    }));
     sceneClasses.Add(NEW<SceneClass>("test.audio", "Test Audio", []() {
         return NEW<TestAudioScene>();
     }));
@@ -95,7 +98,6 @@ void KaijuWorldSystem::RegisterSceneClasses() {
     sceneClasses.Add(NEW<SceneClass>("test.theme", "Test theme", []() {
         return NEW<TestThemeScene>();
     }));
-    sceneClasses.Add(NEW<SceneClass>("test.ui", "Test UI", []() { return NEW<TestUIScene>(); }));
     sceneClasses.Add(NEW<SceneClass>("test.steering", "Test steering", []() {
         return NEW<TestSteeringScene>();
     }));

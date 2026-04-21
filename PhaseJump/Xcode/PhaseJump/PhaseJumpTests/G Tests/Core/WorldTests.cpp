@@ -1,6 +1,8 @@
 #include "gtest/gtest.h"
 
 #include "OrthoCamera.h"
+#include "Prefab.h"
+#include "Viewport.h"
 #include "World.h"
 #include "WorldNode.h"
 #include "MockRenderContext.h"
@@ -354,4 +356,318 @@ TEST(World, ScreenToLocal) {
     EXPECT_EQ(expectedPos, ScreenToLocal(component, screenPos));
 }
 
-// FUTURE: Unit test LocalModelMatrix, WorldModelMatrix
+TEST(World, ParentWorldModelMatrix_NoParent_ReturnsIdentity) {
+    auto world = MAKE<World>();
+    auto node = MAKE<WorldNode>();
+
+    auto matrix = world->ParentWorldModelMatrix(*node);
+    EXPECT_EQ(Vector3(0, 0, 0), matrix.MultiplyPoint(Vector3(0, 0, 0)));
+    EXPECT_EQ(Vector3(7, -3, 2), matrix.MultiplyPoint(Vector3(7, -3, 2)));
+}
+
+TEST(World, ParentWorldModelMatrix_AppliesParentTranslation) {
+    auto world = MAKE<World>();
+    auto parent = MAKE<WorldNode>();
+    world->Add(parent);
+    parent->SetLocalPosition(Vector3(10, 20, 0));
+
+    auto child = MAKE<WorldNode>();
+    parent->Add(child);
+
+    auto matrix = world->ParentWorldModelMatrix(*child);
+    EXPECT_EQ(Vector3(10, 20, 0), matrix.MultiplyPoint(Vector3(0, 0, 0)));
+    EXPECT_EQ(Vector3(11, 20, 0), matrix.MultiplyPoint(Vector3(1, 0, 0)));
+}
+
+TEST(World, ParentWorldModelMatrix_StacksAncestorTranslations) {
+    auto world = MAKE<World>();
+    auto grandparent = MAKE<WorldNode>();
+    world->Add(grandparent);
+    grandparent->SetLocalPosition(Vector3(5, 0, 0));
+
+    auto parent = MAKE<WorldNode>();
+    grandparent->Add(parent);
+    parent->SetLocalPosition(Vector3(2, 3, 0));
+
+    auto child = MAKE<WorldNode>();
+    parent->Add(child);
+
+    auto matrix = world->ParentWorldModelMatrix(*child);
+    EXPECT_EQ(Vector3(7, 3, 0), matrix.MultiplyPoint(Vector3(0, 0, 0)));
+}
+
+TEST(World, ParentWorldModelMatrix_AppliesParentScale) {
+    auto world = MAKE<World>();
+    auto parent = MAKE<WorldNode>();
+    world->Add(parent);
+    parent->SetLocalPosition(Vector3(10, 0, 0));
+    parent->SetScale(Vector3(2, 2, 1));
+
+    auto child = MAKE<WorldNode>();
+    parent->Add(child);
+
+    auto matrix = world->ParentWorldModelMatrix(*child);
+    // Scale applies first, then translate: (1,0,0) -> (2,0,0) -> (12,0,0).
+    EXPECT_EQ(Vector3(12, 0, 0), matrix.MultiplyPoint(Vector3(1, 0, 0)));
+}
+
+TEST(World, ParentWorldModelMatrix_ViewportParentIsTranslateOnly) {
+    auto world = MAKE<World>();
+    auto viewportNode = MAKE<WorldNode>();
+    world->Add(viewportNode);
+    viewportNode->AddComponent<Viewport>();
+    viewportNode->SetLocalPosition(Vector3(10, 0, 0));
+    // Scale must be ignored because the Viewport contributes translation-only to descendants.
+    viewportNode->SetScale(Vector3(3, 3, 1));
+
+    auto child = MAKE<WorldNode>();
+    viewportNode->Add(child);
+
+    auto matrix = world->ParentWorldModelMatrix(*child);
+    EXPECT_EQ(Vector3(11, 0, 0), matrix.MultiplyPoint(Vector3(1, 0, 0)));
+}
+
+TEST(World, ParentWorldModelMatrix_ViewportCollapsesAncestorsAboveIt) {
+    auto world = MAKE<World>();
+    auto grandparent = MAKE<WorldNode>();
+    world->Add(grandparent);
+    grandparent->SetLocalPosition(Vector3(10, 0, 0));
+    // Grandparent's scale should also be ignored once a Viewport is found below it.
+    grandparent->SetScale(Vector3(2, 2, 1));
+
+    auto viewportNode = MAKE<WorldNode>();
+    grandparent->Add(viewportNode);
+    viewportNode->AddComponent<Viewport>();
+    viewportNode->SetLocalPosition(Vector3(5, 0, 0));
+
+    auto child = MAKE<WorldNode>();
+    viewportNode->Add(child);
+
+    auto matrix = world->ParentWorldModelMatrix(*child);
+    // Pure translate stack: viewport (5) + grandparent (10) = 15; input x passes through.
+    EXPECT_EQ(Vector3(16, 0, 0), matrix.MultiplyPoint(Vector3(1, 0, 0)));
+}
+
+TEST(World, LocalModelMatrix_AppliesTranslation) {
+    auto world = MAKE<World>();
+    auto node = MAKE<WorldNode>();
+    node->SetLocalPosition(Vector3(5, -3, 2));
+
+    auto matrix = world->LocalModelMatrix(*node);
+    EXPECT_EQ(Vector3(5, -3, 2), matrix.MultiplyPoint(Vector3(0, 0, 0)));
+    EXPECT_EQ(Vector3(6, -3, 2), matrix.MultiplyPoint(Vector3(1, 0, 0)));
+}
+
+TEST(World, LocalModelMatrix_AppliesScale) {
+    auto world = MAKE<World>();
+    auto node = MAKE<WorldNode>();
+    node->SetScale(Vector3(3, 2, 1));
+
+    auto matrix = world->LocalModelMatrix(*node);
+    EXPECT_EQ(Vector3(0, 0, 0), matrix.MultiplyPoint(Vector3(0, 0, 0)));
+    EXPECT_EQ(Vector3(3, 4, 0), matrix.MultiplyPoint(Vector3(1, 2, 0)));
+}
+
+TEST(World, LocalModelMatrix_CombinesTranslateAndScale) {
+    auto world = MAKE<World>();
+    auto node = MAKE<WorldNode>();
+    node->SetLocalPosition(Vector3(10, 0, 0));
+    node->SetScale(Vector3(2, 2, 1));
+
+    // Scale first, then translate: (1,0,0) -> (2,0,0) -> (12,0,0).
+    auto matrix = world->LocalModelMatrix(*node);
+    EXPECT_EQ(Vector3(12, 0, 0), matrix.MultiplyPoint(Vector3(1, 0, 0)));
+}
+
+TEST(World, WorldModelMatrix_NoParent_UsesLocalMatrix) {
+    auto world = MAKE<World>();
+    auto node = MAKE<WorldNode>();
+    node->SetLocalPosition(Vector3(4, 7, 0));
+
+    // With no parent, WorldModelMatrix == LocalModelMatrix.
+    auto matrix = world->WorldModelMatrix(*node);
+    EXPECT_EQ(Vector3(4, 7, 0), matrix.MultiplyPoint(Vector3(0, 0, 0)));
+    EXPECT_EQ(Vector3(5, 7, 0), matrix.MultiplyPoint(Vector3(1, 0, 0)));
+}
+
+TEST(World, WorldModelMatrix_CombinesNodeAndParentTransforms) {
+    auto world = MAKE<World>();
+    auto parent = MAKE<WorldNode>();
+    world->Add(parent);
+    parent->SetLocalPosition(Vector3(10, 0, 0));
+
+    auto node = MAKE<WorldNode>();
+    parent->Add(node);
+    node->SetLocalPosition(Vector3(3, 2, 0));
+
+    // Node's local (1,0,0) -> (4,2,0) in parent space -> (14,2,0) in world space.
+    auto matrix = world->WorldModelMatrix(*node);
+    EXPECT_EQ(Vector3(14, 2, 0), matrix.MultiplyPoint(Vector3(1, 0, 0)));
+}
+
+TEST(World, WorldModelMatrix_ViewportDropsAncestorScaleButKeepsNodeLocal) {
+    auto world = MAKE<World>();
+    auto viewportNode = MAKE<WorldNode>();
+    world->Add(viewportNode);
+    viewportNode->AddComponent<Viewport>();
+    // Ancestor viewport's scale must not propagate to the node.
+    viewportNode->SetScale(Vector3(5, 5, 1));
+    viewportNode->SetLocalPosition(Vector3(10, 0, 0));
+
+    auto node = MAKE<WorldNode>();
+    viewportNode->Add(node);
+    // The node's own local scale DOES apply — only ancestors up through the viewport
+    // are collapsed to translation-only.
+    node->SetScale(Vector3(2, 2, 1));
+
+    auto matrix = world->WorldModelMatrix(*node);
+    // Node scale 2x on (1,0,0) = (2,0,0); viewport translate adds 10; grandparent none.
+    EXPECT_EQ(Vector3(12, 0, 0), matrix.MultiplyPoint(Vector3(1, 0, 0)));
+}
+
+TEST(World, MainCamera_CachesResult) {
+    TestWorld world;
+
+    auto node = MAKE<WorldNode>();
+    world.Add(node);
+    auto& camera = node->With<OrthoCamera>();
+
+    auto first = world.MainCamera();
+    auto second = world.MainCamera();
+    EXPECT_EQ(&camera, first);
+    EXPECT_EQ(first, second);
+}
+
+TEST(World, MainCamera_InvalidatesWhenOwnerRemoved) {
+    TestWorld world;
+
+    auto node = MAKE<WorldNode>();
+    world.Add(node);
+    node->With<OrthoCamera>();
+
+    EXPECT_NE(nullptr, world.MainCamera());
+
+    world.Root()->Remove(*node);
+    node.reset();
+
+    // After the owning node is gone, the cached weak_ptr expires and MainCamera re-walks.
+    EXPECT_EQ(nullptr, world.MainCamera());
+}
+
+TEST(World, MainCamera_RejectsCameraReParentedToOtherWorld) {
+    auto world1 = MAKE<World>();
+    auto world2 = MAKE<World>();
+
+    auto cameraNode = MAKE<WorldNode>();
+    world1->Add(cameraNode);
+    auto& camera = cameraNode->With<OrthoCamera>();
+
+    // Prime world1's cache.
+    EXPECT_EQ(&camera, world1->MainCamera());
+
+    // Re-parent the camera node to world2.
+    world1->Root()->Remove(*cameraNode);
+    world2->Add(cameraNode);
+
+    // world1 must NOT return the foreign camera even though its weak_ptr is still alive.
+    EXPECT_EQ(nullptr, world1->MainCamera());
+    // world2 now owns it.
+    EXPECT_EQ(&camera, world2->MainCamera());
+}
+
+TEST(World, TypeSystem_Found) {
+    World sut;
+    auto system = MAKE<TestWorldSystem>();
+    sut.Add(system);
+
+    EXPECT_EQ(system.get(), sut.TypeSystem<TestWorldSystem>());
+}
+
+TEST(World, TypeSystem_NotFound) {
+    World sut;
+    sut.Add(MAKE<WorldSystem>());
+
+    EXPECT_EQ(nullptr, sut.TypeSystem<TestWorldSystem>());
+}
+
+TEST(World, LoadPrefab_InvokesLoadFunc) {
+    World sut;
+    auto node = MAKE<WorldNode>();
+    sut.Add(node);
+
+    int loadCount = 0;
+    auto prefab = MAKE<Prefab>([&](WorldNode& target) { loadCount++; });
+    sut.prefabs["test"] = prefab;
+
+    sut.LoadPrefab("test", *node);
+    EXPECT_EQ(1, loadCount);
+}
+
+TEST(World, LoadPrefab_UnknownIdIsNoOp) {
+    World sut;
+    auto node = MAKE<WorldNode>();
+    sut.Add(node);
+
+    // Must not throw or crash on an unknown prefab id.
+    sut.LoadPrefab("missing", *node);
+}
+
+TEST(World, ScreenToWorld_ComponentVariant) {
+    TestWorld world;
+
+    auto node = MAKE<WorldNode>();
+    world.Add(node);
+    world.Go();
+    world.renderContext = NEW<MockRenderContext>(
+        MockRenderContext::Config{ .size = { 400, 200 }, .pixelSize = { 400, 200 } }
+    );
+
+    node->With<OrthoCamera>();
+    auto& component = node->With<WorldComponent>();
+
+    // Screen (200,100) is the render-context center, which maps to world origin.
+    EXPECT_EQ(Vector3(0, 0, 0), ScreenToWorld(component, Vector2(200, 100)));
+    // (201,101) is one pixel right and one pixel DOWN; world Y is up, so Y flips.
+    EXPECT_EQ(Vector3(1, -1, 0), ScreenToWorld(component, Vector2(201, 101)));
+}
+
+TEST(World, WorldToScreen_WorldNodeVariant) {
+    TestWorld world;
+
+    // Camera on its own node so it doesn't follow the node we're querying.
+    auto cameraNode = MAKE<WorldNode>();
+    world.Add(cameraNode);
+    cameraNode->With<OrthoCamera>();
+
+    auto node = MAKE<WorldNode>();
+    world.Add(node);
+    world.Go();
+    world.renderContext = NEW<MockRenderContext>(
+        MockRenderContext::Config{ .size = { 400, 200 }, .pixelSize = { 400, 200 } }
+    );
+
+    // Node at world origin renders at screen center.
+    EXPECT_EQ(Vector2(200, 100), WorldToScreen(*node));
+
+    node->transform.SetLocalPosition(Vector3(10, 5, 0));
+    // World (10,5) -> screen (210, 95) because Y flips around the vertical center.
+    EXPECT_EQ(Vector2(210, 95), WorldToScreen(*node));
+}
+
+TEST(World, LocalToScreen_RoundTripsWithScreenToLocal) {
+    TestWorld world;
+
+    auto node = MAKE<WorldNode>();
+    world.Add(node);
+    world.Go();
+    world.renderContext = NEW<MockRenderContext>(
+        MockRenderContext::Config{ .size = { 400, 200 }, .pixelSize = { 400, 200 } }
+    );
+
+    node->With<OrthoCamera>();
+    auto& component = node->With<WorldComponent>();
+
+    Vector2 screenPos(201, 101);
+    auto localPos = ScreenToLocal(component, screenPos);
+    EXPECT_EQ(screenPos, LocalToScreen(component, localPos));
+}

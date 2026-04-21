@@ -65,6 +65,15 @@ namespace PJ {
             attachmentCore.AddSignalHandler<Signal>(config);
         }
 
+        /// @return Returns true if any ancestor of this component's owner has a component of type T
+        template <class T>
+        bool IsDescendant() const {
+            // Auto is required for forward specialization (no access to WorldNode here)
+            return HasAncestor([](auto* node) {
+                return node->template TypeComponent<T>() != nullptr;
+            });
+        }
+
         // MARK: SomeWorldComponent
 
         WorldNode* Node() const override {
@@ -169,5 +178,8 @@ namespace PJ {
     protected:
         /// Internal. Tracks the life cycle (Start, Awake) of this object
         WorldPartLife life;
+
+        /// @return True if any ancestor of owner satisfies predicate
+        bool HasAncestor(std::function<bool(WorldNode*)> const& predicate) const;
     };
 } // namespace PJ

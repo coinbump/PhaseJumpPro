@@ -69,7 +69,13 @@ VectorList<RaycastHit2D> SimpleRaycaster2D::Raycast(Vector2 worldPosition, Vecto
         // the viewport's clipped subtree and isn't hittable from outside.
         GUARD_CONTINUE(IsWithinViewportClip(node, worldPosition))
 
-        auto localPos = node->WorldToLocal(worldPosition);
+        // Route the world event through the viewport camera
+        auto hostCamera = node->HostCamera();
+        Vector3 testWorldPos =
+            hostCamera ? hostCamera->WorldToLocal(Vector3(worldPosition.x, worldPosition.y, 0))
+                       : Vector3(worldPosition.x, worldPosition.y, 0);
+
+        auto localPos = node->WorldToLocal(testWorldPos);
 
         for (auto& collider : colliders) {
             GUARD_CONTINUE(collider->IsEnabled())
