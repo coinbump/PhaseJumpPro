@@ -10,7 +10,7 @@
  CODE REVIEW: 9/2/24
  */
 namespace PJ {
-    class RenderModel;
+    class MaterialRenderModel;
 
     /// Orders the nodes by their axis position in world space
     class CameraCullRenderProcessor : public RenderProcessor {
@@ -22,6 +22,7 @@ namespace PJ {
 
         // MARK: RenderProcessor
 
-        void Process(RenderCameraModel& cameraModel) override;
+        // TODO: this is broken with new render DAG. Fix this
+        void Process(RenderCameraModel& cameraModel);
     };
 } // namespace PJ

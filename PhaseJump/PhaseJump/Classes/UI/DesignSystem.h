@@ -9,6 +9,7 @@
 #include "Theme.h"
 #include "UITypes.h"
 #include "UnorderedMap.h"
+#include <typeindex>
 
 /*
  RATING: 5 stars
@@ -95,6 +96,15 @@ namespace PJ {
             std::optional<Color> color;
         };
 
+        /// Splitter config — the draggable handle that sits between two SplitView panes.
+        struct SplitterConfig {
+            /// Axis the parent split view splits along.
+            Axis2D axis = Axis2D::X;
+
+            /// Starting first-pane ratio for the SplitterControl created by the design system.
+            float initialRatio = 0.5f;
+        };
+
         /// ToolTip config
         struct ToolTipConfig {
             String text = "##Tip##";
@@ -112,8 +122,14 @@ namespace PJ {
         };
 
     protected:
-        /// Maps UI element ids to specific textures
-        UnorderedMap<String, BuildConfigViewFunc> buildViewFuncs;
+        /// Type-erased builder paired with the config type it expects.
+        struct BuildEntry {
+            std::type_index configType{ typeid(void) };
+            BuildConfigViewFunc func;
+        };
+
+        /// Maps UI element ids to their typed build-view dispatchers.
+        UnorderedMap<String, BuildEntry> buildViewFuncs;
 
         /// Maps UI element ids to specific textures
         UnorderedMap<String, SP<Texture>> elementTextures;
@@ -147,13 +163,32 @@ namespace PJ {
         This& BuildView(String elementId, Config const& config, ViewBuilder& vb) {
             GUARDR_LOG(theme, *this, "ERROR: Missing theme")
 
-            try {
-                auto& buildViewFunc = buildViewFuncs.at(elementId);
-                buildViewFunc(&config, vb);
-            } catch (...) {
+            auto i = buildViewFuncs.find(elementId);
+            if (i == buildViewFuncs.end()) {
                 PJ::Log("ERROR. Design not supported:", elementId);
+                return *this;
             }
 
+            auto& entry = i->second;
+            if (entry.configType != std::type_index(typeid(Config))) {
+                PJ::Log("ERROR. Config type mismatch for element:", elementId);
+                return *this;
+            }
+
+            entry.func(&config, vb);
+            return *this;
+        }
+
+        /// Registers a typed builder for a UI element.
+        template <class ConfigT>
+        This& Register(String elementId, std::function<void(ConfigT const&, ViewBuilder&)> func) {
+            buildViewFuncs.insert_or_assign(
+                elementId,
+                BuildEntry{ .configType = std::type_index(typeid(ConfigT)),
+                            .func = [inner = std::move(func)](
+                                        void const* configP, ViewBuilder& vb
+                                    ) { inner(*static_cast<ConfigT const*>(configP), vb); } }
+            );
             return *this;
         }
     };

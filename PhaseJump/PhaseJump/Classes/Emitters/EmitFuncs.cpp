@@ -38,6 +38,7 @@ Emitter::EmitFunc EmitFuncs::VaryAngle(VaryAngleConfig config) {
 
         GUARDR(config.count > 0, result)
         auto random = emitter.random.get();
+        GUARDR(random, result)
 
         for (int i = 0; i < config.count; i++) {
             EmitModel model;
@@ -58,6 +59,8 @@ Emitter::EmitFunc EmitFuncs::AddVaryDirectionVelocity(
         auto random = emitter.random.get();
 
         auto result = baseFunc(emitter);
+        GUARDR(random, result)
+
         for (auto& model : result) {
             float emitVelocity = random->VaryFloat(velocity, varyVelocity);
             model.tags.Set(EmitModelTag::StartDirectionVelocity, emitVelocity);

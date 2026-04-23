@@ -1,7 +1,7 @@
 #pragma once
 
+#include "Dev.h"
 #include "GraphNode.h"
-#include <iostream>
 
 /*
  RATING: 5 stars
@@ -27,6 +27,7 @@ namespace PJ {
         typename Base::NodeSharedPtr
         AddEdge(typename Base::NodeSharedPtr toNode, EdgeCore model = EdgeCore()) override {
             PJ::Log("Error. Call CyclicGraph.AddEdge instead");
+            PJ::Assert(false);
             return {};
         }
     };

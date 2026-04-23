@@ -300,6 +300,9 @@ namespace PJ {
             return "View2D";
         }
 
+        /// Clips the view's contents using stencil shader
+        View2D& Clip();
+
         // MARK: Internal
 
         /// Called before layout is applied (internal use only)

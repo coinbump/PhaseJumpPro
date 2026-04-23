@@ -68,9 +68,7 @@ namespace PJ {
             return *indices[index];
         }
 
-        constexpr bool operator==(Vector3 const& rhs) const {
-            return x == rhs.x && y == rhs.y && z == rhs.z;
-        }
+        constexpr bool operator==(This const&) const = default;
 
         operator Terathon::Vector3D() const;
         operator Terathon::Point3D() const;
@@ -146,9 +144,7 @@ namespace PJ {
             return *indices[index];
         }
 
-        constexpr bool operator==(Vector3Int const& rhs) const {
-            return x == rhs.x && y == rhs.y && z == rhs.z;
-        }
+        constexpr bool operator==(This const&) const = default;
 
         constexpr operator Vector2() const {
             return { (float)x, (float)y };

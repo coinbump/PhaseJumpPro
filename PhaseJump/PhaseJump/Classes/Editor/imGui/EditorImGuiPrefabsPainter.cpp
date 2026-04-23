@@ -29,7 +29,9 @@ EditorImGuiPrefabsPainter::EditorImGuiPrefabsPainter(EditorWorldSystem& _system)
 
                 if (ImGui::SmallButton(addButtonName.c_str())) {
                     auto prefabNode = MAKE<WorldNode>();
-                    system.Add(prefabNode, world.Root(), world.Root()->Children().size() - 1);
+                    // Insert at end; `size()` (not `size() - 1`) avoids a SIZE_MAX underflow
+                    // when Root has no children.
+                    system.Add(prefabNode, world.Root(), world.Root()->Children().size());
                     world.LoadPrefab(id, *prefabNode);
                     QB(*prefabNode).Drag();
                 }

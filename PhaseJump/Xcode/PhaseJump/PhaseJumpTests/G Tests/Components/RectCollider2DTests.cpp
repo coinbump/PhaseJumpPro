@@ -70,3 +70,28 @@ TEST(RectCollider2D, SetSize_NegativeGuarded) {
     EXPECT_EQ(10, size.x);
     EXPECT_EQ(10, size.y);
 }
+
+TEST(RectCollider2D, GetBounds) {
+    RectCollider2D sut({ 10, 6 });
+    auto bounds = sut.GetBounds();
+    EXPECT_EQ(Vector2(0, 0), bounds.center);
+    EXPECT_EQ(Vector2(5, 3), bounds.extents);
+}
+
+TEST(RectCollider2D, TestIntersect_Overlap) {
+    RectCollider2D sut({ 10, 10 });
+
+    EXPECT_TRUE(sut.TestIntersect(Bounds2D(Vector2(0, 0), Vector2(1, 1))));
+    EXPECT_TRUE(sut.TestIntersect(Bounds2D(Vector2(4, 4), Vector2(2, 2))));
+    EXPECT_TRUE(sut.TestIntersect(Bounds2D(Vector2(-4, -4), Vector2(2, 2))));
+    // Touching edge (shares boundary at x=5)
+    EXPECT_TRUE(sut.TestIntersect(Bounds2D(Vector2(6, 0), Vector2(1, 1))));
+}
+
+TEST(RectCollider2D, TestIntersect_NoOverlap) {
+    RectCollider2D sut({ 10, 10 });
+
+    EXPECT_FALSE(sut.TestIntersect(Bounds2D(Vector2(20, 0), Vector2(1, 1))));
+    EXPECT_FALSE(sut.TestIntersect(Bounds2D(Vector2(0, 20), Vector2(1, 1))));
+    EXPECT_FALSE(sut.TestIntersect(Bounds2D(Vector2(-20, -20), Vector2(1, 1))));
+}

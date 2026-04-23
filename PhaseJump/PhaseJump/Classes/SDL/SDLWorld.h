@@ -47,6 +47,9 @@ namespace PJ {
         /// SDL system cursors created in OnGo, keyed by CursorId.
         UnorderedMap<String, SDL_Cursor*> sdlCursors;
 
+        /// Current cursor id
+        String currentCursorId = CursorId::Arrow;
+
     public:
         /// Max update time delta value
         /// Prevents problems if the app hitches or is paused by the debugger
@@ -67,6 +70,10 @@ namespace PJ {
         // MARK: World
 
         void SetCursor(String cursorId) override;
+
+        String GetCursorId() const override {
+            return currentCursorId;
+        }
 
     protected:
         void MainLoop();

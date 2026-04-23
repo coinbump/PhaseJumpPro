@@ -22,6 +22,8 @@ namespace PJ {
         void* pixelData{};
 
     public:
+        DELETE_COPY(SDLSurface)
+
         struct Config {
             SDL_Surface* surface{};
             void* pixelData{};

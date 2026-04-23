@@ -22,6 +22,7 @@ namespace PJ {
 
         struct Config {
             Color color;
+            RenderOpacityType opacityType = RenderOpacityType::Opaque;
             Vector2 worldSize;
             SP<RenderMaterial> material;
         };
@@ -35,7 +36,7 @@ namespace PJ {
 
         // MARK: Renderer
 
-        VectorList<RenderModel> RenderModels() override {
+        RenderModelList RenderModels() override {
             return core.RenderModels();
         }
 

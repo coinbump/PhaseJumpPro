@@ -134,7 +134,7 @@ bool OrthoCamera::IsCulled(Mesh const& mesh) {
     Vector3 meshExtents2D(mesh.GetBounds().extents.x, mesh.GetBounds().extents.y, 0);
     Bounds meshBounds2D(meshCenter2D, meshExtents2D);
 
-    result = !cameraBounds2D.TestCollide(meshBounds2D);
+    result = !cameraBounds2D.TestIntersect(meshBounds2D);
 
     return result;
 }

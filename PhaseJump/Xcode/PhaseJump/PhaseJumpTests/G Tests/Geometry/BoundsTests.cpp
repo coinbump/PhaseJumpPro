@@ -27,9 +27,9 @@ TEST(Bounds, TestHitCollide)
 {
     Bounds sut(Vector3(0, 0, 0), Vector3(2, 2, 2));
     
-    EXPECT_TRUE(sut.TestCollide(Bounds(Vector3(0, 0, 0), Vector3(1, 1, 1))));
-    EXPECT_TRUE(sut.TestCollide(Bounds(Vector3(1, 1, 1), Vector3(1, 1, 1))));
-    EXPECT_TRUE(sut.TestCollide(Bounds(Vector3(-1, 1, -1), Vector3(1, 1, 1))));
-    EXPECT_TRUE(sut.TestCollide(Bounds(Vector3(2, 2, 2), Vector3(1, 1, 1))));
-    EXPECT_FALSE(sut.TestCollide(Bounds(Vector3(4, 3, 3), Vector3(1, 1, 1))));
+    EXPECT_TRUE(sut.TestIntersect(Bounds(Vector3(0, 0, 0), Vector3(1, 1, 1))));
+    EXPECT_TRUE(sut.TestIntersect(Bounds(Vector3(1, 1, 1), Vector3(1, 1, 1))));
+    EXPECT_TRUE(sut.TestIntersect(Bounds(Vector3(-1, 1, -1), Vector3(1, 1, 1))));
+    EXPECT_TRUE(sut.TestIntersect(Bounds(Vector3(2, 2, 2), Vector3(1, 1, 1))));
+    EXPECT_FALSE(sut.TestIntersect(Bounds(Vector3(4, 3, 3), Vector3(1, 1, 1))));
 }

@@ -2,11 +2,11 @@
 #include "CollectionUtils.h"
 #include "FramePlayable.h"
 #include "Funcs.h"
+#include "MaterialRenderModel.h"
 #include "QuadMeshBuilder.h"
 #include "RenderContextModel.h"
 #include "RenderFeature.h"
 #include "RenderMaterial.h"
-#include "RenderModel.h"
 #include "RenderModelBuilder.h"
 #include "ResourceCatalog.h"
 #include "ShaderProgram.h"
@@ -187,7 +187,7 @@ void AnimatedSpriteRenderer::Awake() {
 
 void AnimatedSpriteRenderer::Configure() {
     core.model.SetBuildRenderModelsFunc([this](auto& model) {
-        VectorList<RenderModel> result;
+        VectorList<MaterialRenderModel> result;
 
         auto material = model.material.get();
         GUARDR_LOG(material, result, "ERROR. Missing material")

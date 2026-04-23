@@ -10,6 +10,7 @@
 #include "Updatable.h"
 #include "VectorList.h"
 #include "Void.h"
+#include <algorithm>
 #include <memory>
 
 /*
@@ -110,11 +111,21 @@ namespace PJ {
         }
 
         void RemoveEdge(Edge& _edge) {
-            if (_edge.toNode && _edge.toNode->Value()) {
-                _edge.toNode->Value()->FromNodes().erase(this);
-            }
+            Node* targetNode =
+                (_edge.toNode && _edge.toNode->Value()) ? _edge.toNode->Value().get() : nullptr;
 
             RemoveFirstIf(edges, [&](auto& edge) { return edge.get() == &_edge; });
+
+            // Only drop the backlink when no other edge from this still points to targetNode.
+            // Multigraphs can have multiple edges between the same pair; clearing fromNodes
+            // unconditionally would leave the surviving edges with a stale backlink.
+            GUARD(targetNode)
+            for (auto& edge : edges) {
+                if (edge && edge->toNode && edge->toNode->Value().get() == targetNode) {
+                    return;
+                }
+            }
+            targetNode->FromNodes().erase(this);
         }
 
         void RemoveEdgesFrom(Node& fromNode) {
@@ -122,19 +133,28 @@ namespace PJ {
         }
 
         void RemoveEdgesTo(Node& toNode) {
-            VectorList<Edge*> iterEdges = Map<Edge*>(edges, [](auto& edge) { return edge.get(); });
-            for (auto& edge : iterEdges) {
-                auto edgeValue = edge->toNode->Value();
-                if (edgeValue.get() == &toNode) {
-                    RemoveEdge(*edge);
-                }
-            }
+            // Single pass: drop every edge pointing at toNode, then clear the backlink once.
+            // Avoids the O(E_out^2) cost of calling RemoveEdge per match.
+            auto newEnd = std::remove_if(edges.begin(), edges.end(), [&](auto const& edge) {
+                return edge && edge->toNode && edge->toNode->Value().get() == &toNode;
+            });
+            GUARD(newEnd != edges.end())
+            edges.erase(newEnd, edges.end());
+            toNode.FromNodes().erase(this);
         }
 
         void RemoveAllEdges() {
-            VectorList<Edge*> iterEdges = Map<Edge*>(edges, [](auto& edge) { return edge.get(); });
-            for (auto& edge : iterEdges) {
-                RemoveEdge(*edge);
+            // Collect distinct target nodes so each backlink is cleared exactly once,
+            // then drop all edges in a single swap. O(E_out) instead of O(E_out^2).
+            WeakNodeSet targets;
+            for (auto& edge : edges) {
+                if (edge && edge->toNode && edge->toNode->Value()) {
+                    targets.insert(edge->toNode->Value().get());
+                }
+            }
+            edges.clear();
+            for (auto* target : targets) {
+                target->FromNodes().erase(this);
             }
         }
     };

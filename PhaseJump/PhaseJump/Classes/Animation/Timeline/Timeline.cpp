@@ -10,11 +10,9 @@ Timeline::Timeline(Config const& config) :
     controller = &timer;
     timer.SetOnPlayTimeChangeFunc([this](auto& playable) { OnPlayTimeChange(); });
 
-    OnPlayTimeChangeFunc overrideFunc = [](auto& playable) {
-        Timeline& timeline = *(static_cast<Timeline*>(&playable));
-
-        float playTime = timeline.PlayTime();
-        for (auto& track : timeline.tracks) {
+    OnPlayTimeChangeFunc overrideFunc = [this](auto& /*playable*/) {
+        float playTime = PlayTime();
+        for (auto& track : tracks) {
             track->SetPlayTime(playTime);
         }
     };

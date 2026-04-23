@@ -2,13 +2,15 @@
 #include "imgui.h"
 #include "imgui_impl_opengl3.h"
 #include "imgui_impl_sdl3.h"
+#include "RenderCameraModel.h"
+#include "RenderPassModel.h"
 
 using namespace std;
 using namespace PJ;
 
 void ImGuiGLRenderProcessor::Process(Phase phase) {
     GUARD_LOG(imGuiContext, "Missing imGuiContext")
-    GUARD_LOG(nullptr == phase.cameraModel, "ERROR. Don't process imGui for each camera")
+    GUARD_LOG(!phase.IsCamera(), "ERROR. Don't process imGui for each camera")
 
     if (phase.id == RenderPhaseId::RenderPassStartPrepare) {
         ImGui::SetCurrentContext(imGuiContext);

@@ -7,6 +7,8 @@
 #include "PolyFrameMeshBuilder.h"
 #include "QuadFrameMeshBuilder.h"
 #include "SpriteRenderer.h"
+#include "StencilPopRenderModel.h"
+#include "StencilPushRenderModel.h"
 #include "TextRenderer.h"
 #include "World.h"
 #include "WorldNode.h"
@@ -22,8 +24,8 @@ ImRenderer::ImRenderer(Config const& config) :
     Configure();
 }
 
-void ImRenderer::Add(ImPath& path) {
-    paths.push_back(path);
+void ImRenderer::Add(ImPath path) {
+    paths.push_back(std::move(path));
 
     model.SetRenderModelsNeedBuild();
 }
@@ -34,8 +36,8 @@ void ImRenderer::AddPath(PathConfig config) {
     ImPath path;
     path.renderType = config.renderType;
 
-    path.items.push_back(config.item);
-    Add(path);
+    path.items.push_back(std::move(config.item));
+    Add(std::move(path));
 }
 
 This& ImRenderer::Image(String id, Vector2 origin) {
@@ -283,6 +285,33 @@ This& ImRenderer::Text(StringView text, Vector2 pos, float fontSize, std::option
     item.frame.size = metrics.CalculateSize();
 
     AddPath({ .item = item });
+
+    return *this;
+}
+
+This& ImRenderer::ClipPush(Rect frame, UP<SomeShape> shape) {
+    GUARDR(shape, *this)
+
+    // Build the stencil mesh at frame.size so the shape fills the frame exactly
+    shape->worldSize = frame.size;
+
+    ImPathItem item;
+    item.type = ImPathItemType::ClipPush;
+    item.frame = frame;
+    item.clipShape = std::move(shape);
+    AddPath({ .item = std::move(item) });
+
+    return *this;
+}
+
+This& ImRenderer::ClipPush(Rect frame) {
+    return ClipPush(frame, NEW<RectShape>(frame.size));
+}
+
+This& ImRenderer::ClipPop() {
+    ImPathItem item;
+    item.type = ImPathItemType::ClipPop;
+    AddPath({ .item = std::move(item) });
 
     return *this;
 }
@@ -536,15 +565,53 @@ void ImRenderer::Configure() {
     translateItemFunc = MakeTranslateItemFunc(vecDown);
 
     model.SetBuildRenderModelsFunc([this](auto& model) {
-        VectorList<RenderModel> result;
+        RenderModelList result;
 
         renderers.clear();
+
+        // Stencil push depth so unmatched pushes can be popped at the end. The user of
+        // ImRenderer might forget to call PopClip(), so the renderer balances the stack
+        int stencilDepth = 0;
 
         for (auto& path : paths) {
             GUARD_CONTINUE(!IsEmpty(path.items))
 
             // FUTURE: support combining items
-            auto item = path.items[0];
+            auto& item = path.items[0];
+
+            if (item.type == ImPathItemType::ClipPush) {
+                GUARD_CONTINUE(item.clipShape)
+
+                auto meshBuilder = item.clipShape->SomeMeshBuilder();
+                GUARD_CONTINUE(meshBuilder)
+
+                if (item.frame.size == Vector2()) {
+                    item.frame.size = item.clipShape->worldSize;
+                }
+
+                Matrix4x4 matrix;
+                if (translateItemFunc) {
+                    matrix = translateItemFunc(*this, item);
+                }
+
+                auto pushModel = MAKE<StencilPushRenderModel>();
+                pushModel->mesh = meshBuilder->BuildMesh();
+                pushModel->mesh *= matrix;
+                if (!stencilMaterial) {
+                    stencilMaterial = ColorRenderer::MakeMaterial(RenderOpacityType::Opaque);
+                }
+                pushModel->material = stencilMaterial.get();
+                result.push_back(pushModel);
+                ++stencilDepth;
+                continue;
+            }
+
+            if (item.type == ImPathItemType::ClipPop) {
+                GUARD_CONTINUE(stencilDepth > 0)
+                result.push_back(MAKE<StencilPopRenderModel>());
+                --stencilDepth;
+                continue;
+            }
 
             try {
                 String id = item.type + String(".") + path.renderType;
@@ -567,14 +634,25 @@ void ImRenderer::Configure() {
                     matrix = translateItemFunc(*this, item);
                 }
 
-                for (auto& renderModel : renderModels) {
-                    renderModel.ModifiableMesh() *= matrix;
+                // Extract MaterialRenderModel leaves; non-draw nodes (stencil/viewport) are
+                // not used by the immediate-mode rebuild path and are skipped here.
+                for (auto& sp : renderModels) {
+                    auto* material = dynamic_cast<MaterialRenderModel*>(sp.get());
+                    GUARD_CONTINUE(material)
+                    auto copy = MAKE<MaterialRenderModel>(*material);
+                    copy->ModifiableMesh() *= matrix;
+                    result.push_back(copy);
                 }
-                AddRange(result, renderModels);
 
                 // Keep the renderer and material in memory for the render
                 renderers.push_back(std::move(renderer));
             } catch (...) {}
+        }
+
+        // Emit balancing pops so the stencil buffer is left in a clean state
+        while (stencilDepth > 0) {
+            result.push_back(MAKE<StencilPopRenderModel>());
+            --stencilDepth;
         }
 
         paths.clear();

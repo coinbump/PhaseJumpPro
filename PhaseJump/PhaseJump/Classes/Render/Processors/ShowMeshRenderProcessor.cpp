@@ -16,7 +16,9 @@ void ShowMeshRenderProcessor::Process(RenderCameraModel& cameraModel) {
 
     Mesh finalMesh;
 
-    VectorList<RenderModel> renderModels;
+    // TODO: this is broken with new render DAG. Fix this
+    /*
+    VectorList<MaterialRenderModel> renderModels;
     for (auto& renderModel : cameraModel.renderModels) {
         auto const& vertices = renderModel.GetMesh().Vertices();
         auto const& indices = renderModel.GetMesh().Triangles();
@@ -44,9 +46,13 @@ void ShowMeshRenderProcessor::Process(RenderCameraModel& cameraModel) {
     renderer->core.model.SetBuildMeshFunc([=](RendererModel const& model) { return finalMesh; });
     cameraModel.renderers.push_back(renderer);
 
-    auto thisRenderModels = renderer->RenderModels();
-    AddRange(renderModels, thisRenderModels);
+    for (auto& sp : renderer->RenderModels()) {
+        if (auto* material = dynamic_cast<MaterialRenderModel*>(sp.get())) {
+            renderModels.push_back(*material);
+        }
+    }
 
     // Replace the existing models and only show the mesh
     cameraModel.renderModels = renderModels;
+     */
 }

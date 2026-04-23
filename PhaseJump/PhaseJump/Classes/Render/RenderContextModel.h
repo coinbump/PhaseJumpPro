@@ -2,6 +2,7 @@
 
 #include "StringUtils.h"
 #include "VectorList.h"
+#include <memory>
 
 /*
  RATING: 5 stars
@@ -9,6 +10,7 @@
  CODE REVIEW: 12/21/24
  */
 namespace PJ {
+    class RenderPassModel;
     class SomeRenderContext;
     class WorldNode;
     class Camera;
@@ -22,5 +24,8 @@ namespace PJ {
 
         VectorList<WorldNode*> nodes;
         VectorList<Camera*> cameras;
+
+        /// DAG of render models for this pass. Built by RenderWorldSystem
+        SP<RenderPassModel> renderPass;
     };
 } // namespace PJ

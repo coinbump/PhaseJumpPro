@@ -1,7 +1,7 @@
 #include "Renderer.h"
+#include "MaterialRenderModel.h"
 #include "RenderContextModel.h"
 #include "RenderMaterial.h"
-#include "RenderModel.h"
 #include "RenderModelBuilder.h"
 #include "SomeRenderEngine.h"
 #include "UIPlanner.h"
@@ -14,7 +14,7 @@ MaterialRendererCore::MaterialRendererCore(SomeWorldComponent* owner, Vector3 wo
 
     model.SetBuildRenderModelsFunc([this](auto& model) {
         VectorList<Texture*> textures;
-        VectorList<RenderModel> result;
+        VectorList<MaterialRenderModel> result;
 
         RenderModelBuilder builder;
         auto renderModel = builder.Build(*this, model);
@@ -43,16 +43,24 @@ WorldComponent::PlanUIFunc MaterialRendererCore::MakePlanUIFunc() {
     };
 }
 
-VectorList<RenderModel> MaterialRendererCore::RenderModels() {
-    auto result = model.RenderModels();
+RenderModelList MaterialRendererCore::RenderModels() {
+    auto const& materialModels = model.RenderModels();
 
-    // Always update the matrix for latest transform
-    if (owner) {
-        auto matrix = owner->ModelMatrix();
-        for (auto& renderModel : result) {
-            renderModel.matrix = matrix;
-        }
+    Matrix4x4 matrix;
+    bool const hasOwner = owner != nullptr;
+    if (hasOwner) {
+        matrix = owner->ModelMatrix();
     }
 
+    // FUTURE: reduce large mesh copies here
+    RenderModelList result;
+    result.reserve(materialModels.size());
+    for (auto const& materialModel : materialModels) {
+        auto sp = MAKE<MaterialRenderModel>(materialModel);
+        if (hasOwner) {
+            sp->matrix = matrix;
+        }
+        result.push_back(sp);
+    }
     return result;
 }

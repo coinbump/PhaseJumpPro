@@ -9,6 +9,7 @@ void PathLayout::ApplyLayout() {
     GUARD(owner)
 
     auto path = BuildPath();
+    GUARD(path)
 
     auto childCount = owner->ChildCount();
     float normalOffset = childCount > 1 ? 1.0f / (float)(childCount - 1) : 0;

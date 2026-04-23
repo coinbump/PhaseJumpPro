@@ -12,8 +12,15 @@
 namespace PJ {
     static UP<FileManager> NewSDLFileManager() {
         UP<FileManager> result = NEW<FileManager>();
-        result->persistentDataPathFunc = [](String companyName, String applicationName) {
-            return SDL_GetPrefPath(companyName.c_str(), applicationName.c_str());
+        result->persistentDataPathFunc = [](String companyName,
+                                            String applicationName) -> FilePath {
+            // SDL_GetPrefPath must be released with SDL_free
+            char* raw = SDL_GetPrefPath(companyName.c_str(), applicationName.c_str());
+            GUARDR(raw, FilePath{})
+
+            FilePath pathResult{ raw };
+            SDL_free(raw);
+            return pathResult;
         };
 
         return result;

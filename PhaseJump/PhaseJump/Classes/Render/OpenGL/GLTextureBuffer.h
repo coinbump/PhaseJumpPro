@@ -116,6 +116,7 @@ namespace PJ {
         void Resize(Vector2Int size) override;
         void Bind() override;
         void Clear() override;
+        void Swap(SP<Texture> texture) override;
 
         /// A texture buffer can't present itself. Use the buffer texture to render it
         void Present() override {}

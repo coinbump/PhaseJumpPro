@@ -19,44 +19,40 @@ namespace PJ {
             switch (axis) {
             case Axis2D::X:
                 return width;
-                break;
             case Axis2D::Y:
                 return height;
-                break;
             }
+            return width;
         }
 
         std::optional<float> AxisValue(Axis2D axis) const {
             switch (axis) {
             case Axis2D::X:
                 return width;
-                break;
             case Axis2D::Y:
                 return height;
-                break;
             }
+            return width;
         }
 
         std::optional<float>& AxisValueOrthogonal(Axis2D axis) {
             switch (axis) {
             case Axis2D::X:
                 return height;
-                break;
             case Axis2D::Y:
                 return width;
-                break;
             }
+            return height;
         }
 
         std::optional<float> AxisValueOrthogonal(Axis2D axis) const {
             switch (axis) {
             case Axis2D::X:
                 return height;
-                break;
             case Axis2D::Y:
                 return width;
-                break;
             }
+            return height;
         }
 
         /// Replaces missing optional values with the specified value
@@ -77,12 +73,17 @@ namespace PJ {
         /// Propose the ideal size
         static const This ideal;
 
+        /// Sentinel for an unbounded axis value (width or height)
+        static std::optional<float> Unbounded() {
+            return FloatMath::maxValue;
+        }
+
         bool IsWidthUnbounded() const {
-            return width == FloatMath::maxValue;
+            return width == Unbounded();
         }
 
         bool IsHeightUnbounded() const {
-            return height == FloatMath::maxValue;
+            return height == Unbounded();
         }
 
         Vector2 ToVector2(float defaultValue = 0) const {

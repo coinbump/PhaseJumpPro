@@ -1,4 +1,5 @@
 #include "View2D.h"
+#include "ClipRenderer.h"
 #include "HoverGestureHandler.h"
 #include "QuickBuilder.h"
 #include "UIPlanner.h"
@@ -133,6 +134,18 @@ void View2D::Start() {
     // Run in start, not Awake, so everything is in place
     UpdateFrameComponents();
     LayoutIfNeeded();
+}
+
+View2D& View2D::Clip() {
+    GUARDR(owner, *this)
+
+    auto existing = owner->GetComponent<ClipRenderer>();
+    if (existing) {
+        existing->worldSize = WorldSize2D();
+        return *this;
+    }
+    owner->AddComponent<ClipRenderer>(WorldSize2D());
+    return *this;
 }
 
 void View2D::Awake() {

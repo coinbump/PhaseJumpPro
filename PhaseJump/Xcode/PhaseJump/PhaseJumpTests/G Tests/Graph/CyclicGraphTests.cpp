@@ -253,7 +253,7 @@ TEST(CyclicGraph, Test_CollectConnectedToNotDeep)
     graph.AddEdge(node, StandardEdgeCore(), childNode2);
 
     auto deepNode = MAKE<Node>();
-    childNode1->AddEdge(deepNode);
+    graph.AddEdge(childNode1, {}, deepNode);
 
     GraphNodeTool<> graphNodeTool;
     auto collectedGraph = graphNodeTool.CollectConnectedTo(node, false);
@@ -438,4 +438,122 @@ TEST(CyclicGraph, Test_CollectBreadthFirstGraphCircular)
     EXPECT_EQ(childNode1, collectedGraph[1]);
     EXPECT_EQ(childNode2, collectedGraph[2]);
     EXPECT_EQ(deepNode, collectedGraph[3]);
+}
+
+// Exercises the queue-based BFS: branches of uneven depth must interleave by level,
+// not drain one branch before the other (which the previous recursive impl did).
+TEST(CyclicGraph, Test_CollectBreadthFirstGraph_UnevenDepthBranches)
+{
+    TestGraph graph;
+    auto root = MAKE<Node>();
+    auto branchB = MAKE<Node>();
+    auto branchC = MAKE<Node>();
+    auto branchBDeep = MAKE<Node>();
+    auto branchBDeeper = MAKE<Node>();
+    auto branchCShallow = MAKE<Node>();
+
+    graph.AddEdge(root, StandardEdgeCore(), branchB);
+    graph.AddEdge(root, StandardEdgeCore(), branchC);
+    graph.AddEdge(branchB, StandardEdgeCore(), branchBDeep);
+    graph.AddEdge(branchBDeep, StandardEdgeCore(), branchBDeeper);
+    graph.AddEdge(branchC, StandardEdgeCore(), branchCShallow);
+
+    GraphNodeTool graphNodeTool;
+    auto result = graphNodeTool.CollectBreadthFirstGraph(root);
+
+    EXPECT_EQ(6, result.size());
+    EXPECT_EQ(root, result[0]);
+    EXPECT_EQ(branchB, result[1]);
+    EXPECT_EQ(branchC, result[2]);
+    // Level 2 — branchCShallow must appear before branchBDeeper
+    EXPECT_EQ(branchBDeep, result[3]);
+    EXPECT_EQ(branchCShallow, result[4]);
+    // Level 3
+    EXPECT_EQ(branchBDeeper, result[5]);
+}
+
+TEST(CyclicGraph, Test_RemoveEdge_Multigraph_PreservesBackLink)
+{
+    TestGraph graph;
+    auto node = MAKE<Node>();
+    auto childNode = MAKE<Node>();
+    graph.AddEdge(node, StandardEdgeCore(), childNode);
+    graph.AddEdge(node, StandardEdgeCore(), childNode);
+
+    EXPECT_EQ(2, node->Edges().size());
+    EXPECT_EQ(1, childNode->FromNodes().size());
+
+    node->RemoveEdge(*node->Edges()[0]);
+
+    EXPECT_EQ(1, node->Edges().size());
+    // The remaining parallel edge still connects node -> childNode,
+    // so the backlink must persist.
+    EXPECT_EQ(1, childNode->FromNodes().size());
+
+    node->RemoveEdge(*node->Edges()[0]);
+
+    EXPECT_EQ(0, node->Edges().size());
+    EXPECT_EQ(0, childNode->FromNodes().size());
+}
+
+TEST(CyclicGraph, Test_RemoveEdgesTo_Multigraph_RemovesAllAndBackLink)
+{
+    TestGraph graph;
+    auto node = MAKE<Node>();
+    auto childNode = MAKE<Node>();
+    graph.AddEdge(node, StandardEdgeCore(), childNode);
+    graph.AddEdge(node, StandardEdgeCore(), childNode);
+
+    node->RemoveEdgesTo(*childNode);
+
+    EXPECT_EQ(0, node->Edges().size());
+    EXPECT_EQ(0, childNode->FromNodes().size());
+}
+
+TEST(CyclicGraph, Test_Clear_RemovesEverything)
+{
+    TestGraph graph;
+    auto node = MAKE<Node>();
+    auto childNode1 = MAKE<Node>();
+    auto childNode2 = MAKE<Node>();
+    graph.AddEdge(node, StandardEdgeCore(), childNode1);
+    graph.AddEdge(node, StandardEdgeCore(), childNode2);
+    graph.AddEdge(childNode1, StandardEdgeCore(), childNode2);
+    graph.SetRoot(node.get());
+
+    EXPECT_EQ(3, graph.nodes.size());
+
+    graph.Clear();
+
+    EXPECT_EQ(0, graph.nodes.size());
+    EXPECT_EQ(nullptr, graph.Root());
+    // External refs survive, but their fromNodes/edges are drained so back-pointers
+    // can't dangle past Clear().
+    EXPECT_EQ(0, node->Edges().size());
+    EXPECT_EQ(0, childNode1->Edges().size());
+    EXPECT_EQ(0, childNode1->FromNodes().size());
+    EXPECT_EQ(0, childNode2->FromNodes().size());
+}
+
+TEST(CyclicGraphNode, Test_DirectAddEdge_Asserts_AndDoesNotMutate)
+{
+    auto savedAssertFunc = PJ::assertFunc;
+    bool assertTriggered = false;
+    PJ::assertFunc = [&](bool value) {
+        if (!value) {
+            assertTriggered = true;
+        }
+    };
+
+    auto node = MAKE<Node>();
+    auto childNode = MAKE<Node>();
+
+    auto result = node->AddEdge(childNode);
+
+    EXPECT_TRUE(assertTriggered);
+    EXPECT_EQ(nullptr, result);
+    EXPECT_EQ(0, node->Edges().size());
+    EXPECT_EQ(0, childNode->FromNodes().size());
+
+    PJ::assertFunc = savedAssertFunc;
 }

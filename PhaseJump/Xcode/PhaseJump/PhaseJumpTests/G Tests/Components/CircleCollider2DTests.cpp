@@ -61,3 +61,27 @@ TEST(CircleCollider2D, SetWorldSize_NonSquare) {
     sut.SetWorldSize({ 10, 30, 0 });
     EXPECT_EQ(5, sut.Radius());
 }
+
+TEST(CircleCollider2D, GetBounds) {
+    CircleCollider2D sut(5);
+    auto bounds = sut.GetBounds();
+    EXPECT_EQ(Vector2(0, 0), bounds.center);
+    EXPECT_EQ(Vector2(5, 5), bounds.extents);
+}
+
+TEST(CircleCollider2D, TestIntersect_Overlap) {
+    CircleCollider2D sut(5);
+
+    // Bounding-box test — corner-overlaps count even if the point lies outside the circle.
+    EXPECT_TRUE(sut.TestIntersect(Bounds2D(Vector2(0, 0), Vector2(1, 1))));
+    EXPECT_TRUE(sut.TestIntersect(Bounds2D(Vector2(4, 4), Vector2(2, 2))));
+    // Touching edge
+    EXPECT_TRUE(sut.TestIntersect(Bounds2D(Vector2(6, 0), Vector2(1, 1))));
+}
+
+TEST(CircleCollider2D, TestIntersect_NoOverlap) {
+    CircleCollider2D sut(5);
+
+    EXPECT_FALSE(sut.TestIntersect(Bounds2D(Vector2(20, 0), Vector2(1, 1))));
+    EXPECT_FALSE(sut.TestIntersect(Bounds2D(Vector2(0, -20), Vector2(1, 1))));
+}

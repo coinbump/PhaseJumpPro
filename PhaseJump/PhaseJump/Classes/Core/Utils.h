@@ -23,7 +23,7 @@ namespace PJ {
         Defer(Func func) :
             func(func) {}
 
-        virtual ~Defer() {
+        ~Defer() {
             GUARD(func);
             func();
         }
@@ -112,7 +112,7 @@ template <class U, class Deleter>
 struct is_unique_ptr<std::unique_ptr<U, Deleter>> : std::true_type {};
 
 template <class T, class... Args, std::enable_if_t<!is_unique_ptr<T>::value, int> = 0>
-inline _LIBCPP_HIDE_FROM_ABI _LIBCPP_CONSTEXPR_SINCE_CXX23 std::unique_ptr<T> NEW(Args&&... args) {
+inline std::unique_ptr<T> NEW(Args&&... args) {
     return std::make_unique<T>(std::forward<Args>(args)...);
 }
 
@@ -135,13 +135,13 @@ std::shared_ptr<_Tp> DCAST(const std::shared_ptr<_Up>& __r) {
 
 #else
 
-template <class _Tp, class... _Args, class = std::__enable_if_t<!std::is_array<_Tp>::value>>
+template <class _Tp, class... _Args, class = std::enable_if_t<!std::is_array<_Tp>::value>>
 std::shared_ptr<_Tp> MAKE(_Args&&... __args) {
     return std::make_shared<_Tp>(std::forward<_Args>(__args)...);
 }
 
 template <class _Tp, class _Up>
-std::shared_ptr<_Tp> SCAST(const std::shared_ptr<_Up>& __r) _NOEXCEPT {
+std::shared_ptr<_Tp> SCAST(const std::shared_ptr<_Up>& __r) noexcept {
     return std::static_pointer_cast<_Tp>(__r);
 }
 
@@ -150,7 +150,7 @@ std::shared_ptr<_Tp> SCAST(const std::shared_ptr<_Up>& __r) _NOEXCEPT {
  slow Use dynamic_cast<Type*>(sharedPointer.get()) instead
  */
 template <class _Tp, class _Up>
-std::shared_ptr<_Tp> DCAST(const std::shared_ptr<_Up>& __r) _NOEXCEPT {
+std::shared_ptr<_Tp> DCAST(const std::shared_ptr<_Up>& __r) noexcept {
     return std::dynamic_pointer_cast<_Tp>(__r);
 }
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GraphNode.h"
+#include <queue>
 
 /*
  RATING: 5 stars
@@ -17,7 +18,7 @@ namespace PJ {
         using Edge = Node::Edge;
 
         /// Collect all forward-directed nodes from this node
-        NodeSet CollectGraph(SP<Node> fromNode) {
+        NodeSet CollectGraph(SP<Node> const& fromNode) {
             NodeSet nodes;
             nodes.insert(fromNode);
 
@@ -29,7 +30,7 @@ namespace PJ {
 
         /// Collects depth-first ordered graph
         /// NOTE: may not work as expected when loops exist in the graph
-        NodeList CollectDepthFirstGraph(SP<Node> fromNode) {
+        NodeList CollectDepthFirstGraph(SP<Node> const& fromNode) {
             NodeList result;
             Add(result, fromNode);
 
@@ -40,90 +41,84 @@ namespace PJ {
             return result;
         }
 
-        /// Collects breadth-first ordered graph
-        /// NOTE: may not work as expected when loops exist in the graph
-        NodeList CollectBreadthFirstGraph(SP<Node> fromNode) {
+        /// Collects breadth-first ordered graph. Cycles are handled by `visited`.
+        NodeList CollectBreadthFirstGraph(SP<Node> const& fromNode) {
             NodeList result;
+            GUARDR(fromNode, result)
+
+            NodeSet visited;
+            std::queue<NodeSharedPtr> frontier;
+
             Add(result, fromNode);
+            visited.insert(fromNode);
+            frontier.push(fromNode);
 
-            NodeSet searchedNodes;
-            searchedNodes.insert(fromNode);
+            while (!frontier.empty()) {
+                auto current = std::move(frontier.front());
+                frontier.pop();
 
-            NodeSet allNodes;
-            allNodes.insert(fromNode);
+                for (auto& edge : current->Edges()) {
+                    auto& toNode = edge->toNode;
+                    GUARD_CONTINUE(toNode)
 
-            CollectBreadthFirstChildren(result, fromNode, searchedNodes, allNodes);
+                    auto child = toNode->Value();
+                    GUARD_CONTINUE(child)
+                    if (Contains(visited, child)) {
+                        continue;
+                    }
+                    visited.insert(child);
+                    Add(result, child);
+                    frontier.push(std::move(child));
+                }
+            }
+
             return result;
         }
 
-        NodeSet CollectConnectedTo(SP<Node> fromNode, bool isDeep) {
+        NodeSet CollectConnectedTo(SP<Node> const& fromNode, bool isDeep) {
             NodeSet nodes;
             NodeSet searchedNodes;
             return CollectEdgeNodesTo(fromNode, nodes, searchedNodes, isDeep);
         }
 
     protected:
-        NodeSet
-        CollectEdgeNodesTo(SP<Node> fromNode, NodeSet& nodes, NodeSet& searchedNodes, bool isDeep) {
+        NodeSet CollectEdgeNodesTo(
+            SP<Node> const& fromNode, NodeSet& nodes, NodeSet& searchedNodes, bool isDeep
+        ) {
             VectorList<Edge*> iterEdges =
                 Map<Edge*>(fromNode->Edges(), [](auto& edge) { return edge.get(); });
             for (auto& edge : iterEdges) {
-                auto& toNode = edge->toNode;
-                nodes.insert(toNode->Value());
+                // Cache Value() — every call bumps an atomic refcount (and locks, for weak refs).
+                auto child = edge->toNode->Value();
+                GUARD_CONTINUE(child)
 
-                // Prevent infinite loop
-                if (isDeep && !Contains(searchedNodes, toNode->Value())) {
-                    searchedNodes.insert(toNode->Value());
-                    CollectEdgeNodesTo(toNode->Value(), nodes, searchedNodes, true);
+                nodes.insert(child);
+
+                if (isDeep && !Contains(searchedNodes, child)) {
+                    searchedNodes.insert(child);
+                    CollectEdgeNodesTo(child, nodes, searchedNodes, true);
                 }
             }
 
             return nodes;
         }
 
-        void CollectBreadthFirstChildren(
-            NodeList& nodes, NodeSharedPtr fromNode, NodeSet& searchedNodes, NodeSet& allNodes
+        void CollectDepthFirstChildren(
+            NodeList& nodes, SP<Node> const& fromNode, NodeSet& searchedNodes
         ) {
-            for (auto& edge : fromNode->Edges()) {
-                auto& toNode = edge->toNode;
-
-                // Avoid duplicates for graphs with loops
-                if (Contains(allNodes, toNode->Value())) {
-                    continue;
-                }
-
-                allNodes.insert(toNode->Value());
-                Add(nodes, toNode->Value());
-            }
-
-            for (auto& edge : fromNode->Edges()) {
-                auto& toNode = edge->toNode;
-
-                // Avoid infinite loop for graphs with loops
-                if (Contains(searchedNodes, toNode->Value())) {
-                    continue;
-                }
-
-                searchedNodes.insert(toNode->Value());
-                CollectBreadthFirstChildren(nodes, toNode->Value(), searchedNodes, allNodes);
-            }
-        }
-
-        void
-        CollectDepthFirstChildren(NodeList& nodes, NodeSharedPtr fromNode, NodeSet& searchedNodes) {
             GUARD(fromNode)
 
             for (auto& edge : fromNode->Edges()) {
-                auto& toNode = edge->toNode;
+                auto child = edge->toNode->Value();
+                GUARD_CONTINUE(child)
 
-                // Avoid infinite loop for graphs with loops
-                if (Contains(searchedNodes, toNode->Value())) {
+                if (Contains(searchedNodes, child)) {
                     continue;
                 }
 
-                searchedNodes.insert(toNode->Value());
-                Add(nodes, toNode->Value());
-                CollectDepthFirstChildren(nodes, toNode->Value(), searchedNodes);
+                searchedNodes.insert(child);
+                Add(nodes, child);
+                CollectDepthFirstChildren(nodes, child, searchedNodes);
             }
         }
     };

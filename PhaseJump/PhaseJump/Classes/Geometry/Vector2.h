@@ -49,9 +49,7 @@ namespace PJ {
             return *indices[index];
         }
 
-        constexpr bool operator==(Vector2 const& rhs) const {
-            return x == rhs.x && y == rhs.y;
-        }
+        constexpr bool operator==(This const&) const = default;
 
         operator Terathon::Vector2D() const;
         operator Terathon::Point2D() const;
@@ -158,9 +156,7 @@ namespace PJ {
             return *indices[index];
         }
 
-        constexpr bool operator==(Vector2Int const& rhs) const {
-            return x == rhs.x && y == rhs.y;
-        }
+        constexpr bool operator==(This const&) const = default;
 
         constexpr operator Vector2() const {
             return Vector2((float)x, (float)y);

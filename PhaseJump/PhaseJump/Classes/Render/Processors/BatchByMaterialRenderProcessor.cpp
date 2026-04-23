@@ -1,117 +1,138 @@
 #include "BatchByMaterialRenderProcessor.h"
-#include "RenderWorldSystem.h"
-#include <stack>
+#include "MaterialRenderModel.h"
+#include "RenderFeature.h"
+#include "RenderMaterial.h"
+#include "RenderPassModel.h"
 
 using namespace std;
 using namespace PJ;
 
-// TODO: needs unit tests
-void BatchByMaterialRenderProcessor::Process(RenderCameraModel& cameraModel) {
-    // Force z order based on model order (used by opaque objects to optimize renders by using the
-    // depth buffer)
-    float z = 0;
-    float zStep = 1.0f / cameraModel.renderModels.size();
-
-    {
-#ifdef PROFILE
-        DevProfiler devProfiler("Camera- Combine RenderModels", [](String value) {
-            std::cout << value;
-        });
-#endif
-        // Don't make extra copies if there's nothing to batch
-        GUARD(cameraModel.renderModels.size() > 1)
-
-        VectorList<RenderModel> models;
-
-        VectorList<RenderModel*> cameraModels;
-        std::transform(
-            cameraModel.renderModels.begin(), cameraModel.renderModels.end(),
-            std::back_inserter(cameraModels), [](auto& model) { return &model; }
-        );
-
-        // Opaque objects are rendered behind blended render models
-        VectorList<RenderModel*> noBlendRenderModels;
-        std::copy_if(
-            cameraModels.begin(), cameraModels.end(), std::back_inserter(noBlendRenderModels),
-            [](auto& model) { return !model->IsFeatureEnabled(RenderFeature::Blend); }
-        );
-
-        std::for_each(
-            noBlendRenderModels.begin(), noBlendRenderModels.end(),
-            [&](RenderModel* model) {
-                model->z = z;
-                z += zStep * Vector3::back.z;
+namespace {
+    /// Replace `parent`'s children with the provided ordered list of replacement nodes.
+    /// AcyclicGraphNode doesn't expose reparenting, so clear and re-add in order.
+    void ReplaceChildren(
+        SomeRenderModelNode& parent, VectorList<RenderPassModel::NodeSharedPtr> const& replacements
+    ) {
+        parent.RemoveAllEdges();
+        for (auto& child : replacements) {
+            if (child) {
+                parent.AddEdge(child);
             }
-        );
-
-        // Transparent objects must be above opaque objects
-        // If you want objects to respect Z-ordering, they must have the same blend type
-        VectorList<RenderModel*> blendRenderModels;
-        std::copy_if(
-            cameraModels.begin(), cameraModels.end(), std::back_inserter(blendRenderModels),
-            [](auto& model) { return model->IsFeatureEnabled(RenderFeature::Blend); }
-        );
-
-        // Process a list of render models
-        auto processModels = [&](VectorList<RenderModel*>& cameraModels) {
-            GUARD(!IsEmpty(cameraModels))
-
-            String prevPropertyId;
-            std::stack<RenderModel*> modelStack;
-
-            bool isBlended = cameraModels[0]->IsFeatureEnabled(RenderFeature::Blend);
-
-            // Combine a list of render models
-            auto combineRecent = [&]() {
-                VectorList<RenderModel*> subModels;
-
-                while (!IsEmpty(modelStack)) {
-                    auto top = modelStack.top();
-                    auto topPropertyId = top->Material()->PropertyId();
-
-                    if (topPropertyId == prevPropertyId) {
-                        subModels.push_back(top);
-                        modelStack.pop();
-                    } else {
-                        break;
-                    }
-                }
-
-                // Blended were inserted in the wrong order, so reverse them
-                if (isBlended) {
-                    std::reverse(subModels.begin(), subModels.end());
-                }
-
-                auto combinedSubModel = Combine(subModels);
-                if (combinedSubModel) {
-                    models.push_back(*combinedSubModel);
-                };
-            };
-
-            for (auto& renderModel : cameraModels) {
-                auto modelMaterial = renderModel->Material();
-                GUARD_CONTINUE(modelMaterial)
-
-                String propertyId = modelMaterial->PropertyId();
-                if (prevPropertyId == propertyId || IsEmpty(modelStack)) {
-                    modelStack.push(renderModel);
-                } else {
-                    combineRecent();
-                    modelStack.push(renderModel);
-                }
-                prevPropertyId = propertyId;
-            }
-            combineRecent();
-        };
-        processModels(noBlendRenderModels);
-        processModels(blendRenderModels);
-
-        cameraModel.renderModels = models;
+        }
     }
+} // namespace
+
+void BatchByMaterialRenderProcessor::Process(SomeRenderModelNode& rootNode) {
+    BatchChildren(rootNode);
 }
 
-std::optional<RenderModel>
-BatchByMaterialRenderProcessor::Combine(VectorList<RenderModel*>& renderModels) {
+void BatchByMaterialRenderProcessor::BatchChildren(SomeRenderModelNode& parent) {
+    // Snapshot the child nodes up front — we rebuild the edge list in place below.
+    VectorList<RenderPassModel::NodeSharedPtr> originalChildren;
+    for (auto& edge : parent.Edges()) {
+        if (!edge || !edge->toNode) {
+            continue;
+        }
+        auto child = edge->toNode->Value();
+        if (!child) {
+            continue;
+        }
+        originalChildren.push_back(SCAST<RenderPassModel::Node>(child));
+    }
+
+    VectorList<RenderPassModel::NodeSharedPtr> result;
+    result.reserve(originalChildren.size());
+
+    VectorList<RenderPassModel::NodeSharedPtr> runNodes;
+    VectorList<MaterialRenderModel*> runModels;
+    RenderMaterial* runMaterial{};
+    String runKey;
+    bool isRunBlended = false;
+
+    auto flushRun = [&]() {
+        if (runModels.empty()) {
+            return;
+        }
+        if (runModels.size() == 1) {
+            // Nothing to combine; keep the original node intact so descendants are
+            // preserved. (A lone material won't have material descendants in a well-formed
+            // DAG, but better to keep the structure than risk losing anything.)
+            result.push_back(runNodes.front());
+        } else {
+            auto combined = Combine(runModels);
+            if (combined) {
+                auto spCombined = MAKE<MaterialRenderModel>(*combined);
+                auto combinedNode = MAKE<RenderPassModel::Node>();
+                combinedNode->core = spCombined;
+                spCombined->node = combinedNode.get();
+                result.push_back(combinedNode);
+            }
+        }
+        runNodes.clear();
+        runModels.clear();
+        runMaterial = nullptr;
+        runKey.clear();
+        isRunBlended = false;
+    };
+
+    for (auto& child : originalChildren) {
+        auto* model = dynamic_cast<MaterialRenderModel*>(child->core.get());
+
+        if (!model) {
+            // Non-material node — break the run, preserve the node, recurse into its
+            // subtree so nested runs (e.g. under a stencil push) batch too.
+            flushRun();
+            BatchChildren(*child);
+            result.push_back(child);
+            continue;
+        }
+
+        // A material with its own children is treated as a scope boundary — we don't batch
+        // it away because something hangs off it. Flush, keep the node, recurse.
+        if (!child->Edges().empty()) {
+            flushRun();
+            BatchChildren(*child);
+            result.push_back(child);
+            continue;
+        }
+
+        auto* renderMaterial = model->Material();
+
+        // A MaterialRenderModel with no RenderMaterial can't share render state with
+        // anything else — keep it as a singleton.
+        if (!renderMaterial) {
+            flushRun();
+            result.push_back(child);
+            continue;
+        }
+
+        String key = renderMaterial->PropertyId();
+        bool const isBlended = model->IsFeatureEnabled(RenderFeature::Blend);
+
+        if (runModels.empty()) {
+            runMaterial = renderMaterial;
+            runKey = key;
+            isRunBlended = isBlended;
+        } else if (renderMaterial != runMaterial &&
+                   (key != runKey || key.empty() || isBlended != isRunBlended)) {
+            // Different RenderMaterial pointer AND either a different propertyId, an empty
+            // (untracked) propertyId, or a blend-mode mismatch — start a new run.
+            flushRun();
+            runMaterial = renderMaterial;
+            runKey = key;
+            isRunBlended = isBlended;
+        }
+
+        runNodes.push_back(child);
+        runModels.push_back(model);
+    }
+    flushRun();
+
+    ReplaceChildren(parent, result);
+}
+
+std::optional<MaterialRenderModel>
+BatchByMaterialRenderProcessor::Combine(VectorList<MaterialRenderModel*>& renderModels) {
     GUARDR(!IsEmpty(renderModels), {})
 
     if (!renderModels[0]->IsFeatureEnabled(RenderFeature::Blend)) {
@@ -160,7 +181,7 @@ BatchByMaterialRenderProcessor::Combine(VectorList<RenderModel*>& renderModels) 
         }
     }
 
-    RenderModel renderModel = *renderModels[0];
+    MaterialRenderModel renderModel = *renderModels[0];
     VectorList<Vector3> vertices;
     vertices.resize(vertexCount);
     renderModel.ModifiableMesh().SetVertices(vertices);

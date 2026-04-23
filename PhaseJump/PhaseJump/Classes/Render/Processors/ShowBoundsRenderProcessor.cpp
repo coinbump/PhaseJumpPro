@@ -15,6 +15,8 @@ void ShowBoundsRenderProcessor::Process(RenderCameraModel& cameraModel) {
     auto boundsMaterial = ColorRenderer::MakeMaterial(RenderOpacityTypeFor(color));
     cameraModel.materials.push_back(boundsMaterial);
 
+    // TODO: this is broken with new render DAG. Fix this
+    /*
     cameraModel.renderModels.reserve(cameraModel.renderModels.size() + cameraModel.nodes.size());
 
     // FUTURE: this can be optimized
@@ -36,9 +38,13 @@ void ShowBoundsRenderProcessor::Process(RenderCameraModel& cameraModel) {
             cameraModel.renderers.push_back(renderer);
 
             renderer->owner = node;
-            auto debugRenderModels = renderer->RenderModels();
-            AddRange(cameraModel.renderModels, debugRenderModels);
+            for (auto& sp : renderer->RenderModels()) {
+                if (auto* material = dynamic_cast<MaterialRenderModel*>(sp.get())) {
+                    cameraModel.renderModels.push_back(*material);
+                }
+            }
             break;
         }
     }
+     */
 }

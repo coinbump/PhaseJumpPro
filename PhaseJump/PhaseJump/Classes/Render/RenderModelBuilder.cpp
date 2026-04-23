@@ -1,9 +1,9 @@
 #include "RenderModelBuilder.h"
+#include "MaterialRenderModel.h"
 #include "Mesh.h"
 #include "Renderer.h"
 #include "RendererModel.h"
 #include "RenderMaterial.h"
-#include "RenderModel.h"
 #include "ShaderProgram.h"
 #include "SomeWorldComponent.h"
 #include "WorldNode.h"
@@ -24,7 +24,7 @@ PJ::UVTransformFunc UVTransformFuncs::textureCoordinates = [](Texture& texture,
     });
 };
 
-std::optional<RenderModel>
+std::optional<MaterialRenderModel>
 RenderModelBuilder::Build(MaterialRendererCore& core, RendererModel& model) {
     auto material = model.material.get();
     GUARDR_LOG(material, {}, "ERROR. Missing material")
@@ -40,11 +40,11 @@ RenderModelBuilder::Build(MaterialRendererCore& core, RendererModel& model) {
     return result;
 }
 
-std::optional<RenderModel> RenderModelBuilder::Build(
+std::optional<MaterialRenderModel> RenderModelBuilder::Build(
     WorldNode* node, Mesh const& mesh, RenderMaterial& material,
     VectorList<SP<Texture>> const& textures
 ) {
-    RenderModel renderModel(&material);
+    MaterialRenderModel renderModel(&material);
     renderModel.name = node ? node->Name() : "";
     renderModel.id = node ? MakeString((uint64_t)node) : "";
 

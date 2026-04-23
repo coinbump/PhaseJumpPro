@@ -44,8 +44,10 @@ namespace PJ {
         /// @return Returns the file name for a path with or without the file extension
         virtual String FileName(FilePath path, FileNameFormat nameFormat) = 0;
 
-        /// @return Returns a list of file paths starting from the specified folder file path
-        virtual VectorList<FilePath> FilePathList(FilePath path, FileSearchType searchType) = 0;
+        /// @return Returns a list of file paths starting from the specified folder file path.
+        /// Non-throwing for permission errors and missing directories
+        virtual VectorList<FilePath>
+        FilePathList(FilePath path, FileSearchType searchType) noexcept = 0;
 
         /// @return Returns the parent path
         virtual String ParentPath(FilePath path) = 0;
@@ -85,7 +87,8 @@ namespace PJ {
         bool IsDirectory(FilePath path) override;
         String FileExtension(FilePath path, FileExtensionFormat extensionFormat) override;
         String FileName(FilePath path, FileNameFormat nameFormat) override;
-        VectorList<FilePath> FilePathList(FilePath path, FileSearchType searchType) override;
+        VectorList<FilePath>
+        FilePathList(FilePath path, FileSearchType searchType) noexcept override;
         String ParentPath(FilePath path) override;
 
         void ShowFile(FilePath path) override {

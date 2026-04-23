@@ -26,8 +26,14 @@ namespace PJ {
         StreamReader(Config const& config) :
             config(config) {}
 
+        /// Reads the raw bytes of `value` from the stream. `Type` must be trivially copyable
+        /// so the byte representation is well-defined; non-POD types with vtables or owning
+        /// handles are rejected at compile time (strings, VectorList, etc. need their own
+        /// serialization path — see the `String` specialization below).
         template <typename Type>
-        void Read(Type& value) const {
+        void Read(Type& value) const
+            requires std::is_trivially_copyable_v<Type> && (!std::integral<Type>)
+        {
             config.stream.read((char*)&value, sizeof(Type));
         }
 
@@ -42,9 +48,10 @@ namespace PJ {
             }
         }
 
-        /// Reads null-terminated strings
-        template <>
-        void Read<String>(String& value) const {
+        /// Reads null-terminated strings. This is a non-template overload so it sidesteps the
+        /// ill-formed in-class explicit specialization and avoids the trivially-copyable
+        /// constraint on the primary `Read<Type>`.
+        void Read(String& value) const {
             std::getline(config.stream, value, '\0');
         }
 

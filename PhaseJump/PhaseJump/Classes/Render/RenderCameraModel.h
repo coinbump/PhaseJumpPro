@@ -1,6 +1,7 @@
 #pragma once
 
-#include "RenderModel.h"
+#include "MaterialRenderModel.h"
+#include "SomeRenderModel.h"
 #include "VectorList.h"
 
 /*
@@ -21,12 +22,6 @@ namespace PJ {
         auto constexpr Blend = "blend";
     } // namespace RenderModelGroupId
 
-    /// Allows render models to be grouped (Example: group blend and opaque renders separately)
-    struct RenderModelGroup {
-        String id;
-        VectorList<RenderModel> value;
-    };
-
     /// Manages render phases and notification when phase changes
     class RenderPhaseModel {
     public:
@@ -44,19 +39,19 @@ namespace PJ {
         void SetPhase(String value);
     };
 
-    /// Defines the model for a render pass
-    /// The render system sends this to render processors, which can then modify it to
-    /// add new draw commands, modify existing commands, filter nodes or cameras, etc.
-    class RenderCameraModel {
+    /// DAG node that represents a single camera's render pass. Child render nodes represent
+    /// render commands for the camera
+    class RenderCameraModel : public SomeRenderModel {
     public:
+        using Base = SomeRenderModel;
         using This = RenderCameraModel;
-        using ModelSortFunc = std::function<bool(RenderModel const&, RenderModel const&)>;
+        using ModelSortFunc =
+            std::function<bool(MaterialRenderModel const&, MaterialRenderModel const&)>;
         using NodeList = VectorList<WorldNode*>;
 
         struct Config {
             SomeRenderContext* context{};
             Camera& camera;
-            VectorList<RenderModel>& renderModels;
             VectorList<WorldNode*>& nodes;
         };
 
@@ -70,12 +65,6 @@ namespace PJ {
 
         /// Nodes to render
         NodeList& nodes;
-
-        /// Models to render
-        VectorList<RenderModel>& renderModels;
-
-        /// Model groups (grouping should be done as a final step)
-        // FUTURE: VectorList<RenderModelGroup> modelGroups;
 
         /// Temporary materials used by render processors
         /// Example: we can create a processor that shows mesh shape, collider bounds, etc
@@ -91,23 +80,24 @@ namespace PJ {
 
         // MARK: Z-Order
 
-        /// (Experimental). Used to sort render models for back-to-front render
-        /// By default, standard Z-ordering is used (Breadth first order)
-        ModelSortFunc modelSortFunc = [this](RenderModel const& lhs, RenderModel const& rhs) {
-            // Z index layering allows us to render groups as layers
-            if (lhs.zIndex < rhs.zIndex) {
-                return true;
-            }
-            return lhs.order < rhs.order;
-        };
+        /// Sorts render models for back-to-front render
+        /// By default, standard Z-ordering is used
+        ModelSortFunc modelSortFunc =
+            [this](MaterialRenderModel const& lhs, MaterialRenderModel const& rhs) {
+                // Z index layering allows us to render groups as layers
+                if (lhs.zIndex < rhs.zIndex) {
+                    return true;
+                }
+                return lhs.order < rhs.order;
+            };
 
         RenderCameraModel(Config const& config);
 
         /// @return Returns the override material for this model if one exists
-        SP<RenderMaterial> OverrideMaterial(RenderModel const& model);
+        SP<RenderMaterial> OverrideMaterial(MaterialRenderModel const& model);
 
         /// Creates an override material for this model
-        SP<RenderMaterial> MakeOverrideMaterial(RenderModel const& model);
+        SP<RenderMaterial> MakeOverrideMaterial(MaterialRenderModel const& model);
 
         void SetPhase(String value);
     };

@@ -1,7 +1,7 @@
 #pragma once
 
+#include "MaterialRenderModel.h"
 #include "Mesh.h"
-#include "RenderModel.h"
 #include "RenderTypes.h"
 #include "Tags.h"
 #include "Vector3.h"
@@ -24,7 +24,8 @@ namespace PJ {
         using BuildMeshFunc = std::function<Mesh(RendererModel const& model)>;
         using BuildColorsFunc =
             std::function<void(RendererModel const& model, VectorList<RenderColor>&)>;
-        using BuildRenderModelsFunc = std::function<VectorList<RenderModel>(RendererModel& model)>;
+        using BuildRenderModelsFunc =
+            std::function<VectorList<MaterialRenderModel>(RendererModel& model)>;
 
     protected:
         using ColorType = PJ::Color;
@@ -46,7 +47,7 @@ namespace PJ {
         Vector3 worldSize;
 
         /// Cached render model (updated when renderer changes)
-        VectorList<RenderModel> renderModels;
+        VectorList<MaterialRenderModel> renderModels;
 
         /// Builds mesh on demand
         BuildMeshFunc buildMeshFunc;
@@ -95,7 +96,7 @@ namespace PJ {
             renderModelsNeedBuild = true;
         }
 
-        VectorList<RenderModel> const& RenderModels() {
+        VectorList<MaterialRenderModel> const& RenderModels() {
             if (renderModelsNeedBuild) {
                 renderModelsNeedBuild = false;
 

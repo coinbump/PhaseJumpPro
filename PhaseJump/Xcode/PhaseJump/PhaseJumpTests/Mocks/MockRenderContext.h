@@ -16,7 +16,6 @@ using namespace PJ;
 namespace PJTest {
     class MockRenderEngine : public PJ::SomeRenderEngine {
         virtual void RenderStart(SomeRenderContext* context) {}
-        virtual void RenderDraw(RenderDrawModel const& drawModel) {}
 
         virtual void EnableFeature(String featureId, bool isEnabled) {}
 

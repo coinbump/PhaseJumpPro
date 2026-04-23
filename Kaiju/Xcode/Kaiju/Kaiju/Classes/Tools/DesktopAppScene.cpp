@@ -100,6 +100,8 @@ DesktopAppScene::DesktopAppScene() {
                           NewAudioWindow(filePath, origin);
                       } else if (extension == "png") {
                           NewImageWindow(filePath, origin);
+                      } else if (extension == "mov") {
+                          NewMovieWindow(filePath, origin);
                       }
                   }
               } }
@@ -139,11 +141,13 @@ void DesktopAppScene::NewCheckersWindow() {
     int existingCount = (int)desktopLock->Windows().size();
     float offset = 30.0f * existingCount;
 
-    desktopLock->NewWindow({ .origin = { 50 + offset, 50 + offset },
-                             .worldSize = { 600, 600 },
-                             .buildContentFunc = [](WorldNode& contentNode) {
-                                 contentNode.AddComponent<Example::Checkers::Scene>();
-                             } });
+    auto window = desktopLock->NewWindow({ .origin = { 50 + offset, 50 + offset },
+                                           .worldSize = { 600, 600 },
+                                           .buildContentFunc = [](WorldNode& contentNode) {
+                                               contentNode.AddComponent<Example::Checkers::Scene>();
+                                           } });
+    GUARD(window)
+    window->aspectRatio = 1.0f;
 }
 
 void DesktopAppScene::NewSceneWindow(SceneClass* sceneClass) {
@@ -218,6 +222,48 @@ void DesktopAppScene::NewAudioWindow(FilePath filePath, Vector2 origin) {
                                  );
                                  renderer.SetAudioStream(stream);
                              } });
+}
+
+void DesktopAppScene::NewMovieWindow(FilePath filePath, Vector2 origin) {
+    auto desktopLock = desktop.lock();
+    GUARD(desktopLock)
+
+    desktopLock->NewWindow({
+        .origin = origin,
+        .worldSize = { 800, 600 },
+        .buildContentFunc =
+            [filePath](WorldNode& contentNode) {
+                auto viewport = contentNode.TypeComponent<Viewport>();
+                GUARD(viewport)
+                auto viewportSize = viewport->worldSize.Value();
+                GUARD(viewportSize.x > 0 && viewportSize.y > 0)
+
+                auto& child = contentNode.AddNode(WorldNode::Config{ .name = "Movie" });
+
+                auto movie =
+                    child.AddComponentPtr<MacMovie>(MacMovie::Config{ .filePath = filePath });
+                GUARD(movie)
+
+                auto material = MAKE<RenderMaterial>(RenderMaterial::Config{
+                    .shaderId = ShaderId::TextureVary,
+                    .features = { { RenderFeature::Blend, RenderFeatureState::Enable } } });
+                auto& sprite = child.AddComponent<SpriteRenderer>(SpriteRenderer::Config{
+                    .material = material });
+                sprite.SetWorldSize(Vector3(viewportSize.x, viewportSize.y, 0));
+
+                movie->Play();
+
+                SpriteRenderer* spritePtr = &sprite;
+                child.updatables.AddContinue([movie, spritePtr](TimeSlice) {
+                    auto texture = movie->MakeTexture();
+                    GUARD(texture)
+                    auto material = spritePtr->core.model.material;
+                    GUARD(material)
+                    material->SetTexture(texture);
+                    spritePtr->core.model.SetMeshNeedsBuild();
+                });
+            },
+    });
 }
 
 void DesktopAppScene::NewImageWindow(FilePath filePath, Vector2 origin) {

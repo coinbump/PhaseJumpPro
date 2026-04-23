@@ -94,7 +94,7 @@ bool GLShaderProgram::Link() {
         isLinked = true;
     }
 
-    GLsizei bufferSize = 255;
+    constexpr GLsizei bufferSize = 255;
     GLsizei length{};
     GLint size{};
     GLenum type{};

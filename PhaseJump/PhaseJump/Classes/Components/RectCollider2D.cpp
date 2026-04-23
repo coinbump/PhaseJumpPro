@@ -16,6 +16,10 @@ bool RectCollider2D::TestHit(Vector2 position) {
     return std::abs(position.x) <= halfX && std::abs(position.y) <= halfY;
 }
 
+Bounds2D RectCollider2D::GetBounds() {
+    return Bounds2D({}, size / 2.0f);
+}
+
 Vector3 RectCollider2D::WorldSize() const {
     return { size.x, size.y, 0 };
 }

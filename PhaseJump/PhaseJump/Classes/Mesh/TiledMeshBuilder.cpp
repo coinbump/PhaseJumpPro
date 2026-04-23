@@ -5,6 +5,10 @@ using namespace std;
 using namespace PJ;
 
 Vector2Int TiledMeshBuilder::MeshSize() const {
+    // Require a positive tileSize in each axis; otherwise the divisions and fmod
+    // below are undefined / produce NaN.
+    GUARDR(tileSize.x > 0 && tileSize.y > 0, Vector2Int())
+
     int numTilesX = (int)floor(worldSize.x / tileSize.x);
     if (fmod(worldSize.x, tileSize.x)) {
         numTilesX++;

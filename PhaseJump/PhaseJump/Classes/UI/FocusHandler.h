@@ -1,6 +1,5 @@
 #pragma once
 
-#include "SomeResolver.h"
 #include "SomeSignal.h"
 #include "UIWorldSystem.h"
 #include "WorldComponent.h"

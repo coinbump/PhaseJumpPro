@@ -12,7 +12,7 @@ namespace BroadcasterTests {
         int listenCount = 0;
         String lastMessage;
 
-        void OnSignal(SomeSignal& signal) override {
+        void OnSignal(SomeSignal const& signal) override {
             listenCount++;
 
             auto standardEvent = As<Event<StandardEventCore>>(&signal);

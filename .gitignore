@@ -10,6 +10,9 @@
 /[Ll]ogs/
 /[Uu]ser[Ss]ettings/
 
+# Temp build files
+build/
+
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data
 /[Mm]emoryCaptures/
@@ -82,3 +85,12 @@ xcuserdata/
 ## Xcode 8 and earlier
 *.xcscmblueprint
 *.xccheckout
+
+# LSP / xcode-build-server (clangd + sourcekit-lsp)
+buildServer.json
+compile_commands.json
+.compile
+.compile.lock
+
+# Clangd cache
+.cache/**

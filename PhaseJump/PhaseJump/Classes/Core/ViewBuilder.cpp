@@ -1,15 +1,20 @@
 #include "ViewBuilder.h"
 #include "Collider2D.h"
 #include "ColorView.h"
+#include "DragGestureHandler2D.h"
 #include "FixedGridViewLayout.h"
 #include "FlowStackViewLayout.h"
 #include "Font.h"
 #include "HoverGestureHandler.h"
 #include "ImRenderer.h"
 #include "PadViewLayout.h"
+#include "PointerClickUIEvent.h"
 #include "QuickBuilder.h"
+#include "ScrollView.h"
 #include "SliderControl.h"
 #include "SpacerView.h"
+#include "SplitterControl.h"
+#include "SplitViewLayout.h"
 #include "TextRenderer.h"
 #include "TextView.h"
 #include "ToggleButtonControl.h"
@@ -522,6 +527,11 @@ This& ViewBuilder::Spacer() {
     return *this;
 }
 
+This& ViewBuilder::Clipped() {
+    QB().ModifyLatest<View2D>([](auto& view) { view.Clip(); });
+    return *this;
+}
+
 This& ViewBuilder::FixedSize(std::optional<float> width, std::optional<float> height) {
     QB().ModifyLatest<View2D>([&](auto& view) { view.SetFixedSize(width, height); });
 
@@ -645,15 +655,15 @@ This& ViewBuilder::Button(ButtonConfig config) {
 }
 
 This& ViewBuilder::SegmentToggle(ToggleButtonConfig config) {
-    return BuildFromDesignSystem(UIItemId::SegmentToggle, config);
+    return BuildFromDesignSystem(UIItemId::ToggleSegment, config);
 }
 
 This& ViewBuilder::ImageToggle(ToggleButtonConfig config) {
-    return BuildFromDesignSystem(UIItemId::ImageToggle, config);
+    return BuildFromDesignSystem(UIItemId::ToggleImage, config);
 }
 
 This& ViewBuilder::SwitchToggle(ToggleButtonConfig config) {
-    return BuildFromDesignSystem(UIItemId::SwitchToggle, config);
+    return BuildFromDesignSystem(UIItemId::ToggleSwitch, config);
 }
 
 This& ViewBuilder::Dial(DialConfig config) {
@@ -677,11 +687,11 @@ This& ViewBuilder::Label(LabelConfig config) {
 }
 
 This& ViewBuilder::CheckButton(ToggleButtonConfig config) {
-    return BuildFromDesignSystem(UIItemId::CheckButton, config);
+    return BuildFromDesignSystem(UIItemId::ButtonCheck, config);
 }
 
 This& ViewBuilder::RadioButton(ToggleButtonConfig config) {
-    return BuildFromDesignSystem(UIItemId::RadioButton, config);
+    return BuildFromDesignSystem(UIItemId::ButtonRadio, config);
 }
 
 This& ViewBuilder::Toast(LabelConfig config) {
@@ -749,5 +759,136 @@ This& ViewBuilder::AddToolTip(ToolTipConfig config) {
               } }
     );
 
+    return *this;
+}
+
+This& ViewBuilder::Splitter(SplitterConfig config) {
+    return BuildFromDesignSystem(UIItemId::Splitter, config);
+}
+
+This& ViewBuilder::ScrollView(ScrollViewConfig config) {
+    QB().And(config.name).template With<PJ::ScrollView>();
+
+    auto& scrollNode = QB().Node();
+    auto* scroll = scrollNode.template TypeComponent<PJ::ScrollView>();
+    GUARDR(scroll, *this)
+
+    scroll->SetEnabledAxes(config.enabledAxes);
+
+    if (config.buildViewFunc) {
+        ViewBuilder childBuilder(scrollNode);
+        config.buildViewFunc(childBuilder);
+    }
+
+    QB().Pop();
+    return *this;
+}
+
+This& ViewBuilder::SplitView(SplitViewConfig config) {
+    // Parent view holds first / splitter / second children and arranges them with a
+    // SplitViewLayout driven by the splitter's firstRatio.
+    QB().And(config.name).template With<View2D>();
+
+    auto& parentNode = QB().Node();
+    auto* parentView = parentNode.template TypeComponent<View2D>();
+    GUARDR(parentView, *this)
+
+    auto const axis = config.axis;
+    auto const splitterSize = config.splitterSize;
+    auto const minRatio = config.minRatio;
+    auto const maxRatio = config.maxRatio;
+
+    // First pane — wrap in PadViewLayout so a single content child fills the slot.
+    auto& firstSlotNode = parentNode.And(WorldNode::Config{ .name = "First" });
+    auto& firstSlotView = firstSlotNode.AddComponent<View2D>();
+    UP<SomeViewLayout> firstSlotLayout = NEW<PadViewLayout>(LayoutInsets{});
+    firstSlotView.SetLayout(firstSlotLayout);
+    if (config.buildFirstViewFunc) {
+        ViewBuilder firstVB(firstSlotNode);
+        config.buildFirstViewFunc(firstVB);
+    }
+
+    // Splitter — the design system creates the SplitterControl + ImRenderer on a new
+    // node and leaves the QB cursor on it so we can attach collider / drag / cursor
+    // behavior here (everything that isn't the pure visual).
+    Splitter(SplitterConfig{ .axis = axis, .initialRatio = config.initialRatio });
+
+    SplitterControl* splitterRaw{};
+    QB().template ModifyLatest<SplitterControl>([&](auto& splitter) { splitterRaw = &splitter; });
+    GUARDR(splitterRaw, *this)
+
+    // Cursor changes on hover
+    String const cursorId =
+        (axis == Axis2D::X) ? CursorId::ResizeEastWest : CursorId::ResizeNorthSouth;
+    auto savedCursorId = MAKE<String>();
+
+    QB().RectCollider().template ModifyLatest<Collider2D>([cursorId,
+                                                           savedCursorId](auto& collider) {
+        collider.template AddSignalHandler<PointerEnterUIEvent>(
+            { .id = SignalId::PointerEnter,
+              .func =
+                  [cursorId, savedCursorId](auto& component, auto& event) {
+                      auto ownerNode = component.Node();
+                      GUARD(ownerNode && ownerNode->World())
+                      *savedCursorId = ownerNode->World()->GetCursorId();
+                      ownerNode->World()->SetCursor(cursorId);
+                  } }
+        );
+        collider.template AddSignalHandler<PointerExitUIEvent>(
+            { .id = SignalId::PointerExit,
+              .func =
+                  [savedCursorId](auto& component, auto& event) {
+                      GUARD(!savedCursorId->empty())
+                      auto ownerNode = component.Node();
+                      GUARD(ownerNode && ownerNode->World())
+                      ownerNode->World()->SetCursor(*savedCursorId);
+                      savedCursorId->clear();
+                  } }
+        );
+    });
+
+    // Drag gesture: move the splitter's ratio in response to pointer drags.
+    auto dragHandler = QB().Node().AddComponentPtr<DragGestureHandler2D>();
+    dragHandler->onDragGestureUpdateFunc = [splitterRaw, axis, minRatio, maxRatio,
+                                            startRatio = config.initialRatio](auto update) mutable {
+        if (update.type == DragGestureHandler2D::Update::Type::Start) {
+            startRatio = splitterRaw->FirstRatio();
+        }
+        auto parent = splitterRaw->ParentView();
+        GUARD(parent)
+        float const length = parent->Frame().size.AxisValue(axis);
+        GUARD(length > 0)
+        auto const translation = update.Translation();
+
+        // World Y points up; view Y points down — flip for Y-axis splits.
+        float const deltaRatio =
+            (axis == Axis2D::X) ? translation.x / length : -translation.y / length;
+        float const newRatio = std::clamp(startRatio + deltaRatio, minRatio, maxRatio);
+        splitterRaw->SetFirstRatio(newRatio);
+    };
+
+    // Second pane — same slot-wrapping treatment as the first pane.
+    auto& secondSlotNode = parentNode.And(WorldNode::Config{ .name = "Second" });
+    auto& secondSlotView = secondSlotNode.AddComponent<View2D>();
+    UP<SomeViewLayout> secondSlotLayout = NEW<PadViewLayout>(LayoutInsets{});
+    secondSlotView.SetLayout(secondSlotLayout);
+    if (config.buildSecondViewFunc) {
+        ViewBuilder secondVB(secondSlotNode);
+        config.buildSecondViewFunc(secondVB);
+    }
+
+    // Install the layout driven by the splitter's firstRatio, and re-layout whenever the
+    // user drags the splitter (the ratio is an ObservedValue, so we hook its change func).
+    UP<SomeViewLayout> layout = NEW<SplitViewLayout>(
+        axis, [splitterRaw](float length) { return splitterRaw->FirstRatio() * length; },
+        [splitterSize](float) { return splitterSize; }
+    );
+    parentView->SetLayout(layout);
+
+    splitterRaw->firstRatio.SetOnValueChangeFunc(
+        SetOnValueChangeFuncType::None, [parentView](float) { parentView->SetNeedsLayout(); }
+    );
+
+    QB().Pop();
     return *this;
 }

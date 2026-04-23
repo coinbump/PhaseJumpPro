@@ -30,13 +30,16 @@ void DepthFirstOrderRenderProcessor::Process(RenderCameraModel& cameraModel) {
 
     /// Paint render models (there will be gaps in order because of nodes in the tree that don't
     /// have a renderer)
-    std::for_each(cameraModel.models.begin(), cameraModel.models.end(), [&](RenderModel& model) {
-        try {
-            model.order = orderMap.at(model.id);
-        } catch (...) {
-            model.order = 0;
+    std::for_each(
+        cameraModel.models.begin(), cameraModel.models.end(),
+        [&](MaterialRenderModel& model) {
+            try {
+                model.order = orderMap.at(model.id);
+            } catch (...) {
+                model.order = 0;
+            }
         }
-    });
+    );
 
     std::sort(cameraModel.models.begin(), cameraModel.models.end(), cameraModel.modelSortFunc);
 }

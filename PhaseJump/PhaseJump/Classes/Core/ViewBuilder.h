@@ -3,6 +3,7 @@
 #include "AlignFunc.h"
 #include "Alignment2D.h"
 #include "AttributedString.h"
+#include "Axis.h"
 #include "Binding.h"
 #include "ButtonControl.h"
 #include "Color.h"
@@ -11,6 +12,7 @@
 #include "LayoutInsets.h"
 #include "PageView.h"
 #include "StringUtils.h"
+#include "UnorderedSet.h"
 
 /*
  RATING: 5 stars
@@ -53,6 +55,7 @@ namespace PJ {
         using DialConfig = DesignSystem::DialConfig;
         using ToolTipConfig = DesignSystem::ToolTipConfig;
         using SliderConfig = DesignSystem::SliderConfig;
+        using SplitterConfig = DesignSystem::SplitterConfig;
 
         struct RadioButtonGroupConfig {
             SingleSelectStore* store{};
@@ -194,6 +197,46 @@ namespace PJ {
             BuildViewFunc buildFrameFunc;
             BuildViewFunc buildLabelFunc;
             ModifyViewFunc modifyViewFunc;
+        };
+
+        /// Scroll view config
+        struct ScrollViewConfig {
+            String name = "Scroll";
+
+            /// Axes that respond to scroll position. Default: Y only (vertical scroll).
+            UnorderedSet<Axis2D> enabledAxes{ Axis2D::Y };
+
+            /// Builds the scroll view's single content view.
+            BuildViewFunc buildViewFunc;
+        };
+
+        /// Split view config. SplitView renders two content panes separated by a draggable
+        /// splitter handle produced by the design system; dragging the handle adjusts the
+        /// first pane's ratio of the total length.
+        struct SplitViewConfig {
+            String name = "Split";
+
+            /// Axis the bounds are split along.
+            Axis2D axis = Axis2D::X;
+
+            /// Starting ratio (0..1) of the first pane along the split axis.
+            float initialRatio = 0.5f;
+
+            /// Lower bound on the drag-adjusted ratio.
+            float minRatio = 0.0f;
+
+            /// Upper bound on the drag-adjusted ratio.
+            float maxRatio = 1.0f;
+
+            /// Pixel length of the splitter handle along the split axis.
+            float splitterSize = 10.0f;
+
+            /// Builds the first pane's content. Called with a VB rooted at the pane, which
+            /// already has a PadViewLayout so a single child fills the allocated slot.
+            BuildViewFunc buildFirstViewFunc;
+
+            /// Builds the second pane's content. Same contract as buildFirstViewFunc.
+            BuildViewFunc buildSecondViewFunc;
         };
 
         ViewBuilder(QuickBuilder& quickBuilder);
@@ -374,6 +417,9 @@ namespace PJ {
         /// Adds a Spacer view
         This& Spacer();
 
+        /// Clip the latest view's content
+        This& Clipped();
+
         // MARK: View modifiers
 
         /// Adds a background view to the latest view
@@ -442,6 +488,17 @@ namespace PJ {
 
         /// Adds a tool tip UI that will appear when the mouse is over the active view
         This& AddToolTip(ToolTipConfig config);
+
+        /// Adds a scroll view wrapping a single content child
+        This& ScrollView(ScrollViewConfig config);
+
+        /// Adds a split view: two content panes separated by a draggable splitter handle.
+        /// The splitter handle itself is rendered by the design system's UIItemId::Splitter
+        /// builder.
+        This& SplitView(SplitViewConfig config);
+
+        /// Adds a themed splitter handle view (design-system rendered
+        This& Splitter(SplitterConfig config = {});
 
     protected:
         This& AddViewAttachments(View2D& view, ViewAttachmentsConfig config);

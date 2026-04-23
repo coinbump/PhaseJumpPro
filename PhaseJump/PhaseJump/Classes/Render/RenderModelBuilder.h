@@ -11,7 +11,7 @@
  */
 namespace PJ {
     class ShaderProgram;
-    struct RenderModel;
+    struct MaterialRenderModel;
     struct Mesh;
     class RenderMaterial;
     class Matrix4x4;
@@ -30,10 +30,10 @@ namespace PJ {
     }
 
     struct RenderModelBuilder {
-        std::optional<RenderModel> Build(MaterialRendererCore& core, RendererModel& model);
+        std::optional<MaterialRenderModel> Build(MaterialRendererCore& core, RendererModel& model);
 
     protected:
-        std::optional<RenderModel> Build(
+        std::optional<MaterialRenderModel> Build(
             WorldNode* node, Mesh const& mesh, RenderMaterial& material,
             VectorList<SP<Texture>> const& textures
         );

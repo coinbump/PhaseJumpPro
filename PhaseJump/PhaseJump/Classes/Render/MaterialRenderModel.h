@@ -6,6 +6,7 @@
 #include "Mesh.h"
 #include "RenderMaterial.h"
 #include "RenderTypes.h"
+#include "SomeRenderModel.h"
 #include "SpanVectorList.h"
 #include "Texture.h"
 #include "UnorderedMap.h"
@@ -21,18 +22,6 @@ namespace PJ {
     class ShaderProgram;
     class SomeRenderCommandModel;
 
-    /// Names of common render model types
-    namespace RenderModelType {
-        /// Draw a mesh
-        auto constexpr Draw = "draw";
-
-        /// Push a stencil
-        auto constexpr StencilPush = "stencil.push";
-
-        /// Pop a stencil
-        auto constexpr StencilPop = "stencil.pop";
-    } // namespace RenderModelType
-
     /**
      Model for a render operation
 
@@ -40,11 +29,13 @@ namespace PJ {
      and performs the render
 
      VectorList is used for easy n-element access and so we can directly upload to the render
-     buffers. All render model types must be non-polymorphic to allow this
+     buffers. Render-path code copies/uploads this type as a value, so downstream consumers
+     must treat it as a concrete leaf type and not add further virtual members.
      */
-    struct RenderModel {
+    struct MaterialRenderModel : public SomeRenderModel {
     public:
-        using This = RenderModel;
+        using Base = SomeRenderModel;
+        using This = MaterialRenderModel;
 
     protected:
         /// Material used to render mesh. Sharing materials between objects allows batching
@@ -63,9 +54,6 @@ namespace PJ {
         Mesh const* meshPtr{};
 
     public:
-        /// Specifies how this render model should be used by the render engine
-        String type = RenderModelType::Draw;
-
         /// @return Returns the material
         RenderMaterial* Material() const {
             return material;
@@ -102,11 +90,21 @@ namespace PJ {
         /// Matrix for transform from model to world space
         Matrix4x4 matrix;
 
-        /// Allows us to pre-emptively resize vectors with default elements
-        RenderModel() {}
+        /// Per-model overrides for material features. The DAG blend-inheritance pass writes
+        /// here so we don't have to mutate the shared material when an opaque child needs to
+        /// inherit a blended parent's blend mode. `IsFeatureEnabled` consults this map first
+        /// and falls back to the material's feature state when no override is present.
+        UnorderedMap<String, RenderFeatureState> overrideFeatures;
 
-        RenderModel(RenderMaterial* material) :
-            material(material) {}
+        /// Allows us to pre-emptively resize vectors with default elements
+        MaterialRenderModel() {
+            type = RenderModelType::Draw;
+        }
+
+        MaterialRenderModel(RenderMaterial* material) :
+            material(material) {
+            type = RenderModelType::Draw;
+        }
 
         Mesh& ModifiableMesh() {
             if (meshPtr) {

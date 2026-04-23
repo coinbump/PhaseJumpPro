@@ -1,9 +1,10 @@
 #pragma once
 
+#include "MaterialRenderModel.h"
 #include "Mesh.h"
 #include "RendererModel.h"
-#include "RenderModel.h"
 #include "SomeRenderContext.h"
+#include "SomeRenderModel.h"
 #include "WorldComponent.h"
 #include "WorldSizeable.h"
 #include <memory>
@@ -16,24 +17,34 @@
 namespace PJ {
     class RenderMaterial;
     class RenderContextModel;
-    class RenderModel;
+    class MaterialRenderModel;
     class Texture;
+
+    /// Polymorphic list of render models. The DAG builder consumes this from each renderer
+    /// and links the resulting nodes into the RenderPassModel.
+    using RenderModelList = VectorList<SP<SomeRenderModel>>;
 
     /// Produces render models for the render engine to render
     class Renderer : public WorldComponent, public WorldSizeable {
     public:
         using This = Renderer;
 
-        using RenderModelsFunc = std::function<VectorList<RenderModel>(This&)>;
+        using RenderModelsFunc = std::function<RenderModelList(This&)>;
 
         RenderModelsFunc renderModelsFunc;
 
         virtual ~Renderer() {}
 
-        /// Create models to send to the render engine for a render
-        virtual VectorList<RenderModel> RenderModels() {
+        /// @return Models that drive the render
+        virtual RenderModelList RenderModels() {
             GUARDR(renderModelsFunc, {})
             return renderModelsFunc(*this);
+        }
+
+        /// @return Models emitted after this renderer's children in the DAG. Default to empty.
+        /// Used for stencil pop
+        virtual RenderModelList PostRenderModels() {
+            return {};
         }
 
         /// @return Returns a calculated size from the given size proposal
@@ -99,7 +110,7 @@ namespace PJ {
         }
 
         /// Create models to send to the render engine for a render
-        VectorList<RenderModel> RenderModels();
+        RenderModelList RenderModels();
 
         /// @return Returns a PlanUIFunc that provides standard editor UI for the core
         WorldComponent::PlanUIFunc MakePlanUIFunc();

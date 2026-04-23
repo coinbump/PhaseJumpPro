@@ -152,7 +152,7 @@ namespace PJ {
             return framePlayable && framePlayable->IsFinished();
         }
 
-        VectorList<RenderModel> RenderModels() override {
+        RenderModelList RenderModels() override {
             return core.RenderModels();
         }
 

@@ -24,7 +24,7 @@ namespace PJ {
 
         // MARK: Renderer
 
-        VectorList<RenderModel> RenderModels() override {
+        RenderModelList RenderModels() override {
             return core.RenderModels();
         }
 

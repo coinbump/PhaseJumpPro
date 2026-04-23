@@ -10,13 +10,14 @@
  CODE REVIEW: 9/1/24
  */
 namespace PJ {
-    class RenderModel;
+    class MaterialRenderModel;
 
     /// Orders the nodes by their axis position in world space
     class OrderRenderProcessor : public RenderProcessor {
     public:
         using Base = RenderProcessor;
-        using SortFunc = std::function<bool(RenderModel const&, RenderModel const&)>;
+        using SortFunc =
+            std::function<bool(MaterialRenderModel const&, MaterialRenderModel const&)>;
 
         SortFunc sortFunc;
 
@@ -26,6 +27,7 @@ namespace PJ {
 
         // MARK: RenderProcessor
 
-        void Process(RenderCameraModel& cameraModel) override;
+        // TODO: this is broken with new render DAG. Fix this
+        void Process(RenderCameraModel& cameraModel);
     };
 } // namespace PJ

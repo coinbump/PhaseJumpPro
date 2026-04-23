@@ -14,6 +14,8 @@ namespace PJ {
     public:
         using Base = Texture;
 
+        DELETE_COPY(SDLTexture)
+
         SDL_Texture* texture{};
 
         SDLTexture(SDL_Texture* texture, Vector2Int size) :

@@ -120,7 +120,7 @@ namespace PJ {
             }
 
             node = MAKE<Node>(state);
-            this->nodes.insert(node);
+            this->AddNode(node);
 
             stateToNodeMap[state] = node;
 

@@ -25,9 +25,13 @@ namespace PJ {
         StreamWriter(Config const& config) :
             config(config) {}
 
+        /// Writes the raw bytes of `value` to the stream. `Type` must be trivially copyable
+        /// so the byte representation is well-defined; this pairs with `StreamReader::Read<Type>`.
         template <typename Type>
-        This const& Write(Type const& value) const {
-            config.stream << value;
+        This const& Write(Type const& value) const
+            requires std::is_trivially_copyable_v<Type> && (!std::integral<Type>)
+        {
+            config.stream.write(reinterpret_cast<char const*>(&value), sizeof(Type));
             return *this;
         }
 
@@ -37,9 +41,10 @@ namespace PJ {
             requires std::integral<Type>
         {
             if (config.nativeEndian != config.streamEndian) {
-                config.stream << std::byteswap(value);
+                Type swapped = std::byteswap(value);
+                config.stream.write(reinterpret_cast<char const*>(&swapped), sizeof(Type));
             } else {
-                config.stream << value;
+                config.stream.write(reinterpret_cast<char const*>(&value), sizeof(Type));
             }
 
             return *this;

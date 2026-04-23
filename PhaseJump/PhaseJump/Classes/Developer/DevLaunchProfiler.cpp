@@ -58,20 +58,6 @@ public:
     }
 };
 
-struct Vector3TempArray {
-public:
-    using This = Vector3TempArray;
-
-    float x = 0;
-    float y = 0;
-    float z = 0;
-
-    constexpr float& operator[](size_t index) {
-        float* indices[3] = { &x, &y, &z };
-        return *indices[index];
-    }
-};
-
 struct Vector3Switch {
 public:
     using This = Vector3Switch;

@@ -3,6 +3,7 @@
 #include "ImRenderer.h"
 #include "QuickBuilder.h"
 #include "SliderControl.h"
+#include "SplitterControl.h"
 #include "ToggleButtonControl.h"
 #include "ViewBuilder.h"
 
@@ -68,32 +69,34 @@ DuckDesignSystem::DuckDesignSystem() :
     RegisterLabel();
     RegisterToast();
     RegisterToolTip();
+    RegisterSplitter();
 }
 
 void DuckDesignSystem::RegisterSurface() {
-    buildViewFuncs[UIItemId::Surface] = [this](auto* _config, auto& vb) {
-        SurfaceConfig const& config = *(static_cast<SurfaceConfig const*>(_config));
-        Color surfaceColor = Color::white;
+    Register<SurfaceConfig>(
+        UIItemId::Surface,
+        [this](SurfaceConfig const& config, ViewBuilder& vb) {
+            Color surfaceColor = Color::white;
 
-        bool areShapesOpaque = this->areShapesOpaque;
+            bool areShapesOpaque = this->areShapesOpaque;
 
-        if (config.color) {
-            surfaceColor = *config.color;
-        } else if (!IsEmpty(config.colorId)) {
-            surfaceColor = theme->ThemeColor(config.colorId, surfaceColor);
+            if (config.color) {
+                surfaceColor = *config.color;
+            } else if (!IsEmpty(config.colorId)) {
+                surfaceColor = theme->ThemeColor(config.colorId, surfaceColor);
+            }
+
+            vb.Immediate({ .renderFunc = [=](auto& view, auto& renderer
+                                         ) { renderer.FillRect(view.Bounds(), surfaceColor); },
+                           .modifyRendererFunc = [=](auto& renderer
+                                                 ) { renderer.areShapesOpaque = areShapesOpaque; } }
+            );
         }
-
-        vb.Immediate({ .renderFunc = [=](auto& view, auto& renderer
-                                     ) { renderer.FillRect(view.Bounds(), surfaceColor); },
-                       .modifyRendererFunc = [=](auto& renderer
-                                             ) { renderer.areShapesOpaque = areShapesOpaque; } });
-    };
+    );
 }
 
 void DuckDesignSystem::RegisterButton() {
-    buildViewFuncs[UIItemId::Button] = [this](auto* _config, auto& vb) {
-        ButtonConfig const& config = *(static_cast<ButtonConfig const*>(_config));
-
+    Register<ButtonConfig>(UIItemId::Button, [this](ButtonConfig const& config, ViewBuilder& vb) {
         Color surfaceColor = theme->ThemeColor(UIElementId::SurfaceInteractive, Color::gray);
         Color pressColor = theme->ThemeColor(UIElementId::SurfaceInteractivePress, Color::blue);
         Color hoverColor = theme->ThemeColor(UIElementId::SurfaceInteractiveHover, Color::red);
@@ -133,13 +136,11 @@ void DuckDesignSystem::RegisterButton() {
                                         } }
                             ).FixedSize({}, frameHeight);
                         } });
-    };
+    });
 }
 
 void DuckDesignSystem::RegisterSlider() {
-    buildViewFuncs[UIItemId::Slider] = [this](auto* _config, auto& vb) {
-        SliderConfig const& config = *(static_cast<SliderConfig const*>(_config));
-
+    Register<SliderConfig>(UIItemId::Slider, [this](SliderConfig const& config, ViewBuilder& vb) {
         Color trackColor = theme->ThemeColor(UIElementId::SurfaceInteractive, Color::gray);
         Color trackPrimaryColor = theme->ThemeColor(UIElementId::PrimaryContainer, Color::gray);
         Color trackHoverColor =
@@ -204,7 +205,7 @@ void DuckDesignSystem::RegisterSlider() {
                           } }
                 );
             });
-    };
+    });
 }
 
 // MARK: Collapsing Header
@@ -256,63 +257,65 @@ void DuckDesignSystem::RegisterSlider() {
 //    };
 
 void DuckDesignSystem::RegisterSegmentToggle() {
-    buildViewFuncs[UIItemId::SegmentToggle] = [this](auto* _config, auto& vb) {
-        ToggleButtonConfig const& config = *(static_cast<ToggleButtonConfig const*>(_config));
+    Register<ToggleButtonConfig>(
+        UIItemId::ToggleSegment,
+        [this](ToggleButtonConfig const& config, ViewBuilder& vb) {
+            Color surfaceColor = theme->ThemeColor(UIElementId::SurfaceToggleOff, Color::gray);
+            Color pressColor = theme->ThemeColor(UIElementId::SurfaceToggleOffPress, Color::yellow);
+            Color hoverColor = theme->ThemeColor(UIElementId::SurfaceToggleOffHover, Color::red);
+            Color isOnColor = theme->ThemeColor(UIElementId::SurfaceToggleOn, Color::green);
+            Color isOnHoverColor = theme->ThemeColor(UIElementId::SurfaceToggleOnHover, isOnColor);
+            Color isOnPressColor = theme->ThemeColor(UIElementId::SurfaceToggleOnPress, isOnColor);
+            Color labelColor = theme->ThemeColor(UIElementId::OnSurfaceInteractive, Color::black);
+            Color labelPressColor =
+                theme->ThemeColor(UIElementId::OnSurfaceInteractivePress, Color::white);
+            float frameHeight = theme->ElementSize(UIElementId::ControlFrame, { 0, 30 }).y;
 
-        Color surfaceColor = theme->ThemeColor(UIElementId::SurfaceToggleOff, Color::gray);
-        Color pressColor = theme->ThemeColor(UIElementId::SurfaceToggleOffPress, Color::yellow);
-        Color hoverColor = theme->ThemeColor(UIElementId::SurfaceToggleOffHover, Color::red);
-        Color isOnColor = theme->ThemeColor(UIElementId::SurfaceToggleOn, Color::green);
-        Color isOnHoverColor = theme->ThemeColor(UIElementId::SurfaceToggleOnHover, isOnColor);
-        Color isOnPressColor = theme->ThemeColor(UIElementId::SurfaceToggleOnPress, isOnColor);
-        Color labelColor = theme->ThemeColor(UIElementId::OnSurfaceInteractive, Color::black);
-        Color labelPressColor =
-            theme->ThemeColor(UIElementId::OnSurfaceInteractivePress, Color::white);
-        float frameHeight = theme->ElementSize(UIElementId::ControlFrame, { 0, 30 }).y;
+            bool areShapesOpaque = this->areShapesOpaque;
 
-        bool areShapesOpaque = this->areShapesOpaque;
+            vb.ToggleButtonView({ .isOnBinding = config.isOnBinding,
+                                  .modifyViewFunc = config.modifyViewFunc,
+                                  .buildFrameFunc = [=](auto& vb) {
+                                      vb.Immediate(
+                                            { .renderFunc =
+                                                  [=](auto& view, auto& renderer) {
+                                                      auto& button =
+                                                          *(static_cast<ToggleButtonControl*>(
+                                                              view.ParentView()
+                                                          ));
 
-        vb.ToggleButtonView({ .isOnBinding = config.isOnBinding,
-                              .modifyViewFunc = config.modifyViewFunc,
-                              .buildFrameFunc = [=](auto& vb) {
-                                  vb.Immediate(
-                                        { .renderFunc =
-                                              [=](auto& view, auto& renderer) {
-                                                  auto& button =
-                                                      *(static_cast<ToggleButtonControl*>(
-                                                          view.ParentView()
-                                                      ));
+                                                      if (button.IsToggleOn()) {
+                                                          renderer.SetColor(
+                                                              button.IsPressed()    ? isOnPressColor
+                                                              : button.IsHovering() ? isOnHoverColor
+                                                                                    : isOnColor
+                                                          );
+                                                      } else {
+                                                          renderer.SetColor(
+                                                              button.IsPressed()    ? pressColor
+                                                              : button.IsHovering() ? hoverColor
+                                                                                    : surfaceColor
+                                                          );
+                                                      }
+                                                      renderer.FillRect(view.Bounds());
 
-                                                  if (button.IsToggleOn()) {
                                                       renderer.SetColor(
-                                                          button.IsPressed()    ? isOnPressColor
-                                                          : button.IsHovering() ? isOnHoverColor
-                                                                                : isOnColor
+                                                          button.IsPressed() ? labelPressColor
+                                                                             : labelColor
                                                       );
-                                                  } else {
-                                                      renderer.SetColor(
-                                                          button.IsPressed()    ? pressColor
-                                                          : button.IsHovering() ? hoverColor
-                                                                                : surfaceColor
-                                                      );
-                                                  }
-                                                  renderer.FillRect(view.Bounds());
-
-                                                  renderer.SetColor(
-                                                      button.IsPressed() ? labelPressColor
-                                                                         : labelColor
-                                                  );
-                                                  renderer.Text(config.label, { 0, 0 }, 32);
-                                              },
-                                          .modifyRendererFunc =
-                                              [=](auto& renderer) {
-                                                  renderer.areShapesOpaque = areShapesOpaque;
-                                                  // Don't translate, so all contents are centered
-                                                  renderer.translateItemFunc = {};
-                                              } }
-                                  ).FixedSize({}, frameHeight);
-                              } });
-    };
+                                                      renderer.Text(config.label, { 0, 0 }, 32);
+                                                  },
+                                              .modifyRendererFunc =
+                                                  [=](auto& renderer) {
+                                                      renderer.areShapesOpaque = areShapesOpaque;
+                                                      // Don't translate, so all contents are
+                                                      // centered
+                                                      renderer.translateItemFunc = {};
+                                                  } }
+                                      ).FixedSize({}, frameHeight);
+                                  } });
+        }
+    );
 }
 
 //    auto setToggleColor = [this](ToggleButtonControl& button, ImRenderer& renderer) {
@@ -340,127 +343,135 @@ void DuckDesignSystem::RegisterSegmentToggle() {
 //    };
 
 void DuckDesignSystem::RegisterImageToggle() {
-    buildViewFuncs[UIItemId::ImageToggle] = [this](auto* _config, auto& vb) {
-        ToggleButtonConfig const& config = *(static_cast<ToggleButtonConfig const*>(_config));
+    Register<ToggleButtonConfig>(
+        UIItemId::ToggleImage,
+        [this](ToggleButtonConfig const& config, ViewBuilder& vb) {
+            Color surfaceColor = theme->ThemeColor(UIElementId::SurfaceToggleOff, Color::gray);
+            Color pressColor = theme->ThemeColor(UIElementId::SurfaceToggleOffPress, Color::yellow);
+            Color hoverColor = theme->ThemeColor(UIElementId::SurfaceToggleOffHover, Color::red);
+            Color isOnColor = theme->ThemeColor(UIElementId::SurfaceToggleOn, Color::green);
+            Color isOnHoverColor = theme->ThemeColor(UIElementId::SurfaceToggleOnHover, isOnColor);
+            Color isOnPressColor = theme->ThemeColor(UIElementId::SurfaceToggleOnPress, isOnColor);
+            Color imageColor =
+                config.imageColor
+                    ? *config.imageColor
+                    : theme->ThemeColor(UIElementId::OnSurfaceInteractive, Color::white);
 
-        Color surfaceColor = theme->ThemeColor(UIElementId::SurfaceToggleOff, Color::gray);
-        Color pressColor = theme->ThemeColor(UIElementId::SurfaceToggleOffPress, Color::yellow);
-        Color hoverColor = theme->ThemeColor(UIElementId::SurfaceToggleOffHover, Color::red);
-        Color isOnColor = theme->ThemeColor(UIElementId::SurfaceToggleOn, Color::green);
-        Color isOnHoverColor = theme->ThemeColor(UIElementId::SurfaceToggleOnHover, isOnColor);
-        Color isOnPressColor = theme->ThemeColor(UIElementId::SurfaceToggleOnPress, isOnColor);
-        Color imageColor = config.imageColor
-                               ? *config.imageColor
-                               : theme->ThemeColor(UIElementId::OnSurfaceInteractive, Color::white);
+            bool areShapesOpaque = this->areShapesOpaque;
 
-        bool areShapesOpaque = this->areShapesOpaque;
+            float frameWidth = config.size ? config.size->x : 60;
+            float frameHeight = config.size ? config.size->y : 60;
 
-        float frameWidth = config.size ? config.size->x : 60;
-        float frameHeight = config.size ? config.size->y : 60;
+            vb.ToggleButtonView({ .isOnBinding = config.isOnBinding,
+                                  .modifyViewFunc = config.modifyViewFunc,
+                                  .buildFrameFunc = [=](auto& vb) {
+                                      vb.Immediate(
+                                            { .renderFunc =
+                                                  [=](auto& view, auto& renderer) {
+                                                      auto& button =
+                                                          *(static_cast<ToggleButtonControl*>(
+                                                              view.ParentView()
+                                                          ));
 
-        vb.ToggleButtonView(
-            { .isOnBinding = config.isOnBinding,
-              .modifyViewFunc = config.modifyViewFunc,
-              .buildFrameFunc =
-                  [=](auto& vb) {
-                      vb.Immediate(
-                            { .renderFunc =
-                                  [=](auto& view, auto& renderer) {
-                                      auto& button =
-                                          *(static_cast<ToggleButtonControl*>(view.ParentView()));
-
-                                      if (button.IsToggleOn()) {
-                                          renderer.SetColor(
-                                              button.IsPressed()    ? isOnPressColor
-                                              : button.IsHovering() ? isOnHoverColor
-                                                                    : isOnColor
-                                          );
-                                      } else {
-                                          renderer.SetColor(
-                                              button.IsPressed()    ? pressColor
-                                              : button.IsHovering() ? hoverColor
-                                                                    : surfaceColor
-                                          );
-                                      }
-                                      renderer.FillRoundRect(view.Bounds(), 10);
-                                      renderer.TemplateImage(config.imageId, { 0, 0 }, imageColor);
-                                  },
-                              .modifyRendererFunc =
-                                  [=](auto& renderer) {
-                                      renderer.areShapesOpaque = areShapesOpaque;
-                                      // Don't translate, so all contents are centered
-                                      renderer.translateItemFunc = {};
-                                  } }
-                      ).FixedSize(frameWidth, frameHeight);
-                  } }
-        );
-    };
+                                                      if (button.IsToggleOn()) {
+                                                          renderer.SetColor(
+                                                              button.IsPressed()    ? isOnPressColor
+                                                              : button.IsHovering() ? isOnHoverColor
+                                                                                    : isOnColor
+                                                          );
+                                                      } else {
+                                                          renderer.SetColor(
+                                                              button.IsPressed()    ? pressColor
+                                                              : button.IsHovering() ? hoverColor
+                                                                                    : surfaceColor
+                                                          );
+                                                      }
+                                                      renderer.FillRoundRect(view.Bounds(), 10);
+                                                      renderer.TemplateImage(
+                                                          config.imageId, { 0, 0 }, imageColor
+                                                      );
+                                                  },
+                                              .modifyRendererFunc =
+                                                  [=](auto& renderer) {
+                                                      renderer.areShapesOpaque = areShapesOpaque;
+                                                      // Don't translate, so all contents are
+                                                      // centered
+                                                      renderer.translateItemFunc = {};
+                                                  } }
+                                      ).FixedSize(frameWidth, frameHeight);
+                                  } });
+        }
+    );
 }
 
 void DuckDesignSystem::RegisterSwitchToggle() {
-    buildViewFuncs[UIItemId::SwitchToggle] = [this](auto* _config, auto& vb) {
-        ToggleButtonConfig const& config = *(static_cast<ToggleButtonConfig const*>(_config));
+    Register<ToggleButtonConfig>(
+        UIItemId::ToggleSwitch,
+        [this](ToggleButtonConfig const& config, ViewBuilder& vb) {
+            Color primaryColor = theme->ThemeColor(UIElementId::Primary, Color::gray);
+            Color pressColor =
+                theme->ThemeColor(UIElementId::SurfaceInteractivePress, Color::yellow);
+            Color hoverColor = theme->ThemeColor(UIElementId::SurfaceInteractiveHover, Color::red);
 
-        Color primaryColor = theme->ThemeColor(UIElementId::Primary, Color::gray);
-        Color pressColor = theme->ThemeColor(UIElementId::SurfaceInteractivePress, Color::yellow);
-        Color hoverColor = theme->ThemeColor(UIElementId::SurfaceInteractiveHover, Color::red);
+            Color primaryContainerColor =
+                theme->ThemeColor(UIElementId::PrimaryContainer, Color::gray);
+            Color surfaceColor = theme->ThemeColor(UIElementId::SurfaceToggleOff, Color::gray);
 
-        Color primaryContainerColor = theme->ThemeColor(UIElementId::PrimaryContainer, Color::gray);
-        Color surfaceColor = theme->ThemeColor(UIElementId::SurfaceToggleOff, Color::gray);
+            bool areShapesOpaque = this->areShapesOpaque;
 
-        bool areShapesOpaque = this->areShapesOpaque;
+            float frameWidth = config.size ? config.size->x : 60;
+            float frameHeight = config.size ? config.size->y : 30;
 
-        float frameWidth = config.size ? config.size->x : 60;
-        float frameHeight = config.size ? config.size->y : 30;
+            vb.ToggleButtonView({ .isOnBinding = config.isOnBinding,
+                                  .modifyViewFunc = config.modifyViewFunc,
+                                  .buildFrameFunc = [=](auto& vb) {
+                                      vb.Immediate(
+                                            { .renderFunc =
+                                                  [=](auto& view, auto& renderer) {
+                                                      auto& button =
+                                                          *(static_cast<ToggleButtonControl*>(
+                                                              view.ParentView()
+                                                          ));
 
-        vb.ToggleButtonView(
-            { .isOnBinding = config.isOnBinding,
-              .modifyViewFunc = config.modifyViewFunc,
-              .buildFrameFunc =
-                  [=](auto& vb) {
-                      vb.Immediate(
-                            { .renderFunc =
-                                  [=](auto& view, auto& renderer) {
-                                      auto& button =
-                                          *(static_cast<ToggleButtonControl*>(view.ParentView()));
+                                                      renderer.SetColor(
+                                                          button.IsToggleOn()
+                                                              ? primaryContainerColor
+                                                              : surfaceColor
+                                                      );
+                                                      renderer.FillCapsule(view.Bounds());
 
-                                      renderer.SetColor(
-                                          button.IsToggleOn() ? primaryContainerColor : surfaceColor
-                                      );
-                                      renderer.FillCapsule(view.Bounds());
+                                                      Rect circleBounds;
+                                                      circleBounds.size = { frameHeight,
+                                                                            frameHeight };
 
-                                      Rect circleBounds;
-                                      circleBounds.size = { frameHeight, frameHeight };
+                                                      if (button.IsToggleOn()) {
+                                                          circleBounds.origin.x =
+                                                              frameWidth - circleBounds.size.x;
+                                                      }
 
-                                      if (button.IsToggleOn()) {
-                                          circleBounds.origin.x = frameWidth - circleBounds.size.x;
-                                      }
-
-                                      renderer.SetColor(
-                                          button.IsPressed()    ? pressColor
-                                          : button.IsHovering() ? hoverColor
-                                                                : primaryColor
-                                      );
-                                      renderer.FillEllipse(circleBounds);
-                                  },
-                              .modifyRendererFunc =
-                                  [=](auto& renderer) {
-                                      renderer.areShapesOpaque = areShapesOpaque;
-                                  } }
-                      ).FixedSize(frameWidth, frameHeight);
-                  } }
-        );
-    };
+                                                      renderer.SetColor(
+                                                          button.IsPressed()    ? pressColor
+                                                          : button.IsHovering() ? hoverColor
+                                                                                : primaryColor
+                                                      );
+                                                      renderer.FillEllipse(circleBounds);
+                                                  },
+                                              .modifyRendererFunc =
+                                                  [=](auto& renderer) {
+                                                      renderer.areShapesOpaque = areShapesOpaque;
+                                                  } }
+                                      ).FixedSize(frameWidth, frameHeight);
+                                  } });
+        }
+    );
 }
 
 void DuckDesignSystem::RegisterCheckTypeButtons() {
     auto buildCheckTypeButtonFunc = [this](
-                                        auto* _config, ViewBuilder& vb,
+                                        ToggleButtonConfig const& config, ViewBuilder& vb,
                                         std::function<void(ImRenderer&, Rect)> drawFill,
                                         std::function<void(ImRenderer&, Rect, float)> drawFrame
                                     ) {
-        ToggleButtonConfig const& config = *(static_cast<ToggleButtonConfig const*>(_config));
-
         Color surfaceColor = theme->ThemeColor(UIElementId::SurfaceToggleOff, Color::gray);
         Color pressColor = theme->ThemeColor(UIElementId::SurfaceToggleOffPress, Color::yellow);
         Color hoverColor = theme->ThemeColor(UIElementId::SurfaceToggleOffHover, Color::red);
@@ -525,103 +536,107 @@ void DuckDesignSystem::RegisterCheckTypeButtons() {
         );
     };
 
-    buildViewFuncs[UIItemId::CheckButton] = [buildCheckTypeButtonFunc,
-                                             this](auto* _config, auto& vb) {
-        buildCheckTypeButtonFunc(
-            _config, vb, [](auto& renderer, auto frame) { renderer.FillRect(frame); },
-            [](auto& renderer, auto frame, auto strokeWidth) {
-                renderer.SetStrokeWidth(strokeWidth);
-                renderer.FrameRect(frame);
-            }
-        );
-    };
+    Register<ToggleButtonConfig>(
+        UIItemId::ButtonCheck,
+        [buildCheckTypeButtonFunc](ToggleButtonConfig const& config, ViewBuilder& vb) {
+            buildCheckTypeButtonFunc(
+                config, vb, [](auto& renderer, auto frame) { renderer.FillRect(frame); },
+                [](auto& renderer, auto frame, auto strokeWidth) {
+                    renderer.SetStrokeWidth(strokeWidth);
+                    renderer.FrameRect(frame);
+                }
+            );
+        }
+    );
 
-    buildViewFuncs[UIItemId::RadioButton] = [buildCheckTypeButtonFunc,
-                                             this](auto* _config, auto& vb) {
-        buildCheckTypeButtonFunc(
-            _config, vb, [](auto& renderer, auto frame) { renderer.FillEllipse(frame); },
-            [](auto& renderer, auto frame, auto strokeWidth) {
-                renderer.SetStrokeWidth(strokeWidth);
-                renderer.FrameEllipse(frame);
-            }
-        );
-    };
+    Register<ToggleButtonConfig>(
+        UIItemId::ButtonRadio,
+        [buildCheckTypeButtonFunc](ToggleButtonConfig const& config, ViewBuilder& vb) {
+            buildCheckTypeButtonFunc(
+                config, vb, [](auto& renderer, auto frame) { renderer.FillEllipse(frame); },
+                [](auto& renderer, auto frame, auto strokeWidth) {
+                    renderer.SetStrokeWidth(strokeWidth);
+                    renderer.FrameEllipse(frame);
+                }
+            );
+        }
+    );
 }
 
 void DuckDesignSystem::RegisterProgressBar() {
-    buildViewFuncs[UIItemId::ProgressBar] = [this](auto* _config, auto& vb) {
-        ProgressBarConfig const& config = *(static_cast<ProgressBarConfig const*>(_config));
+    Register<ProgressBarConfig>(
+        UIItemId::ProgressBar,
+        [this](ProgressBarConfig const& config, ViewBuilder& vb) {
+            Color backColor = theme->ThemeColor(UIElementId::Secondary, Color::gray);
+            Color barColor = config.progressColor
+                                 ? *config.progressColor
+                                 : theme->ThemeColor(UIElementId::Primary, Color::black);
+            float frameHeight = theme->ElementSize(UIElementId::ControlFrame, { 0, 30 }).y;
 
-        Color backColor = theme->ThemeColor(UIElementId::Secondary, Color::gray);
-        Color barColor = config.progressColor
-                             ? *config.progressColor
-                             : theme->ThemeColor(UIElementId::Primary, Color::black);
-        float frameHeight = theme->ElementSize(UIElementId::ControlFrame, { 0, 30 }).y;
+            bool areShapesOpaque = this->areShapesOpaque;
 
-        bool areShapesOpaque = this->areShapesOpaque;
+            vb.Immediate({ .renderFunc =
+                               [=](auto& view, auto& renderer) {
+                                   renderer.FillCapsule(view.Bounds(), Axis2D::X, backColor);
 
-        vb.Immediate({ .renderFunc =
-                           [=](auto& view, auto& renderer) {
-                               renderer.FillCapsule(view.Bounds(), Axis2D::X, backColor);
+                                   if (config.valueFunc) {
+                                       float value = clamp(config.valueFunc(), 0.0f, 1.0f);
 
-                               if (config.valueFunc) {
-                                   float value = clamp(config.valueFunc(), 0.0f, 1.0f);
+                                       Rect barBounds = view.Bounds();
+                                       barBounds.size.x *= value;
 
-                                   Rect barBounds = view.Bounds();
-                                   barBounds.size.x *= value;
-
-                                   renderer.FillCapsule(barBounds, Axis2D::X, barColor);
-                               }
-                           },
-                       .modifyRendererFunc = [=](auto& renderer
-                                             ) { renderer.areShapesOpaque = areShapesOpaque; } }
-        ).FixedSize({}, frameHeight);
-    };
+                                       renderer.FillCapsule(barBounds, Axis2D::X, barColor);
+                                   }
+                               },
+                           .modifyRendererFunc = [=](auto& renderer
+                                                 ) { renderer.areShapesOpaque = areShapesOpaque; } }
+            ).FixedSize({}, frameHeight);
+        }
+    );
 }
 
 void DuckDesignSystem::RegisterProgressCircle() {
-    buildViewFuncs[UIItemId::ProgressCircle] = [this](auto* _config, auto& vb) {
-        ProgressBarConfig const& config = *(static_cast<ProgressBarConfig const*>(_config));
+    Register<ProgressBarConfig>(
+        UIItemId::ProgressCircle,
+        [this](ProgressBarConfig const& config, ViewBuilder& vb) {
+            Color backColor = theme->ThemeColor(UIElementId::Secondary, Color::gray);
+            Color barColor = config.progressColor
+                                 ? *config.progressColor
+                                 : theme->ThemeColor(UIElementId::Primary, Color::black);
 
-        Color backColor = theme->ThemeColor(UIElementId::Secondary, Color::gray);
-        Color barColor = config.progressColor
-                             ? *config.progressColor
-                             : theme->ThemeColor(UIElementId::Primary, Color::black);
+            bool areShapesOpaque = this->areShapesOpaque;
 
-        bool areShapesOpaque = this->areShapesOpaque;
+            vb.Immediate({ .renderFunc =
+                               [=](auto& view, auto& renderer) {
+                                   float strokeWidth = 10;
+                                   renderer.SetStrokeWidth(strokeWidth);
 
-        vb.Immediate({ .renderFunc =
-                           [=](auto& view, auto& renderer) {
-                               float strokeWidth = 10;
-                               renderer.SetStrokeWidth(strokeWidth);
+                                   float radius =
+                                       std::min(view.Bounds().size.x, view.Bounds().size.y) / 2.0f;
+                                   Vector2 circleCenter{ view.Bounds().size.x / 2.0f,
+                                                         view.Bounds().size.y / 2.0f };
+                                   renderer.FrameCircle(circleCenter, radius, backColor);
 
-                               float radius =
-                                   std::min(view.Bounds().size.x, view.Bounds().size.y) / 2.0f;
-                               Vector2 circleCenter{ view.Bounds().size.x / 2.0f,
-                                                     view.Bounds().size.y / 2.0f };
-                               renderer.FrameCircle(circleCenter, radius, backColor);
+                                   if (config.valueFunc) {
+                                       float value = clamp(config.valueFunc(), 0.0f, 1.0f);
 
-                               if (config.valueFunc) {
-                                   float value = clamp(config.valueFunc(), 0.0f, 1.0f);
-
-                                   Vector2 arcSize{ radius * 2, radius * 2 };
-                                   Rect arcFrame{ .origin = { circleCenter.x - radius,
-                                                              circleCenter.y - radius },
-                                                  .size = arcSize };
-                                   Angle angleDelta = Angle::WithDegrees(360.0f * value);
-                                   renderer.FrameArc(arcFrame, Angle{}, angleDelta, barColor);
-                               }
-                           },
-                       .modifyRendererFunc = [=](auto& renderer
-                                             ) { renderer.areShapesOpaque = areShapesOpaque; } }
-        ).FixedSize(60, 60);
-    };
+                                       Vector2 arcSize{ radius * 2, radius * 2 };
+                                       Rect arcFrame{ .origin = { circleCenter.x - radius,
+                                                                  circleCenter.y - radius },
+                                                      .size = arcSize };
+                                       Angle angleDelta = Angle::WithDegrees(360.0f * value);
+                                       renderer.FrameArc(arcFrame, Angle{}, angleDelta, barColor);
+                                   }
+                               },
+                           .modifyRendererFunc = [=](auto& renderer
+                                                 ) { renderer.areShapesOpaque = areShapesOpaque; } }
+            ).FixedSize(60, 60);
+        }
+    );
 }
 
 void DuckDesignSystem::RegisterDial() {
-    buildViewFuncs[UIItemId::Dial] = [this](auto* _config, auto& vb) {
-        DialConfig const& config = *(static_cast<DialConfig const*>(_config));
-
+    Register<DialConfig>(UIItemId::Dial, [this](DialConfig const& config, ViewBuilder& vb) {
         Color surfaceColor = config.surfaceColor
                                  ? *config.surfaceColor
                                  : theme->ThemeColor(UIElementId::Primary, Color::gray);
@@ -667,13 +682,11 @@ void DuckDesignSystem::RegisterDial() {
         ).FixedSize(frameSize.x, frameSize.y);
 
         vb.QB().Pop();
-    };
+    });
 }
 
 void DuckDesignSystem::RegisterLabel() {
-    buildViewFuncs[UIItemId::Label] = [this](auto* _config, auto& vb) {
-        LabelConfig const& config = *(static_cast<LabelConfig const*>(_config));
-
+    Register<LabelConfig>(UIItemId::Label, [this](LabelConfig const& config, ViewBuilder& vb) {
         float frameHeight = theme->ElementSize(UIElementId::ControlFrame, { 0, 30 }).y;
         Color color;
 
@@ -686,13 +699,11 @@ void DuckDesignSystem::RegisterLabel() {
         vb.Immediate({ .renderFunc = [=](auto& view, auto& renderer
                                      ) { renderer.Text(config.text, { 0, 0 }, 32, color); } }
         ).FixedSize({}, frameHeight);
-    };
+    });
 }
 
 void DuckDesignSystem::RegisterToast() {
-    buildViewFuncs[UIItemId::Toast] = [this](auto* _config, auto& vb) {
-        LabelConfig const& config = *(static_cast<LabelConfig const*>(_config));
-
+    Register<LabelConfig>(UIItemId::Toast, [this](LabelConfig const& config, ViewBuilder& vb) {
         Color surfaceColor = theme->ThemeColor(UIElementId::SurfaceContainerHighTertiary);
 
         vb.Pad({ .insets = LayoutInsets::Uniform(32),
@@ -702,31 +713,67 @@ void DuckDesignSystem::RegisterToast() {
                 renderer.FillRect(view.Bounds(), surfaceColor);
             } });
         });
-    };
+    });
 }
 
 void DuckDesignSystem::RegisterToolTip() {
-    buildViewFuncs[UIItemId::ToolTip] = [this](auto* _config, auto& vb) {
-        ToolTipConfig const& config = *(static_cast<ToolTipConfig const*>(_config));
+    Register<ToolTipConfig>(
+        UIItemId::ToolTip,
+        [this](ToolTipConfig const& config, ViewBuilder& vb) {
+            Color surfaceColor = theme->ThemeColor(UIElementId::SurfaceContainerLowTertiary);
 
-        Color surfaceColor = theme->ThemeColor(UIElementId::SurfaceContainerLowTertiary);
+            BuildViewFunc buildBackgroundFunc = [=](auto& vb) {
+                vb.Immediate({ .renderFunc = [=](auto& view, auto& renderer) {
+                    renderer.FillRect(view.Bounds(), surfaceColor);
+                } });
+            };
 
-        BuildViewFunc buildBackgroundFunc = [=](auto& vb) {
-            vb.Immediate({ .renderFunc = [=](auto& view, auto& renderer) {
-                renderer.FillRect(view.Bounds(), surfaceColor);
-            } });
-        };
+            BuildViewFunc buildViewFunc = [=](auto& vb) {
+                vb.Pad({ .insets = LayoutInsets::Uniform(16),
+                         .buildViewFunc = [=](auto& vb) { vb.Text({ .text = config.text }); } });
+            };
 
-        BuildViewFunc buildViewFunc = [=](auto& vb) {
-            vb.Pad({ .insets = LayoutInsets::Uniform(16),
-                     .buildViewFunc = [=](auto& vb) { vb.Text({ .text = config.text }); } });
-        };
+            vb.ViewAttachments({ .buildBackgroundFunc = buildBackgroundFunc,
+                                 .buildViewFunc = buildViewFunc,
+                                 .modifyViewFunc = [config](auto& view) {
+                                     GUARD(config.result);
+                                     *config.result = &view;
+                                 } });
+        }
+    );
+}
 
-        vb.ViewAttachments({ .buildBackgroundFunc = buildBackgroundFunc,
-                             .buildViewFunc = buildViewFunc,
-                             .modifyViewFunc = [config](auto& view) {
-                                 GUARD(config.result);
-                                 *config.result = &view;
-                             } });
-    };
+void DuckDesignSystem::RegisterSplitter() {
+    Register<SplitterConfig>(
+        UIItemId::Splitter,
+        [this](SplitterConfig const& config, ViewBuilder& vb) {
+            bool areShapesOpaque = this->areShapesOpaque;
+
+            vb.QB()
+                .And("Splitter")
+                .template With<SplitterControl>(config.initialRatio)
+                .template With<ImRenderer>(ImRenderer::Config{ .areShapesOpaque = areShapesOpaque })
+                .template ModifyLatest<ImRenderer>([=](auto& renderer) {
+                    renderer.AddSignalHandler(
+                        { .id = SignalId::RenderPrepare,
+                          .func =
+                              [splitter = (SplitterControl*)nullptr](
+                                  auto& renderer, auto& signal
+                              ) mutable {
+                                  auto& imRenderer = *(static_cast<ImRenderer*>(&renderer));
+
+                                  if (nullptr == splitter) {
+                                      splitter =
+                                          renderer.Node()->template TypeComponent<SplitterControl>(
+                                          );
+                                  }
+                                  GUARD(splitter);
+
+                                  imRenderer.FillRect(splitter->Bounds(), PJ::Color::black);
+                              } }
+                    );
+                })
+                .Pop();
+        }
+    );
 }

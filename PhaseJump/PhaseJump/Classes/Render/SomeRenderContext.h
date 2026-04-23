@@ -4,6 +4,7 @@
 #include "Color.h"
 #include "List.h"
 #include "SomeRenderCommandModel.h"
+#include "SomeRenderEngine.h"
 #include "UnorderedMap.h"
 #include "Vector2.h"
 #include <memory>
@@ -56,6 +57,9 @@ namespace PJ {
         virtual SP<Texture> GetTexture() const {
             return nullptr;
         }
+
+        /// Replaces this context's backing texture with texture
+        virtual void Swap(SP<Texture> texture) {}
     };
 
     class RenderContext : public SomeRenderContext {
@@ -67,6 +71,10 @@ namespace PJ {
 
         /// Color used to clear this context for each render pass
         Color clearColor = Color::clear;
+
+        /// Per-context clear behavior. Set to `RenderClearType::None` to preserve the buffer's
+        /// contents across render passes (e.g. for accumulating brush strokes in a paint viewport).
+        RenderClearType clearType = RenderClearType::Clear;
 
         SomeRenderEngine& renderEngine;
 

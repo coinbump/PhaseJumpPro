@@ -1,6 +1,7 @@
 #include "GLTextureBuffer.h"
 #include "Bitmap.h"
 #include "BitmapOperations.h"
+#include "GLBufferBindingScope.h"
 #include "GLRenderEngine.h"
 #include "GLTexture.h"
 
@@ -47,6 +48,8 @@ void GLTextureBuffer::Bind() {
 }
 
 void GLTextureBuffer::Clear() {
+    GUARD(clearType != RenderClearType::None)
+
     glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
 
     // Set the value to clear the stencil buffer to
@@ -79,6 +82,8 @@ void GLTextureBuffer::Build(Vector2Int size) {
     glRenderEngine->BindFrameBuffer(frameBufferId);
     renderId = frameBufferId;
 
+    auto pendingFrameBuffer = NEW<GLFrameBuffer>(frameBufferId);
+
     GLuint textureId{};
     glGenTextures(1, &textureId);
 
@@ -107,10 +112,48 @@ void GLTextureBuffer::Build(Vector2Int size) {
     // FUTURE: evaluate advantages of using GL_DRAW_FRAMEBUFFER here
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthBufferId);
 
+    auto pendingDepthBuffer = NEW<GLRenderBuffer>(depthBufferId);
+
     GUARD(CheckFrameBufferStatus())
-    frameBuffer = NEW<GLFrameBuffer>(frameBufferId);
-    depthBuffer = NEW<GLRenderBuffer>(depthBufferId);
+    frameBuffer = std::move(pendingFrameBuffer);
+    depthBuffer = std::move(pendingDepthBuffer);
     this->size = size;
+}
+
+void GLTextureBuffer::Swap(SP<Texture> newTexture) {
+    GUARD(newTexture)
+    auto glTexture = DCAST<GLTexture>(newTexture);
+    GUARD_LOG(glTexture, "GLTextureBuffer::Swap requires a GLTexture")
+    GUARD(glTexture->RenderId())
+    GUARD(frameBuffer && frameBuffer->Id())
+
+    auto glRenderEngine = static_cast<GLRenderEngine*>(&renderEngine);
+
+    // Capture the current framebuffer/renderbuffer bindings; restored on scope exit. Swap may
+    // run mid-frame, and leaving our framebuffer bound would silently redirect subsequent
+    // draws until the next Bind.
+    GLBufferBindingScope bindingScope(*glRenderEngine);
+
+    glRenderEngine->BindFrameBuffer(frameBuffer->Id());
+
+    // Re-point the framebuffer's color attachment at the incoming texture. The previously
+    // attached texture is released when we reassign `this->texture` below.
+    glFramebufferTexture2D(
+        GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, glTexture->RenderId(), 0
+    );
+
+    auto newSize = glTexture->Size();
+
+    // Resize the depth buffer so it matches the new color attachment's dimensions.
+    if (depthBuffer && depthBuffer->Id()) {
+        glRenderEngine->BindRenderBuffer(GL_RENDERBUFFER, depthBuffer->Id());
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, newSize.x, newSize.y);
+    }
+
+    texture = glTexture;
+    size = newSize;
+
+    (void)CheckFrameBufferStatus();
 }
 
 bool GLTextureBuffer::IsValid() const {
@@ -124,16 +167,13 @@ UP<Bitmap<PixelFormat::RGBA8888>> GLTextureBuffer::NewBitmap() {
 
     auto glRenderEngine = static_cast<GLRenderEngine*>(&renderEngine);
 
-    GLint prevFrameBuffer = 0;
-    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &prevFrameBuffer);
+    GLBufferBindingScope bindingScope(*glRenderEngine);
 
     Bind();
 
     auto bitmap =
         NEW<Bitmap<PixelFormat::RGBA8888>>(Bitmap<PixelFormat::RGBA8888>::Config{ .size = size });
     glReadPixels(0, 0, size.x, size.y, GL_RGBA, GL_UNSIGNED_BYTE, bitmap->Pixels().data());
-
-    glRenderEngine->BindFrameBuffer((GLuint)prevFrameBuffer);
 
     BitmapOperations::NewFlipVertical(UpdateOrientationType::None)->Run(*bitmap);
 

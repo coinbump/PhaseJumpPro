@@ -39,11 +39,15 @@ namespace PJ {
     };
 
     /// Data in memory
+    ///
+    /// Invariant: `allocator` must return pointers compatible with `realloc` and `free`
+    /// (i.e., malloc-family: `malloc`/`calloc`). Custom allocators that return
+    /// aligned_alloc or similar are NOT safe — `ResizeBytes` calls `realloc` on the
+    /// pointer and `Flush`/destructor call `free` on it.
     template <class Type = int8_t>
     class Data final : public SomeData {
-    private:
-        /// Disables copy
-        Data(Data const&);
+    public:
+        DELETE_COPY(Data)
 
     protected:
         Type* data = nullptr;

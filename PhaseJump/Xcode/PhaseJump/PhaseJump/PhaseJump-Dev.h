@@ -32,6 +32,7 @@
 #include <PhaseJump-Dev/BlinkEffect.h>
 #include <PhaseJump-Dev/Bounds.h>
 #include <PhaseJump-Dev/Broadcaster.h>
+#include <PhaseJump-Dev/BrushPaintTool.h>
 #include <PhaseJump-Dev/ButtonControl.h>
 #include <PhaseJump-Dev/CameraCullRenderProcessor.h>
 #include <PhaseJump-Dev/CanvasTool.h>
@@ -51,6 +52,7 @@
 #include <PhaseJump-Dev/CollectionUtils.h>
 #include <PhaseJump-Dev/Colliders2D.h>
 #include <PhaseJump-Dev/Color.h>
+#include <PhaseJump-Dev/ClipRenderer.h>
 #include <PhaseJump-Dev/ColorRenderer.h>
 #include <PhaseJump-Dev/ColorView.h>
 #include <PhaseJump-Dev/Command.h>
@@ -119,6 +121,7 @@
 #include <PhaseJump-Dev/Funcs.h>
 #include <PhaseJump-Dev/Function.h>
 #include <PhaseJump-Dev/GLBlendMode.h>
+#include <PhaseJump-Dev/GLBufferBindingScope.h>
 #include <PhaseJump-Dev/GLHeaders.h>
 #include <PhaseJump-Dev/GLLoadShaderOperation.h>
 #include <PhaseJump-Dev/GLLoadShaderProgramOperation.h>
@@ -169,8 +172,15 @@
 #include <PhaseJump-Dev/MatrixBoardView.h>
 #include <PhaseJump-Dev/MatrixPiece.h>
 #include <PhaseJump-Dev/MatrixPieceHandler.h>
+#include <PhaseJump-Dev/MediaClipModel.h>
 #include <PhaseJump-Dev/MediaFilesAtoms.h>
+#include <PhaseJump-Dev/MediaTimelineModel.h>
+#include <PhaseJump-Dev/MediaTimelineView.h>
+#include <PhaseJump-Dev/MediaTrackModel.h>
+#include <PhaseJump-Dev/MediaTrackView.h>
+#include <PhaseJump-Dev/MediaTrackViewLayout.h>
 #include <PhaseJump-Dev/Menu.h>
+#include <PhaseJump-Dev/MaterialRenderModel.h>
 #include <PhaseJump-Dev/Mesh.h>
 #include <PhaseJump-Dev/MeshRenderer.h>
 #include <PhaseJump-Dev/MockRandom.h>
@@ -180,9 +190,9 @@
 #include <PhaseJump-Dev/NodeHandler.h>
 #include <PhaseJump-Dev/NodesRenderProcessor.h>
 #include <PhaseJump-Dev/ObjectCanvas.h>
+#include <PhaseJump-Dev/PaintCanvas.h>
+#include <PhaseJump-Dev/PaintTool.h>
 #include <PhaseJump-Dev/ObservedValue.h>
-#include <PhaseJump-Dev/OffscreenBuffer.h>
-#include <PhaseJump-Dev/OffscreenBufferRenderer.h>
 #include <PhaseJump-Dev/OrderRenderProcessor.h>
 #include <PhaseJump-Dev/OrderedMap.h>
 #include <PhaseJump-Dev/OrderedSet.h>
@@ -209,6 +219,7 @@
 #include <PhaseJump-Dev/QuadMeshBuilder.h>
 #include <PhaseJump-Dev/QuickBuilder.h>
 #include <PhaseJump-Dev/QuickCharacter.h>
+#include <PhaseJump-Dev/MacMovie.h>
 #include <PhaseJump-Dev/RGBAColor.h>
 #include <PhaseJump-Dev/RTexPackerAtlasModel.h>
 #include <PhaseJump-Dev/Range.h>
@@ -221,8 +232,10 @@
 #include <PhaseJump-Dev/RenderContextModel.h>
 #include <PhaseJump-Dev/RenderFeature.h>
 #include <PhaseJump-Dev/RenderMaterial.h>
-#include <PhaseJump-Dev/RenderModel.h>
+#include <PhaseJump-Dev/MaterialRenderModel.h>
 #include <PhaseJump-Dev/RenderModelBuilder.h>
+#include <PhaseJump-Dev/RenderPassBuilder.h>
+#include <PhaseJump-Dev/RenderPassModel.h>
 #include <PhaseJump-Dev/RenderProcessingModel.h>
 #include <PhaseJump-Dev/RenderProcessor.h>
 #include <PhaseJump-Dev/RenderTypes.h>
@@ -273,6 +286,7 @@
 #include <PhaseJump-Dev/SQLValue.h>
 #include <PhaseJump-Dev/SQLWhereArguments.h>
 #include <PhaseJump-Dev/Scene.h>
+#include <PhaseJump-Dev/ScrollView.h>
 #include <PhaseJump-Dev/ScrollBarControl.h>
 #include <PhaseJump-Dev/SelectHandler.h>
 #include <PhaseJump-Dev/SelectObjectsCanvasTool.h>
@@ -321,6 +335,7 @@
 #include <PhaseJump-Dev/LoadResourcesOperation.h>
 #include <PhaseJump-Dev/SomeMeshBuilder.h>
 #include <PhaseJump-Dev/SomeMouseDevice.h>
+#include <PhaseJump-Dev/Movie.h>
 #include <PhaseJump-Dev/SomeOperation.h>
 #include <PhaseJump-Dev/SomePath.h>
 #include <PhaseJump-Dev/PathLayout.h>
@@ -339,12 +354,12 @@
 #include <PhaseJump-Dev/SomeRenderContext.h>
 #include <PhaseJump-Dev/SomeRenderEngine.h>
 #include <PhaseJump-Dev/Renderer.h>
-#include <PhaseJump-Dev/SomeResolver.h>
 #include <PhaseJump-Dev/ShaderProgram.h>
 #include <PhaseJump-Dev/SomeSignal.h>
 #include <PhaseJump-Dev/SomeSimplePublisher.h>
 #include <PhaseJump-Dev/SomeSimpleSubject.h>
 #include <PhaseJump-Dev/SomeSimpleSubscription.h>
+#include <PhaseJump-Dev/SomeRenderModel.h>
 #include <PhaseJump-Dev/SomeStateMachine.h>
 #include <PhaseJump-Dev/TagClass.h>
 #include <PhaseJump-Dev/Texture.h>
@@ -354,6 +369,8 @@
 #include <PhaseJump-Dev/SomeWorldComponent.h>
 #include <PhaseJump-Dev/SomeWorldSystem.h>
 #include <PhaseJump-Dev/SpacerView.h>
+#include <PhaseJump-Dev/SplitViewLayout.h>
+#include <PhaseJump-Dev/SplitterControl.h>
 #include <PhaseJump-Dev/SpriteRenderer.h>
 #include <PhaseJump-Dev/StandardCore.h>
 #include <PhaseJump-Dev/StandardEdgeCore.h>
@@ -363,6 +380,9 @@
 #include <PhaseJump-Dev/StandardResourceRepositoryModel.h>
 #include <PhaseJump-Dev/StateCore.h>
 #include <PhaseJump-Dev/StateMachine.h>
+#include <PhaseJump-Dev/StencilPopRenderModel.h>
+#include <PhaseJump-Dev/StencilPushRenderModel.h>
+#include <PhaseJump-Dev/SomeShape.h>
 #include <PhaseJump-Dev/StreamReader.h>
 #include <PhaseJump-Dev/StreamWriter.h>
 #include <PhaseJump-Dev/StringConvertible.h>
@@ -423,6 +443,7 @@
 #include <PhaseJump-Dev/ViewProxy.h>
 #include <PhaseJump-Dev/ViewSizeProposal.h>
 #include <PhaseJump-Dev/Viewport.h>
+#include <PhaseJump-Dev/ViewportRenderModel.h>
 #include <PhaseJump-Dev/Void.h>
 #include <PhaseJump-Dev/WeakReference.h>
 #include <PhaseJump-Dev/Weight.h>

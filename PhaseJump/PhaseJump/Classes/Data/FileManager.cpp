@@ -41,8 +41,8 @@ void FileManager::CreateDirectories(FilePath filePath) {
     filesystem::create_directories(filePath, errorCode);
 }
 
-VectorList<FilePath> FileManager::FilePathList(FilePath path, FileSearchType searchType) {
-    // Careful: avoid using this for large file lists on the main thread
+VectorList<FilePath> FileManager::FilePathList(FilePath path, FileSearchType searchType) noexcept {
+    // Careful: avoid using this for large file lists on the main thread.
     VectorList<FilePath> result;
 
     if (!IsDirectory(path)) {
@@ -50,13 +50,14 @@ VectorList<FilePath> FileManager::FilePathList(FilePath path, FileSearchType sea
         return result;
     }
 
+    std::error_code errorCode;
     if (searchType == FileSearchType::Recursive) {
-        for (auto& path : fs::recursive_directory_iterator{ path }) {
-            Add(result, path);
+        for (auto const& entry : fs::recursive_directory_iterator{ path, errorCode }) {
+            Add(result, entry.path());
         }
     } else {
-        for (auto& path : fs::directory_iterator{ path }) {
-            Add(result, path);
+        for (auto const& entry : fs::directory_iterator{ path, errorCode }) {
+            Add(result, entry.path());
         }
     }
 

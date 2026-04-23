@@ -7,6 +7,7 @@
 #include "Polygon.h"
 #include "Rect.h"
 #include "RoundCornersMeshBuilder.h"
+#include "SomeShape.h"
 #include "Vector2.h"
 #include "VectorList.h"
 
@@ -41,6 +42,12 @@ namespace PJ {
         auto constexpr Text = "text";
         auto constexpr Image = "image";
 
+        /// Pushes a stencil clip using the item's clipShape
+        auto constexpr ClipPush = "clip.push";
+
+        /// Pops the most recent stencil clip
+        auto constexpr ClipPop = "clip.pop";
+
         // FUTURE: support context translate and rotation:
         // https://stackoverflow.com/questions/8774001/core-graphics-rotate-rectangle
 
@@ -57,6 +64,8 @@ namespace PJ {
     /// Defines an item component of a path-type object for immediate mode renders
     class ImPathItem {
     public:
+        using This = ImPathItem;
+
         String type;
 
         /// Unique identifier (Example: image id)
@@ -107,6 +116,68 @@ namespace PJ {
 
         /// Text font
         SP<Font> font{};
+
+        /// Clip shape for ClipPush items. The shape's mesh defines the stencil region
+        UP<SomeShape> clipShape;
+
+        ImPathItem() = default;
+        ImPathItem(This&&) noexcept = default;
+        This& operator=(This&&) noexcept = default;
+
+        ImPathItem(This const& other) :
+            type(other.type),
+            id(other.id),
+            frame(other.frame),
+            poly(other.poly),
+            polyClose(other.polyClose),
+            bezierPath(other.bezierPath),
+            segmentDistance(other.segmentDistance),
+            vectors(other.vectors),
+            colors(other.colors),
+            strokeWidth(other.strokeWidth),
+            startPathCap(other.startPathCap),
+            endPathCap(other.endPathCap),
+            pathCorner(other.pathCorner),
+            text(other.text),
+            fontSpec(other.fontSpec),
+            axis(other.axis),
+            roundCorners(other.roundCorners),
+            startAngle(other.startAngle),
+            angleDelta(other.angleDelta),
+            isOpaque(other.isOpaque),
+            texture(other.texture),
+            font(other.font),
+            clipShape(other.clipShape ? other.clipShape->Clone() : nullptr) {}
+
+        This& operator=(This const& other) {
+            if (this == &other) {
+                return *this;
+            }
+            type = other.type;
+            id = other.id;
+            frame = other.frame;
+            poly = other.poly;
+            polyClose = other.polyClose;
+            bezierPath = other.bezierPath;
+            segmentDistance = other.segmentDistance;
+            vectors = other.vectors;
+            colors = other.colors;
+            strokeWidth = other.strokeWidth;
+            startPathCap = other.startPathCap;
+            endPathCap = other.endPathCap;
+            pathCorner = other.pathCorner;
+            text = other.text;
+            fontSpec = other.fontSpec;
+            axis = other.axis;
+            roundCorners = other.roundCorners;
+            startAngle = other.startAngle;
+            angleDelta = other.angleDelta;
+            isOpaque = other.isOpaque;
+            texture = other.texture;
+            font = other.font;
+            clipShape = other.clipShape ? other.clipShape->Clone() : nullptr;
+            return *this;
+        }
 
         Vector2 GetVector(size_t index, Vector2 defaultValue = {}) {
             return index >= 0 && index < vectors.size() ? vectors[index] : defaultValue;

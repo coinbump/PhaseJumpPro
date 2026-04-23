@@ -1,6 +1,7 @@
 #pragma once
 
 #include "RenderTypes.h"
+#include "SomeRenderModel.h"
 #include "UnorderedSet.h"
 #include "Utils.h"
 #include <functional>
@@ -31,8 +32,13 @@ namespace PJ {
             /// Phase id (render start, render draw, etc.)
             String id;
 
-            /// Camera model if we're processing for a specific camera
-            RenderCameraModel* cameraModel{};
+            /// Render node for the processor. For a system-wide processor it is
+            /// the entire tree (children are per-camera render subtrees). For a camera-
+            /// specific processor it is the camera's node (children are the camera's
+            /// render models)
+            SomeRenderModelNode* rootNode{};
+
+            bool IsCamera() const;
         };
 
         /// The system that owns this processor, if any
@@ -68,11 +74,13 @@ namespace PJ {
                 processFunc(phase);
             }
 
-            if (phase.cameraModel) {
-                Process(*phase.cameraModel);
+            if (phase.rootNode) {
+                Process(*phase.rootNode);
             }
         }
 
-        virtual void Process(RenderCameraModel& cameraModel) {}
+        /// Called with the render model root. Processor can walk the children of root and
+        /// add, modify, or replace nodes as needed
+        virtual void Process(SomeRenderModelNode& rootNode);
     };
 } // namespace PJ

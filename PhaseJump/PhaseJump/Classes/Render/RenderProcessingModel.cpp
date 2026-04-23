@@ -4,7 +4,7 @@
 using namespace std;
 using namespace PJ;
 
-void RenderProcessingModel::ProcessPhase(String phase, RenderCameraModel* cameraModel) {
+void RenderProcessingModel::ProcessPhase(String phase, SomeRenderModelNode* rootNode) {
     for (auto& processor : Processors()) {
         GUARD_CONTINUE(processor->IsEnabled())
 
@@ -14,6 +14,6 @@ void RenderProcessingModel::ProcessPhase(String phase, RenderCameraModel* camera
         }
 
         GUARD_CONTINUE(processor->phases.contains(phase));
-        processor->Process({ .id = phase, .cameraModel = cameraModel });
+        processor->Process({ .id = phase, .rootNode = rootNode });
     }
 }

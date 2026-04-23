@@ -177,7 +177,7 @@ namespace PJ {
 
         Vector2 CalculateSize(Vector2 proposal) override;
 
-        VectorList<RenderModel> RenderModels() override {
+        RenderModelList RenderModels() override {
             return core.RenderModels();
         }
 

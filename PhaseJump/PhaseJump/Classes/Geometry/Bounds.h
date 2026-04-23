@@ -21,6 +21,8 @@ namespace PJ {
             center(center),
             extents(extents) {}
 
+        constexpr bool operator==(Bounds const&) const = default;
+
         Vector3 Min() const {
             return center - extents;
         }
@@ -43,7 +45,7 @@ namespace PJ {
             return result;
         }
 
-        bool TestCollide(Bounds value) const {
+        bool TestIntersect(Bounds value) const {
             auto aMin = this->Min();
             auto aMax = this->Max();
             auto bMin = value.Min();

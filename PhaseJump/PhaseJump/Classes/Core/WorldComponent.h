@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Animator.h"
+#include "InterpolateFunc.h"
 #include "SomePosition.h"
 #include "SomeWorldComponent.h"
 #include "StandardCore.h"
@@ -72,6 +74,42 @@ namespace PJ {
             return HasAncestor([](auto* node) {
                 return node->template TypeComponent<T>() != nullptr;
             });
+        }
+
+        // MARK: Animation
+
+        template <class Type>
+        struct AnimateConfig {
+            using SetFunc = SetBindingFunc<Type>;
+
+            float duration = 0.3f;
+            EaseFunc easeFunc = EaseFuncs::outCubed;
+
+            Type startValue{};
+            Type endValue{};
+
+            SetFunc setFunc;
+        };
+
+        template <class Type>
+        void Animate(AnimateConfig<Type> const& config) {
+            GUARD_LOG(config.setFunc, "ERROR: Can't animate without binding")
+
+            using Animator = PJ::Animator<Type>;
+
+            auto startValue = config.startValue;
+
+            InterpolateFunc<Type> interpolateFunc = InterpolateFuncs::Ease(
+                InterpolateFuncs::Make(startValue, config.endValue), config.easeFunc
+            );
+            auto animatorConfig = typename Animator::Config();
+            animatorConfig.duration = config.duration;
+            animatorConfig.interpolateFunc = interpolateFunc;
+            animatorConfig.binding = config.setFunc;
+
+            auto animator = NEW<Animator>(animatorConfig);
+
+            GetUpdatables().Add(std::move(animator));
         }
 
         // MARK: SomeWorldComponent

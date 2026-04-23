@@ -42,21 +42,13 @@ namespace PJ {
 
         // MARK: SomeFramePlayable
 
-        /// @return Returns the frame rate for fixed rate animations
-        /// TODO: BUG: DOES NOT WORK, because we switched to timelines
-        float FrameRate() const override {
-            return frameRate;
-        }
+        /// @return Best-guess frame rate computed from the average interval between consecutive
+        /// keyframes on the underlying track. Falls back to frameRate property
+        float FrameRate() const override;
 
-        /// Set the frame rate for fixed rate animations
-        /// TODO: BUG: DOES NOT WORK, because we switched to timelines
-        void SetFrameRate(float value) override {
-            frameRate = value;
-
-            auto frameCount = FrameCount();
-            GUARD(value >= 0)
-            SetDuration((1.0f / value) * frameCount);
-        }
+        /// Sets the frame rate for fixed-rate animations by redistributing the track's keyframes
+        /// at uniform intervals and updating the duration
+        void SetFrameRate(float value) override;
 
         AnimationCycleType CycleType() const override {
             GUARDR(track, {})

@@ -289,6 +289,11 @@ namespace PJ {
         /// platform worlds (e.g. SDLWorld) override to dispatch to the windowing system.
         virtual void SetCursor(String cursorId) {}
 
+        /// @return Id of the active cursor
+        virtual String GetCursorId() const {
+            return CursorId::Arrow;
+        }
+
     protected:
         // MARK: Base
 

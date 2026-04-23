@@ -1,9 +1,9 @@
 #include "SpriteRenderer.h"
+#include "MaterialRenderModel.h"
 #include "QuadMeshBuilder.h"
 #include "RenderContextModel.h"
 #include "RenderFeature.h"
 #include "RenderMaterial.h"
-#include "RenderModel.h"
 #include "RenderModelBuilder.h"
 #include "ShaderProgram.h"
 #include "SomeRenderEngine.h"
@@ -108,8 +108,8 @@ SpriteRenderer::SpriteRenderer(SP<RenderMaterial> material) :
 void SpriteRenderer::Configure() {
     core.model.SetBuildRenderModelsFunc([this](auto& model) {
         auto renderModel = RenderModelBuilder().Build(core, model);
-        GUARDR(renderModel, VectorList<RenderModel>())
+        GUARDR(renderModel, VectorList<MaterialRenderModel>())
         renderModel->SetVertexColors(std::span<RenderColor const>(model.VertexColors()));
-        return VectorList<RenderModel>{ *renderModel };
+        return VectorList<MaterialRenderModel>{ *renderModel };
     });
 }

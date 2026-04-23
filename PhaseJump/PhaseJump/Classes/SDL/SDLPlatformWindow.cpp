@@ -41,7 +41,9 @@ void SDLPlatformWindow::OnGo() {
     }
 
     GUARD(world)
-    static_cast<SDLWorld*>(world.get())->Configure(window, nullptr);
+    auto sdlWorld = dynamic_cast<SDLWorld*>(world.get());
+    GUARD_LOG(sdlWorld, "ERROR. SDLPlatformWindow requires an SDLWorld")
+    sdlWorld->Configure(window, nullptr);
 
     // Important: Call world.Go() after you've built your scene
 }

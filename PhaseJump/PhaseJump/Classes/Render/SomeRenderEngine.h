@@ -2,6 +2,7 @@
 
 #include "Base.h"
 #include "List.h"
+#include "SomeRenderModel.h"
 #include "Tags.h"
 #include "UnorderedSet.h"
 #include "Vector2.h"
@@ -14,14 +15,20 @@
  CODE REVIEW: 1/11/25
  */
 namespace PJ {
-    struct RenderModel;
+    struct MaterialRenderModel;
     struct RenderContextModel;
     class RenderMaterial;
+    class RenderPassModel;
     class SomeRenderContext;
+    class StencilPushRenderModel;
 
-    /// Stores render models for a render draw
-    struct RenderDrawModel {
-        VectorList<RenderModel> const& renderModels;
+    /// Whether a render context should clear itself when its `Clear()` is invoked
+    enum class RenderClearType {
+        /// Clear to the context's clear color each pass
+        Clear,
+
+        /// Skip clearing — preserves previous contents (for accumulation, e.g. paint buffers)
+        None
     };
 
     /**
@@ -29,11 +36,24 @@ namespace PJ {
      */
     class SomeRenderEngine : public Base {
     public:
+        /// Default clear behavior
+        RenderClearType clearType = RenderClearType::Clear;
+
         /// Called before RenderDraw
         virtual void RenderStart(SomeRenderContext* context) = 0;
 
-        /// Called to render the render models
-        virtual void RenderDraw(RenderDrawModel const& drawModel) = 0;
+        /// Walk the render-pass DAG in DFS pre-order and dispatch each node by type.
+        virtual void RenderDraw(RenderPassModel const& pass) {}
+
+        /// Walk a camera subtree of the render pass DAG. Camera is root node
+        virtual void RenderDrawSubtree(SomeRenderModelNode const& startNode) {}
+
+        /// Push a stencil region. Subsequent draws are clipped to the area defined by
+        /// models mesh (transformed by model.matrix) until the matching pop.
+        virtual void RenderStencilPush(StencilPushRenderModel const& model) {}
+
+        /// Pop the most recent stencil region, restoring the previous clipping scope.
+        virtual void RenderStencilPop() {}
 
         /// Enables or disables a feature by feature id
         virtual void EnableFeature(String featureId, bool isEnabled) = 0;

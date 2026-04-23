@@ -721,6 +721,189 @@ TEST(VStackViewLayout, SpacerDoesntExpandOrthogonal) {
     EXPECT_EQ(Vector2(20, 40), views[2]->Frame().size);
 }
 
+TEST(FlowStackViewLayout, TypeName_ReflectsAxis) {
+    FlowStackViewLayout hLayout(Axis2D::X);
+    EXPECT_EQ("HStackViewLayout", hLayout.TypeName());
+
+    FlowStackViewLayout vLayout(Axis2D::Y);
+    EXPECT_EQ("VStackViewLayout", vLayout.TypeName());
+}
+
+TEST(FlowStackViewLayout, Axis_Getter) {
+    FlowStackViewLayout xLayout(Axis2D::X);
+    EXPECT_EQ(Axis2D::X, xLayout.Axis());
+
+    FlowStackViewLayout yLayout(Axis2D::Y);
+    EXPECT_EQ(Axis2D::Y, yLayout.Axis());
+}
+
+TEST(FlowStackViewLayout, HStack_AlignLeft_PinsChildrenToTopOfBounds) {
+    World world;
+    auto parentNode = MAKE<WorldNode>();
+    world.Add(parentNode);
+
+    VectorList<View2D*> views;
+
+    ViewBuilder vb(*parentNode);
+    vb.RootView({100, 100}, [&](auto& vb) {
+        vb.HStack({.spacing = 0, .alignFunc = AlignFuncs::left, .buildViewFunc = [&](auto& vb) {
+            vb
+                .View({.modifyViewFunc = [&](auto& view) {
+                    views.push_back(&view);
+                    view.SetFixedSize(10, 10);
+                }})
+                .View({.modifyViewFunc = [&](auto& view) {
+                    views.push_back(&view);
+                    view.SetFixedSize(20, 20);
+                }});
+        }});
+    });
+
+    ASSERT_EQ(2, views.size());
+    // Left-align in HStack pins children's orthogonal origin to 0.
+    EXPECT_EQ(0, views[0]->Frame().origin.y);
+    EXPECT_EQ(0, views[1]->Frame().origin.y);
+}
+
+TEST(FlowStackViewLayout, HStack_AlignRight_PinsChildrenToBottomOfBounds) {
+    World world;
+    auto parentNode = MAKE<WorldNode>();
+    world.Add(parentNode);
+
+    VectorList<View2D*> views;
+
+    ViewBuilder vb(*parentNode);
+    vb.RootView({100, 100}, [&](auto& vb) {
+        vb.HStack({.spacing = 0, .alignFunc = AlignFuncs::right, .buildViewFunc = [&](auto& vb) {
+            vb
+                .View({.modifyViewFunc = [&](auto& view) {
+                    views.push_back(&view);
+                    view.SetFixedSize(10, 10);
+                }})
+                .View({.modifyViewFunc = [&](auto& view) {
+                    views.push_back(&view);
+                    view.SetFixedSize(20, 20);
+                }});
+        }});
+    });
+
+    ASSERT_EQ(2, views.size());
+    // Right-align in HStack offsets each child by (stackOrthogonal - childOrthogonal).
+    // Stack orthogonal = max child orthogonal = 20.
+    EXPECT_EQ(10, views[0]->Frame().origin.y);  // 20 - 10
+    EXPECT_EQ(0, views[1]->Frame().origin.y);   // 20 - 20
+}
+
+TEST(VStackViewLayout, AlignLeft_PinsChildrenToLeftOfBounds) {
+    World world;
+    auto parentNode = MAKE<WorldNode>();
+    world.Add(parentNode);
+
+    VectorList<View2D*> views;
+
+    ViewBuilder vb(*parentNode);
+    vb.RootView({100, 100}, [&](auto& vb) {
+        vb.VStack({.spacing = 0, .alignFunc = AlignFuncs::left, .buildViewFunc = [&](auto& vb) {
+            vb
+                .View({.modifyViewFunc = [&](auto& view) {
+                    views.push_back(&view);
+                    view.SetFixedSize(10, 10);
+                }})
+                .View({.modifyViewFunc = [&](auto& view) {
+                    views.push_back(&view);
+                    view.SetFixedSize(20, 20);
+                }});
+        }});
+    });
+
+    ASSERT_EQ(2, views.size());
+    EXPECT_EQ(0, views[0]->Frame().origin.x);
+    EXPECT_EQ(0, views[1]->Frame().origin.x);
+}
+
+TEST(VStackViewLayout, AlignRight_PinsChildrenToRightOfBounds) {
+    World world;
+    auto parentNode = MAKE<WorldNode>();
+    world.Add(parentNode);
+
+    VectorList<View2D*> views;
+
+    ViewBuilder vb(*parentNode);
+    vb.RootView({100, 100}, [&](auto& vb) {
+        vb.VStack({.spacing = 0, .alignFunc = AlignFuncs::right, .buildViewFunc = [&](auto& vb) {
+            vb
+                .View({.modifyViewFunc = [&](auto& view) {
+                    views.push_back(&view);
+                    view.SetFixedSize(10, 10);
+                }})
+                .View({.modifyViewFunc = [&](auto& view) {
+                    views.push_back(&view);
+                    view.SetFixedSize(20, 20);
+                }});
+        }});
+    });
+
+    ASSERT_EQ(2, views.size());
+    // Stack orthogonal = max child orthogonal = 20.
+    EXPECT_EQ(10, views[0]->Frame().origin.x);  // 20 - 10
+    EXPECT_EQ(0, views[1]->Frame().origin.x);   // 20 - 20
+}
+
+TEST(FlowStackViewLayout, SingleChild_NoSpacingLeak) {
+    // (children.size() - 1) * spacing must evaluate to 0 for a single child — regression
+    // against a future signed/unsigned mistake in CalculateUnboundedInfo.
+    World world;
+    auto parentNode = MAKE<WorldNode>();
+    world.Add(parentNode);
+
+    View2D* stackView{};
+    VectorList<View2D*> views;
+
+    ViewBuilder vb(*parentNode);
+    vb.RootView({100, 100}, [&](auto& vb) {
+        vb.HStack({.spacing = 25, .buildViewFunc = [&](auto& vb) {
+            stackView = vb.ActiveView();
+            vb.View({.modifyViewFunc = [&](auto& view) {
+                views.push_back(&view);
+                view.SetFixedSize(30, 30);
+            }});
+        }});
+    });
+
+    ASSERT_EQ(1, views.size());
+    EXPECT_EQ(Vector2(30, 30), stackView->Frame().size);
+    EXPECT_EQ(0, views[0]->Frame().origin.x);
+}
+
+TEST(FlowStackViewLayout, MultipleUnboundedChildren_SplitAvailableLengthEvenly) {
+    World world;
+    auto parentNode = MAKE<WorldNode>();
+    world.Add(parentNode);
+
+    VectorList<View2D*> views;
+
+    ViewBuilder vb(*parentNode);
+    // 100-wide stack with 3 unbounded children and no fixed children → each flex child = 100/3.
+    vb.RootView({100, 100}, [&](auto& vb) {
+        vb.HStack({.spacing = 0, .buildViewFunc = [&](auto& vb) {
+            vb
+                .View({.modifyViewFunc = [&](auto& view) { views.push_back(&view); }})
+                .View({.modifyViewFunc = [&](auto& view) { views.push_back(&view); }})
+                .View({.modifyViewFunc = [&](auto& view) { views.push_back(&view); }});
+        }});
+    });
+
+    ASSERT_EQ(3, views.size());
+    float expectedLength = 100.0f / 3.0f;
+    for (auto* view : views) {
+        EXPECT_NEAR(expectedLength, view->Frame().size.x, 0.01f);
+    }
+    // Origins should tile the unbounded widths contiguously.
+    EXPECT_NEAR(0, views[0]->Frame().origin.x, 0.01f);
+    EXPECT_NEAR(expectedLength, views[1]->Frame().origin.x, 0.01f);
+    EXPECT_NEAR(expectedLength * 2, views[2]->Frame().origin.x, 0.01f);
+}
+
 // With an HStack inside another HStack and the child of the second HStack has an unbounded axis length
 // Then the parent HStack of the unbounded child should have an unbounded child length also
 TEST(FlowStackViewLayout, AllChildrenUnboundedLength) {

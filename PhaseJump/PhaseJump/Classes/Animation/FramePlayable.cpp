@@ -38,3 +38,35 @@ int FramePlayable::Frame() const {
 
     return keyframe->Value();
 }
+
+float FramePlayable::FrameRate() const {
+    GUARDR(track, frameRate)
+
+    auto const& keyframes = track->Keyframes();
+    auto const n = keyframes.size();
+    GUARDR(n >= 2, frameRate)
+
+    // Average interval between consecutive keyframes across the span from first to last
+    float const span = keyframes[n - 1]->time - keyframes[0]->time;
+    GUARDR(span > 0, frameRate)
+
+    float const averageInterval = span / static_cast<float>(n - 1);
+    return 1.0f / averageInterval;
+}
+
+void FramePlayable::SetFrameRate(float value) {
+    GUARD(value > 0)
+    GUARD(track)
+
+    frameRate = value;
+
+    float const frameTime = 1.0f / value;
+
+    // Redistribute existing keyframes at uniform `frameTime` intervals
+    auto const& keyframes = track->Keyframes();
+    for (size_t i = 0; i < keyframes.size(); i++) {
+        keyframes[i]->time = static_cast<float>(i) * frameTime;
+    }
+
+    SetDuration(static_cast<float>(keyframes.size()) * frameTime);
+}

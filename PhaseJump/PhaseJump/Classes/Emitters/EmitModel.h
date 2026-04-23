@@ -73,36 +73,34 @@ namespace PJ {
         }
     };
 
-    /// Stores delay progress for delayed emit
+    /// Stores delay progress for delayed emit.
+    ///
+    /// Note: Do not use onUpdateFunc here with [this] capture, because emit models
+    /// are copied (would cause crash with copied models)
     class DelayedEmitModel final : public SomeUpdatable {
     public:
         EmitModel model;
-        Updatable updatable;
 
         /// Used by emitter to track delay progress
         float delay = 0;
 
-        DelayedEmitModel(EmitModel model, float _delay) :
-            model(model),
-            delay(_delay) {
-            updatable.onUpdateFunc = [this](auto& updatable, auto time) {
-                GUARDR(delay > 0, FinishType::Continue)
-
-                delay -= time.delta;
-                delay = std::max(0.0f, delay);
-
-                return FinishType::Continue;
-            };
-        }
+        DelayedEmitModel(EmitModel model, float delay) :
+            model(std::move(model)),
+            delay(delay) {}
 
         // MARK: SomeUpdatable
 
         FinishType OnUpdate(TimeSlice time) override {
-            return updatable.OnUpdate(time);
+            GUARDR(delay > 0, FinishType::Continue)
+
+            delay -= time.delta;
+            delay = std::max(0.0f, delay);
+
+            return FinishType::Continue;
         }
 
         bool IsFinished() const override {
-            return updatable.IsFinished();
+            return false;
         }
     };
 } // namespace PJ

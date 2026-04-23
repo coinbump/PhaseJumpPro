@@ -15,6 +15,7 @@
 namespace PJ {
     class SomeGLRenderCommand;
     class SomeRenderCommandModel;
+    class StencilPushRenderModel;
 
     // These types are tightly packed in VRAM for renders and cannot be polymorphic
     static_assert(!std::is_polymorphic_v<Vector2>);
@@ -54,13 +55,16 @@ namespace PJ {
 
         UP<SomeGLRenderCommand> BuildRenderCommand(SomeRenderCommandModel& proxyCommand);
 
-        virtual void RenderProcess(RenderModel const& model);
-
     public:
         using Base = BaseGLRenderEngine;
         using This = GLRenderEngine;
 
         GLuint vao{};
+
+        /// Active stencil push depth. Incremented in RenderStencilPush, decremented in
+        /// RenderStencilPop. Subsequent draws are clipped where the buffer's value is
+        /// >= this depth.
+        int stencilDepth = 0;
 
         /// @return Returns the OpenGL id for the given feature id
         std::optional<GLenum> FeatureIdToGLFeatureId(String featureId);
@@ -93,7 +97,10 @@ namespace PJ {
         void LoadMatrix() override {}
 
         void RenderStart(SomeRenderContext* context) override;
-        void RenderDraw(RenderDrawModel const& drawModel) override;
+        void RenderDraw(RenderPassModel const& pass) override;
+        void RenderDrawSubtree(SomeRenderModelNode const& startNode) override;
+        void RenderStencilPush(StencilPushRenderModel const& model) override;
+        void RenderStencilPop() override;
         void ProjectionMatrixLoadOrthographic(Vector2 size) override;
         void ProjectionMatrixLoadPerspective(
             float fovRadians, float aspect, float zNear, float zFar
@@ -102,8 +109,9 @@ namespace PJ {
         SP<SomeRenderContext> MakeTextureBuffer() override;
         VectorList<Tags> EditorInfoList() override;
 
+        virtual void RenderProcess(MaterialRenderModel const& model);
+
     protected:
-        void RenderProcess(RenderDrawModel const& processModel);
         void RenderDrawPlans(std::span<GLRenderPlan* const> renderPlans);
         void ScanGLExtensions();
 

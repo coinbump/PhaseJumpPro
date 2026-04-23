@@ -456,3 +456,53 @@ TEST(AcyclicGraphNode, Test_Parent)
     EXPECT_EQ(nullptr, node->Parent());
     EXPECT_EQ(node.get(), childNode1->Parent());
 }
+
+// Tree invariant: a node should have at most one parent. When a caller constructs
+// a DAG (multi-parent), Root() can't choose deterministically and must return null
+// rather than silently picking one.
+TEST(AcyclicGraphNode, Test_Root_ReturnsNull_WhenNodeHasMultipleParents)
+{
+    auto parentA = MAKE<Node>();
+    auto parentB = MAKE<Node>();
+    auto child = MAKE<Node>();
+    parentA->AddEdge(child);
+    parentB->AddEdge(child);
+
+    EXPECT_EQ(2, child->FromNodes().size());
+    EXPECT_EQ(nullptr, child->Root());
+}
+
+TEST(AcyclicGraphNode, Test_Root_ReturnsNull_WhenAncestorHasMultipleParents)
+{
+    auto grandparentA = MAKE<Node>();
+    auto grandparentB = MAKE<Node>();
+    auto parent = MAKE<Node>();
+    auto child = MAKE<Node>();
+    grandparentA->AddEdge(parent);
+    grandparentB->AddEdge(parent);
+    parent->AddEdge(child);
+
+    EXPECT_EQ(nullptr, child->Root());
+}
+
+namespace AcyclicGraphNodeTests {
+    struct CoredCore {
+        int value = 0;
+    };
+
+    class CoredNode : public AcyclicGraphNode<StandardEdgeCore, CoredCore>
+    {
+    };
+}
+
+// Regression: `NodeStrongReference` used to hard-code `Core = Void`, so AddEdge
+// failed to instantiate for nodes with a non-default Core. Verifies the fix.
+TEST(AcyclicGraphNode, Test_AddEdge_WithNonDefaultCore_WorksAndPreservesType)
+{
+    auto node = MAKE<CoredNode>();
+    auto childNode = MAKE<CoredNode>();
+    node->AddEdge(childNode);
+
+    EXPECT_EQ(1, node->Edges().size());
+    EXPECT_EQ(1, childNode->FromNodes().size());
+}

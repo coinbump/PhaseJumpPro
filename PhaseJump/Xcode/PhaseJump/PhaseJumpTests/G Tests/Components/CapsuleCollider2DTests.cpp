@@ -85,3 +85,28 @@ TEST(CapsuleCollider2D, SetHeight_NegativeGuarded) {
     sut.SetHeight(-1);
     EXPECT_EQ(10, sut.Height());
 }
+
+TEST(CapsuleCollider2D, GetBounds) {
+    CapsuleCollider2D sut(10, 3);
+    // Width = 2 * radius = 6, height = 10 → half extents (3, 5).
+    auto bounds = sut.GetBounds();
+    EXPECT_EQ(Vector2(0, 0), bounds.center);
+    EXPECT_EQ(Vector2(3, 5), bounds.extents);
+}
+
+TEST(CapsuleCollider2D, TestIntersect_Overlap) {
+    CapsuleCollider2D sut(10, 3);
+
+    EXPECT_TRUE(sut.TestIntersect(Bounds2D(Vector2(0, 0), Vector2(1, 1))));
+    EXPECT_TRUE(sut.TestIntersect(Bounds2D(Vector2(0, 4), Vector2(1, 2))));
+    EXPECT_TRUE(sut.TestIntersect(Bounds2D(Vector2(0, -4), Vector2(1, 2))));
+}
+
+TEST(CapsuleCollider2D, TestIntersect_NoOverlap) {
+    CapsuleCollider2D sut(10, 3);
+
+    // Outside width (|x| > 3)
+    EXPECT_FALSE(sut.TestIntersect(Bounds2D(Vector2(10, 0), Vector2(1, 1))));
+    // Outside height (|y| > 5)
+    EXPECT_FALSE(sut.TestIntersect(Bounds2D(Vector2(0, 10), Vector2(1, 1))));
+}

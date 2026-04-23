@@ -34,6 +34,14 @@
 		CD376CBD29E797DA00DC7950 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD376CBC29E797D900DC7950 /* OpenGL.framework */; };
 		CD420AA82957F3CE00C5D3E1 /* resources in Resources */ = {isa = PBXBuildFile; fileRef = CD420AA72957F3CE00C5D3E1 /* resources */; };
 		CD420AE92959FE6900C5D3E1 /* SDLKaiju.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD420AE82959FE6900C5D3E1 /* SDLKaiju.cpp */; };
+		CD4F873D2F982139009B7C4F /* PaintAppScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD4F873C2F982139009B7C4F /* PaintAppScene.cpp */; };
+		CD4F873E2F982139009B7C4F /* PaintAppScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD4F873C2F982139009B7C4F /* PaintAppScene.cpp */; };
+		CD4F87412F98390F009B7C4F /* TestNestedViewportScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD4F87402F98390F009B7C4F /* TestNestedViewportScene.cpp */; };
+		CD4F87422F98390F009B7C4F /* TestNestedViewportScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD4F87402F98390F009B7C4F /* TestNestedViewportScene.cpp */; };
+		CD4F87772F99301C009B7C4F /* TestStencilScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD4F87762F99301C009B7C4F /* TestStencilScene.cpp */; };
+		CD4F87782F99301C009B7C4F /* TestStencilScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD4F87762F99301C009B7C4F /* TestStencilScene.cpp */; };
+		CDA10F2030100001000A0020 /* TestImClipScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDA10F2230100001000A0022 /* TestImClipScene.cpp */; };
+		CDA10F2130100001000A0021 /* TestImClipScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDA10F2230100001000A0022 /* TestImClipScene.cpp */; };
 		CD51DBDB2CEAE45300658590 /* TestViewsScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD51DBDA2CEAE45300658590 /* TestViewsScene.cpp */; };
 		CD51DBDC2CEAE45300658590 /* TestViewsScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD51DBDA2CEAE45300658590 /* TestViewsScene.cpp */; };
 		CD5E59592CC4DA4D0071BA96 /* SDL3_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD5E59582CC4DA4D0071BA96 /* SDL3_image.framework */; };
@@ -68,6 +76,12 @@
 		CD815FC82CABA0FF00FBB665 /* SwiftTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD2A601A2B39EAFC000B801B /* SwiftTest.swift */; };
 		CD8E90E22F903070005E864E /* TestPolygonScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD8E90E12F903070005E864E /* TestPolygonScene.cpp */; };
 		CD8E90E32F903070005E864E /* TestPolygonScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD8E90E12F903070005E864E /* TestPolygonScene.cpp */; };
+		CDAB26040000000000000003 /* MediaTracksAppScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDAB26040000000000000002 /* MediaTracksAppScene.cpp */; };
+		CDAB26040000000000000004 /* MediaTracksAppScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDAB26040000000000000002 /* MediaTracksAppScene.cpp */; };
+		CDAD26040000000000000003 /* TestScrollScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDAD26040000000000000002 /* TestScrollScene.cpp */; };
+		CDAD26040000000000000004 /* TestScrollScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDAD26040000000000000002 /* TestScrollScene.cpp */; };
+		CDAF26040000000000000003 /* TestSplitScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDAF26040000000000000002 /* TestSplitScene.cpp */; };
+		CDAF26040000000000000004 /* TestSplitScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDAF26040000000000000002 /* TestSplitScene.cpp */; };
 		CDB2DE532F8F139800EFE160 /* AudioAppScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDB2DE522F8F139800EFE160 /* AudioAppScene.cpp */; };
 		CDB2DE542F8F139800EFE160 /* AudioAppScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDB2DE522F8F139800EFE160 /* AudioAppScene.cpp */; };
 		CDB7F6C12D1A088400A166F4 /* ImageAppScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDB7F6C02D1A088400A166F4 /* ImageAppScene.cpp */; };
@@ -160,6 +174,15 @@
 		CD420AA72957F3CE00C5D3E1 /* resources */ = {isa = PBXFileReference; lastKnownFileType = folder; path = resources; sourceTree = "<group>"; };
 		CD420AE72959FE6900C5D3E1 /* SDLKaiju.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDLKaiju.h; sourceTree = "<group>"; };
 		CD420AE82959FE6900C5D3E1 /* SDLKaiju.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SDLKaiju.cpp; sourceTree = "<group>"; };
+		CD4F873B2F982139009B7C4F /* PaintAppScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PaintAppScene.h; sourceTree = "<group>"; };
+		CD4F873C2F982139009B7C4F /* PaintAppScene.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PaintAppScene.cpp; sourceTree = "<group>"; };
+		CD4F873F2F98390F009B7C4F /* TestNestedViewportScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestNestedViewportScene.h; sourceTree = "<group>"; };
+		CD4F87402F98390F009B7C4F /* TestNestedViewportScene.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TestNestedViewportScene.cpp; sourceTree = "<group>"; };
+		CD4F87562F98AAB1009B7C4F /* TestScrollScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestScrollScene.h; sourceTree = "<group>"; };
+		CD4F87752F99301C009B7C4F /* TestStencilScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestStencilScene.h; sourceTree = "<group>"; };
+		CD4F87762F99301C009B7C4F /* TestStencilScene.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TestStencilScene.cpp; sourceTree = "<group>"; };
+		CDA10F2330100001000A0023 /* TestImClipScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestImClipScene.h; sourceTree = "<group>"; };
+		CDA10F2230100001000A0022 /* TestImClipScene.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TestImClipScene.cpp; sourceTree = "<group>"; };
 		CD51DBD92CEAE45300658590 /* TestViewsScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestViewsScene.h; sourceTree = "<group>"; };
 		CD51DBDA2CEAE45300658590 /* TestViewsScene.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TestViewsScene.cpp; sourceTree = "<group>"; };
 		CD5E59582CC4DA4D0071BA96 /* SDL3_image.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL3_image.framework; path = ../../../../../../../../Library/Frameworks/SDL3_image.framework; sourceTree = "<group>"; };
@@ -200,6 +223,12 @@
 		CD86A73929F0C1540015BFCE /* TestSlicedTextureScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestSlicedTextureScene.h; sourceTree = "<group>"; };
 		CD8E90E02F903070005E864E /* TestPolygonScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestPolygonScene.h; sourceTree = "<group>"; };
 		CD8E90E12F903070005E864E /* TestPolygonScene.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TestPolygonScene.cpp; sourceTree = "<group>"; };
+		CDAB26040000000000000001 /* MediaTracksAppScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaTracksAppScene.h; sourceTree = "<group>"; };
+		CDAB26040000000000000002 /* MediaTracksAppScene.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MediaTracksAppScene.cpp; sourceTree = "<group>"; };
+		CDAD26040000000000000001 /* TestScrollScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestScrollScene.h; sourceTree = "<group>"; };
+		CDAD26040000000000000002 /* TestScrollScene.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TestScrollScene.cpp; sourceTree = "<group>"; };
+		CDAF26040000000000000001 /* TestSplitScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestSplitScene.h; sourceTree = "<group>"; };
+		CDAF26040000000000000002 /* TestSplitScene.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TestSplitScene.cpp; sourceTree = "<group>"; };
 		CDB2DE512F8F135500EFE160 /* AudioAppScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AudioAppScene.h; sourceTree = "<group>"; };
 		CDB2DE522F8F139800EFE160 /* AudioAppScene.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AudioAppScene.cpp; sourceTree = "<group>"; };
 		CDB7F6BF2D1A088400A166F4 /* ImageAppScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageAppScene.h; sourceTree = "<group>"; };
@@ -395,6 +424,8 @@
 		CDB7F6BE2D1A086500A166F4 /* Tools */ = {
 			isa = PBXGroup;
 			children = (
+				CD4F873B2F982139009B7C4F /* PaintAppScene.h */,
+				CD4F873C2F982139009B7C4F /* PaintAppScene.cpp */,
 				CDB7F6BF2D1A088400A166F4 /* ImageAppScene.h */,
 				CDB7F6C02D1A088400A166F4 /* ImageAppScene.cpp */,
 				CDB2DE512F8F135500EFE160 /* AudioAppScene.h */,
@@ -403,6 +434,8 @@
 				9BC7877CE88D5DCAA7AB0A08 /* CanvasAppScene.cpp */,
 				CD6897E3E9D7AFA43218900F /* DesktopAppScene.h */,
 				956EF6F6DF65FC423E953802 /* DesktopAppScene.cpp */,
+				CDAB26040000000000000001 /* MediaTracksAppScene.h */,
+				CDAB26040000000000000002 /* MediaTracksAppScene.cpp */,
 			);
 			path = Tools;
 			sourceTree = "<group>";
@@ -488,6 +521,13 @@
 		CDF0FB8129EF941D00B9EF1F /* Test Scenes */ = {
 			isa = PBXGroup;
 			children = (
+				CD4F87752F99301C009B7C4F /* TestStencilScene.h */,
+				CD4F87762F99301C009B7C4F /* TestStencilScene.cpp */,
+				CDA10F2330100001000A0023 /* TestImClipScene.h */,
+				CDA10F2230100001000A0022 /* TestImClipScene.cpp */,
+				CD4F87562F98AAB1009B7C4F /* TestScrollScene.h */,
+				CD4F873F2F98390F009B7C4F /* TestNestedViewportScene.h */,
+				CD4F87402F98390F009B7C4F /* TestNestedViewportScene.cpp */,
 				CDD0D2722BF04E25001C4A5B /* TestAnimateApp.h */,
 				CD08CF092C44827000BF159A /* TestAudioScene.h */,
 				CD21C6C82C8819E4004EE116 /* TestEditBezierScene.h */,
@@ -505,6 +545,10 @@
 				CD51DBDA2CEAE45300658590 /* TestViewsScene.cpp */,
 				CD8E90E02F903070005E864E /* TestPolygonScene.h */,
 				CD8E90E12F903070005E864E /* TestPolygonScene.cpp */,
+				CDAD26040000000000000001 /* TestScrollScene.h */,
+				CDAD26040000000000000002 /* TestScrollScene.cpp */,
+				CDAF26040000000000000001 /* TestSplitScene.h */,
+				CDAF26040000000000000002 /* TestSplitScene.cpp */,
 				2379590A55B119F15D3E9519 /* TestPerspectiveScene.h */,
 				3F5A8F55784F104E7B512D59 /* TestPerspectiveScene.cpp */,
 			);
@@ -718,12 +762,15 @@
 				CD1D467F2C9368BA00839F39 /* ExampleLifeAgentGroup.cpp in Sources */,
 				CD1D46802C9368BA00839F39 /* FilesProcessorView.swift in Sources */,
 				CDEC25F82C9C970600FF14A2 /* FilesProcessorScene.cpp in Sources */,
+				CD4F87422F98390F009B7C4F /* TestNestedViewportScene.cpp in Sources */,
 				CD1D46812C9368BA00839F39 /* ViewController.mm in Sources */,
 				CDEC26162C9E7E4400FF14A2 /* ExampleCheckersScene.cpp in Sources */,
 				CD815EFB2C9FE11000FBB665 /* ExampleCheckersBoardView.cpp in Sources */,
 				CD1D46822C9368BA00839F39 /* SDLKaiju.cpp in Sources */,
 				CD815FC82CABA0FF00FBB665 /* SwiftTest.swift in Sources */,
 				CD1D46832C9368BA00839F39 /* AppDelegateBridge.swift in Sources */,
+				CD4F87772F99301C009B7C4F /* TestStencilScene.cpp in Sources */,
+				CDA10F2030100001000A0020 /* TestImClipScene.cpp in Sources */,
 				CDB2DE532F8F139800EFE160 /* AudioAppScene.cpp in Sources */,
 				CD1D46842C9368BA00839F39 /* main.m in Sources */,
 				CDB7F6C12D1A088400A166F4 /* ImageAppScene.cpp in Sources */,
@@ -734,14 +781,18 @@
 				CD815F042CA371AF00FBB665 /* KaijuImGuiRenderProcessor.cpp in Sources */,
 				CD51DBDC2CEAE45300658590 /* TestViewsScene.cpp in Sources */,
 				CD8E90E32F903070005E864E /* TestPolygonScene.cpp in Sources */,
+				CDAD26040000000000000003 /* TestScrollScene.cpp in Sources */,
+				CDAF26040000000000000003 /* TestSplitScene.cpp in Sources */,
 				CD7128842D20F0BA0019A718 /* ExampleGraphsScene.cpp in Sources */,
 				CDEA5EEE00000005000000EA /* ExampleEaseScene.cpp in Sources */,
 				CD1D46872C9368BA00839F39 /* ExampleLifeMatrixRenderer.cpp in Sources */,
 				CD1D46882C9368BA00839F39 /* AppDelegate.mm in Sources */,
+				CD4F873D2F982139009B7C4F /* PaintAppScene.cpp in Sources */,
 				CDEC25F32C9BD94F00FF14A2 /* ExampleMatrixBoardViewAnimationScene.cpp in Sources */,
 				E4040D58BF3B28931AE12319 /* CanvasAppScene.cpp in Sources */,
 				5F589880F9E4D23D5CC780A8 /* DesktopAppScene.cpp in Sources */,
 				3C456EC78B89AA0A3F472F53 /* TestPerspectiveScene.cpp in Sources */,
+				CDAB26040000000000000003 /* MediaTracksAppScene.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -754,12 +805,15 @@
 				CDEC261B2C9F1A2400FF14A2 /* ExampleCheckersMatrixRenderer.cpp in Sources */,
 				CDDB6F7F2C8E56150073D3A2 /* ExampleLifeAgentGroup.cpp in Sources */,
 				CD5FB81C291E130D004F2FB4 /* FilesProcessorView.swift in Sources */,
+				CD4F87412F98390F009B7C4F /* TestNestedViewportScene.cpp in Sources */,
 				CDEC25F72C9C970600FF14A2 /* FilesProcessorScene.cpp in Sources */,
 				CD6FEB5A29170AE500F674D3 /* ViewController.mm in Sources */,
 				CDEC26152C9E7E4400FF14A2 /* ExampleCheckersScene.cpp in Sources */,
 				CD815EFC2C9FE11000FBB665 /* ExampleCheckersBoardView.cpp in Sources */,
 				CD420AE92959FE6900C5D3E1 /* SDLKaiju.cpp in Sources */,
 				CDF0FB7829EE11DA00B9EF1F /* AppDelegateBridge.swift in Sources */,
+				CD4F87782F99301C009B7C4F /* TestStencilScene.cpp in Sources */,
+				CDA10F2130100001000A0021 /* TestImClipScene.cpp in Sources */,
 				CDB2DE542F8F139800EFE160 /* AudioAppScene.cpp in Sources */,
 				CD6FEB6129170AE600F674D3 /* main.m in Sources */,
 				CDB7F6C22D1A088400A166F4 /* ImageAppScene.cpp in Sources */,
@@ -770,14 +824,18 @@
 				CD815F052CA371AF00FBB665 /* KaijuImGuiRenderProcessor.cpp in Sources */,
 				CD51DBDB2CEAE45300658590 /* TestViewsScene.cpp in Sources */,
 				CD8E90E22F903070005E864E /* TestPolygonScene.cpp in Sources */,
+				CDAD26040000000000000004 /* TestScrollScene.cpp in Sources */,
+				CDAF26040000000000000004 /* TestSplitScene.cpp in Sources */,
 				CD7128832D20F0BA0019A718 /* ExampleGraphsScene.cpp in Sources */,
 				CDEA5EEE00000004000000EA /* ExampleEaseScene.cpp in Sources */,
 				CDDB6F7D2C8E51710073D3A2 /* ExampleLifeMatrixRenderer.cpp in Sources */,
 				CD6FEB5729170AE500F674D3 /* AppDelegate.mm in Sources */,
+				CD4F873E2F982139009B7C4F /* PaintAppScene.cpp in Sources */,
 				CDEC25F22C9BD94F00FF14A2 /* ExampleMatrixBoardViewAnimationScene.cpp in Sources */,
 				3E74BA225FC7749A832CFFC8 /* CanvasAppScene.cpp in Sources */,
 				7F46599AB1FC8988F643378D /* DesktopAppScene.cpp in Sources */,
 				5F4BE23A230A65E64EDF938E /* TestPerspectiveScene.cpp in Sources */,
+				CDAB26040000000000000004 /* MediaTracksAppScene.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

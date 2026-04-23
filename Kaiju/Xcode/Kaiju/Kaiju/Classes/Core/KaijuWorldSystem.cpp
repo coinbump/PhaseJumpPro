@@ -10,17 +10,24 @@
 #include "ExampleMinesweeperScene.h"
 #include "FilesProcessorScene.h"
 #include "ImageAppScene.h"
+#include "MediaTracksAppScene.h"
+#include "PaintAppScene.h"
 #include "TestAnimateApp.h"
 #include "TestAudioScene.h"
 #include "TestBulletsScene.h"
 #include "TestEditBezierScene.h"
 #include "TestEmittersScene.h"
 #include "TestGradientsScene.h"
+#include "TestImClipScene.h"
 #include "TestMeshPathScene.h"
+#include "TestNestedViewportScene.h"
 #include "TestPerspectiveScene.h"
 #include "TestPolygonScene.h"
+#include "TestScrollScene.h"
 #include "TestSlicedTextureScene.h"
+#include "TestSplitScene.h"
 #include "TestSteeringScene.h"
+#include "TestStencilScene.h"
 #include "TestTextureScene.h"
 #include "TestThemeScene.h"
 #include "TestViewsScene.h"
@@ -95,6 +102,9 @@ void KaijuWorldSystem::RegisterSceneClasses() {
     sceneClasses.Add(NEW<SceneClass>("test.polygon", "Test polygon", []() {
         return NEW<TestPolygonScene>();
     }));
+    sceneClasses.Add(NEW<SceneClass>("test.nestedViewport", "Test nested viewport", []() {
+        return NEW<TestNestedViewportScene>();
+    }));
     sceneClasses.Add(NEW<SceneClass>("test.theme", "Test theme", []() {
         return NEW<TestThemeScene>();
     }));
@@ -147,8 +157,32 @@ void KaijuWorldSystem::RegisterSceneClasses() {
         return NEW<CanvasAppScene>();
     }));
 
+    sceneClasses.Add(NEW<SceneClass>("app.paint", "App: Paint", []() {
+        return NEW<PaintAppScene>();
+    }));
+
     sceneClasses.Add(NEW<SceneClass>("app.desktop", "App: Desktop", []() {
         return NEW<DesktopAppScene>();
+    }));
+
+    sceneClasses.Add(NEW<SceneClass>("app.mediaTracks", "App: Media tracks", []() {
+        return NEW<MediaTracksAppScene>();
+    }));
+
+    sceneClasses.Add(NEW<SceneClass>("test.scroll", "Test: Scroll", []() {
+        return NEW<TestScrollScene>();
+    }));
+
+    sceneClasses.Add(NEW<SceneClass>("test.split", "Test: Split", []() {
+        return NEW<TestSplitScene>();
+    }));
+
+    sceneClasses.Add(NEW<SceneClass>("test.stencil", "Test: Stencil", []() {
+        return NEW<TestStencilScene>();
+    }));
+
+    sceneClasses.Add(NEW<SceneClass>("test.imClip", "Test: Im Clip", []() {
+        return NEW<TestImClipScene>();
     }));
 }
 

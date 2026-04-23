@@ -8,7 +8,7 @@
  CODE REVIEW: 11/16/24
  */
 namespace PJ {
-    /// Stores bounds information in reading space
+    /// Stores bounds information where origin is the origin of the frame
     struct Rect {
         using This = Rect;
 
@@ -17,14 +17,12 @@ namespace PJ {
 
         static Rect const one;
 
-        bool operator==(This const& rhs) const {
-            return origin == rhs.origin && size == rhs.size;
-        }
+        bool operator==(This const&) const = default;
     };
 
     // MARK: RectInt
 
-    /// Stores integer bounds information in reading space
+    /// Stores integer bounds information in reading space (cartesian coordinates are not supported)
     struct RectInt {
         using This = RectInt;
 
@@ -40,15 +38,13 @@ namespace PJ {
         }
 
         int Bottom() const {
-            return origin.y + size.x - 1;
+            return origin.y + size.y - 1;
         }
 
         int Right() const {
-            return origin.x + size.y - 1;
+            return origin.x + size.x - 1;
         }
 
-        bool operator==(This const& rhs) const {
-            return origin == rhs.origin && size == rhs.size;
-        }
+        bool operator==(This const&) const = default;
     };
 } // namespace PJ

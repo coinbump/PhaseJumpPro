@@ -5,15 +5,19 @@
 #include "GLShaderProgram.h"
 #include "GLSomeBuffer.h"
 #include "GLTextureBuffer.h"
+#include "MaterialRenderModel.h"
 #include "RenderContextModel.h"
 #include "RenderFeature.h"
-#include "RenderModel.h"
+#include "RenderPassModel.h"
 #include "RGBAColor.h"
 #include "SomeGLRenderCommand.h"
 #include "SomeRenderCommandModel.h"
 #include "SomeRenderContext.h"
+#include "StencilPopRenderModel.h"
+#include "StencilPushRenderModel.h"
 #include "Utils.h"
 #include "Vector3.h"
+#include "ViewportRenderModel.h"
 #include <type_traits>
 
 using namespace PJ;
@@ -402,18 +406,172 @@ GLIndexBuffer* GLRenderEngine::AcquirePooledIndexBuffer(std::span<uint32_t const
     return raw;
 }
 
-void GLRenderEngine::RenderProcess(RenderDrawModel const& drawModel) {
-    for (auto& renderModel : drawModel.renderModels) {
-#ifdef PROFILE
-        DevProfiler devProfilerRenderProcess("Render- Process", [](String value) {
-            cout << value;
-        });
-#endif
-        RenderProcess(renderModel);
+namespace {
+    /// Shared DFS walker for RenderDraw variants. Dispatches cores by type and recurses
+    /// into children. Caller is responsible for the final flush after returning.
+    void WalkRenderNode(
+        GLRenderEngine& engine, RenderPassModel::NodeSharedPtr const& node,
+        std::function<void()> const& flush
+    ) {
+        GUARD(node)
+
+        auto const& core = node->core;
+        if (core) {
+            if (auto* push = dynamic_cast<StencilPushRenderModel const*>(core.get())) {
+                flush();
+                engine.RenderStencilPush(*push);
+            } else if (dynamic_cast<StencilPopRenderModel const*>(core.get())) {
+                flush();
+                engine.RenderStencilPop();
+            } else if (auto* materialModel = dynamic_cast<MaterialRenderModel const*>(core.get())) {
+                engine.RenderProcess(*materialModel);
+            }
+        }
+        for (auto& edge : node->Edges()) {
+            GUARD_CONTINUE(edge && edge->toNode)
+
+            auto child = edge->toNode->Value();
+            GUARD_CONTINUE(child)
+
+            WalkRenderNode(engine, SCAST<RenderPassModel::Node>(child), flush);
+        }
     }
+} // namespace
+
+void GLRenderEngine::RenderDraw(RenderPassModel const& pass) {
+    GUARD(pass.rootNode)
+
+    // FUTURE: we're using DAG painter's order for now. In the future, enable depth test for
+    // performance
+    EnableFeature(RenderFeature::DepthTest, false);
+
+    auto flush = [this]() {
+        if (renderPlans.empty()) {
+            return;
+        }
+        VectorList<GLRenderPlan*> orderedPlans;
+        orderedPlans.reserve(renderPlans.size());
+        for (auto& plan : renderPlans) {
+            orderedPlans.push_back(plan.get());
+        }
+        RenderDrawPlans(orderedPlans);
+        renderPlans.clear();
+    };
+
+    WalkRenderNode(*this, pass.rootNode, flush);
+    flush();
 }
 
-void GLRenderEngine::RenderProcess(RenderModel const& model) {
+void GLRenderEngine::RenderDrawSubtree(SomeRenderModelNode const& startNode) {
+    // FUTURE: we're using DAG painter's order for now. In the future, enable depth test for
+    // performance
+    EnableFeature(RenderFeature::DepthTest, false);
+
+    auto flush = [this]() {
+        if (renderPlans.empty()) {
+            return;
+        }
+        VectorList<GLRenderPlan*> orderedPlans;
+        orderedPlans.reserve(renderPlans.size());
+        for (auto& plan : renderPlans) {
+            orderedPlans.push_back(plan.get());
+        }
+        RenderDrawPlans(orderedPlans);
+        renderPlans.clear();
+    };
+
+    for (auto& edge : startNode.Edges()) {
+        GUARD_CONTINUE(edge && edge->toNode)
+
+        auto child = edge->toNode->Value();
+        GUARD_CONTINUE(child)
+
+        WalkRenderNode(*this, SCAST<RenderPassModel::Node>(child), flush);
+    }
+    flush();
+}
+
+void GLRenderEngine::RenderStencilPush(StencilPushRenderModel const& model) {
+    EnableFeature(RenderFeature::StencilTest, true);
+
+    if (stencilDepth == 0) {
+        // Fresh outer scope — the prior frame may have left the stencil write-mask at
+        // 0x00 (set while content draws were active to protect the region). A 0 mask also
+        // blocks glClear(GL_STENCIL_BUFFER_BIT), so force it open before clearing.
+        glStencilMask(0xFF);
+        glClear(GL_STENCIL_BUFFER_BIT);
+    }
+
+    glStencilMask(0xFF);
+    glStencilFunc(GL_ALWAYS, stencilDepth + 1, 0xFF);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_INCR);
+    glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+
+    // Draw the mesh into the stencil buffer
+    if (model.material) {
+        auto savedPlans = std::move(renderPlans);
+        renderPlans.clear();
+
+        MaterialRenderModel stencilDrawModel(model.material);
+        stencilDrawModel.SetMesh(model.mesh);
+        stencilDrawModel.matrix = model.matrix;
+
+        // The shared colorVary shader expects one vertex color per position. Color writes
+        // are masked off for this draw, so the actual value is irrelevant
+        VectorList<RenderColor> stencilVertexColors(
+            model.mesh.Vertices().size(), RenderColor(255, 255, 255, 255)
+        );
+        stencilDrawModel.SetVertexColors(stencilVertexColors);
+
+        RenderProcess(stencilDrawModel);
+
+        VectorList<GLRenderPlan*> immediatePlans;
+        immediatePlans.reserve(renderPlans.size());
+        for (auto& plan : renderPlans) {
+            immediatePlans.push_back(plan.get());
+        }
+        RenderDrawPlans(immediatePlans);
+
+        renderPlans = std::move(savedPlans);
+    }
+
+    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+
+    ++stencilDepth;
+
+    // Subsequent draws are clipped to where stencil >= depth.
+    glStencilMask(0x00);
+    glStencilFunc(GL_LEQUAL, stencilDepth, 0xFF);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+}
+
+void GLRenderEngine::RenderStencilPop() {
+    if (stencilDepth == 0) {
+        // Mismatched pop; still restore the write-mask so a later context Clear can wipe
+        // the stencil buffer (glClear honors the current stencil write mask).
+        glStencilMask(0xFF);
+        EnableFeature(RenderFeature::StencilTest, false);
+        return;
+    }
+
+    --stencilDepth;
+    if (stencilDepth == 0) {
+        // End of the outermost scope — open the mask so subsequent glClear calls can
+        // clear the stencil. Without this, switching scenes leaves the prior
+        // scene's stencil shape lingering because the mask is still 0x00 from the last
+        // push's content-protect phase.
+        glStencilMask(0xFF);
+        EnableFeature(RenderFeature::StencilTest, false);
+        return;
+    }
+
+    // Restore the test for the now-outer stencil scope.
+    glStencilMask(0x00);
+    glStencilFunc(GL_LEQUAL, stencilDepth, 0xFF);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+}
+
+void GLRenderEngine::RenderProcess(MaterialRenderModel const& model) {
     auto modelMaterial = model.Material();
 
     GUARD(modelMaterial)
@@ -460,33 +618,6 @@ void GLRenderEngine::RenderProcess(RenderModel const& model) {
 
     auto renderPlan = NEW<GLRenderPlan>(model, _vboPlan);
     renderPlans.push_back(std::move(renderPlan));
-}
-
-void GLRenderEngine::RenderDraw(RenderDrawModel const& drawModel) {
-    RenderProcess(drawModel);
-
-    VectorList<GLRenderPlan*> orderedPlans;
-    orderedPlans.reserve(renderPlans.size());
-    for (auto& plan : renderPlans) {
-        orderedPlans.push_back(plan.get());
-    }
-
-    auto blendBegin = std::partition(orderedPlans.begin(), orderedPlans.end(), [](auto* plan) {
-        return !plan->model.IsFeatureEnabled(RenderFeature::Blend);
-    });
-
-    // Sort opaque front-to-back
-    std::sort(orderedPlans.begin(), blendBegin, [](auto* lhs, auto* rhs) {
-        return lhs->model.z > rhs->model.z;
-    });
-
-    EnableFeature(RenderFeature::DepthTest, true);
-    RenderDrawPlans({ orderedPlans.begin(), blendBegin });
-
-    EnableFeature(RenderFeature::DepthTest, false);
-    RenderDrawPlans({ blendBegin, orderedPlans.end() });
-
-    renderPlans.clear();
 }
 
 void GLRenderEngine::RenderDrawPlans(std::span<GLRenderPlan* const> renderPlans) {

@@ -32,6 +32,7 @@
 #include <PhaseJump/BlinkEffect.h>
 #include <PhaseJump/Bounds.h>
 #include <PhaseJump/Broadcaster.h>
+#include <PhaseJump/BrushPaintTool.h>
 #include <PhaseJump/ButtonControl.h>
 #include <PhaseJump/CameraCullRenderProcessor.h>
 #include <PhaseJump/CanvasTool.h>
@@ -51,6 +52,7 @@
 #include <PhaseJump/CollectionUtils.h>
 #include <PhaseJump/Colliders2D.h>
 #include <PhaseJump/Color.h>
+#include <PhaseJump/ClipRenderer.h>
 #include <PhaseJump/ColorRenderer.h>
 #include <PhaseJump/ColorView.h>
 #include <PhaseJump/Command.h>
@@ -119,6 +121,7 @@
 #include <PhaseJump/Funcs.h>
 #include <PhaseJump/Function.h>
 #include <PhaseJump/GLBlendMode.h>
+#include <PhaseJump/GLBufferBindingScope.h>
 #include <PhaseJump/GLHeaders.h>
 #include <PhaseJump/GLLoadShaderOperation.h>
 #include <PhaseJump/GLLoadShaderProgramOperation.h>
@@ -169,7 +172,13 @@
 #include <PhaseJump/MatrixBoardView.h>
 #include <PhaseJump/MatrixPiece.h>
 #include <PhaseJump/MatrixPieceHandler.h>
+#include <PhaseJump/MediaClipModel.h>
 #include <PhaseJump/MediaFilesAtoms.h>
+#include <PhaseJump/MediaTimelineModel.h>
+#include <PhaseJump/MediaTimelineView.h>
+#include <PhaseJump/MediaTrackModel.h>
+#include <PhaseJump/MediaTrackView.h>
+#include <PhaseJump/MediaTrackViewLayout.h>
 #include <PhaseJump/Menu.h>
 #include <PhaseJump/Mesh.h>
 #include <PhaseJump/MeshRenderer.h>
@@ -180,9 +189,9 @@
 #include <PhaseJump/NodeHandler.h>
 #include <PhaseJump/NodesRenderProcessor.h>
 #include <PhaseJump/ObjectCanvas.h>
+#include <PhaseJump/PaintCanvas.h>
+#include <PhaseJump/PaintTool.h>
 #include <PhaseJump/ObservedValue.h>
-#include <PhaseJump/OffscreenBuffer.h>
-#include <PhaseJump/OffscreenBufferRenderer.h>
 #include <PhaseJump/OrderRenderProcessor.h>
 #include <PhaseJump/OrderedMap.h>
 #include <PhaseJump/OrderedSet.h>
@@ -209,6 +218,7 @@
 #include <PhaseJump/QuadMeshBuilder.h>
 #include <PhaseJump/QuickBuilder.h>
 #include <PhaseJump/QuickCharacter.h>
+#include <PhaseJump/MacMovie.h>
 #include <PhaseJump/RGBAColor.h>
 #include <PhaseJump/RTexPackerAtlasModel.h>
 #include <PhaseJump/Range.h>
@@ -221,8 +231,10 @@
 #include <PhaseJump/RenderContextModel.h>
 #include <PhaseJump/RenderFeature.h>
 #include <PhaseJump/RenderMaterial.h>
-#include <PhaseJump/RenderModel.h>
+#include <PhaseJump/MaterialRenderModel.h>
 #include <PhaseJump/RenderModelBuilder.h>
+#include <PhaseJump/RenderPassBuilder.h>
+#include <PhaseJump/RenderPassModel.h>
 #include <PhaseJump/RenderProcessingModel.h>
 #include <PhaseJump/RenderProcessor.h>
 #include <PhaseJump/RenderTypes.h>
@@ -273,6 +285,7 @@
 #include <PhaseJump/SQLValue.h>
 #include <PhaseJump/SQLWhereArguments.h>
 #include <PhaseJump/Scene.h>
+#include <PhaseJump/ScrollView.h>
 #include <PhaseJump/ScrollBarControl.h>
 #include <PhaseJump/SelectHandler.h>
 #include <PhaseJump/SelectObjectsCanvasTool.h>
@@ -321,6 +334,7 @@
 #include <PhaseJump/LoadResourcesOperation.h>
 #include <PhaseJump/SomeMeshBuilder.h>
 #include <PhaseJump/SomeMouseDevice.h>
+#include <PhaseJump/Movie.h>
 #include <PhaseJump/SomeOperation.h>
 #include <PhaseJump/SomePath.h>
 #include <PhaseJump/PathLayout.h>
@@ -339,12 +353,12 @@
 #include <PhaseJump/SomeRenderContext.h>
 #include <PhaseJump/SomeRenderEngine.h>
 #include <PhaseJump/Renderer.h>
-#include <PhaseJump/SomeResolver.h>
 #include <PhaseJump/ShaderProgram.h>
 #include <PhaseJump/SomeSignal.h>
 #include <PhaseJump/SomeSimplePublisher.h>
 #include <PhaseJump/SomeSimpleSubject.h>
 #include <PhaseJump/SomeSimpleSubscription.h>
+#include <PhaseJump/SomeRenderModel.h>
 #include <PhaseJump/SomeStateMachine.h>
 #include <PhaseJump/TagClass.h>
 #include <PhaseJump/Texture.h>
@@ -354,6 +368,8 @@
 #include <PhaseJump/SomeWorldComponent.h>
 #include <PhaseJump/SomeWorldSystem.h>
 #include <PhaseJump/SpacerView.h>
+#include <PhaseJump/SplitViewLayout.h>
+#include <PhaseJump/SplitterControl.h>
 #include <PhaseJump/SpriteRenderer.h>
 #include <PhaseJump/StandardCore.h>
 #include <PhaseJump/StandardEdgeCore.h>
@@ -363,6 +379,8 @@
 #include <PhaseJump/StandardResourceRepositoryModel.h>
 #include <PhaseJump/StateCore.h>
 #include <PhaseJump/StateMachine.h>
+#include <PhaseJump/StencilPopRenderModel.h>
+#include <PhaseJump/StencilPushRenderModel.h>
 #include <PhaseJump/StreamReader.h>
 #include <PhaseJump/StreamWriter.h>
 #include <PhaseJump/StringConvertible.h>
@@ -423,6 +441,7 @@
 #include <PhaseJump/ViewProxy.h>
 #include <PhaseJump/ViewSizeProposal.h>
 #include <PhaseJump/Viewport.h>
+#include <PhaseJump/ViewportRenderModel.h>
 #include <PhaseJump/Void.h>
 #include <PhaseJump/WeakReference.h>
 #include <PhaseJump/Weight.h>

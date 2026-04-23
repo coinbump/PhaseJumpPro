@@ -55,11 +55,10 @@ bool ViewProxy::IsAxisUnbounded(Axis2D axis, ViewSizeProposal proposal) const {
     switch (axis) {
     case Axis2D::X:
         return IsWidthUnbounded(proposal);
-        break;
     case Axis2D::Y:
         return IsHeightUnbounded(proposal);
-        break;
     }
+    return false;
 }
 
 void ViewProxy::PlaceView(Vector2 viewPosition, LayoutAnchor2D anchor, ViewSizeProposal proposal) {

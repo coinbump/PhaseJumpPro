@@ -77,6 +77,10 @@ namespace PJ {
         /// Minimum world size the window can be resized to
         Vector2 minWindowSize{ 100, 100 };
 
+        /// When > 0, resize maintains aspect ratio (defined as width / height)
+        /// Example 16:9 aspect ratio is 16 / 9
+        float aspectRatio = 0.0f;
+
         /// Controls how the content node reacts to window size changes.
         ContentResizeType contentResizeType = ContentResizeType::Resize;
 

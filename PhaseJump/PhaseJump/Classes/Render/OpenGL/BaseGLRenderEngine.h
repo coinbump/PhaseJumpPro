@@ -5,9 +5,9 @@
 #include "Data.h"
 #include "GLHeaders.h"
 #include "GLRenderState.h"
+#include "MaterialRenderModel.h"
 #include "Matrix4x4.h"
 #include "OrderedSet.h"
-#include "RenderModel.h"
 #include "SomeRenderEngine.h"
 #include "VectorList.h"
 
@@ -33,7 +33,7 @@ namespace PJ {
     /// Plan for building a GL vertex buffer
     struct GLVertexBufferPlan {
         /// A vertex buffer consists of item groups like vertices, colors, etc.
-        /// This defines the data, count, and size for each VBO item group
+        /// This defines the data, count, and size for each VBO item group.
         class Item {
         public:
             String attributeId;
@@ -42,6 +42,8 @@ namespace PJ {
             GLenum glType{};
             bool normalize{};
             void* dataPtr{};
+
+            virtual ~Item() = default;
 
             uint32_t Size() const {
                 return componentSize * componentCount;
@@ -117,10 +119,10 @@ namespace PJ {
 
     /// Stores a render model, and a plan for building the VBO for that render model
     struct GLRenderPlan {
-        RenderModel const& model;
+        MaterialRenderModel const& model;
         UP<GLVertexBufferPlan> vboPlan;
 
-        GLRenderPlan(RenderModel const& model, UP<GLVertexBufferPlan>& vboPlan) :
+        GLRenderPlan(MaterialRenderModel const& model, UP<GLVertexBufferPlan>& vboPlan) :
             model(model),
             vboPlan(std::move(vboPlan)) {}
     };

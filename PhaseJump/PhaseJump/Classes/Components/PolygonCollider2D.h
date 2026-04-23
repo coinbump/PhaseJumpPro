@@ -28,6 +28,7 @@ namespace PJ {
         // MARK: Collider2D
 
         bool TestHit(Vector2 position) override;
+        Bounds2D GetBounds() override;
 
         // MARK: SomeWorldComponent
 

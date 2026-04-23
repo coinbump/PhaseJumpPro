@@ -11,6 +11,10 @@ PlaneMeshBuilder::PlaneMeshBuilder(Config const& config) :
 Mesh PlaneMeshBuilder::BuildMesh() {
     Mesh result;
 
+    // Require at least one cell in each axis; otherwise the `(vertexXCount - 1)` / `(vertexZCount -
+    // 1)` divisors below collapse to zero and emit NaN vertices/UVs to the GPU.
+    GUARDR(meshSize.x > 0 && meshSize.y > 0, result)
+
     int vertexXCount = meshSize.x + 1;
     int vertexZCount = meshSize.y + 1;
     int verticesSize = vertexXCount * vertexZCount;

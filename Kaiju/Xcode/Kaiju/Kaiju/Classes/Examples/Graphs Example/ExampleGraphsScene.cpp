@@ -87,15 +87,11 @@ void Graphs::Scene::RandomizeValues(bool isAnimated) {
                          sceneModel.minAxisValue;
 
         if (isAnimated) {
-            InterpolateFunc<float> interpolateFunc = InterpolateFuncs::Ease(
-                InterpolateFuncs::Make(oldValue, newValue), EaseFuncs::outElastic
-            );
-            auto animator = NEW<Animator<float>>(Animator<float>::Config{
-                .duration = 1, .interpolateFunc = interpolateFunc, .binding = [&](auto value) {
-                    bar.value = value;
-                } });
-
-            GetUpdatables().Add(std::move(animator));
+            Animate(AnimateConfig<float>{ .duration = 1,
+                                          .easeFunc = EaseFuncs::outElastic,
+                                          .startValue = oldValue,
+                                          .endValue = newValue,
+                                          .setFunc = [&](auto& value) { bar.value = value; } });
         } else {
             bar.value = newValue;
         }

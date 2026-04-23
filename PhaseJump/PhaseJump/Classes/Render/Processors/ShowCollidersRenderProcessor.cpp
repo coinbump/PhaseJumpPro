@@ -15,6 +15,8 @@ void AddOverlay(
     RenderCameraModel& cameraModel, WorldNode* node, SP<RenderMaterial> colliderMaterial,
     Color color, Vector2 overlaySize
 ) {
+    // TODO: this is broken with new render DAG. Fix this
+    /*
     auto renderer = MAKE<ColorRenderer>(ColorRenderer::Config{
         .material = colliderMaterial, .color = color, .worldSize = overlaySize });
     renderer->core.model.SetBuildMeshFunc([=](RendererModel const& model) {
@@ -26,8 +28,11 @@ void AddOverlay(
     cameraModel.renderers.push_back(renderer);
 
     renderer->owner = node;
-    auto debugRenderModels = renderer->RenderModels();
-    AddRange(cameraModel.renderModels, debugRenderModels);
+    for (auto& sp : renderer->RenderModels()) {
+        if (auto* material = dynamic_cast<MaterialRenderModel*>(sp.get())) {
+            cameraModel.renderModels.push_back(*material);
+        }
+    }*/
 }
 
 void ShowCollidersRenderProcessor::Process(RenderCameraModel& cameraModel) {

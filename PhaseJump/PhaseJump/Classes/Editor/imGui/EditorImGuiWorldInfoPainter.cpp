@@ -2,6 +2,7 @@
 #include "DevLog.h"
 #include "DevTerminal.h"
 #include "imgui.h"
+#include "RenderWorldSystem.h"
 #include "SomeWorldSystem.h"
 #include "World.h"
 #include <array>
@@ -11,9 +12,63 @@ using namespace PJ;
 
 namespace {
     bool isTerminalWindowOpen = false;
+    bool isRenderGraphWindowOpen = false;
     std::array<char, 512> terminalInputBuffer{};
     bool shouldScrollLogToBottom = false;
     bool shouldRefocusTerminalInput = false;
+
+    /// Render a RenderInfo node (and its children) as a CollapsingHeader tree.
+    /// idCounter disambiguates headers that share the same title
+    void DrawRenderInfoNode(RenderInfo const& info, int& idCounter) {
+        ImGui::PushID(idCounter++);
+
+        String headerTitle = !info.items.empty() ? info.items[0].value : String("(empty)");
+        if (ImGui::CollapsingHeader(headerTitle.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
+            for (auto const& item : info.items) {
+                ImGui::Text("%s: %s", item.label.c_str(), item.value.c_str());
+            }
+
+            if (!info.tree.Children().empty()) {
+                ImGui::Indent();
+                for (auto const& child : info.tree.Children()) {
+                    GUARD_CONTINUE(child)
+                    DrawRenderInfoNode(*child, idCounter);
+                }
+                ImGui::Unindent();
+            }
+        }
+
+        ImGui::PopID();
+    }
+
+    void DrawRenderGraphWindow(World& world) {
+        GUARD(isRenderGraphWindowOpen)
+
+        ImGui::SetNextWindowSize(ImVec2(500, 600), ImGuiCond_FirstUseEver);
+        if (!ImGui::Begin("Render Graph", &isRenderGraphWindowOpen)) {
+            ImGui::End();
+            return;
+        }
+
+        auto* renderSystem = world.TypeSystem<RenderWorldSystem>();
+        if (!renderSystem) {
+            ImGui::Text("No render system");
+            ImGui::End();
+            return;
+        }
+
+        auto const* info = renderSystem->LastRenderInfo();
+        if (!info) {
+            ImGui::Text("No render data yet");
+            ImGui::End();
+            return;
+        }
+
+        int idCounter = 0;
+        DrawRenderInfoNode(*info, idCounter);
+
+        ImGui::End();
+    }
 
     void DrawDevTerminalWindow() {
         GUARD(isTerminalWindowOpen)
@@ -146,6 +201,10 @@ EditorImGuiWorldInfoPainter::EditorImGuiWorldInfoPainter(World& _world) :
                 ImGui::Text("%s", countTitle.c_str());
             }
 
+            if (ImGui::Button("Show Render Graph")) {
+                isRenderGraphWindowOpen = true;
+            }
+
             auto& systems = world.Systems();
 
             ImGui::Text("Systems");
@@ -163,5 +222,6 @@ EditorImGuiWorldInfoPainter::EditorImGuiWorldInfoPainter(World& _world) :
         }
 
         DrawDevTerminalWindow();
+        DrawRenderGraphWindow(world);
     };
 }

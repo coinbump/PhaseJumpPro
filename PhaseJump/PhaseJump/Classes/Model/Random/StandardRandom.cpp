@@ -11,7 +11,7 @@ static std::default_random_engine generator;
 static std::mutex generateSeedMutex;
 
 void GenerateSeedIfNeeded() {
-    GUARD(hasRandomSeed)
+    GUARD(!hasRandomSeed)
 
     std::lock_guard guard(generateSeedMutex);
 

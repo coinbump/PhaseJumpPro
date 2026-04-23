@@ -8,7 +8,7 @@ using namespace PJ;
 
 void KaijuImGuiRenderProcessor::Process(Phase phase) {
     GUARD(editorSystem.isUIVisible)
-    GUARD_LOG(nullptr == phase.cameraModel, "ERROR. Don't process imGui for each camera")
+    GUARD_LOG(!phase.IsCamera(), "ERROR. Don't process imGui for each camera")
 
     BuildPainters();
 

@@ -37,7 +37,10 @@ void Minesweeper::Scene::ClearTilesAt(Vec2I loc) {
 void Minesweeper::Scene::PopulateBoard() {
     GUARD(owner)
 
-    LoadInto(*owner);
+    // TODO: Remove all crashes, but LoadInto keeps re-creating the camera
+    //    owner->RemoveAllComponents();
+    //    owner->RemoveAllChildren();
+    //    LoadInto(*owner);
 }
 
 void Minesweeper::Scene::Restart() {
@@ -99,6 +102,7 @@ void Minesweeper::Scene::LoadInto(WorldNode& root) {
                                   ImRenderer& im = *(static_cast<ImRenderer*>(&renderer));
                                   imRenderer = &im;
 
+                                  // OPTIMIZE: Draw opaque shapes behind transparent text
                                   boardView->ForEachPiece([&](auto& piece) {
                                       Vec2I loc = piece.Origin();
                                       Vector2 origin{ (float)loc.x * tileSize.x * vecRight,
@@ -110,7 +114,20 @@ void Minesweeper::Scene::LoadInto(WorldNode& root) {
                                           im.Image("example-minesweeper-tile-bomb", origin);
                                       } else if (piece.typeTags.contains("clear")) {
                                           im.Image("example-minesweeper-tile-fill", origin);
+                                      } else if (piece.typeTags.contains("flag")) {
+                                          im.Image("example-minesweeper-tile-flag", origin);
+                                      } else {
+                                          im.Image("example-minesweeper-tile-empty", origin);
+                                      }
+                                  });
 
+                                  boardView->ForEachPiece([&](auto& piece) {
+                                      Vec2I loc = piece.Origin();
+                                      Vector2 origin{ (float)loc.x * tileSize.x * vecRight,
+                                                      im.WorldSize().y + tileSize.y * vecDown +
+                                                          (float)loc.y * tileSize.y * vecDown };
+
+                                      if (piece.typeTags.contains("clear")) {
                                           auto bombSurroundCount = BombSurroundCount(loc, false);
                                           if (bombSurroundCount > 0) {
                                               ModelColor hsv;
@@ -127,10 +144,6 @@ void Minesweeper::Scene::LoadInto(WorldNode& root) {
                                                   color
                                               );
                                           }
-                                      } else if (piece.typeTags.contains("flag")) {
-                                          im.Image("example-minesweeper-tile-flag", origin);
-                                      } else {
-                                          im.Image("example-minesweeper-tile-empty", origin);
                                       }
                                   });
 

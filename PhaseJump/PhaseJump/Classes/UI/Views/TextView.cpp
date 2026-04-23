@@ -11,6 +11,9 @@ TextRenderer* TextView::Renderer() {
     GUARDR(renderer.expired(), renderer.lock().get())
     GUARDR(owner, {})
 
+    // Don't allocate for destroyed node
+    GUARDR(!owner->IsDestroyed(), {})
+
     auto world = owner->World();
     GUARDR(world, {})
 

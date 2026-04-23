@@ -1,9 +1,9 @@
 #pragma once
 
 /*
- RATING: 5 stars
+ RATING: 5+ stars
  Simple protocol
- CODE REVIEW: 10/6/24
+ CODE REVIEW: 4/21/26
  */
 namespace PJ {
     class SomeSignal;
@@ -14,6 +14,6 @@ namespace PJ {
         virtual ~SomeListener() {}
 
         /// Called when a signal is sent to this object
-        virtual void OnSignal(SomeSignal& signal) = 0;
+        virtual void OnSignal(SomeSignal const& signal) = 0;
     };
 } // namespace PJ

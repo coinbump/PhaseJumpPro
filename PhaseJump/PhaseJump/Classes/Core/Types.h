@@ -1,3 +1,7 @@
 #pragma once
 
-using Int = int64_t;
+#include <cstdint>
+
+namespace PJ {
+    using Int = int64_t;
+}

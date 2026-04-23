@@ -29,7 +29,10 @@ void IncludeAliasFileProcessor::Process(FilePath filePath) {
             relativeComponents.insert(relativeComponents.begin(), *i);
         }
 
-        for (int i = 0; i < pathComponents.size() - relativeComponents.size(); i++) {
+        size_t forwardCount = pathComponents.size() >= relativeComponents.size()
+                                  ? pathComponents.size() - relativeComponents.size()
+                                  : 0;
+        for (size_t i = 0; i < forwardCount; i++) {
             Add(forwardComponents, pathComponents[i]);
         }
 

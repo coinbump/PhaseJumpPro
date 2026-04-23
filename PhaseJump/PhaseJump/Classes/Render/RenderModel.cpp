@@ -1,9 +1,15 @@
-#include "RenderModel.h"
+#include "MaterialRenderModel.h"
 
 using namespace std;
 using namespace PJ;
 
-bool RenderModel::IsFeatureEnabled(String feature) const {
+bool MaterialRenderModel::IsFeatureEnabled(String feature) const {
+    // Model overrides win over the material's state
+    auto overrideIt = overrideFeatures.find(feature);
+    if (overrideIt != overrideFeatures.end()) {
+        return overrideIt->second == RenderFeatureState::Enable;
+    }
+
     GUARDR(material, false)
 
     // FUTURE: support feature defaults if needed

@@ -1,7 +1,7 @@
 #pragma once
 
+#include "MaterialRenderModel.h"
 #include "RenderContextModel.h"
-#include "RenderModel.h"
 #include "SomeWorldSystem.h"
 
 /*
@@ -9,9 +9,10 @@
  Tested and works
  CODE REVIEW: 9/7/24
  */
+#include "SomeRenderModel.h"
+
 namespace PJ {
     class RenderProcessor;
-    class RenderCameraModel;
 
     /// Model for a render processing pipeline
     /// Multiple objects can have their own pipeline (system, camera)
@@ -31,6 +32,8 @@ namespace PJ {
             return processors;
         }
 
-        void ProcessPhase(String phase, RenderCameraModel* cameraModel);
+        /// Dispatches the phase to every processor. `rootNode` is the processor scope —
+        /// pass root for system-wide processors, camera DAG node for camera-specific ones.
+        void ProcessPhase(String phase, SomeRenderModelNode* rootNode);
     };
 } // namespace PJ

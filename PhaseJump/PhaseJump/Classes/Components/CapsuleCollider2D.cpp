@@ -17,6 +17,10 @@ CapsuleCollider2D& CapsuleCollider2D::SetHeight(float value) {
     return *this;
 }
 
+Bounds2D CapsuleCollider2D::GetBounds() {
+    return Bounds2D({}, { radius, height / 2.0f });
+}
+
 bool CapsuleCollider2D::TestHit(Vector2 position) {
     float halfHeight = height / 2.0f;
     float halfRectLength = std::max(0.0f, halfHeight - radius);

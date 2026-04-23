@@ -33,6 +33,10 @@ namespace PJ {
             return distance <= radius * radius;
         }
 
+        Bounds2D GetBounds() override {
+            return Bounds2D({}, { radius, radius });
+        }
+
         // MARK: SomeWorldComponent
 
         String TypeName() const override {

@@ -1,14 +1,11 @@
 #include "Window.h"
-#include "Animator.h"
 #include "ButtonControl.h"
 #include "Collider2D.h"
 #include "ColorRenderer.h"
 #include "Desktop.h"
 #include "DragGestureHandler2D.h"
 #include "DragHandler2D.h"
-#include "EaseFunc.h"
 #include "EllipseMeshBuilder.h"
-#include "InterpolateFunc.h"
 #include "LayoutInsets.h"
 #include "PointerClickUIEvent.h"
 #include "PolyFrameMeshBuilder.h"
@@ -24,7 +21,6 @@
 #include "Viewport.h"
 #include "World.h"
 #include "WorldNode.h"
-#include <SDL3/SDL_mouse.h>
 
 using namespace std;
 using namespace PJ;
@@ -84,7 +80,8 @@ void Window::Awake() {
 
         QB(*_titleBarNode)
             .RectCollider()
-            .With<ColorRenderer>(ColorRenderer::Config{ .color = Color::gray });
+            .With<ColorRenderer>(ColorRenderer::Config{ .color = Color::gray,
+                                                        .opacityType = RenderOpacityType::Blend });
 
         auto& frameDrag = _titleBarNode->AddComponent<DragHandler2D>();
         frameDrag.dragTargetResolver = [this]() -> DragHandler* {
@@ -111,9 +108,10 @@ void Window::Awake() {
                     button.onPressFunc = onPressFunc;
                 })
                 .template With<ColorRenderer>(ColorRenderer::Config{
-                    .color = color, .worldSize = Vector2(closeButtonSize, closeButtonSize) })
+                    .color = color,
+                    .opacityType = RenderOpacityType::Blend,
+                    .worldSize = Vector2(closeButtonSize, closeButtonSize) })
                 .template ModifyLatest<ColorRenderer>([](auto& renderer) {
-                    renderer.EnableBlend(true);
                     renderer.core.model.SetBuildMeshFunc([](RendererModel const& model) {
                         EllipseMeshBuilder builder(model.WorldSize());
                         return builder.BuildMesh();
@@ -234,17 +232,18 @@ SP<WorldNode> Window::BuildResizeNode(String name, HResize hResize, VResize vRes
     owner->Add(node);
 
     String cursorId = CursorIdForResize(hResize, vResize);
-    auto savedCursor = MAKE<SDL_Cursor*>(nullptr);
+
+    auto savedCursorId = MAKE<String>();
 
     QB(*node)
         .RectCollider(Vector2(1, 1))
-        .ModifyLatest<Collider2D>([this, cursorId, savedCursor](auto& collider) {
+        .ModifyLatest<Collider2D>([this, cursorId, savedCursorId](auto& collider) {
             collider.template AddSignalHandler<PointerEnterUIEvent>(
                 { .id = SignalId::PointerEnter,
                   .func =
-                      [this, cursorId, savedCursor](auto& component, auto& event) {
-                          *savedCursor = SDL_GetCursor();
+                      [this, cursorId, savedCursorId](auto& component, auto& event) {
                           GUARD(owner && owner->World())
+                          *savedCursorId = owner->World()->GetCursorId();
                           owner->World()->SetCursor(cursorId);
                       } }
             );
@@ -252,10 +251,11 @@ SP<WorldNode> Window::BuildResizeNode(String name, HResize hResize, VResize vRes
             collider.template AddSignalHandler<PointerExitUIEvent>(
                 { .id = SignalId::PointerExit,
                   .func =
-                      [savedCursor](auto& component, auto& event) {
-                          GUARD(*savedCursor)
-                          SDL_SetCursor(*savedCursor);
-                          *savedCursor = nullptr;
+                      [this, savedCursorId](auto& component, auto& event) {
+                          GUARD(!savedCursorId->empty())
+                          GUARD(owner && owner->World())
+                          owner->World()->SetCursor(*savedCursorId);
+                          savedCursorId->clear();
                       } }
             );
         });
@@ -287,11 +287,51 @@ SP<WorldNode> Window::BuildResizeNode(String name, HResize hResize, VResize vRes
                 switch (hResize) {
                 case HResize::Left:
                     newSize.x = std::max(state->startSize.x - translation.x, minWindowSize.x);
+                    break;
+                case HResize::Right:
+                    newSize.x = std::max(state->startSize.x + translation.x, minWindowSize.x);
+                    break;
+                case HResize::None:
+                    break;
+                }
+
+                switch (vResize) {
+                case VResize::Top:
+                    newSize.y = std::max(state->startSize.y + translation.y, minWindowSize.y);
+                    break;
+                case VResize::Bottom:
+                    newSize.y = std::max(state->startSize.y - translation.y, minWindowSize.y);
+                    break;
+                case VResize::None:
+                    break;
+                }
+
+                if (aspectRatio > 0) {
+                    bool const hActive = (hResize != HResize::None);
+                    bool const vActive = (vResize != VResize::None);
+
+                    bool driveByX = hActive;
+                    if (hActive && vActive) {
+                        float const dx = std::abs(newSize.x - state->startSize.x);
+                        float const dy = std::abs(newSize.y - state->startSize.y);
+                        driveByX = dx >= dy;
+                    }
+
+                    if (driveByX) {
+                        newSize.y = std::max(newSize.x / aspectRatio, minWindowSize.y);
+                        newSize.x = std::max(newSize.y * aspectRatio, minWindowSize.x);
+                    } else {
+                        newSize.x = std::max(newSize.y * aspectRatio, minWindowSize.x);
+                        newSize.y = std::max(newSize.x / aspectRatio, minWindowSize.y);
+                    }
+                }
+
+                switch (hResize) {
+                case HResize::Left:
                     newPosition.x =
                         state->startPosition.x + (state->startSize.x - newSize.x) * 0.5f;
                     break;
                 case HResize::Right:
-                    newSize.x = std::max(state->startSize.x + translation.x, minWindowSize.x);
                     newPosition.x =
                         state->startPosition.x + (newSize.x - state->startSize.x) * 0.5f;
                     break;
@@ -301,12 +341,10 @@ SP<WorldNode> Window::BuildResizeNode(String name, HResize hResize, VResize vRes
 
                 switch (vResize) {
                 case VResize::Top:
-                    newSize.y = std::max(state->startSize.y + translation.y, minWindowSize.y);
                     newPosition.y =
                         state->startPosition.y + (newSize.y - state->startSize.y) * 0.5f;
                     break;
                 case VResize::Bottom:
-                    newSize.y = std::max(state->startSize.y - translation.y, minWindowSize.y);
                     newPosition.y =
                         state->startPosition.y + (state->startSize.y - newSize.y) * 0.5f;
                     break;
@@ -498,7 +536,16 @@ void Window::ToggleMaximize() {
         GUARD(desktop)
 
         state = State::Maximized;
-        endSize = desktop->worldSize.Value();
+        auto desktopSize = desktop->worldSize.Value();
+        endSize = desktopSize;
+        if (aspectRatio > 0 && desktopSize.x > 0 && desktopSize.y > 0) {
+            float desktopRatio = desktopSize.x / desktopSize.y;
+            if (desktopRatio >= aspectRatio) {
+                endSize = Vector2(desktopSize.y * aspectRatio, desktopSize.y);
+            } else {
+                endSize = Vector2(desktopSize.x, desktopSize.x / aspectRatio);
+            }
+        }
         endPosition = Vector3(0, 0, startPosition.z);
     } else {
         state = State::Default;
@@ -509,23 +556,14 @@ void Window::ToggleMaximize() {
     // Cancel any in-progress maximize animation
     GetUpdatables().RemoveAll();
 
-    constexpr float duration = 0.3f;
+    Animate<Vector2>({ .startValue = startSize,
+                       .endValue = endSize,
+                       .setFunc = [this](Vector2 value) { worldSize = value; } });
 
-    auto sizeAnimator = NEW<Animator<Vector2>>(Animator<Vector2>::Config{
-        .duration = duration,
-        .interpolateFunc =
-            InterpolateFuncs::Ease(InterpolateFuncs::Make(startSize, endSize), EaseFuncs::outCubed),
-        .binding = [this](Vector2 value) { worldSize = value; } });
-    GetUpdatables().Add(std::move(sizeAnimator));
-
-    auto positionAnimator = NEW<Animator<Vector3>>(Animator<Vector3>::Config{
-        .duration = duration,
-        .interpolateFunc = InterpolateFuncs::Ease(
-            InterpolateFuncs::Make(startPosition, endPosition), EaseFuncs::outCubed
-        ),
-        .binding = [this](Vector3 value) {
-            GUARD(owner)
-            owner->transform.SetLocalPosition(value);
-        } });
-    GetUpdatables().Add(std::move(positionAnimator));
+    Animate<Vector3>({ .startValue = startPosition,
+                       .endValue = endPosition,
+                       .setFunc = [this](Vector3 value) {
+                           GUARD(owner)
+                           owner->transform.SetLocalPosition(value);
+                       } });
 }

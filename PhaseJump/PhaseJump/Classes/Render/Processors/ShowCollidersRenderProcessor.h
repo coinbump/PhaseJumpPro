@@ -24,6 +24,7 @@ namespace PJ {
 
         // MARK: RenderProcessor
 
-        void Process(RenderCameraModel& cameraModel) override;
+        // TODO: this is broken with new render DAG. Fix this
+        void Process(RenderCameraModel& cameraModel);
     };
 } // namespace PJ

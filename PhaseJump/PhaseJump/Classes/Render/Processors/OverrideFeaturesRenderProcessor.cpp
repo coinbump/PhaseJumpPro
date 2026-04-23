@@ -12,6 +12,8 @@ void OverrideFeaturesRenderProcessor::Process(RenderCameraModel& cameraModel) {
     }
 #endif
 
+    // TODO: this is broken with new render DAG. Fix this
+    /*
     for (auto& model : cameraModel.renderModels) {
         auto modelMaterial = model.Material();
         GUARD_CONTINUE(modelMaterial)
@@ -32,4 +34,5 @@ void OverrideFeaturesRenderProcessor::Process(RenderCameraModel& cameraModel) {
             );
         }
     }
+     */
 }

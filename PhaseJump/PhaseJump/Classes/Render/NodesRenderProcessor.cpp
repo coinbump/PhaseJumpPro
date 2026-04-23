@@ -1,6 +1,7 @@
 #include "NodesRenderProcessor.h"
 #include "NodeHandler.h"
 #include "RenderCameraModel.h"
+#include "RenderPassModel.h"
 
 using namespace std;
 using namespace PJ;
@@ -11,9 +12,12 @@ NodesRenderProcessor::NodesRenderProcessor(
     Base(baseConfig),
     signalId(config.signalId) {
     processFunc = [this](auto& phase) {
-        GUARD(phase.cameraModel)
+        GUARD(phase.rootNode)
 
-        for (auto& node : phase.cameraModel->nodes) {
+        auto cameraModel = dynamic_cast<RenderCameraModel*>(phase.rootNode->core.get());
+        GUARD(cameraModel)
+
+        for (auto& node : cameraModel->nodes) {
             node->Signal(signalId, NodesRenderSignal({ .phase = phase }));
         }
     };

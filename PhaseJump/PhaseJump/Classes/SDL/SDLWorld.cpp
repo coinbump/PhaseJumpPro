@@ -21,6 +21,7 @@ void SDLWorld::SetCursor(String cursorId) {
     auto iter = sdlCursors.find(cursorId);
     GUARD(iter != sdlCursors.end() && iter->second)
     SDL_SetCursor(iter->second);
+    currentCursorId = cursorId;
 }
 
 void SDLWorld::OnGo() {

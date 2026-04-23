@@ -25,6 +25,7 @@ void SDLAudioStream::Flush() {
 void SDLAudioStream::Stop() {
     GUARD(stream)
     SDL_DestroyAudioStream(stream);
+    stream = nullptr;
 }
 
 void SDLAudioStream::Play() {

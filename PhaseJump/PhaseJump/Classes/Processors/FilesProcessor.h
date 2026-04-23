@@ -72,7 +72,12 @@ namespace PJ {
         }
 
         int64_t UnfinishedCount() const {
-            return input.size() - processedCount;
+            // Guard against `processedCount > input.size()`: the raw unsigned subtraction
+            // would wrap to a huge positive value before the implicit conversion to int64_t.
+            if (processedCount >= input.size()) {
+                return 0;
+            }
+            return static_cast<int64_t>(input.size() - processedCount);
         }
 
         /// Scans for files to be processed

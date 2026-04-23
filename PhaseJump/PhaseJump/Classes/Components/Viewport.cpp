@@ -62,6 +62,23 @@ void Viewport::Awake() {
     ResizeBuffer(worldSize.Value());
 }
 
+void Viewport::Swap(SP<Texture> texture) {
+    GUARD(texture)
+    auto size = texture->Size();
+    GUARD(size.x > 0 && size.y > 0)
+
+    auto newWorldSize = Vector2(size.x, size.y);
+
+    if (worldSize.Value() != newWorldSize) {
+        worldSize = newWorldSize;
+    } else if (!renderContext) {
+        ResizeBuffer(newWorldSize);
+    }
+
+    GUARD(renderContext)
+    renderContext->Swap(texture);
+}
+
 void Viewport::ResizeBuffer(Vector2 size) {
     GUARD(size.x > 0 && size.y > 0)
     GUARD(owner)

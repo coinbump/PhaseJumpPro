@@ -20,9 +20,8 @@ BitmapOrientation PJ::Flipped(BitmapOrientation value) {
     switch (value) {
     case BitmapOrientation::Standard:
         return BitmapOrientation::Flip;
-        break;
     case BitmapOrientation::Flip:
         return BitmapOrientation::Standard;
-        break;
     }
+    return BitmapOrientation::Standard;
 }

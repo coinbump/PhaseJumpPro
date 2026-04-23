@@ -36,7 +36,7 @@ EditorWorldSystem::EditorWorldSystem(int commandHistorySize) :
 void EditorWorldSystem::Add(SP<WorldNode> node, WorldNode* parent, size_t index) {
     GUARD(parent)
 
-    index = std::min(parent->Children().size() - 1, index);
+    index = std::min(parent->Children().size(), index);
 
     AddNodeCommandCore commandCore{ .node = node, .parent = parent, .index = index };
     UP<SomeCommand> command = NEW<Command<AddNodeCommandCore>>(Command<AddNodeCommandCore>::Config{

@@ -38,5 +38,6 @@ namespace PJ {
         void RegisterLabel();
         void RegisterToast();
         void RegisterToolTip();
+        void RegisterSplitter();
     };
 } // namespace PJ

@@ -10,15 +10,19 @@ using namespace PJ;
 void CameraCullRenderProcessor::Process(RenderCameraModel& cameraModel) {
     GUARD(cameraModel.camera)
 
+    // TODO: this is broken with new render DAG. Fix this
+    /*
     auto beforeCullCount = cameraModel.renderModels.size();
 
-    RemoveIf(cameraModel.renderModels, [&](RenderModel const& model) {
+    // TODO: remove from the DAG, not renderModels
+    RemoveIf(cameraModel.renderModels, [&](MaterialRenderModel const& model) {
         auto mesh = model.GetMesh() * model.matrix;
         return cameraModel.camera->IsCulled(mesh);
     });
 
     auto afterCullCount = cameraModel.renderModels.size();
     if (beforeCullCount > afterCullCount) {
-        cout << "Culled: " << beforeCullCount - afterCullCount << std::endl;
+        PJ::Log(std::format("Culled: {}", beforeCullCount - afterCullCount));
     }
+     */
 }

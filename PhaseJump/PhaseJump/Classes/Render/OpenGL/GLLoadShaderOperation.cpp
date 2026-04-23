@@ -77,6 +77,7 @@ LoadResourcesOperation::Result GLLoadShaderOperation::_LoadResources() {
     glGetShaderiv(glId, GL_COMPILE_STATUS, &status);
     if (status == GL_FALSE) {
         PJ::Log("ERROR. Failed to compile shader");
+        glDeleteShader(glId);
         return Failure();
     } else {
         shader->glId = glId;

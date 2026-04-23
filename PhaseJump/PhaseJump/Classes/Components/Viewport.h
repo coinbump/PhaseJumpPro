@@ -21,6 +21,10 @@ namespace PJ {
 
         Viewport();
 
+        /// Replaces this viewport's backing texture and matches the viewport's
+        /// worldSize to the texture's pixel size
+        void Swap(SP<Texture> texture);
+
         /// @return Outer-world cartesian position for a point in this viewport's buffer context
         Vector3 ContextToWorld(Vector3 position) const;
 

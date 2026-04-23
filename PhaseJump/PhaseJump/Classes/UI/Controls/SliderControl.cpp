@@ -29,14 +29,17 @@ SliderControl::SliderControl(Config const& config) :
         case Axis2D::X:
             {
                 auto maxOrthogonal = std::max(thumbSize.y, trackOrthogonal);
-                return ViewSizeProposal{ .width = FloatMath::maxValue, .height = maxOrthogonal };
+                return ViewSizeProposal{ .width = ViewSizeProposal::Unbounded(),
+                                         .height = maxOrthogonal };
             }
         case Axis2D::Y:
             {
                 auto maxOrthogonal = std::max(thumbSize.x, trackOrthogonal);
-                return ViewSizeProposal{ .width = maxOrthogonal, .height = FloatMath::maxValue };
+                return ViewSizeProposal{ .width = maxOrthogonal,
+                                         .height = ViewSizeProposal::Unbounded() };
             }
         }
+        return ViewSizeProposal{};
     };
 
     switch (this->axis) {
@@ -115,8 +118,15 @@ void SliderControl::UpdateThumbPositionForValue(float value) {
     auto minThumbPos = MinThumbPos(*thumb);
     auto maxThumbPos = MaxThumbPos(*thumb);
 
-    SetValue(clamp(value, minValue, maxValue));
-    float position = (value - minValue) / (maxValue - minValue);
+    float clamped = std::clamp(value, minValue, maxValue);
+    if (clamped != this->value.Value()) {
+        // OnValueChange re-enters this function; on that pass the guard is satisfied and
+        // positioning completes.
+        SetValue(clamped);
+        return;
+    }
+
+    float position = (clamped - minValue) / (maxValue - minValue);
 
     auto localPosition = thumb->transform.LocalPosition();
 

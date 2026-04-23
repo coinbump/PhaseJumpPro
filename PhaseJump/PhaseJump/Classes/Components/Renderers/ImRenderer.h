@@ -4,6 +4,8 @@
 #include "ImTypes.h"
 #include "Renderer.h"
 #include "RoundCornersMeshBuilder.h"
+#include "SomeShape.h"
+#include "StencilPushRenderModel.h"
 #include "UnorderedMap.h"
 #include "Vector2.h"
 #include "VectorList.h"
@@ -39,8 +41,7 @@ namespace PJ {
         public:
             using This = RendererModel;
 
-            using BuildRenderModelsFunc =
-                std::function<VectorList<RenderModel>(RendererModel& model)>;
+            using BuildRenderModelsFunc = std::function<RenderModelList(RendererModel& model)>;
 
         protected:
             bool renderModelsNeedBuild = true;
@@ -49,7 +50,7 @@ namespace PJ {
             BuildRenderModelsFunc buildRenderModelsFunc;
 
             /// Cached render model (updated when renderer changes)
-            VectorList<RenderModel> renderModels;
+            RenderModelList renderModels;
 
             Vector3 worldSize;
 
@@ -73,7 +74,7 @@ namespace PJ {
                 renderModelsNeedBuild = true;
             }
 
-            VectorList<RenderModel>& RenderModels() {
+            RenderModelList& RenderModels() {
                 if (renderModelsNeedBuild) {
                     renderModelsNeedBuild = false;
 
@@ -105,6 +106,9 @@ namespace PJ {
 
         /// Maps "itemType.renderType" to a build renderer func
         UnorderedMap<String, BuildRendererFunc> buildRendererFuncs;
+
+        /// Material used to draw into the stencil buffer. Color doesn't matter
+        SP<RenderMaterial> stencilMaterial;
 
         String RendererId(String itemType, String pathRenderType);
 
@@ -258,6 +262,15 @@ namespace PJ {
         /// Draw wrapped text within the specified frame
         This& Text(StringView text, Rect rect, float fontSize, std::optional<Color> color = {});
 
+        /// Push a stencil clip. Call ClipPop to pop
+        This& ClipPush(Rect frame, UP<SomeShape> shape);
+
+        /// Push a rectangular stencil clip scope. Convenience for `ClipPush(frame, RectShape)`
+        This& ClipPush(Rect frame);
+
+        /// Pop the most recently pushed stencil clip. Has no effect if there is nothing to pop
+        This& ClipPop();
+
         /// Use to customize item translation for different coordinate systems
         TranslateItemFunc MakeTranslateItemFunc(float down = vecDown);
 
@@ -267,12 +280,19 @@ namespace PJ {
             SetForegroundColor(color);
         }
 
-        VectorList<RenderModel> RenderModels() override {
-            auto result = model.RenderModels();
+        RenderModelList RenderModels() override {
+            auto& cachedModels = model.RenderModels();
 
-            // Always update the matrix for latest transform
-            for (auto& renderModel : result) {
-                renderModel.matrix = ModelMatrix();
+            auto matrix = ModelMatrix();
+            RenderModelList result;
+            result.reserve(cachedModels.size());
+            for (auto& sp : cachedModels) {
+                if (auto* material = dynamic_cast<MaterialRenderModel*>(sp.get())) {
+                    material->matrix = matrix;
+                } else if (auto* push = dynamic_cast<StencilPushRenderModel*>(sp.get())) {
+                    push->matrix = matrix;
+                }
+                result.push_back(sp);
             }
 
             return result;
@@ -304,6 +324,6 @@ namespace PJ {
 
         void Configure();
 
-        void Add(ImPath& path);
+        void Add(ImPath path);
     };
 } // namespace PJ
